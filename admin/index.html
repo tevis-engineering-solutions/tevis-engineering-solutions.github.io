@@ -160,6 +160,7 @@
     .inv-actions a.pill:hover, .inv-actions button:hover { border-color:var(--green); }
     .inv-actions button.prim:hover { border-color:transparent; }
     .inv-actions button:disabled { opacity:0.55; cursor:not-allowed; }
+    .inv-actions select { font-family:"Montserrat",sans-serif; font-size:0.68rem; font-weight:700; text-transform:uppercase; letter-spacing:0.03em; padding:0.4rem 0.6rem; border-radius:999px; border:1px solid var(--line); background:var(--bg); color:var(--text); cursor:pointer; }
     .invfind { max-width:1100px; margin:0 auto 0.6rem; padding:0 1rem; }
     .invfind input { width:100%; padding:0.55rem 0.75rem; border-radius:8px; border:1px solid var(--line); background:var(--card); color:var(--text); font-family:inherit; font-size:0.88rem; }
     .invfind input:focus { outline:none; border-color:var(--green); }
@@ -1571,7 +1572,9 @@
     document.getElementById('invClear').addEventListener('click', resetInvoiceForm);
 
     // ---- sending ----
+    var REMINDER_LABEL = { 1: 'past due', 2: 'one week', 3: 'two weeks', 4: 'final' };
     var SEND_ERROR = {
+      not_open: 'Only an open invoice can be reminded',
       not_sendable: 'Only an open invoice can be sent',
       no_email: 'This invoice has no email address',
       mail_unconfigured: 'Email is not configured on the Worker',
@@ -1732,6 +1735,14 @@
       else st.appendChild(el('span', null, 'Not emailed from here'));
       st.appendChild(document.createTextNode(' · '));
       st.appendChild(v.has_pdf ? el('span', null, 'PDF on file') : el('span', 'nopdf', 'No PDF'));
+      // Where the automatic past-due reminders have got to. The cron sends them in
+      // business hours; stage 4 is the final notice and pages Tyler.
+      if (v.reminder_stage) {
+        st.appendChild(document.createTextNode(' · '));
+        st.appendChild(el('span', v.reminder_stage >= 4 ? 'nopdf' : null,
+          'Reminder ' + v.reminder_stage + '/4 (' + (REMINDER_LABEL[v.reminder_stage] || '') + ')' +
+          (v.reminder_sent_at ? ' ' + fmtDate(v.reminder_sent_at) : '')));
+      }
       d.appendChild(st);
 
       if (v.status === 'pending') {
@@ -1758,6 +1769,29 @@
       }
       if (v.status === 'open' || v.status === 'pending') {
         act('Copy pay link', null, function () { copyPayLink(v); });
+      }
+      if (v.status === 'open') {
+        // A reminder by hand: the stage the schedule has reached, or any stage as a
+        // nudge. The server stamps the higher of the two, so a nudge never rewinds
+        // the automatic schedule.
+        var remSel = document.createElement('select');
+        remSel.setAttribute('aria-label', 'Reminder to send for ' + v.number);
+        [['', 'Send reminder…'], ['1', 'Past due'], ['2', 'One week past due'], ['3', 'Two weeks past due'], ['4', 'Final reminder']]
+          .forEach(function (o) { var op = el('option', null, o[1]); op.value = o[0]; remSel.appendChild(op); });
+        remSel.addEventListener('change', function () {
+          var stage = remSel.value;
+          if (!stage) return;
+          remSel.value = '';
+          if (!confirm('Send the ' + REMINDER_LABEL[stage] + ' reminder for ' + v.number + ' to ' + v.email + ' now?')) return;
+          remSel.disabled = true;
+          api('/admin/invoices/' + v.id + '/remind', { method: 'POST', body: { stage: Number(stage) } }).then(function (r) {
+            remSel.disabled = false;
+            if (!r.ok) return toast(SEND_ERROR[r.error] || 'Could not send (' + (r.error || 'unknown') + ')');
+            toast('Sent the ' + r.label + ' reminder to ' + r.to);
+            loadInvoices();
+          });
+        });
+        acts.appendChild(remSel);
       }
       if (v.has_pdf) {
         var a = el('a', 'pill', 'PDF');
