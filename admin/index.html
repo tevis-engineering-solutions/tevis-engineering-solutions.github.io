@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Ticket Triage | TES Admin</title>
+  <title>Admin Center | TES</title>
   <meta name="description" content="Internal ticket triage console for Tevis Engineering Solutions.">
   <meta name="robots" content="noindex, nofollow">
   <link rel="icon" type="image/png" href="../assets/favicon.png">
@@ -307,7 +307,7 @@
     <div class="abar-inner">
       <a class="abrand" href="index.html">
         <img src="../assets/logo-mark.png" alt="Tevis Engineering Solutions">
-        <span><b>TES Triage</b><s>Admin Console</s></span>
+        <span><b>TES Admin Center</b><s>Tickets, customers, invoices, keys</s></span>
       </a>
       <div class="aspacer"></div>
       <div class="awho" id="adminWho">&nbsp;</div>
@@ -3539,9 +3539,12 @@
       var m = /#t=(\d+)/.exec(location.hash);
       if (m) open(m[1]);
     });
-    if (location.hash === '#invoices') showView('invoices');
+    // Invoices is the default. Tickets still deep-link from Telegram (#t=) and by
+    // name; a bare refresh lands on the money.
     if (location.hash === '#keys') showView('keys');
-    if (location.hash === '#customers') showView('customers');
+    else if (location.hash === '#customers') showView('customers');
+    // #tickets and #t= keep the Tickets view (the page's initial state); #c= is handled below.
+    else if (!/^#(tickets|t=|c=)/.test(location.hash)) showView('invoices');
     // #c=<account_id> opens straight onto one person's file.
     var mc = /#c=([A-Za-z0-9_-]{1,64})/.exec(location.hash);
     if (mc) { showView('customers'); openCustomer(mc[1]); }
