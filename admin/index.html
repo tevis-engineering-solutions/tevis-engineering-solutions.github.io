@@ -239,10 +239,12 @@
 
     /* Buttons dropped straight into a dossier section (Remove, End agreement) had no
        rule of their own and rendered as 19px browser buttons. */
-    .cust-sec > button { font-family:"Montserrat",sans-serif; font-size:0.68rem; font-weight:700; text-transform:uppercase; letter-spacing:0.03em; padding:0.5rem 0.8rem; border-radius:999px; border:1px solid var(--line); background:var(--bg); color:var(--text); cursor:pointer; min-height:40px; margin-top:0.4rem; }
+    /* Action buttons dropped straight into a section. NOT clickable rows, which are
+       <button class="row"> and must keep their row shape. */
+    .cust-sec > button:not(.row) { font-family:"Montserrat",sans-serif; font-size:0.68rem; font-weight:700; text-transform:uppercase; letter-spacing:0.03em; padding:0.5rem 0.8rem; border-radius:999px; border:1px solid var(--line); background:var(--bg); color:var(--text); cursor:pointer; min-height:40px; margin-top:0.4rem; }
     .cust-sec .row button { font-family:"Montserrat",sans-serif; font-size:0.66rem; font-weight:700; text-transform:uppercase; letter-spacing:0.03em; padding:0.35rem 0.7rem; border-radius:999px; border:1px solid var(--line); background:var(--bg); color:var(--text); cursor:pointer; min-height:36px; }
-    .cust-sec > button:hover, .cust-sec .row button:hover { border-color:var(--green); }
-    .cust-sec > button.prim { background:linear-gradient(135deg,var(--gold),#e0b840); color:#0d1710; border-color:transparent; }
+    .cust-sec > button:not(.row):hover, .cust-sec .row button:hover { border-color:var(--green); }
+    .cust-sec > button.prim:not(.row) { background:linear-gradient(135deg,var(--gold),#e0b840); color:#0d1710; border-color:transparent; }
 
     .danger-zone { border:1px solid rgba(239,68,68,0.4); background:rgba(239,68,68,0.06); border-radius:12px; padding:0.8rem 0.9rem; margin-top:1rem; }
     .danger-zone h3 { font-family:"Montserrat",sans-serif; font-size:0.82rem; color:#ef4444; margin-bottom:0.3rem; }
