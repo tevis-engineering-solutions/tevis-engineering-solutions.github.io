@@ -98,6 +98,7 @@
       <a class="ptab" href="software.html"><i class="fa-solid fa-cubes"></i> My Software</a>
       <a class="ptab" href="billing.html"><i class="fa-solid fa-credit-card"></i> Billing</a>
       <a class="ptab" href="tickets.html"><i class="fa-solid fa-headset"></i> Support</a>
+      <a class="ptab" href="equipment.html"><i class="fa-solid fa-laptop"></i> Equipment</a>
       <a class="ptab" href="account.html"><i class="fa-solid fa-user-gear"></i> Account</a>
     </div>
   </nav>
@@ -129,6 +130,13 @@
         <p>Open a support ticket and track its status through to resolution.</p>
         <div class="status"><span class="pill ok"><i class="fa-solid fa-circle-check"></i> Active</span></div>
         <a class="plink" href="tickets.html">Open Support <i class="fa-solid fa-arrow-right"></i></a>
+      </div>
+      <div class="pcard">
+        <div class="ic"><i class="fa-solid fa-laptop"></i></div>
+        <h2>Equipment</h2>
+        <p>Hardware and subscriptions on your account, and where to confirm you have received them.</p>
+        <div class="status"><span class="pill muted" id="equipmentPill">Checking&hellip;</span></div>
+        <a class="plink" href="equipment.html">Open Equipment <i class="fa-solid fa-arrow-right"></i></a>
       </div>
       <div class="pcard">
         <div class="ic"><i class="fa-solid fa-user-gear"></i></div>
@@ -210,6 +218,20 @@
           .catch(function () { pill('softwarePill', 'muted', 'Unavailable'); });
       }
 
+      function loadEquipment() {
+        return fetch('/portal-api/equipment', { credentials: 'same-origin' })
+          .then(function (r) { return r.ok ? r.json() : null; })
+          .then(function (d) {
+            if (!d || !d.ok) { pill('equipmentPill', 'muted', 'Unavailable'); return; }
+            var list = d.items || [];
+            var waiting = list.filter(function (i) { return !i.confirmed_at; }).length;
+            if (!list.length) pill('equipmentPill', 'muted', 'Nothing assigned');
+            else if (waiting) pill('equipmentPill', 'gold', waiting + ' awaiting your confirmation');
+            else pill('equipmentPill', 'ok', list.length + ' item' + (list.length === 1 ? '' : 's') + ' confirmed');
+          })
+          .catch(function () { pill('equipmentPill', 'muted', 'Unavailable'); });
+      }
+
       function loadProfile() {
         return fetch('/portal-api/profile', { credentials: 'same-origin' })
           .then(function (r) { return r.ok ? r.json() : null; })
@@ -240,6 +262,7 @@
 
         loadSoftware();
         loadProfile();
+        loadEquipment();
 
         return TESInvoices.fetchForEmail(email).then(function (invoices) {
           var open = invoices.filter(function (inv) { return !inv.paid; });

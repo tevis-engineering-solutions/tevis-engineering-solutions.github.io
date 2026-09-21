@@ -302,6 +302,55 @@
 
     .state { text-align:center; color:var(--muted); font-size:0.88rem; padding:2rem 1rem; border:1px dashed var(--line); border-radius:12px; }
     .toast { position:fixed; left:50%; bottom:1.2rem; transform:translateX(-50%); background:var(--card-2); border:1px solid var(--green); color:var(--text); padding:0.6rem 1rem; border-radius:999px; font-size:0.85rem; z-index:99; }
+    /* ---- inventory + charts ---- */
+    .charts { display:grid; grid-template-columns:1fr 1fr; gap:0.6rem; margin-bottom:1rem; }
+    @media (max-width:640px) { .charts { grid-template-columns:1fr; } }
+    .chart-panel { border:1px solid var(--line); border-radius:12px; background:var(--card); padding:0.8rem 0.9rem; min-width:0; }
+    .chart-panel.wide { grid-column:1 / -1; }
+    .chart-panel h3 { font-family:"Montserrat",sans-serif; font-size:0.72rem; text-transform:uppercase; letter-spacing:0.05em; color:var(--muted); margin-bottom:0.5rem; }
+    .chart-donut { display:flex; gap:0.9rem; align-items:center; flex-wrap:wrap; }
+    .chart-donut svg { flex:0 0 auto; }
+    .donut-mid { font-family:"Montserrat",sans-serif; font-weight:800; font-size:13px; fill:var(--text); }
+    .chart-legend { flex:1 1 10rem; min-width:0; display:flex; flex-direction:column; gap:0.2rem; }
+    .legend-i { display:flex; align-items:center; gap:0.45rem; font-size:0.76rem; color:var(--muted); min-width:0; }
+    .legend-i.pick { cursor:pointer; }
+    .legend-i.pick:hover .legend-l { color:var(--text); }
+    .legend-i i { width:10px; height:10px; border-radius:3px; flex:0 0 auto; }
+    .legend-l { flex:1 1 auto; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+    .legend-i b { color:var(--text); font-family:"Montserrat",sans-serif; white-space:nowrap; }
+    .legend-p { width:2.6rem; text-align:right; white-space:nowrap; }
+    .chart-hbars { display:flex; flex-direction:column; gap:0.45rem; }
+    .hbar.pick { cursor:pointer; }
+    .hbar-top { display:flex; justify-content:space-between; gap:0.5rem; font-size:0.76rem; color:var(--muted); }
+    .hbar-l { overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+    .hbar-top b { color:var(--text); font-family:"Montserrat",sans-serif; white-space:nowrap; }
+    .hbar-track { height:8px; border-radius:999px; background:var(--line); overflow:hidden; margin-top:0.2rem; }
+    .hbar-track i { display:block; height:100%; border-radius:999px; }
+    .hbar-sub { font-size:0.68rem; color:var(--muted); margin-top:0.15rem; }
+    .chart-timeline svg { display:block; overflow:visible; }
+    .tl-axis { stroke:var(--line); stroke-width:2; }
+    .tl-tick { stroke:var(--muted); stroke-width:1; }
+    .tl-lbl { fill:var(--muted); font-size:11px; font-family:"Inter",sans-serif; }
+    .tl-dot { fill:var(--green); stroke:var(--card); stroke-width:2; cursor:pointer; }
+    .tl-dot.hot { fill:var(--gold); }
+    .tl-dot:hover { r:8; }
+    .invt-name { font-weight:600; color:#f0f4f0; }
+    .invt-grid { margin-top:0.6rem; }
+    .invt-notes { white-space:pre-wrap; }
+    .inv.sel { border-color:var(--gold); box-shadow:0 0 0 2px rgba(200,152,48,0.35); }
+    .badge.rcpt { color:var(--gold); border-color:rgba(200,152,48,0.5); text-decoration:none; }
+    .dz.dz-small { padding:0.7rem; }
+    .fwide textarea { width:100%; padding:0.55rem 0.7rem; border-radius:8px; border:1px solid var(--line); background:var(--bg); color:var(--text); font-family:inherit; font-size:0.88rem; line-height:1.5; resize:vertical; }
+    .fwide textarea:focus { outline:none; border-color:var(--green); }
+    .custpick-sel[hidden] { display:none; }
+    @media (max-width:480px) { #invtFilters { flex-wrap:wrap; } #invtFilters .fpill { padding:0.4rem 0.6rem; font-size:0.66rem; letter-spacing:0.02em; } }
+    /* Six tabs do not fit a phone in one row. Below 600px they wrap into two rows
+       as chips, which is better than a bar that scrolls a tab out of sight. */
+    @media (max-width:600px) {
+      .viewnav { flex-wrap:wrap; gap:0.3rem; padding:0.6rem 0.75rem 0; }
+      .vbtn { border-bottom:1px solid var(--line); border-radius:8px; }
+      .vbtn.on { border-color:var(--gold); }
+    }
     [hidden] { display:none !important; }
   </style>
 </head>
@@ -310,7 +359,7 @@
     <div class="abar-inner">
       <a class="abrand" href="index.html">
         <img src="../assets/logo-mark.png" alt="Tevis Engineering Solutions">
-        <span><b>TES Admin Center</b><s>Tickets, customers, invoices, keys</s></span>
+        <span><b>TES Admin Center</b><s>Tickets, customers, invoices, inventory, keys</s></span>
       </a>
       <div class="aspacer"></div>
       <div class="awho" id="adminWho">&nbsp;</div>
@@ -321,6 +370,7 @@
     <button type="button" class="vbtn on" id="navTickets">Tickets</button>
     <button type="button" class="vbtn" id="navCustomers">Customers</button>
     <button type="button" class="vbtn" id="navInvoices">Invoices</button>
+    <button type="button" class="vbtn" id="navInventory">Inventory</button>
     <button type="button" class="vbtn" id="navKeys">Product Keys</button>
   </div>
 
@@ -462,6 +512,144 @@
     </div>
 
     <div id="invList"><div class="state">Loading invoices&hellip;</div></div>
+  </main>
+
+  <main class="wrap" id="viewInventory" aria-label="Inventory" hidden>
+    <div class="tiles" id="invtTiles"></div>
+    <div class="charts" id="invtCharts"></div>
+
+    <section class="newinv" id="invtFormBox">
+      <h2 id="invtFormTitle">Add equipment or a subscription</h2>
+      <form id="invtForm">
+        <div class="fgrid">
+          <div>
+            <label for="invtKind">Kind</label>
+            <select id="invtKind">
+              <option value="equipment">Equipment</option>
+              <option value="subscription">Subscription</option>
+            </select>
+          </div>
+          <div>
+            <label for="invtName">Name</label>
+            <input type="text" id="invtName" required placeholder="ThinkPad T14, Microsoft 365, tevisengineering.com">
+          </div>
+          <div>
+            <label for="invtCategory">Category</label>
+            <select id="invtCategory"><option value="">(none)</option></select>
+          </div>
+          <div>
+            <label for="invtPaidBy">Paid by</label>
+            <select id="invtPaidBy">
+              <option value="tes">TES (counts as an expense)</option>
+              <option value="customer">The customer (register only)</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Who holds it. TES by default; type to hand it to a person or a company. -->
+        <div class="fwide custpick">
+          <label for="invtHolderQ">Assigned to</label>
+          <input type="search" id="invtHolderQ" placeholder="Type a name, company or email to assign it to a customer" autocomplete="off">
+          <div class="custpick-list" id="invtHolderList" hidden></div>
+          <div class="custpick-sel" id="invtHolderSel"></div>
+        </div>
+        <label class="fcheck" id="invtNotifyWrap" hidden>
+          <input type="checkbox" id="invtNotify" checked>
+          Email them to sign in and confirm receipt
+        </label>
+
+        <div class="fgrid invt-grid">
+          <div>
+            <label for="invtVendor">Vendor</label>
+            <input type="text" id="invtVendor" placeholder="Lenovo, Microsoft, Cloudflare">
+          </div>
+          <div>
+            <label for="invtModel">Model</label>
+            <input type="text" id="invtModel" placeholder="21ML">
+          </div>
+          <div>
+            <label for="invtSerial">Serial number</label>
+            <input type="text" id="invtSerial" placeholder="If it has one">
+          </div>
+          <div>
+            <label for="invtLocation">Location</label>
+            <input type="text" id="invtLocation" placeholder="Office, client site, cloud">
+          </div>
+          <div>
+            <label for="invtPurchase">Purchase date</label>
+            <input type="date" id="invtPurchase">
+          </div>
+          <div>
+            <label for="invtPrice">Price (USD)</label>
+            <input type="number" id="invtPrice" step="0.01" min="0" placeholder="1299.00">
+          </div>
+          <div>
+            <label for="invtWarranty">Warranty until</label>
+            <input type="date" id="invtWarranty">
+          </div>
+          <div id="invtLifeWrap">
+            <label for="invtLife">Useful life (months)</label>
+            <input type="number" id="invtLife" min="1" max="600" placeholder="36 for book value">
+          </div>
+        </div>
+
+        <label class="fcheck">
+          <input type="checkbox" id="invtRecurring">
+          Recurring cost
+        </label>
+        <div class="fgrid" id="invtRecFields" hidden>
+          <div>
+            <label for="invtRecAmount">Amount per charge (USD)</label>
+            <input type="number" id="invtRecAmount" step="0.01" min="0.01" placeholder="12.50">
+          </div>
+          <div>
+            <label for="invtRecInterval">Charged</label>
+            <select id="invtRecInterval">
+              <option value="monthly">Monthly</option>
+              <option value="quarterly">Quarterly</option>
+              <option value="annual">Annually</option>
+            </select>
+          </div>
+          <div>
+            <label for="invtRecNext">Next charge date</label>
+            <input type="date" id="invtRecNext">
+          </div>
+        </div>
+
+        <div class="fwide">
+          <label for="invtNotes">Notes</label>
+          <textarea id="invtNotes" rows="2" placeholder="Config, logins location, who it was bought for, anything the next person needs"></textarea>
+        </div>
+
+        <div class="fwide">
+          <div class="dz dz-small" id="invtDrop" tabindex="0" role="button" aria-label="Attach the receipt">
+            <input type="file" id="invtFile" accept="application/pdf,image/*" hidden>
+            <div class="dz-main">Drop the receipt here, or click to choose one</div>
+            <div class="dz-sub">PDF or a photo. Optional, but the deductible ones are worth keeping.</div>
+          </div>
+          <div class="dz-file" id="invtFileInfo" hidden></div>
+        </div>
+
+        <div class="inv-actions">
+          <button type="submit" class="prim" id="invtSave">Add to inventory</button>
+          <button type="button" id="invtCancel">Clear</button>
+        </div>
+      </form>
+    </section>
+
+    <div class="filters" id="invtFilters">
+      <button type="button" class="fpill on" data-view="active">Active</button>
+      <button type="button" class="fpill" data-view="renewals">Renewals</button>
+      <button type="button" class="fpill" data-view="unconfirmed">Unconfirmed</button>
+      <button type="button" class="fpill" data-view="retired">Retired</button>
+      <button type="button" class="fpill" data-view="all">All</button>
+    </div>
+    <div class="invfind">
+      <label for="invtQ" class="sr-only">Search inventory</label>
+      <input type="search" id="invtQ" placeholder="Search by name, tag, serial, vendor or holder" autocomplete="off">
+    </div>
+
+    <div id="invtList"><div class="state">Loading inventory&hellip;</div></div>
   </main>
 
   <main class="wrap" id="viewKeys" aria-label="Product keys" hidden>
@@ -2666,13 +2854,14 @@
       // The file is tabbed: what needs attention first, then the money, the work,
       // the paperwork, and what you want to remember about them.
       var allInv = c.all_invoices || c.invoices || [];
-      var tabs = paneTabs(wrap, ['Overview', 'Invoices', 'Tickets', 'Files', 'Notes'], 'cust:' + c.account.id);
+      var tabs = paneTabs(wrap, ['Overview', 'Invoices', 'Tickets', 'Equipment', 'Files', 'Notes'], 'cust:' + c.account.id);
       var pOverview = tabs.pane('Overview');
       var pInv = tabs.pane('Invoices');
       var pTk = tabs.pane('Tickets');
       tabs.count('Invoices', allInv.length);
       tabs.count('Tickets', c.tickets.length);
       tabs.count('Files', (c.documents || []).length);
+      tabs.count('Equipment', (c.inventory || []).length);
 
       // ---- records that belong to nobody ----
       // Deliberately near the top and gold-bordered: this is the fact the rest of
@@ -2857,6 +3046,15 @@
       ivs.appendChild(mk);
       invoiceRows(ivs, allInv);
       pInv.appendChild(ivs);
+
+      // ---- equipment ----
+      var eqs = sec('Equipment (' + (c.inventory || []).length + ')');
+      eqs.appendChild(licAction('Assign equipment or a subscription', 'prim', function () {
+        startInventoryFor({ holder_type: 'account', holder_id: c.account.id,
+          label: (c.profile && (c.profile.name || c.profile.company)) || c.account.email, email: c.account.email });
+      }));
+      inventoryRows(eqs, c.inventory || []);
+      tabs.pane('Equipment').appendChild(eqs);
 
       // ---- files and notes ----
       tabs.pane('Files').appendChild(filesSection({
@@ -3081,6 +3279,12 @@
           }
           toast(r.created ? 'Customer created' : 'Existing account updated');
           document.getElementById('custAddForm').hidden = true;
+          // Opened from the Inventory holder picker: go back there with them picked.
+          if (afterAddCustomer) {
+            var back = afterAddCustomer; afterAddCustomer = null;
+            back({ account_id: r.account_id, email: r.email || email, name: payload.company || payload.name || '' });
+            return;
+          }
           custMode = 'people';
           loadCustomers('').then(function () { openCustomer(r.account_id); });
         });
@@ -3373,11 +3577,12 @@
       var oInv = extra.invoices || [];
       var oTk = extra.tickets || [];
       var oDocs = extra.documents || [];
-      var otabs = paneTabs(wrap, ['Overview', 'Invoices', 'Tickets', 'Files', 'Notes'], 'org:' + o.id);
+      var otabs = paneTabs(wrap, ['Overview', 'Invoices', 'Tickets', 'Equipment', 'Files', 'Notes'], 'org:' + o.id);
       var oOverview = otabs.pane('Overview');
       otabs.count('Invoices', oInv.length);
       otabs.count('Tickets', oTk.length);
       otabs.count('Files', oDocs.length);
+      otabs.count('Equipment', (extra.inventory || []).length);
 
       // Agreement
       var as = sec('Service agreement');
@@ -3532,6 +3737,13 @@
       ticketRows(oTks, oTk);
       otabs.pane('Tickets').appendChild(oTks);
 
+      var oEq = sec('Equipment (' + (extra.inventory || []).length + ')');
+      oEq.appendChild(licAction('Assign equipment or a subscription', 'prim', function () {
+        startInventoryFor({ holder_type: 'org', holder_id: o.id, label: o.name, email: o.billing_email || '' });
+      }));
+      inventoryRows(oEq, extra.inventory || []);
+      otabs.pane('Equipment').appendChild(oEq);
+
       otabs.pane('Files').appendChild(filesSection({
         base: '/admin/orgs/' + encodeURIComponent(o.id),
         documents: oDocs,
@@ -3547,11 +3759,784 @@
       return wrap;
     }
 
+    // ---- charts: hand-rolled SVG, themed from the page tokens ----------------
+    // No library: a donut, horizontal bars and a timeline are a few dozen lines each
+    // and print as vectors. Every shape carries a <title> for hover.
+    var CHART_COLORS = ['#c89830', '#4aac65', '#9fd3ae', '#e0c98a', '#4fa2ff', '#6a8ba8', '#e08a68', '#cdeed6'];
+    var SVG_NS = 'http://www.w3.org/2000/svg';
+
+    function svgEl(tag, attrs) {
+      var n = document.createElementNS(SVG_NS, tag);
+      Object.keys(attrs || {}).forEach(function (k) { n.setAttribute(k, attrs[k]); });
+      return n;
+    }
+
+    // slices: [{label, value}] in display order. Draws the ring, a total in the
+    // middle, and an HTML legend that wraps on a phone. `fmt` formats a value.
+    function svgDonut(container, slices, opts) {
+      opts = opts || {};
+      var fmt = opts.fmt || String;
+      var total = slices.reduce(function (s, x) { return s + (x.value || 0); }, 0);
+      var wrap = el('div', 'chart-donut');
+      if (!total) { wrap.appendChild(el('div', 'row-sub', opts.empty || 'Nothing to chart yet.')); container.appendChild(wrap); return wrap; }
+      var R = 42, C = 2 * Math.PI * R, size = 120;
+      var svg = svgEl('svg', { viewBox: '0 0 ' + size + ' ' + size, width: size, height: size, role: 'img' });
+      svg.setAttribute('aria-label', opts.label || 'Breakdown');
+      var offset = 0;
+      slices.forEach(function (s, i) {
+        if (!s.value) return;
+        var frac = s.value / total;
+        var c = svgEl('circle', {
+          cx: size / 2, cy: size / 2, r: R, fill: 'none',
+          stroke: s.color || CHART_COLORS[i % CHART_COLORS.length], 'stroke-width': 16,
+          'stroke-dasharray': (frac * C) + ' ' + (C - frac * C),
+          'stroke-dashoffset': String(-offset * C),
+          transform: 'rotate(-90 ' + (size / 2) + ' ' + (size / 2) + ')',
+        });
+        c.setAttribute('data-i', String(i));
+        var t = svgEl('title');
+        t.textContent = s.label + ': ' + fmt(s.value) + ' (' + Math.round(frac * 100) + '%)';
+        c.appendChild(t);
+        svg.appendChild(c);
+        offset += frac;
+      });
+      var mid = svgEl('text', { x: size / 2, y: size / 2 + 1, 'text-anchor': 'middle', 'dominant-baseline': 'middle', class: 'donut-mid' });
+      mid.textContent = opts.center != null ? opts.center : fmt(total);
+      svg.appendChild(mid);
+      wrap.appendChild(svg);
+      var leg = el('div', 'chart-legend');
+      slices.forEach(function (s, i) {
+        if (!s.value) return;
+        var li = el('div', 'legend-i');
+        var dot = el('i');
+        dot.style.background = s.color || CHART_COLORS[i % CHART_COLORS.length];
+        li.appendChild(dot);
+        li.appendChild(el('span', 'legend-l', s.label));
+        li.appendChild(el('b', null, fmt(s.value)));
+        li.appendChild(el('span', 'legend-p', Math.round(s.value / total * 100) + '%'));
+        if (opts.onPick) { li.classList.add('pick'); li.addEventListener('click', function () { opts.onPick(s, i); }); }
+        leg.appendChild(li);
+      });
+      wrap.appendChild(leg);
+      container.appendChild(wrap);
+      return wrap;
+    }
+
+    // rows: [{label, value, sub?}]. Plain HTML bars: they wrap, print, and need no
+    // coordinate math for labels.
+    function hBars(container, rows, opts) {
+      opts = opts || {};
+      var fmt = opts.fmt || String;
+      var wrap = el('div', 'chart-hbars');
+      var max = rows.reduce(function (m, r) { return Math.max(m, r.value || 0); }, 0);
+      if (!max) { wrap.appendChild(el('div', 'row-sub', opts.empty || 'Nothing to chart yet.')); container.appendChild(wrap); return wrap; }
+      rows.forEach(function (r, i) {
+        var line = el('div', 'hbar' + (opts.onPick ? ' pick' : ''));
+        var top = el('div', 'hbar-top');
+        top.appendChild(el('span', 'hbar-l', r.label));
+        top.appendChild(el('b', null, fmt(r.value)));
+        line.appendChild(top);
+        var track = el('div', 'hbar-track');
+        var fill = el('i');
+        fill.style.width = Math.max(1, Math.round(r.value / max * 100)) + '%';
+        fill.style.background = r.color || CHART_COLORS[i % CHART_COLORS.length];
+        fill.title = r.label + ': ' + fmt(r.value);
+        track.appendChild(fill);
+        line.appendChild(track);
+        if (r.sub) line.appendChild(el('div', 'hbar-sub', r.sub));
+        if (opts.onPick) line.addEventListener('click', function () { opts.onPick(r, i); });
+        wrap.appendChild(line);
+      });
+      container.appendChild(wrap);
+      return wrap;
+    }
+
+    // points: [{day:'YYYY-MM-DD', label, amount}] over the next `days` days from
+    // today. A strip with month ticks and one dot per point; tap a dot for its label.
+    function svgTimeline(container, points, days, opts) {
+      opts = opts || {};
+      var W = 600, H = 58, padL = 6, padR = 6, y = 30;
+      var wrap = el('div', 'chart-timeline');
+      var today = new Date(); today.setHours(12, 0, 0, 0);
+      var svg = svgEl('svg', { viewBox: '0 0 ' + W + ' ' + H, width: '100%', height: H, role: 'img', preserveAspectRatio: 'none' });
+      svg.setAttribute('aria-label', opts.label || 'Timeline');
+      svg.appendChild(svgEl('line', { x1: padL, x2: W - padR, y1: y, y2: y, class: 'tl-axis' }));
+      var span = W - padL - padR;
+      var xFor = function (d) { return padL + Math.max(0, Math.min(1, (d - today) / 86400000 / days)) * span; };
+      // Month boundaries as ticks.
+      var cur = new Date(today); cur.setDate(1); cur.setMonth(cur.getMonth() + 1);
+      while ((cur - today) / 86400000 < days) {
+        var x = xFor(cur);
+        svg.appendChild(svgEl('line', { x1: x, x2: x, y1: y - 6, y2: y + 6, class: 'tl-tick' }));
+        var t = svgEl('text', { x: x + 3, y: y + 20, class: 'tl-lbl' });
+        t.textContent = cur.toLocaleDateString('en-US', { month: 'short' });
+        svg.appendChild(t);
+        cur.setMonth(cur.getMonth() + 1);
+      }
+      var t0 = svgEl('text', { x: padL, y: y + 20, class: 'tl-lbl' });
+      t0.textContent = 'Today';
+      svg.appendChild(t0);
+      var tN = svgEl('text', { x: W - padR, y: y - 12, class: 'tl-lbl', 'text-anchor': 'end' });
+      tN.textContent = days + ' days';
+      svg.appendChild(tN);
+      var shown = 0;
+      points.forEach(function (p) {
+        var d = new Date(p.day + 'T12:00:00');
+        if (isNaN(d) || d < today || (d - today) / 86400000 > days) return;
+        shown++;
+        var c = svgEl('circle', { cx: xFor(d), cy: y, r: 6, class: 'tl-dot' + (p.hot ? ' hot' : '') });
+        var tt = svgEl('title');
+        tt.textContent = p.label;
+        c.appendChild(tt);
+        if (opts.onPick) c.addEventListener('click', function () { opts.onPick(p); });
+        svg.appendChild(c);
+      });
+      if (!shown) { wrap.appendChild(el('div', 'row-sub', opts.empty || 'Nothing due in the next ' + days + ' days.')); container.appendChild(wrap); return wrap; }
+      wrap.appendChild(svg);
+      container.appendChild(wrap);
+      return wrap;
+    }
+
+    // ---- inventory: equipment and subscriptions ------------------------------
+    // One fetch of the whole register (view=all); filters, search, tiles and charts
+    // are all worked out here, so the charts never disagree with the list.
+    var invtAll = [];
+    var invtSummary = null;
+    var invtView = 'active';
+    var invtSearch = '';
+    var invtEditing = null;    // the item being edited, or null for a new one
+    var invtReceipt = null;    // {filename, data, content_type, size} waiting to upload
+    var invtHolder = { holder_type: 'tes', holder_id: null, label: 'TES', email: '' };
+    var invtListEl = document.getElementById('invtList');
+    var INVT_CATEGORIES = ['laptop', 'desktop', 'server', 'network', 'peripheral', 'mobile', 'display', 'software', 'hosting', 'domain', 'license', 'service', 'other'];
+    var INVT_STATUS_COLOR = { active: '#22c55e', retired: '#6a8ba8', returned: '#4fa2ff', lost: '#ef4444', canceled: '#6a8ba8' };
+    var INVT_ERROR = {
+      holder_not_found: 'That customer no longer exists.',
+      not_receipt: 'A receipt must be a PDF or an image.',
+      too_large: 'That file is over the 10 MB limit.',
+    };
+
+    function cap(s) { return s ? s.charAt(0).toUpperCase() + s.slice(1) : ''; }
+    function fmtDayStr(d) {
+      if (!d) return '';
+      var p = String(d).split('-');
+      return new Date(Number(p[0]), Number(p[1]) - 1, Number(p[2])).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+    }
+    function todayDay() {
+      var d = new Date();
+      return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+    }
+    function daysUntil(day) {
+      var p = String(day).split('-');
+      var t = new Date(); t.setHours(12, 0, 0, 0);
+      return Math.round((new Date(Number(p[0]), Number(p[1]) - 1, Number(p[2]), 12) - t) / 86400000);
+    }
+    function recurringLine(i) {
+      if (!i.recurring) return '';
+      var n = daysUntil(i.next_charge_on);
+      return money(i.recurring_cents) + ' ' + i.recurring_interval + ' · next ' + fmtDayStr(i.next_charge_on) +
+        (n < 0 ? '' : n === 0 ? ' (today)' : ' (in ' + n + (n === 1 ? ' day)' : ' days)'));
+    }
+
+    // ---- the holder picker (TES, a person, or a company) ----
+    var invtHolderQ = document.getElementById('invtHolderQ');
+    var invtHolderList = document.getElementById('invtHolderList');
+    var invtHolderSel = document.getElementById('invtHolderSel');
+    var invtNotifyWrap = document.getElementById('invtNotifyWrap');
+    var hpTimer = null;
+    // Set while the People tab's add form is opened from here, so the new customer
+    // comes straight back as the holder instead of landing on their dossier.
+    var afterAddCustomer = null;
+
+    function setHolder(h) {
+      invtHolder = h;
+      invtHolderList.hidden = true;
+      invtHolderQ.value = '';
+      invtHolderSel.textContent = '';
+      invtHolderSel.appendChild(el('b', null, h.label));
+      var sub = h.holder_type === 'tes' ? 'held by TES' : (h.holder_type === 'org' ? 'Company' : 'Person') + (h.email ? ' · ' + h.email : '');
+      invtHolderSel.appendChild(el('span', 'cp-s', sub));
+      if (h.holder_type !== 'tes') {
+        var ch = el('button', null, 'Back to TES');
+        ch.type = 'button';
+        ch.addEventListener('click', function () { setHolder({ holder_type: 'tes', holder_id: null, label: 'TES', email: '' }); });
+        invtHolderSel.appendChild(ch);
+      }
+      invtNotifyWrap.hidden = h.holder_type === 'tes';
+    }
+
+    function hpSearch(q) {
+      if (!q) { invtHolderList.hidden = true; return; }
+      Promise.all([
+        api('/admin/customers?q=' + encodeURIComponent(q)),
+        api('/admin/orgs').catch(function () { return { ok: false }; }),
+      ]).then(function (res) {
+        if (invtHolderQ.value.trim() !== q) return;
+        invtHolderList.textContent = '';
+        invtHolderList.hidden = false;
+        var ql = q.toLowerCase();
+        var orgs = (res[1].ok ? (res[1].orgs || []) : []).filter(function (o) {
+          return (o.name || '').toLowerCase().indexOf(ql) >= 0 || (o.billing_email || '').toLowerCase().indexOf(ql) >= 0;
+        });
+        orgs.slice(0, 6).forEach(function (o) {
+          var b = el('button'); b.type = 'button';
+          b.appendChild(el('div', 'cp-n', o.name));
+          b.appendChild(el('div', 'cp-s', 'Company' + (o.billing_email ? ' · emails go to ' + o.billing_email : ' · no billing contact, so no email')));
+          b.addEventListener('click', function () { setHolder({ holder_type: 'org', holder_id: o.id, label: o.name, email: o.billing_email || '' }); });
+          invtHolderList.appendChild(b);
+        });
+        // Only people with an account can hold something: the item is keyed on the
+        // account id, and that is what the portal lists their gear by.
+        var people = (res[0].ok ? (res[0].customers || []) : []).filter(function (c) { return c.account_id; });
+        people.slice(0, 12).forEach(function (c) {
+          var b = el('button'); b.type = 'button';
+          b.appendChild(el('div', 'cp-n', cpLabel(c)));
+          b.appendChild(el('div', 'cp-s', [c.company && c.company !== cpLabel(c) ? c.company : '', c.email].filter(Boolean).join(' · ')));
+          b.addEventListener('click', function () { setHolder({ holder_type: 'account', holder_id: c.account_id, label: cpLabel(c), email: c.email }); });
+          invtHolderList.appendChild(b);
+        });
+        if (!people.length && !orgs.length) invtHolderList.appendChild(el('div', 'state', 'Nobody matches.'));
+        var add = el('button'); add.type = 'button';
+        add.appendChild(el('div', 'cp-n cp-new', '+ Not listed? Add a customer'));
+        add.appendChild(el('div', 'cp-s', 'Opens the People tab with this typed in. They come straight back here as the holder.'));
+        add.addEventListener('click', function () {
+          invtHolderList.hidden = true;
+          afterAddCustomer = function (r) {
+            showView('inventory');
+            setHolder({ holder_type: 'account', holder_id: r.account_id, label: r.name || r.email, email: r.email });
+            document.getElementById('invtFormBox').scrollIntoView({ behavior: 'smooth', block: 'start' });
+          };
+          showView('customers');
+          custMode = 'people'; syncMode();
+          var open = function () {
+            var box = document.getElementById('custAddForm');
+            if (box.hidden) document.getElementById('custAddToggle').click();
+            setTimeout(function () {
+              var em = document.getElementById('addEmail'), nm = document.getElementById('addName');
+              if (em && /@/.test(q)) em.value = q; else if (nm) nm.value = q;
+              (em || nm) && (em && !em.value ? em : nm || em).focus();
+            }, 50);
+          };
+          open();
+        });
+        invtHolderList.appendChild(add);
+      });
+    }
+    invtHolderQ.addEventListener('input', function () {
+      clearTimeout(hpTimer);
+      var q = invtHolderQ.value.trim();
+      hpTimer = setTimeout(function () { hpSearch(q); }, 250);
+    });
+    invtHolderQ.addEventListener('focus', function () { if (invtHolderQ.value.trim()) hpSearch(invtHolderQ.value.trim()); });
+    invtHolderQ.addEventListener('keydown', function (e) { if (e.key === 'Escape') invtHolderList.hidden = true; });
+    document.addEventListener('click', function (e) {
+      if (!invtHolderList.contains(e.target) && e.target !== invtHolderQ) invtHolderList.hidden = true;
+    });
+
+    // ---- the form ----
+    var invtForm = document.getElementById('invtForm');
+    var invtF = {};
+    ['kind', 'name', 'category', 'paidBy', 'vendor', 'model', 'serial', 'purchase', 'price', 'warranty', 'life', 'location',
+     'recurring', 'recAmount', 'recInterval', 'recNext', 'notes', 'notify'].forEach(function (k) {
+      invtF[k] = document.getElementById('invt' + cap(k));
+    });
+    var invtRecFields = document.getElementById('invtRecFields');
+    var invtLifeWrap = document.getElementById('invtLifeWrap');
+    var invtDrop = document.getElementById('invtDrop');
+    var invtFile = document.getElementById('invtFile');
+    var invtFileInfo = document.getElementById('invtFileInfo');
+    var invtFormTitle = document.getElementById('invtFormTitle');
+    var invtSave = document.getElementById('invtSave');
+    var invtCancel = document.getElementById('invtCancel');
+
+    INVT_CATEGORIES.forEach(function (c) {
+      var o = document.createElement('option'); o.value = c; o.textContent = cap(c);
+      invtF.category.appendChild(o);
+    });
+
+    function syncKind() {
+      var sub = invtF.kind.value === 'subscription';
+      invtLifeWrap.hidden = sub;
+      if (sub && !invtF.recurring.checked) { invtF.recurring.checked = true; }
+      invtRecFields.hidden = !invtF.recurring.checked;
+    }
+    invtF.kind.addEventListener('change', syncKind);
+    invtF.recurring.addEventListener('change', function () { invtRecFields.hidden = !invtF.recurring.checked; });
+
+    function clearReceipt() {
+      invtReceipt = null;
+      invtFile.value = '';
+      invtFileInfo.hidden = true;
+      invtFileInfo.textContent = '';
+    }
+    function takeReceipt(file) {
+      if (!file) return;
+      var okType = /^(application\/pdf|image\/(png|jpeg|gif|webp))$/.test(file.type) || /\.(pdf|png|jpe?g|gif|webp)$/i.test(file.name);
+      if (!okType) return toast('A receipt is a PDF or an image');
+      if (file.size > 10 * 1024 * 1024) return toast('Receipts are capped at 10 MB');
+      fileToBase64(file).then(function (b64) {
+        invtReceipt = { filename: file.name, data: b64, content_type: file.type || 'application/octet-stream', size: file.size };
+        invtFileInfo.hidden = false;
+        invtFileInfo.textContent = '';
+        invtFileInfo.appendChild(el('b', null, file.name));
+        invtFileInfo.appendChild(document.createTextNode(' · ' + fmtSize(file.size) + (invtEditing ? ' · replaces the current receipt on Save' : '')));
+        invtFileInfo.appendChild(licAction('Remove', null, clearReceipt));
+      }, function () { toast('Could not read that file'); });
+    }
+    invtDrop.addEventListener('click', function () { invtFile.click(); });
+    invtDrop.addEventListener('keydown', function (e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); invtFile.click(); } });
+    invtFile.addEventListener('change', function () { takeReceipt(invtFile.files && invtFile.files[0]); });
+    ['dragenter', 'dragover'].forEach(function (ev) { invtDrop.addEventListener(ev, function (e) { e.preventDefault(); invtDrop.classList.add('over'); }); });
+    ['dragleave', 'drop'].forEach(function (ev) { invtDrop.addEventListener(ev, function (e) { e.preventDefault(); invtDrop.classList.remove('over'); }); });
+    invtDrop.addEventListener('drop', function (e) { takeReceipt(e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files[0]); });
+
+    function resetInvtForm() {
+      invtForm.reset();
+      invtEditing = null;
+      invtFormTitle.textContent = 'Add equipment or a subscription';
+      invtSave.textContent = 'Add to inventory';
+      invtCancel.textContent = 'Clear';
+      invtF.notify.checked = true;
+      setHolder({ holder_type: 'tes', holder_id: null, label: 'TES', email: '' });
+      clearReceipt();
+      syncKind();
+    }
+
+    // Opens the form on an existing item, scrolled into view.
+    function editInvt(i) {
+      resetInvtForm();
+      invtEditing = i;
+      invtFormTitle.textContent = 'Edit ' + i.tag + ' · ' + i.name;
+      invtSave.textContent = 'Save changes';
+      invtCancel.textContent = 'Cancel';
+      invtF.kind.value = i.kind;
+      invtF.name.value = i.name;
+      invtF.category.value = i.category || '';
+      invtF.paidBy.value = i.paid_by;
+      invtF.vendor.value = i.vendor || '';
+      invtF.model.value = i.model || '';
+      invtF.serial.value = i.serial || '';
+      invtF.purchase.value = i.purchase_date || '';
+      invtF.price.value = i.price_cents ? (i.price_cents / 100).toFixed(2) : '';
+      invtF.warranty.value = i.warranty_until || '';
+      invtF.life.value = i.useful_life_months || '';
+      invtF.location.value = i.location || '';
+      invtF.recurring.checked = !!i.recurring;
+      invtF.recAmount.value = i.recurring_cents ? (i.recurring_cents / 100).toFixed(2) : '';
+      invtF.recInterval.value = i.recurring_interval || 'monthly';
+      invtF.recNext.value = i.next_charge_on || '';
+      invtF.notes.value = i.notes || '';
+      invtF.notify.checked = false;
+      setHolder({ holder_type: i.holder_type, holder_id: i.holder_id, label: i.holder_name || 'TES', email: i.holder_email || '' });
+      syncKind();
+      document.getElementById('invtFormBox').scrollIntoView({ behavior: 'smooth', block: 'start' });
+      invtF.name.focus();
+    }
+
+    // From a customer's file: a new item with them already picked as the holder.
+    function startInventoryFor(h) {
+      showView('inventory');
+      resetInvtForm();
+      setHolder(h);
+      document.getElementById('invtFormBox').scrollIntoView({ behavior: 'smooth', block: 'start' });
+      invtF.name.focus();
+    }
+
+    function invtPayload() {
+      var p = {
+        kind: invtF.kind.value,
+        name: invtF.name.value.trim(),
+        category: invtF.category.value || null,
+        holder_type: invtHolder.holder_type,
+        holder_id: invtHolder.holder_id,
+        paid_by: invtF.paidBy.value,
+        vendor: invtF.vendor.value.trim(),
+        model: invtF.model.value.trim(),
+        serial: invtF.serial.value.trim(),
+        purchase_date: invtF.purchase.value || null,
+        price_cents: invtF.price.value ? Math.round(parseFloat(invtF.price.value) * 100) : 0,
+        warranty_until: invtF.warranty.value || null,
+        useful_life_months: invtF.kind.value === 'equipment' && invtF.life.value ? Number(invtF.life.value) : null,
+        location: invtF.location.value.trim(),
+        recurring: invtF.recurring.checked,
+        notes: invtF.notes.value,
+      };
+      if (p.recurring) {
+        p.recurring_cents = invtF.recAmount.value ? Math.round(parseFloat(invtF.recAmount.value) * 100) : null;
+        p.recurring_interval = invtF.recInterval.value;
+        p.next_charge_on = invtF.recNext.value || null;
+      }
+      return p;
+    }
+
+    invtForm.addEventListener('submit', function (e) {
+      e.preventDefault();
+      var p = invtPayload();
+      if (!p.name) return toast('Give it a name');
+      if (p.recurring && !p.recurring_cents) return toast('A recurring cost needs an amount');
+      if (p.recurring && !p.next_charge_on && !p.purchase_date) return toast('Give the next charge date, or a purchase date to count from');
+      invtSave.disabled = true;
+      var req;
+      if (invtEditing) {
+        req = api('/admin/inventory/' + invtEditing.id, { method: 'PATCH', body: p }).then(function (r) {
+          if (!r || !r.ok) return r;
+          var next = Promise.resolve(r);
+          if (invtReceipt) {
+            next = api('/admin/inventory/' + invtEditing.id + '/receipt', { method: 'POST', body: invtReceipt }).then(function (a) {
+              if (!a || !a.ok) r.receipt_error = (a && a.error) || 'failed';
+              return r;
+            });
+          }
+          // Emailing a changed holder is opt-in on an edit, so a typo fix does not
+          // send the customer a second "confirm receipt" out of nowhere.
+          if (invtF.notify.checked && !invtNotifyWrap.hidden) {
+            next = next.then(function (r2) {
+              return api('/admin/inventory/' + invtEditing.id + '/notify', { method: 'POST' }).then(function (n) {
+                if (n && n.ok) { r2.emailed = true; r2.to = n.to; } else r2.email_error = (n && n.error) || 'failed';
+                return r2;
+              });
+            });
+          }
+          return next;
+        });
+      } else {
+        if (invtReceipt) p.receipt = invtReceipt;
+        if (!invtNotifyWrap.hidden && invtF.notify.checked) p.notify = true;
+        req = api('/admin/inventory', { method: 'POST', body: p });
+      }
+      req.then(function (r) {
+        invtSave.disabled = false;
+        if (!r || !r.ok) return toast((r && r.message) || INVT_ERROR[r && r.error] || 'Could not save (' + ((r && r.error) || 'unknown') + ')');
+        var msg = (invtEditing ? 'Saved ' : 'Added ') + r.item.tag;
+        if (r.emailed) msg += ' · emailed ' + r.to;
+        else if (r.email_error) msg += ' · EMAIL FAILED (' + r.email_error + ')';
+        if (r.receipt_error) msg += ' · receipt not attached (' + (INVT_ERROR[r.receipt_error] || r.receipt_error) + ')';
+        toast(msg);
+        if (r.email_error || r.receipt_error) alert(msg);
+        var id = r.item.id;
+        resetInvtForm();
+        loadInventory().then(function () { flashInvt(id); });
+      }, function () { invtSave.disabled = false; toast('Network error'); });
+    });
+    invtCancel.addEventListener('click', resetInvtForm);
+
+    // ---- tiles and charts ----
+    function invtTiles(s) {
+      var t = document.getElementById('invtTiles');
+      t.textContent = '';
+      if (!s) return;
+      var mk = function (label, val, sub, warn) {
+        var d = el('div', 'tile');
+        d.appendChild(el('s', null, label));
+        d.appendChild(el('b', warn ? 'warn' : null, val));
+        if (sub) d.appendChild(el('div', 'sub', sub));
+        t.appendChild(d);
+      };
+      mk('In service', String(s.items), s.equipment + ' equipment · ' + s.subscriptions + (s.subscriptions === 1 ? ' subscription' : ' subscriptions'));
+      mk('Purchases', money(s.purchases_cents), 'TES-paid equipment, all time');
+      mk('Book value', money(s.book_value_cents), 'straight-line, items with a useful life');
+      mk('Monthly recurring', money(s.monthly_recurring_cents), 'TES-paid subscriptions');
+      mk('Renewals in 30 days', String(s.renewals_30d), s.renewals_30d ? money(s.renewals_30d_cents) + ' due' : 'nothing due', s.renewals_30d > 0);
+      mk('Awaiting confirmation', String(s.unconfirmed), s.assigned + ' assigned to customers', s.unconfirmed > 0);
+    }
+
+    function invtCharts(items) {
+      var box = document.getElementById('invtCharts');
+      box.textContent = '';
+      var byCat = {};
+      items.forEach(function (i) {
+        if (i.paid_by !== 'tes' || i.kind !== 'equipment' || !i.price_cents) return;
+        var k = cap(i.category || 'other');
+        byCat[k] = (byCat[k] || 0) + i.price_cents;
+      });
+      var cats = Object.keys(byCat).map(function (k) { return { label: k, value: byCat[k] }; })
+        .sort(function (a, b) { return b.value - a.value; });
+      var p1 = el('div', 'chart-panel');
+      p1.appendChild(el('h3', null, 'Purchases by category'));
+      svgDonut(p1, cats, { fmt: money, label: 'Purchases by category', empty: 'No TES-paid equipment yet.',
+        onPick: function (s) { invtSearchEl.value = s.label.toLowerCase(); invtSearch = s.label.toLowerCase(); renderInventory(); } });
+      box.appendChild(p1);
+
+      var byVendor = {};
+      items.forEach(function (i) {
+        if (i.paid_by !== 'tes' || i.status !== 'active' || !i.monthly_cents) return;
+        var k = i.vendor || i.name;
+        byVendor[k] = (byVendor[k] || 0) + i.monthly_cents;
+      });
+      var vendors = Object.keys(byVendor).map(function (k) { return { label: k, value: byVendor[k] }; })
+        .sort(function (a, b) { return b.value - a.value; }).slice(0, 8);
+      var p2 = el('div', 'chart-panel');
+      p2.appendChild(el('h3', null, 'Monthly recurring by vendor'));
+      hBars(p2, vendors, { fmt: function (c) { return money(c) + '/mo'; }, empty: 'No TES-paid subscriptions yet.',
+        onPick: function (r) { invtSearchEl.value = r.label; invtSearch = r.label.toLowerCase(); renderInventory(); } });
+      box.appendChild(p2);
+
+      var p3 = el('div', 'chart-panel wide');
+      p3.appendChild(el('h3', null, 'Renewals, next 90 days'));
+      var pts = items.filter(function (i) { return i.status === 'active' && i.recurring && i.next_charge_on; })
+        .map(function (i) {
+          return { day: i.next_charge_on, hot: i.paid_by === 'tes' && daysUntil(i.next_charge_on) <= 7, id: i.id,
+            label: fmtDayStr(i.next_charge_on) + ' · ' + i.name + ' · ' + money(i.recurring_cents) + (i.paid_by === 'customer' ? ' (customer pays)' : '') };
+        });
+      svgTimeline(p3, pts, 90, { label: 'Renewals in the next 90 days', onPick: function (p) { toast(p.label); flashInvt(p.id); } });
+      box.appendChild(p3);
+    }
+
+    // ---- the list ----
+    function invtMatches(i) {
+      var v = invtView;
+      if (v === 'active' && i.status !== 'active') return false;
+      if (v === 'retired' && i.status === 'active') return false;
+      if (v === 'renewals' && !(i.status === 'active' && i.recurring && daysUntil(i.next_charge_on) <= 90)) return false;
+      if (v === 'unconfirmed' && !(i.status === 'active' && i.holder_type !== 'tes' && !i.confirmed_at)) return false;
+      if (!invtSearch) return true;
+      var hay = [i.name, i.tag, i.serial, i.vendor, i.model, i.category, i.holder_name, i.holder_email, i.location, i.notes]
+        .filter(Boolean).join(' ').toLowerCase();
+      return hay.indexOf(invtSearch) >= 0;
+    }
+
+    function invtCard(i) {
+      var c = el('div', 'inv invt' + (i.status !== 'active' ? ' archived' : ''));
+      c.setAttribute('data-invt', String(i.id));
+      var top = el('div', 'inv-top');
+      var left = el('div');
+      left.appendChild(el('span', 'inv-num', i.tag + '  '));
+      left.appendChild(el('span', 'invt-name', i.name));
+      top.appendChild(left);
+      var right = el('div', 'inv-amt', i.recurring ? money(i.recurring_cents) + '/' + { monthly: 'mo', quarterly: 'qtr', annual: 'yr' }[i.recurring_interval]
+        : i.price_cents ? money(i.price_cents) : '');
+      top.appendChild(right);
+      c.appendChild(top);
+
+      var badges = el('div', 'cust-badges');
+      badges.appendChild(badge(i.kind, i.kind === 'subscription' ? '#4fa2ff' : '#9fd3ae'));
+      if (i.category) badges.appendChild(badge(i.category, '#8aa48d'));
+      if (i.status !== 'active') badges.appendChild(badge(i.status, INVT_STATUS_COLOR[i.status] || '#8aa48d'));
+      if (i.paid_by === 'customer') badges.appendChild(badge('customer paid', '#e0c98a'));
+      if (i.holder_type !== 'tes') {
+        badges.appendChild(i.confirmed_at ? badge('confirmed ' + fmtDate(i.confirmed_at), '#22c55e')
+          : i.assignment_notified_at ? badge('awaiting confirmation', '#c89830') : badge('not emailed', '#e08a68'));
+      }
+      if (i.has_receipt) {
+        var rc = el('a', 'badge rcpt', 'receipt');
+        rc.href = API + '/admin/inventory/' + i.id + '/receipt';
+        rc.target = '_blank'; rc.rel = 'noopener';
+        badges.appendChild(rc);
+      }
+      c.appendChild(badges);
+
+      var meta1 = [i.vendor, i.model, i.serial ? 'S/N ' + i.serial : '', i.location].filter(Boolean).join(' · ');
+      if (meta1) c.appendChild(el('div', 'inv-meta', meta1));
+      var meta2 = [
+        i.purchase_date ? 'Bought ' + fmtDayStr(i.purchase_date) : '',
+        i.warranty_until ? 'Warranty to ' + fmtDayStr(i.warranty_until) + (daysUntil(i.warranty_until) < 0 ? ' (expired)' : '') : '',
+        i.book_value_cents != null ? 'Book value ' + money(i.book_value_cents) : '',
+      ].filter(Boolean).join(' · ');
+      if (meta2) c.appendChild(el('div', 'inv-meta', meta2));
+      if (i.recurring) c.appendChild(el('div', 'inv-meta' + (i.paid_by === 'tes' && daysUntil(i.next_charge_on) <= 7 ? ' pending-line' : ''), recurringLine(i)));
+      if (i.holder_type !== 'tes') {
+        c.appendChild(el('div', 'inv-meta', 'Held by ' + (i.holder_name || i.holder_email || i.holder_id) +
+          (i.assigned_at ? ' since ' + fmtDate(i.assigned_at) : '') +
+          (i.assignment_notified_at ? ' · emailed ' + fmtDate(i.assignment_notified_at) : '')));
+      }
+      if (i.notes) c.appendChild(el('div', 'inv-meta invt-notes', i.notes));
+
+      var acts = el('div', 'inv-actions');
+      acts.appendChild(licAction('Edit', null, function () { editInvt(i); }));
+      if (i.holder_type !== 'tes' && i.status === 'active') {
+        acts.appendChild(licAction(i.assignment_notified_at ? 'Email again' : 'Email to confirm', i.assignment_notified_at ? null : 'prim', function () {
+          if (!confirm('Email ' + (i.holder_email || 'the holder') + ' asking them to sign in and confirm ' + i.tag + '?')) return;
+          api('/admin/inventory/' + i.id + '/notify', { method: 'POST' }).then(function (r) {
+            toast(r && r.ok ? 'Emailed ' + r.to : (r && r.message) || 'Could not send');
+            if (r && r.ok) loadInventory();
+          });
+        }));
+      }
+      var att = licAction(i.has_receipt ? 'Replace receipt' : 'Attach receipt', null, function () {
+        var f = document.createElement('input');
+        f.type = 'file'; f.accept = 'application/pdf,image/*';
+        f.addEventListener('change', function () {
+          var file = f.files && f.files[0];
+          if (!file) return;
+          if (file.size > 10 * 1024 * 1024) return toast('Receipts are capped at 10 MB');
+          fileToBase64(file).then(function (b64) {
+            return api('/admin/inventory/' + i.id + '/receipt', { method: 'POST', body: { filename: file.name, data: b64, content_type: file.type } });
+          }).then(function (r) {
+            toast(r && r.ok ? 'Receipt attached' : (r && r.message) || INVT_ERROR[r && r.error] || 'Could not attach');
+            if (r && r.ok) loadInventory();
+          });
+        });
+        f.click();
+      });
+      acts.appendChild(att);
+      if (i.status === 'active') {
+        var st = document.createElement('select');
+        st.setAttribute('aria-label', 'Mark as');
+        [['', 'Mark as…'], ['retired', 'Retired'], ['returned', 'Returned'], ['lost', 'Lost'], ['canceled', 'Canceled']].forEach(function (o) {
+          var op = document.createElement('option'); op.value = o[0]; op.textContent = o[1]; st.appendChild(op);
+        });
+        st.addEventListener('change', function () {
+          var v = st.value; if (!v) return;
+          st.value = '';
+          if (!confirm('Mark ' + i.tag + ' as ' + v + '? It leaves the active list.')) return;
+          api('/admin/inventory/' + i.id, { method: 'PATCH', body: { status: v } }).then(function (r) {
+            toast(r && r.ok ? cap(v) : (r && r.message) || 'Could not update');
+            loadInventory();
+          });
+        });
+        acts.appendChild(st);
+      } else {
+        acts.appendChild(licAction('Back in service', null, function () {
+          api('/admin/inventory/' + i.id, { method: 'PATCH', body: { status: 'active' } }).then(function () { loadInventory(); });
+        }));
+      }
+      acts.appendChild(licAction('Delete', 'danger', function () {
+        if (!confirm('Delete ' + i.tag + ' ' + i.name + '? The receipt goes with it. This cannot be undone.')) return;
+        api('/admin/inventory/' + i.id, { method: 'DELETE' }).then(function (r) {
+          toast(r && r.ok ? 'Deleted ' + i.tag : (r && r.error) || 'Could not delete');
+          loadInventory();
+        });
+      }));
+      c.appendChild(acts);
+      return c;
+    }
+
+    function renderInventory() {
+      invtListEl.textContent = '';
+      var list = invtAll.filter(invtMatches);
+      if (!list.length) {
+        invtListEl.appendChild(el('div', 'state',
+          invtSearch ? 'Nothing matches "' + invtSearch + '" in ' + invtView + '.'
+          : invtView === 'active' ? 'Nothing in inventory yet. Add the first item above.'
+          : invtView === 'unconfirmed' ? 'Everything assigned to a customer has been confirmed.'
+          : invtView === 'renewals' ? 'No renewals in the next 90 days.'
+          : 'Nothing in ' + invtView + '.'));
+        return;
+      }
+      // Grouped by holder: TES first, then companies, then people. Same shape as the
+      // invoice list, and each customer header opens their file.
+      var groups = {}, order = [];
+      list.forEach(function (i) {
+        var k = i.holder_type === 'tes' ? 'tes' : i.holder_type + ':' + i.holder_id;
+        if (!groups[k]) { groups[k] = { type: i.holder_type, id: i.holder_id, name: i.holder_type === 'tes' ? 'Held by TES' : i.holder_name || i.holder_email || i.holder_id, email: i.holder_email, rows: [], cost: 0, monthly: 0, unconfirmed: 0 }; order.push(k); }
+        var g = groups[k];
+        g.rows.push(i);
+        if (i.paid_by === 'tes') { g.cost += i.price_cents || 0; g.monthly += i.monthly_cents || 0; }
+        if (i.holder_type !== 'tes' && !i.confirmed_at && i.status === 'active') g.unconfirmed++;
+      });
+      order.sort(function (a, b) {
+        var ra = groups[a].type === 'tes' ? 0 : groups[a].type === 'org' ? 1 : 2;
+        var rb = groups[b].type === 'tes' ? 0 : groups[b].type === 'org' ? 1 : 2;
+        return ra - rb || groups[a].name.localeCompare(groups[b].name, undefined, { sensitivity: 'base' });
+      });
+      var sum = el('div', 'inv-sum');
+      sum.appendChild(el('b', null, list.length + (list.length === 1 ? ' item' : ' items')));
+      sum.appendChild(document.createTextNode(' across ' + order.length + (order.length === 1 ? ' holder' : ' holders')));
+      invtListEl.appendChild(sum);
+      order.forEach(function (k) {
+        var g = groups[k];
+        var wrap = el('div', 'inv-group');
+        var h = el('div', 'inv-group-h');
+        if (g.type === 'tes') {
+          var hh = el('div');
+          hh.appendChild(el('h3', null, g.name));
+          h.appendChild(hh);
+        } else {
+          var open = el('button', 'g-open');
+          open.type = 'button';
+          open.setAttribute('aria-label', 'Open the customer file for ' + g.name);
+          open.appendChild(el('h3', null, g.name));
+          open.appendChild(el('div', 'g-sub', (g.type === 'org' ? 'Company' : 'Person') + (g.email ? ' · ' + g.email : '')));
+          open.addEventListener('click', function () {
+            showView('customers');
+            if (g.type === 'org') { custMode = 'orgs'; syncMode(); openOrg(g.id); }
+            else { custMode = 'people'; syncMode(); openCustomer(g.id); }
+          });
+          h.appendChild(open);
+        }
+        var tot = el('div', 'g-tot');
+        tot.appendChild(document.createTextNode(g.rows.length + (g.rows.length === 1 ? ' item' : ' items')));
+        if (g.cost) { tot.appendChild(document.createTextNode(' · ')); tot.appendChild(el('b', null, money(g.cost))); }
+        if (g.monthly) { tot.appendChild(document.createTextNode(' · ')); tot.appendChild(el('b', null, money(g.monthly) + '/mo')); }
+        if (g.unconfirmed) { tot.appendChild(document.createTextNode(' · ')); tot.appendChild(el('b', 'late', g.unconfirmed + ' unconfirmed')); }
+        h.appendChild(tot);
+        wrap.appendChild(h);
+        g.rows.forEach(function (i) { wrap.appendChild(invtCard(i)); });
+        invtListEl.appendChild(wrap);
+      });
+    }
+
+    function flashInvt(id) {
+      var card = invtListEl.querySelector('[data-invt="' + id + '"]');
+      if (!card) {
+        // It may be filtered out (retired, or a search); show everything and try again.
+        if (invtView !== 'all' || invtSearch) { setInvtView('all'); invtSearchEl.value = ''; invtSearch = ''; renderInventory(); card = invtListEl.querySelector('[data-invt="' + id + '"]'); }
+        if (!card) return;
+      }
+      card.classList.add('sel');
+      card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      setTimeout(function () { card.classList.remove('sel'); }, 2500);
+    }
+
+    function loadInventory() {
+      return api('/admin/inventory?view=all').then(function (r) {
+        if (!r.ok) {
+          invtListEl.textContent = '';
+          invtListEl.appendChild(el('div', 'state', 'Could not load inventory.'));
+          return;
+        }
+        invtAll = r.items || [];
+        invtSummary = r.summary || null;
+        invtTiles(invtSummary);
+        invtCharts(invtAll);
+        renderInventory();
+      });
+    }
+
+    var invtSearchEl = document.getElementById('invtQ');
+    var invtQTimer = null;
+    invtSearchEl.addEventListener('input', function () {
+      clearTimeout(invtQTimer);
+      invtQTimer = setTimeout(function () { invtSearch = invtSearchEl.value.trim().toLowerCase(); renderInventory(); }, 200);
+    });
+    function setInvtView(v) {
+      invtView = v;
+      document.querySelectorAll('#invtFilters .fpill').forEach(function (b) { b.classList.toggle('on', b.getAttribute('data-view') === v); });
+    }
+    document.getElementById('invtFilters').addEventListener('click', function (e) {
+      var b = e.target.closest('.fpill');
+      if (!b) return;
+      setInvtView(b.getAttribute('data-view'));
+      renderInventory();
+    });
+
+    // Rows for a customer's file (Equipment pane): each jumps to the card.
+    function inventoryRows(parent, list) {
+      if (!list.length) { parent.appendChild(el('div', 'row-sub', 'Nothing assigned.')); return; }
+      list.forEach(function (i) {
+        var right = el('div', 'cust-badges');
+        if (i.status !== 'active') right.appendChild(badge(i.status, INVT_STATUS_COLOR[i.status] || '#8aa48d'));
+        else if (i.confirmed_at) right.appendChild(badge('confirmed', '#22c55e'));
+        else right.appendChild(badge(i.assignment_notified_at ? 'awaiting confirmation' : 'not emailed', i.assignment_notified_at ? '#c89830' : '#e08a68'));
+        parent.appendChild(row(i.tag + ' · ' + i.name,
+          [i.kind, i.serial ? 'S/N ' + i.serial : '', i.recurring ? recurringLine(i) : (i.price_cents ? money(i.price_cents) : ''),
+           i.paid_by === 'customer' ? 'customer paid' : ''].filter(Boolean).join(' · '),
+          right, function () {
+            showView('inventory');
+            var go = function () { flashInvt(i.id); };
+            if (invtAll.length) go(); else loadInventory().then(go);
+          }));
+      });
+    }
+
+    resetInvtForm();
+
     // ---- view switching --------------------------------------------------
     var VIEWS = {
       tickets: { view: 'viewTickets', nav: 'navTickets' },
       customers: { view: 'viewCustomers', nav: 'navCustomers', load: function () { loadCustomers(''); } },
       invoices: { view: 'viewInvoices', nav: 'navInvoices', load: loadInvoices },
+      inventory: { view: 'viewInventory', nav: 'navInventory', load: loadInventory },
       keys: { view: 'viewKeys', nav: 'navKeys', load: loadKeys }
     };
     var loaded = {};
@@ -3579,11 +4564,15 @@
     // name; a bare refresh lands on the money.
     if (location.hash === '#keys') showView('keys');
     else if (location.hash === '#customers') showView('customers');
+    else if (location.hash === '#inventory') showView('inventory');
     // #tickets and #t= keep the Tickets view (the page's initial state); #c= is handled below.
-    else if (!/^#(tickets|t=|c=)/.test(location.hash)) showView('invoices');
+    else if (!/^#(tickets|t=|c=|i=)/.test(location.hash)) showView('invoices');
     // #c=<account_id> opens straight onto one person's file.
     var mc = /#c=([A-Za-z0-9_-]{1,64})/.exec(location.hash);
     if (mc) { showView('customers'); openCustomer(mc[1]); }
+    // #i=<id> (Telegram renewal nudges) opens the Inventory tab on one item.
+    var mi = /#i=(\d+)/.exec(location.hash);
+    if (mi) { loaded.inventory = true; showView('inventory'); loadInventory().then(function () { flashInvt(Number(mi[1])); }); }
   })();
   </script>
 </body>

@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Equipment | TES Customer Portal</title>
+  <meta name="description" content="Equipment and subscriptions assigned to your Tevis Engineering Solutions account, and where to confirm you have received them.">
+  <meta name="robots" content="noindex, nofollow">
+  <link rel="canonical" href="https://tevisengineering.com/portal/equipment.html">
+  <link rel="icon" type="image/png" href="../assets/favicon.png">
+  <meta http-equiv="X-Content-Type-Options" content="nosniff">
+  <meta name="referrer" content="strict-origin-when-cross-origin">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Montserrat:wght@500;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+  <style>
+    :root { --bg:#0d1710; --card:#142019; --card-2:#1c2e22; --line:#2c4232; --text:#e4ede5; --muted:#8aa48d; --green:#4aac65; --gold:#c89830; }
+    * { box-sizing:border-box; margin:0; padding:0; }
+    /* .sumgrid/.sec-title/.state set display, which beats the UA [hidden] rule. */
+    [hidden] { display:none !important; }
+    html { scroll-behavior:smooth; }
+    body { font-family:"Inter","Segoe UI",system-ui,sans-serif; color:var(--text); background:radial-gradient(circle at top,#172b1c 0%,#0d1710 45%,#060e08 100%); line-height:1.6; min-height:100vh; }
+    a { color:var(--green); }
+    .pbar { position:sticky; top:0; z-index:50; background:rgba(9,18,12,0.92); backdrop-filter:blur(12px); border-bottom:1px solid rgba(74,172,101,0.22); }
+    .pbar-inner { display:flex; align-items:center; gap:1rem; padding:0.7rem 5%; max-width:1200px; margin:0 auto; }
+    .pbrand { display:flex; align-items:center; gap:0.7rem; text-decoration:none; }
+    .pbrand img { width:40px; height:40px; border-radius:9px; border:1px solid rgba(255,255,255,0.15); }
+    .pbrand .pl { font-family:"Montserrat",sans-serif; text-transform:uppercase; letter-spacing:0.06em; line-height:1.15; }
+    .pbrand .pl b { display:block; font-size:0.9rem; color:#fff; }
+    .pbrand .pl s { display:block; font-size:0.6rem; color:var(--gold); text-decoration:none; letter-spacing:0.12em; }
+    .pbar-spacer { flex:1; }
+    .pacct { display:flex; align-items:center; gap:0.75rem; }
+    .pacct .who { text-align:right; line-height:1.25; }
+    .pacct .who b { display:block; font-size:0.82rem; color:#e4ede5; }
+    .pacct .who span { font-size:0.72rem; color:var(--muted); }
+    .pavatar { width:38px; height:38px; border-radius:999px; background:linear-gradient(135deg,#4aac65,#c89830); color:#0d1710; display:grid; place-items:center; font-weight:800; font-family:"Montserrat",sans-serif; }
+    .psignout { font-family:"Montserrat",sans-serif; font-size:0.72rem; text-transform:uppercase; letter-spacing:0.05em; font-weight:700; color:var(--muted); text-decoration:none; border:1px solid var(--line); border-radius:999px; padding:0.4rem 0.8rem; transition:color .2s,border-color .2s; white-space:nowrap; }
+    .psignout:hover { color:#e4ede5; border-color:var(--green); }
+    @media (max-width:640px) { .pacct .who { display:none; } }
+    .ptabs { background:rgba(9,18,12,0.55); border-bottom:1px solid var(--line); position:sticky; top:55px; z-index:40; }
+    .ptabs-inner { display:flex; gap:0.2rem; max-width:1200px; margin:0 auto; padding:0 5%; overflow-x:auto; scrollbar-width:none; }
+    .ptabs-inner::-webkit-scrollbar { display:none; }
+    .ptab { padding:0.85rem 1rem; font-family:"Montserrat",sans-serif; font-size:0.8rem; text-transform:uppercase; letter-spacing:0.04em; font-weight:700; color:var(--muted); text-decoration:none; border-bottom:2px solid transparent; white-space:nowrap; display:inline-flex; align-items:center; gap:0.5rem; transition:color .2s; }
+    .ptab:hover { color:#e4ede5; }
+    .ptab.active { color:#fff; border-bottom-color:var(--gold); }
+    .pmain { max-width:1200px; margin:0 auto; padding:2rem 5% 4rem; }
+    .phead { margin-bottom:1.4rem; }
+    .phead h1 { font-family:"Montserrat",sans-serif; text-transform:uppercase; letter-spacing:0.02em; font-size:1.7rem; margin-bottom:0.3rem; }
+    .phead p { color:var(--muted); font-size:0.95rem; }
+    .pgrid { display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); gap:1rem; }
+    .pcard { background:var(--card); border:1px solid var(--line); border-radius:14px; padding:1.35rem; display:flex; flex-direction:column; }
+    .pcard.feat { border-color:rgba(200,152,48,0.4); }
+    .pcard .ic { width:42px; height:42px; border-radius:11px; background:rgba(74,172,101,0.1); border:1px solid rgba(74,172,101,0.22); color:var(--green); display:grid; place-items:center; font-size:1.1rem; margin-bottom:0.9rem; }
+    .pcard.feat .ic { background:rgba(200,152,48,0.12); border-color:rgba(200,152,48,0.3); color:var(--gold); }
+    .pcard h2 { font-family:"Montserrat",sans-serif; font-size:1.1rem; color:#fff; margin-bottom:0.4rem; }
+    .pcard p { color:var(--muted); font-size:0.9rem; margin-bottom:1rem; }
+    .pill { display:inline-flex; align-items:center; gap:0.4rem; font-size:0.72rem; font-weight:700; text-transform:uppercase; letter-spacing:0.05em; padding:0.25rem 0.7rem; border-radius:999px; width:max-content; }
+    .pill.muted { background:var(--card-2); color:var(--muted); border:1px solid var(--line); margin-bottom:1rem; }
+    .btn { text-decoration:none; border-radius:999px; padding:0.7rem 1.1rem; font-weight:700; border:1px solid transparent; font-size:0.82rem; font-family:"Montserrat",sans-serif; text-transform:uppercase; letter-spacing:0.03em; display:inline-flex; align-items:center; gap:0.5rem; justify-content:center; margin-top:auto; cursor:pointer; }
+    .btn-primary { background:linear-gradient(135deg,#c89830,#e0b840); color:#0d1710; }
+    .btn-ghost { border-color:var(--line); color:#cfe0d2; background:var(--card); }
+    .btn-ghost:hover { border-color:var(--green); }
+    .sec-title { font-family:"Montserrat",sans-serif; text-transform:uppercase; letter-spacing:0.04em; font-size:1rem; color:#f1f7f1; margin:2.2rem 0 0.8rem; display:flex; align-items:center; gap:0.6rem; flex-wrap:wrap; }
+    .sec-title .count { font-size:0.72rem; font-weight:700; color:var(--muted); background:var(--card-2); border:1px solid var(--line); border-radius:999px; padding:0.1rem 0.6rem; letter-spacing:0.04em; }
+    .empty-row { background:var(--card); border:1px dashed var(--line); border-radius:14px; padding:1.8rem 1.5rem; text-align:center; color:var(--muted); font-size:0.9rem; }
+    .empty-row i { color:#33513c; font-size:1.6rem; display:block; margin-bottom:0.5rem; }
+    .pfoot { max-width:1200px; margin:0 auto; padding:1.5rem 5% 2.5rem; border-top:1px solid var(--line); color:var(--muted); font-size:0.8rem; display:flex; justify-content:space-between; flex-wrap:wrap; gap:0.5rem; }
+    .pfoot a { color:var(--muted); text-decoration:none; }
+    .pfoot a:hover { color:var(--green); }
+
+    /* --- account summary tiles --- */
+    .sumgrid { display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:1rem; }
+    .sumtile { background:var(--card); border:1px solid var(--line); border-radius:14px; padding:1.1rem 1.25rem; }
+    .sumtile.due { border-color:rgba(200,152,48,0.4); background:linear-gradient(180deg,rgba(200,152,48,0.07),rgba(20,32,25,0.9)); }
+    .sumtile .lab { font-family:"Montserrat",sans-serif; font-size:0.68rem; text-transform:uppercase; letter-spacing:0.09em; color:var(--muted); font-weight:700; }
+    .sumtile .val { font-family:"Montserrat",sans-serif; font-size:1.65rem; font-weight:800; color:#fff; line-height:1.25; margin-top:0.2rem; }
+    .sumtile.due .val { color:var(--gold); }
+    .sumtile .sub { font-size:0.78rem; color:var(--muted); }
+
+    /* --- loading / empty / error states --- */
+    .state { background:var(--card); border:1px solid var(--line); border-radius:14px; padding:1.4rem 1.5rem; color:var(--muted); font-size:0.9rem; display:flex; gap:0.9rem; align-items:flex-start; margin-top:1rem; }
+    .state i { color:var(--gold); font-size:1.1rem; margin-top:0.15rem; }
+    .state b { color:#e4ede5; display:block; }
+    .state.bad { border-color:rgba(214,120,90,0.4); }
+    .state.bad i { color:#d6785a; }
+    .spin { display:inline-block; width:16px; height:16px; border:2px solid rgba(138,164,141,0.3); border-top-color:var(--green); border-radius:50%; animation:sp .8s linear infinite; flex-shrink:0; margin-top:0.2rem; }
+    @keyframes sp { to { transform:rotate(360deg); } }
+
+    /* --- invoice cards --- */
+    .inv { background:var(--card); border:1px solid var(--line); border-radius:14px; padding:1.25rem 1.35rem; margin-bottom:0.9rem; }
+    .inv.open { border-color:rgba(200,152,48,0.35); }
+    .inv-top { display:flex; flex-wrap:wrap; gap:0.8rem 1.2rem; align-items:flex-start; }
+    .inv-id { font-family:"Montserrat",sans-serif; font-weight:800; color:#fff; font-size:1.02rem; letter-spacing:0.02em; }
+    .inv-meta { color:var(--muted); font-size:0.83rem; margin-top:0.15rem; }
+    .inv-meta span + span::before { content:"\00b7"; margin:0 0.45rem; color:#3c5a45; }
+    .inv-spacer { flex:1; }
+    .inv-right { text-align:right; }
+    .inv-amt { font-family:"Montserrat",sans-serif; font-weight:800; font-size:1.35rem; color:#fff; white-space:nowrap; }
+    .inv.open .inv-amt { color:var(--gold); }
+    .inv-desc { color:#c3d4c6; font-size:0.88rem; margin-top:0.6rem; }
+    .badge { display:inline-flex; align-items:center; gap:0.35rem; font-size:0.68rem; font-weight:700; text-transform:uppercase; letter-spacing:0.06em; padding:0.2rem 0.6rem; border-radius:999px; }
+    .badge.due { background:rgba(200,152,48,0.14); color:#e0b840; border:1px solid rgba(200,152,48,0.35); }
+    .badge.paid { background:rgba(74,172,101,0.14); color:#6dc882; border:1px solid rgba(74,172,101,0.35); }
+    .badge.pending { background:rgba(74,172,101,0.1); color:#8aa48d; border:1px solid var(--line); }
+    .badge.late { background:rgba(214,120,90,0.14); color:#e08a68; border:1px solid rgba(214,120,90,0.35); }
+    .inv-actions { margin-top:1rem; display:flex; flex-wrap:wrap; gap:0.6rem; align-items:center; }
+    .inv-actions .btn { margin-top:0; }
+    .pay-panel { margin-top:1rem; padding-top:1rem; border-top:1px solid var(--line); display:none; }
+    .pay-panel.open { display:block; }
+    .pay-note { color:var(--muted); font-size:0.8rem; margin-bottom:0.7rem; }
+    .pp-box { max-width:460px; }
+    .paid-ok { background:rgba(74,172,101,0.09); border:1px solid rgba(74,172,101,0.3); border-radius:12px; padding:1.1rem 1.2rem; }
+    .paid-ok .tick { color:#6dc882; font-size:1.5rem; font-weight:800; line-height:1; }
+    .paid-ok b { display:block; color:#fff; font-family:"Montserrat",sans-serif; margin:0.35rem 0 0.2rem; }
+    .paid-ok p { color:var(--muted); font-size:0.85rem; margin:0; }
+    .paid-ok code { font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:0.78rem; color:#c3d4c6; }
+    .err-msg { color:#e08a68; font-size:0.85rem; }
+
+    /* --- payment history table --- */
+    .hist-wrap { overflow-x:auto; background:var(--card); border:1px solid var(--line); border-radius:14px; }
+    table.hist { width:100%; border-collapse:collapse; min-width:560px; }
+    table.hist th { text-align:left; font-family:"Montserrat",sans-serif; font-size:0.68rem; text-transform:uppercase; letter-spacing:0.08em; color:var(--muted); font-weight:700; padding:0.85rem 1.1rem; border-bottom:1px solid var(--line); white-space:nowrap; }
+    table.hist td { padding:0.85rem 1.1rem; border-bottom:1px solid rgba(44,66,50,0.55); font-size:0.88rem; color:#c3d4c6; }
+    table.hist tr:last-child td { border-bottom:none; }
+    table.hist td.num { font-family:"Montserrat",sans-serif; font-weight:700; color:#fff; white-space:nowrap; }
+    table.hist td.id { color:#fff; font-weight:600; white-space:nowrap; }
+    table.hist td.id a.hist-pdf { margin-left:0.4rem; font-family:"Montserrat",sans-serif; font-size:0.62rem; font-weight:700; text-transform:uppercase; letter-spacing:0.05em; color:var(--gold); text-decoration:none; border:1px solid rgba(200,152,48,0.45); border-radius:999px; padding:0.1rem 0.45rem; }
+    table.hist td.id a.hist-pdf:hover { background:rgba(200,152,48,0.14); }
+    .hist-foot { color:var(--muted); font-size:0.78rem; margin-top:0.6rem; }
+  </style>
+</head>
+<body>
+  <div class="pbar">
+    <div class="pbar-inner">
+      <a class="pbrand" href="index.html">
+        <img src="../assets/logo-mark.png" alt="Tevis Engineering Solutions">
+        <span class="pl"><b>Tevis Engineering</b><s>Customer Portal</s></span>
+      </a>
+      <div class="pbar-spacer"></div>
+      <div class="pacct">
+        <div class="who"><b id="acctName">Your Account</b><span id="acctEmail">Signed in</span></div>
+        <div class="pavatar" id="acctAvatar" aria-hidden="true">TE</div>
+        <a class="psignout" href="#">Sign out</a>
+      </div>
+    </div>
+  </div>
+  <nav class="ptabs" aria-label="Portal sections">
+    <div class="ptabs-inner">
+      <a class="ptab" href="index.html"><i class="fa-solid fa-gauge-high"></i> Dashboard</a>
+      <a class="ptab" href="software.html"><i class="fa-solid fa-cubes"></i> My Software</a>
+      <a class="ptab" href="billing.html"><i class="fa-solid fa-credit-card"></i> Billing</a>
+      <a class="ptab" href="tickets.html"><i class="fa-solid fa-headset"></i> Support</a>
+      <a class="ptab" href="equipment.html"><i class="fa-solid fa-laptop"></i> Equipment</a>
+      <a class="ptab" href="account.html"><i class="fa-solid fa-user-gear"></i> Account</a>
+    </div>
+  </nav>
+
+  <main class="pmain">
+    <div class="phead">
+      <h1>Equipment</h1>
+      <p>Hardware and subscriptions on your account. When something new is assigned to you, confirm here that you have it.</p>
+    </div>
+
+    <div class="state" id="stateBox"><span class="spin"></span><div><b>Loading your equipment&hellip;</b>One moment.</div></div>
+
+    <h2 class="sec-title" id="pendHead" hidden>Waiting for your confirmation <span class="count" id="pendCount">0</span></h2>
+    <div id="pendList"></div>
+
+    <h2 class="sec-title" id="allHead" hidden>Everything on your account <span class="count" id="allCount">0</span></h2>
+    <div id="allList"></div>
+
+    <p class="hist-foot" id="eqFoot" hidden>Something missing or wrong? <a href="tickets.html">Open a ticket</a> or reply to the email you received and we will sort it out.</p>
+  </main>
+
+  <footer class="pfoot">
+    <span>&copy; 2026 Tevis Engineering Solutions, LLC &middot; Cleveland, OH</span>
+    <span><a href="../index.html">Main site</a> &middot; <a href="../contact.html">Contact</a> &middot; <a href="../privacy_policy.html">Privacy &amp; Terms</a></span>
+  </footer>
+
+  <script src="../assets/js/invoices.js?v=2"></script>
+  <script>
+  (function () {
+    'use strict';
+
+    var stateBox = document.getElementById('stateBox');
+    var pendHead = document.getElementById('pendHead');
+    var pendList = document.getElementById('pendList');
+    var allHead = document.getElementById('allHead');
+    var allList = document.getElementById('allList');
+    var eqFoot = document.getElementById('eqFoot');
+
+    function requireSession(id) {
+      if (!id || !id.email) { location.replace('../login.html'); return false; }
+      return true;
+    }
+
+    function el(tag, cls, text) {
+      var n = document.createElement(tag);
+      if (cls) n.className = cls;
+      if (text != null) n.textContent = text;
+      return n;
+    }
+
+    function showState(cls, icon, title, body) {
+      stateBox.hidden = false;
+      stateBox.className = 'state' + (cls ? ' ' + cls : '');
+      stateBox.textContent = '';
+      var i = el('i', icon);
+      stateBox.appendChild(i);
+      var d = el('div');
+      d.appendChild(el('b', null, title));
+      d.appendChild(document.createTextNode(body || ''));
+      stateBox.appendChild(d);
+    }
+
+    function fmtDayStr(d) {
+      if (!d) return '';
+      var p = String(d).split('-');
+      return new Date(Number(p[0]), Number(p[1]) - 1, Number(p[2])).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+    }
+
+    function card(item) {
+      var c = el('div', 'inv' + (item.confirmed_at ? '' : ' open'));
+      var top = el('div', 'inv-top');
+      var left = el('div');
+      left.appendChild(el('div', 'inv-id', item.name));
+      var meta = el('div', 'inv-meta');
+      var bits = [
+        'Asset tag ' + item.tag,
+        item.kind === 'subscription' ? 'Subscription' : (item.category ? item.category.charAt(0).toUpperCase() + item.category.slice(1) : 'Equipment'),
+        item.model ? 'Model ' + item.model : '',
+        item.serial ? 'S/N ' + item.serial : '',
+        item.vendor || '',
+      ].filter(Boolean);
+      bits.forEach(function (b) { meta.appendChild(el('span', null, b)); });
+      left.appendChild(meta);
+      if (item.holder_type === 'org' && item.holder_name) {
+        left.appendChild(el('div', 'inv-desc', 'Assigned to ' + item.holder_name + '.'));
+      }
+      if (item.recurring && item.next_charge_on) {
+        left.appendChild(el('div', 'inv-desc', 'Renews ' + item.recurring_interval + ', next on ' + fmtDayStr(item.next_charge_on) +
+          (item.paid_by === 'customer' ? '.' : ', billed through TES.')));
+      }
+      top.appendChild(left);
+      top.appendChild(el('div', 'inv-spacer'));
+      var right = el('div', 'inv-right');
+      if (item.confirmed_at) {
+        var ok = el('span', 'badge paid');
+        ok.appendChild(el('i', 'fa-solid fa-circle-check'));
+        ok.appendChild(document.createTextNode(' Confirmed ' + TESInvoices.formatDate(new Date(item.confirmed_at * 1000))));
+        right.appendChild(ok);
+      } else {
+        var due = el('span', 'badge due');
+        due.appendChild(el('i', 'fa-solid fa-hand-point-right'));
+        due.appendChild(document.createTextNode(' Please confirm'));
+        right.appendChild(due);
+      }
+      top.appendChild(right);
+      c.appendChild(top);
+
+      if (!item.confirmed_at) {
+        var acts = el('div', 'inv-actions');
+        var btn = el('button', 'btn btn-primary', null);
+        btn.type = 'button';
+        btn.appendChild(el('i', 'fa-solid fa-check'));
+        btn.appendChild(document.createTextNode(' I have this'));
+        var err = el('span', 'err-msg');
+        err.hidden = true;
+        btn.addEventListener('click', function () {
+          btn.disabled = true;
+          err.hidden = true;
+          fetch('/portal-api/equipment/' + item.id + '/confirm', {
+            method: 'POST', credentials: 'same-origin',
+            headers: { 'content-type': 'application/json' }, body: '{}',
+          }).then(function (r) { return r.json(); }).then(function (d) {
+            if (!d || !d.ok) throw new Error((d && d.error) || 'failed');
+            item.confirmed_at = d.confirmed_at;
+            render(items);
+          }).catch(function () {
+            btn.disabled = false;
+            err.hidden = false;
+            err.textContent = 'That did not go through. Please try again, or reply to the email.';
+          });
+        });
+        acts.appendChild(btn);
+        acts.appendChild(el('span', 'pay-note', 'One click tells us the ' + (item.kind === 'subscription' ? 'subscription' : 'equipment') + ' reached you.'));
+        acts.appendChild(err);
+        c.appendChild(acts);
+      }
+      return c;
+    }
+
+    var items = [];
+
+    function render(list) {
+      items = list;
+      var pending = list.filter(function (i) { return !i.confirmed_at; });
+      pendList.textContent = '';
+      allList.textContent = '';
+      stateBox.hidden = true;
+      if (!list.length) {
+        showState('', 'fa-solid fa-box-open', 'Nothing on your account yet.',
+          ' When TES assigns equipment or a subscription to you, it appears here with a button to confirm you have it.');
+        pendHead.hidden = true; allHead.hidden = true; eqFoot.hidden = true;
+        return;
+      }
+      pendHead.hidden = !pending.length;
+      document.getElementById('pendCount').textContent = String(pending.length);
+      pending.forEach(function (i) { pendList.appendChild(card(i)); });
+      allHead.hidden = false;
+      document.getElementById('allCount').textContent = String(list.length);
+      list.filter(function (i) { return i.confirmed_at; }).forEach(function (i) { allList.appendChild(card(i)); });
+      if (!list.some(function (i) { return i.confirmed_at; })) {
+        allList.appendChild(el('div', 'empty-row', 'Everything on your account is listed above, waiting for a confirmation.'));
+      }
+      eqFoot.hidden = false;
+    }
+
+    TESInvoices.getIdentity().then(function (id) {
+      if (!requireSession(id)) return null;
+      var display = id.name || id.email.split('@')[0];
+      var nameEl = document.getElementById('acctName');
+      var emailEl = document.getElementById('acctEmail');
+      var avatarEl = document.getElementById('acctAvatar');
+      if (nameEl) nameEl.textContent = display;
+      if (emailEl) emailEl.textContent = id.email;
+      if (avatarEl) avatarEl.textContent = display.replace(/[^A-Za-z]/g, '').slice(0, 2).toUpperCase() || 'TE';
+
+      return fetch('/portal-api/equipment', { credentials: 'same-origin' })
+        .then(function (r) { return r.ok ? r.json() : null; })
+        .then(function (d) {
+          if (!d || !d.ok) throw new Error('unavailable');
+          render(d.items || []);
+        });
+    }).catch(function () {
+      showState('bad', 'fa-solid fa-triangle-exclamation', 'Could not load your equipment.',
+        ' Please refresh in a moment. If it keeps happening, open a ticket.');
+    });
+  })();
+  </script>
+
+  <script>
+  // Sign-out ends the app-level session in the portal Worker.
+  (function () {
+    var links = document.querySelectorAll('.psignout, .signout-link');
+    Array.prototype.forEach.call(links, function (a) {
+      a.setAttribute('href', '#');
+      a.addEventListener('click', function (ev) {
+        ev.preventDefault();
+        fetch('/portal-api/auth/logout', {
+          method: 'POST',
+          credentials: 'same-origin',
+          headers: { 'content-type': 'application/json' },
+          body: '{}'
+        }).then(function () { location.href = '../login.html'; });
+      });
+    });
+  })();
+  </script>
+</body>
+</html>
