@@ -4,15 +4,35 @@
     {
       "name": "TES Site",
       "runtimeExecutable": "npx",
-      "runtimeArgs": ["serve", "-l", "5500", "."],
+      "runtimeArgs": [
+        "serve",
+        "-l",
+        "5500",
+        "."
+      ],
       "port": 5500
     },
     {
       "name": "TES Site (any port)",
       "runtimeExecutable": "npx",
-      "runtimeArgs": ["serve", "."],
+      "runtimeArgs": [
+        "serve",
+        "."
+      ],
       "port": 3000,
       "autoPort": true
+    },
+    {
+      "name": "Geo map (static publish)",
+      "runtimeExecutable": "python",
+      "runtimeArgs": [
+        "-m",
+        "http.server",
+        "5616",
+        "--directory",
+        "C:/dev/cleveland-geo-visualizer/publish"
+      ],
+      "port": 5616
     }
   ]
 }

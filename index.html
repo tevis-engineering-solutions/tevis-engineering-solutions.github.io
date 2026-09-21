@@ -194,7 +194,7 @@
   .hx-head-cta { flex-shrink:0; }
 
   /* Product cards */
-  .hx-prod-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:1.1rem; }
+  .hx-prod-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:1.1rem; }
   .hx-prod { display:flex; flex-direction:column; text-decoration:none; overflow:hidden; height:100%;
     background:rgba(8,16,11,0.62); border:1px solid var(--border-default); border-radius:16px; backdrop-filter:blur(2px);
     transition:transform var(--dur-base) var(--ease-out),border-color var(--dur-base),box-shadow var(--dur-base); }
@@ -276,7 +276,7 @@
 
   @media (max-width:980px) {
     .hx-prod-grid, .hx-core { grid-template-columns:1fr 1fr; }
-    .hx-prod-grid > :nth-child(3), .hx-core > :nth-child(3) { grid-column:1 / -1; }
+    .hx-core > :nth-child(3) { grid-column:1 / -1; }
   }
   @media (max-width:720px) {
     .hx-soft { padding:1.6rem; border-radius:20px; }
@@ -284,7 +284,7 @@
     .hx-core-head .hx-h { font-size:1.45rem; }
     .hx-core-head { margin-top:2.75rem; }
     .hx-prod-grid, .hx-core { grid-template-columns:1fr; }
-    .hx-prod-grid > :nth-child(3), .hx-core > :nth-child(3) { grid-column:auto; }
+    .hx-core > :nth-child(3) { grid-column:auto; }
     .hx-head-cta { width:100%; }
     .hx-build { flex-wrap:wrap; gap:0.9rem; }
     .hx-build-go { width:100%; justify-content:center; padding-top:0.4rem; }
@@ -574,6 +574,19 @@
             <h4>3D Shed Builder</h4>
             <p class="hx-who">Shed builders &amp; barn dealers &mdash; whitelabeled to your brand</p>
             <p class="hx-desc">Customers pick a style, size, colors and doors and watch the building assemble in 3D while an itemized price updates on every click &mdash; then send the design to you as a lead.</p>
+            <span class="hx-go">See the product <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></span>
+          </div>
+        </a></div>
+
+        <div class="rv"><a class="hx-prod" href="cleveland-crime-map.html">
+          <div class="hx-shot">
+            <img src="assets/geo-map/card-thumb.jpg" alt="The Cleveland Crime Map: a month of Cleveland Heights police reports as colored severity clusters on a dark street map" loading="lazy" decoding="async" width="1200" height="750">
+            <span class="hx-live"><i class="fa-solid fa-map-location-dot" aria-hidden="true"></i> Free &middot; Try it Now!</span>
+          </div>
+          <div class="hx-prod-b">
+            <h4>Cleveland Crime Map</h4>
+            <p class="hx-who">Free for everyone &mdash; custom builds for cities, newsrooms &amp; firms</p>
+            <p class="hx-desc">Police reports from eight Cleveland-area departments on one live timeline, refreshed nightly, with parcels, permits and cameras stacked on top. The same engine, built on your data.</p>
             <span class="hx-go">See the product <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></span>
           </div>
         </a></div>
