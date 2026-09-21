@@ -69,16 +69,22 @@
     .reply-row button:hover { border-color:var(--green); }
     .reply-row button.prim { background:linear-gradient(135deg,var(--gold),#e0b840); color:#0d1710; border-color:transparent; }
 
-    .viewnav { display:flex; gap:0.4rem; padding:0.6rem 1rem 0; max-width:1100px; margin:0 auto; overflow-x:auto; scrollbar-width:none; }
+    /* The tab strip. A centered row of chips when they fit; a wheel that wraps
+       around when they do not (see buildNavWheel). */
+    .viewnav { max-width:1100px; margin:0 auto; padding:0.7rem 1rem 0.2rem; overflow-x:auto; overflow-y:hidden; scrollbar-width:none; }
     .viewnav::-webkit-scrollbar { display:none; }
-    .vbtn { flex:0 0 auto; font-family:"Montserrat",sans-serif; font-size:0.74rem; font-weight:700; text-transform:uppercase; letter-spacing:0.05em; padding:0.5rem 0.9rem; border-radius:8px 8px 0 0; border:1px solid var(--line); border-bottom:none; background:transparent; color:var(--muted); cursor:pointer; }
-    .vbtn.on { background:var(--card); color:#fff; border-color:var(--gold); }
-    /* Four tabs overflow a phone. The bar scrolls, but a tab you cannot see is a
-       tab you will not use, and this console is used from a phone first. */
-    @media (max-width:480px) {
-      .viewnav { gap:0.2rem; padding:0.6rem 0.45rem 0; }
-      .vbtn { font-size:0.66rem; letter-spacing:0.02em; padding:0.5rem 0.5rem; }
-    }
+    .viewnav-track { display:flex; gap:0.35rem; width:max-content; margin:0 auto; }
+    .vbtn { flex:0 0 auto; font-family:"Montserrat",sans-serif; font-size:0.72rem; font-weight:700; text-transform:uppercase; letter-spacing:0.05em; padding:0.5rem 0.95rem; border-radius:999px; border:1px solid var(--line); background:transparent; color:var(--muted); cursor:pointer; min-height:38px; transition:color .15s, border-color .15s, background .15s; }
+    .vbtn:hover { color:var(--text); border-color:var(--green); }
+    .vbtn.on { background:var(--card); color:#fff; border-color:var(--gold); box-shadow:0 0 0 1px rgba(200,152,48,0.25) inset; }
+    .viewnav.wheel { padding-left:0; padding-right:0; cursor:grab; user-select:none; scroll-snap-type:x proximity;
+      -webkit-mask-image:linear-gradient(to right, transparent 0, #000 12%, #000 88%, transparent 100%);
+      mask-image:linear-gradient(to right, transparent 0, #000 12%, #000 88%, transparent 100%); }
+    .viewnav.wheel.dragging, .viewnav.wheel.gliding { scroll-snap-type:none; }
+    .viewnav.wheel.dragging { cursor:grabbing; }
+    .viewnav.wheel .viewnav-track { margin:0; padding:0 1rem; }
+    .viewnav.wheel .vbtn { scroll-snap-align:center; }
+    @media (max-width:480px) { .vbtn { font-size:0.66rem; letter-spacing:0.03em; padding:0.5rem 0.75rem; } }
     .inv { border:1px solid var(--line); border-radius:12px; background:var(--card); padding:0.85rem 1rem; margin-bottom:0.5rem; }
     .inv-top { display:flex; justify-content:space-between; gap:0.6rem; align-items:center; flex-wrap:wrap; }
     .inv-num { font-family:"Montserrat",sans-serif; font-weight:800; font-size:0.82rem; }
@@ -344,22 +350,16 @@
     .fwide textarea:focus { outline:none; border-color:var(--green); }
     .custpick-sel[hidden] { display:none; }
     @media (max-width:480px) { #invtFilters { flex-wrap:wrap; } #invtFilters .fpill { padding:0.4rem 0.6rem; font-size:0.66rem; letter-spacing:0.02em; } }
-    /* Six tabs do not fit a phone in one row. Below 600px they wrap into two rows
-       as chips, which is better than a bar that scrolls a tab out of sight. */
-    @media (max-width:600px) {
-      .viewnav { flex-wrap:wrap; gap:0.3rem; padding:0.6rem 0.75rem 0; }
-      .vbtn { border-bottom:1px solid var(--line); border-radius:8px; }
-      .vbtn.on { border-color:var(--gold); }
-    }
     /* ---- finance ---- */
-    .fin-bar { display:flex; flex-wrap:wrap; gap:0.5rem 0.8rem; align-items:center; margin:0.3rem 0 0.9rem; }
-    .fin-bar .filters { padding:0; margin:0; max-width:none; }
-    .fin-nav { display:flex; align-items:center; gap:0.35rem; flex:1 1 auto; }
+    .fin-bar { display:flex; flex-direction:column; align-items:center; gap:0.65rem; margin:0.4rem 0 1.1rem; }
+    .fin-bar .filters { padding:0; margin:0; max-width:none; justify-content:center; flex-wrap:wrap; overflow:visible; }
+    .fin-nav { display:flex; align-items:center; justify-content:center; gap:0.5rem; }
     .fin-arrow { font-size:1.3rem; line-height:1; width:36px; height:36px; border-radius:999px; border:1px solid var(--line); background:var(--card); color:var(--text); cursor:pointer; }
     .fin-arrow:hover, .fin-today:hover { border-color:var(--green); }
-    .fin-label { font-family:"Montserrat",sans-serif; font-weight:800; font-size:1rem; min-width:9rem; text-align:center; }
+    .fin-label { font-family:"Montserrat",sans-serif; font-weight:800; font-size:1.15rem; min-width:11rem; text-align:center; }
     .fin-today { font-family:"Montserrat",sans-serif; font-size:0.66rem; font-weight:700; text-transform:uppercase; letter-spacing:0.04em; padding:0.35rem 0.7rem; border-radius:999px; border:1px solid var(--line); background:var(--card); color:var(--muted); cursor:pointer; }
-    .fin-export select { font-family:"Montserrat",sans-serif; font-size:0.7rem; font-weight:700; text-transform:uppercase; letter-spacing:0.03em; padding:0.5rem 0.8rem; border-radius:999px; border:1px solid var(--line); background:linear-gradient(135deg,var(--gold),#e0b840); color:#0d1710; cursor:pointer; }
+    .fin-export { display:flex; justify-content:center; }
+    .fin-export select { min-width:14rem; text-align:center; text-align-last:center; font-family:"Montserrat",sans-serif; font-size:0.7rem; font-weight:700; text-transform:uppercase; letter-spacing:0.03em; padding:0.5rem 0.8rem; border-radius:999px; border:1px solid var(--line); background:linear-gradient(135deg,var(--gold),#e0b840); color:#0d1710; cursor:pointer; }
     .fin-tiles { grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); }
     .tile b.neg { color:#ef4444; }
     .tile b.warn { color:var(--gold); }
@@ -444,14 +444,16 @@
     </div>
   </header>
 
-  <div class="viewnav">
-    <button type="button" class="vbtn on" id="navTickets">Tickets</button>
-    <button type="button" class="vbtn" id="navCustomers">Customers</button>
-    <button type="button" class="vbtn" id="navInvoices">Invoices</button>
-    <button type="button" class="vbtn" id="navInventory">Inventory</button>
-    <button type="button" class="vbtn" id="navFinance">Finance<span class="nbadge" id="finBadge" hidden></span></button>
-    <button type="button" class="vbtn" id="navKeys">Product Keys</button>
-  </div>
+  <nav class="viewnav" id="viewnav" aria-label="Sections">
+    <div class="viewnav-track" id="viewTrack">
+      <button type="button" class="vbtn on" id="navTickets" data-view="tickets">Tickets</button>
+      <button type="button" class="vbtn" id="navCustomers" data-view="customers">Customers</button>
+      <button type="button" class="vbtn" id="navInvoices" data-view="invoices">Invoices</button>
+      <button type="button" class="vbtn" id="navInventory" data-view="inventory">Inventory</button>
+      <button type="button" class="vbtn" id="navFinance" data-view="finance">Finance<span class="nbadge" id="finBadge" hidden></span></button>
+      <button type="button" class="vbtn" id="navKeys" data-view="keys">Product Keys</button>
+    </div>
+  </nav>
 
   <div id="viewTickets">
   <div class="filters" id="filters">
@@ -4810,9 +4812,10 @@
     function renderFinance(st) {
       finBody.textContent = '';
       finLabel.textContent = st.label;
-      var nb = document.getElementById('finBadge');
-      nb.hidden = !st.paypal.needs_review;
-      nb.textContent = String(st.paypal.needs_review || '');
+      Array.prototype.forEach.call(document.querySelectorAll('.vbtn[data-view="finance"] .nbadge'), function (nb) {
+        nb.hidden = !st.paypal.needs_review;
+        nb.textContent = String(st.paypal.needs_review || '');
+      });
       document.querySelectorAll('#finPeriod .fpill').forEach(function (b) { b.classList.toggle('on', b.getAttribute('data-period') === st.period); });
       var printHead = el('div', 'fin-print-head');
       printHead.appendChild(el('b', null, 'Tevis Engineering Solutions, LLC · Statement · ' + st.label));
@@ -5202,18 +5205,150 @@
     var loaded = {};
 
     function showView(which) {
+      if (!VIEWS[which]) return;
       Object.keys(VIEWS).forEach(function (k) {
         var on = k === which;
         document.getElementById(VIEWS[k].view).hidden = !on;
-        document.getElementById(VIEWS[k].nav).classList.toggle('on', on);
+        // Every copy of the tab in the wheel, not just the one with the id.
+        navButtonsFor(k).forEach(function (b) { b.classList.toggle('on', on); });
       });
+      centerNav(which, true);
       var v = VIEWS[which];
       // Each list is fetched the first time its tab is opened, not on page load.
       if (v && v.load && !loaded[which]) { loaded[which] = true; v.load(); }
     }
-    Object.keys(VIEWS).forEach(function (k) {
-      document.getElementById(VIEWS[k].nav).addEventListener('click', function () { showView(k); });
+    // ---- the tab wheel -------------------------------------------------------
+    // When every tab fits, the strip is a centered row of chips. When they do not
+    // (a phone, or more tabs than the bar can hold), the strip becomes a wheel: the
+    // set is laid three times end to end, the scroll position is kept inside the
+    // middle copy, and the moment it drifts into an outer copy it is shifted back by
+    // exactly one set width. The copies are identical, so nothing visibly moves and
+    // the wheel has no ends. Picking a tab centers it.
+    var navWrap = document.getElementById('viewnav');
+    var navTrack = document.getElementById('viewTrack');
+    var navWheel = false;
+    var navSetWidth = 0;
+    var navDragged = false;
+
+    function navButtonsFor(view) {
+      return Array.prototype.slice.call(navTrack.querySelectorAll('.vbtn[data-view="' + view + '"]'));
+    }
+
+    function buildNavWheel() {
+      var current = (navTrack.querySelector('.vbtn.on') || {}).getAttribute ? navTrack.querySelector('.vbtn.on').getAttribute('data-view') : null;
+      Array.prototype.forEach.call(navTrack.querySelectorAll('.vbtn.clone'), function (b) { b.remove(); });
+      navWrap.classList.remove('wheel');
+      navWheel = false;
+      var originals = Array.prototype.slice.call(navTrack.querySelectorAll('.vbtn'));
+      if (!originals.length) return;
+      var setW = navTrack.scrollWidth;
+      if (setW <= navWrap.clientWidth - 8) return;   // everything fits: a plain centered row
+      navWheel = true;
+      navWrap.classList.add('wheel');
+      for (var copy = 0; copy < 2; copy++) {
+        originals.forEach(function (b) {
+          var c = b.cloneNode(true);
+          c.classList.add('clone');
+          c.removeAttribute('id');
+          Array.prototype.forEach.call(c.querySelectorAll('[id]'), function (n) { n.removeAttribute('id'); });
+          c.setAttribute('aria-hidden', 'true');
+          c.tabIndex = -1;
+          navTrack.appendChild(c);
+        });
+      }
+      var firstClone = navTrack.querySelector('.vbtn.clone');
+      navSetWidth = firstClone.offsetLeft - originals[0].offsetLeft;
+      navWrap.scrollLeft = navSetWidth;
+      if (current) centerNav(current, false);
+    }
+
+    // Keeps the scroll position inside [half a set, a set and a half). The jump is
+    // exactly one set width, so the strip looks identical before and after.
+    navWrap.addEventListener('scroll', function () {
+      if (!navWheel || !navSetWidth) return;
+      var x = navWrap.scrollLeft;
+      if (x < navSetWidth * 0.5) navWrap.scrollLeft = x + navSetWidth;
+      else if (x >= navSetWidth * 1.5) navWrap.scrollLeft = x - navSetWidth;
     });
+
+    // Scrolls so the tab sits in the middle of the strip, using whichever of the
+    // three copies can be reached without crossing a wrap point mid-animation.
+    function centerNav(view, smooth) {
+      if (!navWheel) return;
+      var cw = navWrap.clientWidth;
+      var copies = navButtonsFor(view);
+      var lo = navSetWidth * 0.5, hi = navSetWidth * 1.5;
+      var target = null;
+      copies.forEach(function (b) {
+        var x = b.offsetLeft + b.offsetWidth / 2 - cw / 2;
+        if (x >= lo && x < hi) target = x;
+      });
+      if (target == null) target = copies[1].offsetLeft + copies[1].offsetWidth / 2 - cw / 2;
+      if (smooth) glideNav(target); else navWrap.scrollLeft = target;
+    }
+
+    // Our own ease-out glide rather than scrollTo({behavior:'smooth'}), which snap
+    // containers and some embedded views ignore.
+    var navGlide = null;
+    function glideNav(target) {
+      if (navGlide) cancelAnimationFrame(navGlide);
+      var from = navWrap.scrollLeft, dist = target - from, t0 = null, ms = 380;
+      if (!dist) return;
+      navWrap.classList.add('gliding');
+      var step = function (ts) {
+        if (t0 == null) t0 = ts;
+        var p = Math.min(1, (ts - t0) / ms);
+        var e = 1 - Math.pow(1 - p, 3);
+        navWrap.scrollLeft = from + dist * e;
+        if (p < 1) navGlide = requestAnimationFrame(step);
+        else { navGlide = null; navWrap.classList.remove('gliding'); }
+      };
+      navGlide = requestAnimationFrame(step);
+    }
+
+    // A mouse wheel over the strip turns it; touch already does.
+    navWrap.addEventListener('wheel', function (e) {
+      if (!navWheel) return;
+      if (Math.abs(e.deltaY) > Math.abs(e.deltaX)) { navWrap.scrollLeft += e.deltaY; e.preventDefault(); }
+    }, { passive: false });
+
+    // Drag with a mouse. A drag of more than a few pixels is not a click.
+    (function () {
+      var down = null;
+      navWrap.addEventListener('pointerdown', function (e) {
+        if (!navWheel || e.pointerType !== 'mouse') return;
+        down = { x: e.clientX, left: navWrap.scrollLeft };
+        navDragged = false;
+      });
+      window.addEventListener('pointermove', function (e) {
+        if (!down) return;
+        var dx = e.clientX - down.x;
+        if (Math.abs(dx) > 4) { navDragged = true; navWrap.classList.add('dragging'); }
+        navWrap.scrollLeft = down.left - dx;
+      });
+      window.addEventListener('pointerup', function () {
+        if (!down) return;
+        down = null;
+        navWrap.classList.remove('dragging');
+        setTimeout(function () { navDragged = false; }, 0);
+      });
+    })();
+
+    navTrack.addEventListener('click', function (e) {
+      var b = e.target.closest('.vbtn');
+      if (!b || navDragged) return;
+      showView(b.getAttribute('data-view'));
+    });
+
+    var navResizeTimer = null;
+    window.addEventListener('resize', function () {
+      clearTimeout(navResizeTimer);
+      navResizeTimer = setTimeout(buildNavWheel, 120);
+    });
+
+
+    buildNavWheel();
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(buildNavWheel);
 
     // Telegram alerts deep-link to #t=<id>, so honour the hash on load.
     load().then(function () {
