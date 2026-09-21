@@ -351,6 +351,84 @@
       .vbtn { border-bottom:1px solid var(--line); border-radius:8px; }
       .vbtn.on { border-color:var(--gold); }
     }
+    /* ---- finance ---- */
+    .fin-bar { display:flex; flex-wrap:wrap; gap:0.5rem 0.8rem; align-items:center; margin:0.3rem 0 0.9rem; }
+    .fin-bar .filters { padding:0; margin:0; max-width:none; }
+    .fin-nav { display:flex; align-items:center; gap:0.35rem; flex:1 1 auto; }
+    .fin-arrow { font-size:1.3rem; line-height:1; width:36px; height:36px; border-radius:999px; border:1px solid var(--line); background:var(--card); color:var(--text); cursor:pointer; }
+    .fin-arrow:hover, .fin-today:hover { border-color:var(--green); }
+    .fin-label { font-family:"Montserrat",sans-serif; font-weight:800; font-size:1rem; min-width:9rem; text-align:center; }
+    .fin-today { font-family:"Montserrat",sans-serif; font-size:0.66rem; font-weight:700; text-transform:uppercase; letter-spacing:0.04em; padding:0.35rem 0.7rem; border-radius:999px; border:1px solid var(--line); background:var(--card); color:var(--muted); cursor:pointer; }
+    .fin-export select { font-family:"Montserrat",sans-serif; font-size:0.7rem; font-weight:700; text-transform:uppercase; letter-spacing:0.03em; padding:0.5rem 0.8rem; border-radius:999px; border:1px solid var(--line); background:linear-gradient(135deg,var(--gold),#e0b840); color:#0d1710; cursor:pointer; }
+    .fin-tiles { grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); }
+    .tile b.neg { color:#ef4444; }
+    .tile b.warn { color:var(--gold); }
+    .delta { font-weight:700; }
+    .delta.good { color:#6dc882; }
+    .delta.bad { color:#e08a68; }
+    .fin-grid { grid-template-columns:1fr 1fr; }
+    @media (max-width:860px) { .fin-grid { grid-template-columns:1fr; } }
+    .fin-sec-h { display:flex; justify-content:space-between; align-items:baseline; gap:0.6rem; flex-wrap:wrap; margin-bottom:0.5rem; }
+    .fin-sec-h h3 { margin-bottom:0; }
+    .fin-note { font-size:0.8rem; color:var(--muted); margin-top:0.6rem; line-height:1.5; }
+    .fin-note.warn { color:#e0c98a; }
+    .chart-bars svg { display:block; overflow:visible; }
+    .ax-grid { stroke:var(--line); stroke-width:1; }
+    .ax-lbl { fill:var(--muted); font-size:11px; font-family:"Inter",sans-serif; }
+    .bar.pick { cursor:pointer; }
+    .bar.pick:hover { opacity:0.8; }
+    .chart-legend.legend-row { flex-direction:row; flex-wrap:wrap; gap:0.3rem 1rem; margin-top:0.4rem; }
+    .stack-track { display:flex; height:16px; border-radius:999px; overflow:hidden; background:var(--line); margin-bottom:0.6rem; }
+    .stack-track i { display:block; height:100%; }
+    .stack-track i.pick { cursor:pointer; }
+    .fin-clients { display:grid; grid-template-columns:minmax(0,240px) minmax(0,1fr); gap:1rem; align-items:start; }
+    @media (max-width:720px) { .fin-clients { grid-template-columns:1fr; } }
+    .fin-donut .chart-donut { flex-direction:column; align-items:flex-start; }
+    .fin-table-wrap { overflow-x:auto; }
+    .fin-table { width:100%; border-collapse:collapse; font-size:0.8rem; min-width:520px; }
+    .fin-table th { text-align:left; font-family:"Montserrat",sans-serif; font-size:0.62rem; text-transform:uppercase; letter-spacing:0.06em; color:var(--muted); padding:0.45rem 0.5rem; border-bottom:1px solid var(--line); cursor:pointer; white-space:nowrap; }
+    .fin-table th.sorted { color:var(--gold); }
+    .fin-table th.num, .fin-table td.num { text-align:right; font-variant-numeric:tabular-nums; white-space:nowrap; }
+    .fin-table td { padding:0.45rem 0.5rem; border-bottom:1px solid rgba(44,66,50,0.6); }
+    .fin-table td.warn { color:var(--gold); }
+    .fin-table tr.pick { cursor:pointer; }
+    .fin-table tr.pick:hover td, .fin-table tr.hi td { background:rgba(74,172,101,0.09); }
+    .fin-list .row b.num { font-family:"Montserrat",sans-serif; white-space:nowrap; }
+    .pp-row .row-main { display:flex; gap:0.4rem; align-items:baseline; flex-wrap:wrap; }
+    .pp-dir { font-family:"Montserrat",sans-serif; font-size:0.66rem; font-weight:800; text-transform:uppercase; letter-spacing:0.04em; padding:0.1rem 0.4rem; border-radius:6px; }
+    .pp-dir.in { color:#6dc882; background:rgba(74,172,101,0.12); }
+    .pp-dir.out { color:#e08a68; background:rgba(224,138,104,0.12); }
+    .pp-amt { font-family:"Montserrat",sans-serif; font-weight:800; white-space:nowrap; }
+    .pp-amt.in { color:#6dc882; }
+    .pp-amt.out { color:#e08a68; }
+    .pp-review { border:1px solid rgba(200,152,48,0.4); background:rgba(200,152,48,0.05); border-radius:12px; padding:0.7rem 0.8rem; margin-top:0.9rem; }
+    .pp-hidden { margin-top:0.6rem; }
+    .pp-hidden summary { font-size:0.78rem; color:var(--muted); cursor:pointer; padding:0.3rem 0; }
+    .vbtn .nbadge { display:inline-block; min-width:1.2rem; padding:0 0.3rem; margin-left:0.35rem; border-radius:999px; background:var(--gold); color:#0d1710; font-size:0.6rem; line-height:1.2rem; text-align:center; }
+    .fin-print-head { display:none; }
+    /* ---- the printed statement ---- */
+    @media print {
+      @page { size: letter; margin: 0.5in; }
+      html, body { background:#fff !important; color:#111 !important; }
+      .abar, .viewnav, .fin-bar, .inv-actions, .toast, #viewFinance button, #viewFinance select, .pp-review, .pp-hidden, details { display:none !important; }
+      .wrap { max-width:none; padding:0; }
+      .fin-print-head { display:block; margin-bottom:0.8rem; padding-bottom:0.5rem; border-bottom:2px solid #111; }
+      .fin-print-head b { display:block; font-family:"Montserrat",sans-serif; font-size:1.1rem; }
+      .fin-print-head span { font-size:0.72rem; color:#444; }
+      .tile, .chart-panel, .row { background:#fff !important; border-color:#bbb !important; color:#111 !important; break-inside:avoid; }
+      .tile s, .tile .sub, .chart-panel h3, .row-sub, .legend-i, .hbar-top, .fin-note, .ax-lbl, .tl-lbl, .fin-table th { color:#444 !important; fill:#444 !important; }
+      .tile b, .legend-i b, .hbar-top b, .row-main, .fin-table td, .donut-mid, .fin-label { color:#111 !important; fill:#111 !important; }
+      .tile .warn, .tile b.warn, .fin-table td.warn { color:#8a6300 !important; }
+      .tile b.neg { color:#b00020 !important; }
+      .delta.good { color:#1d6b35 !important; } .delta.bad { color:#b00020 !important; }
+      .ax-grid { stroke:#ddd !important; }
+      .hbar-track, .stack-track { background:#eee !important; }
+      .fin-grid { grid-template-columns:1fr 1fr; }
+      .chart-panel.wide { grid-column:1 / -1; }
+      .fin-sec { page-break-inside:avoid; }
+      .fin-table tr.pick:hover td { background:none; }
+      * { -webkit-print-color-adjust:exact; print-color-adjust:exact; }
+    }
     [hidden] { display:none !important; }
   </style>
 </head>
@@ -359,7 +437,7 @@
     <div class="abar-inner">
       <a class="abrand" href="index.html">
         <img src="../assets/logo-mark.png" alt="Tevis Engineering Solutions">
-        <span><b>TES Admin Center</b><s>Tickets, customers, invoices, inventory, keys</s></span>
+        <span><b>TES Admin Center</b><s>Tickets, customers, invoices, inventory, finance, keys</s></span>
       </a>
       <div class="aspacer"></div>
       <div class="awho" id="adminWho">&nbsp;</div>
@@ -371,6 +449,7 @@
     <button type="button" class="vbtn" id="navCustomers">Customers</button>
     <button type="button" class="vbtn" id="navInvoices">Invoices</button>
     <button type="button" class="vbtn" id="navInventory">Inventory</button>
+    <button type="button" class="vbtn" id="navFinance">Finance<span class="nbadge" id="finBadge" hidden></span></button>
     <button type="button" class="vbtn" id="navKeys">Product Keys</button>
   </div>
 
@@ -650,6 +729,37 @@
     </div>
 
     <div id="invtList"><div class="state">Loading inventory&hellip;</div></div>
+  </main>
+
+  <main class="wrap" id="viewFinance" aria-label="Finance" hidden>
+    <div class="fin-bar">
+      <div class="filters fin-periods" id="finPeriod">
+        <button type="button" class="fpill on" data-period="month">Month</button>
+        <button type="button" class="fpill" data-period="quarter">Quarter</button>
+        <button type="button" class="fpill" data-period="year">Year</button>
+      </div>
+      <div class="fin-nav">
+        <button type="button" class="fin-arrow" id="finPrev" aria-label="Previous period">&lsaquo;</button>
+        <span class="fin-label" id="finLabel">&nbsp;</span>
+        <button type="button" class="fin-arrow" id="finNext" aria-label="Next period">&rsaquo;</button>
+        <button type="button" class="fin-today" id="finToday">Today</button>
+      </div>
+      <div class="fin-export">
+        <label for="finExport" class="sr-only">Export</label>
+        <select id="finExport">
+          <option value="">Export&hellip;</option>
+          <option value="xlsx">Excel workbook (.xlsx)</option>
+          <option value="print">Print / Save as PDF</option>
+          <option value="summary">CSV: summary</option>
+          <option value="clients">CSV: clients</option>
+          <option value="invoices">CSV: invoices</option>
+          <option value="hours">CSV: hours</option>
+          <option value="expenses">CSV: expenses</option>
+          <option value="paypal">CSV: PayPal</option>
+        </select>
+      </div>
+    </div>
+    <div id="finBody"><div class="state">Loading&hellip;</div></div>
   </main>
 
   <main class="wrap" id="viewKeys" aria-label="Product keys" hidden>
@@ -4531,12 +4641,562 @@
 
     resetInvtForm();
 
+    // ---- charts, continued: grouped bars with a line, and a stacked bar ---------
+    // data: { labels:[], series:[{name, values:[], color}], line:{name, values:[], color} }
+    function svgBars(container, data, opts) {
+      opts = opts || {};
+      var fmt = opts.fmt || String;
+      var W = 640, H = 220, padL = 52, padR = 10, padT = 14, padB = 34;
+      var wrap = el('div', 'chart-bars');
+      var all = [];
+      data.series.forEach(function (s) { all = all.concat(s.values); });
+      if (data.line) all = all.concat(data.line.values);
+      var max = all.reduce(function (m, v) { return Math.max(m, v || 0); }, 0);
+      if (!max) { wrap.appendChild(el('div', 'row-sub', opts.empty || 'Nothing to chart yet.')); container.appendChild(wrap); return wrap; }
+      // A round ceiling for the axis.
+      var mag = Math.pow(10, Math.floor(Math.log10(max)));
+      var top = Math.ceil(max / mag * 2) / 2 * mag;
+      var svg = svgEl('svg', { viewBox: '0 0 ' + W + ' ' + H, width: '100%', role: 'img' });
+      svg.setAttribute('aria-label', opts.label || 'Chart');
+      var plotW = W - padL - padR, plotH = H - padT - padB;
+      var yFor = function (v) { return padT + plotH - (v / top) * plotH; };
+      for (var g = 0; g <= 4; g++) {
+        var yv = top * g / 4, y = yFor(yv);
+        svg.appendChild(svgEl('line', { x1: padL, x2: W - padR, y1: y, y2: y, class: 'ax-grid' }));
+        var t = svgEl('text', { x: padL - 6, y: y + 4, class: 'ax-lbl', 'text-anchor': 'end' });
+        t.textContent = fmt(yv);
+        svg.appendChild(t);
+      }
+      var n = data.labels.length, groupW = plotW / n, gap = Math.min(10, groupW * 0.18);
+      var barW = (groupW - gap * 2) / Math.max(1, data.series.length);
+      data.labels.forEach(function (lab, i) {
+        var gx = padL + i * groupW;
+        data.series.forEach(function (s, si) {
+          var v = s.values[i] || 0;
+          var x = gx + gap + si * barW, y = yFor(v);
+          var rect = svgEl('rect', { x: x, y: y, width: Math.max(1, barW - 1), height: Math.max(0, padT + plotH - y), fill: s.color, rx: 2, class: 'bar' + (opts.onPick ? ' pick' : '') + (i === n - 1 ? ' cur' : '') });
+          var tt = svgEl('title');
+          tt.textContent = lab + ' · ' + s.name + ': ' + fmt(v);
+          rect.appendChild(tt);
+          if (opts.onPick) rect.addEventListener('click', function () { opts.onPick(i); });
+          svg.appendChild(rect);
+        });
+        var xl = svgEl('text', { x: gx + groupW / 2, y: H - padB + 16, class: 'ax-lbl', 'text-anchor': 'middle' });
+        // Every other label when there are many, always including the last one.
+        if (n <= 8 || (n - 1 - i) % 2 === 0) xl.textContent = lab;
+        svg.appendChild(xl);
+      });
+      if (data.line) {
+        var pts = data.labels.map(function (_, i) { return (padL + i * groupW + groupW / 2) + ',' + yFor(data.line.values[i] || 0); }).join(' ');
+        svg.appendChild(svgEl('polyline', { points: pts, fill: 'none', stroke: data.line.color, 'stroke-width': 2.5, 'stroke-linejoin': 'round', class: 'line' }));
+        data.labels.forEach(function (lab, i) {
+          var c = svgEl('circle', { cx: padL + i * groupW + groupW / 2, cy: yFor(data.line.values[i] || 0), r: 3.5, fill: data.line.color, stroke: 'var(--card)', 'stroke-width': 1.5 });
+          var tt = svgEl('title');
+          tt.textContent = lab + ' · ' + data.line.name + ': ' + fmt(data.line.values[i] || 0);
+          c.appendChild(tt);
+          svg.appendChild(c);
+        });
+      }
+      wrap.appendChild(svg);
+      var leg = el('div', 'chart-legend legend-row');
+      data.series.concat(data.line ? [data.line] : []).forEach(function (s) {
+        var li = el('div', 'legend-i');
+        var dot = el('i'); dot.style.background = s.color;
+        li.appendChild(dot); li.appendChild(el('span', 'legend-l', s.name));
+        leg.appendChild(li);
+      });
+      wrap.appendChild(leg);
+      container.appendChild(wrap);
+      return wrap;
+    }
+
+    // One stacked horizontal bar. segments: [{label, value, color, onPick}]
+    function stackBar(container, segments, opts) {
+      opts = opts || {};
+      var fmt = opts.fmt || String;
+      var total = segments.reduce(function (s, x) { return s + (x.value || 0); }, 0);
+      var wrap = el('div', 'chart-stack');
+      if (!total) { wrap.appendChild(el('div', 'row-sub', opts.empty || 'Nothing outstanding.')); container.appendChild(wrap); return wrap; }
+      var bar = el('div', 'stack-track');
+      segments.forEach(function (s) {
+        if (!s.value) return;
+        var seg = el('i');
+        seg.style.width = (s.value / total * 100) + '%';
+        seg.style.background = s.color;
+        seg.title = s.label + ': ' + fmt(s.value);
+        if (s.onPick) { seg.classList.add('pick'); seg.addEventListener('click', s.onPick); }
+        bar.appendChild(seg);
+      });
+      wrap.appendChild(bar);
+      var leg = el('div', 'chart-legend');
+      segments.forEach(function (s) {
+        var li = el('div', 'legend-i' + (s.onPick ? ' pick' : ''));
+        var dot = el('i'); dot.style.background = s.color;
+        li.appendChild(dot);
+        li.appendChild(el('span', 'legend-l', s.label + (s.sub ? ' · ' + s.sub : '')));
+        li.appendChild(el('b', null, fmt(s.value)));
+        li.appendChild(el('span', 'legend-p', total ? Math.round(s.value / total * 100) + '%' : ''));
+        if (s.onPick) li.addEventListener('click', s.onPick);
+        leg.appendChild(li);
+      });
+      wrap.appendChild(leg);
+      container.appendChild(wrap);
+      return wrap;
+    }
+
+    // ---- finance -------------------------------------------------------------
+    var finPeriod = 'month';
+    var finAnchor = '';          // '' = the period containing today
+    var finStatement = null;
+    var finBody = document.getElementById('finBody');
+    var finLabel = document.getElementById('finLabel');
+    var finSort = { key: 'invoiced_cents', dir: -1 };
+
+    function moneyShort(c) {
+      var d = Math.abs(c) / 100;
+      var s = d >= 1000000 ? (d / 1000000).toFixed(1).replace(/\.0$/, '') + 'M' : d >= 1000 ? (d / 1000).toFixed(d >= 10000 ? 0 : 1).replace(/\.0$/, '') + 'k' : Math.round(d).toString();
+      return (c < 0 ? '-$' : '$') + s;
+    }
+    function hoursOf(min) { return (min / 60).toFixed(min % 60 ? 1 : 0) + ' h'; }
+    function keyToAnchor(key) {
+      var m;
+      if ((m = /^(\d{4})-Q(\d)$/.exec(key))) return m[1] + '-' + String((Number(m[2]) - 1) * 3 + 1).padStart(2, '0') + '-01';
+      if ((m = /^(\d{4})-(\d{2})$/.exec(key))) return m[1] + '-' + m[2] + '-01';
+      if ((m = /^(\d{4})$/.exec(key))) return m[1] + '-01-01';
+      return '';
+    }
+
+    function loadFinance() {
+      finBody.textContent = '';
+      finBody.appendChild(el('div', 'state', 'Building the statement…'));
+      var url = '/admin/finance/statement?period=' + encodeURIComponent(finPeriod) + (finAnchor ? '&anchor=' + encodeURIComponent(finAnchor) : '');
+      return api(url).then(function (r) {
+        if (!r.ok) { finBody.textContent = ''; finBody.appendChild(el('div', 'state', 'Could not build the statement.')); return; }
+        finStatement = r.statement;
+        finAnchor = keyToAnchor(finStatement.key);
+        history.replaceState(null, '', '#finance=' + finStatement.key);
+        renderFinance(finStatement);
+      });
+    }
+
+    function finTile(parent, label, value, sub, delta, invert) {
+      var t = el('div', 'tile');
+      t.appendChild(el('s', null, label));
+      t.appendChild(el('b', null, value));
+      var s = el('div', 'sub');
+      if (delta && delta.prev != null && delta.prev !== 0 && delta.now != null) {
+        var pct = Math.round((delta.now - delta.prev) / Math.abs(delta.prev) * 100);
+        var up = delta.now >= delta.prev;
+        var good = invert ? !up : up;
+        var prevLabel = finStatement.previous ? finStatement.previous.label.replace(/^(\w{3})\w+ (\d{4})$/, '$1') : 'last';
+        var d = el('span', 'delta ' + (pct === 0 ? '' : good ? 'good' : 'bad'), (pct === 0 ? '= ' : (up ? '▲ ' : '▼ ')) + Math.abs(pct) + '% vs ' + prevLabel);
+        s.appendChild(d);
+        if (sub) s.appendChild(document.createTextNode(' · ' + sub));
+      } else if (sub) s.appendChild(document.createTextNode(sub));
+      if (s.childNodes.length) t.appendChild(s);
+      parent.appendChild(t);
+      return t;
+    }
+
+    function finPanel(title, sub) {
+      var p = el('div', 'chart-panel fin-sec');
+      var h = el('div', 'fin-sec-h');
+      h.appendChild(el('h3', null, title));
+      if (sub) h.appendChild(el('span', 'row-sub', sub));
+      p.appendChild(h);
+      return p;
+    }
+
+    function renderFinance(st) {
+      finBody.textContent = '';
+      finLabel.textContent = st.label;
+      var nb = document.getElementById('finBadge');
+      nb.hidden = !st.paypal.needs_review;
+      nb.textContent = String(st.paypal.needs_review || '');
+      document.querySelectorAll('#finPeriod .fpill').forEach(function (b) { b.classList.toggle('on', b.getAttribute('data-period') === st.period); });
+      var printHead = el('div', 'fin-print-head');
+      printHead.appendChild(el('b', null, 'Tevis Engineering Solutions, LLC · Statement · ' + st.label));
+      printHead.appendChild(el('span', null, 'Cash basis. Generated ' + new Date(st.now * 1000).toLocaleString('en-US') + '. Collected is by payment date; expenses are TES-paid purchases, subscription charges and PayPal purchases; PayPal rows count only once classified as business.'));
+      finBody.appendChild(printHead);
+
+      // ---- headline tiles ----
+      var tiles = el('div', 'tiles fin-tiles');
+      finTile(tiles, 'Invoiced', money(st.revenue.issued_cents), st.revenue.count + (st.revenue.count === 1 ? ' invoice' : ' invoices'), st.deltas.issued_cents);
+      finTile(tiles, 'Collected', money(st.revenue.collected_cents), st.revenue.paid_count + ' paid', st.deltas.collected_cents);
+      finTile(tiles, 'Outstanding', money(st.revenue.outstanding_cents), 'issued this period, still owed', st.deltas.outstanding_cents, true);
+      finTile(tiles, 'Expenses', money(st.expenses.total_cents), st.expenses.count + (st.expenses.count === 1 ? ' item' : ' items'), st.deltas.expenses_cents, true);
+      var netT = finTile(tiles, 'Net (cash basis)', money(st.net_cents), 'collected − expenses − fees');
+      if (st.net_cents < 0) netT.querySelector('b').classList.add('neg');
+      finTile(tiles, 'Billable hours', hoursOf(st.hours.billable_minutes), st.hours.effective_rate_cents != null ? money(st.hours.effective_rate_cents) + ' per billed hour' : 'nothing billed yet', st.deltas.billable_minutes);
+      finTile(tiles, 'PayPal fees', money(st.paypal.fee_cents), st.paypal.count + (st.paypal.count === 1 ? ' payment' : ' payments'), st.deltas.fee_cents, true);
+      finTile(tiles, 'Days to pay', st.days_to_pay.average != null ? String(st.days_to_pay.average) : '—', st.days_to_pay.count ? 'average · median ' + st.days_to_pay.median + ' · ' + st.days_to_pay.count + ' paid' : 'nothing paid this period');
+      finBody.appendChild(tiles);
+
+      var grid = el('div', 'charts fin-grid');
+
+      // ---- trend ----
+      var trend = finPanel('Trend', 'trailing ' + st.series.length + ' ' + (st.period === 'year' ? 'years' : st.period + 's') + ' · tap a bar to open it');
+      trend.classList.add('wide');
+      svgBars(trend, {
+        labels: st.series.map(function (b) { return st.period === 'month' ? b.label.replace(/^(\w{3})\w* (\d{4})$/, '$1 $2').replace(/ 20/, ' ’') : b.label; }),
+        series: [
+          { name: 'Invoiced', values: st.series.map(function (b) { return b.issued_cents; }), color: '#c89830' },
+          { name: 'Collected', values: st.series.map(function (b) { return b.collected_cents; }), color: '#4aac65' },
+        ],
+        line: { name: 'Expenses', values: st.series.map(function (b) { return b.expenses_cents; }), color: '#e08a68' },
+      }, { fmt: moneyShort, label: 'Invoiced, collected and expenses by period', onPick: function (i) { finAnchor = keyToAnchor(st.series[i].key); loadFinance(); } });
+      grid.appendChild(trend);
+
+      // ---- clients ----
+      var cl = finPanel('Clients', 'who the revenue came from');
+      cl.classList.add('wide');
+      var clWrap = el('div', 'fin-clients');
+      var donutBox = el('div', 'fin-donut');
+      var top8 = st.clients.slice(0, 8).map(function (c) { return { label: c.name, value: c.invoiced_cents, key: c.key }; });
+      var rest = st.clients.slice(8).reduce(function (s, c) { return s + c.invoiced_cents; }, 0);
+      if (rest) top8.push({ label: 'Others (' + (st.clients.length - 8) + ')', value: rest, key: null });
+      svgDonut(donutBox, top8, { fmt: money, label: 'Share of invoiced by client', empty: 'No invoices this period.',
+        onPick: function (s) { var tr = clWrap.querySelector('tr[data-key="' + s.key + '"]'); if (tr) { tr.classList.add('hi'); tr.scrollIntoView({ block: 'nearest' }); setTimeout(function () { tr.classList.remove('hi'); }, 1500); } } });
+      clWrap.appendChild(donutBox);
+      var tw = el('div', 'fin-table-wrap');
+      var table = el('table', 'fin-table');
+      var thead = el('thead'); var hr = el('tr');
+      [['name', 'Client'], ['minutes', 'Hours'], ['invoice_count', 'Invoices'], ['invoiced_cents', 'Invoiced'], ['collected_cents', 'Collected'], ['outstanding_cents', 'Owed'], ['share', 'Share']].forEach(function (col) {
+        var th = el('th', col[0] === 'name' ? '' : 'num', col[1]);
+        th.setAttribute('role', 'button'); th.tabIndex = 0;
+        if (finSort.key === col[0]) th.classList.add('sorted');
+        th.addEventListener('click', function () { finSort = { key: col[0], dir: finSort.key === col[0] ? -finSort.dir : (col[0] === 'name' ? 1 : -1) }; renderFinance(st); });
+        hr.appendChild(th);
+      });
+      thead.appendChild(hr); table.appendChild(thead);
+      var tb = el('tbody');
+      var rows = st.clients.slice().sort(function (a, b) {
+        var k = finSort.key; var av = a[k], bv = b[k];
+        if (typeof av === 'string') return av.localeCompare(bv, undefined, { sensitivity: 'base' }) * finSort.dir;
+        return ((av || 0) - (bv || 0)) * finSort.dir;
+      });
+      if (!rows.length) { var tr0 = el('tr'); var td0 = el('td', null, 'No invoices or hours this period.'); td0.colSpan = 7; tr0.appendChild(td0); tb.appendChild(tr0); }
+      rows.forEach(function (c) {
+        var tr = el('tr');
+        tr.setAttribute('data-key', c.key);
+        if (c.type !== 'email') { tr.classList.add('pick'); tr.addEventListener('click', function () {
+          showView('customers');
+          if (c.type === 'org') { custMode = 'orgs'; syncMode(); openOrg(c.id); } else { custMode = 'people'; syncMode(); openCustomer(c.id); }
+        }); }
+        tr.appendChild(el('td', null, c.name));
+        tr.appendChild(el('td', 'num', c.minutes ? hoursOf(c.minutes) : '—'));
+        tr.appendChild(el('td', 'num', String(c.invoice_count)));
+        tr.appendChild(el('td', 'num', money(c.invoiced_cents)));
+        tr.appendChild(el('td', 'num', money(c.collected_cents)));
+        tr.appendChild(el('td', 'num' + (c.outstanding_cents ? ' warn' : ''), c.outstanding_cents ? money(c.outstanding_cents) : '—'));
+        tr.appendChild(el('td', 'num', c.share ? Math.round(c.share * 100) + '%' : '—'));
+        tb.appendChild(tr);
+      });
+      table.appendChild(tb); tw.appendChild(table); clWrap.appendChild(tw);
+      cl.appendChild(clWrap);
+      grid.appendChild(cl);
+
+      // ---- projected vs actual ----
+      var pj = finPanel('Projected vs actual', 'expected by due date, collected by paid date');
+      svgBars(pj, {
+        labels: st.projection.months.map(function (m) { return m.label.replace(/ 20/, ' ’'); }),
+        series: [
+          { name: 'Expected (open, by due date)', values: st.projection.months.map(function (m) { return m.expected_cents; }), color: '#e0c98a' },
+          { name: 'Collected', values: st.projection.months.map(function (m) { return m.actual_cents; }), color: '#4aac65' },
+        ],
+      }, { fmt: moneyShort, label: 'Projected versus collected, six months', empty: 'Nothing due or collected in this window.' });
+      var sentence = money(st.projection.due_30d_cents) + ' is due in the next 30 days' +
+        (st.projection.overdue_expected_cents ? '; ' + money(st.projection.overdue_expected_cents) + ' is already past due.' : '; nothing is past due.');
+      pj.appendChild(el('p', 'fin-note' + (st.projection.overdue_expected_cents ? ' warn' : ''), sentence));
+      grid.appendChild(pj);
+
+      // ---- aging ----
+      var ag = finPanel('Receivables aging', 'every open invoice as of today · ' + money(st.aging.total_cents) + ' across ' + st.aging.count);
+      var agColors = ['#4aac65', '#e0c98a', '#c89830', '#e08a68', '#ef4444'];
+      stackBar(ag, st.aging.buckets.map(function (b, i) {
+        return { label: b.label, sub: b.count + (b.count === 1 ? ' invoice' : ' invoices'), value: b.cents, color: agColors[i],
+          onPick: b.count ? function () { showInvoicesView(i === 0 ? 'open' : 'overdue', ''); } : null };
+      }), { fmt: money, empty: 'Nothing outstanding. Every invoice is paid.' });
+      if (st.aging.count) {
+        var stg = st.aging.stages;
+        ag.appendChild(el('p', 'fin-note', 'Reminders sent: ' + stg[0] + ' none · ' + stg[1] + ' past due · ' + stg[2] + ' one week · ' + stg[3] + ' two weeks · ' + stg[4] + ' final.'));
+      }
+      grid.appendChild(ag);
+
+      // ---- hours ----
+      var hs = finPanel('Hours', hoursOf(st.hours.total_minutes) + ' logged across ' + st.hours.entries + (st.hours.entries === 1 ? ' entry' : ' entries'));
+      var ht = el('div', 'tiles');
+      finTile(ht, 'Billable', hoursOf(st.hours.billable_minutes), hoursOf(st.hours.total_minutes - st.hours.billable_minutes) + ' non-billable');
+      finTile(ht, 'Covered by agreements', hoursOf(st.hours.covered_minutes), 'inside a plan allowance');
+      finTile(ht, 'Billed', hoursOf(st.hours.billed_minutes), money(st.hours.billed_cents) + ' invoiced');
+      var ub = finTile(ht, 'Unbilled', hoursOf(st.hours.unbilled_minutes), money(st.hours.unbilled_cents) + ' not yet invoiced');
+      if (st.hours.unbilled_minutes) ub.querySelector('b').classList.add('warn');
+      hs.appendChild(ht);
+      if (st.hours.unbilled_minutes) {
+        hs.appendChild(licAction('Customers with unbilled work', null, function () { showView('customers'); custMode = 'people'; syncMode(); loadCustomers(''); }));
+      }
+      grid.appendChild(hs);
+
+      // ---- expenses ----
+      var ex = finPanel('Expenses', money(st.expenses.total_cents) + ' · ' + money(st.expenses.purchases_cents) + ' equipment · ' + money(st.expenses.recurring_cents) + ' subscriptions · ' + money(st.expenses.paypal_cents) + ' PayPal purchases');
+      var exWrap = el('div', 'fin-clients');
+      var exDonut = el('div', 'fin-donut');
+      svgDonut(exDonut, st.expenses.by_category.map(function (c) { return { label: cap(c.category), value: c.cents }; }), { fmt: money, label: 'Expenses by category', empty: 'No expenses this period.' });
+      exWrap.appendChild(exDonut);
+      var exList = el('div', 'fin-list');
+      st.expenses.items.slice(0, 60).forEach(function (x) {
+        var right = el('b', 'num', money(x.cents));
+        exList.appendChild(row(x.name + (x.vendor ? ' · ' + x.vendor : ''),
+          fmtDate(x.ts) + ' · ' + (x.kind === 'purchase' ? 'purchase' : x.kind === 'recurring' ? 'subscription charge' : 'PayPal purchase') + (x.tag ? ' · ' + x.tag : ''),
+          right, x.item_id ? function () { showView('inventory'); var go = function () { flashInvt(x.item_id); }; if (invtAll.length) go(); else loadInventory().then(go); } : null));
+      });
+      if (!st.expenses.items.length) exList.appendChild(el('div', 'row-sub', 'Nothing spent this period. Purchases come from the Inventory tab (TES-paid items) and from PayPal rows marked as expenses.'));
+      exWrap.appendChild(exList);
+      ex.appendChild(exWrap);
+      grid.appendChild(ex);
+
+      // ---- PayPal ----
+      grid.appendChild(paypalPanel(st));
+      finBody.appendChild(grid);
+    }
+
+    // The PayPal panel: business totals, sync, and the three lists. Nothing here counts
+    // until it is classified; the review list is where that happens.
+    function paypalPanel(st) {
+      var pp = st.paypal;
+      var p = finPanel('PayPal', pp.last_synced_at ? 'synced ' + fmt(pp.last_synced_at) : 'never synced');
+      p.classList.add('wide');
+      if (!pp.configured) {
+        p.appendChild(el('p', 'fin-note', 'PayPal credentials are not set on the Worker, so nothing can be synced.'));
+        return p;
+      }
+      if (!pp.enabled) {
+        p.appendChild(el('p', 'fin-note warn', 'PayPal refused the Transactions API. In the PayPal developer dashboard open the live REST app, tick "Transaction Search" under Features, save, wait a few minutes, then press Sync now.'));
+      } else if (pp.last_error) {
+        p.appendChild(el('p', 'fin-note warn', 'The last sync failed: ' + pp.last_error));
+      }
+      var t = el('div', 'tiles');
+      finTile(t, 'Gross received', money(pp.gross_cents), pp.off_invoice_cents ? money(pp.off_invoice_cents) + ' without an invoice' : 'all against invoices');
+      finTile(t, 'Fees', money(pp.fee_cents), pp.gross_cents ? (pp.fee_cents / pp.gross_cents * 100).toFixed(1) + '% of gross' : '');
+      finTile(t, 'Net', money(pp.net_cents), 'after fees and refunds');
+      finTile(t, 'Refunds', money(pp.refund_cents), '');
+      finTile(t, 'Purchases', money(pp.purchases_cents), pp.purchase_count + ' marked as expense');
+      p.appendChild(t);
+
+      var bar = el('div', 'inv-actions');
+      var syncBtn = licAction('Sync now', 'prim', function () {
+        syncBtn.disabled = true; syncBtn.textContent = 'Syncing…';
+        api('/admin/finance/paypal-sync', { method: 'POST' }).then(function (r) {
+          syncBtn.disabled = false; syncBtn.textContent = 'Sync now';
+          if (!r || !r.ok) { alert((r && r.message) || 'Sync failed (' + ((r && r.error) || 'unknown') + ')'); loadFinance(); return; }
+          toast('Fetched ' + r.fetched + ' · ' + r.inserted + ' new · ' + r.needs_review + ' to review');
+          loadFinance();
+        });
+      });
+      bar.appendChild(syncBtn);
+      p.appendChild(bar);
+
+      // Needs review: all time, not just the period, so nothing is forgotten.
+      var rv = el('section', 'cust-sec pp-review');
+      rv.appendChild(el('h3', null, 'Needs review (' + pp.needs_review + ')'));
+      if (!pp.needs_review) rv.appendChild(el('div', 'row-sub', 'Everything imported has been classified.'));
+      else {
+        rv.appendChild(el('div', 'row-sub', 'New imports. Personal hides a row from every figure here; Business counts it as income; Expense counts it as a purchase; Link settles one of our invoices.'));
+        var rvList = el('div');
+        rv.appendChild(rvList);
+        api('/admin/finance/paypal?which=review').then(function (r) {
+          (r.transactions || []).forEach(function (tx) { rvList.appendChild(ppRow(tx, 'review')); });
+        });
+      }
+      p.appendChild(rv);
+
+      var bz = el('section', 'cust-sec');
+      bz.appendChild(el('h3', null, 'Business this period (' + pp.rows.length + ')'));
+      if (!pp.rows.length) bz.appendChild(el('div', 'row-sub', 'No classified business rows in ' + st.label + '.'));
+      pp.rows.forEach(function (tx) { bz.appendChild(ppRow(tx, 'business')); });
+      p.appendChild(bz);
+
+      var hd = el('details', 'pp-hidden');
+      var sm = el('summary', null, 'Hidden: ' + pp.hidden + ' personal or transfer');
+      hd.appendChild(sm);
+      var hdList = el('div');
+      hd.appendChild(hdList);
+      var hdLoaded = false;
+      hd.addEventListener('toggle', function () {
+        if (!hd.open || hdLoaded) return;
+        hdLoaded = true;
+        api('/admin/finance/paypal?which=hidden').then(function (r) {
+          (r.transactions || []).forEach(function (tx) { hdList.appendChild(ppRow(tx, 'hidden')); });
+          if (!(r.transactions || []).length) hdList.appendChild(el('div', 'row-sub', 'Nothing hidden.'));
+        });
+      });
+      p.appendChild(hd);
+      return p;
+    }
+
+    var PP_CLASS_COLOR = { business: '#22c55e', expense: '#e0c98a', personal: '#6a8ba8', transfer: '#4fa2ff' };
+
+    function ppClassify(tx, body, done) {
+      api('/admin/finance/paypal/' + encodeURIComponent(tx.transaction_id), { method: 'PATCH', body: body }).then(function (r) {
+        if (!r || !r.ok) { alert((r && r.message) || 'Could not update (' + ((r && r.error) || 'unknown') + ')'); return; }
+        if (r.marked_paid) toast('Linked and marked ' + r.invoice_number + ' paid'); else toast(r.classification ? cap(r.classification) : 'Back to review');
+        if (done) done(r); else loadFinance();
+      });
+    }
+
+    function ppRow(tx, mode) {
+      var d = el('div', 'row pp-row');
+      var left = el('div');
+      var main = el('div', 'row-main');
+      main.appendChild(el('span', 'pp-dir ' + tx.direction, tx.direction === 'in' ? '→ in' : '← out'));
+      main.appendChild(document.createTextNode(' ' + (tx.counterparty || 'PayPal') + (tx.subject ? ' · ' + tx.subject : '')));
+      left.appendChild(main);
+      left.appendChild(el('div', 'row-sub', fmtDate(tx.initiated_at) + ' · ' + tx.transaction_id +
+        (tx.fee_cents ? ' · fee ' + money(-tx.fee_cents) : '') + (tx.invoice_number ? ' · invoice ' + tx.invoice_number : '') +
+        (tx.refund ? ' · refund' : '') + (tx.transfer ? ' · bank transfer' : '')));
+      d.appendChild(left);
+      var right = el('div', 'cust-badges');
+      right.appendChild(el('b', 'pp-amt ' + tx.direction, money(tx.gross_cents)));
+      if (tx.classification) right.appendChild(badge(tx.classification, PP_CLASS_COLOR[tx.classification] || '#8aa48d'));
+      if (mode === 'review') {
+        right.appendChild(licAction('Personal', null, function () { ppClassify(tx, { classification: 'personal' }); }));
+        if (tx.direction === 'in') {
+          right.appendChild(licAction('Business', null, function () { ppClassify(tx, { classification: 'business' }); }));
+          right.appendChild(licAction('Link to invoice…', 'prim', function () { ppLink(tx); }));
+        } else {
+          right.appendChild(licAction('Business expense', null, function () { ppClassify(tx, { classification: 'expense' }); }));
+        }
+        if (tx.transfer) right.appendChild(licAction('Transfer', null, function () { ppClassify(tx, { classification: 'transfer' }); }));
+      } else if (mode === 'hidden') {
+        right.appendChild(licAction('Undo', null, function () { ppClassify(tx, { classification: null }); }));
+      } else if (mode === 'business') {
+        if (tx.classification === 'expense') {
+          right.appendChild(licAction('Add to inventory', null, function () {
+            showView('inventory');
+            resetInvtForm();
+            invtF.name.value = tx.subject || (tx.counterparty ? 'Purchase from ' + tx.counterparty : 'PayPal purchase');
+            invtF.vendor.value = tx.counterparty || '';
+            invtF.price.value = (Math.abs(tx.gross_cents) / 100).toFixed(2);
+            invtF.purchase.value = new Date(tx.initiated_at * 1000).toISOString().slice(0, 10);
+            invtF.notes.value = 'PayPal ' + tx.transaction_id;
+            document.getElementById('invtFormBox').scrollIntoView({ behavior: 'smooth', block: 'start' });
+          }));
+        }
+        right.appendChild(licAction('Review again', null, function () { ppClassify(tx, { classification: null }); }));
+      }
+      d.appendChild(right);
+      return d;
+    }
+
+    // Links a payment to one of our open invoices. The Worker only accepts an exact
+    // amount match and marks it paid; anything else is refused with a reason.
+    function ppLink(tx) {
+      api('/admin/invoices?view=open').then(function (r) {
+        var list = (r && r.invoices) || [];
+        var exact = list.filter(function (v) { return v.amount_cents === tx.gross_cents; });
+        var pool = exact.length ? exact : list;
+        if (!pool.length) return alert('There are no open invoices to link this payment to. Mark it Business instead.');
+        var lines = pool.slice(0, 20).map(function (v, i) { return (i + 1) + '. ' + v.number + ' · ' + money(v.amount_cents) + ' · ' + (v.customer_name || v.email); });
+        var pick = prompt('Link ' + money(tx.gross_cents) + ' from ' + (tx.counterparty || 'PayPal') + ' to which invoice?' +
+          (exact.length ? '' : '\n\n(No open invoice is for exactly this amount; a link is refused unless it matches.)') + '\n\n' + lines.join('\n') + '\n\nType the number:');
+        var n = Number(pick);
+        if (!(n >= 1 && n <= pool.length)) return;
+        var v = pool[n - 1];
+        if (!confirm('Mark ' + v.number + ' paid with PayPal ' + tx.transaction_id + ' (' + money(tx.gross_cents) + ')? A receipt goes to ' + (v.email || 'the customer') + '.')) return;
+        ppClassify(tx, { invoice_id: v.id });
+      });
+    }
+
+    // Opens the Invoices tab on a view, optionally searched.
+    function showInvoicesView(view, q) {
+      showView('invoices');
+      invView = view;
+      document.querySelectorAll('#invFilters .fpill').forEach(function (b) { b.classList.toggle('on', b.getAttribute('data-view') === view); });
+      invSearch = q || '';
+      document.getElementById('invQ').value = invSearch;
+      loadInvoices();
+    }
+
+    // ---- period bar and exports ----
+    document.getElementById('finPeriod').addEventListener('click', function (e) {
+      var b = e.target.closest('.fpill');
+      if (!b) return;
+      finPeriod = b.getAttribute('data-period');
+      // Switching the period size from a window that contains today lands on today's
+      // period, not on the first month of the old one.
+      var nowSecs = Math.floor(Date.now() / 1000);
+      if (finStatement && finStatement.start <= nowSecs && nowSecs < finStatement.end) finAnchor = '';
+      loadFinance();
+    });
+    document.getElementById('finPrev').addEventListener('click', function () { if (finStatement) { finAnchor = keyToAnchor(finStatement.prev_key); loadFinance(); } });
+    document.getElementById('finNext').addEventListener('click', function () { if (finStatement) { finAnchor = keyToAnchor(finStatement.next_key); loadFinance(); } });
+    document.getElementById('finToday').addEventListener('click', function () { finAnchor = ''; loadFinance(); });
+
+    function downloadBlob(name, blob) {
+      var a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = name;
+      document.body.appendChild(a); a.click();
+      setTimeout(function () { URL.revokeObjectURL(a.href); a.remove(); }, 1000);
+    }
+
+    // SheetJS, loaded the first time a workbook is asked for, the way pdf.js is. Not
+    // an ES module, so a script tag rather than import().
+    var XLSX_SRC = 'https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js';
+    var xlsxLoading = null;
+    function loadXlsx() {
+      if (window.XLSX) return Promise.resolve(window.XLSX);
+      if (!xlsxLoading) {
+        xlsxLoading = new Promise(function (resolve, reject) {
+          var s = document.createElement('script');
+          s.src = XLSX_SRC; s.async = true;
+          s.onload = function () { resolve(window.XLSX); };
+          s.onerror = function () { xlsxLoading = null; reject(new Error('xlsx_load_failed')); };
+          document.head.appendChild(s);
+        });
+      }
+      return xlsxLoading;
+    }
+
+    var FIN_SHEETS = ['summary', 'clients', 'invoices', 'hours', 'expenses', 'paypal'];
+    function finExportUrl(sheet) {
+      return API + '/admin/finance/export?period=' + encodeURIComponent(finPeriod) + '&anchor=' + encodeURIComponent(finAnchor) + '&sheet=' + sheet;
+    }
+    // The workbook is built from the same six CSVs the Worker writes, so the two
+    // exports can never disagree about a figure.
+    function exportXlsx() {
+      if (!finStatement) return;
+      var btn = document.getElementById('finExport');
+      btn.disabled = true;
+      Promise.all([loadXlsx()].concat(FIN_SHEETS.map(function (s) { return fetch(finExportUrl(s), { credentials: 'same-origin' }).then(function (r) { return r.text(); }); })))
+        .then(function (res) {
+          var X = res[0];
+          var wb = X.utils.book_new();
+          FIN_SHEETS.forEach(function (s, i) {
+            var ws = X.read(res[i + 1], { type: 'string' }).Sheets.Sheet1;
+            X.utils.book_append_sheet(wb, ws, s === 'paypal' ? 'PayPal' : cap(s));
+          });
+          X.writeFile(wb, 'TES-' + finStatement.key + '.xlsx');
+          btn.disabled = false;
+        }, function () { btn.disabled = false; toast('Could not build the workbook'); });
+    }
+    document.getElementById('finExport').addEventListener('change', function () {
+      var v = this.value; this.value = '';
+      if (!v || !finStatement) return;
+      if (v === 'xlsx') return exportXlsx();
+      if (v === 'print') return window.print();
+      var a = document.createElement('a');
+      a.href = finExportUrl(v); a.download = '';
+      document.body.appendChild(a); a.click(); a.remove();
+    });
+
     // ---- view switching --------------------------------------------------
     var VIEWS = {
       tickets: { view: 'viewTickets', nav: 'navTickets' },
       customers: { view: 'viewCustomers', nav: 'navCustomers', load: function () { loadCustomers(''); } },
       invoices: { view: 'viewInvoices', nav: 'navInvoices', load: loadInvoices },
       inventory: { view: 'viewInventory', nav: 'navInventory', load: loadInventory },
+      finance: { view: 'viewFinance', nav: 'navFinance', load: loadFinance },
       keys: { view: 'viewKeys', nav: 'navKeys', load: loadKeys }
     };
     var loaded = {};
@@ -4565,6 +5225,11 @@
     if (location.hash === '#keys') showView('keys');
     else if (location.hash === '#customers') showView('customers');
     else if (location.hash === '#inventory') showView('inventory');
+    else if (/^#finance/.test(location.hash)) {
+      var mf = /^#finance=(\d{4}(?:-Q\d|-\d{2})?)$/.exec(location.hash);
+      if (mf) { finPeriod = /Q/.test(mf[1]) ? 'quarter' : /-/.test(mf[1]) ? 'month' : 'year'; finAnchor = keyToAnchor(mf[1]); }
+      showView('finance');
+    }
     // #tickets and #t= keep the Tickets view (the page's initial state); #c= is handled below.
     else if (!/^#(tickets|t=|c=|i=)/.test(location.hash)) showView('invoices');
     // #c=<account_id> opens straight onto one person's file.
