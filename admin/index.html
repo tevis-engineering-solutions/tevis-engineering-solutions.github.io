@@ -5198,8 +5198,11 @@
       tickets: { view: 'viewTickets', nav: 'navTickets' },
       customers: { view: 'viewCustomers', nav: 'navCustomers', load: function () { loadCustomers(''); } },
       invoices: { view: 'viewInvoices', nav: 'navInvoices', load: loadInvoices },
-      inventory: { view: 'viewInventory', nav: 'navInventory', load: loadInventory },
-      finance: { view: 'viewFinance', nav: 'navFinance', load: loadFinance },
+      // Inventory and Finance re-read on every visit: both are one request, and a
+      // confirmation or a payment that landed while you were on another tab should
+      // show without a refresh.
+      inventory: { view: 'viewInventory', nav: 'navInventory', load: loadInventory, always: true },
+      finance: { view: 'viewFinance', nav: 'navFinance', load: loadFinance, always: true },
       keys: { view: 'viewKeys', nav: 'navKeys', load: loadKeys }
     };
     var loaded = {};
@@ -5215,7 +5218,7 @@
       centerNav(which, true);
       var v = VIEWS[which];
       // Each list is fetched the first time its tab is opened, not on page load.
-      if (v && v.load && !loaded[which]) { loaded[which] = true; v.load(); }
+      if (v && v.load && (v.always || !loaded[which])) { loaded[which] = true; v.load(); }
     }
     // ---- the tab wheel -------------------------------------------------------
     // When every tab fits, the strip is a centered row of chips. When they do not
