@@ -317,6 +317,8 @@
     }
 
     .billed-sub { font-size:0.82rem; font-weight:400; color:var(--muted); }
+    .result-pdf { margin-left:0.35rem; font-family:"Montserrat",sans-serif; font-size:0.66rem; font-weight:700; text-transform:uppercase; letter-spacing:0.05em; color:var(--accent); text-decoration:none; border:1px solid rgba(200,152,48,0.45); border-radius:999px; padding:0.12rem 0.5rem; white-space:nowrap; }
+    .result-pdf:hover { background:rgba(200,152,48,0.14); }
     .paytabs { display:flex; gap:0.4rem; flex-wrap:wrap; margin-bottom:1rem; }
     .paytab { flex:1 1 auto; min-width:132px; font-family:"Montserrat",sans-serif; font-size:0.72rem; font-weight:700; text-transform:uppercase; letter-spacing:0.03em; padding:0.6rem 0.7rem; border-radius:10px; border:1px solid var(--border); background:transparent; color:var(--muted); cursor:pointer; display:inline-flex; align-items:center; justify-content:center; gap:0.4rem; }
     .paytab:hover { color:var(--text); border-color:var(--blue); }
@@ -848,6 +850,17 @@
         resultUsername.appendChild(sub);
       }
       resultLatestInvoice.textContent = row.number || "-";
+      if (row.hasPdf) {
+        // The PDF copy, fetched with the same signed token that resolved the invoice.
+        const pdfLink = document.createElement("a");
+        pdfLink.className = "result-pdf";
+        pdfLink.href = TESInvoices.pdfUrl(row);
+        pdfLink.target = "_blank";
+        pdfLink.rel = "noopener";
+        pdfLink.textContent = "View PDF";
+        resultLatestInvoice.appendChild(document.createTextNode(" "));
+        resultLatestInvoice.appendChild(pdfLink);
+      }
       resultCadence.textContent = row.service || "-";
       resultAmount.textContent = row.amount === null ? "-" : TESInvoices.formatUSD(row.amount);
 

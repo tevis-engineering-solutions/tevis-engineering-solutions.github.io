@@ -124,6 +124,77 @@
     .hev:last-child { border-bottom:none; }
     .hev b { color:var(--text); font-weight:700; white-space:nowrap; }
     .hev .when { margin-left:auto; white-space:nowrap; }
+    /* ---- invoices: PDF drop, customer picker, grouped list ---- */
+    .sr-only { position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap; }
+    .dz { border:2px dashed var(--line); border-radius:12px; padding:1rem; text-align:center; cursor:pointer; background:rgba(74,172,101,0.04); transition:border-color .15s, background .15s; }
+    .dz:hover, .dz:focus-visible, .dz.over { border-color:var(--green); background:rgba(74,172,101,0.09); outline:none; }
+    .dz.busy { border-style:solid; border-color:var(--gold); cursor:progress; }
+    .dz-main { font-family:"Montserrat",sans-serif; font-weight:700; font-size:0.86rem; }
+    .dz-sub { font-size:0.74rem; color:var(--muted); margin-top:0.3rem; line-height:1.5; }
+    .dz-file { margin-top:0.6rem; padding:0.6rem 0.75rem; border-radius:10px; border:1px solid rgba(200,152,48,0.4); background:rgba(200,152,48,0.08); font-size:0.78rem; line-height:1.55; }
+    .dz-file b { font-family:"Montserrat",sans-serif; font-weight:800; }
+    .dz-file .found { color:#cdeed6; }
+    .dz-file .missing { color:#e0c98a; }
+    .dz-file .warn { color:#e08585; }
+    .dz-file button { margin-left:0.5rem; font-family:"Montserrat",sans-serif; font-size:0.64rem; font-weight:700; text-transform:uppercase; letter-spacing:0.03em; padding:0.25rem 0.55rem; border-radius:999px; border:1px solid var(--line); background:var(--bg); color:var(--text); cursor:pointer; }
+    .custpick { position:relative; margin-top:0.8rem; }
+    .custpick input[type="search"] { width:100%; padding:0.55rem 0.7rem; border-radius:8px; border:1px solid var(--line); background:var(--bg); color:var(--text); font-family:inherit; font-size:0.88rem; }
+    .custpick input[type="search"]:focus { outline:none; border-color:var(--green); }
+    .custpick-list { position:absolute; left:0; right:0; z-index:30; margin-top:0.25rem; max-height:16rem; overflow-y:auto; border:1px solid var(--line); border-radius:10px; background:#112018; box-shadow:0 12px 30px rgba(0,0,0,0.45); }
+    .custpick-list button { display:block; width:100%; text-align:left; padding:0.55rem 0.75rem; border:0; border-bottom:1px solid rgba(44,66,50,0.7); background:transparent; color:var(--text); font-family:inherit; cursor:pointer; }
+    .custpick-list button:last-child { border-bottom:0; }
+    .custpick-list button:hover, .custpick-list button:focus { background:rgba(74,172,101,0.12); outline:none; }
+    .custpick-list .cp-n { font-family:"Montserrat",sans-serif; font-weight:700; font-size:0.82rem; }
+    .custpick-list .cp-s { font-size:0.72rem; color:var(--muted); }
+    .custpick-list .cp-new { color:var(--gold); }
+    .custpick-list .state { padding:0.7rem; border:0; font-size:0.78rem; }
+    .custpick-sel { display:flex; align-items:center; gap:0.5rem; flex-wrap:wrap; margin-top:0.4rem; padding:0.45rem 0.7rem; border-radius:10px; border:1px solid rgba(74,172,101,0.35); background:rgba(74,172,101,0.1); font-size:0.78rem; }
+    .custpick-sel b { font-family:"Montserrat",sans-serif; font-weight:800; }
+    .custpick-sel .cp-s { color:var(--muted); }
+    .custpick-sel button { margin-left:auto; font-family:"Montserrat",sans-serif; font-size:0.64rem; font-weight:700; text-transform:uppercase; letter-spacing:0.03em; padding:0.25rem 0.55rem; border-radius:999px; border:1px solid var(--line); background:var(--bg); color:var(--text); cursor:pointer; }
+    .inv-created { margin-top:0.7rem; padding:0.75rem 0.85rem; border-radius:10px; border:1px solid var(--gold); background:rgba(200,152,48,0.09); }
+    .inv-created h3 { font-family:"Montserrat",sans-serif; font-size:0.78rem; text-transform:uppercase; letter-spacing:0.05em; color:var(--gold); margin-bottom:0.35rem; }
+    .inv-created p { font-size:0.78rem; color:var(--muted); line-height:1.5; margin-bottom:0.5rem; }
+    .inv-created .inv-actions { margin-top:0.3rem; }
+    .inv-actions a.pill { font-family:"Montserrat",sans-serif; font-size:0.68rem; font-weight:700; text-transform:uppercase; letter-spacing:0.03em; padding:0.4rem 0.7rem; border-radius:999px; border:1px solid var(--line); background:var(--bg); color:var(--text); text-decoration:none; display:inline-flex; align-items:center; }
+    .inv-actions a.pill:hover, .inv-actions button:hover { border-color:var(--green); }
+    .inv-actions button.prim:hover { border-color:transparent; }
+    .inv-actions button:disabled { opacity:0.55; cursor:not-allowed; }
+    .invfind { max-width:1100px; margin:0 auto 0.6rem; padding:0 1rem; }
+    .invfind input { width:100%; padding:0.55rem 0.75rem; border-radius:8px; border:1px solid var(--line); background:var(--card); color:var(--text); font-family:inherit; font-size:0.88rem; }
+    .invfind input:focus { outline:none; border-color:var(--green); }
+    .inv-group { margin-bottom:0.9rem; }
+    .inv-group-h { display:flex; justify-content:space-between; align-items:baseline; gap:0.6rem; flex-wrap:wrap; padding:0.35rem 0.25rem 0.4rem; border-bottom:1px solid var(--line); margin-bottom:0.45rem; }
+    .inv-group-h h3 { font-family:"Montserrat",sans-serif; font-size:0.88rem; font-weight:800; word-break:break-word; }
+    .inv-group-h .g-sub { font-size:0.72rem; color:var(--muted); word-break:break-word; }
+    .inv-group-h .g-tot { font-family:"Montserrat",sans-serif; font-size:0.74rem; color:var(--muted); white-space:nowrap; }
+    .inv-group-h .g-tot b { color:var(--gold); font-weight:800; }
+    .inv-group-h .g-tot .late { color:#ef4444; }
+    .inv.late { border-color:rgba(239,68,68,0.5); }
+    .inv-meta .sent { color:#9fd3ae; }
+    .inv-meta .nopdf { color:#e0c98a; }
+    .inv-sum { max-width:1100px; margin:0 auto 0.6rem; padding:0 1rem; font-size:0.76rem; color:var(--muted); }
+    .inv-sum b { color:var(--text); font-weight:700; }
+    .dz-file button, .custpick-sel button { min-height:32px; }
+    /* Five pills have to fit a phone without the last one being clipped. */
+    @media (max-width:480px) { #invFilters { flex-wrap:wrap; } #invFilters .fpill { padding:0.4rem 0.6rem; font-size:0.66rem; letter-spacing:0.02em; } }
+    /* ---- the customer file: tabs, billing tiles, files, notes ---- */
+    .ptabs { display:flex; gap:0.3rem; flex-wrap:wrap; border-bottom:1px solid var(--line); margin:0.2rem 0 0.9rem; padding-bottom:0.5rem; }
+    .ptab { font-family:"Montserrat",sans-serif; font-size:0.7rem; font-weight:700; text-transform:uppercase; letter-spacing:0.04em; padding:0.45rem 0.8rem; border-radius:999px; border:1px solid var(--line); background:transparent; color:var(--muted); cursor:pointer; min-height:36px; }
+    .ptab.on { color:#0d1710; background:linear-gradient(135deg,var(--gold),#e0b840); border-color:transparent; }
+    .ptab:hover:not(.on) { border-color:var(--green); color:var(--text); }
+    .pane[hidden] { display:none; }
+    .btiles { grid-template-columns:repeat(auto-fit,minmax(170px,1fr)); }
+    .tile .sub { font-size:0.68rem; color:var(--muted); margin-top:0.25rem; line-height:1.45; }
+    .tile .sub .warn { color:var(--gold); font-weight:700; }
+    .notes-ed textarea { width:100%; min-height:9rem; padding:0.6rem 0.7rem; border-radius:10px; border:1px solid var(--line); background:var(--bg); color:var(--text); font-family:inherit; font-size:0.88rem; line-height:1.5; resize:vertical; }
+    .notes-ed textarea:focus { outline:none; border-color:var(--green); }
+    .notes-ed .reply-row { margin-top:0.5rem; }
+    .worklog-add input[type="file"] { flex:1 1 100%; }
+    /* A group header on the Invoices tab opens the customer's file. */
+    .g-open { all:unset; cursor:pointer; display:block; }
+    .g-open:hover h3, .g-open:focus-visible h3 { color:var(--gold); }
+    .g-open h3::after { content:" \2197"; font-size:0.7em; color:var(--muted); }
     /* ---- customers ---- */
     .custfind { border:1px solid var(--line); border-radius:14px; background:var(--card); padding:1rem; margin-bottom:1rem; }
     .custfind label { display:block; font-size:0.68rem; text-transform:uppercase; letter-spacing:0.05em; color:var(--muted); font-weight:700; margin-bottom:0.2rem; }
@@ -308,14 +379,37 @@
     <section class="newinv">
       <h2>New invoice</h2>
       <form id="invForm">
+        <!-- Step 1: the PDF. The filename is the invoice number; the customer, dates
+             and total are read out of the document and land in the fields below as
+             suggestions. Everything is checked by a human before Create. -->
+        <div class="dz" id="invDrop" tabindex="0" role="button" aria-label="Attach the invoice PDF">
+          <input type="file" id="invFile" accept="application/pdf,.pdf" hidden>
+          <div class="dz-main">Drop the invoice PDF here, or click to choose one</div>
+          <div class="dz-sub">The filename is the invoice number. Customer, dates and the total are read from the PDF and filled in below for you to check.</div>
+        </div>
+        <div class="dz-file" id="invFileInfo" hidden></div>
+
+        <!-- Step 2: who. Picks an existing customer, or is auto-matched from the
+             address the PDF carried. -->
+        <div class="fwide custpick">
+          <label for="invCustQ">Customer</label>
+          <input type="search" id="invCustQ" placeholder="Search by name, company or email" autocomplete="off">
+          <div class="custpick-list" id="invCustList" hidden></div>
+          <div class="custpick-sel" id="invCustSel" hidden></div>
+        </div>
+
         <div class="fgrid">
           <div>
             <label for="invNumber">Invoice number</label>
-            <input type="text" id="invNumber" name="number" required placeholder="TES-2026-001">
+            <input type="text" id="invNumber" name="number" required placeholder="TES-INV-MDG-2026-001">
           </div>
           <div>
             <label for="invEmail">Client email</label>
             <input id="invEmail" name="email" type="email" required placeholder="billing@client.com">
+          </div>
+          <div>
+            <label for="invName">Billed to (name)</label>
+            <input type="text" id="invName" name="contact_name" placeholder="Jane Roe">
           </div>
           <div>
             <label for="invCompany">Company</label>
@@ -326,8 +420,12 @@
             <input type="text" id="invService" name="service" placeholder="Managed IT - March">
           </div>
           <div>
-            <label for="invAmount">Amount (USD)</label>
+            <label for="invAmount">Total due (USD)</label>
             <input id="invAmount" name="amount" type="number" step="0.01" min="0.01" required placeholder="1143.10">
+          </div>
+          <div>
+            <label for="invIssued">Invoice date</label>
+            <input id="invIssued" name="issued" type="date">
           </div>
           <div>
             <label for="invDue">Due date</label>
@@ -340,10 +438,25 @@
         </div>
         <div class="inv-actions">
           <button type="submit" class="prim" id="invCreate">Create &amp; get pay link</button>
+          <button type="button" id="invClear">Clear</button>
         </div>
         <div class="paylink" id="invPayLink" hidden></div>
+        <!-- Step 3: after Create. Send is enabled only once a pay link exists. -->
+        <div class="inv-created" id="invCreated" hidden></div>
       </form>
     </section>
+
+    <div class="filters" id="invFilters">
+      <button type="button" class="fpill on" data-view="open">Open</button>
+      <button type="button" class="fpill" data-view="overdue">Overdue</button>
+      <button type="button" class="fpill" data-view="closed">Closed</button>
+      <button type="button" class="fpill" data-view="archived">Archived</button>
+      <button type="button" class="fpill" data-view="all">All</button>
+    </div>
+    <div class="invfind">
+      <label for="invQ" class="sr-only">Search invoices</label>
+      <input type="search" id="invQ" placeholder="Search by customer, company, email or invoice number" autocomplete="off">
+    </div>
 
     <div id="invList"><div class="state">Loading invoices&hellip;</div></div>
   </main>
@@ -890,86 +1003,667 @@
     var invListEl = document.getElementById('invList');
     var invForm = document.getElementById('invForm');
     var invPayLink = document.getElementById('invPayLink');
+    var invCreated = document.getElementById('invCreated');
+    var invDrop = document.getElementById('invDrop');
+    var invFile = document.getElementById('invFile');
+    var invFileInfo = document.getElementById('invFileInfo');
+    var invCustQ = document.getElementById('invCustQ');
+    var invCustList = document.getElementById('invCustList');
+    var invCustSel = document.getElementById('invCustSel');
+    var invQEl = document.getElementById('invQ');
     var STATUS_COLOR = { open: '#f59e0b', pending: '#c89830', paid: '#22c55e', void: '#6a8ba8' };
+
+    // The list's current view and search, and the two things the form is holding
+    // that are not in an input: the PDF waiting to be attached, and the customer
+    // picked from the search.
+    var invView = 'open';
+    var invSearch = '';
+    var invSearchTimer = null;
+    var invPending = null;   // { filename, data (base64), size }
+    var invSelected = null;  // a row from /admin/customers, or null
 
     function money(cents) {
       return (Number(cents) / 100).toLocaleString('en-US', { style: 'currency', currency: 'USD' });
     }
 
-    function invCard(v) {
-      var d = el('div', 'inv');
-      var top = el('div', 'inv-top');
-      top.appendChild(el('span', 'inv-num', v.number));
-      var right = el('span');
-      right.appendChild(badge(v.status, STATUS_COLOR[v.status] || '#8aa48d'));
-      right.appendChild(document.createTextNode(' '));
-      right.appendChild(el('span', 'inv-amt', money(v.amount_cents)));
-      top.appendChild(right);
-      d.appendChild(top);
+    // Date only. Due dates and invoice dates are days, not moments.
+    function fmtDate(ts) {
+      if (!ts) return '';
+      return new Date(ts * 1000).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' });
+    }
 
-      d.appendChild(el('div', 'inv-meta',
-        [v.company, v.email, v.service].filter(Boolean).join(' \u00b7 ')));
-      if (v.paid_at) d.appendChild(el('div', 'inv-meta', 'Paid ' + fmt(v.paid_at)));
-      if (v.status === 'pending') {
-        var how = v.payment_method === 'check' ? 'Check' :
-                  v.payment_method === 'wire' ? 'Wire' : 'ACH';
-        var line = el('div', 'inv-meta pending-line',
-          'Customer reported: ' + how + (v.payment_ref ? ' #' + v.payment_ref : '') +
-          (v.reported_at ? ' on ' + fmt(v.reported_at) : '') + ' — confirm before marking paid');
-        d.appendChild(line);
+    // A calendar date from an <input type="date"> as noon local, so the day cannot
+    // slip across midnight when it is stored as a UTC instant.
+    function dayToTs(v) {
+      if (!v) return null;
+      var t = new Date(v + 'T12:00:00').getTime();
+      return isNaN(t) ? null : Math.floor(t / 1000);
+    }
+
+    // ---- reading the PDF in the browser ----
+    // pdf.js is loaded from cdnjs the first time a PDF is dropped, never on page
+    // load: most visits to this console are triage, and a 400 KB parser is only
+    // needed when a file is on the way in. Cross-origin module workers are refused
+    // by the browser, so pdf.js falls back to running its worker on the main thread
+    // -- fine for a two-page invoice.
+    var PDFJS_BASE = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.10.38/';
+    var pdfjsLoading = null;
+    function loadPdfjs() {
+      if (!pdfjsLoading) {
+        pdfjsLoading = import(PDFJS_BASE + 'pdf.min.mjs').then(function (m) {
+          m.GlobalWorkerOptions.workerSrc = PDFJS_BASE + 'pdf.worker.min.mjs';
+          return m;
+        });
+        pdfjsLoading.catch(function () { pdfjsLoading = null; });
+      }
+      return pdfjsLoading;
+    }
+
+    // Every text run on every page with its position: what the parser below reads.
+    function readPdfRuns(file) {
+      return Promise.all([loadPdfjs(), file.arrayBuffer()]).then(function (res) {
+        var pdfjs = res[0];
+        return pdfjs.getDocument({ data: new Uint8Array(res[1]) }).promise;
+      }).then(function (doc) {
+        var pages = [];
+        var chain = Promise.resolve();
+        for (var p = 1; p <= Math.min(doc.numPages, 6); p++) {
+          (function (n) {
+            chain = chain.then(function () { return doc.getPage(n); })
+              .then(function (page) { return page.getTextContent(); })
+              .then(function (tc) {
+                pages.push({ items: tc.items.filter(function (i) { return i.str && i.str.trim(); })
+                  .map(function (i) { return { str: i.str, x: i.transform[4], y: i.transform[5], w: i.width }; }) });
+              });
+          })(p);
+        }
+        return chain.then(function () { return pages; });
+      });
+    }
+
+    function fileToBase64(file) {
+      return new Promise(function (resolve, reject) {
+        var reader = new FileReader();
+        reader.onload = function () { resolve(String(reader.result).replace(/^data:[^;]*;base64,/, '')); };
+        reader.onerror = function () { reject(reader.error); };
+        reader.readAsDataURL(file);
+      });
+    }
+
+    // ---- reading an invoice PDF ------------------------------------------
+    // The console fills the new-invoice form from the PDF itself. pdf.js hands back
+    // positioned text runs, not lines, and a single value ("TES-INV-TMT-2026-001",
+    // an email address) can arrive as five runs. So the runs are first rebuilt into
+    // lines by page and baseline, joined without a space when they abut, and the
+    // fields are then read off those lines by label. Everything found is a
+    // SUGGESTION: it lands in an editable form and is checked before anything is
+    // created. Nothing here is trusted enough to skip that step.
+
+    var MONTHS = { jan: 0, feb: 1, mar: 2, apr: 3, may: 4, jun: 5, jul: 6, aug: 7,
+                   sep: 8, sept: 8, oct: 9, nov: 10, dec: 11 };
+
+    // Rebuilds lines. Runs on the same baseline (within 2.5pt) belong together; two
+    // runs are glued with no space when the gap between them is under 1.5pt, which is
+    // how "Tevis Engineering Solutions" + ", LLC" and "Tyler.m.tevis@gmail" + ".com"
+    // come back as one string.
+    function pdfLines(pages) {
+      var lines = [];
+      pages.forEach(function (page, pi) {
+        var items = page.items.slice().sort(function (a, b) { return b.y - a.y || a.x - b.x; });
+        var cur = null;
+        items.forEach(function (it) {
+          if (!cur || Math.abs(cur.y - it.y) > 2.5) {
+            cur = { page: pi, y: it.y, runs: [] };
+            lines.push(cur);
+          }
+          cur.runs.push(it);
+        });
+      });
+      lines.forEach(function (ln) {
+        ln.runs.sort(function (a, b) { return a.x - b.x; });
+        var text = '';
+        var prevEnd = null;
+        ln.runs.forEach(function (r) {
+          var gap = prevEnd == null ? 0 : r.x - prevEnd;
+          if (text && gap >= 1.5) text += ' ';
+          text += r.str;
+          prevEnd = r.x + (r.w || 0);
+        });
+        ln.text = text.replace(/\s+/g, ' ').trim();
+        ln.x = ln.runs.length ? ln.runs[0].x : 0;
+      });
+      return lines;
+    }
+
+    // Text to the right of a label on the same line, cut at the next label. Handles
+    // both "Invoice Date   September 21, 2026" (separate runs) and
+    // "Invoice Date: September 21, 2026" (one run).
+    var LABELS = /\b(invoice\s*(#|no\.?|number|date)|date|due\s*date|payment\s*terms|terms|bill(ed)?\s*to|ship\s*to|p\.?o\.?\s*(#|number)|amount\s*due|total\s*due|balance\s*due)\b/i;
+    function valueAfter(lines, labelRe) {
+      for (var i = 0; i < lines.length; i++) {
+        var m = labelRe.exec(lines[i].text);
+        if (!m) continue;
+        var rest = lines[i].text.slice(m.index + m[0].length).replace(/^[\s:#.-]+/, '');
+        var cut = LABELS.exec(rest);
+        if (cut) rest = rest.slice(0, cut.index);
+        rest = rest.trim();
+        if (rest) return rest;
+      }
+      return '';
+    }
+
+    function parseDate(s) {
+      if (!s) return null;
+      s = String(s).trim();
+      var m = /^(\d{4})-(\d{1,2})-(\d{1,2})/.exec(s);
+      if (m) return new Date(+m[1], +m[2] - 1, +m[3]);
+      m = /^(\d{1,2})[\/.-](\d{1,2})[\/.-](\d{2,4})/.exec(s);
+      if (m) {
+        var yy = +m[3]; if (yy < 100) yy += 2000;
+        return new Date(yy, +m[1] - 1, +m[2]);
+      }
+      m = /^([A-Za-z]{3,9})\.?\s+(\d{1,2})(?:st|nd|rd|th)?,?\s+(\d{4})/.exec(s);
+      if (m) {
+        var mo = MONTHS[m[1].slice(0, 4).toLowerCase()];
+        if (mo == null) mo = MONTHS[m[1].slice(0, 3).toLowerCase()];
+        if (mo != null) return new Date(+m[3], mo, +m[2]);
+      }
+      m = /^(\d{1,2})\s+([A-Za-z]{3,9})\.?,?\s+(\d{4})/.exec(s);
+      if (m) {
+        var mo2 = MONTHS[m[2].slice(0, 3).toLowerCase()];
+        if (mo2 != null) return new Date(+m[3], mo2, +m[1]);
+      }
+      return null;
+    }
+
+    function ymd(d) {
+      if (!d || isNaN(d.getTime())) return '';
+      return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' +
+             String(d.getDate()).padStart(2, '0');
+    }
+
+    function parseMoney(s) {
+      var m = /\$?\s*([\d,]+\.\d{2})\b/.exec(s || '');
+      return m ? parseFloat(m[1].replace(/,/g, '')) : null;
+    }
+
+    // Grace on "Due on Receipt" invoices, in days (Tyler's call, Session 49).
+    var RECEIPT_GRACE_DAYS = 7;
+
+    // Our own addresses are on every invoice we send. They are never the customer.
+    var OWN_EMAIL = /@tevisengineering\.com$/i;
+
+    function titleCase(s) {
+      return String(s || '').toLowerCase().replace(/(^|[\s'-])([a-z])/g, function (_, p, c) {
+        return p + c.toUpperCase();
+      });
+    }
+
+    function parseInvoicePdf(pages, filename) {
+      var lines = pdfLines(pages);
+      var all = lines.map(function (l) { return l.text; }).join('\n');
+      var out = { number: '', name: '', company: '', email: '', phone: '',
+                  issued: '', due: '', terms: '', amount: null, service: '', description: '',
+                  found: [], missing: [] };
+
+      // 1. The number IS the filename, by convention. The label on the page is a
+      //    fallback for a file somebody renamed.
+      var base = String(filename || '').replace(/\.pdf$/i, '').trim();
+      if (/^[A-Za-z0-9][A-Za-z0-9 _.-]{2,}$/.test(base)) out.number = base.replace(/\s+/g, '-');
+      if (!out.number) {
+        var n = valueAfter(lines, /\binvoice\s*(#|no\.?|number)\s*/i);
+        if (/^[A-Za-z0-9][A-Za-z0-9_.-]{2,}$/.test(n)) out.number = n;
       }
 
+      // 2. Dates and terms, by label.
+      var issuedTxt = valueAfter(lines, /\b(invoice\s*date|date\s*of\s*issue|issued|date)\b/i);
+      var issued = parseDate(issuedTxt);
+      out.issued = ymd(issued);
+      out.terms = valueAfter(lines, /\b(payment\s*terms|terms)\b/i);
+      var dueTxt = valueAfter(lines, /\bdue\s*date\b/i);
+      var due = parseDate(dueTxt);
+      if (!due && out.terms) {
+        var net = /net\s*(\d{1,3})/i.exec(out.terms);
+        // "Due on Receipt" gets a week: stored as the invoice date it would read as
+        // overdue the next morning, and a week is what the customer is actually given.
+        if (/receipt/i.test(out.terms) && issued) due = new Date(issued.getTime() + RECEIPT_GRACE_DAYS * 86400000);
+        else if (net && issued) due = new Date(issued.getTime() + (+net[1]) * 86400000);
+        else due = parseDate(out.terms);
+      }
+      out.due = ymd(due);
+
+      // 3. The amount. A "Total Due" / "Amount Due" / "Balance Due" line wins; then
+      //    the payment paragraph ("Total due on receipt: $360.58"); then the largest
+      //    figure on the page, which on a normal invoice is the total.
+      var amt = null;
+      for (var i = 0; i < lines.length && amt == null; i++) {
+        if (/\b(total|amount|balance)\s*due\b/i.test(lines[i].text)) amt = parseMoney(lines[i].text);
+      }
+      if (amt == null) {
+        var pm = /\b(total|amount|balance)\s*due[^$\n]{0,40}\$\s*([\d,]+\.\d{2})/i.exec(all);
+        if (pm) amt = parseFloat(pm[2].replace(/,/g, ''));
+      }
+      if (amt == null) {
+        for (var j = 0; j < lines.length && amt == null; j++) {
+          if (/^\s*total\b/i.test(lines[j].text)) amt = parseMoney(lines[j].text);
+        }
+      }
+      if (amt == null) {
+        var best = null;
+        (all.match(/\$\s*[\d,]+\.\d{2}\b/g) || []).forEach(function (s) {
+          var v = parseMoney(s);
+          if (v != null && (best == null || v > best)) best = v;
+        });
+        amt = best;
+      }
+      out.amount = amt;
+
+      // 4. Who it is billed to: the block under "BILL TO", read by position so the
+      //    right-hand column (Invoice #, Date, Terms) on the same baselines is not
+      //    mixed in. A name line, a company line, and a contact line, in any order.
+      var bt = null;
+      for (var k = 0; k < lines.length; k++) {
+        if (/^(bill(ed)?\s*to|invoice(d)?\s*to|customer|client)\b/i.test(lines[k].text)) { bt = lines[k]; break; }
+      }
+      var block = [];
+      if (bt) {
+        var runs = [];
+        pages[bt.page].items.forEach(function (it) {
+          if (it.y < bt.y - 1 && it.y > bt.y - 90 && it.x >= bt.x - 4 && it.x < bt.x + 230) runs.push(it);
+        });
+        pdfLines([{ items: runs }]).forEach(function (l) {
+          // An inline "Bill to: Name" puts the name on the label line itself.
+          if (l.text) block.push(l.text);
+        });
+        var inline = bt.text.replace(/^(bill(ed)?\s*to|invoice(d)?\s*to|customer|client)\s*[:#-]?\s*/i, '');
+        if (inline) block.unshift(inline);
+      }
+      var emails = [];
+      block.concat(lines.map(function (l) { return l.text; })).forEach(function (t) {
+        (t.match(/[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}/g) || []).forEach(function (e) {
+          if (!OWN_EMAIL.test(e) && emails.indexOf(e.toLowerCase()) < 0) emails.push(e.toLowerCase());
+        });
+      });
+      out.email = emails[0] || '';
+      var ph = /\(?\d{3}\)?[\s.-]?\d{3}[\s.-]?\d{4}/.exec(block.join(' '));
+      out.phone = ph ? ph[0] : '';
+
+      var COMPANY = /\b(llc|l\.l\.c|inc\b|inc\.|corp|co\.|ltd|group|company|services|solutions|associates|partners|dental|clinic|law|pllc|plc|dds|md|studio|shop|church|school)\b/i;
+      var texty = block.filter(function (t) {
+        return !/@/.test(t) && !/\d{3}[\s.-]?\d{3}[\s.-]?\d{4}/.test(t) && !/^\d+\s/.test(t) &&
+               !/\b(OH|Ohio|[A-Z]{2})\s+\d{5}\b/.test(t);
+      });
+      var cIdx = -1;
+      for (var c = 0; c < texty.length; c++) if (COMPANY.test(texty[c])) { cIdx = c; break; }
+      if (cIdx >= 0) { out.company = texty[cIdx]; texty.splice(cIdx, 1); }
+      if (texty.length) {
+        out.name = texty[0];
+        if (out.name === out.name.toUpperCase()) out.name = titleCase(out.name);
+      }
+      if (!out.company && texty.length > 1) out.company = texty[1];
+
+      // 5. Service and description. The section heading over the line items names
+      //    the engagement; the first sentence of the summary paragraph describes it.
+      var svc = null;
+      for (var s = 0; s < lines.length; s++) {
+        if (/^(time\s*&\s*materials|managed\s*it|monthly\s*support|support\s*plan|project|professional\s*services|web(site)?\s*(design|development|maintenance)|consulting|data\s*destruction|knowledge\s*transfer)\b/i.test(lines[s].text) &&
+            lines[s].text.length < 60) { svc = lines[s].text; break; }
+      }
+      out.service = svc ? svc.replace(/\s*[-—:]\s*$/, '') : '';
+      var sumIdx = -1;
+      for (var w = 0; w < lines.length; w++) {
+        if (/^(work\s*summary|summary|description|scope|details)\b/i.test(lines[w].text) && lines[w].text.length < 40) { sumIdx = w; break; }
+      }
+      if (sumIdx >= 0) {
+        var para = '';
+        for (var q = sumIdx + 1; q < lines.length && q < sumIdx + 8; q++) {
+          if (!lines[q].text || /^(time\s*&|line\s*item|qty|description\s+qty|item)/i.test(lines[q].text)) break;
+          para += (para ? ' ' : '') + lines[q].text;
+        }
+        // Rejoin words hyphenated across a line ("solid- state" -> "solid-state").
+        para = para.replace(/(\w)- (\w)/g, '$1-$2');
+        var sent = /^(.+?[.!?])(\s|$)/.exec(para);
+        var desc = sent ? sent[1] : para;
+        // A long first sentence is cut at a word, not mid-word: it is a starting
+        // point for the description field, not the description.
+        if (desc.length > 160) desc = desc.slice(0, 157).replace(/\s+\S*$/, '') + '…';
+        out.description = desc;
+      }
+
+      ['number', 'email', 'company', 'name', 'issued', 'due', 'amount', 'service', 'description'].forEach(function (f) {
+        (out[f] !== '' && out[f] != null ? out.found : out.missing).push(f);
+      });
+      return out;
+    }
+
+    // ---- the drop zone ----
+    var FIELD_LABEL = { number: 'invoice number', email: 'email', company: 'company', name: 'billed-to name',
+                        issued: 'invoice date', due: 'due date', amount: 'total due', service: 'service',
+                        description: 'description' };
+
+    function setIf(id, value) {
+      var input = document.getElementById(id);
+      if (value === '' || value == null) return;
+      input.value = value;
+    }
+
+    // Fills the form from what the parser found. Found values overwrite: a fresh
+    // PDF is the newer truth about this invoice. Anything not found is left alone.
+    function applyParsed(p) {
+      setIf('invNumber', p.number);
+      setIf('invEmail', p.email);
+      setIf('invName', p.name);
+      setIf('invCompany', p.company);
+      setIf('invService', p.service);
+      setIf('invAmount', p.amount != null ? p.amount.toFixed(2) : '');
+      setIf('invIssued', p.issued);
+      setIf('invDue', p.due);
+      setIf('invDesc', p.description);
+      // The address on the PDF is the best key to an existing customer. One exact
+      // match is picked automatically; anything else is left for a human. A pick
+      // made before the drop, for a different address, is stale and is cleared
+      // rather than left claiming the invoice is for somebody it is not.
+      if (p.email && invSelected && invSelected.email !== p.email) {
+        invSelected = null;
+        invCustSel.hidden = true;
+      }
+      if (p.email && !invSelected) {
+        api('/admin/customers?q=' + encodeURIComponent(p.email)).then(function (r) {
+          var hits = (r.ok && r.customers || []).filter(function (c) { return c.email === p.email; });
+          if (hits.length === 1) selectCustomer(hits[0], true);
+        });
+      }
+    }
+
+    function renderFileInfo(file, parsed, readErr) {
+      invFileInfo.hidden = false;
+      invFileInfo.textContent = '';
+      var head = el('div');
+      head.appendChild(el('b', null, file.name));
+      head.appendChild(document.createTextNode(' · ' + Math.max(1, Math.round(file.size / 1024)) + ' KB, attaches on Create'));
+      var drop = el('button', null, 'Remove');
+      drop.type = 'button';
+      drop.addEventListener('click', function () { clearPdf(); });
+      head.appendChild(drop);
+      invFileInfo.appendChild(head);
+
+      if (readErr) {
+        invFileInfo.appendChild(el('div', 'warn',
+          'Could not read the text in this PDF (' + readErr + '). It will still be attached; fill the fields in by hand.'));
+        return;
+      }
+      if (parsed.found.length) {
+        invFileInfo.appendChild(el('div', 'found', 'Read from the PDF: ' +
+          parsed.found.map(function (f) { return FIELD_LABEL[f]; }).join(', ') + '. Check them before creating.'));
+      }
+      if (parsed.missing.length) {
+        invFileInfo.appendChild(el('div', 'missing', 'Not found: ' +
+          parsed.missing.map(function (f) { return FIELD_LABEL[f]; }).join(', ') + '.'));
+      }
+      if (parsed.terms) invFileInfo.appendChild(el('div', null, 'Terms on the invoice: ' + parsed.terms));
+    }
+
+    function clearPdf() {
+      invPending = null;
+      invFile.value = '';
+      invFileInfo.hidden = true;
+      invFileInfo.textContent = '';
+    }
+
+    function takePdf(file) {
+      if (!file) return;
+      if (!/\.pdf$/i.test(file.name) && file.type !== 'application/pdf') return toast('That is not a PDF');
+      if (file.size > 10 * 1024 * 1024) return toast('PDFs are capped at 10 MB');
+      invDrop.classList.add('busy');
+      var textErr = null;
+      Promise.all([
+        fileToBase64(file),
+        readPdfRuns(file).catch(function (e) { textErr = (e && e.message) || 'unreadable'; return null; }),
+      ]).then(function (res) {
+        invPending = { filename: file.name, data: res[0], size: file.size };
+        var parsed = res[1] ? parseInvoicePdf(res[1], file.name) : null;
+        if (parsed) applyParsed(parsed);
+        renderFileInfo(file, parsed, textErr);
+        invCreated.hidden = true;
+        invPayLink.hidden = true;
+      }).catch(function (e) {
+        toast('Could not read that file');
+        console.error(e);
+      }).then(function () { invDrop.classList.remove('busy'); });
+    }
+
+    invDrop.addEventListener('click', function () { invFile.click(); });
+    invDrop.addEventListener('keydown', function (e) {
+      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); invFile.click(); }
+    });
+    invFile.addEventListener('change', function () { takePdf(invFile.files[0]); });
+    ['dragenter', 'dragover'].forEach(function (evn) {
+      invDrop.addEventListener(evn, function (e) { e.preventDefault(); invDrop.classList.add('over'); });
+    });
+    ['dragleave', 'drop'].forEach(function (evn) {
+      invDrop.addEventListener(evn, function (e) { e.preventDefault(); invDrop.classList.remove('over'); });
+    });
+    invDrop.addEventListener('drop', function (e) {
+      var f = e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files[0];
+      takePdf(f);
+    });
+    // A PDF dropped anywhere on the Invoices tab lands in the form, not in a new
+    // browser tab showing the PDF, which is what a missed drop does otherwise.
+    document.getElementById('viewInvoices').addEventListener('dragover', function (e) { e.preventDefault(); });
+    document.getElementById('viewInvoices').addEventListener('drop', function (e) {
+      e.preventDefault();
+      if (!invDrop.contains(e.target)) {
+        var f = e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files[0];
+        if (f) takePdf(f);
+      }
+    });
+
+    // ---- the customer picker ----
+    var cpTimer = null;
+
+    function cpLabel(c) {
+      return c.name || c.company || c.email || '(no name)';
+    }
+
+    function selectCustomer(c, auto) {
+      invSelected = c;
+      invCustList.hidden = true;
+      invCustQ.value = '';
+      invCustSel.hidden = false;
+      invCustSel.textContent = '';
+      invCustSel.appendChild(el('b', null, cpLabel(c)));
+      var sub = [c.org_id ? 'Company' : '', c.company && c.company !== cpLabel(c) ? c.company : '', c.email,
+                 c.account_id || c.org_id ? '' : 'no portal account yet'].filter(Boolean).join(' · ');
+      if (sub) invCustSel.appendChild(el('span', 'cp-s', sub));
+      if (auto) invCustSel.appendChild(el('span', 'cp-s', '(matched from the PDF)'));
+      var ch = el('button', null, 'Change');
+      ch.type = 'button';
+      ch.addEventListener('click', function () {
+        invSelected = null;
+        invCustSel.hidden = true;
+        invCustQ.focus();
+      });
+      invCustSel.appendChild(ch);
+      // The record fills only what is still empty, so a value read off the PDF
+      // is not overwritten by a stale profile.
+      if (c.email && !document.getElementById('invEmail').value) document.getElementById('invEmail').value = c.email;
+      if (c.company && !document.getElementById('invCompany').value) document.getElementById('invCompany').value = c.company;
+      if (c.name && !document.getElementById('invName').value) document.getElementById('invName').value = c.name;
+    }
+
+    // Companies come from the same list the Customers tab shows, filtered here by
+    // name or billing contact, so the two pickers can never disagree about who exists.
+    function cpSearch(q) {
+      if (!q) { invCustList.hidden = true; return; }
+      Promise.all([
+        api('/admin/customers?q=' + encodeURIComponent(q)),
+        api('/admin/orgs').catch(function () { return { ok: false }; }),
+      ]).then(function (res) {
+        var r = res[0];
+        if (invCustQ.value.trim() !== q) return; // typed past this one
+        invCustList.textContent = '';
+        invCustList.hidden = false;
+        var list = r.ok ? (r.customers || []) : [];
+        var ql = q.toLowerCase();
+        var orgs = (res[1].ok ? (res[1].orgs || []) : []).filter(function (o) {
+          return (o.name || '').toLowerCase().indexOf(ql) >= 0 ||
+                 (o.billing_email || '').toLowerCase().indexOf(ql) >= 0;
+        });
+        orgs.slice(0, 6).forEach(function (o) {
+          var b = el('button');
+          b.type = 'button';
+          b.appendChild(el('div', 'cp-n', o.name));
+          b.appendChild(el('div', 'cp-s', 'Company' + (o.billing_email ? ' · invoices go to ' + o.billing_email : ' · no billing contact set')));
+          b.addEventListener('click', function () {
+            selectCustomer({ org_id: o.id, account_id: null, email: o.billing_email || '', name: '', company: o.name }, false);
+          });
+          invCustList.appendChild(b);
+        });
+        if (!list.length && !orgs.length) {
+          invCustList.appendChild(el('div', 'state', 'Nobody matches. Fill the fields in below; the invoice links to them when they first sign in.'));
+          return;
+        }
+        list.slice(0, 12).forEach(function (c) {
+          var b = el('button');
+          b.type = 'button';
+          b.appendChild(el('div', 'cp-n', cpLabel(c)));
+          var bits = [c.company && c.company !== cpLabel(c) ? c.company : '', c.email,
+                      c.open_invoices ? c.open_invoices + ' open' : '',
+                      c.balance_cents ? money(c.balance_cents) + ' owed' : ''].filter(Boolean);
+          b.appendChild(el('div', 'cp-s' + (c.account_id ? '' : ' cp-new'), bits.join(' · ') + (c.account_id ? '' : ' · no account yet')));
+          b.addEventListener('click', function () { selectCustomer(c, false); });
+          invCustList.appendChild(b);
+        });
+      });
+    }
+
+    invCustQ.addEventListener('input', function () {
+      clearTimeout(cpTimer);
+      var q = invCustQ.value.trim();
+      cpTimer = setTimeout(function () { cpSearch(q); }, 250);
+    });
+    invCustQ.addEventListener('focus', function () { if (invCustQ.value.trim()) cpSearch(invCustQ.value.trim()); });
+    invCustQ.addEventListener('keydown', function (e) { if (e.key === 'Escape') invCustList.hidden = true; });
+    document.addEventListener('click', function (e) {
+      if (!invCustList.contains(e.target) && e.target !== invCustQ) invCustList.hidden = true;
+    });
+
+    // Opens the form for one person, from the dossier.
+    function startInvoiceFor(c) {
+      showView('invoices');
+      resetInvoiceForm();
+      selectCustomer({ account_id: c.account.id, email: c.account.email,
+                       name: c.profile.name || '', company: c.profile.company || '' }, false);
+      invForm.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      document.getElementById('invNumber').focus();
+    }
+
+    function resetInvoiceForm() {
+      invForm.reset();
+      clearPdf();
+      invSelected = null;
+      invCustSel.hidden = true;
+      invCustList.hidden = true;
+      invPayLink.hidden = true;
+      invCreated.hidden = true;
+      invCreated.textContent = '';
+    }
+    document.getElementById('invClear').addEventListener('click', resetInvoiceForm);
+
+    // ---- sending ----
+    var SEND_ERROR = {
+      not_sendable: 'Only an open invoice can be sent',
+      no_email: 'This invoice has no email address',
+      mail_unconfigured: 'Email is not configured on the Worker',
+      send_failed: 'The mail service rejected it. Nothing was sent.',
+      paylink_failed: 'Could not sign a pay link',
+    };
+
+    // Emails the pay link (and the PDF, when there is one). Awaited on the server:
+    // the button reports what happened rather than assuming.
+    function sendInvoiceMail(v, btn, done) {
+      if (!v.has_pdf && !confirm('No PDF is attached to ' + v.number + '. Send the pay link on its own?')) return;
+      btn.disabled = true;
+      api('/admin/invoices/' + v.id + '/send', { method: 'POST', body: {} }).then(function (r) {
+        btn.disabled = false;
+        if (!r.ok) return toast(SEND_ERROR[r.error] || 'Could not send (' + (r.error || 'unknown') + ')');
+        toast((r.resend ? 'Reminder sent to ' : 'Sent to ') + r.to + (r.attached ? ' with the PDF' : ', no PDF'));
+        if (done) done(r);
+      });
+    }
+
+    function copyPayLink(v) {
+      api('/admin/invoices/' + v.id + '/paylink', { method: 'POST', body: {} }).then(function (r) {
+        if (!r.ok) return toast('Could not mint a link');
+        navigator.clipboard.writeText(r.pay_url).then(
+          function () { toast('Pay link copied'); },
+          function () { invPayLink.hidden = false; invPayLink.textContent = r.pay_url; }
+        );
+      });
+    }
+
+    function pdfHref(v) { return API + '/admin/invoices/' + v.id + '/pdf'; }
+
+    // Attach or replace a PDF on an existing invoice, from its card.
+    function attachPdfTo(v, after) {
+      var input = document.createElement('input');
+      input.type = 'file';
+      input.accept = 'application/pdf,.pdf';
+      input.addEventListener('change', function () {
+        var f = input.files[0];
+        if (!f) return;
+        if (f.size > 10 * 1024 * 1024) return toast('PDFs are capped at 10 MB');
+        fileToBase64(f).then(function (b64) {
+          return api('/admin/invoices/' + v.id + '/pdf', { method: 'POST', body: { filename: f.name, data: b64 } });
+        }).then(function (r) {
+          if (!r.ok) return toast(r.message || 'Could not attach (' + (r.error || 'unknown') + ')');
+          toast((v.has_pdf ? 'PDF replaced on ' : 'PDF attached to ') + v.number);
+          if (after) after(r);
+        });
+      });
+      input.click();
+    }
+
+    // ---- after Create ----
+    function showCreated(r, payload) {
+      invCreated.hidden = false;
+      invCreated.textContent = '';
+      invCreated.appendChild(el('h3', null, 'Invoice ' + payload.number + ' created'));
+      var v = { id: r.id, number: payload.number, has_pdf: !!r.pdf, email: payload.email };
+      var p = el('p');
+      p.textContent = money(payload.amount_cents) + ' to ' + payload.email +
+        (r.pdf ? ', PDF attached (' + r.pdf.filename + ').' :
+         r.pdf_error ? '. The PDF was NOT attached (' + (r.pdf_error === 'not_pdf' ? 'not a PDF' : r.pdf_error) + ') -- attach it from the card below.' :
+         ', no PDF attached.');
+      invCreated.appendChild(p);
       var acts = el('div', 'inv-actions');
+      var send = el('button', 'prim', 'Email invoice to customer');
+      send.type = 'button';
+      // Enabled only once a pay link exists: the email is built around it.
+      send.disabled = !r.pay_url;
+      send.addEventListener('click', function () {
+        sendInvoiceMail(v, send, function (res) {
+          send.textContent = 'Sent ✓ (send again)';
+          loadInvoices();
+        });
+      });
+      acts.appendChild(send);
       var copy = el('button', null, 'Copy pay link');
       copy.type = 'button';
       copy.addEventListener('click', function () {
-        api('/admin/invoices/' + v.id + '/paylink', { method: 'POST', body: {} })
-          .then(function (r) {
-            if (!r.ok) return toast('Could not mint a link');
-            navigator.clipboard.writeText(r.pay_url).then(
-              function () { toast('Pay link copied'); },
-              function () { invPayLink.hidden = false; invPayLink.textContent = r.pay_url; }
-            );
-          });
+        if (!r.pay_url) return copyPayLink(v);
+        navigator.clipboard.writeText(r.pay_url).then(
+          function () { toast('Pay link copied'); },
+          function () { invPayLink.hidden = false; invPayLink.textContent = r.pay_url; });
       });
       acts.appendChild(copy);
-
-      if (v.status !== 'paid') {
-        var paid = el('button', v.status === 'pending' ? 'prim' : null,
-          v.status === 'pending' ? 'Confirm received' : 'Mark paid');
-        paid.type = 'button';
-        paid.addEventListener('click', function () {
-          api('/admin/invoices/' + v.id, { method: 'PATCH', body: { status: 'paid' } })
-            .then(function (r) { toast(r.ok ? 'Marked paid' : 'Failed'); loadInvoices(); });
-        });
-        acts.appendChild(paid);
-
-        var voidB = el('button', null, 'Void');
-        voidB.type = 'button';
-        voidB.addEventListener('click', function () {
-          api('/admin/invoices/' + v.id, { method: 'PATCH', body: { status: 'void' } })
-            .then(function (r) { toast(r.ok ? 'Voided' : 'Failed'); loadInvoices(); });
-        });
-        acts.appendChild(voidB);
+      if (r.pdf) {
+        var a = el('a', 'pill', 'Open PDF');
+        a.href = pdfHref(v); a.target = '_blank'; a.rel = 'noopener';
+        acts.appendChild(a);
       }
-      d.appendChild(acts);
-      return d;
-    }
-
-    function loadInvoices() {
-      return api('/admin/invoices').then(function (r) {
-        invListEl.textContent = '';
-        if (!r.ok) {
-          invListEl.appendChild(el('div', 'state', 'Could not load invoices.'));
-          return;
-        }
-        var list = r.invoices || [];
-        if (!list.length) {
-          invListEl.appendChild(el('div', 'state', 'No invoices yet. Create one above.'));
-          return;
-        }
-        list.forEach(function (v) { invListEl.appendChild(invCard(v)); });
-      });
+      invCreated.appendChild(acts);
+      if (r.pay_url) { invPayLink.hidden = false; invPayLink.textContent = r.pay_url; }
     }
 
     invForm.addEventListener('submit', function (ev) {
@@ -979,29 +1673,231 @@
       new FormData(invForm).forEach(function (val, k) { f[k] = val; });
 
       var payload = {
-        number: f.number, email: f.email, company: f.company,
+        number: f.number.trim(), email: f.email.trim(), company: f.company, contact_name: f.contact_name,
         service: f.service, description: f.description,
         // Sent as integer cents so nothing depends on float parsing of money.
         amount_cents: Math.round(parseFloat(f.amount) * 100),
       };
-      if (f.due) payload.due_at = Math.floor(new Date(f.due + 'T12:00:00').getTime() / 1000);
+      if (f.issued) payload.issued_at = dayToTs(f.issued);
+      if (f.due) payload.due_at = dayToTs(f.due);
+      if (invPending) payload.pdf = { filename: invPending.filename, data: invPending.data };
 
       var btn = document.getElementById('invCreate');
       btn.disabled = true;
       api('/admin/invoices', { method: 'POST', body: payload }).then(function (r) {
         btn.disabled = false;
         if (!r.ok) {
-          toast(r.error === 'duplicate_number' ? 'That invoice number already exists' : 'Could not create');
+          toast(r.error === 'duplicate_number' ? 'That invoice number already exists'
+              : r.error === 'invalid_amount' ? 'The amount is not valid'
+              : 'Could not create (' + (r.error || 'unknown') + ')');
           return;
         }
-        invPayLink.hidden = false;
-        invPayLink.textContent = r.pay_url;
-        if (navigator.clipboard) navigator.clipboard.writeText(r.pay_url).then(function () {}, function () {});
-        toast('Invoice created, pay link copied');
+        if (r.pay_url && navigator.clipboard) navigator.clipboard.writeText(r.pay_url).then(function () {}, function () {});
+        toast('Invoice created' + (r.pay_url ? ', pay link copied' : ''));
+        // The form clears for the next one; the created box keeps this one's
+        // buttons until the next PDF lands or Clear is pressed.
         invForm.reset();
+        clearPdf();
+        invSelected = null;
+        invCustSel.hidden = true;
+        showCreated(r, payload);
         loadInvoices();
       });
     });
+
+    // ---- the list, grouped by customer ----
+    function invCard(v) {
+      var d = el('div', 'inv' + (v.archived ? ' archived' : '') + (v.overdue ? ' late' : ''));
+      var top = el('div', 'inv-top');
+      top.appendChild(el('span', 'inv-num', v.number));
+      var right = el('span');
+      if (v.overdue) { right.appendChild(badge('overdue', '#ef4444')); right.appendChild(document.createTextNode(' ')); }
+      if (v.archived) { right.appendChild(badge('archived', '#6a8ba8')); right.appendChild(document.createTextNode(' ')); }
+      right.appendChild(badge(v.status, STATUS_COLOR[v.status] || '#8aa48d'));
+      right.appendChild(document.createTextNode(' '));
+      right.appendChild(el('span', 'inv-amt', money(v.amount_cents)));
+      top.appendChild(right);
+      d.appendChild(top);
+
+      d.appendChild(el('div', 'inv-meta',
+        [v.contact_name, v.email, v.service].filter(Boolean).join(' · ')));
+      var when = [];
+      if (v.issued_at) when.push('Issued ' + fmtDate(v.issued_at));
+      if (v.due_at) when.push((v.overdue ? 'Was due ' : 'Due ') + fmtDate(v.due_at));
+      if (v.paid_at) when.push('Paid ' + fmtDate(v.paid_at));
+      if (when.length) d.appendChild(el('div', 'inv-meta', when.join(' · ')));
+
+      var st = el('div', 'inv-meta');
+      if (v.sent_at) st.appendChild(el('span', 'sent', 'Emailed ' + fmt(v.sent_at)));
+      else st.appendChild(el('span', null, 'Not emailed from here'));
+      st.appendChild(document.createTextNode(' · '));
+      st.appendChild(v.has_pdf ? el('span', null, 'PDF on file') : el('span', 'nopdf', 'No PDF'));
+      d.appendChild(st);
+
+      if (v.status === 'pending') {
+        var how = v.payment_method === 'check' ? 'Check' :
+                  v.payment_method === 'wire' ? 'Wire' : 'ACH';
+        d.appendChild(el('div', 'inv-meta pending-line',
+          'Customer reported: ' + how + (v.payment_ref ? ' #' + v.payment_ref : '') +
+          (v.reported_at ? ' on ' + fmt(v.reported_at) : '') + ' — confirm before marking paid'));
+      }
+
+      var acts = el('div', 'inv-actions');
+      function act(label, cls, fn) {
+        var b = el('button', cls || null, label);
+        b.type = 'button';
+        b.addEventListener('click', fn);
+        acts.appendChild(b);
+        return b;
+      }
+
+      if (v.status === 'open') {
+        var send = act(v.sent_at ? 'Resend invoice' : 'Email invoice', 'prim', function () {
+          sendInvoiceMail(v, send, function () { loadInvoices(); });
+        });
+      }
+      if (v.status === 'open' || v.status === 'pending') {
+        act('Copy pay link', null, function () { copyPayLink(v); });
+      }
+      if (v.has_pdf) {
+        var a = el('a', 'pill', 'PDF');
+        a.href = pdfHref(v); a.target = '_blank'; a.rel = 'noopener';
+        acts.appendChild(a);
+      }
+      if (!v.archived) {
+        act(v.has_pdf ? 'Replace PDF' : 'Attach PDF', null, function () {
+          attachPdfTo(v, function () { loadInvoices(); });
+        });
+      }
+      if (v.status === 'open' || v.status === 'pending') {
+        act(v.status === 'pending' ? 'Confirm received' : 'Mark paid', v.status === 'pending' ? 'prim' : null, function () {
+          api('/admin/invoices/' + v.id, { method: 'PATCH', body: { status: 'paid' } })
+            .then(function (r) { toast(r.ok ? 'Marked paid' : 'Failed'); loadInvoices(); });
+        });
+        act('Void', 'danger', function () {
+          if (!confirm('Void ' + v.number + '? The customer can no longer pay it.')) return;
+          api('/admin/invoices/' + v.id, { method: 'PATCH', body: { status: 'void' } })
+            .then(function (r) { toast(r.ok ? 'Voided' : 'Failed'); loadInvoices(); });
+        });
+      }
+      if (v.status === 'paid' || v.status === 'void') {
+        act(v.archived ? 'Unarchive' : 'Archive', null, function () {
+          api('/admin/invoices/' + v.id, { method: 'PATCH', body: { archived: !v.archived } })
+            .then(function (r) {
+              toast(r.ok ? (v.archived ? 'Restored' : 'Archived') : (r.message || 'Failed'));
+              loadInvoices();
+            });
+        });
+        if (v.status === 'void') {
+          act('Reopen', null, function () {
+            api('/admin/invoices/' + v.id, { method: 'PATCH', body: { status: 'open' } })
+              .then(function (r) { toast(r.ok ? 'Reopened' : 'Failed'); loadInvoices(); });
+          });
+        }
+      }
+      d.appendChild(acts);
+      return d;
+    }
+
+    function loadInvoices() {
+      var url = '/admin/invoices?view=' + encodeURIComponent(invView) +
+                (invSearch ? '&q=' + encodeURIComponent(invSearch) : '');
+      return api(url).then(function (r) {
+        invListEl.textContent = '';
+        if (!r.ok) {
+          invListEl.appendChild(el('div', 'state', 'Could not load invoices.'));
+          return;
+        }
+        var list = r.invoices || [];
+        if (!list.length) {
+          invListEl.appendChild(el('div', 'state',
+            invSearch ? 'Nothing matches "' + invSearch + '" in ' + invView + '.'
+            : invView === 'open' ? 'Nothing open. Create one above.'
+            : 'Nothing in ' + invView + '.'));
+          return;
+        }
+
+        // One group per customer, alphabetical; the rows inside keep the server's
+        // due-date order so the most pressing one is on top.
+        var groups = {};
+        var order = [];
+        list.forEach(function (v) {
+          var k = v.customer_key || ('email:' + v.email);
+          if (!groups[k]) { groups[k] = { name: v.customer_name || v.email, email: v.email, rows: [], owed: 0, late: 0 }; order.push(k); }
+          groups[k].rows.push(v);
+          if (v.status === 'open' || v.status === 'pending') groups[k].owed += v.amount_cents;
+          if (v.overdue) groups[k].late += 1;
+        });
+        order.sort(function (a, b) { return groups[a].name.localeCompare(groups[b].name, undefined, { sensitivity: 'base' }); });
+
+        var totOwed = 0, totLate = 0;
+        list.forEach(function (v) {
+          if (v.status === 'open' || v.status === 'pending') totOwed += v.amount_cents;
+          if (v.overdue) totLate += 1;
+        });
+        var sum = el('div', 'inv-sum');
+        sum.appendChild(el('b', null, list.length + (list.length === 1 ? ' invoice' : ' invoices')));
+        sum.appendChild(document.createTextNode(' across ' + order.length + (order.length === 1 ? ' customer' : ' customers') +
+          (totOwed ? ' · ' + money(totOwed) + ' outstanding' : '') +
+          (totLate ? ' · ' + totLate + ' overdue' : '')));
+        invListEl.appendChild(sum);
+
+        order.forEach(function (k) {
+          var g = groups[k];
+          var wrap = el('div', 'inv-group');
+          var h = el('div', 'inv-group-h');
+          // The header is the way into the customer's file. An account id opens the
+          // dossier directly; an unlinked address opens the Customers tab searched for it.
+          var left = el('button', 'g-open');
+          left.type = 'button';
+          left.setAttribute('aria-label', 'Open the customer file for ' + g.name);
+          left.appendChild(el('h3', null, g.name));
+          if (g.email && g.email !== g.name) left.appendChild(el('div', 'g-sub', g.email));
+          left.addEventListener('click', function () {
+            showView('customers');
+            if (/^email:/.test(k)) { custMode = 'people'; syncMode(); custQEl.value = g.email; loadCustomers(g.email); }
+            else { custMode = 'people'; syncMode(); openCustomer(k); }
+          });
+          h.appendChild(left);
+          var tot = el('div', 'g-tot');
+          tot.appendChild(document.createTextNode(g.rows.length + (g.rows.length === 1 ? ' invoice' : ' invoices')));
+          if (g.owed) { tot.appendChild(document.createTextNode(' · ')); tot.appendChild(el('b', null, money(g.owed) + ' owed')); }
+          if (g.late) { tot.appendChild(document.createTextNode(' · ')); tot.appendChild(el('b', 'late', g.late + ' overdue')); }
+          h.appendChild(tot);
+          wrap.appendChild(h);
+          g.rows.forEach(function (v) { wrap.appendChild(invCard(v)); });
+          invListEl.appendChild(wrap);
+        });
+      });
+    }
+
+    document.getElementById('invFilters').addEventListener('click', function (e) {
+      var b = e.target.closest('.fpill');
+      if (!b) return;
+      Array.prototype.forEach.call(this.querySelectorAll('.fpill'), function (x) { x.classList.remove('on'); });
+      b.classList.add('on');
+      invView = b.getAttribute('data-view') || 'open';
+      loadInvoices();
+    });
+    invQEl.addEventListener('input', function () {
+      clearTimeout(invSearchTimer);
+      invSearchTimer = setTimeout(function () {
+        invSearch = invQEl.value.trim();
+        loadInvoices();
+      }, 250);
+    });
+
+    // Jump to one invoice from anywhere else in the console.
+    function showInvoice(number) {
+      showView('invoices');
+      invView = 'all';
+      Array.prototype.forEach.call(document.querySelectorAll('#invFilters .fpill'), function (x) {
+        x.classList.toggle('on', x.getAttribute('data-view') === 'all');
+      });
+      invSearch = number;
+      invQEl.value = number;
+      loadInvoices().then(function () { invListEl.scrollIntoView({ behavior: 'smooth', block: 'start' }); });
+    }
 
     // ---- product keys ----------------------------------------------------
     var keyListEl = document.getElementById('keyList');
@@ -1463,6 +2359,211 @@
       return d;
     }
 
+    // ---- the customer file: tabs, billing by period, files, notes -----------
+    // Shared by a person's dossier and a company's panel, so the two read the same.
+
+    // Which tab each file was last open on, so re-rendering after a save (which
+    // rebuilds the whole panel) lands you back where you were.
+    var custTabPref = {};
+
+    function paneTabs(wrap, names, key) {
+      var bar = el('div', 'ptabs');
+      bar.setAttribute('role', 'tablist');
+      var panes = {};
+      var current = custTabPref[key] || names[0];
+      if (names.indexOf(current) < 0) current = names[0];
+      names.forEach(function (n) {
+        var b = el('button', 'ptab' + (n === current ? ' on' : ''), n);
+        b.type = 'button';
+        b.setAttribute('role', 'tab');
+        b.setAttribute('aria-selected', n === current ? 'true' : 'false');
+        b.addEventListener('click', function () {
+          custTabPref[key] = n;
+          names.forEach(function (m) {
+            panes[m].hidden = m !== n;
+            panes[m].btn.classList.toggle('on', m === n);
+            panes[m].btn.setAttribute('aria-selected', m === n ? 'true' : 'false');
+          });
+        });
+        bar.appendChild(b);
+        var p = el('div', 'pane');
+        p.hidden = n !== current;
+        p.btn = b;
+        panes[n] = p;
+      });
+      wrap.appendChild(bar);
+      names.forEach(function (n) { wrap.appendChild(panes[n]); });
+      return {
+        pane: function (n) { return panes[n]; },
+        // A count on the tab label, so "Invoices (12)" is visible without opening it.
+        count: function (n, k) { panes[n].btn.textContent = n + (k ? ' (' + k + ')' : ''); },
+      };
+    }
+
+    // Billed / collected / outstanding for this month, this quarter, the year, and
+    // all time. Every figure is summed on the server from the invoices themselves.
+    function billingTiles(b) {
+      var tiles = el('div', 'tiles btiles');
+      if (!b) return tiles;
+      [['month', 'This month'], ['quarter', 'This quarter'], ['ytd', 'Year to date'], ['all', 'All time']]
+        .forEach(function (pair) {
+          var p = b[pair[0]] || {};
+          var t = el('div', 'tile');
+          t.appendChild(el('s', null, pair[1]));
+          t.appendChild(el('b', null, money(p.billed_cents || 0)));
+          var sub = el('div', 'sub');
+          sub.appendChild(document.createTextNode(
+            (p.count || 0) + (p.count === 1 ? ' invoice' : ' invoices') +
+            ' · ' + money(p.collected_cents || 0) + ' collected'));
+          if (p.outstanding_cents) {
+            sub.appendChild(document.createTextNode(' · '));
+            sub.appendChild(el('span', 'warn', money(p.outstanding_cents) + ' owed'));
+          }
+          t.appendChild(sub);
+          tiles.appendChild(t);
+        });
+      return tiles;
+    }
+
+    // One row per invoice; each opens the Invoices tab on that number, where the
+    // PDF, send and status controls live.
+    function invoiceRows(parent, list) {
+      if (!list.length) {
+        parent.appendChild(el('div', 'row-sub', 'None yet.'));
+        return;
+      }
+      list.forEach(function (i) {
+        var right = el('span');
+        right.appendChild(el('span', 'inv-amt', money(i.amount_cents)));
+        right.appendChild(document.createTextNode(' '));
+        if (i.status === 'open' && i.due_at && i.due_at < Date.now() / 1000) {
+          right.appendChild(badge('overdue', '#ef4444'));
+          right.appendChild(document.createTextNode(' '));
+        }
+        right.appendChild(badge(i.status, STATUS_COLOR[i.status] || '#8aa48d'));
+        var sub = [
+          i.issued_at ? 'Issued ' + fmtDate(i.issued_at) : '',
+          i.due_at ? 'due ' + fmtDate(i.due_at) : '',
+          i.paid_at ? 'paid ' + fmtDate(i.paid_at) : '',
+          i.sent_at ? 'emailed ' + fmtDate(i.sent_at) : 'not emailed',
+          i.has_pdf ? 'PDF on file' : 'no PDF',
+          i.archived_at ? 'archived' : '',
+          i.email && i.contact_name ? i.contact_name + ' · ' + i.email : (i.email || ''),
+        ].filter(Boolean).join(' · ');
+        parent.appendChild(row(i.number + (i.service ? ' · ' + i.service : ''), sub, right,
+          function () { showInvoice(i.number); }));
+      });
+    }
+
+    function ticketRows(parent, list) {
+      if (!list.length) {
+        parent.appendChild(el('div', 'row-sub', 'None yet.'));
+        return;
+      }
+      list.forEach(function (t) {
+        parent.appendChild(row(t.ticket_number + ' · ' + (t.subject || ''),
+          fmt(t.created_at) + (t.email ? ' · ' + (t.contact_name ? t.contact_name + ' · ' : '') + t.email : ''),
+          badge(t.status, STATUS[t.status] || '#8aa48d'),
+          function () { showView('tickets'); open(t.id); }));
+      });
+    }
+
+    // Files kept on the relationship rather than on a ticket: NDA, SoW, MSA, W-9.
+    // `h` is { base, documents, reload }.
+    function filesSection(h) {
+      var s = el('section', 'cust-sec worklog');
+      var head = el('div', 'worklog-head');
+      head.appendChild(el('h3', null, 'Files (' + h.documents.length + ')'));
+      s.appendChild(head);
+      if (!h.documents.length) {
+        s.appendChild(el('div', 'row-sub', 'Nothing on file. Agreements, signed quotes and paperwork go here.'));
+      }
+      h.documents.forEach(function (d) {
+        var d2 = el('div', 'row');
+        var left = el('div');
+        left.appendChild(el('div', 'row-main', (d.label ? d.label + ' · ' : '') + d.filename));
+        left.appendChild(el('div', 'row-sub',
+          fmtSize(d.size_bytes) + ' · ' + fmtDate(d.uploaded_at) +
+          (d.uploaded_by ? ' by ' + d.uploaded_by : '') + (d.note ? ' · ' + d.note : '')));
+        d2.appendChild(left);
+        var right = el('div', 'cust-badges');
+        var openBtn = el('a', 'doclink', 'Open');
+        openBtn.href = API + '/admin/customer-documents/' + d.id;
+        openBtn.target = '_blank'; openBtn.rel = 'noopener';
+        right.appendChild(openBtn);
+        right.appendChild(licAction('Delete', null, function () {
+          if (!confirm('Delete ' + d.filename + '? This cannot be undone.')) return;
+          api('/admin/customer-documents/' + d.id, { method: 'DELETE' }).then(function (r) {
+            toast(r && r.ok ? 'Deleted' : (r && r.message) || 'Could not delete');
+            h.reload();
+          });
+        }));
+        d2.appendChild(right);
+        s.appendChild(d2);
+      });
+
+      var form = el('div', 'worklog-add');
+      var file = document.createElement('input');
+      file.type = 'file';
+      file.setAttribute('aria-label', 'File');
+      var label = document.createElement('input');
+      label.type = 'text'; label.placeholder = 'What it is: NDA, SoW, MSA';
+      label.setAttribute('aria-label', 'Label');
+      var note = document.createElement('input');
+      note.type = 'text'; note.placeholder = 'Optional note';
+      note.setAttribute('aria-label', 'Note');
+      var up = licAction('Upload', 'prim', function () {
+        var f = file.files && file.files[0];
+        if (!f) return toast('Choose a file first');
+        if (f.size > 10 * 1024 * 1024) return toast('Files are capped at 10 MB');
+        up.disabled = true;
+        fileToBase64(f).then(function (b64) {
+          return api(h.base + '/documents', {
+            method: 'POST',
+            body: { filename: f.name, data: b64, content_type: f.type || 'application/octet-stream',
+                    label: label.value, note: note.value },
+          });
+        }).then(function (r) {
+          up.disabled = false;
+          if (!r || !r.ok) return toast((r && r.message) || 'Could not upload (' + ((r && r.error) || 'unknown') + ')');
+          toast('Uploaded ' + f.name);
+          h.reload();
+        }, function () { up.disabled = false; toast('Could not read that file'); });
+      });
+      form.appendChild(file); form.appendChild(label); form.appendChild(note); form.appendChild(up);
+      s.appendChild(form);
+      return s;
+    }
+
+    // Staff-only notes: special arrangements, standing instructions, what to remember
+    // before the next call. `h` is { notes, updated_at, updated_by, save(text), reload }.
+    function notesSection(h) {
+      var s = el('section', 'cust-sec notes-ed');
+      s.appendChild(el('h3', null, 'Notes'));
+      s.appendChild(el('div', 'row-sub',
+        h.updated_at ? 'Last written ' + fmt(h.updated_at) + (h.updated_by ? ' by ' + h.updated_by : '')
+                     : 'Nothing written yet. Only you see these; the customer never does.'));
+      var ta = document.createElement('textarea');
+      ta.rows = 8;
+      ta.value = h.notes || '';
+      ta.placeholder = 'Special arrangements, standing agreements, who to call, what not to touch…';
+      ta.setAttribute('aria-label', 'Notes');
+      s.appendChild(ta);
+      var rowEl = el('div', 'reply-row');
+      var save = licAction('Save notes', 'prim', function () {
+        save.disabled = true;
+        h.save(ta.value).then(function (r) {
+          save.disabled = false;
+          if (!r || !r.ok) return toast((r && r.error) || 'Could not save');
+          toast('Notes saved');
+          h.reload();
+        });
+      });
+      rowEl.appendChild(save);
+      s.appendChild(rowEl);
+      return s;
+    }
+
     function dossier(c) {
       var wrap = el('div', 'panel');
 
@@ -1496,10 +2597,6 @@
             : 'No name on file. They have never filed a ticket.'));
       wrap.appendChild(head);
 
-      if (c.profile.notes) {
-        var n = el('div', 'desc', c.profile.notes);
-        wrap.appendChild(n);
-      }
 
       // ---- the numbers ----
       var tiles = el('div', 'tiles');
@@ -1529,6 +2626,17 @@
         tiles.appendChild(u);
       }
       wrap.appendChild(tiles);
+
+      // The file is tabbed: what needs attention first, then the money, the work,
+      // the paperwork, and what you want to remember about them.
+      var allInv = c.all_invoices || c.invoices || [];
+      var tabs = paneTabs(wrap, ['Overview', 'Invoices', 'Tickets', 'Files', 'Notes'], 'cust:' + c.account.id);
+      var pOverview = tabs.pane('Overview');
+      var pInv = tabs.pane('Invoices');
+      var pTk = tabs.pane('Tickets');
+      tabs.count('Invoices', allInv.length);
+      tabs.count('Tickets', c.tickets.length);
+      tabs.count('Files', (c.documents || []).length);
 
       // ---- records that belong to nobody ----
       // Deliberately near the top and gold-bordered: this is the fact the rest of
@@ -1611,7 +2719,7 @@
             money(i.amount_cents), badge(i.status, STATUS_COLOR[i.status] || '#8aa48d'),
             i, 'invoices', i.number));
         });
-        wrap.appendChild(o);
+        pOverview.appendChild(o);
       }
 
       // ---- unbilled work ----
@@ -1642,7 +2750,7 @@
             after: function () { openCustomer(c.account.id); }
           }));
         }
-        wrap.appendChild(us);
+        pOverview.appendChild(us);
       }
 
       // ---- subscriptions ----
@@ -1654,7 +2762,7 @@
             (s.renews_at ? ' · renews ' + fmt(s.renews_at) : ''),
             badge(s.status, s.status === 'active' ? '#22c55e' : '#c89830')));
         });
-        wrap.appendChild(ss);
+        pOverview.appendChild(ss);
       }
 
       // A checkout they started and never approved. Nothing bills and nothing is
@@ -1667,7 +2775,7 @@
             'Started ' + fmt(i.created_at) + ' · nothing was charged',
             badge(i.status, '#c89830')));
         });
-        wrap.appendChild(as);
+        pOverview.appendChild(as);
       }
 
       // ---- keys ----
@@ -1680,7 +2788,7 @@
           ks.appendChild(row(l.product, note.join(' · '),
             badge(l.status, LIC_COLOR[l.status] || '#8aa48d')));
         });
-        wrap.appendChild(ks);
+        pOverview.appendChild(ks);
       }
 
       // ---- trials ----
@@ -1693,7 +2801,7 @@
               : 'Claimed ' + fmt(t.claimed_at) + ', released by ' + (t.released_by || 'staff'),
             badge(t.spent ? 'spent' : 'released', t.spent ? '#c89830' : '#22c55e')));
         });
-        wrap.appendChild(ts);
+        pOverview.appendChild(ts);
       }
 
       // ---- tickets ----
@@ -1704,24 +2812,32 @@
           fmt(t.created_at), badge(t.status, STATUS[t.status] || '#8aa48d'),
           function () { showView('tickets'); open(t.id); }));
       });
-      wrap.appendChild(tks);
+      pTk.appendChild(tks);
 
       // ---- invoices ----
-      var ivs = sec('Invoices (' + c.invoices.length + ')');
-      if (!c.invoices.length) ivs.appendChild(el('div', 'row-sub', 'None attached to this account.'));
-      c.invoices.forEach(function (i) {
-        var amt = el('span', 'inv-amt', money(i.amount_cents));
-        var right = el('span');
-        right.appendChild(amt);
-        right.appendChild(document.createTextNode(' '));
-        right.appendChild(badge(i.status, STATUS_COLOR[i.status] || '#8aa48d'));
-        ivs.appendChild(row(i.number + ' · ' + (i.service || ''),
-          i.due_at ? 'Due ' + fmt(i.due_at) : (i.issued_at ? 'Issued ' + fmt(i.issued_at) : ''),
-          right));
-      });
-      wrap.appendChild(ivs);
+      pInv.appendChild(billingTiles(c.billing));
+      var ivs = sec('Invoices (' + allInv.length + ')');
+      var mk = licAction('New invoice for this customer', 'prim', function () { startInvoiceFor(c); });
+      ivs.appendChild(mk);
+      invoiceRows(ivs, allInv);
+      pInv.appendChild(ivs);
 
-      wrap.appendChild(dangerZone(c));
+      // ---- files and notes ----
+      tabs.pane('Files').appendChild(filesSection({
+        base: '/admin/customers/' + encodeURIComponent(c.account.id),
+        documents: c.documents || [],
+        reload: function () { openCustomer(c.account.id); },
+      }));
+      tabs.pane('Notes').appendChild(notesSection({
+        notes: c.profile.notes, updated_at: c.profile.notes_updated_at, updated_by: c.profile.notes_updated_by,
+        save: function (text) {
+          return api('/admin/customers/' + encodeURIComponent(c.account.id) + '/notes',
+            { method: 'PATCH', body: { notes: text } });
+        },
+        reload: function () { openCustomer(c.account.id); },
+      }));
+
+      pOverview.appendChild(dangerZone(c));
       return wrap;
     }
 
@@ -1816,7 +2932,7 @@
     // up -- org, agreement, license -- before they have ever signed in.
 
     // NOT named field(): there is already a field(label, value) above that renders a
-    // detail on a licence card, and a second declaration with the same name silently
+    // detail on a license card, and a second declaration with the same name silently
     // replaces it for the whole script -- which is exactly how the Product Keys tab
     // stopped listing anything.
     function formField(parent, id, label, type, placeholder) {
@@ -2189,11 +3305,11 @@
           custDetailEl.appendChild(el('div', 'state', 'Could not load that organization.'));
           return;
         }
-        custDetailEl.appendChild(orgPanel(r.org, r.unbilled));
+        custDetailEl.appendChild(orgPanel(r.org, r.unbilled, r));
       });
     }
 
-    function orgPanel(o, un) {
+    function orgPanel(o, un, extra) {
       var wrap = el('div', 'panel');
       var head = el('div', 'cust-head');
       head.appendChild(el('h2', null, o.name));
@@ -2216,6 +3332,16 @@
           });
       }));
       wrap.appendChild(bill);
+
+      extra = extra || {};
+      var oInv = extra.invoices || [];
+      var oTk = extra.tickets || [];
+      var oDocs = extra.documents || [];
+      var otabs = paneTabs(wrap, ['Overview', 'Invoices', 'Tickets', 'Files', 'Notes'], 'org:' + o.id);
+      var oOverview = otabs.pane('Overview');
+      otabs.count('Invoices', oInv.length);
+      otabs.count('Tickets', oTk.length);
+      otabs.count('Files', oDocs.length);
 
       // Agreement
       var as = sec('Service agreement');
@@ -2268,7 +3394,7 @@
         }));
         as.appendChild(ag);
       }
-      wrap.appendChild(as);
+      oOverview.appendChild(as);
 
       // Domains
       var ds = sec('Email domains');
@@ -2302,7 +3428,7 @@
           });
       }));
       ds.appendChild(db);
-      wrap.appendChild(ds);
+      oOverview.appendChild(ds);
 
       // Members
       var ms = sec('Members');
@@ -2315,7 +3441,7 @@
               { method: 'DELETE' }).then(function () { toast('Removed'); openOrg(o.id); });
           })));
       });
-      wrap.appendChild(ms);
+      oOverview.appendChild(ms);
 
       // Outstanding work
       var ws = sec('Outstanding work');
@@ -2335,7 +3461,7 @@
           after: function () { openOrg(o.id); loadOrgs(); }
         }));
       }
-      wrap.appendChild(ws);
+      oOverview.appendChild(ws);
 
       var oz = el('div', 'danger-zone');
       oz.appendChild(el('h3', null, 'Delete this organization'));
@@ -2355,7 +3481,33 @@
           loadOrgs();
         });
       }));
-      wrap.appendChild(oz);
+      oOverview.appendChild(oz);
+
+      // Money, work, paperwork, notes: the same four tabs a person's file has.
+      var oPInv = otabs.pane('Invoices');
+      oPInv.appendChild(billingTiles(extra.billing));
+      var oIvs = sec('Invoices (' + oInv.length + ')');
+      oIvs.appendChild(el('div', 'row-sub',
+        "Everything billed to a member, to the billing contact, or to an address on a claimed domain."));
+      invoiceRows(oIvs, oInv);
+      oPInv.appendChild(oIvs);
+
+      var oTks = sec('Tickets (' + oTk.length + ')');
+      ticketRows(oTks, oTk);
+      otabs.pane('Tickets').appendChild(oTks);
+
+      otabs.pane('Files').appendChild(filesSection({
+        base: '/admin/orgs/' + encodeURIComponent(o.id),
+        documents: oDocs,
+        reload: function () { openOrg(o.id); },
+      }));
+      otabs.pane('Notes').appendChild(notesSection({
+        notes: o.notes, updated_at: o.notes_updated_at, updated_by: o.notes_updated_by,
+        save: function (text) {
+          return api('/admin/orgs/' + encodeURIComponent(o.id), { method: 'PATCH', body: { notes: text } });
+        },
+        reload: function () { openOrg(o.id); },
+      }));
       return wrap;
     }
 

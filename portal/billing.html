@@ -126,6 +126,8 @@
     table.hist tr:last-child td { border-bottom:none; }
     table.hist td.num { font-family:"Montserrat",sans-serif; font-weight:700; color:#fff; white-space:nowrap; }
     table.hist td.id { color:#fff; font-weight:600; white-space:nowrap; }
+    table.hist td.id a.hist-pdf { margin-left:0.4rem; font-family:"Montserrat",sans-serif; font-size:0.62rem; font-weight:700; text-transform:uppercase; letter-spacing:0.05em; color:var(--gold); text-decoration:none; border:1px solid rgba(200,152,48,0.45); border-radius:999px; padding:0.1rem 0.45rem; }
+    table.hist td.id a.hist-pdf:hover { background:rgba(200,152,48,0.14); }
     .hist-foot { color:var(--muted); font-size:0.78rem; margin-top:0.6rem; }
   </style>
 </head>
@@ -325,6 +327,15 @@
       payBtn.appendChild(el('i', 'fa-solid fa-credit-card'));
       payBtn.appendChild(document.createTextNode(' Pay ' + TESInvoices.formatUSD(inv.amount)));
       actions.appendChild(payBtn);
+      if (inv.hasPdf) {
+        var pdfA = el('a', 'btn btn-ghost');
+        pdfA.href = TESInvoices.pdfUrl(inv);
+        pdfA.target = '_blank';
+        pdfA.rel = 'noopener';
+        pdfA.appendChild(el('i', 'fa-solid fa-file-pdf'));
+        pdfA.appendChild(document.createTextNode(' Invoice PDF'));
+        actions.appendChild(pdfA);
+      }
       card.appendChild(actions);
 
       var panel = el('div', 'pay-panel');
@@ -384,7 +395,17 @@
       var tbody = el('tbody');
       rows.forEach(function (inv) {
         var tr = el('tr');
-        tr.appendChild(el('td', 'id', inv.number || '—'));
+        var idCell = el('td', 'id', inv.number || '—');
+        if (inv.hasPdf) {
+          idCell.appendChild(document.createTextNode(' '));
+          var h = el('a', 'hist-pdf', 'PDF');
+          h.href = TESInvoices.pdfUrl(inv);
+          h.target = '_blank';
+          h.rel = 'noopener';
+          h.setAttribute('aria-label', 'Invoice ' + (inv.number || '') + ' PDF');
+          idCell.appendChild(h);
+        }
+        tr.appendChild(idCell);
         tr.appendChild(el('td', null, inv.service || '—'));
         tr.appendChild(el('td', null, inv.paidDate ? TESInvoices.formatDate(inv.paidDate) : '—'));
         tr.appendChild(el('td', 'num', TESInvoices.formatUSD(inv.amount)));

@@ -23,7 +23,7 @@
   var API = '/portal-api';
 
   /* Set when the page is opened from a signed pay link (?t=...). That token is
-     the authorisation for exactly one invoice, so it is what payment calls send. */
+     the authorization for exactly one invoice, so it is what payment calls send. */
   var payToken = null;
 
   /* Column aliases. The sheet's header row supplies the JSON keys, so accept
@@ -159,6 +159,9 @@
       due:         inv.due_at || null,
       paidDate:    inv.paid_at || null,
       overdue:     !!inv.overdue,
+      /* A PDF copy is on file. Fetched by invoice id (or by the pay token on the
+         public pay page), never by a storage key. */
+      hasPdf:      !!inv.has_pdf,
       currency:    inv.currency || 'USD',
       ref:         '',
       /* Billed-to. Safe on the pay-link path: the recipient already holds this
@@ -197,6 +200,13 @@
       if (!d || !d.ok) return { ok: false, error: (d && d.error) || 'not_found' };
       return { ok: true, invoice: fromApi(d.invoice) };
     });
+  }
+
+  /* Where the PDF copy of an invoice is served from. On the pay page the signed
+     token is the authorization; in the portal it is the session cookie. */
+  function pdfUrl(inv) {
+    if (payToken) return API + '/pay/invoice/pdf?t=' + encodeURIComponent(payToken);
+    return API + '/invoices/' + encodeURIComponent(inv.id) + '/pdf';
   }
 
   /* Legacy name kept so pay_invoice.html keeps working. */
@@ -240,7 +250,7 @@
     }, 150);
   }
 
-  /* Identifies the invoice to the server. A pay link authorises exactly one
+  /* Identifies the invoice to the server. A pay link authorizes exactly one
      invoice; otherwise the session decides what the caller may pay. Note that
      no AMOUNT is sent -- the server reads it from the database. That is the
      whole point: the old flow built the order in the browser, so a modified
@@ -314,6 +324,7 @@
     fetchSummary: fetchSummary,
     lookup: lookup,
     lookupFromPayLink: lookupFromPayLink,
+    pdfUrl: pdfUrl,
     notifyPaid: notifyPaid,
     getIdentity: getIdentity,
     mountPayPal: mountPayPal,
