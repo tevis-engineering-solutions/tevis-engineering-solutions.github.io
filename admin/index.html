@@ -2299,11 +2299,11 @@
 
         var top = el('div', 'cust-top');
         top.appendChild(el('span', 'cust-name', c.name || c.company || c.email || '(no name)'));
-        // The badge is the whole point of the row for an unlinked person: it says
-        // why their records are invisible everywhere else in the console.
+        // Only badges that mean something on a list: an unlinked person (why their
+        // records are invisible elsewhere) and a suspended account. The software plan is
+        // on the file itself, not here.
         if (!c.account_id) top.appendChild(badge('No account', '#c89830'));
         else if (c.status && c.status !== 'active') top.appendChild(badge(acctState(c.status), '#ef4444'));
-        else if (c.plan) top.appendChild(badge(c.plan, '#4fa2ff'));
         b.appendChild(top);
 
         b.appendChild(el('div', 'cust-sub',
