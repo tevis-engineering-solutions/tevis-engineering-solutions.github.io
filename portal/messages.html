@@ -3,10 +3,10 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Billing | TES Customer Portal</title>
-  <meta name="description" content="Pay invoices and manage your Tevis Engineering Solutions subscription and billing.">
+  <title>Messages | TES Customer Portal</title>
+  <meta name="description" content="Your direct message thread with Tevis Engineering Solutions.">
   <meta name="robots" content="noindex, nofollow">
-  <link rel="canonical" href="https://tevisengineering.com/portal/billing.html">
+  <link rel="canonical" href="https://tevisengineering.com/portal/messages.html">
   <link rel="icon" type="image/png" href="../assets/favicon.png">
   <meta http-equiv="X-Content-Type-Options" content="nosniff">
   <meta name="referrer" content="strict-origin-when-cross-origin">
@@ -14,7 +14,6 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Montserrat:wght@500;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
-  <script src="https://www.paypal.com/sdk/js?client-id=Ab_dnVs8tumZ0eMkFfSuR9eR5ut5xYKPmEbgCRODAyopaxWByLowbaOpY9pgZJKAa_nliulcrbPBQ9IC&currency=USD&components=buttons&intent=capture" defer></script>
   <style>
     :root { --bg:#0d1710; --card:#142019; --card-2:#1c2e22; --line:#2c4232; --text:#e4ede5; --muted:#8aa48d; --green:#4aac65; --gold:#c89830; }
     * { box-sizing:border-box; margin:0; padding:0; }
@@ -129,6 +128,25 @@
     table.hist td.id a.hist-pdf { margin-left:0.4rem; font-family:"Montserrat",sans-serif; font-size:0.62rem; font-weight:700; text-transform:uppercase; letter-spacing:0.05em; color:var(--gold); text-decoration:none; border:1px solid rgba(200,152,48,0.45); border-radius:999px; padding:0.1rem 0.45rem; }
     table.hist td.id a.hist-pdf:hover { background:rgba(200,152,48,0.14); }
     .hist-foot { color:var(--muted); font-size:0.78rem; margin-top:0.6rem; }
+    /* --- messages --- */
+    .thread { display:flex; flex-direction:column; gap:0.7rem; margin-bottom:1.2rem; }
+    .bubble { max-width:min(720px, 92%); border-radius:14px; padding:0.8rem 1rem; border:1px solid var(--line); background:var(--card); }
+    .bubble.me { align-self:flex-end; background:rgba(74,172,101,0.09); border-color:rgba(74,172,101,0.3); }
+    .bubble.them { align-self:flex-start; }
+    .b-meta { font-family:"Montserrat",sans-serif; font-size:0.66rem; text-transform:uppercase; letter-spacing:0.06em; color:var(--muted); margin-bottom:0.35rem; }
+    .b-body { font-size:0.92rem; color:#e4ede5; white-space:pre-wrap; word-wrap:break-word; line-height:1.55; }
+    .b-files { display:flex; flex-wrap:wrap; gap:0.4rem; margin-top:0.55rem; }
+    .b-file { display:inline-flex; align-items:center; gap:0.3rem; font-size:0.74rem; padding:0.25rem 0.6rem; border-radius:999px; border:1px solid rgba(200,152,48,0.45); color:var(--gold); text-decoration:none; background:var(--bg); }
+    .b-file:hover { background:rgba(200,152,48,0.14); }
+    .b-file .sz { color:var(--muted); }
+    .composer { background:var(--card); border:1px solid var(--line); border-radius:14px; padding:1rem 1.1rem; }
+    .composer textarea { width:100%; padding:0.7rem 0.8rem; border-radius:10px; border:1px solid var(--line); background:var(--bg); color:var(--text); font-family:"Inter",sans-serif; font-size:0.92rem; line-height:1.5; resize:vertical; }
+    .composer textarea:focus { outline:none; border-color:var(--green); }
+    .composer-tools { display:flex; flex-wrap:wrap; gap:0.7rem; align-items:center; justify-content:space-between; margin-top:0.7rem; }
+    .filepick { display:inline-flex; align-items:center; gap:0.4rem; font-size:0.82rem; color:#cfe0d2; cursor:pointer; }
+    .filepick input { position:absolute; width:1px; height:1px; opacity:0; }
+    .filepick i { color:var(--gold); }
+    .sr-only { position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap; }
     .ptab { position:relative; }
     .pdot { position:absolute; top:0.7rem; right:0.35rem; width:8px; height:8px; border-radius:50%; background:var(--gold); box-shadow:0 0 0 2px var(--bg); }
     .pannounce { max-width:1200px; margin:0.9rem auto 0; padding:0 5%; }
@@ -160,9 +178,9 @@
     <div class="ptabs-inner">
       <a class="ptab" href="index.html"><i class="fa-solid fa-gauge-high"></i> Dashboard</a>
       <a class="ptab" href="software.html"><i class="fa-solid fa-cubes"></i> My Software</a>
-      <a class="ptab active" href="billing.html"><i class="fa-solid fa-credit-card"></i> Billing</a>
+      <a class="ptab" href="billing.html"><i class="fa-solid fa-credit-card"></i> Billing</a>
       <a class="ptab" href="tickets.html"><i class="fa-solid fa-headset"></i> Support</a>
-      <a class="ptab" href="messages.html"><i class="fa-solid fa-comments"></i> Messages</a>
+      <a class="ptab active" href="messages.html"><i class="fa-solid fa-comments"></i> Messages</a>
       <a class="ptab" href="documents.html"><i class="fa-solid fa-folder-open"></i> Documents</a>
       <a class="ptab" href="equipment.html"><i class="fa-solid fa-laptop"></i> Equipment</a>
       <a class="ptab" href="account.html"><i class="fa-solid fa-user-gear"></i> Account</a>
@@ -206,61 +224,23 @@
 
   <main class="pmain">
     <div class="phead">
-      <h1>Billing</h1>
-      <p id="billingIntro">Invoices billed to your account, ready to pay by card or PayPal.</p>
+      <h1>Messages</h1>
+      <p id="msgIntro">A direct line to Tevis Engineering for anything that is not a ticket. We reply here and you get an email when we do.</p>
     </div>
 
-    <div class="sumgrid" id="summary" hidden>
-      <div class="sumtile due">
-        <div class="lab">Balance due</div>
-        <div class="val" id="sumDue">$0.00</div>
-        <div class="sub" id="sumDueSub">Nothing outstanding</div>
-      </div>
-      <div class="sumtile">
-        <div class="lab">Open invoices</div>
-        <div class="val" id="sumOpen">0</div>
-        <div class="sub" id="sumOpenSub">All caught up</div>
-      </div>
-      <div class="sumtile">
-        <div class="lab">Last payment</div>
-        <div class="val" id="sumLast">&mdash;</div>
-        <div class="sub" id="sumLastSub">No payments on file</div>
-      </div>
-    </div>
+    <div class="state" id="stateBox"><span class="spin"></span><div><b>Loading your messages&hellip;</b>One moment.</div></div>
 
-    <div id="stateBox" class="state" role="status">
-      <span class="spin" aria-hidden="true"></span>
-      <div><b>Loading your invoices&hellip;</b>Checking the billing records tied to your sign-in email.</div>
-    </div>
+    <div class="thread" id="thread" hidden></div>
 
-    <h2 class="sec-title" id="openHead" hidden>Open invoices <span class="count" id="openCount"></span></h2>
-    <div id="openList"></div>
-
-    <h2 class="sec-title" id="histHead" hidden>Payment history <span class="count" id="histCount"></span></h2>
-    <div id="histBox"></div>
-
-    <h2 class="sec-title">More billing options</h2>
-    <div class="pgrid">
-      <div class="pcard feat">
-        <div class="ic"><i class="fa-solid fa-file-invoice-dollar"></i></div>
-        <h2>Invoice not listed?</h2>
-        <p>An invoice billed to a different email &mdash; a one-off project, say &mdash; is paid from the secure payment link in that invoice email. It opens without signing in.</p>
-        <a class="btn btn-primary" href="mailto:billing@tevisengineering.com?subject=Payment%20link%20request"><i class="fa-solid fa-envelope"></i> Request a Payment Link</a>
+    <section class="composer" id="composer" hidden>
+      <label for="msgBody" class="sr-only">Your message</label>
+      <textarea id="msgBody" rows="4" placeholder="Write to us&hellip;"></textarea>
+      <div class="composer-tools">
+        <label class="filepick"><input type="file" id="msgFiles" multiple accept=".pdf,.png,.jpg,.jpeg,.gif,.webp,.txt,.csv,.docx,.xlsx,.pptx,.zip"><i class="fa-solid fa-paperclip"></i> Attach files <span id="msgPicked"></span></label>
+        <button type="button" class="btn btn-primary" id="msgSend"><i class="fa-solid fa-paper-plane"></i> Send</button>
       </div>
-      <div class="pcard">
-        <div class="ic"><i class="fa-solid fa-arrows-rotate"></i></div>
-        <h2>Subscription</h2>
-        <p>Change your plan, add counties or agencies, or update your billing cadence for a software subscription.</p>
-        <span class="pill muted">No active subscription</span>
-        <a class="btn btn-ghost" href="../software.html"><i class="fa-solid fa-laptop-code"></i> View Plans</a>
-      </div>
-      <div class="pcard">
-        <div class="ic"><i class="fa-solid fa-headset"></i></div>
-        <h2>Billing support</h2>
-        <p>A question about a charge, invoice, or receipt? Reach billing directly and we'll sort it out.</p>
-        <a class="btn btn-ghost" href="../pay_invoice.html#billing-support"><i class="fa-solid fa-envelope"></i> Contact Billing</a>
-      </div>
-    </div>
+      <p class="hist-foot">PDFs, images, text and office files up to 10 MB each, five at a time. For a fault or a request with a deadline, <a href="tickets.html">open a ticket</a> so it gets a response time.</p>
+    </section>
   </main>
 
   <footer class="pfoot">
@@ -272,356 +252,94 @@
   <script>
   (function () {
     'use strict';
-
-    var PENDING_KEY = 'tes_invoice_pending_v1';
-
+    var API = '/portal-api';
     var stateBox = document.getElementById('stateBox');
-    var summary  = document.getElementById('summary');
-    var openHead = document.getElementById('openHead');
-    var openList = document.getElementById('openList');
-    var histHead = document.getElementById('histHead');
-    var histBox  = document.getElementById('histBox');
+    var threadEl = document.getElementById('thread');
+    var composer = document.getElementById('composer');
+    var bodyEl = document.getElementById('msgBody');
+    var filesEl = document.getElementById('msgFiles');
+    var pickedEl = document.getElementById('msgPicked');
+    var sendBtn = document.getElementById('msgSend');
 
-    /* PayPal captures instantly, but the sheet only flips to Paid when the
-       Apps Script write-back runs (or Tyler marks it by hand). Remember the
-       capture locally so the invoice stops showing as Due in the meantime and
-       doesn't get paid twice. */
-    function readPending() {
-      try { return JSON.parse(localStorage.getItem(PENDING_KEY) || '{}') || {}; }
-      catch (e) { return {}; }
+    function el(tag, cls, text) { var n = document.createElement(tag); if (cls) n.className = cls; if (text != null) n.textContent = text; return n; }
+    function requireSession(id) { if (!id || !id.email) { location.replace('../login.html'); return false; } return true; }
+    function api(path, body) {
+      var o = { credentials: 'same-origin' };
+      if (body !== undefined) { o.method = 'POST'; o.headers = { 'content-type': 'application/json' }; o.body = JSON.stringify(body); }
+      return fetch(API + path, o).then(function (r) { return r.json().catch(function () { return { ok: false }; }); });
     }
-    function markPending(invoiceId, orderId) {
-      try {
-        var p = readPending();
-        p[String(invoiceId).toLowerCase()] = { order: orderId, at: Date.now() };
-        localStorage.setItem(PENDING_KEY, JSON.stringify(p));
-      } catch (e) { /* private mode - badge just won't persist */ }
+    function showState(cls, icon, title, body) {
+      stateBox.hidden = false; stateBox.className = 'state' + (cls ? ' ' + cls : ''); stateBox.textContent = '';
+      stateBox.appendChild(el('i', icon)); var d = el('div'); d.appendChild(el('b', null, title)); d.appendChild(document.createTextNode(body || '')); stateBox.appendChild(d);
     }
-    function clearPending(ids) {
-      try {
-        var p = readPending(), changed = false;
-        ids.forEach(function (id) {
-          var k = String(id).toLowerCase();
-          if (p[k]) { delete p[k]; changed = true; }
-        });
-        if (changed) localStorage.setItem(PENDING_KEY, JSON.stringify(p));
-      } catch (e) {}
+    function fmt(ts) { return new Date(ts * 1000).toLocaleString('en-US', { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' }); }
+    function size(b) { return b < 1048576 ? Math.max(1, Math.round(b / 1024)) + ' KB' : (b / 1048576).toFixed(1) + ' MB'; }
+    function readAll(files) {
+      return Promise.all(Array.prototype.slice.call(files || []).slice(0, 5).map(function (f) {
+        if (f.size > 10 * 1024 * 1024) return Promise.reject(new Error(f.name + ' is over 10 MB'));
+        return new Promise(function (res, rej) { var r = new FileReader(); r.onerror = function () { rej(new Error('Could not read ' + f.name)); }; r.onload = function () { res({ filename: f.name, data: String(r.result).replace(/^data:[^;]*;base64,/, ''), content_type: f.type || '' }); }; r.readAsDataURL(f); });
+      }));
     }
 
-    function setState(html, bad) {
-      stateBox.hidden = false;
-      stateBox.className = 'state' + (bad ? ' bad' : '');
-      stateBox.innerHTML = html;
-    }
-
-    function el(tag, cls, text) {
-      var n = document.createElement(tag);
-      if (cls) n.className = cls;
-      if (text != null) n.textContent = text;
-      return n;
-    }
-
-    function metaLine(inv) {
-      var wrap = el('div', 'inv-meta');
-      if (inv.service) wrap.appendChild(el('span', null, inv.service));
-      if (inv.issued)  wrap.appendChild(el('span', null, 'Issued ' + TESInvoices.formatDate(inv.issued)));
-      if (inv.due)     wrap.appendChild(el('span', null, 'Due ' + TESInvoices.formatDate(inv.due)));
-      return wrap.childNodes.length ? wrap : null;
-    }
-
-    function renderOpenInvoice(inv, pending) {
-      var card = el('div', 'inv open');
-      var top  = el('div', 'inv-top');
-
-      var left = el('div');
-      left.appendChild(el('div', 'inv-id', inv.number || 'Invoice'));
-      var m = metaLine(inv);
-      if (m) left.appendChild(m);
-      top.appendChild(left);
-      top.appendChild(el('div', 'inv-spacer'));
-
-      var right = el('div', 'inv-right');
-      right.appendChild(el('div', 'inv-amt', TESInvoices.formatUSD(inv.amount)));
-      var overdue = TESInvoices.isOverdue(inv);
-      var badge = pending
-        ? el('span', 'badge pending', 'Payment submitted')
-        : el('span', 'badge ' + (overdue ? 'late' : 'due'), overdue ? 'Past due' : 'Due');
-      right.appendChild(badge);
-      top.appendChild(right);
-      card.appendChild(top);
-
-      if (inv.description) card.appendChild(el('div', 'inv-desc', inv.description));
-
-      if (pending) {
-        var note = el('div', 'pay-note');
-        note.style.marginTop = '0.9rem';
-        note.textContent = 'We received your payment (PayPal order ' + pending.order +
-          '). This invoice clears once the payment posts, usually within one business day.';
-        card.appendChild(note);
-        return card;
-      }
-
-      if (inv.amount === null || inv.amount <= 0) {
-        var bad = el('div', 'pay-note');
-        bad.style.marginTop = '0.9rem';
-        bad.textContent = 'This invoice has no payable amount on file. Email billing@tevisengineering.com and we will correct it.';
-        card.appendChild(bad);
-        return card;
-      }
-
-      var actions = el('div', 'inv-actions');
-      var payBtn = el('button', 'btn btn-primary');
-      payBtn.type = 'button';
-      payBtn.appendChild(el('i', 'fa-solid fa-credit-card'));
-      payBtn.appendChild(document.createTextNode(' Pay ' + TESInvoices.formatUSD(inv.amount)));
-      actions.appendChild(payBtn);
-      if (inv.hasPdf) {
-        var pdfA = el('a', 'btn btn-ghost');
-        pdfA.href = TESInvoices.pdfUrl(inv);
-        pdfA.target = '_blank';
-        pdfA.rel = 'noopener';
-        pdfA.appendChild(el('i', 'fa-solid fa-file-pdf'));
-        pdfA.appendChild(document.createTextNode(' Invoice PDF'));
-        actions.appendChild(pdfA);
-      }
-      card.appendChild(actions);
-
-      var panel = el('div', 'pay-panel');
-      panel.appendChild(el('p', 'pay-note', 'Pay by card or PayPal. PayPal emails your receipt immediately.'));
-      var box = el('div', 'pp-box');
-      panel.appendChild(box);
-      card.appendChild(panel);
-
-      var mounted = false;
-      payBtn.addEventListener('click', function () {
-        if (panel.classList.contains('open')) { panel.classList.remove('open'); return; }
-        panel.classList.add('open');
-        if (mounted) return;
-        mounted = true;
-        TESInvoices.mountPayPal(box, inv, {
-          onPaid: function (orderId, payerName) {
-            markPending(inv.number, orderId);
-            var ok = el('div', 'paid-ok');
-            ok.appendChild(el('div', 'tick', '✓'));
-            ok.appendChild(el('b', null, 'Payment complete'));
-            ok.appendChild(el('p', null,
-              (payerName ? 'Thank you, ' + payerName + '. ' : 'Thank you. ') +
-              'Your payment of ' + TESInvoices.formatUSD(inv.amount) + ' for ' +
-              (inv.number || 'this invoice') + ' has been received.'));
-            var ref = el('p');
-            ref.appendChild(el('code', null, 'PayPal order ' + orderId));
-            ok.appendChild(ref);
-            card.classList.remove('open');
-            panel.innerHTML = '';
-            panel.appendChild(ok);
-            actions.remove();
-            badge.className = 'badge pending';
-            badge.textContent = 'Payment submitted';
-          },
-          onError: function () {
-            box.innerHTML = '';
-            box.appendChild(el('p', 'err-msg',
-              'Payment could not be started. Try again, or email billing@tevisengineering.com.'));
-          }
-        });
-      });
-
-      return card;
-    }
-
-    function renderHistory(rows) {
-      var wrap = el('div', 'hist-wrap');
-      var table = el('table', 'hist');
-      var thead = el('thead');
-      var hr = el('tr');
-      ['Invoice', 'Service', 'Paid', 'Amount', 'Status'].forEach(function (h) {
-        hr.appendChild(el('th', null, h));
-      });
-      thead.appendChild(hr);
-      table.appendChild(thead);
-
-      var tbody = el('tbody');
-      rows.forEach(function (inv) {
-        var tr = el('tr');
-        var idCell = el('td', 'id', inv.number || '—');
-        if (inv.hasPdf) {
-          idCell.appendChild(document.createTextNode(' '));
-          var h = el('a', 'hist-pdf', 'PDF');
-          h.href = TESInvoices.pdfUrl(inv);
-          h.target = '_blank';
-          h.rel = 'noopener';
-          h.setAttribute('aria-label', 'Invoice ' + (inv.number || '') + ' PDF');
-          idCell.appendChild(h);
+    function render(d) {
+      threadEl.textContent = '';
+      threadEl.hidden = false; composer.hidden = false; stateBox.hidden = true;
+      if (d.conversation.holder_type === 'org' && d.conversation.holder_name) document.getElementById('msgIntro').textContent = 'The shared thread for ' + d.conversation.holder_name + '. Everyone on the account sees it, and we reply here.';
+      if (!d.messages.length) { threadEl.appendChild(el('div', 'empty-row', 'No messages yet. Say hello below.')); return; }
+      d.messages.forEach(function (m) {
+        var b = el('div', 'bubble ' + (m.author_type === 'staff' ? 'them' : 'me'));
+        b.appendChild(el('div', 'b-meta', (m.author_type === 'staff' ? 'Tevis Engineering' : (m.author || 'You')) + ' · ' + fmt(m.created_at)));
+        b.appendChild(el('div', 'b-body', m.body));
+        if (m.attachments && m.attachments.length) {
+          var fl = el('div', 'b-files');
+          m.attachments.forEach(function (f) { var a = el('a', 'b-file'); a.href = API + '/attachments/' + f.id; a.target = '_blank'; a.rel = 'noopener'; a.appendChild(el('i', 'fa-solid fa-paperclip')); a.appendChild(document.createTextNode(' ' + f.filename + ' ')); a.appendChild(el('span', 'sz', size(f.size_bytes))); fl.appendChild(a); });
+          b.appendChild(fl);
         }
-        tr.appendChild(idCell);
-        tr.appendChild(el('td', null, inv.service || '—'));
-        tr.appendChild(el('td', null, inv.paidDate ? TESInvoices.formatDate(inv.paidDate) : '—'));
-        tr.appendChild(el('td', 'num', TESInvoices.formatUSD(inv.amount)));
-        var st = el('td');
-        st.appendChild(el('span', 'badge paid', 'Paid'));
-        tr.appendChild(st);
-        tbody.appendChild(tr);
+        threadEl.appendChild(b);
       });
-      table.appendChild(tbody);
-      wrap.appendChild(table);
-      return wrap;
+      threadEl.lastChild.scrollIntoView({ block: 'nearest' });
+      if (d.conversation.unread) api('/messages/read', {});
     }
 
-    function renderSummary(open, paid, pending) {
-      var due = 0, unpaidCount = 0;
-      open.forEach(function (inv) {
-        if (pending[String(inv.number).toLowerCase()]) return;
-        due += (inv.amount || 0);
-        unpaidCount++;
+    function load() {
+      return api('/messages').then(function (d) {
+        if (!d || !d.ok) throw new Error('unavailable');
+        render(d);
       });
-
-      document.getElementById('sumDue').textContent = TESInvoices.formatUSD(due);
-      document.getElementById('sumDueSub').textContent =
-        due > 0 ? 'Across ' + unpaidCount + ' invoice' + (unpaidCount === 1 ? '' : 's') : 'Nothing outstanding';
-
-      document.getElementById('sumOpen').textContent = String(unpaidCount);
-      var overdue = open.filter(function (inv) {
-        return !pending[String(inv.number).toLowerCase()] && TESInvoices.isOverdue(inv);
-      }).length;
-      document.getElementById('sumOpenSub').textContent =
-        overdue > 0 ? overdue + ' past due' : (unpaidCount ? 'None past due' : 'All caught up');
-
-      var last = paid.slice().sort(function (a, b) {
-        return (TESInvoices.dateValue(b.paidDate) || 0) - (TESInvoices.dateValue(a.paidDate) || 0);
-      })[0];
-      document.getElementById('sumLast').textContent = last ? TESInvoices.formatUSD(last.amount) : '—';
-      document.getElementById('sumLastSub').textContent =
-        last ? (last.paidDate ? TESInvoices.formatDate(last.paidDate) : (last.number || 'On file'))
-             : 'No payments on file';
-
-      summary.hidden = false;
     }
 
-    function render(invoices, email) {
-      var open = invoices.filter(function (i) { return !i.paid; });
-      var paid = invoices.filter(function (i) { return i.paid; });
-
-      // An invoice the sheet now reports as paid is settled - stop tracking it.
-      clearPending(paid.map(function (i) { return i.number; }));
-      var pending = readPending();
-
-      renderSummary(open, paid, pending);
-
-      openHead.hidden = false;
-      document.getElementById('openCount').textContent = open.length + ' total';
-      openList.innerHTML = '';
-      if (open.length) {
-        open.sort(function (a, b) {
-          return (TESInvoices.dateValue(a.due) || Infinity) - (TESInvoices.dateValue(b.due) || Infinity);
-        });
-        open.forEach(function (inv) {
-          openList.appendChild(renderOpenInvoice(inv, pending[String(inv.number).toLowerCase()]));
-        });
-      } else {
-        var e1 = el('div', 'empty-row');
-        e1.appendChild(el('i', 'fa-solid fa-circle-check'));
-        e1.appendChild(document.createTextNode('You have no open invoices. Nothing is due right now.'));
-        openList.appendChild(e1);
-      }
-
-      histHead.hidden = false;
-      document.getElementById('histCount').textContent = paid.length + ' paid';
-      histBox.innerHTML = '';
-      if (paid.length) {
-        histBox.appendChild(renderHistory(paid));
-        histBox.appendChild(el('p', 'hist-foot',
-          'PayPal emails a receipt at the time of payment. Need another copy? Email billing@tevisengineering.com.'));
-      } else {
-        var e2 = el('div', 'empty-row');
-        e2.appendChild(el('i', 'fa-solid fa-receipt'));
-        e2.appendChild(document.createTextNode('No paid invoices yet. Once an invoice is settled it moves here with its date and amount.'));
-        histBox.appendChild(e2);
-      }
-
-      document.getElementById('billingIntro').textContent =
-        'Invoices billed to ' + email + '. Pay by card or PayPal, no extra sign-in.';
-      stateBox.hidden = true;
-    }
-
-    function notLinked(email) {
-      setState(
-        '<i class="fa-solid fa-circle-info"></i><div><b>No invoices are linked to ' +
-        TESInvoices.escapeHtml(email) + ' yet.</b>' +
-        'If an invoice was sent to a different address, open the payment link from that invoice email ' +
-        'to pay it by number. To have future invoices appear here automatically, email ' +
-        '<a href="mailto:billing@tevisengineering.com">billing@tevisengineering.com</a> and we will link this address to your account.</div>'
-      );
-      summary.hidden = true;
-    }
-
-    function noIdentity() {
-      /* No session. Send them to sign in rather than showing a signed-out shell
-         that looks like a broken login. */
-      location.replace('../login.html');
-    }
-
-    function loadFailed() {
-      setState(
-        '<i class="fa-solid fa-triangle-exclamation"></i><div><b>Billing records are unavailable right now.</b>' +
-        'We could not reach the invoicing service. Try again in a few minutes, use ' +
-        'the payment link from your invoice email, or email ' +
-        '<a href="mailto:billing@tevisengineering.com">billing@tevisengineering.com</a>.</div>',
-        true
-      );
-    }
-
-    function applyIdentity(id) {
-      var email = id.email;
-      var display = id.name || email.split('@')[0];
-      var n = document.getElementById('acctName'),
-          e = document.getElementById('acctEmail'),
-          a = document.getElementById('acctAvatar');
-      if (n) n.textContent = display;
-      if (e) e.textContent = email;
-      if (a) a.textContent = display.replace(/[^A-Za-z]/g, '').slice(0, 2).toUpperCase() || 'TE';
-      return email;
-    }
-
-    // The Apps Script backend can take 30s to wake up. Say so rather than
-    // leaving a bare spinner that looks stuck.
-    var slowTimer = setTimeout(function () {
-      if (stateBox.hidden) return;
-      var msg = stateBox.querySelector('div');
-      if (msg) msg.lastChild.textContent =
-        'The invoicing service is waking up. This can take up to half a minute on the first load.';
-    }, 6000);
+    filesEl.addEventListener('change', function () { var n = filesEl.files ? filesEl.files.length : 0; pickedEl.textContent = n ? '(' + n + ')' : ''; });
+    sendBtn.addEventListener('click', function () {
+      var text = bodyEl.value.trim();
+      if (!text) { bodyEl.focus(); return; }
+      sendBtn.disabled = true;
+      readAll(filesEl.files).then(function (files) { return api('/messages', { message: text, files: files }); }).then(function (r) {
+        sendBtn.disabled = false;
+        if (!r || !r.ok) { showState('bad', 'fa-solid fa-triangle-exclamation', 'That did not send.', r && r.error === 'rate_limited' ? ' Please wait a few minutes and try again.' : ' Please try again.'); return; }
+        bodyEl.value = ''; filesEl.value = ''; pickedEl.textContent = '';
+        load().then(function () { if (r.refused && r.refused.length) showState('', 'fa-solid fa-circle-info', 'Sent, but ' + r.refused.length + ' file' + (r.refused.length === 1 ? ' was' : 's were') + ' not attached.', ' Allowed: PDF, images, text, and office files up to 10 MB.'); });
+      }, function (e) { sendBtn.disabled = false; showState('bad', 'fa-solid fa-triangle-exclamation', e.message || 'Could not read a file.', ''); });
+    });
 
     TESInvoices.getIdentity().then(function (id) {
-      if (!id || !id.email) { noIdentity(); return null; }
-      var email = applyIdentity(id);
-      return TESInvoices.fetchForEmail(email).then(function (invoices) {
-        if (!invoices.length) { notLinked(email); return; }
-        render(invoices, email);
-      });
-    }).catch(function (err) {
-      console.error('Billing load failed:', err);
-      loadFailed();
-    }).then(function () {
-      clearTimeout(slowTimer);
-    });
+      if (!requireSession(id)) return null;
+      var display = id.name || id.email.split('@')[0];
+      var n = document.getElementById('acctName'), e = document.getElementById('acctEmail'), a = document.getElementById('acctAvatar');
+      if (n) n.textContent = display; if (e) e.textContent = id.email;
+      if (a) a.textContent = display.replace(/[^A-Za-z]/g, '').slice(0, 2).toUpperCase() || 'TE';
+      return load();
+    }).catch(function () { showState('bad', 'fa-solid fa-triangle-exclamation', 'Could not load your messages.', ' Please refresh in a moment.'); });
   })();
   </script>
 
   <script>
-  // Sign-out now ends the app-level session in the portal Worker. Cloudflare Access
-  // no longer gates portal/* -- it is reserved for the admin console.
   (function () {
     var links = document.querySelectorAll('.psignout, .signout-link');
     Array.prototype.forEach.call(links, function (a) {
       a.setAttribute('href', '#');
       a.addEventListener('click', function (ev) {
         ev.preventDefault();
-        fetch('/portal-api/auth/logout', {
-          method: 'POST',
-          credentials: 'same-origin',
-          headers: { 'content-type': 'application/json' },
-          body: '{}'
-        }).then(function () { location.href = '../login.html'; });
+        fetch('/portal-api/auth/logout', { method: 'POST', credentials: 'same-origin', headers: { 'content-type': 'application/json' }, body: '{}' }).then(function () { location.href = '../login.html'; });
       });
     });
   })();

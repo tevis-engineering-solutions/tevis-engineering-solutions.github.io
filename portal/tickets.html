@@ -77,10 +77,34 @@
     .tk-empty i { display:block; font-size:1.5rem; color:#33513c; margin-bottom:0.4rem; }
     .thread-toggle { background:none; border:none; color:var(--green); cursor:pointer; padding:0.4rem 0; font:inherit; font-size:0.82rem; }
     .reply-box { width:100%; margin-top:0.5rem; }
-    .reply-send { margin-top:0.4rem; }
+    .reply-send { margin-top:0.4rem; min-height:44px; }
+    .tk-files { display:flex; flex-wrap:wrap; gap:0.35rem; margin-top:0.4rem; }
+    .tk-file { display:inline-flex; align-items:center; gap:0.3rem; font-size:0.72rem; padding:0.2rem 0.55rem; border-radius:999px; border:1px solid rgba(200,152,48,0.45); color:var(--gold); text-decoration:none; background:var(--bg); }
+    .tk-file:hover { background:rgba(200,152,48,0.14); }
+    .tk-unread { display:inline-block; width:8px; height:8px; border-radius:50%; background:var(--gold); margin-right:0.35rem; vertical-align:middle; }
+    .tk-actions { display:flex; flex-wrap:wrap; gap:0.5rem; align-items:center; margin-top:0.7rem; }
+    .tk-actions .btn { margin-top:0; padding:0.5rem 0.9rem; font-size:0.74rem; min-height:44px; }
+    .reply-tools { display:flex; flex-wrap:wrap; gap:0.6rem; align-items:center; margin-top:0.4rem; font-size:0.78rem; color:var(--muted); }
+    .reply-tools input[type="file"] { max-width:100%; font-size:0.76rem; }
+    .stars { display:inline-flex; gap:0.15rem; }
+    .stars button { background:none; border:0; color:var(--muted); font-size:1.5rem; cursor:pointer; padding:0 0.15rem; line-height:1; min-width:36px; min-height:44px; }
+    .stars button.on { color:var(--gold); }
+    .tk-closed { font-size:0.8rem; color:#9fd3ae; margin-top:0.5rem; }
+    .tk-closed b { color:var(--gold); letter-spacing:0.1em; }
+
     .pfoot { max-width:1200px; margin:0 auto; padding:1.5rem 5% 2.5rem; border-top:1px solid var(--line); color:var(--muted); font-size:0.8rem; display:flex; justify-content:space-between; flex-wrap:wrap; gap:0.5rem; }
     .pfoot a { color:var(--muted); text-decoration:none; }
     .pfoot a:hover { color:var(--green); }
+    .ptab { position:relative; }
+    .pdot { position:absolute; top:0.7rem; right:0.35rem; width:8px; height:8px; border-radius:50%; background:var(--gold); box-shadow:0 0 0 2px var(--bg); }
+    .pannounce { max-width:1200px; margin:0.9rem auto 0; padding:0 5%; }
+    .pann { display:flex; gap:0.8rem; align-items:flex-start; border:1px solid rgba(200,152,48,0.4); background:rgba(200,152,48,0.08); border-radius:12px; padding:0.7rem 0.9rem; margin-bottom:0.5rem; font-size:0.86rem; color:#e4ede5; }
+    .pann.maintenance { border-color:rgba(74,172,101,0.4); background:rgba(74,172,101,0.08); }
+    .pann.billing { border-color:rgba(214,120,90,0.4); background:rgba(214,120,90,0.08); }
+    .pann-t { flex:1 1 auto; min-width:0; line-height:1.5; }
+    .pann-t b { color:#fff; }
+    .pann-x { flex:0 0 auto; background:none; border:0; color:var(--muted); font-size:1.2rem; line-height:1; cursor:pointer; padding:0 0.2rem; }
+    .pann-x:hover { color:#fff; }
   </style>
 </head>
 <body>
@@ -104,10 +128,47 @@
       <a class="ptab" href="software.html"><i class="fa-solid fa-cubes"></i> My Software</a>
       <a class="ptab" href="billing.html"><i class="fa-solid fa-credit-card"></i> Billing</a>
       <a class="ptab active" href="tickets.html"><i class="fa-solid fa-headset"></i> Support</a>
+      <a class="ptab" href="messages.html"><i class="fa-solid fa-comments"></i> Messages</a>
+      <a class="ptab" href="documents.html"><i class="fa-solid fa-folder-open"></i> Documents</a>
       <a class="ptab" href="equipment.html"><i class="fa-solid fa-laptop"></i> Equipment</a>
       <a class="ptab" href="account.html"><i class="fa-solid fa-user-gear"></i> Account</a>
     </div>
   </nav>
+  <div class="pannounce" id="pAnnounce" hidden></div>
+  <script>
+  // Shared on every portal page: what is waiting on the customer (tab dots) and any
+  // live announcement. One extra /me call, which every page already makes once.
+  (function () {
+    function dot(href, n) {
+      var a = document.querySelector('.ptab[href="' + href + '"]');
+      if (!a || !n) return;
+      var d = document.createElement('span'); d.className = 'pdot'; d.setAttribute('aria-label', n + ' waiting'); a.appendChild(d);
+    }
+    fetch('/portal-api/me', { credentials: 'same-origin' }).then(function (r) { return r.ok ? r.json() : null; }).then(function (me) {
+      if (!me || !me.ok || !me.waiting) return;
+      dot('messages.html', me.waiting.messages); dot('tickets.html', me.waiting.tickets); dot('equipment.html', me.waiting.equipment); dot('billing.html', me.waiting.invoices_due);
+      if (!me.waiting.announcements) return;
+      return fetch('/portal-api/announcements', { credentials: 'same-origin' }).then(function (r) { return r.ok ? r.json() : null; }).then(function (d) {
+        if (!d || !d.ok || !d.announcements.length) return;
+        var box = document.getElementById('pAnnounce');
+        var seen = {}; try { seen = JSON.parse(localStorage.getItem('tes_ann_seen') || '{}'); } catch (e) { seen = {}; }
+        d.announcements.forEach(function (a) {
+          if (seen[a.id]) return;
+          var row = document.createElement('div'); row.className = 'pann ' + a.kind;
+          var t = document.createElement('div'); t.className = 'pann-t';
+          var b = document.createElement('b'); b.textContent = (a.kind === 'maintenance' ? 'Maintenance: ' : a.kind === 'billing' ? 'Billing: ' : '') + a.title; t.appendChild(b);
+          var p = document.createElement('span'); p.textContent = ' ' + a.body; t.appendChild(p);
+          row.appendChild(t);
+          var x = document.createElement('button'); x.type = 'button'; x.className = 'pann-x'; x.setAttribute('aria-label', 'Dismiss'); x.textContent = '×';
+          x.addEventListener('click', function () { row.remove(); seen[a.id] = 1; try { localStorage.setItem('tes_ann_seen', JSON.stringify(seen)); } catch (e) { /* private mode */ } if (!box.childNodes.length) box.hidden = true; });
+          row.appendChild(x);
+          box.appendChild(row);
+        });
+        if (box.childNodes.length) box.hidden = false;
+      });
+    }).catch(function () { /* the strip is a courtesy */ });
+  })();
+  </script>
 
   <main class="pmain">
     <div class="phead">
@@ -232,6 +293,35 @@
     // ---- ticket list ----------------------------------------------------
     var listEl = document.getElementById('ticketList');
 
+    function readAll(files) {
+      return Promise.all(Array.prototype.slice.call(files || []).slice(0, 5).map(function (f) {
+        if (f.size > 10 * 1024 * 1024) return Promise.reject(new Error(f.name + ' is over 10 MB'));
+        return new Promise(function (res, rej) {
+          var r = new FileReader();
+          r.onerror = function () { rej(new Error('Could not read ' + f.name)); };
+          r.onload = function () { res({ filename: f.name, data: String(r.result).replace(/^data:[^;]*;base64,/, ''), content_type: f.type || '' }); };
+          r.readAsDataURL(f);
+        });
+      }));
+    }
+
+    function fileChips(list) {
+      var w = el('div', 'tk-files');
+      (list || []).forEach(function (f) {
+        var a = el('a', 'tk-file'); a.href = API + '/attachments/' + f.id; a.target = '_blank'; a.rel = 'noopener';
+        a.appendChild(el('i', 'fa-solid fa-paperclip')); a.appendChild(document.createTextNode(' ' + f.filename));
+        w.appendChild(a);
+      });
+      return w;
+    }
+
+    function act(t, action, payload, done) {
+      api('/tickets/' + t.id + '/' + action, { method: 'POST', body: payload || {} }).then(function (r) {
+        if (!r || !r.ok) { alert(r && r.error === 'too_old' ? 'This ticket was resolved more than two weeks ago. Please open a new one and mention it.' : 'That did not go through. Please try again.'); return; }
+        done && done(r);
+      });
+    }
+
     function renderThread(box, t) {
       box.textContent = '';
       (t.comments || []).forEach(function (c) {
@@ -239,34 +329,89 @@
         m.appendChild(el('strong', null, (c.author_type === 'staff' ? 'TES' : 'You') + ' \u00b7 ' + fmt(c.created_at)));
         m.appendChild(document.createElement('br'));
         m.appendChild(document.createTextNode(c.body));
+        if (c.attachments && c.attachments.length) m.appendChild(fileChips(c.attachments));
         box.appendChild(m);
       });
+      if (t.status === 'Resolved') {
+        var cl = el('div', 'tk-closed');
+        cl.appendChild(document.createTextNode((t.closed_by === 'customer' ? 'You closed this' : 'Resolved') + (t.resolved_at ? ' on ' + fmt(t.resolved_at) : '') + (t.resolution ? '. ' + t.resolution : '.')));
+        if (t.rating) { cl.appendChild(document.createTextNode(' Your rating: ')); cl.appendChild(el('b', null, '\u2605'.repeat(t.rating) + '\u2606'.repeat(5 - t.rating))); }
+        box.appendChild(cl);
+        var acts = el('div', 'tk-actions');
+        if (!t.rating) {
+          var stars = el('div', 'stars'); stars.setAttribute('role', 'group'); stars.setAttribute('aria-label', 'Rate this ticket');
+          var picked = 0;
+          for (var i = 1; i <= 5; i++) (function (v) {
+            var b = el('button', null, '\u2605'); b.type = 'button'; b.setAttribute('aria-label', v + ' of 5');
+            b.addEventListener('click', function () {
+              picked = v;
+              Array.prototype.forEach.call(stars.children, function (x, k) { x.classList.toggle('on', k < v); });
+              var note = prompt('Anything to add? (optional)', '');
+              if (note === null) return;
+              act(t, 'rate', { rating: v, note: note }, function () { reload(); });
+            });
+            stars.appendChild(b);
+          })(i);
+          acts.appendChild(document.createTextNode('How did we do? '));
+          acts.appendChild(stars);
+        }
+        var re = el('button', 'btn btn-ghost', 'Reopen'); re.type = 'button';
+        re.addEventListener('click', function () {
+          var note = prompt('What is still wrong?', '');
+          if (note === null) return;
+          act(t, 'reopen', { note: note }, function () { reload(); });
+        });
+        acts.appendChild(re);
+        box.appendChild(acts);
+        return;
+      }
       var ta = document.createElement('textarea');
       ta.rows = 2;
       ta.placeholder = 'Add a reply...';
       ta.className = 'reply-box';
       ta.setAttribute('aria-label', 'Reply to ticket ' + (t.ticket_number || ''));
+      var tools = el('div', 'reply-tools');
+      var file = document.createElement('input'); file.type = 'file'; file.multiple = true;
+      file.accept = '.pdf,.png,.jpg,.jpeg,.gif,.webp,.txt,.csv,.docx,.xlsx,.pptx,.zip';
+      file.setAttribute('aria-label', 'Attach files');
+      tools.appendChild(file);
       var send = el('button', 'btn btn-primary reply-send', 'Send reply');
       send.type = 'button';
       send.addEventListener('click', function () {
         var msg = ta.value.trim();
         if (!msg) return;
         send.disabled = true;
-        api('/tickets/' + t.id + '/comments', { method: 'POST', body: { message: msg } })
-          .then(function (r) {
-            send.disabled = false;
-            if (!r.ok) return;
-            ta.value = '';
-            api('/tickets/' + t.id).then(function (d) { if (d.ok) renderThread(box, d.ticket); });
-          });
+        readAll(file.files).then(function (files) {
+          return api('/tickets/' + t.id + '/comments', { method: 'POST', body: { message: msg, files: files } });
+        }).then(function (r) {
+          send.disabled = false;
+          if (!r.ok) return;
+          ta.value = ''; file.value = '';
+          if (r.refused && r.refused.length) alert(r.refused.length + ' file(s) were not attached. Allowed: PDF, images, text and office files up to 10 MB.');
+          reload();
+        }, function (e) { send.disabled = false; alert(e.message); });
       });
-      box.appendChild(ta); box.appendChild(send);
+      var acts2 = el('div', 'tk-actions');
+      var close = el('button', 'btn btn-ghost', 'This is resolved'); close.type = 'button';
+      close.addEventListener('click', function () {
+        var note = prompt('Anything to note before we close it? (optional)', '');
+        if (note === null) return;
+        act(t, 'close', { note: note }, function () { reload(); });
+      });
+      acts2.appendChild(close);
+      box.appendChild(ta); box.appendChild(tools); box.appendChild(send); box.appendChild(acts2);
+      // Re-render this thread and this card's badges in place. Reloading the whole list
+      // would collapse the conversation the customer is looking at.
+      function reload() { api('/tickets/' + t.id).then(function (d) { if (!d.ok) return; renderThread(box, d.ticket); var card = box.parentNode, bs = card && card.querySelector('.tk-badges'); if (bs) { bs.textContent = ''; if (d.ticket.status) bs.appendChild(badge(d.ticket.status, STATUS[d.ticket.status] || '#8aa48d')); if (d.ticket.priority) bs.appendChild(badge(d.ticket.priority, PRIORITY[d.ticket.priority] || '#8aa48d')); } }); }
     }
 
     function card(t) {
       var d = el('div', 'tk');
       var top = el('div', 'tk-top');
-      top.appendChild(el('span', 'tk-id', t.ticket_number || ('#' + t.id)));
+      var idEl = el('span', 'tk-id');
+      if (t.customer_unread) idEl.appendChild(el('span', 'tk-unread'));
+      idEl.appendChild(document.createTextNode(t.ticket_number || ('#' + t.id)));
+      top.appendChild(idEl);
       var bs = el('span', 'tk-badges');
       if (t.status) bs.appendChild(badge(t.status, STATUS[t.status] || '#8aa48d'));
       if (t.priority) bs.appendChild(badge(t.priority, PRIORITY[t.priority] || '#8aa48d'));
@@ -285,7 +430,7 @@
       toggle.addEventListener('click', function () {
         if (box.childNodes.length) { box.textContent = ''; toggle.textContent = 'View conversation'; return; }
         toggle.textContent = 'Hide conversation';
-        api('/tickets/' + t.id).then(function (r) { if (r.ok) renderThread(box, r.ticket); });
+        api('/tickets/' + t.id).then(function (r) { if (r.ok) { renderThread(box, r.ticket); var dot = d.querySelector('.tk-unread'); if (dot) dot.remove(); } });
       });
       d.appendChild(toggle);
       d.appendChild(box);

@@ -128,6 +128,16 @@
     table.hist td.id a.hist-pdf { margin-left:0.4rem; font-family:"Montserrat",sans-serif; font-size:0.62rem; font-weight:700; text-transform:uppercase; letter-spacing:0.05em; color:var(--gold); text-decoration:none; border:1px solid rgba(200,152,48,0.45); border-radius:999px; padding:0.1rem 0.45rem; }
     table.hist td.id a.hist-pdf:hover { background:rgba(200,152,48,0.14); }
     .hist-foot { color:var(--muted); font-size:0.78rem; margin-top:0.6rem; }
+    .ptab { position:relative; }
+    .pdot { position:absolute; top:0.7rem; right:0.35rem; width:8px; height:8px; border-radius:50%; background:var(--gold); box-shadow:0 0 0 2px var(--bg); }
+    .pannounce { max-width:1200px; margin:0.9rem auto 0; padding:0 5%; }
+    .pann { display:flex; gap:0.8rem; align-items:flex-start; border:1px solid rgba(200,152,48,0.4); background:rgba(200,152,48,0.08); border-radius:12px; padding:0.7rem 0.9rem; margin-bottom:0.5rem; font-size:0.86rem; color:#e4ede5; }
+    .pann.maintenance { border-color:rgba(74,172,101,0.4); background:rgba(74,172,101,0.08); }
+    .pann.billing { border-color:rgba(214,120,90,0.4); background:rgba(214,120,90,0.08); }
+    .pann-t { flex:1 1 auto; min-width:0; line-height:1.5; }
+    .pann-t b { color:#fff; }
+    .pann-x { flex:0 0 auto; background:none; border:0; color:var(--muted); font-size:1.2rem; line-height:1; cursor:pointer; padding:0 0.2rem; }
+    .pann-x:hover { color:#fff; }
   </style>
 </head>
 <body>
@@ -151,10 +161,47 @@
       <a class="ptab" href="software.html"><i class="fa-solid fa-cubes"></i> My Software</a>
       <a class="ptab" href="billing.html"><i class="fa-solid fa-credit-card"></i> Billing</a>
       <a class="ptab" href="tickets.html"><i class="fa-solid fa-headset"></i> Support</a>
-      <a class="ptab" href="equipment.html"><i class="fa-solid fa-laptop"></i> Equipment</a>
+      <a class="ptab" href="messages.html"><i class="fa-solid fa-comments"></i> Messages</a>
+      <a class="ptab" href="documents.html"><i class="fa-solid fa-folder-open"></i> Documents</a>
+      <a class="ptab active" href="equipment.html"><i class="fa-solid fa-laptop"></i> Equipment</a>
       <a class="ptab" href="account.html"><i class="fa-solid fa-user-gear"></i> Account</a>
     </div>
   </nav>
+  <div class="pannounce" id="pAnnounce" hidden></div>
+  <script>
+  // Shared on every portal page: what is waiting on the customer (tab dots) and any
+  // live announcement. One extra /me call, which every page already makes once.
+  (function () {
+    function dot(href, n) {
+      var a = document.querySelector('.ptab[href="' + href + '"]');
+      if (!a || !n) return;
+      var d = document.createElement('span'); d.className = 'pdot'; d.setAttribute('aria-label', n + ' waiting'); a.appendChild(d);
+    }
+    fetch('/portal-api/me', { credentials: 'same-origin' }).then(function (r) { return r.ok ? r.json() : null; }).then(function (me) {
+      if (!me || !me.ok || !me.waiting) return;
+      dot('messages.html', me.waiting.messages); dot('tickets.html', me.waiting.tickets); dot('equipment.html', me.waiting.equipment); dot('billing.html', me.waiting.invoices_due);
+      if (!me.waiting.announcements) return;
+      return fetch('/portal-api/announcements', { credentials: 'same-origin' }).then(function (r) { return r.ok ? r.json() : null; }).then(function (d) {
+        if (!d || !d.ok || !d.announcements.length) return;
+        var box = document.getElementById('pAnnounce');
+        var seen = {}; try { seen = JSON.parse(localStorage.getItem('tes_ann_seen') || '{}'); } catch (e) { seen = {}; }
+        d.announcements.forEach(function (a) {
+          if (seen[a.id]) return;
+          var row = document.createElement('div'); row.className = 'pann ' + a.kind;
+          var t = document.createElement('div'); t.className = 'pann-t';
+          var b = document.createElement('b'); b.textContent = (a.kind === 'maintenance' ? 'Maintenance: ' : a.kind === 'billing' ? 'Billing: ' : '') + a.title; t.appendChild(b);
+          var p = document.createElement('span'); p.textContent = ' ' + a.body; t.appendChild(p);
+          row.appendChild(t);
+          var x = document.createElement('button'); x.type = 'button'; x.className = 'pann-x'; x.setAttribute('aria-label', 'Dismiss'); x.textContent = '×';
+          x.addEventListener('click', function () { row.remove(); seen[a.id] = 1; try { localStorage.setItem('tes_ann_seen', JSON.stringify(seen)); } catch (e) { /* private mode */ } if (!box.childNodes.length) box.hidden = true; });
+          row.appendChild(x);
+          box.appendChild(row);
+        });
+        if (box.childNodes.length) box.hidden = false;
+      });
+    }).catch(function () { /* the strip is a courtesy */ });
+  })();
+  </script>
 
   <main class="pmain">
     <div class="phead">

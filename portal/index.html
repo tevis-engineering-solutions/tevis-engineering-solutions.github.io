@@ -56,6 +56,10 @@
     .pill.gold { background:rgba(200,152,48,0.12); color:#e6c68a; border:1px solid rgba(200,152,48,0.35); }
     /* info banner */
     /* cards */
+    .pstrip { display:flex; flex-wrap:wrap; gap:0.5rem; margin-bottom:1.2rem; }
+    .pstrip a { display:inline-flex; align-items:center; gap:0.45rem; font-size:0.82rem; font-weight:600; color:#e6c68a; text-decoration:none; border:1px solid rgba(200,152,48,0.4); background:rgba(200,152,48,0.1); border-radius:999px; padding:0.45rem 0.9rem; }
+    .pstrip a:hover { border-color:var(--gold); }
+    .pstrip a i { color:var(--gold); }
     .pgrid { display:grid; grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); gap:1rem; }
     .pcard { background:var(--card); border:1px solid var(--line); border-radius:14px; padding:1.3rem; display:flex; flex-direction:column; }
     .pcard .ic { width:40px; height:40px; border-radius:11px; background:rgba(74,172,101,0.1); border:1px solid rgba(74,172,101,0.22); color:var(--green); display:grid; place-items:center; font-size:1.05rem; margin-bottom:0.9rem; }
@@ -72,6 +76,16 @@
     .pfoot { max-width:1200px; margin:0 auto; padding:1.5rem 5% 2.5rem; border-top:1px solid var(--line); color:var(--muted); font-size:0.8rem; display:flex; justify-content:space-between; flex-wrap:wrap; gap:0.5rem; }
     .pfoot a { color:var(--muted); text-decoration:none; }
     .pfoot a:hover { color:var(--green); }
+    .ptab { position:relative; }
+    .pdot { position:absolute; top:0.7rem; right:0.35rem; width:8px; height:8px; border-radius:50%; background:var(--gold); box-shadow:0 0 0 2px var(--bg); }
+    .pannounce { max-width:1200px; margin:0.9rem auto 0; padding:0 5%; }
+    .pann { display:flex; gap:0.8rem; align-items:flex-start; border:1px solid rgba(200,152,48,0.4); background:rgba(200,152,48,0.08); border-radius:12px; padding:0.7rem 0.9rem; margin-bottom:0.5rem; font-size:0.86rem; color:#e4ede5; }
+    .pann.maintenance { border-color:rgba(74,172,101,0.4); background:rgba(74,172,101,0.08); }
+    .pann.billing { border-color:rgba(214,120,90,0.4); background:rgba(214,120,90,0.08); }
+    .pann-t { flex:1 1 auto; min-width:0; line-height:1.5; }
+    .pann-t b { color:#fff; }
+    .pann-x { flex:0 0 auto; background:none; border:0; color:var(--muted); font-size:1.2rem; line-height:1; cursor:pointer; padding:0 0.2rem; }
+    .pann-x:hover { color:#fff; }
   </style>
 </head>
 <body>
@@ -98,10 +112,47 @@
       <a class="ptab" href="software.html"><i class="fa-solid fa-cubes"></i> My Software</a>
       <a class="ptab" href="billing.html"><i class="fa-solid fa-credit-card"></i> Billing</a>
       <a class="ptab" href="tickets.html"><i class="fa-solid fa-headset"></i> Support</a>
+      <a class="ptab" href="messages.html"><i class="fa-solid fa-comments"></i> Messages</a>
+      <a class="ptab" href="documents.html"><i class="fa-solid fa-folder-open"></i> Documents</a>
       <a class="ptab" href="equipment.html"><i class="fa-solid fa-laptop"></i> Equipment</a>
       <a class="ptab" href="account.html"><i class="fa-solid fa-user-gear"></i> Account</a>
     </div>
   </nav>
+  <div class="pannounce" id="pAnnounce" hidden></div>
+  <script>
+  // Shared on every portal page: what is waiting on the customer (tab dots) and any
+  // live announcement. One extra /me call, which every page already makes once.
+  (function () {
+    function dot(href, n) {
+      var a = document.querySelector('.ptab[href="' + href + '"]');
+      if (!a || !n) return;
+      var d = document.createElement('span'); d.className = 'pdot'; d.setAttribute('aria-label', n + ' waiting'); a.appendChild(d);
+    }
+    fetch('/portal-api/me', { credentials: 'same-origin' }).then(function (r) { return r.ok ? r.json() : null; }).then(function (me) {
+      if (!me || !me.ok || !me.waiting) return;
+      dot('messages.html', me.waiting.messages); dot('tickets.html', me.waiting.tickets); dot('equipment.html', me.waiting.equipment); dot('billing.html', me.waiting.invoices_due);
+      if (!me.waiting.announcements) return;
+      return fetch('/portal-api/announcements', { credentials: 'same-origin' }).then(function (r) { return r.ok ? r.json() : null; }).then(function (d) {
+        if (!d || !d.ok || !d.announcements.length) return;
+        var box = document.getElementById('pAnnounce');
+        var seen = {}; try { seen = JSON.parse(localStorage.getItem('tes_ann_seen') || '{}'); } catch (e) { seen = {}; }
+        d.announcements.forEach(function (a) {
+          if (seen[a.id]) return;
+          var row = document.createElement('div'); row.className = 'pann ' + a.kind;
+          var t = document.createElement('div'); t.className = 'pann-t';
+          var b = document.createElement('b'); b.textContent = (a.kind === 'maintenance' ? 'Maintenance: ' : a.kind === 'billing' ? 'Billing: ' : '') + a.title; t.appendChild(b);
+          var p = document.createElement('span'); p.textContent = ' ' + a.body; t.appendChild(p);
+          row.appendChild(t);
+          var x = document.createElement('button'); x.type = 'button'; x.className = 'pann-x'; x.setAttribute('aria-label', 'Dismiss'); x.textContent = '×';
+          x.addEventListener('click', function () { row.remove(); seen[a.id] = 1; try { localStorage.setItem('tes_ann_seen', JSON.stringify(seen)); } catch (e) { /* private mode */ } if (!box.childNodes.length) box.hidden = true; });
+          row.appendChild(x);
+          box.appendChild(row);
+        });
+        if (box.childNodes.length) box.hidden = false;
+      });
+    }).catch(function () { /* the strip is a courtesy */ });
+  })();
+  </script>
 
   <main class="pmain">
     <div class="phead">
@@ -109,7 +160,16 @@
       <p>Manage your TES software, subscriptions, billing, and support in one place.</p>
     </div>
 
+    <div class="pstrip" id="pStrip" hidden></div>
+
     <div class="pgrid">
+      <div class="pcard">
+        <div class="ic"><i class="fa-solid fa-comments"></i></div>
+        <h2>Messages</h2>
+        <p>A direct line to us for anything that is not a ticket. We reply here and by email.</p>
+        <div class="status"><span class="pill muted" id="messagesPill">Checking&hellip;</span></div>
+        <a class="plink" href="messages.html">Open Messages <i class="fa-solid fa-arrow-right"></i></a>
+      </div>
       <div class="pcard">
         <div class="ic"><i class="fa-solid fa-cubes"></i></div>
         <h2>My Software</h2>
@@ -263,6 +323,18 @@
         loadSoftware();
         loadProfile();
         loadEquipment();
+        // What is waiting on them, from the same /me the identity came from.
+        if (id.waiting) {
+          var w = id.waiting, strip = document.getElementById('pStrip');
+          var items = [];
+          if (w.messages) items.push(['messages.html', 'fa-comments', 'A message is waiting for you']);
+          if (w.tickets) items.push(['tickets.html', 'fa-headset', w.tickets + (w.tickets === 1 ? ' ticket has' : ' tickets have') + ' a new reply']);
+          if (w.invoices_due) items.push(['billing.html', 'fa-file-invoice-dollar', w.invoices_due + (w.invoices_due === 1 ? ' invoice is' : ' invoices are') + ' open']);
+          if (w.equipment) items.push(['equipment.html', 'fa-laptop', w.equipment + (w.equipment === 1 ? ' item' : ' items') + ' to confirm']);
+          items.forEach(function (it) { var a = document.createElement('a'); a.href = it[0]; var i = document.createElement('i'); i.className = 'fa-solid ' + it[1]; a.appendChild(i); a.appendChild(document.createTextNode(' ' + it[2])); strip.appendChild(a); });
+          strip.hidden = !items.length;
+          pill('messagesPill', w.messages ? 'gold' : 'ok', w.messages ? 'New message' : 'Nothing waiting');
+        }
 
         return TESInvoices.fetchForEmail(email).then(function (invoices) {
           var open = invoices.filter(function (inv) { return !inv.paid; });
