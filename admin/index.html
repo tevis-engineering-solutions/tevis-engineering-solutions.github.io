@@ -243,6 +243,15 @@
     .tile .warn { color:var(--gold); }
 
     .cust-sec { margin-bottom:0.9rem; }
+    /* The company line on a person's file. Dashed while the company is only a string
+       on their contact record, solid once it is a company RECORD they belong to. */
+    .co-link { margin-bottom:0.9rem; padding:0.6rem 0.75rem; border-radius:10px;
+      border:1px dashed rgba(200,152,48,0.45); background:rgba(200,152,48,0.05); }
+    .co-link.joined { border-style:solid; border-color:var(--line); background:var(--bg); }
+    .co-link p { font-size:0.82rem; color:var(--text); margin:0 0 0.15rem; }
+    .co-link .why { font-size:0.72rem; color:var(--muted); margin:0; line-height:1.45; }
+    .co-link .reply-row { margin-top:0.5rem; }
+    .co-link select { max-width:100%; }
     .cust-sec > h3 { font-family:"Montserrat",sans-serif; font-size:0.76rem; text-transform:uppercase; letter-spacing:0.05em; color:var(--muted); margin-bottom:0.4rem; }
     .row { width:100%; text-align:left; border:1px solid var(--line); border-radius:10px; background:var(--bg); padding:0.55rem 0.7rem; margin-bottom:0.35rem; color:inherit; font:inherit; display:flex; justify-content:space-between; gap:0.5rem; align-items:center; flex-wrap:wrap; }
     button.row { cursor:pointer; }
@@ -4313,13 +4322,20 @@
         c.profile.source === 'profile'
           ? (c.profile.updated_source === 'customer'
               ? 'Details entered by the customer in their portal'
-              : 'Details corrected by ' + (c.profile.updated_by || 'staff')) +
+              : c.profile.updated_source === 'document'
+                // They were created by a quote or an invoice, not by signing in.
+                ? 'Details read from the quote or invoice that created this customer'
+                : 'Details corrected by ' + (c.profile.updated_by || 'staff')) +
             (c.profile.updated_at ? ' on ' + fmt(c.profile.updated_at) : '')
           : c.profile.source === 'ticket'
             ? 'Details read from their most recent ticket. No profile saved yet.'
             : 'No name on file. They have never filed a ticket.'));
       wrap.appendChild(head);
 
+      // Their company, or the offer to make one. Directly under who they are, because
+      // it changes who gets billed for everything below it.
+      var coBox = companySection(c);
+      if (coBox) wrap.appendChild(coBox);
 
       // ---- the numbers ----
       var tiles = el('div', 'tiles');
@@ -4364,6 +4380,84 @@
       tabs.count('Equipment', (c.inventory || []).length);
 
       // ---- records that belong to nobody ----
+      // A person's company. Intake puts the company NAME on their contact record but
+      // never invents an organization, because "Acme Co" and "Acme Co." would become
+      // two of them and bill separately. So when the name is there and the record is
+      // not, this offers to make it -- once, deliberately, with a human looking.
+      function companySection(c) {
+        if (c.org) {
+          var j = el('div', 'co-link joined');
+          j.appendChild(el('p', null, 'Part of ' + c.org.name));
+          var open = el('button', null, 'Open the company');
+          open.type = 'button';
+          open.addEventListener('click', function () { openObject('org', c.org.id); });
+          var rowJ = el('div', 'reply-row');
+          rowJ.appendChild(open);
+          j.appendChild(rowJ);
+          return j;
+        }
+        var name = (c.profile && c.profile.company || '').trim();
+        if (!name) return null;
+
+        var box = el('div', 'co-link');
+        box.appendChild(el('p', null, 'Company on file: ' + name));
+        box.appendChild(el('p', 'why',
+          'That is text on their contact record, not a company yet. Making it one pools ' +
+          'their hours, invoices and tickets with the rest of the company.'));
+        var rowC = el('div', 'reply-row');
+
+        var mk = el('button', 'prim', 'Create "' + name + '"');
+        mk.type = 'button';
+        mk.addEventListener('click', function () {
+          if (!confirm('Create a company called "' + name + '" and put ' + c.account.email + ' in it?')) return;
+          mk.disabled = true;
+          api('/admin/orgs', { method: 'POST', body: { name: name } }).then(function (r) {
+            if (!r.ok || !r.id) { mk.disabled = false; return toast(r.error === 'missing_name' ? 'That company needs a name' : 'Could not create the company'); }
+            return api('/admin/orgs/' + r.id + '/members', { method: 'POST', body: { account_id: c.account.id } })
+              .then(function (m2) {
+                mk.disabled = false;
+                if (!m2.ok) return toast('Company created, but they were not added to it');
+                toast('Created ' + name);
+                openCustomer(c.account.id);
+              });
+          });
+        });
+        rowC.appendChild(mk);
+
+        // Or join one that already exists, which is the common case for a second
+        // person at a company we already work with.
+        var sel = document.createElement('select');
+        sel.setAttribute('aria-label', 'Add ' + c.account.email + ' to an existing company');
+        var ph = el('option', null, 'Add to an existing company…');
+        ph.value = '';
+        sel.appendChild(ph);
+        api('/admin/orgs').then(function (r) {
+          (r.ok ? r.orgs || [] : []).forEach(function (o) {
+            var op = el('option', null, o.name);
+            op.value = o.id;
+            sel.appendChild(op);
+          });
+        });
+        sel.addEventListener('change', function () {
+          var id = sel.value;
+          if (!id) return;
+          var label = sel.options[sel.selectedIndex].textContent;
+          sel.value = '';
+          if (!confirm('Add ' + c.account.email + ' to ' + label + '?')) return;
+          sel.disabled = true;
+          api('/admin/orgs/' + id + '/members', { method: 'POST', body: { account_id: c.account.id } })
+            .then(function (r) {
+              sel.disabled = false;
+              if (!r.ok) return toast(r.error === 'unknown_account' ? 'That account no longer exists' : 'Could not add them');
+              toast('Added to ' + label);
+              openCustomer(c.account.id);
+            });
+        });
+        rowC.appendChild(sel);
+        box.appendChild(rowC);
+        return box;
+      }
+
       // Deliberately near the top and gold-bordered: this is the fact the rest of
       // the console cannot show you, and it is invisible on the customer's own
       // dashboard too.
