@@ -271,6 +271,9 @@
     /* Action buttons dropped straight into a section. NOT clickable rows, which are
        <button class="row"> and must keep their row shape. */
     .cust-sec > button:not(.row) { font-family:"Montserrat",sans-serif; font-size:0.68rem; font-weight:700; text-transform:uppercase; letter-spacing:0.03em; padding:0.5rem 0.8rem; border-radius:999px; border:1px solid var(--line); background:var(--bg); color:var(--text); cursor:pointer; min-height:40px; margin-top:0.4rem; }
+    /* An action button sitting straight on top of the list it acts on reads as part of
+       the first row. Give it room, but only when something follows it. */
+    .cust-sec > button:not(.row):not(:last-child) { margin-bottom:0.75rem; }
     .cust-sec .row button { font-family:"Montserrat",sans-serif; font-size:0.66rem; font-weight:700; text-transform:uppercase; letter-spacing:0.03em; padding:0.35rem 0.7rem; border-radius:999px; border:1px solid var(--line); background:var(--bg); color:var(--text); cursor:pointer; min-height:36px; }
     .cust-sec > button:not(.row):hover, .cust-sec .row button:hover { border-color:var(--green); }
     .cust-sec > button.prim:not(.row) { background:linear-gradient(135deg,var(--gold),#e0b840); color:#0d1710; border-color:transparent; }
@@ -4309,12 +4312,27 @@
       // out loud when dispatching an on-site visit.
       if (c.profile.address) head.appendChild(el('div', 'who', c.profile.address));
 
+      // `plan` and `status` on an account are the software control plane's fields: a
+      // trial quota and whether a licence may activate. Every account carries them
+      // whether or not they have ever bought software, so on an IT-only customer they
+      // read as a product relationship that does not exist. Shown only when one does.
+      var hasSoftware = !!(
+        (c.licenses && c.licenses.length) ||
+        (c.subscriptions && c.subscriptions.length) ||
+        (c.trial_claims && c.trial_claims.length) ||
+        (c.subscribe_intents && c.subscribe_intents.length) ||
+        c.account.subscribed
+      );
       var badges = el('div', 'cust-badges');
-      badges.appendChild(badge(c.account.plan_label || c.account.plan, '#4fa2ff'));
-      badges.appendChild(badge(acctState(c.account.status),
-        c.account.status === 'active' ? '#22c55e' : c.account.status === 'past_due' ? '#c89830' : '#ef4444'));
+      if (hasSoftware) badges.appendChild(badge(c.account.plan_label || c.account.plan, '#4fa2ff'));
+      // A status that is NOT active is a warning worth showing either way -- it is what
+      // a suspended account looks like, and that is the thing you are chasing.
+      if (hasSoftware || c.account.status !== 'active') {
+        badges.appendChild(badge(acctState(c.account.status),
+          c.account.status === 'active' ? '#22c55e' : c.account.status === 'past_due' ? '#c89830' : '#ef4444'));
+      }
       if (c.account.subscribed) badges.appendChild(badge('PayPal sub', '#22c55e'));
-      head.appendChild(badges);
+      if (badges.childNodes.length) head.appendChild(badges);
 
       // Says whether the name above was typed by a human or guessed off a ticket,
       // rather than presenting the two as equally reliable.
@@ -4351,8 +4369,10 @@
       if (owed.amount_cents) {
         tiles.appendChild(tile('Unbilled work', owed.duration + ' · ' + money(owed.amount_cents), true));
       }
-      tiles.appendChild(tile('Keys', String(c.licenses.length)));
-      if (c.usage) {
+      // Same reasoning as the badges: "Keys 0" and an untouched trial allowance are
+      // not facts about an IT customer, they are the software schema showing through.
+      if (hasSoftware) tiles.appendChild(tile('Keys', String(c.licenses.length)));
+      if (c.usage && hasSoftware) {
         var u = el('div', 'tile');
         u.appendChild(el('s', null, c.usage.period_label));
         u.appendChild(el('b', c.usage.pct >= 80 ? 'warn' : null,
