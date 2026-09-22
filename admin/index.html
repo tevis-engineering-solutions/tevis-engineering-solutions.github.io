@@ -99,6 +99,17 @@
     .inv-actions button.danger { border-color:#7f2c2c; color:#e08585; }
     .inv-actions button.danger:hover { background:rgba(190,60,60,.14); }
     .pending-line { color:#e0c98a; }
+    /* Staff notes on an invoice. Gold rule down the left so a card carrying one is
+       obvious in a list, and white-space:pre-wrap because these are written in lines. */
+    .inv-note { margin-top:0.6rem; padding:0.5rem 0.7rem; border-left:2px solid var(--gold);
+      background:rgba(200,152,48,0.06); border-radius:0 8px 8px 0; }
+    .inv-note p { font-size:0.82rem; line-height:1.5; white-space:pre-wrap; word-break:break-word; margin:0; }
+    .inv-note .by { display:block; font-size:0.68rem; color:var(--muted); margin-top:0.35rem; }
+    .inv-note textarea { width:100%; min-height:6rem; padding:0.55rem 0.65rem; border-radius:8px;
+      border:1px solid var(--line); background:var(--bg); color:var(--text); font-family:inherit;
+      font-size:0.85rem; line-height:1.5; resize:vertical; }
+    .inv-note textarea:focus { outline:none; border-color:var(--green); }
+    .inv-note .reply-row { margin-top:0.45rem; }
     .newinv { border:1px solid var(--line); border-radius:14px; background:var(--card); padding:1rem; margin-bottom:1rem; }
     .newinv h2 { font-family:"Montserrat",sans-serif; font-size:1rem; margin-bottom:0.8rem; }
     .fgrid { display:grid; grid-template-columns:1fr 1fr; gap:0.6rem; }
@@ -2596,6 +2607,64 @@
           (v.reported_at ? ' on ' + fmt(v.reported_at) : '') + ' — confirm before marking paid'));
       }
 
+      // Staff notes. Rendered before the actions so a card carrying one reads as
+      // carrying one, and editable in EVERY state -- how somebody actually paid, or a
+      // credit carried over, is usually learned after the invoice closed.
+      var noteBox = el('div');
+      d.appendChild(noteBox);
+      var noteOpen = false;
+
+      function drawNote() {
+        noteBox.textContent = '';
+        noteBox.className = v.internal_notes ? 'inv-note' : '';
+        if (noteOpen) {
+          noteBox.className = 'inv-note';
+          var ta = document.createElement('textarea');
+          ta.value = v.internal_notes || '';
+          ta.placeholder = 'How they paid, a credit carried over, what was agreed\u2026 Only you see this.';
+          ta.setAttribute('aria-label', 'Internal notes for ' + v.number);
+          noteBox.appendChild(ta);
+          var rowN = el('div', 'reply-row');
+          var saveN = el('button', 'prim', 'Save note');
+          saveN.type = 'button';
+          var cancelN = el('button', null, 'Cancel');
+          cancelN.type = 'button';
+          rowN.appendChild(saveN);
+          rowN.appendChild(cancelN);
+          noteBox.appendChild(rowN);
+          ta.focus();
+          // Saving re-renders THIS card only. A full reload would close the editor
+          // under anybody typing a second note on another card.
+          saveN.addEventListener('click', function () {
+            saveN.disabled = true;
+            api('/admin/invoices/' + v.id + '/notes', { method: 'PATCH', body: { internal_notes: ta.value } })
+              .then(function (r) {
+                saveN.disabled = false;
+                if (!r.ok) return toast((r.message || r.error) === 'nothing_to_save' ? 'Nothing to save' : 'Could not save the note');
+                v.internal_notes = r.internal_notes;
+                v.notes_updated_at = r.notes_updated_at;
+                v.notes_updated_by = r.notes_updated_by;
+                noteOpen = false;
+                drawNote();
+                syncNoteBtn();
+                toast(r.internal_notes ? 'Note saved' : 'Note cleared');
+              });
+          });
+          cancelN.addEventListener('click', function () { noteOpen = false; drawNote(); syncNoteBtn(); });
+          return;
+        }
+        if (!v.internal_notes) return;
+        noteBox.appendChild(el('p', null, v.internal_notes));
+        noteBox.appendChild(el('span', 'by',
+          'Internal note' + (v.notes_updated_by ? ' \u00b7 ' + v.notes_updated_by : '') +
+          (v.notes_updated_at ? ' \u00b7 ' + fmt(v.notes_updated_at) : '')));
+      }
+
+      var noteBtn = null;
+      function syncNoteBtn() {
+        if (noteBtn) noteBtn.textContent = noteOpen ? 'Close note' : (v.internal_notes ? 'Edit note' : 'Add note');
+      }
+
       var acts = el('div', 'inv-actions');
       function act(label, cls, fn) {
         var b = el('button', cls || null, label);
@@ -2604,6 +2673,14 @@
         acts.appendChild(b);
         return b;
       }
+
+      noteBtn = act('Add note', null, function () {
+        noteOpen = !noteOpen;
+        drawNote();
+        syncNoteBtn();
+      });
+      syncNoteBtn();
+      drawNote();
 
       if (v.status === 'open') {
         var send = act(v.sent_at ? 'Resend invoice' : 'Email invoice', 'prim', function () {
