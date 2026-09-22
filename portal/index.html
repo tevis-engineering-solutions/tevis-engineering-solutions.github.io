@@ -329,6 +329,7 @@
           var items = [];
           if (w.messages) items.push(['messages.html', 'fa-comments', 'A message is waiting for you']);
           if (w.tickets) items.push(['tickets.html', 'fa-headset', w.tickets + (w.tickets === 1 ? ' ticket has' : ' tickets have') + ' a new reply']);
+          if (w.quotes) items.push(['billing.html', 'fa-file-signature', w.quotes + (w.quotes === 1 ? ' quote is' : ' quotes are') + ' waiting for your decision']);
           if (w.invoices_due) items.push(['billing.html', 'fa-file-invoice-dollar', w.invoices_due + (w.invoices_due === 1 ? ' invoice is' : ' invoices are') + ' open']);
           if (w.equipment) items.push(['equipment.html', 'fa-laptop', w.equipment + (w.equipment === 1 ? ' item' : ' items') + ' to confirm']);
           items.forEach(function (it) { var a = document.createElement('a'); a.href = it[0]; var i = document.createElement('i'); i.className = 'fa-solid ' + it[1]; a.appendChild(i); a.appendChild(document.createTextNode(' ' + it[2])); strip.appendChild(a); });

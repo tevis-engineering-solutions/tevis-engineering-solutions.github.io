@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Your Quote | Tevis Engineering Solutions</title>
+  <meta name="description" content="Review and accept a quote from Tevis Engineering Solutions.">
+  <meta name="author" content="Tyler Tevis, Tevis Engineering Solutions">
+  <!-- Not an indexable page: it renders one customer's quote from a signed link. -->
+  <meta name="robots" content="noindex, nofollow">
+  <link rel="icon" type="image/png" href="assets/favicon.png">
+  <meta http-equiv="X-Content-Type-Options" content="nosniff">
+  <meta name="referrer" content="strict-origin-when-cross-origin">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Montserrat:wght@500;700;800&display=swap" rel="stylesheet">
+  <style>
+    /* Deliberately LIGHT, like website-report.html: this is a document the customer
+       reads, signs and files, and it prints to PDF cleanly. Do not dark-mode it. */
+    :root {
+      --brand-dark: #0d1710;
+      --brand-green: #4aac65;
+      --brand-green-600: #2f7d4a;
+      --brand-green-300: #8ad6a0;
+      --brand-gold: #c89830;
+      --ink: #12211a;
+      --muted: #5d7266;
+      --line: #dfe7e1;
+      --bg: #f4f7f4;
+      --card: #ffffff;
+      --red: #b3392b;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { background: var(--bg); color: var(--ink); font: 15px/1.6 "Inter", "Segoe UI", system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
+    h1, h2, h3, .wordmark, .q-total-n { font-family: "Montserrat", sans-serif; }
+    .wrap { max-width: 860px; margin: 0 auto; padding: 26px 22px 70px; }
+    [hidden] { display: none !important; }
+
+    .brandbar { display: flex; justify-content: space-between; align-items: center; gap: 16px; flex-wrap: wrap; background: var(--brand-dark); border-radius: 14px; padding: 14px 20px; margin-bottom: 20px; }
+    .lockup { display: flex; align-items: center; gap: 13px; text-decoration: none; }
+    .lockup img { width: 46px; height: 46px; border-radius: 9px; display: block; }
+    .lockup .rule { width: 2px; height: 38px; background: var(--brand-green); border-radius: 2px; }
+    .wordmark { display: flex; flex-direction: column; line-height: 1.05; }
+    .wordmark .n1 { font-size: 16px; font-weight: 800; letter-spacing: 2px; color: #fff; }
+    .wordmark .n2 { font-size: 10px; font-weight: 600; letter-spacing: 4.2px; color: var(--brand-green-300); margin-top: 4px; }
+    .brandcontact { font-size: 11.5px; color: #8aa48d; text-align: right; line-height: 1.7; }
+    .brandcontact a { color: var(--brand-green-300); font-weight: 600; text-decoration: none; }
+
+    .toolbar { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; background: #fff; border: 1px solid var(--line); border-radius: 12px; padding: 10px 14px; margin-bottom: 18px; font-size: 12.5px; color: var(--muted); }
+    .toolbar .sp { margin-left: auto; }
+    .tbtn { border: 0; border-radius: 9px; padding: 9px 17px; cursor: pointer; font-family: "Montserrat", sans-serif; font-weight: 700; font-size: 12.5px; background: var(--brand-green-600); color: #fff; text-decoration: none; display: inline-block; min-height: 40px; line-height: 22px; }
+    .tbtn:hover { filter: brightness(1.08); }
+    .tbtn.alt { background: var(--brand-gold); color: #241a03; }
+    .tbtn.ghost { background: #fff; color: var(--brand-green-600); border: 1px solid var(--line); }
+    .tbtn:disabled { opacity: 0.55; cursor: default; }
+    @media (max-width: 700px) { .tbtn { min-height: 44px; line-height: 26px; padding: 9px 18px; } }
+
+    .q-hero { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 22px 24px; margin-bottom: 16px; display: flex; justify-content: space-between; gap: 20px; flex-wrap: wrap; }
+    .q-hero h1 { font-size: 22px; letter-spacing: -0.2px; margin-bottom: 4px; }
+    .q-hero .sub { color: var(--muted); font-size: 13px; }
+    .q-hero .who { margin-top: 12px; font-size: 13.5px; color: #33463c; line-height: 1.5; }
+    .q-hero .who b { color: var(--ink); }
+    .q-status { text-align: right; min-width: 170px; }
+    .q-pill { display: inline-block; font-size: 11px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; padding: 4px 10px; border-radius: 6px; color: #fff; background: var(--brand-green-600); }
+    .q-pill.gold { background: var(--brand-gold); color: #241a03; }
+    .q-pill.grey { background: #8a9a8e; }
+    .q-pill.red { background: var(--red); }
+    .q-status .valid { font-size: 12.5px; color: var(--muted); margin-top: 8px; }
+    .q-status .valid b { color: var(--ink); }
+    @media (max-width: 560px) { .q-status { text-align: left; } }
+
+    .q-sec { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 20px 24px; margin-bottom: 16px; }
+    .q-sec > h2 { font-size: 12px; text-transform: uppercase; letter-spacing: 1.4px; color: var(--brand-green-600); font-weight: 700; margin-bottom: 14px; }
+    .q-intro { font-size: 14.5px; color: #33463c; white-space: pre-wrap; }
+
+    table.q-items { width: 100%; border-collapse: collapse; }
+    .q-items th { text-align: left; font-size: 11px; text-transform: uppercase; letter-spacing: 1px; color: var(--muted); font-weight: 700; padding: 0 8px 8px 0; border-bottom: 2px solid var(--line); }
+    .q-items th.num, .q-items td.num { text-align: right; white-space: nowrap; font-variant-numeric: tabular-nums; }
+    .q-items td { padding: 10px 8px 10px 0; border-bottom: 1px solid var(--line); vertical-align: top; font-size: 14px; }
+    .q-items td.desc { color: var(--ink); }
+    .q-items td.desc .k { display: inline-block; font-size: 10.5px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.6px; color: var(--brand-green-600); background: #e7f2ea; padding: 1px 6px; border-radius: 4px; margin-left: 6px; vertical-align: 1px; }
+    .q-items td.desc .opt { display: block; font-size: 12.5px; color: var(--muted); margin-top: 3px; }
+    .q-items tr.optional td { background: #fbfdfb; }
+    .q-items tr.optional.off td.desc, .q-items tr.optional.off td.num { color: var(--muted); text-decoration: line-through; }
+    .q-items tr.optional.off td.desc .opt { text-decoration: none; }
+    .q-items label.tick { display: flex; align-items: flex-start; gap: 10px; cursor: pointer; }
+    .q-items label.tick input { width: 18px; height: 18px; margin-top: 2px; accent-color: var(--brand-green-600); flex-shrink: 0; }
+    .q-items td.qty { color: var(--muted); font-size: 13px; }
+    .q-totals { margin-top: 12px; margin-left: auto; width: 100%; max-width: 340px; }
+    .q-totals .row { display: flex; justify-content: space-between; gap: 12px; padding: 5px 0; font-size: 13.5px; color: var(--muted); }
+    .q-totals .row.big { border-top: 2px solid var(--line); margin-top: 6px; padding-top: 10px; color: var(--ink); font-weight: 700; font-size: 15px; }
+    .q-totals .row.big .q-total-n { font-size: 22px; font-weight: 800; color: var(--brand-green-600); }
+    .q-totals .row.opt { color: var(--brand-gold); }
+    @media (max-width: 560px) {
+      .q-items th.qty, .q-items td.qty { display: none; }
+      .q-items td { font-size: 13px; }
+    }
+
+    .q-terms { font-size: 13px; color: #4a5f53; white-space: pre-wrap; }
+
+    .q-accept { background: var(--brand-dark); color: #d8e6da; border-radius: 14px; padding: 22px 24px; }
+    .q-accept h2 { color: var(--brand-green-300); font-size: 12px; text-transform: uppercase; letter-spacing: 1.4px; margin-bottom: 12px; }
+    .q-accept p { font-size: 14px; margin-bottom: 12px; }
+    .q-accept b { color: #fff; }
+    .q-accept label { display: block; font-size: 12px; text-transform: uppercase; letter-spacing: 1px; color: #8aa48d; font-weight: 700; margin-bottom: 6px; }
+    .q-accept input[type="text"] { width: 100%; max-width: 420px; padding: 11px 13px; border-radius: 9px; border: 1px solid #2c4232; background: #142019; color: #fff; font: 15px "Inter", sans-serif; }
+    .q-accept input[type="text"]:focus { outline: none; border-color: var(--brand-green); }
+    .q-agree { display: flex; align-items: flex-start; gap: 10px; margin: 14px 0 6px; font-size: 13.5px; }
+    .q-agree input { width: 18px; height: 18px; margin-top: 2px; accent-color: var(--brand-green); flex-shrink: 0; }
+    .q-acts { margin-top: 16px; display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+    .q-decline { background: none; border: 0; color: #8aa48d; font: 600 12.5px "Montserrat", sans-serif; cursor: pointer; text-decoration: underline; padding: 8px; min-height: 40px; }
+    .q-decline:hover { color: #fff; }
+    .q-declinebox { margin-top: 14px; padding-top: 14px; border-top: 1px solid #2c4232; }
+    .q-declinebox textarea { width: 100%; max-width: 520px; min-height: 80px; padding: 10px 12px; border-radius: 9px; border: 1px solid #2c4232; background: #142019; color: #fff; font: 14px "Inter", sans-serif; resize: vertical; }
+    .q-err { color: #ffb4a8; font-size: 13px; margin-top: 10px; }
+    .q-fine { font-size: 11.5px; color: #8aa48d; margin-top: 14px; }
+
+    .q-done { background: var(--card); border: 1px solid var(--brand-green); border-radius: 14px; padding: 22px 24px; }
+    .q-done h2 { font-size: 18px; margin-bottom: 8px; }
+    .q-done p { font-size: 14px; color: #33463c; margin-bottom: 8px; }
+    .q-done.declined { border-color: var(--line); }
+    .q-done.expired { border-color: var(--brand-gold); }
+
+    .foot { color: var(--muted); font-size: 11.5px; text-align: center; margin-top: 24px; }
+    .foot a { color: var(--muted); }
+    .empty { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 40px 24px; text-align: center; }
+    .empty h1 { font-size: 20px; margin-bottom: 10px; }
+    .empty p { color: var(--muted); font-size: 14px; margin-bottom: 18px; max-width: 460px; margin-left: auto; margin-right: auto; }
+    .q-pending { display: flex; align-items: center; gap: 9px; font-size: 13px; color: var(--muted); padding: 30px 0; justify-content: center; }
+    .q-pending::before { content: ''; width: 14px; height: 14px; border-radius: 50%; border: 2px solid #d3e0d6; border-top-color: var(--brand-green); flex-shrink: 0; animation: qSpin 0.9s linear infinite; }
+    @keyframes qSpin { to { transform: rotate(360deg); } }
+    @media (prefers-reduced-motion: reduce) { .q-pending::before { animation: none; } }
+
+    @media print {
+      body { background: #fff; }
+      .wrap { padding-top: 0; }
+      .toolbar, .noprint, .q-accept { display: none !important; }
+      .q-sec, .q-hero, .q-done { break-inside: avoid; border-color: #ccc; }
+      .brandbar { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+      .q-items label.tick input { display: none; }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+
+    <div class="brandbar">
+      <a class="lockup" href="index.html">
+        <img src="assets/logo-mark.png" alt="Tevis Engineering Solutions">
+        <span class="rule"></span>
+        <span class="wordmark">
+          <span class="n1">TEVIS ENGINEERING</span>
+          <span class="n2">SOLUTIONS</span>
+        </span>
+      </a>
+      <div class="brandcontact">
+        <a href="tel:+12163028486">(216)&nbsp;302&#8209;8486</a> &nbsp;&middot;&nbsp; support@tevisengineering.com<br>
+        IT Support &amp; Custom Engineering &middot; Cleveland, OH
+      </div>
+    </div>
+
+    <div class="q-pending" id="qLoading">Opening your quote&hellip;</div>
+
+    <div class="empty" id="qEmpty" hidden>
+      <h1>This quote link is not valid</h1>
+      <p>The link may have expired or been copied incompletely. Open it from the email we sent, or ask us for a fresh one and we will send it right over.</p>
+      <a class="tbtn" href="contact.html">Contact us</a>
+    </div>
+
+    <div id="qBody" hidden>
+      <div class="toolbar noprint">
+        <span id="qToolMsg">Review the details below. Accepting takes a typed name and one click.</span>
+        <span class="sp"></span>
+        <button type="button" class="tbtn ghost" id="qPrint">Print / Save as PDF</button>
+      </div>
+
+      <section class="q-hero">
+        <div>
+          <h1 id="qTitle">Quote</h1>
+          <div class="sub" id="qNumber"></div>
+          <div class="who" id="qWho"></div>
+        </div>
+        <div class="q-status">
+          <span class="q-pill" id="qPill">Open</span>
+          <div class="valid" id="qValid"></div>
+        </div>
+      </section>
+
+      <section class="q-sec" id="qIntroSec" hidden>
+        <h2>About this work</h2>
+        <div class="q-intro" id="qIntro"></div>
+      </section>
+
+      <section class="q-sec">
+        <h2>What is included</h2>
+        <table class="q-items" aria-label="Quote line items">
+          <thead><tr><th>Item</th><th class="qty num">Qty</th><th class="num">Amount</th></tr></thead>
+          <tbody id="qItems"></tbody>
+        </table>
+        <div class="q-totals" id="qTotals"></div>
+      </section>
+
+      <section class="q-sec" id="qTermsSec" hidden>
+        <h2>Terms</h2>
+        <div class="q-terms" id="qTerms"></div>
+      </section>
+
+      <section class="q-accept noprint" id="qAccept" hidden>
+        <h2>Accept this quote</h2>
+        <p>Type your name as your signature and tick the box. Nothing is charged now; the work is invoiced on the terms above.</p>
+        <label for="qSig">Your full name</label>
+        <input type="text" id="qSig" autocomplete="name" maxlength="120" placeholder="Jane Roe">
+        <label class="q-agree"><input type="checkbox" id="qAgree"> <span>I have read this quote and I agree to the work and the terms as described<span id="qAgreeTotal"></span>.</span></label>
+        <div class="q-acts">
+          <button type="button" class="tbtn alt" id="qAcceptBtn">Accept quote</button>
+          <button type="button" class="q-decline" id="qDeclineToggle">I would like to decline</button>
+        </div>
+        <div class="q-declinebox" id="qDeclineBox" hidden>
+          <label for="qReason">Anything we should know? (optional)</label>
+          <textarea id="qReason" placeholder="Timing, budget, went another way&hellip;"></textarea>
+          <div class="q-acts">
+            <button type="button" class="tbtn ghost" id="qDeclineBtn">Decline this quote</button>
+            <button type="button" class="q-decline" id="qDeclineCancel">Never mind</button>
+          </div>
+        </div>
+        <div class="q-err" id="qErr" hidden></div>
+        <p class="q-fine">Accepting online records your name, the time, and the network address it came from, the same as a signed acceptance. Questions first? Reply to the email or call (216)&nbsp;302&#8209;8486.</p>
+      </section>
+
+      <section class="q-done" id="qDone" hidden></section>
+
+      <p class="foot">Tevis Engineering Solutions, LLC &middot; Cleveland, OH &middot; <a href="privacy_policy.html">Privacy &amp; Terms</a></p>
+    </div>
+  </div>
+
+  <script>
+  (function () {
+    'use strict';
+    var API = '/portal-api';
+    var token = new URLSearchParams(location.search).get('t') || '';
+    var quote = null;
+    var $ = function (id) { return document.getElementById(id); };
+    function el(tag, cls, text) { var n = document.createElement(tag); if (cls) n.className = cls; if (text != null) n.textContent = text; return n; }
+    function money(c) { return (Number(c || 0) / 100).toLocaleString('en-US', { style: 'currency', currency: 'USD' }); }
+    function longDate(ts) { return ts ? new Date(ts * 1000).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }) : ''; }
+    function api(path, body) {
+      var o = { credentials: 'same-origin' };
+      if (body !== undefined) { o.method = 'POST'; o.headers = { 'content-type': 'application/json' }; o.body = JSON.stringify(body); }
+      return fetch(API + path, o).then(function (r) { return r.json().catch(function () { return { ok: false, error: 'bad_response' }; }); });
+    }
+
+    // What the customer would owe with the optional lines currently ticked.
+    function chosenTotal() {
+      var base = 0;
+      quote.items.forEach(function (i) { if (!i.optional || i.accepted) base += i.line_cents; });
+      return base + Math.round(base * (quote.tax_rate_bp || 0) / 10000);
+    }
+
+    function renderTotals() {
+      var t = $('qTotals'); t.textContent = '';
+      var decided = quote.status === 'accepted' || quote.status === 'converted';
+      var row = function (l, v, cls) { var r = el('div', 'row' + (cls ? ' ' + cls : '')); r.appendChild(el('span', null, l)); r.appendChild(el('span', cls === 'big' ? 'q-total-n' : null, v)); t.appendChild(r); };
+      if (decided) {
+        row('Accepted total' + (quote.tax_cents ? ' (incl. tax)' : ''), money(quote.accepted_cents), 'big');
+      } else {
+        var taken = 0; quote.items.forEach(function (i) { if (i.optional && i.accepted) taken += i.line_cents; });
+        row('Subtotal', money(quote.subtotal_cents));
+        if (taken) row('Optional items selected', money(taken), 'opt');
+        if (quote.tax_rate_bp) row('Tax (' + (quote.tax_rate_bp / 100).toFixed(2).replace(/\.?0+$/, '') + '%)', money(Math.round((quote.subtotal_cents + taken) * quote.tax_rate_bp / 10000)));
+        row('Total', money(chosenTotal()), 'big');
+      }
+      $('qAgreeTotal').textContent = decided ? '' : ' for ' + money(chosenTotal());
+    }
+
+    function renderItems(canPick) {
+      var tb = $('qItems'); tb.textContent = '';
+      quote.items.forEach(function (i) {
+        var tr = el('tr', i.optional ? 'optional' + (i.accepted ? '' : ' off') : null);
+        var d = el('td', 'desc');
+        if (i.optional && canPick) {
+          var lab = el('label', 'tick');
+          var cb = document.createElement('input'); cb.type = 'checkbox'; cb.checked = !!i.accepted; cb.setAttribute('aria-label', 'Include ' + i.description);
+          cb.addEventListener('change', function () { i.accepted = cb.checked; tr.classList.toggle('off', !cb.checked); renderTotals(); });
+          lab.appendChild(cb);
+          var txt = el('span'); txt.appendChild(document.createTextNode(i.description)); txt.appendChild(el('span', 'opt', 'Optional. Tick to include it.'));
+          lab.appendChild(txt); d.appendChild(lab);
+        } else {
+          d.appendChild(document.createTextNode(i.description));
+          if (i.optional) d.appendChild(el('span', 'opt', i.accepted ? 'Optional item, included' : 'Optional item, not included'));
+        }
+        tr.appendChild(d);
+        tr.appendChild(el('td', 'qty num', i.qty !== 1 || i.unit ? String(i.qty) + (i.unit ? ' ' + i.unit : '') + ' x ' + money(i.unit_cents) : ''));
+        tr.appendChild(el('td', 'num', money(i.line_cents)));
+        tb.appendChild(tr);
+      });
+    }
+
+    function render() {
+      $('qLoading').hidden = true; $('qBody').hidden = false;
+      document.title = 'Quote ' + quote.number + ' | Tevis Engineering Solutions';
+      $('qTitle').textContent = quote.title;
+      $('qNumber').textContent = 'Quote ' + quote.number + (quote.sent_at ? ' · ' + longDate(quote.sent_at) : '');
+      var who = $('qWho'); who.textContent = '';
+      who.appendChild(el('span', null, 'Prepared for '));
+      who.appendChild(el('b', null, quote.contact_name || quote.email));
+      if (quote.company) { who.appendChild(document.createTextNode(', ')); who.appendChild(el('b', null, quote.company)); }
+      if (quote.intro) { $('qIntroSec').hidden = false; $('qIntro').textContent = quote.intro; }
+      if (quote.terms) { $('qTermsSec').hidden = false; $('qTerms').textContent = quote.terms; }
+
+      var open = (quote.status === 'sent' || quote.status === 'viewed') && !quote.expired;
+      var pill = $('qPill'), valid = $('qValid'), done = $('qDone');
+      pill.className = 'q-pill';
+      if (quote.status === 'accepted' || quote.status === 'converted') {
+        pill.textContent = 'Accepted';
+        valid.textContent = 'Accepted ' + longDate(quote.decided_at) + (quote.signature_name ? ' by ' + quote.signature_name : '');
+        done.hidden = false; done.className = 'q-done';
+        done.appendChild(el('h2', null, 'Thank you. This quote is accepted.'));
+        done.appendChild(el('p', null, 'You accepted it on ' + longDate(quote.decided_at) + (quote.signature_name ? ', signed as ' + quote.signature_name : '') + '. We will be in touch to schedule the work' + (quote.invoice_number ? '. Invoice ' + quote.invoice_number + ' has been raised for it' : '; an invoice follows on the terms above') + '.'));
+        done.appendChild(el('p', null, 'Keep this page or print it for your records.'));
+        $('qToolMsg').textContent = 'This quote has been accepted.';
+      } else if (quote.status === 'declined') {
+        pill.textContent = 'Declined'; pill.classList.add('grey');
+        valid.textContent = 'Declined ' + longDate(quote.decided_at);
+        done.hidden = false; done.className = 'q-done declined';
+        done.appendChild(el('h2', null, 'This quote was declined.'));
+        done.appendChild(el('p', null, 'No problem. If circumstances change, reply to the email or call and we will pick it back up.'));
+        $('qToolMsg').textContent = 'This quote was declined.';
+      } else if (quote.expired) {
+        pill.textContent = 'Expired'; pill.classList.add('gold');
+        valid.textContent = 'Was valid until ' + longDate(quote.valid_until);
+        done.hidden = false; done.className = 'q-done expired';
+        done.appendChild(el('h2', null, 'This quote has expired.'));
+        done.appendChild(el('p', null, 'Prices were held until ' + longDate(quote.valid_until) + '. Reply to the email or call (216) 302-8486 and we will refresh it for you.'));
+        $('qToolMsg').textContent = 'This quote has expired. Ask us for a fresh one.';
+      } else {
+        pill.textContent = 'Open';
+        if (quote.valid_until) { valid.textContent = ''; valid.appendChild(document.createTextNode('Valid until ')); valid.appendChild(el('b', null, longDate(quote.valid_until))); }
+        $('qAccept').hidden = false;
+      }
+      renderItems(open);
+      renderTotals();
+    }
+
+    function fail(msg) { $('qErr').hidden = false; $('qErr').textContent = msg; }
+    function decided(r, fallback) {
+      if (r.ok) { quote = r.quote; $('qAccept').hidden = true; $('qDone').textContent = ''; render(); window.scrollTo({ top: 0, behavior: 'smooth' }); return; }
+      var m = { expired: 'This quote has expired. Ask us for a fresh one.', already_accepted: 'This quote was already accepted.', already_declined: 'This quote was already declined.', not_open: 'This quote is no longer open.', rate_limited: 'Too many attempts. Please wait a few minutes.', signature_required: 'Please type your full name.', agreement_required: 'Please tick the box to confirm you agree.' };
+      fail(m[r.error] || fallback);
+    }
+
+    $('qPrint').addEventListener('click', function () { window.print(); });
+    $('qDeclineToggle').addEventListener('click', function () { $('qDeclineBox').hidden = false; $('qReason').focus(); });
+    $('qDeclineCancel').addEventListener('click', function () { $('qDeclineBox').hidden = true; });
+    $('qAcceptBtn').addEventListener('click', function () {
+      $('qErr').hidden = true;
+      var name = $('qSig').value.trim();
+      if (name.length < 2) { fail('Please type your full name.'); $('qSig').focus(); return; }
+      if (!$('qAgree').checked) { fail('Please tick the box to confirm you agree.'); return; }
+      var picked = quote.items.filter(function (i) { return i.optional && i.accepted; }).map(function (i) { return i.id; });
+      var b = $('qAcceptBtn'); b.disabled = true;
+      api('/quote/accept', { t: token, signature_name: name, agree: true, optional_items: picked }).then(function (r) { b.disabled = false; decided(r, 'That did not go through. Please try again or call us.'); }, function () { b.disabled = false; fail('Could not reach the server. Please try again.'); });
+    });
+    $('qDeclineBtn').addEventListener('click', function () {
+      $('qErr').hidden = true;
+      var b = $('qDeclineBtn'); b.disabled = true;
+      api('/quote/decline', { t: token, reason: $('qReason').value.trim() }).then(function (r) { b.disabled = false; decided(r, 'That did not go through. Please try again or call us.'); }, function () { b.disabled = false; fail('Could not reach the server. Please try again.'); });
+    });
+
+    if (!token) { $('qLoading').hidden = true; $('qEmpty').hidden = false; return; }
+    api('/quote?t=' + encodeURIComponent(token)).then(function (r) {
+      if (!r.ok || !r.quote) { $('qLoading').hidden = true; $('qEmpty').hidden = false; return; }
+      quote = r.quote;
+      render();
+    }, function () { $('qLoading').hidden = true; $('qEmpty').hidden = false; });
+  })();
+  </script>
+</body>
+</html>

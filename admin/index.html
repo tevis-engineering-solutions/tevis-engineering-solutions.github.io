@@ -516,6 +516,46 @@
     .mgmt textarea { width:100%; padding:0.5rem 0.65rem; border-radius:8px; border:1px solid var(--line); background:var(--bg); color:var(--text); font-family:inherit; font-size:0.85rem; }
     .ann-kind { font-size:0.62rem; }
     [hidden] { display:none !important; }
+    /* ---- quotes (Phase 3) ---- */
+    .quotes .qhead { display:flex; justify-content:space-between; align-items:center; gap:0.6rem; flex-wrap:wrap; margin-bottom:0.6rem; }
+    .quotes .qhead h2 { margin-bottom:0; }
+    .quotes .qhead button.prim { font-family:"Montserrat",sans-serif; font-size:0.7rem; font-weight:700; text-transform:uppercase; letter-spacing:0.03em; padding:0.5rem 0.9rem; border-radius:999px; border:1px solid transparent; background:linear-gradient(135deg,var(--gold),#e0b840); color:#0d1710; cursor:pointer; min-height:36px; }
+    .quotes .filters { margin-top:0.8rem; }
+    .fwide textarea { width:100%; padding:0.55rem 0.7rem; border-radius:8px; border:1px solid var(--line); background:var(--bg); color:var(--text); font-family:inherit; font-size:0.88rem; resize:vertical; }
+    .fwide textarea:focus { outline:none; border-color:var(--green); }
+    .qlines { margin:0.8rem 0; padding:0.7rem 0.75rem; border:1px solid var(--line); border-radius:10px; background:var(--bg); }
+    .qlines-h { display:flex; justify-content:space-between; gap:0.6rem; flex-wrap:wrap; font-size:0.68rem; text-transform:uppercase; letter-spacing:0.05em; color:var(--muted); font-weight:700; margin-bottom:0.5rem; }
+    .qlines-hint { text-transform:none; letter-spacing:0; font-weight:400; }
+    .qline { display:grid; grid-template-columns:minmax(0,3fr) 4.6rem 4rem 6rem 6.5rem auto auto; gap:0.4rem; align-items:center; margin-bottom:0.4rem; }
+    .qline input, .qline select { width:100%; padding:0.45rem 0.55rem; border-radius:7px; border:1px solid var(--line); background:var(--card); color:var(--text); font-family:inherit; font-size:0.84rem; min-height:38px; }
+    .qline input:focus, .qline select:focus { outline:none; border-color:var(--green); }
+    .qline .qline-amt { font-family:"Montserrat",sans-serif; font-weight:800; font-size:0.8rem; text-align:right; white-space:nowrap; color:var(--text); min-width:5.5rem; }
+    /* Matches the height of the inputs beside it: the tick is the smallest control in the row and the easiest to miss on a phone. */
+    .qline label.opt { display:inline-flex; align-items:center; gap:0.3rem; font-size:0.68rem; text-transform:uppercase; letter-spacing:0.03em; color:var(--muted); white-space:nowrap; cursor:pointer; min-height:38px; }
+    .qline label.opt input { width:16px; height:16px; min-height:0; accent-color:var(--gold); }
+    .qline .qline-x { background:none; border:1px solid var(--line); color:var(--muted); border-radius:7px; width:36px; height:36px; cursor:pointer; font-size:1rem; line-height:1; }
+    .qline .qline-x:hover { color:#e08585; border-color:#7f2c2c; }
+    .qlines > button { font-family:"Montserrat",sans-serif; font-size:0.68rem; font-weight:700; text-transform:uppercase; letter-spacing:0.03em; padding:0.45rem 0.8rem; border-radius:999px; border:1px dashed var(--line); background:transparent; color:var(--muted); cursor:pointer; min-height:36px; }
+    .qlines > button:hover { color:var(--text); border-color:var(--green); }
+    .qtotals { display:flex; flex-direction:column; align-items:flex-end; gap:0.15rem; margin-top:0.6rem; font-size:0.78rem; color:var(--muted); }
+    .qtotals b { color:var(--gold); font-family:"Montserrat",sans-serif; font-size:1rem; }
+    .qtotals .optl { color:#e6c68a; }
+    @media (max-width:760px) {
+      .qline { grid-template-columns:1fr 1fr; }
+      .qline input.qline-desc { grid-column:1 / -1; }
+      .qline .qline-amt { text-align:left; }
+    }
+    .qcard-status .q-sig { color:#9fd3ae; }
+    .qcard-status .q-dead { color:var(--muted); }
+    .qcard-status .q-late { color:var(--gold); }
+    .inv.quote-draft { border-style:dashed; }
+    .inv.quote-accepted { border-color:rgba(74,172,101,0.5); }
+    .qitems-mini { margin:0.4rem 0 0; padding:0; list-style:none; font-size:0.74rem; color:var(--muted); }
+    .qitems-mini li { display:flex; justify-content:space-between; gap:0.6rem; padding:0.12rem 0; }
+    .qitems-mini li.opt { color:#b59653; }
+    .qitems-mini li span:last-child { white-space:nowrap; }
+    .qevents { margin-top:0.5rem; font-size:0.72rem; color:var(--muted); }
+    .qevents div { padding:0.1rem 0; }
   </style>
 </head>
 <body>
@@ -740,6 +780,79 @@
     </div>
 
     <div id="invList"><div class="state">Loading invoices&hellip;</div></div>
+
+    <!-- ---- Quotes (Phase 3). The front half of the money cycle sits with the back
+         half: a quote becomes an invoice with one click, on this tab. ---- -->
+    <section class="newinv quotes" id="quoteBox">
+      <div class="qhead">
+        <h2 id="quoteFormTitle">Quotes</h2>
+        <button type="button" class="prim" id="quoteNewBtn">+ New quote</button>
+      </div>
+      <form id="quoteForm" hidden>
+        <input type="hidden" id="quoteId" value="">
+        <div class="fwide custpick">
+          <label for="qtCustQ">Customer</label>
+          <input type="search" id="qtCustQ" placeholder="Search by name, company or email" autocomplete="off">
+          <div class="custpick-list" id="qtCustList" hidden></div>
+          <div class="custpick-sel" id="qtCustSel" hidden></div>
+        </div>
+        <div class="fgrid">
+          <div>
+            <label for="qtEmail">Email</label>
+            <input id="qtEmail" type="email" required placeholder="owner@client.com">
+          </div>
+          <div>
+            <label for="qtName">Prepared for (name)</label>
+            <input id="qtName" type="text" placeholder="Jane Roe">
+          </div>
+          <div>
+            <label for="qtCompany">Company</label>
+            <input id="qtCompany" type="text" placeholder="Meridian Dental Group">
+          </div>
+          <div>
+            <label for="qtTitle">Title</label>
+            <input id="qtTitle" type="text" required placeholder="Office network refresh">
+          </div>
+          <div>
+            <label for="qtTax">Tax rate (%)</label>
+            <input id="qtTax" type="number" step="0.01" min="0" max="100" value="0">
+          </div>
+          <div>
+            <label for="qtValid">Valid for (days)</label>
+            <input id="qtValid" type="number" min="1" max="365" value="30">
+          </div>
+        </div>
+        <div class="fwide">
+          <label for="qtIntro">About this work (shown at the top)</label>
+          <textarea id="qtIntro" rows="2" placeholder="What the job is and what it solves, in a sentence or two."></textarea>
+        </div>
+
+        <div class="qlines">
+          <div class="qlines-h"><span>Line items</span><span class="qlines-hint">Tick Optional for add-ons the customer can choose. Tax applies to the required lines.</span></div>
+          <div id="qtLines"></div>
+          <button type="button" id="qtAddLine">+ Add a line</button>
+          <div class="qtotals" id="qtTotals"></div>
+        </div>
+
+        <div class="fwide">
+          <label for="qtTerms">Terms (printed on the quote)</label>
+          <textarea id="qtTerms" rows="3"></textarea>
+        </div>
+        <div class="inv-actions">
+          <button type="submit" class="prim" id="qtSave">Save draft</button>
+          <button type="button" id="qtSaveSend" class="prim">Save &amp; send</button>
+          <button type="button" id="qtCancel">Cancel</button>
+        </div>
+      </form>
+      <div class="filters" id="quoteFilters">
+        <button type="button" class="fpill on" data-view="open">Open</button>
+        <button type="button" class="fpill" data-view="accepted">Accepted</button>
+        <button type="button" class="fpill" data-view="closed">Declined / expired</button>
+        <button type="button" class="fpill" data-view="all">All</button>
+      </div>
+      <div id="quoteList"><div class="state">Loading quotes&hellip;</div></div>
+    </section>
+
   </main>
 
   <main class="wrap" id="viewInventory" aria-label="Inventory" hidden>
@@ -2441,6 +2554,327 @@
       loadInvoices().then(function () { invListEl.scrollIntoView({ behavior: 'smooth', block: 'start' }); });
     }
 
+    // ---- quotes (Phase 3) -----------------------------------------------
+    var quoteForm = document.getElementById('quoteForm');
+    var quoteListEl = document.getElementById('quoteList');
+    var qtLinesEl = document.getElementById('qtLines');
+    var qtCustQ = document.getElementById('qtCustQ');
+    var qtCustList = document.getElementById('qtCustList');
+    var qtCustSel = document.getElementById('qtCustSel');
+    var qtSelected = null;
+    var qtTimer = null;
+    var quoteView = 'open';
+    var QUOTE_COLOR = { draft: '#8aa48d', sent: '#4fa2ff', viewed: '#4aac65', accepted: '#22c55e', converted: '#22c55e', declined: '#6a8ba8', expired: '#c89830' };
+    var QUOTE_ERROR = { invalid_email: 'That email is not valid', title_required: 'Give the quote a title', items_required: 'Add at least one line with a description', bad_qty: 'A quantity is not a number', bad_price: 'A price is not a number', not_editable: 'This quote has been decided and cannot be edited', not_sendable: 'This quote cannot be sent in its current state', send_failed: 'Resend refused the email', mail_unconfigured: 'Email is not configured on the Worker', not_accepted: 'The customer has not accepted; tick the verbal box to convert anyway', already_converted: 'Already converted', duplicate_number: 'An invoice with that number already exists', not_draft: 'Only a draft can be deleted', not_open: 'This quote is no longer open' };
+    var DEFAULT_TERMS = 'This quote is valid until the date shown. Prices are for the work described; anything outside it is quoted separately before it starts. Work is invoiced on completion unless the quote says otherwise, and invoices are due on receipt. Accepting this quote online has the same effect as a signed acceptance.';
+
+    function qtLine(item) {
+      item = item || {};
+      var row = el('div', 'qline');
+      var desc = document.createElement('input'); desc.type = 'text'; desc.className = 'qline-desc'; desc.placeholder = 'Description'; desc.value = item.description || ''; desc.setAttribute('aria-label', 'Line description'); desc.maxLength = 300;
+      var kind = document.createElement('select'); kind.setAttribute('aria-label', 'Kind');
+      [['service', 'Service'], ['hours', 'Hours'], ['product', 'Product'], ['expense', 'Expense']].forEach(function (k) { var o = el('option', null, k[1]); o.value = k[0]; kind.appendChild(o); });
+      kind.value = item.kind || 'service';
+      var qty = document.createElement('input'); qty.type = 'number'; qty.step = '0.001'; qty.min = '0'; qty.placeholder = 'Qty'; qty.value = item.qty != null ? item.qty : 1; qty.setAttribute('aria-label', 'Quantity');
+      var unit = document.createElement('input'); unit.type = 'text'; unit.placeholder = 'Unit'; unit.value = item.unit || ''; unit.maxLength = 12; unit.setAttribute('aria-label', 'Unit');
+      var price = document.createElement('input'); price.type = 'number'; price.step = '0.01'; price.min = '0'; price.placeholder = 'Unit price'; price.value = item.unit_cents != null ? (item.unit_cents / 100).toFixed(2) : ''; price.setAttribute('aria-label', 'Unit price');
+      var amt = el('span', 'qline-amt', '');
+      var optL = el('label', 'opt'); var opt = document.createElement('input'); opt.type = 'checkbox'; opt.checked = !!item.optional; optL.appendChild(opt); optL.appendChild(document.createTextNode('Optional'));
+      var x = el('button', 'qline-x', '×'); x.type = 'button'; x.setAttribute('aria-label', 'Remove line');
+      x.addEventListener('click', function () { row.remove(); if (!qtLinesEl.children.length) qtLinesEl.appendChild(qtLine()); qtRecalc(); });
+      [desc, kind, qty, unit, price, amt, optL, x].forEach(function (n) { row.appendChild(n); });
+      [qty, price, opt].forEach(function (n) { n.addEventListener('input', qtRecalc); n.addEventListener('change', qtRecalc); });
+      kind.addEventListener('change', function () { if (kind.value === 'hours' && !unit.value) unit.value = 'hr'; if (kind.value === 'hours' && !price.value) price.value = '80.00'; qtRecalc(); });
+      row.read = function () { return { description: desc.value.trim(), kind: kind.value, qty: qty.value === '' ? 1 : Number(qty.value), unit: unit.value.trim(), unit_price: Number(price.value || 0), optional: opt.checked }; };
+      row.amtEl = amt;
+      return row;
+    }
+
+    // Mirrors src/quotes.js priceItems: qty * unit rounded once, tax on the required lines.
+    function qtRecalc() {
+      var sub = 0, optTotal = 0;
+      Array.prototype.forEach.call(qtLinesEl.children, function (row) {
+        var it = row.read();
+        var cents = Math.round(Math.round(Number(it.qty) * 1000) / 1000 * Math.round(it.unit_price * 100));
+        if (!Number.isFinite(cents)) cents = 0;
+        row.amtEl.textContent = it.description || cents ? money(cents) : '';
+        if (!it.description) return;
+        if (it.optional) optTotal += cents; else sub += cents;
+      });
+      var bp = Math.round(Number(document.getElementById('qtTax').value || 0) * 100);
+      var tax = Math.round(sub * bp / 10000);
+      var t = document.getElementById('qtTotals'); t.textContent = '';
+      t.appendChild(el('span', null, 'Subtotal ' + money(sub)));
+      if (tax) t.appendChild(el('span', null, 'Tax ' + money(tax)));
+      var tot = el('span'); tot.appendChild(document.createTextNode('Total ')); tot.appendChild(el('b', null, money(sub + tax))); t.appendChild(tot);
+      if (optTotal) t.appendChild(el('span', 'optl', '+ ' + money(optTotal) + ' in optional items if taken'));
+    }
+    document.getElementById('qtTax').addEventListener('input', qtRecalc);
+    document.getElementById('qtAddLine').addEventListener('click', function () { var r = qtLine(); qtLinesEl.appendChild(r); r.querySelector('input').focus(); });
+
+    function qtSelect(c) {
+      qtSelected = c;
+      qtCustList.hidden = true; qtCustQ.value = '';
+      qtCustSel.hidden = false; qtCustSel.textContent = '';
+      qtCustSel.appendChild(el('b', null, cpLabel(c)));
+      var sub = [c.org_id ? 'Company' : '', c.company && c.company !== cpLabel(c) ? c.company : '', c.email].filter(Boolean).join(' · ');
+      if (sub) qtCustSel.appendChild(el('span', 'cp-s', sub));
+      var ch = el('button', null, 'Change'); ch.type = 'button';
+      ch.addEventListener('click', function () { qtSelected = null; qtCustSel.hidden = true; qtCustQ.focus(); });
+      qtCustSel.appendChild(ch);
+      if (c.email && !document.getElementById('qtEmail').value) document.getElementById('qtEmail').value = c.email;
+      if (c.company && !document.getElementById('qtCompany').value) document.getElementById('qtCompany').value = c.company;
+      if (c.name && !document.getElementById('qtName').value) document.getElementById('qtName').value = c.name;
+    }
+    function qtSearch(q) {
+      if (!q) { qtCustList.hidden = true; return; }
+      Promise.all([api('/admin/customers?q=' + encodeURIComponent(q)), api('/admin/orgs')]).then(function (res) {
+        if (qtCustQ.value.trim() !== q) return;
+        qtCustList.textContent = ''; qtCustList.hidden = false;
+        var ql = q.toLowerCase();
+        var orgs = (res[1].ok ? (res[1].orgs || []) : []).filter(function (o) { return (o.name || '').toLowerCase().indexOf(ql) >= 0 || (o.billing_email || '').toLowerCase().indexOf(ql) >= 0; });
+        var list = res[0].ok ? (res[0].customers || []) : [];
+        orgs.slice(0, 6).forEach(function (o) {
+          var b = el('button'); b.type = 'button';
+          b.appendChild(el('div', 'cp-n', o.name)); b.appendChild(el('div', 'cp-s', 'Company' + (o.billing_email ? ' · ' + o.billing_email : '')));
+          b.addEventListener('click', function () { qtSelect({ org_id: o.id, account_id: null, email: o.billing_email || '', name: '', company: o.name }); });
+          qtCustList.appendChild(b);
+        });
+        if (!list.length && !orgs.length) { qtCustList.appendChild(el('div', 'state', 'Nobody matches. Fill in the email below; the quote links to them when they sign in.')); return; }
+        list.slice(0, 12).forEach(function (c) {
+          var b = el('button'); b.type = 'button';
+          b.appendChild(el('div', 'cp-n', cpLabel(c)));
+          b.appendChild(el('div', 'cp-s', [c.company && c.company !== cpLabel(c) ? c.company : '', c.email].filter(Boolean).join(' · ')));
+          b.addEventListener('click', function () { qtSelect(c); });
+          qtCustList.appendChild(b);
+        });
+      });
+    }
+    qtCustQ.addEventListener('input', function () { clearTimeout(qtTimer); var q = qtCustQ.value.trim(); qtTimer = setTimeout(function () { qtSearch(q); }, 250); });
+    qtCustQ.addEventListener('keydown', function (e) { if (e.key === 'Escape') qtCustList.hidden = true; });
+    document.addEventListener('click', function (e) { if (!qtCustList.contains(e.target) && e.target !== qtCustQ) qtCustList.hidden = true; });
+
+    function quoteFormOpen(q, c) {
+      quoteForm.hidden = false;
+      document.getElementById('quoteId').value = q ? q.id : '';
+      document.getElementById('quoteFormTitle').textContent = q ? 'Edit ' + q.number : 'New quote';
+      ['qtEmail', 'qtName', 'qtCompany', 'qtTitle', 'qtIntro'].forEach(function (id) { document.getElementById(id).value = ''; });
+      document.getElementById('qtTax').value = q ? (q.tax_rate_bp / 100) : 0;
+      document.getElementById('qtValid').value = 30;
+      document.getElementById('qtTerms').value = q ? (q.terms || '') : DEFAULT_TERMS;
+      qtSelected = null; qtCustSel.hidden = true;
+      qtLinesEl.textContent = '';
+      if (q) {
+        document.getElementById('qtEmail').value = q.email || '';
+        document.getElementById('qtName').value = q.contact_name || '';
+        document.getElementById('qtCompany').value = q.company || '';
+        document.getElementById('qtTitle').value = q.title || '';
+        document.getElementById('qtIntro').value = q.intro || '';
+        if (q.valid_until) document.getElementById('qtValid').value = Math.max(1, Math.round((q.valid_until - Date.now() / 1000) / 86400));
+        (q.items || []).forEach(function (i) { qtLinesEl.appendChild(qtLine(i)); });
+      } else {
+        if (c) qtSelect(c);
+        qtLinesEl.appendChild(qtLine());
+      }
+      qtRecalc();
+      quoteForm.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      document.getElementById(q ? 'qtTitle' : 'qtCustQ').focus();
+    }
+    function quoteFormClose() { quoteForm.hidden = true; document.getElementById('quoteFormTitle').textContent = 'Quotes'; }
+    document.getElementById('quoteNewBtn').addEventListener('click', function () { quoteFormOpen(null, null); });
+    document.getElementById('qtCancel').addEventListener('click', quoteFormClose);
+
+    function quotePayload() {
+      var items = Array.prototype.map.call(qtLinesEl.children, function (row) { return row.read(); }).filter(function (i) { return i.description; });
+      var p = {
+        email: document.getElementById('qtEmail').value.trim(), contact_name: document.getElementById('qtName').value.trim(), company: document.getElementById('qtCompany').value.trim(),
+        title: document.getElementById('qtTitle').value.trim(), intro: document.getElementById('qtIntro').value.trim(), terms: document.getElementById('qtTerms').value.trim(),
+        tax_rate_bp: Math.round(Number(document.getElementById('qtTax').value || 0) * 100), valid_days: Number(document.getElementById('qtValid').value || 30), items: items,
+      };
+      if (qtSelected && qtSelected.account_id) p.account_id = qtSelected.account_id;
+      if (qtSelected && qtSelected.org_id) p.org_id = qtSelected.org_id;
+      return p;
+    }
+    function quoteSave(thenSend) {
+      var p = quotePayload();
+      if (!p.email) return toast('Whose quote is it? Enter their email.');
+      if (!p.title) return toast('Give the quote a title');
+      if (!p.items.length) return toast('Add at least one line');
+      var id = document.getElementById('quoteId').value;
+      var btn = document.getElementById(thenSend ? 'qtSaveSend' : 'qtSave'); btn.disabled = true;
+      var req = id ? api('/admin/quotes/' + id, { method: 'PATCH', body: p }) : api('/admin/quotes', { method: 'POST', body: p });
+      req.then(function (r) {
+        btn.disabled = false;
+        if (!r.ok) return toast((QUOTE_ERROR[r.error] || 'Could not save') + (r.description ? ' (' + r.description + ')' : ''));
+        var q = r.quote;
+        if (!thenSend) { toast('Saved ' + q.number); quoteFormClose(); loadQuotes(); return; }
+        btn.disabled = true;
+        api('/admin/quotes/' + q.id + '/send', { method: 'POST' }).then(function (s) {
+          btn.disabled = false;
+          toast(s.ok ? 'Sent ' + q.number + ' to ' + s.to : 'Saved, but not sent: ' + (QUOTE_ERROR[s.error] || s.error));
+          quoteFormClose(); loadQuotes();
+        });
+      });
+    }
+    quoteForm.addEventListener('submit', function (e) { e.preventDefault(); quoteSave(false); });
+    document.getElementById('qtSaveSend').addEventListener('click', function () { quoteSave(true); });
+
+    function quoteStatusLine(q) {
+      var st = el('div', 'inv-meta qcard-status');
+      var bits = [];
+      if (q.status === 'draft') bits.push('Draft, not sent');
+      if (q.sent_at) bits.push('Sent ' + fmt(q.sent_at));
+      if (q.viewed_at) bits.push('Opened ' + fmt(q.viewed_at));
+      if (q.status === 'sent' && q.sent_at && !q.viewed_at && Date.now() / 1000 - q.sent_at > 3 * 86400) bits.push('not opened yet');
+      if (q.follow_up_stage) bits.push('Follow-up ' + q.follow_up_stage + '/2 sent');
+      st.appendChild(document.createTextNode(bits.join(' · ')));
+      if (q.status === 'accepted' || q.status === 'converted') {
+        st.appendChild(document.createTextNode(bits.length ? ' · ' : ''));
+        st.appendChild(el('span', 'q-sig', 'Accepted ' + fmt(q.decided_at) + (q.signature_name ? ' by ' + q.signature_name : q.decided_by && q.decided_by !== 'customer' ? ' (verbal, recorded by ' + q.decided_by + ')' : '')));
+      }
+      if (q.status === 'converted' && q.invoice_number) { st.appendChild(document.createTextNode(' · ')); var a = el('a', null, 'Invoice ' + q.invoice_number); a.href = '#inv=' + encodeURIComponent(q.invoice_number); st.appendChild(a); }
+      if (q.status === 'declined') { st.appendChild(document.createTextNode(bits.length ? ' · ' : '')); st.appendChild(el('span', 'q-dead', 'Declined ' + fmt(q.decided_at) + (q.decline_reason ? ': "' + q.decline_reason + '"' : ''))); }
+      if (q.expired && q.status !== 'accepted' && q.status !== 'converted' && q.status !== 'declined') { st.appendChild(document.createTextNode(bits.length ? ' · ' : '')); st.appendChild(el('span', 'q-late', 'Expired ' + fmtDate(q.valid_until))); }
+      else if (q.valid_until && (q.status === 'sent' || q.status === 'viewed' || q.status === 'draft')) { st.appendChild(document.createTextNode(bits.length ? ' · ' : '')); st.appendChild(el('span', null, 'Valid until ' + fmtDate(q.valid_until))); }
+      return st;
+    }
+
+    function quoteCard(q, onChange) {
+      var reload = onChange || loadQuotes;
+      var d = el('div', 'inv quote-' + q.status);
+      var top = el('div', 'inv-top');
+      top.appendChild(el('span', 'inv-num', q.number + ' · ' + q.title));
+      var right = el('span');
+      right.appendChild(badge(q.status === 'viewed' ? 'opened' : q.status, QUOTE_COLOR[q.status] || '#8aa48d'));
+      right.appendChild(document.createTextNode(' '));
+      right.appendChild(el('span', 'inv-amt', money(q.status === 'accepted' || q.status === 'converted' ? q.accepted_cents : q.total_cents)));
+      top.appendChild(right);
+      d.appendChild(top);
+      d.appendChild(el('div', 'inv-meta', [q.contact_name, q.company, q.email].filter(Boolean).join(' · ') + (q.item_count ? ' · ' + q.item_count + (q.item_count === 1 ? ' line' : ' lines') : '') + (q.optional_cents ? ' · ' + money(q.optional_cents) + ' optional' : '')));
+      d.appendChild(quoteStatusLine(q));
+      var acts = el('div', 'inv-actions');
+      function qact(label, cls, fn) { var b = el('button', cls || null, label); b.type = 'button'; b.addEventListener('click', fn); acts.appendChild(b); return b; }
+      var open = q.status === 'sent' || q.status === 'viewed';
+      if (q.status === 'draft' || open || q.status === 'expired') {
+        var send = qact(q.sent_at ? 'Resend' : 'Send to customer', 'prim', function () {
+          send.disabled = true;
+          api('/admin/quotes/' + q.id + '/send', { method: 'POST' }).then(function (r) { send.disabled = false; toast(r.ok ? (r.resend ? 'Copy sent to ' : 'Sent to ') + r.to : (QUOTE_ERROR[r.error] || 'Could not send')); reload(); });
+        });
+        qact('Edit', null, function () { api('/admin/quotes/' + q.id).then(function (r) { if (r.ok) { showView('invoices'); quoteFormOpen(r.quote); } }); });
+      }
+      if (open || q.status === 'draft') {
+        qact('Copy link', null, function () {
+          api('/admin/quotes/' + q.id + '/link', { method: 'POST' }).then(function (r) {
+            if (!r.ok) return toast('Could not make a link');
+            if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(r.url).then(function () { toast('Link copied'); }, function () { prompt('Quote link', r.url); });
+            else prompt('Quote link', r.url);
+          });
+        });
+      }
+      if (q.status === 'accepted') {
+        qact('Convert to invoice', 'prim', function () {
+          var num = prompt('Invoice number:', q.number.replace('TES-Q-', 'TES-INV-Q-'));
+          if (num === null) return;
+          api('/admin/quotes/' + q.id + '/convert', { method: 'POST', body: { invoice_number: num.trim(), due_days: 14 } }).then(function (r) {
+            if (!r.ok) return toast(QUOTE_ERROR[r.error] || 'Could not convert');
+            toast('Invoice ' + r.invoice_number + ' created' + (r.pay_url ? ' with a pay link' : ''));
+            reload();
+          });
+        });
+      }
+      if (open) {
+        qact('Accepted by phone', null, function () {
+          var note = prompt('How did they accept? (recorded on the quote as your note, never as their signature)', 'agreed by phone');
+          if (note === null) return;
+          var num = prompt('Invoice number:', q.number.replace('TES-Q-', 'TES-INV-Q-'));
+          if (num === null) return;
+          api('/admin/quotes/' + q.id + '/convert', { method: 'POST', body: { verbal: note.trim() || 'verbal', invoice_number: num.trim(), due_days: 14 } }).then(function (r) {
+            if (!r.ok) return toast(QUOTE_ERROR[r.error] || 'Could not convert');
+            toast('Marked accepted and invoiced as ' + r.invoice_number); reload();
+          });
+        });
+        qact('Mark declined', null, function () {
+          var reason = prompt('Reason, if they gave one:', '');
+          if (reason === null) return;
+          api('/admin/quotes/' + q.id + '/decline', { method: 'POST', body: { reason: reason.trim() } }).then(function (r) { toast(r.ok ? 'Marked declined' : (QUOTE_ERROR[r.error] || 'Failed')); reload(); });
+        });
+      }
+      if (open || q.status === 'expired') {
+        qact(q.status === 'expired' ? 'Reopen for 30 days' : 'Extend 30 days', null, function () {
+          api('/admin/quotes/' + q.id + '/extend', { method: 'POST', body: { days: 30 } }).then(function (r) { toast(r.ok ? 'Valid until ' + fmtDate(r.quote.valid_until) : 'Failed'); reload(); });
+        });
+      }
+      if (q.status !== 'draft') {
+        qact('Duplicate', null, function () {
+          api('/admin/quotes/' + q.id + '/duplicate', { method: 'POST' }).then(function (r) { if (!r.ok) return toast('Could not duplicate'); toast('Drafted ' + r.quote.number); showView('invoices'); quoteFormOpen(r.quote); loadQuotes(); });
+        });
+      }
+      if (q.status === 'draft') {
+        qact('Delete', 'danger', function () {
+          if (!confirm('Delete draft ' + q.number + '?')) return;
+          api('/admin/quotes/' + q.id, { method: 'DELETE' }).then(function (r) { toast(r.ok ? 'Deleted' : (QUOTE_ERROR[r.error] || 'Failed')); reload(); });
+        });
+      }
+      var hist = qact('History', null, function () {
+        if (d.querySelector('.qevents')) { d.querySelector('.qevents').remove(); return; }
+        api('/admin/quotes/' + q.id).then(function (r) {
+          if (!r.ok) return;
+          var ev = el('div', 'qevents');
+          var ul = el('ul', 'qitems-mini');
+          r.quote.items.forEach(function (i) { var li = el('li', i.optional ? 'opt' : null); li.appendChild(el('span', null, i.description + (i.qty !== 1 ? ' x' + i.qty + (i.unit ? ' ' + i.unit : '') : '') + (i.optional ? (i.accepted ? ' (optional, taken)' : ' (optional)') : ''))); li.appendChild(el('span', null, money(i.line_cents))); ul.appendChild(li); });
+          ev.appendChild(ul);
+          (r.events || []).forEach(function (e) { ev.appendChild(el('div', null, fmt(e.at) + ' · ' + (e.note || e.kind) + (e.actor && e.actor !== 'system' ? ' · ' + e.actor.replace(/^customer:/, '') : ''))); });
+          d.appendChild(ev);
+        });
+      });
+      d.appendChild(acts);
+      return d;
+    }
+
+    function loadQuotes() {
+      return api('/admin/quotes?view=' + encodeURIComponent(quoteView)).then(function (r) {
+        quoteListEl.textContent = '';
+        if (!r.ok) { quoteListEl.appendChild(el('div', 'state', 'Could not load quotes.')); return; }
+        var list = r.quotes || [];
+        if (!list.length) { quoteListEl.appendChild(el('div', 'state', quoteView === 'open' ? 'No open quotes. Start one with + New quote.' : 'Nothing here.')); return; }
+        list.forEach(function (q) { quoteListEl.appendChild(quoteCard(q)); });
+      });
+    }
+    document.getElementById('quoteFilters').addEventListener('click', function (e) {
+      var b = e.target.closest('.fpill'); if (!b) return;
+      Array.prototype.forEach.call(this.querySelectorAll('.fpill'), function (x) { x.classList.remove('on'); });
+      b.classList.add('on'); quoteView = b.getAttribute('data-view') || 'open'; loadQuotes();
+    });
+
+    // Deep link: open the Invoices tab on one quote, showing every view.
+    function showQuote(id) {
+      showView('invoices');
+      history.replaceState(null, '', '#q=' + id);
+      quoteView = 'all';
+      Array.prototype.forEach.call(document.querySelectorAll('#quoteFilters .fpill'), function (x) { x.classList.toggle('on', x.getAttribute('data-view') === 'all'); });
+      loadQuotes().then(function () {
+        api('/admin/quotes/' + id).then(function (r) {
+          if (!r.ok) return;
+          quoteListEl.textContent = '';
+          quoteListEl.appendChild(quoteCard(r.quote, function () { showQuote(id); }));
+          var back = licAction('Show all quotes', null, function () { loadQuotes(); });
+          quoteListEl.appendChild(back);
+          quoteListEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        });
+      });
+    }
+
+    // From a customer's file: a new quote with them filled in.
+    function startQuoteFor(c) {
+      showView('invoices');
+      quoteFormOpen(null, { account_id: c.account.id, email: c.account.email, name: c.profile.name || '', company: c.profile.company || '' });
+    }
+    // The dossier's Quotes pane.
+    function quoteRows(parent, list, reload) {
+      if (!list || !list.length) { parent.appendChild(el('div', 'row-sub', 'None yet.')); return; }
+      list.forEach(function (q) { parent.appendChild(quoteCard(q, reload)); });
+    }
+
     // ---- product keys ----------------------------------------------------
     var keyListEl = document.getElementById('keyList');
     var keyForm = document.getElementById('keyForm');
@@ -3173,7 +3607,8 @@
       // The file is tabbed: what needs attention first, then the money, the work,
       // the paperwork, and what you want to remember about them.
       var allInv = c.all_invoices || c.invoices || [];
-      var tabs = paneTabs(wrap, ['Overview', 'Invoices', 'Tickets', 'Equipment', 'Files', 'Notes', 'Activity'], 'cust:' + c.account.id);
+      var tabs = paneTabs(wrap, ['Overview', 'Quotes', 'Invoices', 'Tickets', 'Equipment', 'Files', 'Notes', 'Activity'], 'cust:' + c.account.id);
+      tabs.count('Quotes', (c.quotes || []).length);
       var pOverview = tabs.pane('Overview');
       var pInv = tabs.pane('Invoices');
       var pTk = tabs.pane('Tickets');
@@ -3369,6 +3804,11 @@
       pOverview.insertBefore(quick, pOverview.firstChild);
       invoiceRows(ivs, allInv);
       pInv.appendChild(ivs);
+      var pQ = tabs.pane('Quotes');
+      var qs = sec('Quotes (' + (c.quotes || []).length + ')');
+      qs.appendChild(licAction('New quote for this customer', 'prim', function () { startQuoteFor(c); }));
+      quoteRows(qs, c.quotes || [], function () { openCustomer(c.account.id); });
+      pQ.appendChild(qs);
 
       // ---- equipment ----
       var eqs = sec('Equipment (' + (c.inventory || []).length + ')');
@@ -3904,7 +4344,8 @@
       var oInv = extra.invoices || [];
       var oTk = extra.tickets || [];
       var oDocs = extra.documents || [];
-      var otabs = paneTabs(wrap, ['Overview', 'Invoices', 'Tickets', 'Equipment', 'Files', 'Notes', 'Activity'], 'org:' + o.id);
+      var otabs = paneTabs(wrap, ['Overview', 'Quotes', 'Invoices', 'Tickets', 'Equipment', 'Files', 'Notes', 'Activity'], 'org:' + o.id);
+      otabs.count('Quotes', (extra.quotes || []).length);
       var oOverview = otabs.pane('Overview');
       otabs.count('Invoices', oInv.length);
       otabs.count('Tickets', oTk.length);
@@ -4059,6 +4500,10 @@
         "Everything billed to a member, to the billing contact, or to an address on a claimed domain."));
       invoiceRows(oIvs, oInv);
       oPInv.appendChild(oIvs);
+      var oQs = sec('Quotes (' + (extra.quotes || []).length + ')');
+      oQs.appendChild(licAction('New quote for this company', 'prim', function () { showView('invoices'); quoteFormOpen(null, { org_id: o.id, account_id: null, email: o.billing_email || '', name: '', company: o.name }); }));
+      quoteRows(oQs, extra.quotes || [], function () { openOrg(o.id); });
+      otabs.pane('Quotes').appendChild(oQs);
 
       var oTks = sec('Tickets (' + oTk.length + ')');
       ticketRows(oTks, oTk);
@@ -5484,6 +5929,7 @@
       else if (type === 'org') { showView('customers'); custMode = 'orgs'; syncMode(); openOrg(String(id)); }
       else if (type === 'agreement') { showView('customers'); }
       else if (type === 'invoice') { var mnum = /^(\S+)/.exec(summary || ''); if (mnum) showInvoice(mnum[1]); else showView('invoices'); }
+      else if (type === 'quote') { showQuote(Number(id)); }
       else if (type === 'inventory') { showView('inventory'); var go = function () { flashInvt(Number(id)); }; if (invtAll.length) go(); else loadInventory().then(go); }
       else if (type === 'license') { showView('keys'); }
       else if (type === 'paypal') { showView('finance'); }
@@ -5581,6 +6027,15 @@
           s4.appendChild(row(i.number + ' · ' + i.who, (i.payment_method || 'payment') + (i.payment_ref ? ' #' + i.payment_ref : '') + ' reported ' + (i.reported_at ? ago(a.now - i.reported_at) + ' ago' : ''), right, function () { showInvoice(i.number); }));
         });
         wrap.appendChild(s4);
+      }
+      if ((a.quotes || []).length) {
+        any = true;
+        var sQ = attSection('Quotes', a.quotes.length, true);
+        a.quotes.forEach(function (q) {
+          var right = el('b', 'num', money(q.total_cents));
+          sQ.appendChild(row(q.number + ' · ' + q.title, q.who + ' · ' + (q.needs === 'convert' ? 'accepted, convert to an invoice' : q.unopened ? 'sent ' + ago(a.now - q.sent_at) + ' ago, not opened' : q.viewed ? 'opened, no decision yet' : 'sent ' + ago(a.now - (q.sent_at || a.now)) + ' ago') + (q.expires_in_sec != null && q.needs === 'decision' ? ' · ' + (q.expires_in_sec > 0 ? 'expires in ' + ago(q.expires_in_sec) : 'expired') : ''), right, function () { showQuote(q.id); }));
+        });
+        wrap.appendChild(sQ);
       }
       if (a.money.paypal_review) {
         any = true;
@@ -5795,6 +6250,7 @@
       else if ((m = /^#c=([A-Za-z0-9_-]{1,64})/.exec(hash))) { showView('customers'); custMode = 'people'; syncMode(); openCustomer(m[1]); }
       else if ((m = /^#o=([A-Za-z0-9_-]{1,64})/.exec(hash))) { showView('customers'); custMode = 'orgs'; syncMode(); openOrg(m[1]); }
       else if ((m = /^#inv=(.+)/.exec(hash))) { showInvoice(decodeURIComponent(m[1])); }
+      else if ((m = /^#q=(\d+)/.exec(hash))) { showQuote(Number(m[1])); }
       else if ((m = /^#i=(\d+)/.exec(hash))) { loaded.inventory = true; showView('inventory'); loadInventory().then(function () { flashInvt(Number(m[1])); }); }
       else if ((m = /^#finance(?:=(\d{4}(?:-Q\d|-\d{2})?))?$/.exec(hash))) {
         if (m[1]) { finPeriod = /Q/.test(m[1]) ? 'quarter' : /-/.test(m[1]) ? 'month' : 'year'; finAnchor = keyToAnchor(m[1]); }
@@ -6145,7 +6601,7 @@
       inbox: { view: 'viewInbox', nav: 'navInbox', load: loadInbox, always: true },
       tickets: { view: 'viewTickets', nav: 'navTickets' },
       customers: { view: 'viewCustomers', nav: 'navCustomers', load: function () { loadCustomers(''); } },
-      invoices: { view: 'viewInvoices', nav: 'navInvoices', load: loadInvoices },
+      invoices: { view: 'viewInvoices', nav: 'navInvoices', load: function () { loadQuotes(); return loadInvoices(); } },
       // Inventory and Finance re-read on every visit: both are one request, and a
       // confirmation or a payment that landed while you were on another tab should
       // show without a refresh.
@@ -6159,7 +6615,7 @@
     // second, redundant history entry.
     var HASH_OF = {
       home: /^(#home|#|)$/, inbox: /^#(inbox|m=)/, tickets: /^#(tickets|t=)/, customers: /^#(customers|c=|o=)/,
-      invoices: /^#(invoices|inv=)/, inventory: /^#(inventory|i=)/, finance: /^#finance/, keys: /^#keys/,
+      invoices: /^#(invoices|inv=|q=)/, inventory: /^#(inventory|i=)/, finance: /^#finance/, keys: /^#keys/,
     };
 
     function showView(which) {

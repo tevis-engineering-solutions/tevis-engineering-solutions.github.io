@@ -92,6 +92,11 @@
     .inv { background:var(--card); border:1px solid var(--line); border-radius:14px; padding:1.25rem 1.35rem; margin-bottom:0.9rem; }
     .inv.open { border-color:rgba(200,152,48,0.35); }
     .inv-top { display:flex; flex-wrap:wrap; gap:0.8rem 1.2rem; align-items:flex-start; }
+    .inv.quote { border-color:rgba(74,172,101,0.35); }
+    .inv.quote.done { border-color:var(--line); }
+    .q-badge { display:inline-block; font-size:0.66rem; font-weight:700; text-transform:uppercase; letter-spacing:0.05em; padding:0.2rem 0.55rem; border-radius:999px; background:rgba(74,172,101,0.14); color:#9fd3ae; margin-left:0.5rem; vertical-align:middle; }
+    .q-badge.gold { background:rgba(200,152,48,0.16); color:#e6c68a; }
+    .q-badge.grey { background:var(--card-2); color:var(--muted); }
     .inv-id { font-family:"Montserrat",sans-serif; font-weight:800; color:#fff; font-size:1.02rem; letter-spacing:0.02em; }
     .inv-meta { color:var(--muted); font-size:0.83rem; margin-top:0.15rem; }
     .inv-meta span + span::before { content:"\00b7"; margin:0 0.45rem; color:#3c5a45; }
@@ -232,6 +237,9 @@
       <span class="spin" aria-hidden="true"></span>
       <div><b>Loading your invoices&hellip;</b>Checking the billing records tied to your sign-in email.</div>
     </div>
+
+    <h2 class="sec-title" id="quoteHead" hidden>Quotes <span class="count" id="quoteCount"></span></h2>
+    <div id="quoteList"></div>
 
     <h2 class="sec-title" id="openHead" hidden>Open invoices <span class="count" id="openCount"></span></h2>
     <div id="openList"></div>
@@ -590,6 +598,38 @@
       if (msg) msg.lastChild.textContent =
         'The invoicing service is waking up. This can take up to half a minute on the first load.';
     }, 6000);
+
+    // Quotes come from the portal Worker, not the billing sheet, so they render even
+    // when the invoice lookup is slow or down.
+    function renderQuotes(list) {
+      var head = document.getElementById('quoteHead'), box = document.getElementById('quoteList');
+      if (!list || !list.length) return;
+      head.hidden = false;
+      document.getElementById('quoteCount').textContent = list.length + ' total';
+      list.forEach(function (q) {
+        var open = (q.status === 'sent' || q.status === 'viewed') && !q.expired;
+        var done = q.status === 'accepted' || q.status === 'converted';
+        var c = el('div', 'inv quote' + (open ? '' : ' done'));
+        var top = el('div', 'inv-top');
+        var left = el('div');
+        var idEl = el('div', 'inv-id', q.number);
+        var b = el('span', 'q-badge' + (open ? '' : done ? '' : q.status === 'declined' ? ' grey' : ' gold'), open ? 'Awaiting your decision' : done ? 'Accepted' : q.status === 'declined' ? 'Declined' : 'Expired');
+        idEl.appendChild(b);
+        left.appendChild(idEl);
+        var meta = el('div', 'inv-meta');
+        [q.title, q.sent_at ? 'Sent ' + TESInvoices.formatDate(new Date(q.sent_at * 1000)) : '', open && q.valid_until ? 'Valid until ' + TESInvoices.formatDate(new Date(q.valid_until * 1000)) : '', done && q.decided_at ? 'Accepted ' + TESInvoices.formatDate(new Date(q.decided_at * 1000)) : '', q.invoice_number ? 'Invoice ' + q.invoice_number : ''].filter(Boolean).forEach(function (t) { meta.appendChild(el('span', null, t)); });
+        left.appendChild(meta);
+        top.appendChild(left);
+        top.appendChild(el('div', 'inv-spacer'));
+        var right = el('div', 'inv-right');
+        right.appendChild(el('div', 'inv-amt', TESInvoices.formatUSD((done ? q.accepted_cents : q.total_cents) / 100)));
+        if (q.url) { var a = el('a', 'btn btn-primary'); a.href = q.url; a.target = '_blank'; a.rel = 'noopener'; a.appendChild(el('i', 'fa-solid fa-file-signature')); a.appendChild(document.createTextNode(' Review & accept')); right.appendChild(a); }
+        top.appendChild(right);
+        c.appendChild(top);
+        box.appendChild(c);
+      });
+    }
+    fetch('/portal-api/quotes', { credentials: 'same-origin' }).then(function (r) { return r.ok ? r.json() : null; }).then(function (d) { if (d && d.ok) renderQuotes(d.quotes); }).catch(function () { /* the quotes list is a courtesy here */ });
 
     TESInvoices.getIdentity().then(function (id) {
       if (!id || !id.email) { noIdentity(); return null; }

@@ -9,6 +9,7 @@ Disallow: /portal/
 # The free website analysis report. It renders one visitor's own scan out of their
 # own browser storage, so to a crawler it is a permanently empty page.
 Disallow: /website-report.html
+Disallow: /quote.html
 
 # The embedded 3D Shed Builder demo. A bare app shell titled "Shed Builder" with no
 # copy on it; the page that sells it is 3d-shed-builder-tool.html.
