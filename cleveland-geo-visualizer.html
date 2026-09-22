@@ -1,0 +1,1043 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cleveland Geo Visualizer &mdash; Free Interactive Map of Cleveland Open Data: Property, Police Reports, Cameras &amp; More | Tevis Engineering Solutions</title>
+  <meta name="description" content="Free interactive map of Cleveland-area public data. Stack property values and sales, tax delinquency, permits, code violations, police reports, dispatch calls, license-plate cameras and census context on one map with one timeline, and run your own analysis. No sign-up, refreshed nightly. Built by Tevis Engineering Solutions in Cleveland, Ohio, who build the same tool on your data.">
+  <meta name="author" content="Tyler Tevis, Tevis Engineering Solutions">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Tevis Engineering Solutions">
+  <meta property="og:locale" content="en_US">
+  <meta property="og:url" content="https://tevisengineering.com/cleveland-geo-visualizer.html">
+  <meta property="og:title" content="Cleveland Geo Visualizer &mdash; Free Interactive Map of Cleveland Open Data | Tevis Engineering Solutions">
+  <meta property="og:description" content="Property values, sales, permits, police reports, dispatch, license-plate cameras and more from county and city open data, stacked on one map with one timeline. Free, no sign-up. Build your own analysis.">
+  <meta property="og:image" content="https://tevisengineering.com/assets/geo-map/heat-decade.jpg">
+  <meta property="og:image:width" content="1400">
+  <meta property="og:image:height" content="900">
+  <meta property="og:image:alt" content="The Cleveland Geo Visualizer with two datasets stacked: a ten-year heat surface of police reports under the county's license-plate camera network, with a shared timeline along the bottom.">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Cleveland Geo Visualizer &mdash; Free Interactive Map of Cleveland Open Data | Tevis Engineering Solutions">
+  <meta name="twitter:description" content="Property values, sales, permits, police reports, dispatch, license-plate cameras and more from county and city open data, stacked on one map with one timeline. Free, no sign-up. Build your own analysis.">
+  <meta name="twitter:image" content="https://tevisengineering.com/assets/geo-map/heat-decade.jpg">
+  <link rel="canonical" href="https://tevisengineering.com/cleveland-geo-visualizer.html">
+  <link rel="icon" type="image/png" href="assets/favicon.png">
+  <meta http-equiv="X-Content-Type-Options" content="nosniff">
+  <meta name="referrer" content="strict-origin-when-cross-origin">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Montserrat:wght@500;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+  <style>
+    :root {
+      --bg: #0d1710;
+      --card: #142019;
+      --card-2: #1c2e22;
+      --line: #2c4232;
+      --text: #e4ede5;
+      --muted: #8aa48d;
+      --blue: #4aac65;
+      --green: #4aac65;
+      --gold: #c89830;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: "Inter", "Segoe UI", system-ui, sans-serif;
+      color: var(--text);
+      background: radial-gradient(circle at top, #172b1c 0%, #0d1710 45%, #060e08 100%);
+      line-height: 1.65;
+    }
+    .container { width: min(1120px, 92%); margin: 0 auto; }
+    .hero { padding: 3.5rem 0 2rem; text-align: left; }
+    .eyebrow { display:inline-flex; align-items:center; gap:0.4rem; border:1px solid rgba(74,172,101,0.45); border-radius:999px; padding:0.32rem 0.8rem; font-size:0.8rem; font-weight:700; text-transform:uppercase; letter-spacing:0.08em; color:#cdeed6; background:rgba(74,172,101,0.12); margin-bottom:0.9rem; }
+    h1 { font-family:"Montserrat",sans-serif; text-transform:uppercase; letter-spacing:0.02em; font-size:clamp(2rem,6vw,3.15rem); line-height:1.12; margin-bottom:0.9rem; }
+    h1 .grad { background:linear-gradient(90deg,#4aac65,#c89830); -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent; }
+    .hero p { max-width:900px; color:var(--muted); font-size:1.05rem; }
+    .cta-row { margin-top:1.4rem; display:flex; gap:0.8rem; flex-wrap:wrap; }
+    .btn { text-decoration:none; border-radius:999px; padding:0.78rem 1.2rem; font-weight:700; border:1px solid transparent; font-size:0.9rem; font-family:"Montserrat",sans-serif; text-transform:uppercase; letter-spacing:0.03em; cursor:pointer; }
+    .btn-primary { background:linear-gradient(135deg,#c89830,#e0b840); color:#0d1710; box-shadow:0 10px 20px rgba(200,152,48,0.25); }
+    .btn-secondary { border-color:rgba(74,172,101,0.4); background:rgba(74,172,101,0.1); color:#cdeed6; }
+    .section { margin-top:1.25rem; background:rgba(20,32,25,0.74); border:1px solid var(--line); border-radius:16px; padding:1.5rem; }
+    .section h2 { font-family:"Montserrat",sans-serif; text-transform:uppercase; letter-spacing:0.03em; font-size:1.3rem; margin-bottom:0.75rem; color:#f1f7f1; }
+    .section h2 .gold { color:var(--gold); }
+    .section > p { color:var(--muted); margin-bottom:0.7rem; }
+    .section p strong, .section li strong { color:#dfeadf; }
+    .lead-line { font-size:1.08rem; color:#cfe0d2 !important; }
+    .grid { display:grid; grid-template-columns:repeat(3,1fr); gap:0.85rem; margin-top:0.85rem; }
+    @media (max-width:900px) { .grid { grid-template-columns:1fr 1fr; } }
+    @media (max-width:560px) { .grid { grid-template-columns:1fr; } }
+    .card { background:var(--card); border:1px solid var(--line); border-radius:12px; padding:1rem; }
+    .card h3 { font-family:"Montserrat",sans-serif; font-size:1rem; margin-bottom:0.5rem; color:#e4ede5; display:flex; align-items:center; gap:0.55rem; }
+    .card h3 i { color:var(--gold); width:1.1rem; text-align:center; }
+    .card p, .card li { font-size:0.95rem; color:#bcd0bf; }
+
+    /* stat tiles */
+
+    /* screenshots */
+    .shot { margin-top:0.9rem; }
+    .shot img { display:block; width:100%; height:auto; border:1px solid var(--line); border-radius:12px; box-shadow:0 14px 40px rgba(0,0,0,0.4); background:#0b120d; }
+    .shot figcaption { margin-top:0.6rem; font-size:0.85rem; color:var(--muted); line-height:1.55; }
+    .shot figcaption .tag { display:inline-block; font-size:0.66rem; letter-spacing:0.14em; text-transform:uppercase; color:var(--gold); font-weight:800; margin-right:0.5rem; }
+    .shot figcaption b { color:#cfe0d2; }
+    .shots-2 { display:grid; grid-template-columns:1.55fr 1fr; gap:1rem; align-items:start; margin-top:0.9rem; }
+    @media (max-width:760px) { .shots-2 { grid-template-columns:1fr; } }
+
+    /* process */
+    .process { counter-reset:flow; display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:0.8rem; margin-top:0.7rem; }
+    .process-step { background:var(--card); border:1px solid var(--line); border-radius:12px; padding:0.95rem; position:relative; }
+    .process-step::before { counter-increment:flow; content:counter(flow); position:absolute; top:-10px; right:10px; width:24px; height:24px; border-radius:999px; display:grid; place-items:center; font-size:0.78rem; font-weight:800; color:#0d1710; background:linear-gradient(135deg,#c89830,#e0b840); }
+    .process-step strong { display:block; margin-bottom:0.35rem; color:#dfeadf; }
+    .process-step p { color:var(--muted); font-size:0.92rem; }
+
+    /* notice / callout */
+    .notice { margin-top:0.95rem; border-radius:12px; border:1px solid rgba(200,152,48,0.34); background:rgba(200,152,48,0.09); padding:0.9rem 1rem; color:#ecd9b3; font-size:0.94rem; }
+    .notice b { color:#f2e2c0; }
+
+    /* comparison tables */
+
+    /* pricing model cards */
+
+    /* subscription plan cards */
+    .plan .btn { display:block; font-size:0.8rem; padding:0.6rem 1rem; }
+
+
+    .fields { display:flex; flex-wrap:wrap; gap:0.4rem; margin-top:0.6rem; }
+    .fields code { font-family:"Inter",sans-serif; font-size:0.82rem; background:var(--card); border:1px solid var(--line); border-radius:6px; padding:0.28rem 0.6rem; color:#cfe0d2; }
+
+    /* FAQ */
+    .faq { margin-top:0.6rem; }
+    .faq details { border:1px solid var(--line); border-radius:12px; background:var(--card); margin-bottom:0.6rem; overflow:hidden; }
+    .faq summary { cursor:pointer; padding:0.9rem 1rem; font-family:"Montserrat",sans-serif; font-weight:700; font-size:0.98rem; color:#e4ede5; list-style:none; display:flex; justify-content:space-between; align-items:center; gap:1rem; }
+    .faq summary::-webkit-details-marker { display:none; }
+    .faq summary::after { content:"+"; color:var(--gold); font-weight:800; font-size:1.2rem; }
+    .faq details[open] summary::after { content:"\2212"; }
+    .faq details[open] summary { border-bottom:1px solid var(--line); }
+    .faq .faq-a { padding:0.9rem 1rem; color:var(--muted); font-size:0.95rem; }
+
+    /* CTA band + request form */
+    .cta-band { margin-top:1.25rem; background:radial-gradient(120% 130% at 50% 0%,rgba(74,172,101,0.14),transparent 60%),linear-gradient(160deg,#16261d,#0f1c14); border:1px solid rgba(74,172,101,0.28); border-radius:16px; padding:1.8rem 1.5rem; text-align:center; }
+    .cta-band h2 { font-family:"Montserrat",sans-serif; text-transform:uppercase; letter-spacing:0.03em; font-size:1.4rem; color:#fff; margin-bottom:0.5rem; }
+    .cta-band p { color:var(--muted); max-width:640px; margin:0 auto 1.2rem; }
+    .req-form { max-width:640px; margin:1.2rem auto 0; display:grid; grid-template-columns:1fr 1fr; gap:0.7rem; text-align:left; }
+    .req-form .full { grid-column:1 / -1; }
+    .req-form label { display:block; font-size:0.78rem; text-transform:uppercase; letter-spacing:0.05em; color:var(--muted); margin-bottom:0.3rem; font-weight:600; }
+    .req-form input, .req-form select, .req-form textarea { width:100%; padding:0.6rem 0.75rem; border-radius:8px; border:1px solid var(--line); background:var(--bg); color:var(--text); font-size:0.9rem; font-family:"Inter",sans-serif; outline:none; transition:border-color 0.2s; }
+    .req-form input:focus, .req-form select:focus, .req-form textarea:focus { border-color:var(--green); }
+    .req-form .trap { position:absolute; left:-9999px; opacity:0; height:0; overflow:hidden; }
+    .req-form button { grid-column:1 / -1; }
+    .req-success { max-width:640px; margin:1rem auto 0; background:rgba(74,172,101,0.1); border:1px solid rgba(74,172,101,0.35); border-radius:12px; padding:1.2rem; color:#cdeed6; }
+    @media (max-width:560px) { .req-form { grid-template-columns:1fr; } }
+
+    .breadcrumbs { padding:1.25rem 0 0; font-size:0.82rem; color:var(--muted); }
+    .breadcrumbs a { color:var(--muted); text-decoration:none; }
+    .breadcrumbs a:hover { color:var(--green); }
+    @media (max-width:700px) { .hero { padding-top:2.8rem; } .section { padding:1.1rem; } }
+    @media (max-width:480px) { .hero { padding:2.2rem 0 1.5rem; } .cta-row { flex-direction:column; align-items:stretch; } .cta-row .btn { text-align:center; } .process { grid-template-columns:1fr; } }
+
+    /* page-specific */
+    .shots-2.even { grid-template-columns:1fr 1fr; }
+    .shots-3 { display:grid; grid-template-columns:repeat(3,1fr); gap:1rem; align-items:start; margin-top:0.9rem; }
+    .shots-3 figcaption { font-size:0.82rem; }
+    .shot-wide img { object-fit:cover; }
+    .faq-h2 { font-family:"Montserrat",sans-serif; text-transform:uppercase; letter-spacing:0.03em; font-size:1.3rem; margin-bottom:0.9rem; color:#fff; }
+    .success-tel { color:#cdeed6; }
+    @media (max-width:860px) { .shots-3 { grid-template-columns:1fr 1fr; } }
+    @media (max-width:760px) { .shots-2.even { grid-template-columns:1fr; } }
+    @media (max-width:560px) { .shots-3 { grid-template-columns:1fr; } }
+
+    /* ---------- coverage table + privacy list ---------- */
+    .cov-wrap { overflow-x:auto; margin-top:0.9rem; border:1px solid var(--line); border-radius:12px; background:var(--card); }
+    .cov { width:100%; border-collapse:collapse; font-size:0.92rem; min-width:520px; }
+    .cov th, .cov td { text-align:left; padding:0.62rem 0.9rem; border-bottom:1px solid var(--line); white-space:nowrap; }
+    .cov th { font-family:"Montserrat",sans-serif; font-size:0.72rem; letter-spacing:0.1em; text-transform:uppercase; color:var(--gold); }
+    .cov td { color:#cfe0d2; }
+    .cov td.num { text-align:right; font-variant-numeric:tabular-nums; }
+    .cov th.num { text-align:right; }
+    .cov tr:last-child td { border-bottom:0; }
+    .cov-note { margin-top:0.6rem; font-size:0.84rem; color:var(--muted); }
+    .cov-note b { color:#cfe0d2; }
+    .priv { list-style:none; padding:0; margin:0.8rem 0 0; display:grid; grid-template-columns:1fr 1fr; gap:0.7rem; }
+    .priv li { background:var(--card); border:1px solid var(--line); border-radius:12px; padding:0.9rem 1rem; font-size:0.93rem; color:#bcd0bf; }
+    .priv li b { display:block; color:#dfeadf; margin-bottom:0.25rem; font-family:"Montserrat",sans-serif; font-size:0.9rem; }
+    .priv li i { color:var(--gold); margin-right:0.4rem; }
+    @media (max-width:700px) { .priv { grid-template-columns:1fr; } }
+
+    /* ---------- live builder demo ---------- */
+    .hero-try { display:flex; gap:0.6rem; align-items:flex-start; margin-top:1rem; max-width:900px; padding:0.8rem 1rem; border:1px solid rgba(200,152,48,0.34); background:rgba(200,152,48,0.09); border-radius:12px; color:#ecd9b3 !important; font-size:0.97rem; }
+    .hero-try i { color:var(--gold); margin-top:0.25rem; }
+    .hero-try strong { color:#f2e2c0; }
+    .gold-link { color:var(--gold); }
+    .demo-sec { border-color:rgba(200,152,48,0.32); }
+    /* The builder is a full-height app: it fills whatever box it is given and scrolls its
+       own panel. So the iframe gets a real height and never a postMessage sizer — there is
+       no content height to report, because the content is already sized to the frame. */
+    .sb-frame { margin-top:1rem; border:1px solid rgba(200,152,48,0.3); border-radius:16px; overflow:hidden; background:#0d1710; height:clamp(640px,82vh,960px); }
+    .sb-frame iframe { display:block; width:100%; height:100%; border:0; }
+    .sb-meta { display:flex; flex-wrap:wrap; gap:0.6rem 1.2rem; align-items:center; justify-content:space-between; margin-top:0.8rem; }
+    .sb-fine { color:var(--muted); font-size:0.83rem; margin:0; max-width:62ch; }
+    .sb-open { display:inline-flex; align-items:center; gap:0.45rem; text-decoration:none; font-family:"Montserrat",sans-serif; font-weight:700; font-size:0.78rem; text-transform:uppercase; letter-spacing:0.04em; color:#0d1710; background:linear-gradient(135deg,#c89830,#e0b840); border-radius:999px; padding:0.6rem 1.1rem; white-space:nowrap; min-height:44px; box-sizing:border-box; }
+    .sb-open:hover { filter:brightness(1.06); }
+    @media (max-width:900px) { .sb-frame { height:88vh; min-height:660px; } }
+
+    /* ---------- three doors + stacks + suggestion box ---------- */
+    .doors { display:grid; grid-template-columns:repeat(3,1fr); gap:0.7rem; margin-top:1rem; }
+    .door { background:var(--card); border:1px solid var(--line); border-radius:12px; padding:0.8rem 0.95rem; font-size:0.9rem; color:#bcd0bf; display:flex; flex-direction:column; gap:0.2rem; }
+    .door b { font-family:"Montserrat",sans-serif; font-size:0.78rem; letter-spacing:0.1em; text-transform:uppercase; color:var(--gold); }
+    @media (max-width:700px) { .doors { grid-template-columns:1fr; } }
+    .suggest-sec { border-color:rgba(74,172,101,0.4); background:radial-gradient(120% 130% at 50% 0%,rgba(74,172,101,0.12),transparent 60%),rgba(20,32,25,0.74); }
+    .suggest-form { margin-top:1rem; display:grid; gap:0.75rem; max-width:820px; }
+    .suggest-row { display:grid; grid-template-columns:1fr 1fr; gap:0.75rem; }
+    .suggest-form label { display:block; font-size:0.78rem; text-transform:uppercase; letter-spacing:0.05em; color:var(--muted); margin-bottom:0.3rem; font-weight:600; }
+    .suggest-form label .opt { text-transform:none; letter-spacing:0; font-weight:500; color:#7f9a83; }
+    .suggest-form input, .suggest-form select, .suggest-form textarea { width:100%; padding:0.7rem 0.8rem; border-radius:8px; border:1px solid var(--line); background:var(--bg); color:var(--text); font-size:0.95rem; font-family:"Inter",sans-serif; outline:none; transition:border-color 0.2s; }
+    .suggest-form input:focus, .suggest-form select:focus, .suggest-form textarea:focus { border-color:var(--green); }
+    .suggest-form textarea { resize:vertical; min-height:120px; }
+    .suggest-form .trap { position:absolute; left:-9999px; opacity:0; height:0; overflow:hidden; }
+    .suggest-foot { display:flex; flex-wrap:wrap; gap:0.7rem 1.2rem; align-items:center; justify-content:space-between; }
+    .suggest-form button { min-height:44px; }
+    .suggest-form button[disabled] { opacity:0.6; cursor:wait; }
+    .suggest-success { margin:1rem 0 0; max-width:820px; }
+    .form-error { margin:0; border-radius:10px; border:1px solid rgba(220,80,80,0.45); background:rgba(220,80,80,0.1); padding:0.75rem 0.9rem; color:#f3c9c9; font-size:0.92rem; }
+    [hidden] { display:none !important; }
+    @media (max-width:600px) { .suggest-row { grid-template-columns:1fr; } .suggest-foot { flex-direction:column; align-items:stretch; } .suggest-form button { width:100%; } }
+
+    /* Newsletter signup */
+    .newsletter-section { background: var(--card); border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); padding: 3.5rem 5%; margin-top: 4rem; }
+    .newsletter-inner { max-width: 640px; margin: 0 auto; text-align: center; }
+    .newsletter-heading { font-family: "Montserrat", sans-serif; font-size: 1.5rem; font-weight: 700; color: var(--text); margin: 0 0 0.5rem; text-transform: uppercase; letter-spacing: 0.04em; }
+    .newsletter-sub { color: var(--muted); font-size: 0.95rem; margin: 0 0 1.75rem; }
+    .newsletter-form { display: flex; gap: 0.6rem; justify-content: center; flex-wrap: wrap; }
+    .newsletter-input { flex: 1 1 220px; max-width: 320px; padding: 0.7rem 1rem; border-radius: 8px; border: 1px solid var(--line); background: var(--bg); color: var(--text); font-size: 0.95rem; font-family: "Inter", sans-serif; outline: none; transition: border-color 0.2s; }
+    .newsletter-input:focus { border-color: var(--blue); }
+    .newsletter-btn { padding: 0.7rem 1.5rem; border-radius: 8px; border: none; background: var(--blue); color: #0d1710; font-family: "Montserrat", sans-serif; font-weight: 700; font-size: 0.9rem; cursor: pointer; text-transform: uppercase; letter-spacing: 0.05em; transition: opacity 0.2s; }
+    .newsletter-btn:hover { opacity: 0.85; }
+    .newsletter-fine { margin-top: 1rem; font-size: 0.78rem; color: var(--muted); }
+    .newsletter-fine a { color: var(--muted); text-decoration: underline; }
+    .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); border: 0; }
+    /* ===== TES NAV ===== */
+    .tnav-bar { position:sticky; top:0; z-index:50; background:rgba(9,18,12,0.9); backdrop-filter:blur(12px); border-bottom:1px solid rgba(74,172,101,0.22); }
+    .tnav-inner { display:flex; align-items:center; gap:1.25rem; padding:0.8rem 5%; max-width:1280px; margin:0 auto; }
+    .tnav-brand { display:flex; align-items:center; gap:0.8rem; cursor:pointer; text-decoration:none; }
+    .tnav-brand img { width:44px; height:44px; border-radius:10px; border:1px solid rgba(255,255,255,0.15); }
+    .tnav-brand .bn { display:flex; flex-direction:column; font-family:'Montserrat','Segoe UI',system-ui,sans-serif; text-transform:uppercase; letter-spacing:0.08em; line-height:1.15; }
+    .tnav-brand .bn b { font-size:1rem; font-weight:800; color:#fff; }
+    .tnav-brand .bn s { font-size:0.7rem; font-weight:500; color:#8aa48d; text-decoration:none; }
+    .tnav-spacer { flex:1; }
+    .tnav-wrap { position:relative; }
+    .tnav-trigger { display:inline-flex; align-items:center; gap:0.5rem; font-family:'Montserrat','Segoe UI',system-ui,sans-serif; text-transform:uppercase; letter-spacing:0.06em; font-weight:700; font-size:0.85rem; color:#c2d2c5; background:transparent; border:1px solid transparent; padding:0.6rem 1rem; border-radius:999px; cursor:pointer; transition:color .2s,background .2s,border-color .2s; }
+    .tnav-wrap:hover .tnav-trigger,.tnav-trigger[aria-expanded="true"] { color:#fff; background:rgba(74,172,101,0.10); border-color:rgba(74,172,101,0.22); }
+    .tnav-chev { transition:transform .25s cubic-bezier(0.22,1,0.36,1); }
+    .tnav-wrap:hover .tnav-chev,.tnav-trigger[aria-expanded="true"] .tnav-chev { transform:rotate(180deg); }
+    .tnav-mega { position:fixed; top:72px; left:50%; width:min(840px,calc(100vw - 32px)); max-height:calc(100vh - 92px); overflow-y:auto; background:#142019; border:1px solid #2c4232; border-radius:20px; box-shadow:0 24px 60px rgba(0,0,0,0.55); padding:1.4rem; display:grid; grid-template-columns:1fr 1fr 0.85fr; gap:1.1rem; opacity:0; visibility:hidden; pointer-events:none; transform:translateX(-50%) translateY(8px); transition:opacity .22s cubic-bezier(0.22,1,0.36,1),transform .22s cubic-bezier(0.22,1,0.36,1); z-index:60; }
+    .tnav-mega::before { content:''; position:absolute; top:-22px; left:0; right:0; height:24px; }
+    .tnav-mega.is-open { opacity:1; visibility:visible; pointer-events:auto; transform:translateX(-50%) translateY(0); }
+    .tnav-col-head { font-family:'Montserrat','Segoe UI',system-ui,sans-serif; font-size:0.64rem; font-weight:800; text-transform:uppercase; letter-spacing:0.14em; color:#c89830; margin:0 0 0.55rem; padding-left:0.45rem; }
+    .tnav-link { display:flex; gap:0.7rem; align-items:flex-start; padding:0.5rem; border-radius:12px; cursor:pointer; text-decoration:none; transition:background .18s,transform .18s; }
+    .tnav-link:hover { background:#1c2e22; transform:translateX(3px); }
+    .tnav-ic { width:34px; height:34px; flex-shrink:0; border-radius:9px; background:rgba(74,172,101,0.10); border:1px solid rgba(74,172,101,0.22); color:#4aac65; display:flex; align-items:center; justify-content:center; font-size:0.85rem; transition:background .18s,color .18s; }
+    .tnav-link:hover .tnav-ic { background:#4aac65; color:#0d1710; }
+    .tnav-tt { font-family:'Montserrat','Segoe UI',system-ui,sans-serif; font-weight:700; font-size:0.85rem; color:#e4ede5; line-height:1.2; display:block; }
+    .tnav-dd { font-size:0.73rem; color:#8aa48d; margin-top:2px; line-height:1.3; display:block; }
+    .tnav-cta { background:radial-gradient(110% 120% at 50% 0%,rgba(74,172,101,0.16),transparent 60%),linear-gradient(160deg,#16261d,#0f1c14); border:1px solid rgba(74,172,101,0.22); border-radius:18px; padding:1.3rem 1.1rem; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; gap:0.5rem; }
+    .tnav-cta .star { color:#c89830; font-size:1.3rem; }
+    .tnav-cta h4 { font-family:'Montserrat','Segoe UI',system-ui,sans-serif; text-transform:uppercase; letter-spacing:0.04em; font-size:0.95rem; color:#fff; margin:0.2rem 0 0; }
+    .tnav-cta p { font-size:0.76rem; color:#8aa48d; margin:0 0 0.6rem; line-height:1.45; }
+    .tnav-right { display:flex; align-items:center; gap:0.9rem; }
+    .tnav-sup-btn { display:inline-flex; align-items:center; justify-content:center; gap:0.5rem; font-family:'Montserrat','Segoe UI',system-ui,sans-serif; font-weight:700; text-transform:uppercase; letter-spacing:0.04em; text-decoration:none; border-radius:999px; cursor:pointer; border:2px solid rgba(255,255,255,0.45); padding:8px 18px; font-size:0.78rem; color:#e4ede5; background:transparent; transition:transform 0.2s,border-color 0.2s; }
+    .tnav-sup-btn:hover { transform:translateY(-2px); border-color:#fff; }
+    .tnav-cta-btn { display:inline-flex; align-items:center; justify-content:center; gap:0.5rem; font-family:'Montserrat','Segoe UI',system-ui,sans-serif; font-weight:700; text-transform:uppercase; letter-spacing:0.04em; text-decoration:none; border-radius:999px; cursor:pointer; border:1px solid rgba(255,255,255,0.25); padding:8px 18px; font-size:0.78rem; color:#0d1710; background:linear-gradient(135deg,#c89830,#e0b840); box-shadow:0 10px 20px rgba(200,152,48,0.28); transition:transform 0.2s,filter 0.2s; }
+    .tnav-cta-btn:hover { transform:translateY(-2px); filter:brightness(1.06); }
+    @media (max-width:860px) { .tnav-mega { top:68px; left:4vw; right:4vw; width:auto; grid-template-columns:1fr; max-height:calc(100vh - 84px); transform:translateY(8px); } .tnav-mega.is-open { transform:translateY(0); } .tnav-cta,.tnav-brand .bn { display:none; } }
+    @media (max-width:460px) { .tnav-inner { gap:0.6rem; padding:0.7rem 4%; } .tnav-trigger { padding:0.55rem 0.75rem; } .tnav-sup-btn span.lbl { display:none; } }
+    /* ===== TES FOOTER ===== */
+    .tfoot { background:#050b07; border-top:1px solid #2c4232; padding:3rem 5% 2rem; }
+    .tfoot-grid { max-width:1280px; margin:0 auto; display:grid; grid-template-columns:1.5fr 1fr 1fr 1fr; gap:2rem; }
+    .tfoot-brand { display:flex; align-items:center; gap:0.7rem; margin-bottom:1rem; cursor:pointer; text-decoration:none; }
+    .tfoot-brand img { width:40px; height:40px; border-radius:9px; }
+    .tfoot-brand b { font-family:'Montserrat','Segoe UI',system-ui,sans-serif; font-weight:800; text-transform:uppercase; letter-spacing:0.06em; color:#fff; font-size:0.95rem; }
+    .tfoot-blurb { color:#8aa48d; font-size:0.9rem; line-height:1.7; max-width:34ch; margin:0 0 1rem; }
+    .tfoot-nap { color:#8aa48d; font-size:0.85rem; line-height:1.7; margin:0 0 1rem; }
+    .tfoot-nap a { color:#8aa48d; text-decoration:none; }
+    .tfoot-nap a:hover { color:#4aac65; }
+    .tfoot-col h5 { font-family:'Montserrat','Segoe UI',system-ui,sans-serif; font-size:0.7rem; font-weight:800; text-transform:uppercase; letter-spacing:0.1em; color:#c89830; margin-bottom:0.9rem; }
+    .tfoot-col a { display:block; color:#8aa48d; text-decoration:none; font-size:0.88rem; padding:0.3rem 0; transition:color 0.2s,transform 0.2s; }
+    .tfoot-col a:hover { color:#4aac65; transform:translateX(3px); }
+    .tfoot-bar { max-width:1280px; margin:2rem auto 0; padding-top:1.5rem; border-top:1px solid #2c4232; display:flex; justify-content:space-between; flex-wrap:wrap; gap:0.5rem; align-items:center; }
+    .tfoot-bar span { color:#8aa48d; font-size:0.82rem; }
+    .tfoot-social { display:flex; gap:1.2rem; }
+    .tfoot-social a { color:#8aa48d; font-size:1.1rem; transition:color 0.2s; }
+    .tfoot-social a:hover { color:#4aac65; }
+    @media (max-width:780px) { .tfoot-grid { grid-template-columns:1fr 1fr; } }
+    @media (max-width:480px) { .tfoot-grid { grid-template-columns:1fr; } }
+  </style>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "Cleveland Geo Visualizer",
+    "alternateName": [
+      "Cleveland Open Data Map",
+      "Cleveland Crime Map"
+    ],
+    "url": "https://map.tevisengineering.com/",
+    "description": "Free interactive map of Cleveland-area open data. Stack property values and sales, tax delinquency, permits, code violations, police reports from eight departments, live dispatch calls, license-plate cameras and census context on one map with one shared timeline, and run your own analysis. Refreshed nightly.",
+    "applicationCategory": "UtilitiesApplication",
+    "browserRequirements": "Requires a modern browser with JavaScript enabled",
+    "operatingSystem": "Any",
+    "isAccessibleForFree": true,
+    "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "USD"
+    },
+    "screenshot": "https://tevisengineering.com/assets/geo-map/heat-decade.jpg",
+    "image": "https://tevisengineering.com/assets/geo-map/heat-decade.jpg",
+    "featureList": [
+      "More than 150 live open-data layers from 21 public publishers: parcels, sales, tax delinquency, permits, code violations, dispatch, crashes, census context",
+      "Property values against each city’s median, sales by buyer type, comparable sales and appeal candidates from any parcel",
+      "About 1,300 license-plate reader cameras with facing direction and install date",
+      "Police reports from eight Cleveland-area departments, colored by severity, ten years deep",
+      "Every layer stacks with every other on one shared legend and timeline",
+      "Guided views, a full stacking tool, and a workbench for trends, correlation, overlap, repeats and county rankings",
+      "Civilian names never published; sensitive reports shown at the hundred block",
+      "Refreshed nightly with no human in the loop"
+    ],
+    "provider": {
+      "@id": "https://tevisengineering.com/#business"
+    },
+    "publisher": {
+      "@id": "https://tevisengineering.com/#business"
+    },
+    "areaServed": {
+      "@type": "AdministrativeArea",
+      "name": "Cuyahoga County, Ohio"
+    },
+    "mainEntityOfPage": "https://tevisengineering.com/cleveland-geo-visualizer.html"
+  }
+  </script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "name": "Home",
+        "item": "https://tevisengineering.com/"
+      },
+      {
+        "@type": "ListItem",
+        "position": 2,
+        "name": "Software Services",
+        "item": "https://tevisengineering.com/software.html"
+      },
+      {
+        "@type": "ListItem",
+        "position": 3,
+        "name": "Cleveland Geo Visualizer",
+        "item": "https://tevisengineering.com/cleveland-geo-visualizer.html"
+      }
+    ]
+  }
+  </script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "Is this a crime map?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Police reports are one layer of it, and for a few cities they are the deepest layer, but they are a small part of what is on the map. Most of the catalog is property, housing, permits, streets and demographic context from county and city open data. Use it for whatever question you have; the crime layer is there if the question needs it."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Where does the data come from?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Two places. Almost everything, such as parcels, sales, permits, code cases, dispatch calls and camera locations, comes live from the open-data services run by Cuyahoga County, the City of Cleveland and the surrounding municipalities, fetched by your browser at the moment you look and never stored by us. The police-report layer is the exception: it is read nightly from each department’s own public report portal by our software, and the coverage table above lists every department and the dates covered."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "How do I do my own analysis?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Switch to Analyze from the top bar, open the catalog, and add any layers you like. They all share one legend and one timeline, so dragging a window filters every dataset on the map together, and clicking a category hides or isolates it. Pro adds a workbench with trend detection, pairwise correlation, hot-spot overlap, repeat locations and a county-wide ranking of any layer. Everything a guided view sets up can be opened in Analyze and changed."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Is any of this official?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "No. It is an independent tool built by Tevis Engineering Solutions from data that public agencies publish themselves. The live layers are as current as the agency that runs them. Police reports can lag the department by days, and a report is a record that somebody called and an officer wrote it up, not a conviction. For anything that matters, confirm it with the agency itself."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "How current is it?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "The live county and city layers are fetched at the moment you look, so they are as current as the agency that publishes them. The police-report feed rebuilds every night, and the date it was last built is shown inside the map. New reports typically appear within a day or two of a department publishing them."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Why do some reports show a block instead of an address?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Sexual-offense and domestic reports are shown at the hundred block, such as 24XX Noble Rd, with the dot placed within about a hundred meters rather than on the house. A precise dot on that kind of report would identify the victim at their own front door, and nothing about a map needs that. Every other report keeps the address as the department published it, and civilian names are never on the map in any category."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Can I suggest a dataset or a feature?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Yes, and please do. The suggestion box on this page goes straight to the engineer who builds the tool. Datasets that a public agency already publishes to an open-data service can usually be added quickly; a police department is added when its reports are published somewhere public we can read. Good stacks that people send in become guided views."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Can I embed the map or get the data?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Yes to both. The map can be embedded in an iframe on your own site, as it is on this page, and the police feed is a documented JSON format we can point you at. Use the request form below and say what you have in mind."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Can you build something like this for us?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "That is what this page is for. The same engine runs on any open-data source: your city’s permits and code cases, a county’s parcels and transfers, a dispatch feed, a set of inspection records. We scope it, build it, review it for privacy the way this one was, and hand it over as a fixed-price build you own or a hosted service we run for you. Ask for a quote and you will get a number, not a sales call."
+        }
+      }
+    ]
+  }
+  </script>
+</head>
+<body>
+<!-- ===== NAV ===== -->
+<div class="tnav-bar">
+  <div class="tnav-inner">
+    <a class="tnav-brand" href="index.html">
+      <img src="assets/logo-mark.png" alt="Tevis Engineering Solutions">
+      <span class="bn"><b>Tevis Engineering</b><s>Solutions</s></span>
+    </a>
+    <div class="tnav-spacer"></div>
+    <div class="tnav-wrap" id="navWrap">
+      <button class="tnav-trigger" type="button" aria-haspopup="true" aria-expanded="false" id="navTrigger">
+        Menu
+        <svg class="tnav-chev" width="11" height="7" viewBox="0 0 10 7" fill="none" aria-hidden="true"><path d="M1 1.5l4 4 4-4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+      <div class="tnav-mega" id="navMega" role="navigation" aria-label="Site navigation">
+        <div>
+          <div class="tnav-col-head">Services</div>
+          <a class="tnav-link" href="how_support_works.html"><span class="tnav-ic"><i class="fa-regular fa-circle-question"></i></span><span><span class="tnav-tt">How Support Works</span><span class="tnav-dd">Intake, scope, delivery, and billing</span></span></a>
+          <a class="tnav-link" href="pricing_sheet.html"><span class="tnav-ic"><i class="fa-solid fa-tag"></i></span><span><span class="tnav-tt">Pricing</span><span class="tnav-dd">Flat rates, hourly, and retainer plans</span></span></a>
+          <a class="tnav-link" href="portfolio.html"><span class="tnav-ic"><i class="fa-solid fa-briefcase"></i></span><span><span class="tnav-tt">Portfolio</span><span class="tnav-dd">Case studies across IT and engineering</span></span></a>
+          <a class="tnav-link" href="assessment.html"><span class="tnav-ic"><i class="fa-solid fa-chart-simple"></i></span><span><span class="tnav-tt">IT Assessment</span><span class="tnav-dd">Free 7-question readiness quiz</span></span></a>
+          <a class="tnav-link" href="website_creation.html"><span class="tnav-ic"><i class="fa-solid fa-globe"></i></span><span><span class="tnav-tt">Web &amp; App Design</span><span class="tnav-dd">Sites, tools, and digital presence</span></span></a>
+          <a class="tnav-link" href="data_destruction.html"><span class="tnav-ic"><i class="fa-solid fa-shield-halved"></i></span><span><span class="tnav-tt">Data Destruction</span><span class="tnav-dd">NIST-aligned secure media sanitization</span></span></a>
+          <a class="tnav-link" href="knowledge_transfer.html"><span class="tnav-ic"><i class="fa-solid fa-file-lines"></i></span><span><span class="tnav-tt">Knowledge Transfer</span><span class="tnav-dd">Documentation and process handoffs</span></span></a>
+        </div>
+        <div>
+          <div class="tnav-col-head">Company &amp; Tools</div>
+          <a class="tnav-link" href="service-areas.html"><span class="tnav-ic"><i class="fa-solid fa-location-dot"></i></span><span><span class="tnav-tt">Service Areas</span><span class="tnav-dd">Cleveland-area cities we support</span></span></a>
+          <a class="tnav-link" href="blog/index.html"><span class="tnav-ic"><i class="fa-solid fa-newspaper"></i></span><span><span class="tnav-tt">Blog / Knowledge Base</span><span class="tnav-dd">IT tips and guides for small businesses</span></span></a>
+          <a class="tnav-link" href="software.html"><span class="tnav-ic"><i class="fa-solid fa-laptop-code"></i></span><span><span class="tnav-tt">Software Services</span><span class="tnav-dd">Cloud apps &amp; licensed software</span></span></a>
+          <a class="tnav-link" href="service_catalog.html"><span class="tnav-ic"><i class="fa-solid fa-rectangle-list"></i></span><span><span class="tnav-tt">Services Catalog</span><span class="tnav-dd">Full rate card &amp; line sheet</span></span></a>
+          <a class="tnav-link" href="pay_invoice.html"><span class="tnav-ic"><i class="fa-solid fa-credit-card"></i></span><span><span class="tnav-tt">Pay an Invoice</span><span class="tnav-dd">Look up and pay your balance online</span></span></a>
+          <a class="tnav-link" href="contact.html"><span class="tnav-ic"><i class="fa-solid fa-envelope"></i></span><span><span class="tnav-tt">Contact</span><span class="tnav-dd">Send a message or request a quote</span></span></a>
+          <a class="tnav-link" href="privacy_policy.html"><span class="tnav-ic"><i class="fa-solid fa-file-shield"></i></span><span><span class="tnav-tt">Privacy &amp; Terms</span><span class="tnav-dd">Payment terms and data policy</span></span></a>
+        </div>
+        <div class="tnav-cta">
+          <span class="star">&#9733;</span>
+          <h4>Need help now?</h4>
+          <p>Talk straight to the engineer &mdash; no call center, one-business-day reply.</p>
+          <a class="tnav-cta-btn" href="make_ticket.html"><i class="fa-solid fa-headset"></i> Get Support Now</a>
+        </div>
+      </div>
+    </div>
+    <div class="tnav-spacer"></div>
+    <div class="tnav-right">
+      <a class="tnav-sup-btn" href="login.html"><i class="fa-solid fa-right-to-bracket"></i> <span class="lbl">LOGIN</span></a>
+    </div>
+  </div>
+</div>
+
+  <main class="container">
+    <nav class="breadcrumbs" aria-label="Breadcrumb">
+      <a href="index.html">Home</a> &rsaquo; <a href="software.html">Software Services</a> &rsaquo; <span>Cleveland Geo Visualizer</span>
+    </nav>
+
+    <section class="hero">
+      <span class="eyebrow"><i class="fa-solid fa-map-location-dot"></i> Free Public Tool &middot; Cuyahoga County Open Data</span>
+      <h1>Cleveland Geo Visualizer <span class="grad">Every Public Dataset, One Map</span></h1>
+      <p>
+        What houses are worth and who has been buying them. Which parcels are tax-delinquent, condemned or in
+        foreclosure. Building permits, code violations, vacant structures. Police reports from eight departments,
+        Cleveland&rsquo;s live dispatch stream, and about 1,300 license-plate cameras. All of it from county and city
+        open data, on one map, on one timeline you can scrub through ten years of. <strong>Free, no sign-up, and
+        refreshed every night.</strong>
+      </p>
+      <p>
+        The point is not any one layer. It is that you can stack any of them on top of each other, drag one timeline,
+        and see what lines up. Pick a question and go find out.
+      </p>
+      <div class="cta-row">
+        <a class="btn btn-primary" href="#try">Open the Map</a>
+        <a class="btn btn-secondary" href="#stacks">Ideas to Try</a>
+        <a class="btn btn-secondary" href="#suggest">Suggest a Dataset</a>
+      </div>
+      <p class="hero-try">
+        <i class="fa-solid fa-layer-group" aria-hidden="true"></i>
+        <span><strong>The map itself is on this page.</strong> Best on a desktop. Everything on it comes from a public
+        agency; police reports can lag the department by days and this is not an official source. Jump to
+        <a href="#try" class="gold-link">the map</a>.</span>
+      </p>
+    </section>
+
+    <section class="section demo-sec" id="try">
+      <h2>Try it &mdash; <span class="gold">the map, live</span></h2>
+      <p class="lead-line">
+        Start in <strong>Explore</strong> and click through the guided views. When one of them makes you curious,
+        press <em>Open in Analyze</em>, add a second dataset from the catalog, and drag the timeline. Click any dot or
+        parcel to read the record behind it.
+      </p>
+      <div class="sb-frame">
+        <iframe src="https://map.tevisengineering.com/?tier=explore&amp;embed=1" title="Cleveland Geo Visualizer &mdash; live map" loading="lazy" allow="fullscreen" referrerpolicy="strict-origin-when-cross-origin"></iframe>
+      </div>
+      <div class="sb-meta">
+        <p class="sb-fine">
+          <strong>What you are looking at is real.</strong> County and city data fetched live as you pan, and police
+          reports as each department published them. Sensitive reports are shown at the block, never the house &mdash;
+          see <a href="#privacy" class="gold-link">how names and addresses are handled</a>. If the frame is cramped,
+          open it in its own tab.
+        </p>
+        <a class="sb-open" href="https://map.tevisengineering.com/" target="_blank" rel="noopener noreferrer">
+          <i class="fa-solid fa-up-right-from-square" aria-hidden="true"></i> Open full screen
+        </a>
+      </div>
+      <div class="doors">
+        <div class="door"><b>Explore</b><span>Guided views, one click each. No controls to learn.</span></div>
+        <div class="door"><b>Analyze</b><span>The full stacking tool: any layers, one legend, one timeline.</span></div>
+        <div class="door"><b>Pro</b><span>Adds the workbench: trends, correlation, overlap, repeat locations, county rankings.</span></div>
+      </div>
+    </section>
+
+    <section class="section" id="layers">
+      <h2>What you can <span class="gold">put on the map</span></h2>
+      <p class="lead-line">
+        More than 150 live layers from 21 public publishers, plus a nightly police-report feed. Every one of them
+        stacks with every other. A few of the groups:
+      </p>
+      <div class="grid">
+        <div class="card">
+          <h3><i class="fa-solid fa-house-chimney"></i> Property and real estate</h3>
+          <p>Every parcel colored against its own city&rsquo;s median value. A year of sales, colored by whether the
+            buyer was a person, a company, a trust or a bank. Tax delinquency, foreclosure, forfeited land, condemned
+            structures. Comparable sales, appeal candidates and rent yield by street, from any parcel&rsquo;s dossier.</p>
+        </div>
+        <div class="card">
+          <h3><i class="fa-solid fa-camera"></i> License-plate cameras</h3>
+          <p>About 1,300 automated readers county-wide, each with the direction it faces and when it went in, from a
+            public crowd-sourced register. Filter to a city, then lay the net over anything else and see what the
+            cameras face and what they miss.</p>
+        </div>
+        <div class="card">
+          <h3><i class="fa-solid fa-shield-halved"></i> Police reports</h3>
+          <p>Every published report from eight departments, colored by its most serious offense. Ten years deep for
+            Cleveland Heights. Search by street, offense, report number or officer. Cleveland itself publishes calls
+            for service instead, so its police, fire and EMS dispatch is on the map live.</p>
+        </div>
+        <div class="card">
+          <h3><i class="fa-solid fa-hammer"></i> Permits, code and housing</h3>
+          <p>Building and demolition permits, code violation notices, vacant structures, rental registrations,
+            lead-safe certificates, land bank lots, tax abatement areas. Where a block is turning, and which way.</p>
+        </div>
+        <div class="card">
+          <h3><i class="fa-solid fa-car-burst"></i> Streets and crashes</h3>
+          <p>Traffic crashes countywide and in detail for Cleveland, pedestrian and bicycle crashes, traffic counts,
+            the street safety priority index, transit reach, the bike network as it is and as it is planned.</p>
+        </div>
+        <div class="card">
+          <h3><i class="fa-solid fa-people-group"></i> Context</h3>
+          <p>Census tracts and block groups, poverty rate, food access, jobs reachable by transit, the 1940 HOLC
+            redlining grades, zoning, ward and precinct lines. The denominator for everything else, so a count can
+            become a rate.</p>
+        </div>
+      </div>
+      <div class="shots-2 even">
+        <figure class="shot">
+          <img src="assets/geo-map/parcel-values.jpg" alt="Street-level view of Cleveland Heights with every parcel drawn as a dot colored purple below, white at, and green above the city's residential median of 182,500 dollars, over a dark street map with the property-value legend at the right." width="1400" height="900" loading="lazy" decoding="async">
+          <figcaption><span class="tag">Property</span><b>Every parcel against its own city&rsquo;s median.</b> Live from the county, drawn as you pan. Click one for the full dossier: sales, taxes, owner of record, the lot, comparable sales.</figcaption>
+        </figure>
+        <figure class="shot">
+          <img src="assets/geo-map/camera-net.jpg" alt="Cuyahoga County with roughly 1,300 license-plate reader cameras mapped as purple clusters along the major roads from Avon Lake to Solon, with a timeline of install dates below." width="1400" height="900" loading="lazy" decoding="async">
+          <figcaption><span class="tag">Cameras</span><b>About 1,300 license-plate readers, county-wide.</b> Where they are and which way each one faces. The timeline below is their install dates, so you can watch the net grow.</figcaption>
+        </figure>
+      </div>
+      <div class="shots-2 even">
+        <figure class="shot">
+          <img src="assets/geo-map/heat-decade.jpg" alt="Ten years of Cleveland Heights reports as a heat surface: a yellow-to-red gradient concentrated along the main corridors, with purple license-plate camera cones overlaid, and the full 2016 to 2026 timeline below." width="1400" height="900" loading="lazy" decoding="async">
+          <figcaption><span class="tag">Two layers stacked</span><b>Ten years of reports as a heat surface, with the camera net over it.</b> This is the whole idea in one picture: two unrelated public datasets, one map, and a question you can now answer.</figcaption>
+        </figure>
+        <figure class="shot">
+          <img src="assets/geo-map/month-cleveland-heights.jpg" alt="A month of Cleveland Heights police reports on a dark map: numbered clusters colored red for violent, orange for serious, yellow for property and green for disorder, inside the city boundary, with the guided-views panel on the left and the ten-year timeline below." width="1400" height="900" loading="lazy" decoding="async">
+          <figcaption><span class="tag">This month</span><b>A guided view in Explore.</b> Every report from the last 30 days, colored by severity. The picker at the top switches between the eight departments.</figcaption>
+        </figure>
+      </div>
+      <figure class="shot shot-wide">
+        <img src="assets/geo-map/timeline-scrub.jpg" alt="The Analyze view: a severity panel listing violent, serious, property, disorder and traffic counts with offense-type chips, the Cleveland Heights map clustered by severity, and the timeline brushed to a 90-day window from June to September 2026." width="1400" height="900" loading="lazy" decoding="async">
+        <figcaption><span class="tag">Analyze</span><b>The timeline is shared by every layer.</b> Drag a window and every dataset on the map filters to it together. Click a category to hide it, click a chip to keep only that kind. Add another layer and it joins the same timeline.</figcaption>
+      </figure>
+    </section>
+
+    <section class="section" id="stacks">
+      <h2>Stacks worth <span class="gold">trying</span></h2>
+      <p class="lead-line">
+        Nobody has looked at most of these combinations before, because the data has never been in one place. Here
+        are a few to start with. Every one takes about a minute in Analyze, and none of them needs an account.
+      </p>
+      <div class="grid stacks">
+        <div class="card">
+          <h3><i class="fa-solid fa-building"></i> Who is buying the distressed blocks</h3>
+          <p>A year of sales colored by buyer type, over tax delinquency and foreclosure. Watch where the LLCs and
+            trusts cluster, and whether that matches where the individual buyers are.</p>
+        </div>
+        <div class="card">
+          <h3><i class="fa-solid fa-camera"></i> What the cameras face</h3>
+          <p>The license-plate net over ten years of police reports as a heat surface. Where the readers are and where
+            the harm is are two different maps, and the overlap tab will tell you how different.</p>
+        </div>
+        <div class="card">
+          <h3><i class="fa-solid fa-phone-volume"></i> Calls are not crimes</h3>
+          <p>Cleveland&rsquo;s live dispatch stream against confirmed reports next door. Most calls are never founded,
+            and a map of calls looks nothing like a map of what actually happened.</p>
+        </div>
+        <div class="card">
+          <h3><i class="fa-solid fa-arrow-trend-up"></i> Where a block is turning</h3>
+          <p>Building permits over vacant structures and land bank lots, with the timeline dragged back a few years.
+            Investment shows up in permits first, long before it shows up in prices.</p>
+        </div>
+        <div class="card">
+          <h3><i class="fa-solid fa-key"></i> Rentals and code enforcement</h3>
+          <p>Rental registrations over code violation notices and lead-safe certificates. Whether the blocks with the
+            most rentals are the blocks getting inspected.</p>
+        </div>
+        <div class="card">
+          <h3><i class="fa-solid fa-football"></i> The Cleveland Vibe</h3>
+          <p>A guided view that tests eighteen bad theories properly: whether a Browns blowout, a full moon, a snow day
+            or Friday the 13th moves the numbers at all, and by how much. See which ones survive.</p>
+        </div>
+      </div>
+      <div class="notice">
+        <b>Then make your own.</b> Everything a guided view sets up can be taken apart in Analyze with one click, and
+        every layer in the catalog joins the same legend and timeline. When you find a stack that says something, use
+        the <a href="#suggest" class="gold-link">suggestion box</a> and tell us. The good ones become guided views.
+      </div>
+    </section>
+
+    <section class="section" id="coverage">
+      <h2>Police reports: <span class="gold">which departments are covered</span></h2>
+      <p>
+        The police-report layer is the one part of the map we build ourselves rather than read live. Only departments
+        that publish their reports to a public portal can be on it, and only from the date their portal starts. This
+        table is read from the live feed, so it says what the map says.
+      </p>
+      <div class="cov-wrap">
+        <table class="cov" id="covTable">
+          <thead>
+            <tr><th>Department</th><th class="num">Reports mapped</th><th>Covered</th></tr>
+          </thead>
+          <tbody id="covBody">
+            <tr><td>Cleveland Heights</td><td class="num">42,908</td><td>2016-12 &rarr; 2026-09</td></tr>
+            <tr><td>Euclid</td><td class="num">12,060</td><td>2014-01 &rarr; 2026-09</td></tr>
+            <tr><td>North Olmsted</td><td class="num">6,640</td><td>2017-01 &rarr; 2026-08</td></tr>
+            <tr><td>Shaker Heights</td><td class="num">3,072</td><td>2004-04 &rarr; 2026-09</td></tr>
+            <tr><td>Richmond Heights</td><td class="num">2,331</td><td>2005-01 &rarr; 2026-03</td></tr>
+            <tr><td>Solon</td><td class="num">1,900</td><td>2013-04 &rarr; 2026-01</td></tr>
+            <tr><td>Parma Heights</td><td class="num">1,260</td><td>2021-01 &rarr; 2026-08</td></tr>
+            <tr><td>North Randall</td><td class="num">625</td><td>2022-01 &rarr; 2026-09</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="cov-note" id="covNote"><b>70,796 reports</b> across 8 departments. Feed built 2026-09-14.</p>
+      <div class="notice">
+        <b>Not on the list?</b> Cleveland itself publishes calls for service rather than reports; those are on the map
+        as a live dispatch layer. If your department publishes reports somewhere public and is not here, tell us where
+        in the <a href="#suggest" class="gold-link">suggestion box</a> and we will look.
+      </div>
+    </section>
+
+    <section class="section" id="privacy">
+      <h2>How names and addresses <span class="gold">are handled</span></h2>
+      <p class="lead-line">
+        The source is public. That does not make every detail in it something a map should repeat.
+      </p>
+      <ul class="priv">
+        <li><i class="fa-solid fa-user-slash"></i><b>Civilian names are never published.</b> The police portals print the names of people involved in crash reports. Those are private individuals who did not choose to be on a map, and the export strips them in every category.</li>
+        <li><i class="fa-solid fa-house-medical"></i><b>Some calls are withheld entirely.</b> Medical transports, attempted suicide and death investigations are dropped from the public build, because their location would expose a private episode in a private home.</li>
+        <li><i class="fa-solid fa-location-dot"></i><b>Sensitive reports are shown at the block.</b> Sexual-offense and domestic reports get a hundred-block address, <em>24XX Noble Rd</em>, and a dot placed within about a hundred meters, never on the house.</li>
+        <li><i class="fa-solid fa-id-badge"></i><b>Officer names stay.</b> They are the public acts of public employees, printed on a report the department itself publishes. That is a different thing from a victim&rsquo;s address.</li>
+        <li><i class="fa-solid fa-landmark"></i><b>Parcel owners are the county&rsquo;s record.</b> The owner of record on a parcel comes live from the county fiscal officer, the same as on the county&rsquo;s own site, and is not stored by us.</li>
+        <li><i class="fa-solid fa-flag"></i><b>Something wrong?</b> If a record on the map identifies someone it should not, use the <a href="#suggest" class="gold-link">suggestion box</a> with <em>A data problem</em> selected and it will be looked at that day.</li>
+      </ul>
+    </section>
+
+    <section class="section suggest-sec" id="suggest">
+      <h2>Tell us what <span class="gold">to add</span></h2>
+      <p class="lead-line">
+        A dataset you wish was on the map. A department whose reports we should be reading. A stack you built that
+        says something. A feature that would make your own analysis easier. This box goes straight to the engineer who
+        builds it.
+      </p>
+      <div class="req-success suggest-success" id="sugSuccess" hidden>
+        <strong>Thanks &mdash; got it.</strong> Suggestions are read the day they arrive. If you left an email, you will hear back when something comes of it.
+      </div>
+      <form id="sugForm" class="suggest-form" action="https://formspree.io/f/maqvanal" method="POST">
+        <input type="hidden" name="_subject" value="Cleveland Geo Visualizer — Suggestion">
+        <input type="hidden" name="_next" value="https://tevisengineering.com/cleveland-geo-visualizer.html?suggested=1#suggest">
+        <input type="hidden" name="product" value="Cleveland Geo Visualizer">
+        <input type="hidden" name="form" value="suggestion">
+        <input type="text" name="_honeypot" class="trap" tabindex="-1" autocomplete="off" aria-hidden="true">
+        <div class="suggest-row">
+          <div>
+            <label for="sugKind">What kind of suggestion</label>
+            <select id="sugKind" name="kind">
+              <option value="A dataset to add">A dataset to add</option>
+              <option value="A department to cover">A police department to cover</option>
+              <option value="A stack that says something">A stack that says something</option>
+              <option value="A feature or analysis tool">A feature or analysis tool</option>
+              <option value="A data problem">A data problem (something wrong on the map)</option>
+              <option value="Something else">Something else</option>
+            </select>
+          </div>
+          <div>
+            <label for="sugEmail">Email <span class="opt">(optional, if you want a reply)</span></label>
+            <input id="sugEmail" type="email" name="email" autocomplete="email" placeholder="you@example.com">
+          </div>
+        </div>
+        <div>
+          <label for="sugMsg">Your suggestion</label>
+          <textarea id="sugMsg" name="message" rows="4" required maxlength="2000" placeholder="e.g. Lakewood publishes its police reports at ... and it would be good to have them on the map. Or: layering 311 requests over code violations shows ..."></textarea>
+        </div>
+        <div class="suggest-foot">
+          <p class="sb-fine">No account needed. Nothing you type is published; it goes to us by email.</p>
+          <button type="submit" class="btn btn-primary" id="sugBtn">Send Suggestion</button>
+        </div>
+        <p class="form-error" id="sugError" hidden></p>
+      </form>
+    </section>
+
+    <section class="section" id="yours">
+      <h2>The same engine, <span class="gold">on your data</span></h2>
+      <p class="lead-line">
+        Nothing here is specific to Cleveland, or to any one kind of data. The map reads any open-data service, puts
+        it on a shared timeline, and stacks it with everything else. What changes is whose data, and what question it
+        is built to answer.
+      </p>
+      <div class="grid">
+        <div class="card">
+          <h3><i class="fa-solid fa-city"></i> Cities and counties</h3>
+          <p>An open-data portal residents actually use. Permits, code cases, service requests and dispatch on one
+            map, on your own domain, with the privacy rules written down and enforced in the export.</p>
+        </div>
+        <div class="card">
+          <h3><i class="fa-solid fa-house-chimney"></i> Realtors and investors</h3>
+          <p>Parcels against the local median, a year of sales colored by who bought them, tax-delinquency and
+            appeal candidates, rent yield by street. The property record for a whole county, filtered to a block.</p>
+        </div>
+        <div class="card">
+          <h3><i class="fa-solid fa-newspaper"></i> Newsrooms</h3>
+          <p>An embeddable, self-updating map for a beat: housing, development, public safety. Guided views written
+            for the story, the raw layers one click below them, and a data feed your readers can check.</p>
+        </div>
+        <div class="card">
+          <h3><i class="fa-solid fa-scale-balanced"></i> Law firms and insurers</h3>
+          <p>Crash and incident geography by corridor and by month, with the public record behind each dot. Where
+            the same intersection keeps coming up, and when.</p>
+        </div>
+        <div class="card">
+          <h3><i class="fa-solid fa-people-group"></i> Community groups</h3>
+          <p>A neighborhood&rsquo;s own view of its own data, kept current without anyone maintaining a spreadsheet.
+            Print a month for the meeting; link the map for everyone who could not come.</p>
+        </div>
+        <div class="card">
+          <h3><i class="fa-solid fa-key"></i> You own it</h3>
+          <p>A fixed-price build you keep, or a hosted service we run. No per-seat licensing, no per-view metering.
+            The feed format is documented so your data is never locked inside our tool.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="how">
+      <h2>How a <span class="gold">custom build</span> works</h2>
+      <div class="process">
+        <div class="process-step">
+          <strong>Sources audit</strong>
+          <p>We find what your city, county or agency already publishes, what it would take to read it, and what
+            in it must not reach a map. You get that in writing before anything is built.</p>
+        </div>
+        <div class="process-step">
+          <strong>Data contract</strong>
+          <p>Which fields, at what precision, refreshed how often, with which categories masked or withheld. The
+            rules this map runs on, adapted to yours.</p>
+        </div>
+        <div class="process-step">
+          <strong>Build and privacy review</strong>
+          <p>The map, the guided views written for your questions, and an export that refuses to publish anything
+            the contract forbids. Checked twice, by two separate audits, before every refresh.</p>
+        </div>
+        <div class="process-step">
+          <strong>Hand-off or hosting</strong>
+          <p>On your domain, refreshing on its own with no one on duty. Yours to keep, or ours to run for you, with
+            an alert to a human only when something breaks.</p>
+        </div>
+      </div>
+      <div class="notice">
+        <b>What it is not.</b> It is not a way to reach people named in public records. There is no contact
+        information in it and no lead list comes out of it. It shows what a public agency has already published, on
+        a map, with the parts that identify private individuals taken out.
+      </div>
+    </section>
+
+    <section class="section" id="faq">
+      <h2 class="faq-h2">Common questions</h2>
+      <div class="faq">
+        <details>
+          <summary>Is this a crime map?</summary>
+          <div class="faq-a">Police reports are one layer of it, and for a few cities they are the deepest layer, but they are a small part of what is on the map. Most of the catalog is property, housing, permits, streets and demographic context from county and city open data. Use it for whatever question you have; the crime layer is there if the question needs it.</div>
+        </details>
+        <details>
+          <summary>Where does the data come from?</summary>
+          <div class="faq-a">Two places. Almost everything, such as parcels, sales, permits, code cases, dispatch calls and camera locations, comes live from the open-data services run by Cuyahoga County, the City of Cleveland and the surrounding municipalities, fetched by your browser at the moment you look and never stored by us. The police-report layer is the exception: it is read nightly from each department’s own public report portal by our software, and the coverage table above lists every department and the dates covered.</div>
+        </details>
+        <details>
+          <summary>How do I do my own analysis?</summary>
+          <div class="faq-a">Switch to Analyze from the top bar, open the catalog, and add any layers you like. They all share one legend and one timeline, so dragging a window filters every dataset on the map together, and clicking a category hides or isolates it. Pro adds a workbench with trend detection, pairwise correlation, hot-spot overlap, repeat locations and a county-wide ranking of any layer. Everything a guided view sets up can be opened in Analyze and changed.</div>
+        </details>
+        <details>
+          <summary>Is any of this official?</summary>
+          <div class="faq-a">No. It is an independent tool built by Tevis Engineering Solutions from data that public agencies publish themselves. The live layers are as current as the agency that runs them. Police reports can lag the department by days, and a report is a record that somebody called and an officer wrote it up, not a conviction. For anything that matters, confirm it with the agency itself.</div>
+        </details>
+        <details>
+          <summary>How current is it?</summary>
+          <div class="faq-a">The live county and city layers are fetched at the moment you look, so they are as current as the agency that publishes them. The police-report feed rebuilds every night, and the date it was last built is shown inside the map. New reports typically appear within a day or two of a department publishing them.</div>
+        </details>
+        <details>
+          <summary>Why do some reports show a block instead of an address?</summary>
+          <div class="faq-a">Sexual-offense and domestic reports are shown at the hundred block, such as 24XX Noble Rd, with the dot placed within about a hundred meters rather than on the house. A precise dot on that kind of report would identify the victim at their own front door, and nothing about a map needs that. Every other report keeps the address as the department published it, and civilian names are never on the map in any category.</div>
+        </details>
+        <details>
+          <summary>Can I suggest a dataset or a feature?</summary>
+          <div class="faq-a">Yes, and please do. The suggestion box on this page goes straight to the engineer who builds the tool. Datasets that a public agency already publishes to an open-data service can usually be added quickly; a police department is added when its reports are published somewhere public we can read. Good stacks that people send in become guided views.</div>
+        </details>
+        <details>
+          <summary>Can I embed the map or get the data?</summary>
+          <div class="faq-a">Yes to both. The map can be embedded in an iframe on your own site, as it is on this page, and the police feed is a documented JSON format we can point you at. Use the request form below and say what you have in mind.</div>
+        </details>
+        <details>
+          <summary>Can you build something like this for us?</summary>
+          <div class="faq-a">That is what this page is for. The same engine runs on any open-data source: your city’s permits and code cases, a county’s parcels and transfers, a dispatch feed, a set of inspection records. We scope it, build it, review it for privacy the way this one was, and hand it over as a fixed-price build you own or a hosted service we run for you. Ask for a quote and you will get a number, not a sales call.</div>
+        </details>
+      </div>
+    </section>
+
+    <section class="cta-band" id="get-started">
+      <h2>Build one for your city, newsroom or firm</h2>
+      <p>Tell us whose data it is and the question it should answer. We will look at what is already published, show you what it would look like on the map, and come back with a fixed number. Straight to the engineer, one-business-day reply.</p>
+      <div class="req-success" id="reqSuccess" style="display:none;">
+        <strong>Thanks &mdash; your request is in.</strong> We'll reply within one business day. For anything urgent, call <a href="tel:+12163028486" class="success-tel">(216)&nbsp;302&#8209;8486</a>.
+      </div>
+      <form id="reqForm" class="req-form" action="https://formspree.io/f/maqvanal" method="POST">
+        <input type="hidden" name="_subject" value="Cleveland Geo Visualizer — Quote / Consult Request">
+        <input type="hidden" name="_next" value="https://tevisengineering.com/cleveland-geo-visualizer.html?requested=1">
+        <input type="hidden" name="product" value="Cleveland Geo Visualizer">
+        <input type="text" name="_honeypot" class="trap" tabindex="-1" autocomplete="off" aria-hidden="true">
+        <div>
+          <label for="reqName">Name</label>
+          <input id="reqName" type="text" name="name" required autocomplete="name">
+        </div>
+        <div>
+          <label for="reqCompany">Organization</label>
+          <input id="reqCompany" type="text" name="company" autocomplete="organization">
+        </div>
+        <div>
+          <label for="reqEmail">Email</label>
+          <input id="reqEmail" type="email" name="email" required autocomplete="email">
+        </div>
+        <div>
+          <label for="reqPhone">Phone</label>
+          <input id="reqPhone" type="tel" name="phone" autocomplete="tel">
+        </div>
+        <div class="full">
+          <label for="reqSite">Your website</label>
+          <input id="reqSite" type="text" name="website" placeholder="yourcity.gov" autocomplete="url">
+        </div>
+        <div class="full">
+          <label for="reqStart">How you'd like to start</label>
+          <select id="reqStart" name="start">
+            <option value="Quote for a custom map">Quote for a custom map</option>
+            <option value="Data or GIS consult">Data or GIS consult</option>
+            <option value="Embed this map on my site">Embed this map on my site</option>
+            <option value="Not sure yet">Not sure yet</option>
+          </select>
+        </div>
+        <div class="full">
+          <label for="reqNotes">Whose data, and what it should answer</label>
+          <textarea id="reqNotes" name="notes" rows="3" placeholder="e.g. our city's permits and code cases on one map for residents; we publish to an ArcGIS portal already"></textarea>
+        </div>
+        <button type="submit" class="btn btn-primary">Get My Quote</button>
+      </form>
+    </section>
+  </main>
+
+  <!-- NEWSLETTER SIGNUP -->
+  <section class="newsletter-section" aria-label="Email newsletter signup">
+    <div class="newsletter-inner">
+      <div class="newsletter-text">
+        <h2 class="newsletter-heading">Tools &amp; Tips from TES</h2>
+        <p class="newsletter-sub">Occasional updates on new software, features, and practical business technology. No spam. Unsubscribe anytime.</p>
+      </div>
+      <form
+        action="https://buttondown.com/api/emails/embed-subscribe/tevisengineering"
+        method="post"
+        target="popupwindow"
+        class="newsletter-form"
+        id="newsletterForm"
+      >
+        <input type="hidden" value="1" name="embed">
+        <label for="newsletterEmail" class="sr-only">Email address</label>
+        <input type="email" id="newsletterEmail" name="email" placeholder="your@email.com" required autocomplete="email" class="newsletter-input">
+        <button type="submit" class="newsletter-btn">Subscribe</button>
+        <noscript><p style="margin-top:0.75rem;font-size:0.85rem;">To subscribe, visit <a href="https://buttondown.com/tevisengineering" target="_blank" rel="noopener noreferrer">buttondown.email</a> directly.</p></noscript>
+      </form>
+      <p class="newsletter-fine">
+        Powered by <a href="https://buttondown.com/refer/tevisengineering" target="_blank" rel="noopener noreferrer">Buttondown</a>.
+        Read our <a href="privacy_policy.html" rel="noopener">privacy policy</a>.
+      </p>
+    </div>
+  </section>
+
+  <!-- ===== FOOTER ===== -->
+  <footer class="tfoot">
+    <div class="tfoot-grid">
+      <div>
+        <a class="tfoot-brand" href="index.html"><img src="assets/logo-mark.png" alt="TES"><b>Tevis Engineering</b></a>
+        <p class="tfoot-blurb">IT Support, Engineering, 3D Design/Printing and tangential services for small businesses and individuals in the Cleveland, Ohio area and beyond.</p>
+        <p class="tfoot-nap"><a href="tel:+12163028486">(216)&nbsp;302&#8209;8486</a> &middot; Cleveland,&nbsp;OH</p>
+      </div>
+      <div class="tfoot-col">
+        <h5>Services</h5>
+        <a href="service_catalog.html">Services Catalog</a>
+        <a href="pricing_sheet.html">Managed IT Support</a>
+        <a href="website_creation.html">Web &amp; App Design</a>
+        <a href="portfolio.html">PCB &amp; CAD Design</a>
+        <a href="portfolio.html">3D Printing</a>
+        <a href="data_destruction.html">Data Destruction</a>
+      </div>
+      <div class="tfoot-col">
+        <h5>Company</h5>
+        <a href="service-areas.html">Service Areas</a>
+        <a href="how_support_works.html">How Support Works</a>
+        <a href="portfolio.html">Portfolio</a>
+        <a href="blog/index.html">Blog</a>
+        <a href="pricing_sheet.html">Pricing</a>
+        <a href="contact.html">Contact</a>
+      </div>
+      <div class="tfoot-col">
+        <h5>Get Started</h5>
+        <a href="make_ticket.html">Make a Ticket</a>
+        <a href="pay_invoice.html">Pay Invoice</a>
+        <a href="assessment.html">IT Assessment</a>
+        <a href="how_support_works.html">How Support Works</a>
+      </div>
+    </div>
+    <div class="tfoot-bar">
+      <span>&copy; 2026 Tevis Engineering Solutions, LLC &middot; Cleveland, OH</span>
+      <div class="tfoot-social">
+        <a href="https://linkedin.com/in/tylertevis/" aria-label="LinkedIn"><i class="fa-brands fa-linkedin"></i></a>
+        <a href="https://github.com/tevis-engineering-solutions" aria-label="GitHub"><i class="fa-brands fa-github"></i></a>
+        <a href="contact.html" aria-label="Email"><i class="fa-solid fa-envelope"></i></a>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    (function() {
+      var wrap = document.getElementById('navWrap');
+      var trigger = document.getElementById('navTrigger');
+      var mega = document.getElementById('navMega');
+      function setOpen(o) { mega.classList.toggle('is-open', o); trigger.setAttribute('aria-expanded', o ? 'true' : 'false'); if (window.innerWidth <= 860 && typeof Tawk_API !== 'undefined') { o ? Tawk_API.hideWidget() : Tawk_API.showWidget(); } }
+      var closeTimer;
+      trigger.addEventListener('click', function(e) { e.stopPropagation(); setOpen(!mega.classList.contains('is-open')); });
+      if (window.matchMedia && window.matchMedia('(hover: hover)').matches) {
+        wrap.addEventListener('mouseenter', function() { clearTimeout(closeTimer); setOpen(true); });
+        wrap.addEventListener('mouseleave', function() { closeTimer = setTimeout(function() { setOpen(false); }, 150); });
+        mega.addEventListener('mouseenter', function() { clearTimeout(closeTimer); });
+        mega.addEventListener('mouseleave', function() { closeTimer = setTimeout(function() { setOpen(false); }, 150); });
+      }
+      document.addEventListener('click', function(e) { if (!wrap.contains(e.target)) setOpen(false); });
+      document.addEventListener('keydown', function(e) { if (e.key === 'Escape') setOpen(false); });
+      mega.querySelectorAll('a').forEach(function(a) { a.addEventListener('click', function() { setOpen(false); }); });
+    })();
+    var form = document.getElementById('newsletterForm');
+    if (form) {
+      form.addEventListener('submit', function() {
+        window.open('https://buttondown.com/tevisengineering', 'popupwindow', 'scrollbars=yes,width=800,height=600');
+      });
+    }
+    // Suggestion box: AJAX to Formspree so the page does not reload. On any failure fall back
+    // to a native submit, which lands back here with ?suggested=1. Nothing is lost either way.
+    (function() {
+      var form = document.getElementById('sugForm'), ok = document.getElementById('sugSuccess');
+      var err = document.getElementById('sugError'), btn = document.getElementById('sugBtn');
+      if (!form) return;
+      function done() { form.hidden = true; ok.hidden = false; ok.scrollIntoView({ block: 'nearest' }); }
+      if (window.location.search.indexOf('suggested=1') !== -1) { done(); return; }
+      var busy = false;
+      form.addEventListener('submit', function(e) {
+        if (busy || typeof window.fetch !== 'function') return; // let the native submit run
+        e.preventDefault();
+        busy = true; btn.disabled = true; err.hidden = true;
+        var ctl = typeof AbortController === 'function' ? new AbortController() : null;
+        var timer = ctl && setTimeout(function() { ctl.abort(); }, 10000);
+        fetch(form.action, { method: 'POST', body: new FormData(form), headers: { 'Accept': 'application/json' }, signal: ctl ? ctl.signal : undefined })
+          .then(function(r) { if (!r.ok) throw new Error('http ' + r.status); return r.json(); })
+          .then(function() { if (timer) clearTimeout(timer); done(); })
+          .catch(function() { if (timer) clearTimeout(timer); busy = false; btn.disabled = false; form.submit(); });
+      });
+    })();
+    // Trial/quote request success state (Formspree _next redirect back with ?requested=1)
+    (function() {
+      if (window.location.search.indexOf('requested=1') !== -1) {
+        var s = document.getElementById('reqSuccess'), f = document.getElementById('reqForm');
+        if (s) s.style.display = 'block';
+        if (f) f.style.display = 'none';
+      }
+    })();
+  </script>
+
+  <script src="assets/js/geo-coverage.js" defer></script>
+<script type="text/javascript">
+var Tawk_API=Tawk_API||{}, Tawk_LoadStart=new Date();
+(function(){
+var s1=document.createElement("script"),s0=document.getElementsByTagName("script")[0];
+s1.async=true;
+s1.src='https://embed.tawk.to/6a2d769e0f46281c35cc68ee/1jr0pemhe';
+s1.charset='UTF-8';
+s1.setAttribute('crossorigin','*');
+s0.parentNode.insertBefore(s1,s0);
+})();
+</script>
+</body>
+</html>

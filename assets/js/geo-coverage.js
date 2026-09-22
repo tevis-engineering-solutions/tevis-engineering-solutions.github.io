@@ -1,4 +1,4 @@
-/* Coverage table on cleveland-crime-map.html, read from the live feed.
+/* Coverage table on cleveland-geo-visualizer.html, read from the live feed.
  *
  * The table is baked into the page with the numbers current at the last edit, so it reads
  * correctly with no JavaScript and when the feed is unreachable. When agencies.json
