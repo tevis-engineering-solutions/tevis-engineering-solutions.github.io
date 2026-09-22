@@ -26,6 +26,9 @@
     .abrand s { display:block; font-size:0.6rem; color:var(--gold); text-decoration:none; letter-spacing:0.12em; }
     .aspacer { flex:1; }
     .awho { font-size:0.72rem; color:var(--muted); text-align:right; max-width:40vw; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+    /* A phone gets the wordmark and the search button; the subtitle and the email
+       are for a screen with room for them. */
+    @media (max-width:520px) { .abrand s, .awho { display:none; } .abrand b { white-space:nowrap; } }
 
     .filters { display:flex; gap:0.35rem; padding:0.6rem 1rem; max-width:1100px; margin:0 auto; overflow-x:auto; scrollbar-width:none; }
     .filters::-webkit-scrollbar { display:none; }
@@ -431,6 +434,60 @@
       .fin-table tr.pick:hover td { background:none; }
       * { -webkit-print-color-adjust:exact; print-color-adjust:exact; }
     }
+    /* ---- home, search, banners ---- */
+    .asearch { width:38px; height:38px; border-radius:999px; border:1px solid var(--line); background:transparent; color:var(--muted); cursor:pointer; display:inline-flex; align-items:center; justify-content:center; flex:0 0 auto; }
+    .asearch:hover { color:var(--text); border-color:var(--green); }
+    .asearch svg { width:17px; height:17px; }
+    .asearch kbd { display:none; }
+    @media (min-width:900px) { .asearch { width:auto; padding:0 0.7rem 0 0.6rem; gap:0.45rem; font-size:0.7rem; } .asearch kbd { display:inline; font-family:"Montserrat",sans-serif; font-size:0.62rem; border:1px solid var(--line); border-radius:5px; padding:0.05rem 0.35rem; color:var(--muted); } }
+    .netbar { position:sticky; top:0; z-index:60; display:flex; gap:0.6rem; align-items:center; justify-content:center; padding:0.55rem 1rem; font-size:0.82rem; background:#3b1f1f; color:#f2c9c9; border-bottom:1px solid #7f2c2c; }
+    .netbar.offline { background:#2e2a12; color:#e0c98a; border-color:#6e5a1b; }
+    .netbar button { font-family:"Montserrat",sans-serif; font-size:0.66rem; font-weight:700; text-transform:uppercase; letter-spacing:0.03em; padding:0.3rem 0.7rem; border-radius:999px; border:1px solid currentColor; background:transparent; color:inherit; cursor:pointer; }
+    .home-hello { display:flex; flex-wrap:wrap; align-items:baseline; gap:0.4rem 1rem; margin:0.4rem 0 0.9rem; }
+    .home-hello h2 { font-family:"Montserrat",sans-serif; font-size:1.25rem; }
+    .home-hello .date { color:var(--muted); font-size:0.82rem; }
+    .home-nums { display:grid; grid-template-columns:repeat(3,1fr); gap:0.5rem; margin-bottom:1rem; }
+    @media (max-width:480px) { .home-nums { grid-template-columns:1fr 1fr 1fr; gap:0.35rem; } .home-nums .tile { padding:0.55rem 0.6rem; } .home-nums .tile b { font-size:0.95rem; } }
+    .home-grid { display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr); gap:0.6rem; align-items:start; }
+    @media (max-width:860px) { .home-grid { grid-template-columns:1fr; } }
+    .home-col > .chart-panel { margin-bottom:0.6rem; }
+    .att-sec h3 .n { display:inline-block; min-width:1.3rem; padding:0 0.35rem; margin-left:0.35rem; border-radius:999px; background:var(--gold); color:#0d1710; font-size:0.62rem; line-height:1.3rem; text-align:center; letter-spacing:0; }
+    .att-sec h3 .n.calm { background:var(--line); color:var(--muted); }
+    .att-sec .row { margin-bottom:0.3rem; }
+    .att-sec .row-main b { font-family:"Montserrat",sans-serif; font-weight:800; }
+    .att-sec .late { color:#ef4444; }
+    .att-sec .soon { color:var(--gold); }
+    .att-empty { padding:1.2rem 0.5rem; text-align:center; color:var(--muted); font-size:0.85rem; }
+    .att-empty b { display:block; color:#9fd3ae; font-family:"Montserrat",sans-serif; margin-bottom:0.2rem; }
+    .act-day { font-family:"Montserrat",sans-serif; font-size:0.66rem; text-transform:uppercase; letter-spacing:0.06em; color:var(--muted); margin:0.7rem 0 0.35rem; }
+    .act-day:first-child { margin-top:0; }
+    .act { display:flex; gap:0.6rem; align-items:flex-start; padding:0.4rem 0.2rem; border-bottom:1px dashed rgba(44,66,50,0.7); font-size:0.8rem; cursor:pointer; }
+    .act:last-child { border-bottom:0; }
+    .act:hover .act-s { color:#fff; }
+    .act i { flex:0 0 auto; width:8px; height:8px; border-radius:50%; margin-top:0.45rem; background:var(--muted); }
+    .act i.ticket { background:#4fa2ff; } .act i.invoice { background:var(--gold); } .act i.paypal { background:#e0c98a; } .act i.inventory { background:#9fd3ae; } .act i.license { background:#c88bff; } .act i.customer, .act i.org { background:#6a8ba8; } .act i.agreement { background:var(--green); }
+    .act-s { flex:1 1 auto; min-width:0; color:var(--text); word-break:break-word; }
+    .act-m { flex:0 0 auto; color:var(--muted); font-size:0.7rem; white-space:nowrap; text-align:right; }
+    .act-m span { display:block; }
+    .act-new { display:none; margin:0 0 0.5rem; font-family:"Montserrat",sans-serif; font-size:0.66rem; font-weight:700; text-transform:uppercase; letter-spacing:0.04em; padding:0.35rem 0.8rem; border-radius:999px; border:1px solid var(--gold); background:rgba(200,152,48,0.1); color:var(--gold); cursor:pointer; }
+    .act-new.show { display:inline-block; }
+    .cmdk { position:fixed; inset:0; z-index:80; background:rgba(5,10,7,0.72); backdrop-filter:blur(4px); display:flex; align-items:flex-start; justify-content:center; padding:8vh 1rem 1rem; }
+    .cmdk[hidden] { display:none; }
+    .cmdk-box { width:100%; max-width:640px; background:#112018; border:1px solid var(--line); border-radius:14px; box-shadow:0 20px 60px rgba(0,0,0,0.55); overflow:hidden; }
+    .cmdk-box input { width:100%; padding:0.95rem 1.1rem; font-family:inherit; font-size:1rem; background:transparent; border:0; border-bottom:1px solid var(--line); color:var(--text); }
+    .cmdk-box input:focus { outline:none; }
+    .cmdk-res { max-height:60vh; overflow-y:auto; padding:0.4rem 0; }
+    .cmdk-h { font-family:"Montserrat",sans-serif; font-size:0.62rem; text-transform:uppercase; letter-spacing:0.08em; color:var(--gold); padding:0.5rem 1.1rem 0.2rem; }
+    .cmdk-r { display:flex; justify-content:space-between; gap:0.6rem; align-items:baseline; padding:0.5rem 1.1rem; cursor:pointer; }
+    .cmdk-r.on, .cmdk-r:hover { background:rgba(74,172,101,0.12); }
+    .cmdk-r .l { font-size:0.88rem; color:var(--text); min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+    .cmdk-r .s { font-size:0.72rem; color:var(--muted); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:45%; }
+    .cmdk-e { padding:1rem 1.1rem; color:var(--muted); font-size:0.85rem; }
+    .tkfind { max-width:1100px; margin:0 auto; padding:0 1rem 0.5rem; }
+    .tkfind input { width:100%; padding:0.55rem 0.75rem; border-radius:8px; border:1px solid var(--line); background:var(--card); color:var(--text); font-family:inherit; font-size:0.88rem; }
+    .tkfind input:focus { outline:none; border-color:var(--green); }
+    .more-btn { width:100%; margin-top:0.4rem; font-family:"Montserrat",sans-serif; font-size:0.7rem; font-weight:700; text-transform:uppercase; letter-spacing:0.04em; padding:0.6rem; border-radius:10px; border:1px dashed var(--line); background:transparent; color:var(--muted); cursor:pointer; }
+    .more-btn:hover { border-color:var(--green); color:var(--text); }
     [hidden] { display:none !important; }
   </style>
 </head>
@@ -439,15 +496,27 @@
     <div class="abar-inner">
       <a class="abrand" href="index.html">
         <img src="../assets/logo-mark.png" alt="Tevis Engineering Solutions">
-        <span><b>TES Admin Center</b><s>Tickets, customers, invoices, inventory, finance, keys</s></span>
+        <span><b>TES Admin Center</b><s>Home, tickets, customers, money, inventory</s></span>
       </a>
       <div class="aspacer"></div>
       <div class="awho" id="adminWho">&nbsp;</div>
+      <button type="button" class="asearch" id="asearch" aria-label="Search everything">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg><kbd>Ctrl K</kbd>
+      </button>
     </div>
   </header>
+  <div class="netbar" id="netBanner" hidden><span id="netBannerText"></span><button type="button" id="netBannerBtn">Reload</button></div>
+  <div class="cmdk" id="cmdk" hidden role="dialog" aria-label="Search">
+    <div class="cmdk-box">
+      <label for="cmdkIn" class="sr-only">Search</label>
+      <input type="search" id="cmdkIn" placeholder="Search tickets, customers, invoices, equipment&hellip;" autocomplete="off">
+      <div class="cmdk-res" id="cmdkRes"></div>
+    </div>
+  </div>
 
   <nav class="viewnav" id="viewnav" aria-label="Sections">
     <div class="viewnav-track" id="viewTrack">
+      <button type="button" class="vbtn" id="navHome" data-view="home">Home</button>
       <button type="button" class="vbtn on" id="navTickets" data-view="tickets">Tickets</button>
       <button type="button" class="vbtn" id="navCustomers" data-view="customers">Customers</button>
       <button type="button" class="vbtn" id="navInvoices" data-view="invoices">Invoices</button>
@@ -456,6 +525,23 @@
       <button type="button" class="vbtn" id="navKeys" data-view="keys">Product Keys</button>
     </div>
   </nav>
+
+  <main class="wrap" id="viewHome" aria-label="Home" hidden>
+    <div class="home-hello">
+      <h2 id="homeHello">Good morning</h2>
+      <span class="date" id="homeDate"></span>
+    </div>
+    <div class="home-nums" id="homeNums"></div>
+    <div class="home-grid">
+      <div class="home-col" id="homeAttention"><div class="state">Loading&hellip;</div></div>
+      <div class="home-col">
+        <div class="chart-panel">
+          <div class="fin-sec-h"><h3>Activity</h3><button type="button" class="act-new" id="actNew">New activity</button></div>
+          <div id="homeActivity"><div class="state">Loading&hellip;</div></div>
+        </div>
+      </div>
+    </div>
+  </main>
 
   <div id="viewTickets">
   <div class="filters" id="filters">
@@ -467,6 +553,10 @@
     <button type="button" class="fpill" data-status="Archived">Archived</button>
   </div>
 
+  <div class="tkfind">
+    <label for="tkQ" class="sr-only">Search tickets</label>
+    <input type="search" id="tkQ" placeholder="Search tickets by number, subject, text, name or email" autocomplete="off">
+  </div>
   <main class="wrap" aria-label="Ticket triage">
     <div class="grid">
       <section aria-label="Tickets">
@@ -841,9 +931,32 @@
         opts.body = opts.body ? JSON.stringify(opts.body) : '{}';
       }
       return fetch(API + path, opts).then(function (r) {
-        return r.json().catch(function () { return { ok: false }; });
+        // A dead Access session answers 403 (or an HTML redirect that is not JSON).
+        // Either way the operator must be told to sign in, not that their edit was
+        // refused. Nothing here ever rejects: every caller reads r.ok.
+        if (r.status === 401 || r.status === 403) { netBanner('expired'); return { ok: false, error: 'session_expired', message: 'Your sign-in expired. Reload to sign in again.' }; }
+        if (r.status >= 500) return r.json().catch(function () { return {}; }).then(function (j) { return { ok: false, error: j.error || 'server_error', message: j.message || 'The server had a problem (' + r.status + '). Try again in a moment.' }; });
+        netBanner(null);
+        return r.json().catch(function () { return { ok: false, error: 'bad_response' }; });
+      }, function () {
+        netBanner('offline');
+        return { ok: false, error: 'offline', message: 'No connection. Check the network and try again.' };
       });
     }
+
+    // One banner for the two states the console used to fail silently in.
+    var netBannerEl = document.getElementById('netBanner');
+    var netState = null;
+    function netBanner(state) {
+      if (state === netState) return;
+      if (state === 'offline' && netState === 'expired') return;   // a dead session outranks a blip
+      netState = state;
+      netBannerEl.hidden = !state;
+      netBannerEl.classList.toggle('offline', state === 'offline');
+      document.getElementById('netBannerText').textContent = state === 'expired' ? 'Your sign-in expired. Reload to sign in again.' : state === 'offline' ? 'No connection. Changes will not save until it is back.' : '';
+      document.getElementById('netBannerBtn').hidden = state !== 'expired';
+    }
+    document.getElementById('netBannerBtn').addEventListener('click', function () { location.reload(); });
 
     function toast(msg) {
       toastEl.textContent = msg;
@@ -1269,7 +1382,7 @@
     }
 
     function load() {
-      return api('/admin/tickets' + (filter ? '?status=' + encodeURIComponent(filter) : ''))
+      return api('/admin/tickets?status=' + encodeURIComponent(filter || '') + (tkSearch ? '&q=' + encodeURIComponent(tkSearch) : ''))
         .then(function (r) {
           if (!r.ok) {
             listEl.textContent = '';
@@ -1278,6 +1391,14 @@
           }
           tickets = r.tickets || [];
           renderList();
+          if (r.more) listEl.appendChild(licAction('Load older tickets', 'more-btn', function () {
+            var last = tickets[tickets.length - 1];
+            api('/admin/tickets?status=' + encodeURIComponent(filter || '') + (tkSearch ? '&q=' + encodeURIComponent(tkSearch) : '') + '&before=' + last.updated_at).then(function (r2) {
+              if (!r2.ok) return;
+              tickets = tickets.concat(r2.tickets || []);
+              renderList();
+            });
+          }));
         });
     }
 
@@ -2228,6 +2349,7 @@
     // Jump to one invoice from anywhere else in the console.
     function showInvoice(number) {
       showView('invoices');
+      history.replaceState(null, '', '#inv=' + encodeURIComponent(number));
       invView = 'all';
       Array.prototype.forEach.call(document.querySelectorAll('#invFilters .fpill'), function (x) {
         x.classList.toggle('on', x.getAttribute('data-view') === 'all');
@@ -2968,7 +3090,7 @@
       // The file is tabbed: what needs attention first, then the money, the work,
       // the paperwork, and what you want to remember about them.
       var allInv = c.all_invoices || c.invoices || [];
-      var tabs = paneTabs(wrap, ['Overview', 'Invoices', 'Tickets', 'Equipment', 'Files', 'Notes'], 'cust:' + c.account.id);
+      var tabs = paneTabs(wrap, ['Overview', 'Invoices', 'Tickets', 'Equipment', 'Files', 'Notes', 'Activity'], 'cust:' + c.account.id);
       var pOverview = tabs.pane('Overview');
       var pInv = tabs.pane('Invoices');
       var pTk = tabs.pane('Tickets');
@@ -3171,6 +3293,10 @@
       tabs.pane('Equipment').appendChild(eqs);
 
       // ---- files and notes ----
+      var acts = sec('Activity');
+      activityRows(acts, c.activity || [], { empty: 'Nothing on record yet.' });
+      tabs.pane('Activity').appendChild(acts);
+
       tabs.pane('Files').appendChild(filesSection({
         base: '/admin/customers/' + encodeURIComponent(c.account.id),
         documents: c.documents || [],
@@ -3691,7 +3817,7 @@
       var oInv = extra.invoices || [];
       var oTk = extra.tickets || [];
       var oDocs = extra.documents || [];
-      var otabs = paneTabs(wrap, ['Overview', 'Invoices', 'Tickets', 'Equipment', 'Files', 'Notes'], 'org:' + o.id);
+      var otabs = paneTabs(wrap, ['Overview', 'Invoices', 'Tickets', 'Equipment', 'Files', 'Notes', 'Activity'], 'org:' + o.id);
       var oOverview = otabs.pane('Overview');
       otabs.count('Invoices', oInv.length);
       otabs.count('Tickets', oTk.length);
@@ -3857,6 +3983,10 @@
       }));
       inventoryRows(oEq, extra.inventory || []);
       otabs.pane('Equipment').appendChild(oEq);
+
+      var oActs = sec('Activity');
+      activityRows(oActs, extra.activity || [], { empty: 'Nothing on record yet.' });
+      otabs.pane('Activity').appendChild(oActs);
 
       otabs.pane('Files').appendChild(filesSection({
         base: '/admin/orgs/' + encodeURIComponent(o.id),
@@ -5242,8 +5372,335 @@
       document.body.appendChild(a); a.click(); a.remove();
     });
 
+    // ---- home: what needs you, and what happened ------------------------------
+    var homeAttentionEl = document.getElementById('homeAttention');
+    var homeActivityEl = document.getElementById('homeActivity');
+    var homeActMax = 0;        // newest activity id rendered
+    var homeActOldest = null;  // for Load more
+
+    function ago(sec) {
+      if (sec < 90) return 'just now';
+      var m = Math.round(sec / 60); if (m < 60) return m + ' min';
+      var h = Math.round(sec / 3600); if (h < 36) return h + (h === 1 ? ' hour' : ' hours');
+      var d = Math.round(sec / 86400); if (d < 14) return d + (d === 1 ? ' day' : ' days');
+      var w = Math.round(d / 7); if (w < 9) return w + (w === 1 ? ' week' : ' weeks');
+      return Math.round(d / 30) + ' months';
+    }
+
+    // Opens whatever an activity row or a search result points at.
+    function openObject(type, id, summary) {
+      if (type === 'ticket') { showView('tickets'); open(String(id)); }
+      else if (type === 'customer') { showView('customers'); custMode = 'people'; syncMode(); openCustomer(String(id)); }
+      else if (type === 'org') { showView('customers'); custMode = 'orgs'; syncMode(); openOrg(String(id)); }
+      else if (type === 'agreement') { showView('customers'); }
+      else if (type === 'invoice') { var mnum = /^(\S+)/.exec(summary || ''); if (mnum) showInvoice(mnum[1]); else showView('invoices'); }
+      else if (type === 'inventory') { showView('inventory'); var go = function () { flashInvt(Number(id)); }; if (invtAll.length) go(); else loadInventory().then(go); }
+      else if (type === 'license') { showView('keys'); }
+      else if (type === 'paypal') { showView('finance'); }
+      else showView('home');
+    }
+
+    function attSection(title, n, hot) {
+      var s = el('section', 'cust-sec att-sec');
+      var h = el('h3', null, title);
+      h.appendChild(el('span', 'n' + (hot ? '' : ' calm'), String(n)));
+      s.appendChild(h);
+      return s;
+    }
+
+    function renderHome(a) {
+      var h = new Date().getHours();
+      document.getElementById('homeHello').textContent = h < 12 ? 'Good morning' : h < 17 ? 'Good afternoon' : 'Good evening';
+      document.getElementById('homeDate').textContent = new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' });
+
+      var nums = document.getElementById('homeNums');
+      nums.textContent = '';
+      var tile = function (label, val, sub, warn, go) {
+        var t = el('div', 'tile' + (go ? ' pick' : ''));
+        t.appendChild(el('s', null, label));
+        t.appendChild(el('b', warn ? 'warn' : null, val));
+        if (sub) t.appendChild(el('div', 'sub', sub));
+        if (go) { t.style.cursor = 'pointer'; t.addEventListener('click', go); }
+        nums.appendChild(t);
+      };
+      tile('Overdue', money(a.money.overdue_cents), a.money.overdue.length + (a.money.overdue.length === 1 ? ' invoice' : ' invoices'), a.money.overdue.length > 0, function () { showInvoicesView('overdue', ''); });
+      tile('Unanswered', String(a.tickets.unanswered.length), a.tickets.sla_risk.length ? a.tickets.sla_risk.length + ' on the clock' : 'tickets', a.tickets.unanswered.length > 0, function () { showView('tickets'); });
+      tile('Unbilled', money(a.money.unbilled_cents), a.money.unbilled.length + (a.money.unbilled.length === 1 ? ' customer' : ' customers'), a.money.unbilled.length > 0, function () { showView('customers'); });
+
+      homeAttentionEl.textContent = '';
+      var any = false;
+      var wrap = el('div', 'chart-panel');
+      wrap.appendChild(el('h3', null, 'Needs attention'));
+
+      if (a.tickets.sla_risk.length) {
+        any = true;
+        var s1 = attSection('Response due', a.tickets.sla_risk.length, true);
+        a.tickets.sla_risk.forEach(function (t) {
+          var right = el('div', 'cust-badges');
+          right.appendChild(badge(t.sla.state === 'breached' ? 'late ' + ago(-t.sla.minutes_left * 60) : 'due in ' + ago(t.sla.minutes_left * 60), t.sla.state === 'breached' ? '#ef4444' : '#c89830'));
+          s1.appendChild(row(t.ticket_number + ' · ' + (t.subject || ''), t.who + ' · ' + t.priority + ' · opened ' + ago(t.age_sec) + ' ago', right, function () { openObject('ticket', t.id); }));
+        });
+        wrap.appendChild(s1);
+      }
+      var unans = a.tickets.unanswered.filter(function (t) { return !a.tickets.sla_risk.some(function (r) { return r.id === t.id; }); });
+      if (unans.length) {
+        any = true;
+        var s2 = attSection('Unanswered tickets', unans.length, true);
+        unans.slice(0, 8).forEach(function (t) {
+          var right = el('div', 'cust-badges');
+          right.appendChild(badge(t.priority, PRIORITY[t.priority] || '#8aa48d'));
+          s2.appendChild(row(t.ticket_number + ' · ' + (t.subject || ''), t.who + ' · waiting ' + ago(t.age_sec), right, function () { openObject('ticket', t.id); }));
+        });
+        if (unans.length > 8) s2.appendChild(el('div', 'row-sub', 'and ' + (unans.length - 8) + ' more on the Tickets tab'));
+        wrap.appendChild(s2);
+      }
+      if (a.money.overdue.length) {
+        any = true;
+        var s3 = attSection('Overdue invoices', a.money.overdue.length, true);
+        a.money.overdue.slice(0, 8).forEach(function (i) {
+          var right = el('div', 'cust-badges');
+          right.appendChild(el('b', 'late', money(i.amount_cents)));
+          if (i.reminder_stage) right.appendChild(badge(REMINDER_LABEL[i.reminder_stage] || 'reminded', '#8aa48d'));
+          s3.appendChild(row(i.number + ' · ' + i.who, i.days_late + (i.days_late === 1 ? ' day' : ' days') + ' past due', right, function () { showInvoice(i.number); }));
+        });
+        wrap.appendChild(s3);
+      }
+      if (a.money.pending.length) {
+        any = true;
+        var s4 = attSection('Payments to confirm', a.money.pending.length, true);
+        a.money.pending.forEach(function (i) {
+          var right = el('b', 'num', money(i.amount_cents));
+          s4.appendChild(row(i.number + ' · ' + i.who, (i.payment_method || 'payment') + (i.payment_ref ? ' #' + i.payment_ref : '') + ' reported ' + (i.reported_at ? ago(a.now - i.reported_at) + ' ago' : ''), right, function () { showInvoice(i.number); }));
+        });
+        wrap.appendChild(s4);
+      }
+      if (a.money.paypal_review) {
+        any = true;
+        var s5 = attSection('PayPal to review', a.money.paypal_review, true);
+        s5.appendChild(row(a.money.paypal_review + (a.money.paypal_review === 1 ? ' transaction is' : ' transactions are') + ' waiting to be marked', 'Personal, business, expense, or linked to an invoice', null, function () { showView('finance'); }));
+        wrap.appendChild(s5);
+      }
+      if (a.inventory.unconfirmed.length) {
+        any = true;
+        var s6 = attSection('Equipment not confirmed', a.inventory.unconfirmed.length, true);
+        a.inventory.unconfirmed.forEach(function (i) {
+          s6.appendChild(row(i.tag + ' · ' + i.name, 'with ' + (i.holder_name || i.holder_id) + ' for ' + ago(a.now - i.assigned_at) + (i.assignment_notified_at ? '' : ' · never emailed'), null, function () { openObject('inventory', i.id); }));
+        });
+        wrap.appendChild(s6);
+      }
+      if (a.tickets.pending_stale.length) {
+        any = true;
+        var s7 = attSection('Waiting on the customer', a.tickets.pending_stale.length, false);
+        a.tickets.pending_stale.slice(0, 6).forEach(function (t) {
+          s7.appendChild(row(t.ticket_number + ' · ' + (t.subject || ''), t.who + ' · quiet for ' + ago(t.idle_sec) + ' · worth a nudge', null, function () { openObject('ticket', t.id); }));
+        });
+        wrap.appendChild(s7);
+      }
+      if (a.money.unbilled.length) {
+        any = true;
+        var s8 = attSection('Unbilled work', a.money.unbilled.length, false);
+        a.money.unbilled.forEach(function (u) {
+          var right = el('b', 'num', money(u.cents));
+          s8.appendChild(row(u.name, fmtDur(u.minutes) + ' across ' + u.entries + (u.entries === 1 ? ' entry' : ' entries') + ' · oldest ' + fmtDate(u.oldest), right, function () {
+            if (u.org_id) openObject('org', u.org_id); else openObject('customer', u.account_id);
+          }));
+        });
+        wrap.appendChild(s8);
+      }
+      if (a.inventory.renewals.length) {
+        any = true;
+        var s9 = attSection('Renewals in 14 days', a.inventory.renewals.length, false);
+        a.inventory.renewals.forEach(function (i) {
+          var right = el('b', 'num', money(i.recurring_cents));
+          s9.appendChild(row(i.name + (i.vendor ? ' · ' + i.vendor : ''), fmtDayStr(i.next_charge_on) + ' · ' + i.recurring_interval, right, function () { openObject('inventory', i.id); }));
+        });
+        wrap.appendChild(s9);
+      }
+      if (!any) {
+        var e = el('div', 'att-empty');
+        e.appendChild(el('b', null, 'All clear.'));
+        e.appendChild(document.createTextNode('Nothing is waiting on you.'));
+        wrap.appendChild(e);
+      }
+      homeAttentionEl.appendChild(wrap);
+      setNavBadge('home', a.counts.attention);
+      setNavBadge('finance', a.counts.paypal_review);
+    }
+
+    function actRow(a) {
+      var d = el('div', 'act');
+      d.appendChild(el('i', a.object_type));
+      d.appendChild(el('div', 'act-s', a.summary));
+      var m = el('div', 'act-m');
+      m.appendChild(el('span', null, fmt(a.at)));
+      var who = a.actor === 'system' ? 'automatic' : /^customer:/.test(a.actor) ? 'customer' : (a.actor || '').split('@')[0];
+      m.appendChild(el('span', null, who));
+      d.appendChild(m);
+      d.addEventListener('click', function () { openObject(a.object_type, a.object_id, a.summary); });
+      return d;
+    }
+
+    // Renders a list of activity rows grouped by day into `parent`.
+    function activityRows(parent, list, opts) {
+      opts = opts || {};
+      if (!list.length) { parent.appendChild(el('div', 'row-sub', opts.empty || 'Nothing yet.')); return; }
+      var lastDay = null;
+      list.forEach(function (a) {
+        var day = new Date(a.at * 1000).toDateString();
+        if (day !== lastDay) {
+          var today = new Date().toDateString(), yest = new Date(Date.now() - 86400000).toDateString();
+          parent.appendChild(el('div', 'act-day', day === today ? 'Today' : day === yest ? 'Yesterday' : fmtDate(a.at)));
+          lastDay = day;
+        }
+        parent.appendChild(actRow(a));
+      });
+    }
+
+    function loadHomeActivity(more) {
+      var url = '/admin/activity?limit=40' + (more && homeActOldest ? '&before=' + homeActOldest : '');
+      return api(url).then(function (r) {
+        if (!r.ok) { if (!more) { homeActivityEl.textContent = ''; homeActivityEl.appendChild(el('div', 'state', 'Could not load activity.')); } return; }
+        var list = r.activity || [];
+        if (!more) { homeActivityEl.textContent = ''; homeActMax = list.length ? list[0].id : homeActMax; }
+        else { var old = homeActivityEl.querySelector('.more-btn'); if (old) old.remove(); }
+        activityRows(homeActivityEl, list, { empty: 'Nothing has happened yet. Activity from every tab lands here.' });
+        if (list.length) homeActOldest = list[list.length - 1].id;
+        if (list.length === 40) homeActivityEl.appendChild(licAction('Load more', 'more-btn', function () { loadHomeActivity(true); }));
+        document.getElementById('actNew').classList.remove('show');
+      });
+    }
+
+    function loadHome() {
+      return Promise.all([
+        api('/admin/attention').then(function (r) {
+          if (!r.ok) { homeAttentionEl.textContent = ''; homeAttentionEl.appendChild(el('div', 'state', r.error === 'session_expired' ? 'Signed out.' : 'Could not load.')); return; }
+          renderHome(r.attention);
+        }),
+        loadHomeActivity(false),
+      ]);
+    }
+    document.getElementById('actNew').addEventListener('click', function () { loadHomeActivity(false); });
+
+    // ---- badges on the tab strip ----
+    function setNavBadge(view, n) {
+      navButtonsFor(view).forEach(function (b) {
+        var nb = b.querySelector('.nbadge');
+        if (!nb) { nb = el('span', 'nbadge'); b.appendChild(nb); }
+        nb.hidden = !n;
+        nb.textContent = n ? String(n) : '';
+      });
+    }
+
+    // ---- pulse: counts every 45s while the page is visible ----
+    var pulseTimer = null;
+    function pulse() {
+      if (document.hidden) return;
+      api('/admin/pulse').then(function (r) {
+        if (!r.ok) return;
+        setNavBadge('home', r.counts.attention);
+        setNavBadge('finance', r.counts.paypal_review);
+        if (r.activity_max_id > homeActMax && homeActMax) document.getElementById('actNew').classList.add('show');
+      });
+    }
+    function startPulse() { clearInterval(pulseTimer); pulseTimer = setInterval(pulse, 45000); }
+    document.addEventListener('visibilitychange', function () { if (!document.hidden) { pulse(); startPulse(); } });
+    startPulse();
+
+    // ---- search (Ctrl/Cmd+K) ----
+    var cmdk = document.getElementById('cmdk');
+    var cmdkIn = document.getElementById('cmdkIn');
+    var cmdkRes = document.getElementById('cmdkRes');
+    var cmdkTimer = null, cmdkItems = [], cmdkIdx = -1;
+    function openSearch() { cmdk.hidden = false; cmdkIn.value = ''; cmdkRes.textContent = ''; cmdkRes.appendChild(el('div', 'cmdk-e', 'Tickets, customers, companies, invoices, equipment, keys.')); cmdkItems = []; cmdkIdx = -1; setTimeout(function () { cmdkIn.focus(); }, 0); }
+    function closeSearch() { cmdk.hidden = true; }
+    function cmdkPick(i) {
+      cmdkIdx = i;
+      cmdkItems.forEach(function (it, k) { it.el.classList.toggle('on', k === i); });
+      if (cmdkItems[i]) cmdkItems[i].el.scrollIntoView({ block: 'nearest' });
+    }
+    function cmdkGo(item) {
+      closeSearch();
+      routeHash(item.href, true);
+    }
+    function runSearch(q) {
+      api('/admin/search?q=' + encodeURIComponent(q)).then(function (r) {
+        if (cmdkIn.value.trim() !== q) return;
+        cmdkRes.textContent = ''; cmdkItems = []; cmdkIdx = -1;
+        if (!r.ok) { cmdkRes.appendChild(el('div', 'cmdk-e', 'Search is not available right now.')); return; }
+        var groups = [['tickets', 'Tickets'], ['customers', 'People'], ['orgs', 'Companies'], ['invoices', 'Invoices'], ['inventory', 'Equipment'], ['licenses', 'Product keys']];
+        groups.forEach(function (g) {
+          var list = r[g[0]] || [];
+          if (!list.length) return;
+          cmdkRes.appendChild(el('div', 'cmdk-h', g[1]));
+          list.forEach(function (it) {
+            var d = el('div', 'cmdk-r');
+            d.appendChild(el('span', 'l', it.label));
+            d.appendChild(el('span', 's', it.sub || ''));
+            var idx = cmdkItems.length;
+            d.addEventListener('mousemove', function () { if (cmdkIdx !== idx) cmdkPick(idx); });
+            d.addEventListener('click', function () { cmdkGo(it); });
+            cmdkItems.push({ el: d, href: it.href });
+            cmdkRes.appendChild(d);
+          });
+        });
+        if (!cmdkItems.length) cmdkRes.appendChild(el('div', 'cmdk-e', 'Nothing matches "' + q + '".'));
+        else cmdkPick(0);
+      });
+    }
+    cmdkIn.addEventListener('input', function () {
+      clearTimeout(cmdkTimer);
+      var q = cmdkIn.value.trim();
+      if (q.length < 2) { cmdkRes.textContent = ''; cmdkItems = []; return; }
+      cmdkTimer = setTimeout(function () { runSearch(q); }, 200);
+    });
+    cmdkIn.addEventListener('keydown', function (e) {
+      if (e.key === 'ArrowDown') { e.preventDefault(); if (cmdkItems.length) cmdkPick(Math.min(cmdkItems.length - 1, cmdkIdx + 1)); }
+      else if (e.key === 'ArrowUp') { e.preventDefault(); if (cmdkItems.length) cmdkPick(Math.max(0, cmdkIdx - 1)); }
+      else if (e.key === 'Enter') { e.preventDefault(); if (cmdkItems[cmdkIdx]) cmdkGo(cmdkItems[cmdkIdx]); }
+      else if (e.key === 'Escape') closeSearch();
+    });
+    cmdk.addEventListener('click', function (e) { if (e.target === cmdk) closeSearch(); });
+    document.getElementById('asearch').addEventListener('click', openSearch);
+    document.addEventListener('keydown', function (e) {
+      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') { e.preventDefault(); if (cmdk.hidden) openSearch(); else closeSearch(); }
+      else if (e.key === 'Escape' && !cmdk.hidden) closeSearch();
+    });
+
+    // ---- tickets: search box and load more ----
+    var tkQ = document.getElementById('tkQ');
+    var tkQTimer = null;
+    var tkSearch = '';
+    tkQ.addEventListener('input', function () {
+      clearTimeout(tkQTimer);
+      tkQTimer = setTimeout(function () { tkSearch = tkQ.value.trim(); load(); }, 250);
+    });
+
+    // ---- routing: one function, called at load and on every hash change ----
+    function routeHash(hash, push) {
+      hash = hash || location.hash || '';
+      if (push && location.hash !== hash) history.pushState(null, '', hash);
+      var m;
+      if ((m = /^#t=(\d+)/.exec(hash))) { showView('tickets'); if (tickets.length) open(m[1]); else load().then(function () { open(m[1]); }); }
+      else if ((m = /^#c=([A-Za-z0-9_-]{1,64})/.exec(hash))) { showView('customers'); custMode = 'people'; syncMode(); openCustomer(m[1]); }
+      else if ((m = /^#o=([A-Za-z0-9_-]{1,64})/.exec(hash))) { showView('customers'); custMode = 'orgs'; syncMode(); openOrg(m[1]); }
+      else if ((m = /^#inv=(.+)/.exec(hash))) { showInvoice(decodeURIComponent(m[1])); }
+      else if ((m = /^#i=(\d+)/.exec(hash))) { loaded.inventory = true; showView('inventory'); loadInventory().then(function () { flashInvt(Number(m[1])); }); }
+      else if ((m = /^#finance(?:=(\d{4}(?:-Q\d|-\d{2})?))?$/.exec(hash))) {
+        if (m[1]) { finPeriod = /Q/.test(m[1]) ? 'quarter' : /-/.test(m[1]) ? 'month' : 'year'; finAnchor = keyToAnchor(m[1]); }
+        showView('finance');
+      }
+      else if (hash === '#keys') showView('keys');
+      else if (hash === '#customers') showView('customers');
+      else if (hash === '#inventory') showView('inventory');
+      else if (hash === '#invoices') showView('invoices');
+      else if (hash === '#tickets') showView('tickets');
+      else showView('home');
+    }
+    window.addEventListener('hashchange', function () { routeHash(location.hash, false); });
+
     // ---- view switching --------------------------------------------------
     var VIEWS = {
+      home: { view: 'viewHome', nav: 'navHome', load: loadHome, always: true },
       tickets: { view: 'viewTickets', nav: 'navTickets' },
       customers: { view: 'viewCustomers', nav: 'navCustomers', load: function () { loadCustomers(''); } },
       invoices: { view: 'viewInvoices', nav: 'navInvoices', load: loadInvoices },
@@ -5255,6 +5712,13 @@
       keys: { view: 'viewKeys', nav: 'navKeys', load: loadKeys }
     };
     var loaded = {};
+    var suppressHashPush = false;
+    // Which hashes already belong to a view, so switching to it does not push a
+    // second, redundant history entry.
+    var HASH_OF = {
+      home: /^(#home|#|)$/, tickets: /^#(tickets|t=)/, customers: /^#(customers|c=|o=)/,
+      invoices: /^#(invoices|inv=)/, inventory: /^#(inventory|i=)/, finance: /^#finance/, keys: /^#keys/,
+    };
 
     function showView(which) {
       if (!VIEWS[which]) return;
@@ -5265,6 +5729,9 @@
         navButtonsFor(k).forEach(function (b) { b.classList.toggle('on', on); });
       });
       centerNav(which, true);
+      // A plain tab switch is a history entry, so Back returns to the tab you were on.
+      // Openers (a ticket, a file) replace the hash themselves right after this.
+      if (!suppressHashPush && !HASH_OF[which].test(location.hash)) history.pushState(null, '', '#' + which);
       var v = VIEWS[which];
       // Each list is fetched the first time its tab is opened, not on page load.
       if (v && v.load && (v.always || !loaded[which])) { loaded[which] = true; v.load(); }
@@ -5402,29 +5869,11 @@
     buildNavWheel();
     if (document.fonts && document.fonts.ready) document.fonts.ready.then(buildNavWheel);
 
-    // Telegram alerts deep-link to #t=<id>, so honour the hash on load.
-    load().then(function () {
-      var m = /#t=(\d+)/.exec(location.hash);
-      if (m) open(m[1]);
-    });
-    // Invoices is the default. Tickets still deep-link from Telegram (#t=) and by
-    // name; a bare refresh lands on the money.
-    if (location.hash === '#keys') showView('keys');
-    else if (location.hash === '#customers') showView('customers');
-    else if (location.hash === '#inventory') showView('inventory');
-    else if (/^#finance/.test(location.hash)) {
-      var mf = /^#finance=(\d{4}(?:-Q\d|-\d{2})?)$/.exec(location.hash);
-      if (mf) { finPeriod = /Q/.test(mf[1]) ? 'quarter' : /-/.test(mf[1]) ? 'month' : 'year'; finAnchor = keyToAnchor(mf[1]); }
-      showView('finance');
-    }
-    // #tickets and #t= keep the Tickets view (the page's initial state); #c= is handled below.
-    else if (!/^#(tickets|t=|c=|i=)/.test(location.hash)) showView('invoices');
-    // #c=<account_id> opens straight onto one person's file.
-    var mc = /#c=([A-Za-z0-9_-]{1,64})/.exec(location.hash);
-    if (mc) { showView('customers'); openCustomer(mc[1]); }
-    // #i=<id> (Telegram renewal nudges) opens the Inventory tab on one item.
-    var mi = /#i=(\d+)/.exec(location.hash);
-    if (mi) { loaded.inventory = true; showView('inventory'); loadInventory().then(function () { flashInvt(Number(mi[1])); }); }
+    // One router for the load-time hash, Back/Forward, and search results.
+    suppressHashPush = true;
+    if (/^#(t=|tickets)/.test(location.hash) || !location.hash) load();
+    routeHash(location.hash, false);
+    suppressHashPush = false;
   })();
   </script>
 </body>
