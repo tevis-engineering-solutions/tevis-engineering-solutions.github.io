@@ -556,6 +556,24 @@
     .qitems-mini li span:last-child { white-space:nowrap; }
     .qevents { margin-top:0.5rem; font-size:0.72rem; color:var(--muted); }
     .qevents div { padding:0.1rem 0; }
+    /* ---- agreements (Phase 4) ---- */
+    .agree-terms { display:grid; grid-template-columns:repeat(auto-fit,minmax(190px,1fr)); gap:0.3rem 0.9rem; margin:0.5rem 0 0.7rem; font-size:0.78rem; }
+    .agree-terms .k { color:var(--muted); text-transform:uppercase; letter-spacing:0.04em; font-size:0.66rem; font-weight:700; display:block; }
+    .agree-terms b { color:var(--text); font-family:"Montserrat",sans-serif; font-size:0.86rem; }
+    .meter { margin:0.7rem 0; }
+    .meter-head { font-size:0.78rem; color:var(--muted); margin-bottom:0.3rem; }
+    .meter-head b { color:var(--text); font-family:"Montserrat",sans-serif; font-size:0.92rem; }
+    .meter-track { height:10px; border-radius:999px; background:var(--bg); border:1px solid var(--line); overflow:hidden; }
+    .meter-fill { height:100%; background:linear-gradient(90deg,var(--green),#6dc882); border-radius:999px; transition:width 0.3s ease; }
+    .meter-fill.warn { background:linear-gradient(90deg,var(--gold),#e0b840); }
+    .meter-fill.over { background:linear-gradient(90deg,#d6785a,#ef4444); }
+    .meter-sub { font-size:0.72rem; color:var(--muted); margin-top:0.3rem; }
+    .agreeform { border:1px solid var(--gold); border-radius:12px; background:rgba(200,152,48,0.06); padding:0.9rem 1rem; margin:0.6rem 0; }
+    .agreeform h3 { font-family:"Montserrat",sans-serif; font-size:0.8rem; text-transform:uppercase; letter-spacing:0.05em; color:var(--gold); margin-bottom:0.6rem; }
+    .agreeform .fgrid { grid-template-columns:repeat(auto-fit,minmax(190px,1fr)); }
+    .agree-opts { display:flex; flex-direction:column; gap:0.35rem; margin:0.7rem 0 0.2rem; }
+    .agree-opts label { display:flex; align-items:center; gap:0.5rem; font-size:0.78rem; color:#cfe0d2; cursor:pointer; min-height:38px; }
+    .agree-opts input { width:17px; height:17px; accent-color:var(--gold); flex-shrink:0; }
   </style>
 </head>
 <body>
@@ -2554,6 +2572,178 @@
       loadInvoices().then(function () { invListEl.scrollIntoView({ behavior: 'smooth', block: 'start' }); });
     }
 
+    // ---- agreements: terms, the meter, billing (Phase 4) ------------------
+    var PERIOD_WORD = { monthly: 'month', quarterly: 'quarter', annual: 'year' };
+    var AGREE_ERROR = {
+      invalid_fee: 'That fee is not a number', invalid_bill_day: 'The bill day has to be 1 to 28',
+      invalid_term: 'The term has to be 1 to 120 months', invalid_renews_on: 'Use YYYY-MM-DD for the renewal date',
+      invalid_minutes: 'Included hours are not a number', invalid_rate: 'That rate is not a number',
+      invalid_sla: 'Response hours have to be 1 to 400', already_ended: 'This agreement has ended',
+      no_billing_email: 'That company has no billing contact. Set one above first.',
+      already_billed: 'This period has already been invoiced.',
+      no_fee: 'No fee on this agreement. Tick "include outstanding work" to bill the hours.',
+      nothing_to_bill: 'Nothing to bill for this period.', nothing_to_save: 'Nothing changed',
+    };
+
+    // The hours meter: what the customer sees on their plan page, shown here too so a
+    // call about "how many hours have we got left" is answered from the same number.
+    function usageMeter(u) {
+      var d = el('div', 'meter');
+      var head = el('div', 'meter-head');
+      head.appendChild(el('b', null, fmtDur(u.used_minutes) + ' of ' + fmtDur(u.allowance_minutes)));
+      head.appendChild(el('span', null, ' used in ' + u.period_label +
+        (u.rolled_over_minutes ? ' (including ' + fmtDur(u.rolled_over_minutes) + ' carried over)' : '')));
+      d.appendChild(head);
+      var track = el('div', 'meter-track');
+      var fill = el('div', 'meter-fill' + (u.percent >= 100 ? ' over' : u.percent >= 80 ? ' warn' : ''));
+      fill.style.width = Math.min(100, u.percent) + '%';
+      track.appendChild(fill);
+      d.appendChild(track);
+      d.appendChild(el('div', 'meter-sub', u.over_minutes
+        ? fmtDur(u.over_minutes) + ' beyond the plan, billable at the overage rate'
+        : fmtDur(u.remaining_minutes) + ' left'));
+      return d;
+    }
+
+    // Everything commercial about a live agreement, and the buttons that act on it.
+    function agreementPanel(a, usage, onChange) {
+      var reload = onChange || function () {};
+      var d = el('div', 'agree');
+      d.appendChild(el('h3', null, a.name || 'Service agreement'));
+      var word = PERIOD_WORD[a.period] || 'month';
+
+      var terms = el('div', 'agree-terms');
+      var row = function (k, v) { var r = el('div'); r.appendChild(el('span', 'k', k)); r.appendChild(el('b', null, v)); terms.appendChild(r); };
+      if (a.fee_cents) row('Fee', money(a.fee_cents) + ' / ' + word);
+      row('Included', fmtDur(a.included_minutes) + ' / ' + word + (a.rollover ? ', rolls over' : ''));
+      row('Overage', money(a.rate_cents) + '/hr');
+      if (a.sla_response_hours) row('Response', a.sla_response_hours + 'h on a Medium ticket');
+      if (a.bill_day && a.fee_cents) row('Bills on', 'day ' + a.bill_day + (a.last_invoiced_period ? ' · last ' + a.last_invoiced_period : ''));
+      if (a.renews_on) row(a.auto_renew ? 'Renews' : 'Ends', a.renews_on + (a.term_months ? ' · ' + a.term_months + ' month term' : ''));
+      d.appendChild(terms);
+      if (usage) d.appendChild(usageMeter(usage));
+
+      var acts = el('div', 'inv-actions');
+      function agact(label, cls, fn) { var b = el('button', cls || null, label); b.type = 'button'; b.addEventListener('click', fn); acts.appendChild(b); return b; }
+
+      if (a.fee_cents) {
+        agact('Bill this period', 'prim', function () {
+          var withHours = confirm('Invoice ' + money(a.fee_cents) + ' for this ' + word + '.\n\n' +
+            'OK also adds the outstanding chargeable hours to the same invoice.\n' +
+            'Cancel bills the fee on its own.');
+          api('/admin/agreements/' + a.id + '/bill', { method: 'POST', body: { include_overage: withHours } }).then(function (r) {
+            if (!r.ok) return toast(AGREE_ERROR[r.error] || r.message || 'Could not bill it');
+            toast('Invoiced ' + r.number + ' for ' + money(r.amount_cents) + (r.emailed ? ' · emailed' : ' · not emailed'));
+            if (r.partial) alert('Some time entries were claimed by something else while this ran. Check the invoice against the work log before sending it.');
+            reload();
+          });
+        });
+      }
+      agact('Edit terms', null, function () { agreementForm(a, reload); });
+      agact('Email the plan', null, function () {
+        api('/admin/agreements/' + a.id + '/announce', { method: 'POST' }).then(function (r) {
+          toast(r.ok ? 'Sent to ' + r.to : (AGREE_ERROR[r.error] || 'Could not send'));
+        });
+      });
+      agact('History', null, function () {
+        if (d.querySelector('.qevents')) { d.querySelector('.qevents').remove(); return; }
+        api('/admin/agreements/' + a.id).then(function (r) {
+          if (!r.ok) return;
+          var ev = el('div', 'qevents');
+          if (r.next_bill_day) ev.appendChild(el('div', null, 'Next invoice: ' + r.next_bill_day));
+          (r.events || []).forEach(function (e) { ev.appendChild(el('div', null, fmt(e.at) + ' · ' + (e.note || e.kind))); });
+          if (!(r.events || []).length) ev.appendChild(el('div', null, 'Nothing recorded yet.'));
+          d.appendChild(ev);
+        });
+      });
+      agact('End agreement', 'danger', function () {
+        if (!confirm('End ' + (a.name || 'this agreement') + '?\n\nWork logged after this bills at the full rate. ' +
+          'Coverage already granted stays on the entries it paid for.')) return;
+        api('/admin/agreements/' + a.id, { method: 'DELETE' }).then(function (r) { toast(r && r.ok ? 'Ended' : 'Could not end it'); reload(); });
+      });
+      d.appendChild(acts);
+      return d;
+    }
+
+    // One form for both adding and editing. `a` null means a new one.
+    function agreementForm(a, reload, holder) {
+      var box = el('div', 'agreeform');
+      box.appendChild(el('h3', null, a ? 'Edit the agreement' : 'New service agreement'));
+      var grid = el('div', 'fgrid');
+      function fld(label, id, type, val, ph) {
+        var w = el('div');
+        var l = el('label', null, label); l.setAttribute('for', 'ag_' + id); w.appendChild(l);
+        var i = document.createElement(type === 'select' ? 'select' : 'input');
+        i.id = 'ag_' + id;
+        if (type !== 'select') { i.type = type; if (ph) i.placeholder = ph; i.value = val == null ? '' : val; }
+        grid.appendChild(w); w.appendChild(i);
+        return i;
+      }
+      var fName = fld('Plan name', 'name', 'text', a ? a.name : '', 'Managed IT - Growth');
+      var fHours = fld('Included hours per period', 'hours', 'number', a ? (a.included_minutes / 60) : '', '10');
+      fHours.step = '0.25'; fHours.min = '0';
+      var fPeriod = fld('Period', 'period', 'select');
+      [['monthly', 'Monthly'], ['quarterly', 'Quarterly'], ['annual', 'Annual']].forEach(function (o) { var op = el('option', null, o[1]); op.value = o[0]; fPeriod.appendChild(op); });
+      fPeriod.value = a ? a.period : 'monthly';
+      var fFee = fld('Fee per period ($)', 'fee', 'number', a && a.fee_cents ? (a.fee_cents / 100).toFixed(2) : '', '1500.00');
+      fFee.step = '0.01'; fFee.min = '0';
+      var fBill = fld('Bills on day (1-28)', 'billday', 'number', a ? a.bill_day : 1, '1');
+      fBill.min = '1'; fBill.max = '28';
+      var fRate = fld('Overage $/hr (blank = standard)', 'rate', 'number', a && !a.rate_is_default ? (a.rate_cents / 100).toFixed(2) : '', '80.00');
+      fRate.step = '0.01'; fRate.min = '0';
+      var fSla = fld('Response hours (blank = no SLA)', 'sla', 'number', a ? a.sla_response_hours : '', '4');
+      fSla.min = '1';
+      var fTerm = fld('Term in months (blank = open-ended)', 'term', 'number', a ? a.term_months : '', '12');
+      fTerm.min = '1';
+      var fRenew = fld('Renews / ends on', 'renews', 'date', a ? a.renews_on : '');
+      box.appendChild(grid);
+
+      var opts = el('div', 'agree-opts');
+      var cbAuto = document.createElement('input'); cbAuto.type = 'checkbox'; cbAuto.checked = a ? !!a.auto_renew : true; cbAuto.id = 'ag_auto';
+      var lAuto = el('label', null, ''); lAuto.setAttribute('for', 'ag_auto'); lAuto.appendChild(cbAuto); lAuto.appendChild(document.createTextNode(' Renews automatically at the end of the term'));
+      var cbRoll = document.createElement('input'); cbRoll.type = 'checkbox'; cbRoll.checked = a ? !!a.rollover : false; cbRoll.id = 'ag_roll';
+      var lRoll = el('label', null, ''); lRoll.setAttribute('for', 'ag_roll'); lRoll.appendChild(cbRoll); lRoll.appendChild(document.createTextNode(' Unused hours carry into the next period (capped at one period)'));
+      opts.appendChild(lAuto); opts.appendChild(lRoll);
+      box.appendChild(opts);
+
+      var acts = el('div', 'inv-actions');
+      var save = el('button', 'prim', a ? 'Save changes' : 'Create agreement'); save.type = 'button';
+      save.addEventListener('click', function () {
+        var hrs = parseFloat(fHours.value);
+        if (!(hrs >= 0)) return toast('Enter the included hours, e.g. 10');
+        var payload = {
+          name: fName.value.trim(), included_minutes: Math.round(hrs * 60), period: fPeriod.value,
+          fee_cents: fFee.value.trim() === '' ? 0 : Math.round(parseFloat(fFee.value) * 100),
+          bill_day: fBill.value.trim() === '' ? null : parseInt(fBill.value, 10),
+          rate_cents: fRate.value.trim() === '' ? null : Math.round(parseFloat(fRate.value) * 100),
+          sla_response_hours: fSla.value.trim() === '' ? null : parseFloat(fSla.value),
+          term_months: fTerm.value.trim() === '' ? null : parseInt(fTerm.value, 10),
+          renews_on: fRenew.value || null,
+          auto_renew: cbAuto.checked, rollover: cbRoll.checked,
+        };
+        save.disabled = true;
+        var req = a
+          ? api('/admin/agreements/' + a.id, { method: 'PATCH', body: payload })
+          : api('/admin/agreements', { method: 'POST', body: Object.assign({ holder_type: holder.type, holder_id: holder.id }, payload) });
+        req.then(function (r) {
+          save.disabled = false;
+          if (!r.ok) return toast(AGREE_ERROR[r.error] || r.message || 'Could not save it');
+          toast(a ? 'Saved' : 'Agreement created');
+          reload();
+        });
+      });
+      acts.appendChild(save);
+      var cancel = el('button', null, 'Cancel'); cancel.type = 'button';
+      cancel.addEventListener('click', function () { box.remove(); });
+      acts.appendChild(cancel);
+      box.appendChild(acts);
+
+      // Replace whatever the caller was showing, so the form is not stacked twice.
+      var host = (a ? document.querySelector('.agree') : null);
+      if (host && host.parentNode) host.parentNode.insertBefore(box, host.nextSibling);
+      return box;
+    }
+
     // ---- quotes (Phase 3) -----------------------------------------------
     var quoteForm = document.getElementById('quoteForm');
     var quoteListEl = document.getElementById('quoteList');
@@ -3707,7 +3897,21 @@
       // offers the buttons when the client is this person.
       if (owed.minutes) {
         var us = sec('Outstanding work');
-        if (c.unbilled && c.unbilled.agreement) us.appendChild(agreementNote(c.unbilled));
+        if (c.unbilled && c.unbilled.agreement) {
+          // Their own agreement is editable here; a company's is edited on the company,
+          // which is also where it is billed, so there is one place it can change.
+          var gov = c.unbilled.agreement;
+          if (gov.holder_type === 'account' && gov.holder_id === c.account.id) {
+            us.appendChild(agreementPanel(gov, c.agreement_usage, function () { openCustomer(c.account.id); }));
+          } else {
+            us.appendChild(agreementNote(c.unbilled));
+            if (c.agreement_usage) us.appendChild(usageMeter(c.agreement_usage));
+          }
+        } else {
+          us.appendChild(licAction('Add an agreement', null, function () {
+            us.appendChild(agreementForm(null, function () { openCustomer(c.account.id); }, { type: 'account', id: c.account.id }));
+          }));
+        }
         (owed.periods || []).forEach(function (pd) { us.appendChild(periodLine(pd)); });
         owed.tickets.forEach(function (g) {
           us.appendChild(row(g.ticket_number,
@@ -4355,14 +4559,10 @@
       // Agreement
       var as = sec('Service agreement');
       if (o.agreement) {
-        as.appendChild(agreementNote({ agreement: o.agreement, governed_by: 'org' }));
-        as.appendChild(licAction('End agreement', null, function () {
-          if (!confirm('End this agreement?\n\nWork logged after this bills at the full ' +
-            'rate. Coverage already granted stays on the entries it paid for.')) return;
-          api('/admin/agreements/' + o.agreement.id, { method: 'DELETE' }).then(function (r) {
-            toast(r && r.ok ? 'Ended' : 'Could not end it');
-            openOrg(o.id);
-          });
+        as.appendChild(agreementPanel(o.agreement, extra.agreement_usage, function () { openOrg(o.id); }));
+      } else if (true) {
+        as.appendChild(licAction('Add an agreement', 'prim', function () {
+          as.appendChild(agreementForm(null, function () { openOrg(o.id); }, { type: 'org', id: o.id }));
         }));
       } else {
         var ag = el('div', 'orgbar');
@@ -6036,6 +6236,16 @@
           sQ.appendChild(row(q.number + ' · ' + q.title, q.who + ' · ' + (q.needs === 'convert' ? 'accepted, convert to an invoice' : q.unopened ? 'sent ' + ago(a.now - q.sent_at) + ' ago, not opened' : q.viewed ? 'opened, no decision yet' : 'sent ' + ago(a.now - (q.sent_at || a.now)) + ' ago') + (q.expires_in_sec != null && q.needs === 'decision' ? ' · ' + (q.expires_in_sec > 0 ? 'expires in ' + ago(q.expires_in_sec) : 'expired') : ''), right, function () { showQuote(q.id); }));
         });
         wrap.appendChild(sQ);
+      }
+      if ((a.agreements || []).length) {
+        any = true;
+        var sAg = attSection('Agreements', a.agreements.length, true);
+        a.agreements.forEach(function (g) {
+          sAg.appendChild(row(g.name + ' · ' + g.who, g.label, null, function () {
+            openObject(g.holder_type === 'org' ? 'org' : 'customer', g.holder_id);
+          }));
+        });
+        wrap.appendChild(sAg);
       }
       if (a.money.paypal_review) {
         any = true;

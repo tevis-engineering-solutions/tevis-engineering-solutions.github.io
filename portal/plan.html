@@ -3,10 +3,10 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Messages | TES Customer Portal</title>
-  <meta name="description" content="Your direct message thread with Tevis Engineering Solutions.">
+  <title>Your Plan | TES Customer Portal</title>
+  <meta name="description" content="Your service agreement with Tevis Engineering Solutions: what it covers, the hours you have used, and when it renews.">
   <meta name="robots" content="noindex, nofollow">
-  <link rel="canonical" href="https://tevisengineering.com/portal/messages.html">
+  <link rel="canonical" href="https://tevisengineering.com/portal/plan.html">
   <link rel="icon" type="image/png" href="../assets/favicon.png">
   <meta http-equiv="X-Content-Type-Options" content="nosniff">
   <meta name="referrer" content="strict-origin-when-cross-origin">
@@ -128,25 +128,6 @@
     table.hist td.id a.hist-pdf { margin-left:0.4rem; font-family:"Montserrat",sans-serif; font-size:0.62rem; font-weight:700; text-transform:uppercase; letter-spacing:0.05em; color:var(--gold); text-decoration:none; border:1px solid rgba(200,152,48,0.45); border-radius:999px; padding:0.1rem 0.45rem; }
     table.hist td.id a.hist-pdf:hover { background:rgba(200,152,48,0.14); }
     .hist-foot { color:var(--muted); font-size:0.78rem; margin-top:0.6rem; }
-    /* --- messages --- */
-    .thread { display:flex; flex-direction:column; gap:0.7rem; margin-bottom:1.2rem; }
-    .bubble { max-width:min(720px, 92%); border-radius:14px; padding:0.8rem 1rem; border:1px solid var(--line); background:var(--card); }
-    .bubble.me { align-self:flex-end; background:rgba(74,172,101,0.09); border-color:rgba(74,172,101,0.3); }
-    .bubble.them { align-self:flex-start; }
-    .b-meta { font-family:"Montserrat",sans-serif; font-size:0.66rem; text-transform:uppercase; letter-spacing:0.06em; color:var(--muted); margin-bottom:0.35rem; }
-    .b-body { font-size:0.92rem; color:#e4ede5; white-space:pre-wrap; word-wrap:break-word; line-height:1.55; }
-    .b-files { display:flex; flex-wrap:wrap; gap:0.4rem; margin-top:0.55rem; }
-    .b-file { display:inline-flex; align-items:center; gap:0.3rem; font-size:0.74rem; padding:0.25rem 0.6rem; border-radius:999px; border:1px solid rgba(200,152,48,0.45); color:var(--gold); text-decoration:none; background:var(--bg); }
-    .b-file:hover { background:rgba(200,152,48,0.14); }
-    .b-file .sz { color:var(--muted); }
-    .composer { background:var(--card); border:1px solid var(--line); border-radius:14px; padding:1rem 1.1rem; }
-    .composer textarea { width:100%; padding:0.7rem 0.8rem; border-radius:10px; border:1px solid var(--line); background:var(--bg); color:var(--text); font-family:"Inter",sans-serif; font-size:0.92rem; line-height:1.5; resize:vertical; }
-    .composer textarea:focus { outline:none; border-color:var(--green); }
-    .composer-tools { display:flex; flex-wrap:wrap; gap:0.7rem; align-items:center; justify-content:space-between; margin-top:0.7rem; }
-    .filepick { display:inline-flex; align-items:center; gap:0.4rem; font-size:0.82rem; color:#cfe0d2; cursor:pointer; }
-    .filepick input { position:absolute; width:1px; height:1px; opacity:0; }
-    .filepick i { color:var(--gold); }
-    .sr-only { position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap; }
     .ptab { position:relative; }
     .pdot { position:absolute; top:0.7rem; right:0.35rem; width:8px; height:8px; border-radius:50%; background:var(--gold); box-shadow:0 0 0 2px var(--bg); }
     .pannounce { max-width:1200px; margin:0.9rem auto 0; padding:0 5%; }
@@ -157,6 +138,28 @@
     .pann-t b { color:#fff; }
     .pann-x { flex:0 0 auto; background:none; border:0; color:var(--muted); font-size:1.2rem; line-height:1; cursor:pointer; padding:0 0.2rem; }
     .pann-x:hover { color:#fff; }
+    /* --- plan --- */
+    .planhead { display:flex; justify-content:space-between; align-items:flex-start; gap:1.2rem; flex-wrap:wrap; background:var(--card); border:1px solid var(--line); border-radius:14px; padding:1.3rem 1.4rem; margin-bottom:1rem; }
+    .planhead h2 { font-family:"Montserrat",sans-serif; font-size:1.25rem; color:#fff; }
+    .planwho { color:var(--muted); font-size:0.85rem; margin-top:0.3rem; }
+    .planfee { text-align:right; }
+    .planfee .amt { font-family:"Montserrat",sans-serif; font-weight:800; font-size:1.6rem; color:var(--gold); white-space:nowrap; }
+    .planfee .per { color:var(--muted); font-size:0.78rem; }
+    .meter-card h2 { font-family:"Montserrat",sans-serif; font-size:1rem; color:#f1f7f1; margin-bottom:0.8rem; }
+    .meter-head { font-size:0.85rem; color:var(--muted); margin-bottom:0.45rem; }
+    .meter-head b { color:#fff; font-family:"Montserrat",sans-serif; font-size:1.15rem; }
+    .meter-track { height:12px; border-radius:999px; background:var(--bg); border:1px solid var(--line); overflow:hidden; }
+    .meter-fill { height:100%; background:linear-gradient(90deg,var(--green),#6dc882); border-radius:999px; transition:width 0.4s ease; }
+    .meter-fill.warn { background:linear-gradient(90deg,var(--gold),#e0b840); }
+    .meter-fill.over { background:linear-gradient(90deg,#d6785a,#ef4444); }
+    .meter-sub { font-size:0.8rem; color:#cfe0d2; margin-top:0.45rem; }
+    .meter-note { font-size:0.8rem; color:var(--muted); margin-top:0.7rem; line-height:1.55; }
+    .terms { display:grid; grid-template-columns:repeat(auto-fit,minmax(230px,1fr)); gap:0.8rem; }
+    .term { background:var(--card); border:1px solid var(--line); border-radius:14px; padding:1rem 1.1rem; }
+    .term .k { font-family:"Montserrat",sans-serif; font-size:0.66rem; text-transform:uppercase; letter-spacing:0.06em; color:var(--muted); font-weight:700; }
+    .term .v { font-family:"Montserrat",sans-serif; font-size:1rem; color:#fff; margin-top:0.25rem; }
+    .term .s { font-size:0.78rem; color:var(--muted); margin-top:0.35rem; line-height:1.5; }
+    .state a { color:var(--gold); }
   </style>
 </head>
 <body>
@@ -178,12 +181,12 @@
     <div class="ptabs-inner">
       <a class="ptab" href="index.html"><i class="fa-solid fa-gauge-high"></i> Dashboard</a>
       <a class="ptab" href="software.html"><i class="fa-solid fa-cubes"></i> My Software</a>
-      <a class="ptab" href="plan.html"><i class="fa-solid fa-file-contract"></i> Plan</a>
+      <a class="ptab active" href="plan.html"><i class="fa-solid fa-file-contract"></i> Plan</a>
       <a class="ptab" href="billing.html"><i class="fa-solid fa-credit-card"></i> Billing</a>
       <a class="ptab" href="tickets.html"><i class="fa-solid fa-headset"></i> Support</a>
-      <a class="ptab active" href="messages.html"><i class="fa-solid fa-comments"></i> Messages</a>
+      <a class="ptab" href="messages.html"><i class="fa-solid fa-comments"></i> Messages</a>
       <a class="ptab" href="documents.html"><i class="fa-solid fa-folder-open"></i> Documents</a>
-      <a class="ptab" href="equipment.html"><i class="fa-solid fa-laptop"></i> Equipment</a>
+      <a class="ptab active" href="equipment.html"><i class="fa-solid fa-laptop"></i> Equipment</a>
       <a class="ptab" href="account.html"><i class="fa-solid fa-user-gear"></i> Account</a>
     </div>
   </nav>
@@ -225,23 +228,48 @@
 
   <main class="pmain">
     <div class="phead">
-      <h1>Messages</h1>
-      <p id="msgIntro">A direct line to Tevis Engineering for anything that is not a ticket. We reply here and you get an email when we do.</p>
+      <h1>Your Plan</h1>
+      <p id="planLede">What your service agreement covers, how much of it you have used, and when the next invoice goes out.</p>
     </div>
 
-    <div class="state" id="stateBox"><span class="spin"></span><div><b>Loading your messages&hellip;</b>One moment.</div></div>
+    <div class="state" id="stateBox"><span class="spin"></span><div><b>Loading your plan&hellip;</b>One moment.</div></div>
 
-    <div class="thread" id="thread" hidden></div>
+    <div id="planBody" hidden>
+      <section class="planhead">
+        <div>
+          <h2 id="planName">Service agreement</h2>
+          <div class="planwho" id="planWho"></div>
+        </div>
+        <div class="planfee" id="planFee" hidden>
+          <div class="amt" id="planFeeAmt"></div>
+          <div class="per" id="planFeePer"></div>
+        </div>
+      </section>
 
-    <section class="composer" id="composer" hidden>
-      <label for="msgBody" class="sr-only">Your message</label>
-      <textarea id="msgBody" rows="4" placeholder="Write to us&hellip;"></textarea>
-      <div class="composer-tools">
-        <label class="filepick"><input type="file" id="msgFiles" multiple accept=".pdf,.png,.jpg,.jpeg,.gif,.webp,.txt,.csv,.docx,.xlsx,.pptx,.zip"><i class="fa-solid fa-paperclip"></i> Attach files <span id="msgPicked"></span></label>
-        <button type="button" class="btn btn-primary" id="msgSend"><i class="fa-solid fa-paper-plane"></i> Send</button>
+      <section class="pcard meter-card" id="meterCard" hidden>
+        <h2>Your included time</h2>
+        <div class="meter-head"><b id="meterUsed"></b> <span id="meterOf"></span></div>
+        <div class="meter-track"><div class="meter-fill" id="meterFill"></div></div>
+        <div class="meter-sub" id="meterSub"></div>
+        <p class="meter-note" id="meterNote"></p>
+      </section>
+
+      <h2 class="sec-title">The terms</h2>
+      <div class="terms" id="planTerms"></div>
+
+      <p class="hist-foot">Something here not matching what we agreed? <a href="messages.html">Send us a message</a> and we will put it right.</p>
+    </div>
+
+    <div class="state" id="noPlan" hidden>
+      <i class="fa-solid fa-file-contract"></i>
+      <div>
+        <b>You are not on a plan.</b>
+        Work is quoted or billed at our standard rate as it comes up, and nothing is charged
+        on a schedule. If you would like a set number of hours each month with a guaranteed
+        response time, <a href="../contact.html">tell us what you need</a> and we will put a
+        plan together.
       </div>
-      <p class="hist-foot">PDFs, images, text and office files up to 10 MB each, five at a time. For a fault or a request with a deadline, <a href="tickets.html">open a ticket</a> so it gets a response time.</p>
-    </section>
+    </div>
   </main>
 
   <footer class="pfoot">
@@ -255,81 +283,84 @@
     'use strict';
     var API = '/portal-api';
     var stateBox = document.getElementById('stateBox');
-    var threadEl = document.getElementById('thread');
-    var composer = document.getElementById('composer');
-    var bodyEl = document.getElementById('msgBody');
-    var filesEl = document.getElementById('msgFiles');
-    var pickedEl = document.getElementById('msgPicked');
-    var sendBtn = document.getElementById('msgSend');
-
     function el(tag, cls, text) { var n = document.createElement(tag); if (cls) n.className = cls; if (text != null) n.textContent = text; return n; }
-    function requireSession(id) { if (!id || !id.email) { location.replace('../login.html'); return false; } return true; }
-    function api(path, body) {
-      var o = { credentials: 'same-origin' };
-      if (body !== undefined) { o.method = 'POST'; o.headers = { 'content-type': 'application/json' }; o.body = JSON.stringify(body); }
-      return fetch(API + path, o).then(function (r) { return r.json().catch(function () { return { ok: false }; }); });
+    function money(c) { return (Number(c || 0) / 100).toLocaleString('en-US', { style: 'currency', currency: 'USD' }); }
+    function hrs(min) {
+      var m = Math.max(0, Math.round(Number(min) || 0));
+      var h = Math.floor(m / 60), r = m % 60;
+      if (!h) return r + 'm';
+      return h + 'h' + (r ? ' ' + r + 'm' : '');
+    }
+    function longDate(d) {
+      if (!d) return '';
+      var p = String(d).split('-');
+      return new Date(Date.UTC(p[0], p[1] - 1, p[2], 12)).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric', timeZone: 'UTC' });
     }
     function showState(cls, icon, title, body) {
       stateBox.hidden = false; stateBox.className = 'state' + (cls ? ' ' + cls : ''); stateBox.textContent = '';
       stateBox.appendChild(el('i', icon)); var d = el('div'); d.appendChild(el('b', null, title)); d.appendChild(document.createTextNode(body || '')); stateBox.appendChild(d);
     }
-    function fmt(ts) { return new Date(ts * 1000).toLocaleString('en-US', { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' }); }
-    function size(b) { return b < 1048576 ? Math.max(1, Math.round(b / 1024)) + ' KB' : (b / 1048576).toFixed(1) + ' MB'; }
-    function readAll(files) {
-      return Promise.all(Array.prototype.slice.call(files || []).slice(0, 5).map(function (f) {
-        if (f.size > 10 * 1024 * 1024) return Promise.reject(new Error(f.name + ' is over 10 MB'));
-        return new Promise(function (res, rej) { var r = new FileReader(); r.onerror = function () { rej(new Error('Could not read ' + f.name)); }; r.onload = function () { res({ filename: f.name, data: String(r.result).replace(/^data:[^;]*;base64,/, ''), content_type: f.type || '' }); }; r.readAsDataURL(f); });
-      }));
-    }
 
-    function render(d) {
-      threadEl.textContent = '';
-      threadEl.hidden = false; composer.hidden = false; stateBox.hidden = true;
-      if (d.conversation.holder_type === 'org' && d.conversation.holder_name) document.getElementById('msgIntro').textContent = 'The shared thread for ' + d.conversation.holder_name + '. Everyone on the account sees it, and we reply here.';
-      if (!d.messages.length) { threadEl.appendChild(el('div', 'empty-row', 'No messages yet. Say hello below.')); return; }
-      d.messages.forEach(function (m) {
-        var b = el('div', 'bubble ' + (m.author_type === 'staff' ? 'them' : 'me'));
-        b.appendChild(el('div', 'b-meta', (m.author_type === 'staff' ? 'Tevis Engineering' : (m.author || 'You')) + ' · ' + fmt(m.created_at)));
-        b.appendChild(el('div', 'b-body', m.body));
-        if (m.attachments && m.attachments.length) {
-          var fl = el('div', 'b-files');
-          m.attachments.forEach(function (f) { var a = el('a', 'b-file'); a.href = API + '/attachments/' + f.id; a.target = '_blank'; a.rel = 'noopener'; a.appendChild(el('i', 'fa-solid fa-paperclip')); a.appendChild(document.createTextNode(' ' + f.filename + ' ')); a.appendChild(el('span', 'sz', size(f.size_bytes))); fl.appendChild(a); });
-          b.appendChild(fl);
-        }
-        threadEl.appendChild(b);
-      });
-      threadEl.lastChild.scrollIntoView({ block: 'nearest' });
-      if (d.conversation.unread) api('/messages/read', {});
-    }
+    function render(p) {
+      stateBox.hidden = true;
+      document.getElementById('planBody').hidden = false;
+      document.getElementById('planName').textContent = p.name;
+      var who = document.getElementById('planWho');
+      who.textContent = p.holder === 'company'
+        ? 'Held by ' + (p.holder_name || 'your company') + ', so it covers everyone on the account.'
+        : 'Your personal plan.';
+      if (p.fee_cents) {
+        document.getElementById('planFee').hidden = false;
+        document.getElementById('planFeeAmt').textContent = money(p.fee_cents);
+        document.getElementById('planFeePer').textContent = 'per ' + p.period_label;
+      }
 
-    function load() {
-      return api('/messages').then(function (d) {
-        if (!d || !d.ok) throw new Error('unavailable');
-        render(d);
-      });
-    }
+      var u = p.usage;
+      if (u && u.allowance_minutes > 0) {
+        document.getElementById('meterCard').hidden = false;
+        document.getElementById('meterUsed').textContent = hrs(u.used_minutes);
+        document.getElementById('meterOf').textContent = 'of ' + hrs(u.allowance_minutes) + ' used in ' + u.period_label +
+          (u.rolled_over_minutes ? ' (including ' + hrs(u.rolled_over_minutes) + ' carried over)' : '');
+        var fill = document.getElementById('meterFill');
+        fill.style.width = Math.min(100, u.percent) + '%';
+        fill.className = 'meter-fill' + (u.percent >= 100 ? ' over' : u.percent >= 80 ? ' warn' : '');
+        document.getElementById('meterSub').textContent = u.over_minutes
+          ? hrs(u.over_minutes) + ' beyond the plan so far this ' + p.period_label
+          : hrs(u.remaining_minutes) + ' left this ' + p.period_label;
+        document.getElementById('meterNote').textContent = u.over_minutes
+          ? 'Nothing stops: keep sending tickets as normal. Time beyond your included hours is billed at ' + money(p.rate_cents) + ' per hour and is itemised by ticket on your invoice.'
+          : 'Every hour is logged against a ticket, so you can always see where it went. Time beyond your included hours is billed at ' + money(p.rate_cents) + ' per hour.';
+      }
 
-    filesEl.addEventListener('change', function () { var n = filesEl.files ? filesEl.files.length : 0; pickedEl.textContent = n ? '(' + n + ')' : ''; });
-    sendBtn.addEventListener('click', function () {
-      var text = bodyEl.value.trim();
-      if (!text) { bodyEl.focus(); return; }
-      sendBtn.disabled = true;
-      readAll(filesEl.files).then(function (files) { return api('/messages', { message: text, files: files }); }).then(function (r) {
-        sendBtn.disabled = false;
-        if (!r || !r.ok) { showState('bad', 'fa-solid fa-triangle-exclamation', 'That did not send.', r && r.error === 'rate_limited' ? ' Please wait a few minutes and try again.' : ' Please try again.'); return; }
-        bodyEl.value = ''; filesEl.value = ''; pickedEl.textContent = '';
-        load().then(function () { if (r.refused && r.refused.length) showState('', 'fa-solid fa-circle-info', 'Sent, but ' + r.refused.length + ' file' + (r.refused.length === 1 ? ' was' : 's were') + ' not attached.', ' Allowed: PDF, images, text, and office files up to 10 MB.'); });
-      }, function (e) { sendBtn.disabled = false; showState('bad', 'fa-solid fa-triangle-exclamation', e.message || 'Could not read a file.', ''); });
-    });
+      var t = document.getElementById('planTerms');
+      function term(k, v, sub) {
+        if (!v) return;
+        var d = el('div', 'term');
+        d.appendChild(el('div', 'k', k));
+        d.appendChild(el('div', 'v', v));
+        if (sub) d.appendChild(el('div', 's', sub));
+        t.appendChild(d);
+      }
+      term('Included', hrs(p.included_minutes) + ' per ' + p.period_label, p.rollover ? 'Unused time carries into the next ' + p.period_label + '.' : 'Resets at the start of each ' + p.period_label + '.');
+      term('Additional work', money(p.rate_cents) + ' per hour', 'Only what goes beyond your included time.');
+      if (p.fee_cents) term('Fee', money(p.fee_cents) + ' per ' + p.period_label, p.next_invoice_on ? 'Next invoice ' + longDate(p.next_invoice_on) + '.' : null);
+      if (p.sla_response_hours) term('First response', 'within ' + p.sla_response_hours + ' business hours', 'On a Medium ticket. Critical gets a quarter of that, High a half, Low double.');
+      if (p.started_at) term('Started', new Date(p.started_at * 1000).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }), null);
+      if (p.renews_on) term(p.auto_renew ? 'Renews' : 'Ends', longDate(p.renews_on), p.auto_renew ? 'It continues on the same terms unless you tell us otherwise.' : 'It will not renew on its own. Message us if you would like to continue.');
+    }
 
     TESInvoices.getIdentity().then(function (id) {
-      if (!requireSession(id)) return null;
+      if (!id || !id.email) { location.replace('../login.html'); return null; }
       var display = id.name || id.email.split('@')[0];
       var n = document.getElementById('acctName'), e = document.getElementById('acctEmail'), a = document.getElementById('acctAvatar');
       if (n) n.textContent = display; if (e) e.textContent = id.email;
       if (a) a.textContent = display.replace(/[^A-Za-z]/g, '').slice(0, 2).toUpperCase() || 'TE';
-      return load();
-    }).catch(function () { showState('bad', 'fa-solid fa-triangle-exclamation', 'Could not load your messages.', ' Please refresh in a moment.'); });
+      return fetch(API + '/plan', { credentials: 'same-origin' }).then(function (r) { return r.ok ? r.json() : null; }).then(function (d) {
+        if (!d || !d.ok) throw new Error('unavailable');
+        if (!d.plan) { stateBox.hidden = true; document.getElementById('noPlan').hidden = false; return; }
+        render(d.plan);
+      });
+    }).catch(function () { showState('bad', 'fa-solid fa-triangle-exclamation', 'Could not load your plan.', ' Please refresh in a moment.'); });
   })();
   </script>
 

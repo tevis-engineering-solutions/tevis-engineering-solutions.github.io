@@ -110,6 +110,7 @@
     <div class="ptabs-inner">
       <a class="ptab active" href="index.html"><i class="fa-solid fa-gauge-high"></i> Dashboard</a>
       <a class="ptab" href="software.html"><i class="fa-solid fa-cubes"></i> My Software</a>
+      <a class="ptab" href="plan.html"><i class="fa-solid fa-file-contract"></i> Plan</a>
       <a class="ptab" href="billing.html"><i class="fa-solid fa-credit-card"></i> Billing</a>
       <a class="ptab" href="tickets.html"><i class="fa-solid fa-headset"></i> Support</a>
       <a class="ptab" href="messages.html"><i class="fa-solid fa-comments"></i> Messages</a>
@@ -169,6 +170,13 @@
         <p>A direct line to us for anything that is not a ticket. We reply here and by email.</p>
         <div class="status"><span class="pill muted" id="messagesPill">Checking&hellip;</span></div>
         <a class="plink" href="messages.html">Open Messages <i class="fa-solid fa-arrow-right"></i></a>
+      </div>
+      <div class="pcard">
+        <div class="ic"><i class="fa-solid fa-file-contract"></i></div>
+        <h2>Your Plan</h2>
+        <p>What your agreement covers, the hours you have used this period, and when it renews.</p>
+        <div class="status"><span class="pill muted" id="planPill">Checking&hellip;</span></div>
+        <a class="plink" href="plan.html">See your plan <i class="fa-solid fa-arrow-right"></i></a>
       </div>
       <div class="pcard">
         <div class="ic"><i class="fa-solid fa-cubes"></i></div>
@@ -323,6 +331,19 @@
         loadSoftware();
         loadProfile();
         loadEquipment();
+        // The plan pill says where their hours are, which is the question the card
+        // exists to answer; no plan is a normal answer and says so.
+        fetch('/portal-api/plan', { credentials: 'same-origin' }).then(function (r) { return r.ok ? r.json() : null; }).then(function (d) {
+          if (!d || !d.ok) { pill('planPill', 'muted', 'Unavailable'); return; }
+          if (!d.plan) { pill('planPill', 'muted', 'No plan - billed as we go'); return; }
+          var u = d.plan.usage;
+          if (!u || !u.allowance_minutes) { pill('planPill', 'ok', d.plan.name); return; }
+          var left = Math.max(0, u.remaining_minutes);
+          var txt = u.over_minutes
+            ? Math.round(u.over_minutes / 60 * 10) / 10 + ' h beyond the plan'
+            : Math.round(left / 60 * 10) / 10 + ' h left this ' + d.plan.period_label;
+          pill('planPill', u.percent >= 100 ? 'gold' : 'ok', txt);
+        }).catch(function () { pill('planPill', 'muted', 'Unavailable'); });
         // What is waiting on them, from the same /me the identity came from.
         if (id.waiting) {
           var w = id.waiting, strip = document.getElementById('pStrip');
