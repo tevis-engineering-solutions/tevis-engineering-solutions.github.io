@@ -264,6 +264,34 @@
     .ced input:focus { outline:none; border-color:var(--green); }
     .ced .fixed { color:var(--muted); font-size:0.75rem; margin:0.1rem 0 0; }
     .ced .reply-row { margin-top:0.7rem; }
+    /* The line items on an invoice: what was sold, and what share of it is ours. */
+    .li-wrap { margin-top:0.8rem; }
+    .li-head { display:flex; align-items:baseline; justify-content:space-between; gap:0.6rem; flex-wrap:wrap; }
+    .li-row { display:grid; grid-template-columns:96px minmax(0,1fr) 58px 48px 84px 84px; gap:0.4rem;
+      align-items:center; padding:0.35rem 0; border-bottom:1px solid rgba(44,66,50,0.5); }
+    @media (max-width:860px) { .li-row { grid-template-columns:96px minmax(0,1fr) 84px; } .li-row .narrow { display:none; } }
+    .li-row select, .li-row input { width:100%; padding:0.35rem 0.4rem; border-radius:7px; border:1px solid var(--line);
+      background:var(--bg); color:var(--text); font:inherit; font-size:0.78rem; min-height:34px; }
+    .li-row input.num { text-align:right; font-variant-numeric:tabular-nums; }
+    .li-row .rm { min-height:34px; padding:0 0.5rem; border-radius:7px; border:1px solid var(--line);
+      background:var(--bg); color:var(--muted); cursor:pointer; font-size:0.9rem; }
+    .li-row .rm:hover { color:#e08a68; border-color:#e08a68; }
+    .li-extra { grid-column:1 / -1; display:flex; gap:0.4rem; flex-wrap:wrap; padding-bottom:0.3rem; }
+    .li-extra input { max-width:180px; font-size:0.72rem; }
+    .li-extra label { font-size:0.68rem; color:var(--muted); display:inline-flex; align-items:center; gap:0.3rem; }
+    .li-sum { display:flex; flex-wrap:wrap; gap:0.5rem 1.1rem; margin-top:0.6rem; font-size:0.78rem; }
+    .li-sum b { font-family:"Montserrat",sans-serif; }
+    .li-sum .ok { color:#6dc882; }
+    .li-sum .bad { color:#e08a68; }
+    .li-note { font-size:0.76rem; color:var(--muted); margin-top:0.4rem; line-height:1.5; }
+    .li-note.warn { color:#e0c98a; }
+    /* On a card, read-only. */
+    .li-view { margin-top:0.6rem; border-top:1px solid var(--line); padding-top:0.5rem; }
+    .li-view table { width:100%; border-collapse:collapse; font-size:0.76rem; }
+    .li-view td { padding:0.2rem 0.3rem; vertical-align:top; }
+    .li-view td.n { text-align:right; font-variant-numeric:tabular-nums; white-space:nowrap; }
+    .li-view .k { font-size:0.6rem; text-transform:uppercase; letter-spacing:0.05em; color:var(--muted); white-space:nowrap; }
+    .li-view .sub { color:var(--muted); font-size:0.7rem; }
     .cust-sec > h3 { font-family:"Montserrat",sans-serif; font-size:0.76rem; text-transform:uppercase; letter-spacing:0.05em; color:var(--muted); margin-bottom:0.4rem; }
     .row { width:100%; text-align:left; border:1px solid var(--line); border-radius:10px; background:var(--bg); padding:0.55rem 0.7rem; margin-bottom:0.35rem; color:inherit; font:inherit; display:flex; justify-content:space-between; gap:0.5rem; align-items:center; flex-wrap:wrap; }
     button.row { cursor:pointer; }
@@ -855,6 +883,7 @@
           <input type="text" id="invDesc" name="description" placeholder="Optional line-item summary">
         </div>
         <div class="inv-actions">
+          <div id="invItems"></div>
           <button type="submit" class="prim" id="invCreate">Create &amp; get pay link</button>
           <button type="button" id="invClear">Clear</button>
         </div>
@@ -1881,6 +1910,9 @@
     // ---- invoices -------------------------------------------------------
     var invListEl = document.getElementById('invList');
     var invForm = document.getElementById('invForm');
+    // Built once and reused. The total it reconciles against is whatever is in the
+    // amount box at the time, so editing either side re-checks the other.
+    var invItems = null;
     var invPayLink = document.getElementById('invPayLink');
     var invCreated = document.getElementById('invCreated');
     var invDrop = document.getElementById('invDrop');
@@ -2078,7 +2110,227 @@
       });
     }
 
+    // ---- reading the line-item table --------------------------------------
+    //
+    // The header fields above are read by LABEL. A table cannot be, because its rows
+    // have no labels -- what makes a row a row is geometry. So this works in columns:
+    // find where the Price column starts, take every money value in it as a row, and
+    // give each description line to the row whose price sits nearest it vertically.
+    //
+    // Nearest-price assignment rather than "a price starts a row" on purpose: a price
+    // is often vertically CENTRED against a four-line description, so it can sit in
+    // the middle of its own row. Rows cannot interleave, so nearest always lands right.
+    //
+    // Everything here is a SUGGESTION. It fills an editable list, the totals are
+    // checked against the invoice's own total, and a mismatch is said out loud rather
+    // than quietly accepted.
+
+    var MONEY_RE = /^\$?\(?-?[\d,]+\.\d{2}\)?$/;
+
+    function moneyToCents(s) {
+      var neg = /^\(.*\)$/.test(String(s).trim());
+      var n = Number(String(s).replace(/[^0-9.]/g, ''));
+      if (!isFinite(n)) return null;
+      return Math.round(n * 100) * (neg ? -1 : 1);
+    }
+
+    // Classifies a row from how the line is worded, and pulls out the numbers a
+    // description carries. Tuned to how TES writes invoices; every guess is editable.
+    function classifyLine(text, cents) {
+      var out = { kind: 'service', qty: 1, unit: '', unit_cents: cents, line_cents: cents,
+                  sku: '', serial: '', at_cost: false };
+
+      // "3 hrs @ $50/hr" -- hours and the rate, which is what a utilization report needs.
+      var hr = /(\d+(?:\.\d+)?)\s*(?:hrs?|hours?)\s*(?:@|at)\s*\$?([\d,]+(?:\.\d{2})?)/i.exec(text);
+      if (hr) {
+        out.kind = 'labor';
+        out.qty = Number(hr[1]);
+        out.unit = 'hr';
+        out.unit_cents = Math.round(Number(String(hr[2]).replace(/,/g, '')) * 100);
+        out.line_cents = cents;
+      } else if (/\b(labou?r|service call|consult|install(ation)?\s+time)\b/i.test(text)) {
+        out.kind = 'labor';
+      }
+
+      // Tax is never revenue, so it is worth matching narrowly and confidently.
+      if (/\b(sales\s*tax|use\s*tax|tax\s+paid|tax\s+collected)\b/i.test(text)) {
+        out.kind = 'tax';
+        out.unit_cents = 0;
+        out.qty = 1;
+        out.unit = '';
+      }
+
+      var sku = /\bSKU[:\s#]*([A-Za-z0-9][A-Za-z0-9-]{2,})/i.exec(text);
+      if (sku) out.sku = sku[1];
+      var sn = /\b(?:S\/N|serial(?:\s*(?:no\.?|number))?)[:\s#]*([A-Za-z0-9][A-Za-z0-9-]{3,})/i.exec(text);
+      if (sn) out.serial = sn[1];
+
+      // "billed at cost, no markup" / "pass-through at actual cost"
+      if (/\b(at\s+cost|no\s+mark-?up|pass-?through|actual\s+cost|reimburse)/i.test(text)) out.at_cost = true;
+
+      var qty = /\bqty[:\s]*(\d+(?:\.\d+)?)/i.exec(text);
+      if (qty && out.kind !== 'labor') {
+        out.qty = Number(qty[1]);
+        if (out.qty > 0) out.unit_cents = Math.round(cents / out.qty);
+        out.unit = out.unit || 'ea';
+      }
+
+      // A part is a thing with a SKU or a serial, or something plainly hardware.
+      if (out.kind === 'service' && (out.sku || out.serial)) out.kind = 'part';
+      if (out.kind === 'service' && /\b(ssd|hdd|drive|cable|kit|adapter|ram|memory|router|switch|battery|psu|monitor|keyboard|mouse|licen[cs]e key)\b/i.test(text)) {
+        out.kind = 'part';
+      }
+      // Something bought in and passed on that is not hardware.
+      if (out.kind === 'service' && out.at_cost && /\b(shipping|freight|permit|fee|postage)\b/i.test(text)) {
+        out.kind = 'expense';
+      }
+      return out;
+    }
+
+    // Same rule pdfLines uses: two runs are one word when they abut. Joining the
+    // description column with a plain space turns "pass-through" into "pass - through",
+    // because the hyphen is its own run.
+    function glueRuns(runs) {
+      var text = '';
+      var prevEnd = null;
+      runs.slice().sort(function (a, b) { return a.x - b.x; }).forEach(function (r) {
+        var gap = prevEnd == null ? 0 : r.x - prevEnd;
+        if (text && gap >= 1.5) text += ' ';
+        text += r.str;
+        prevEnd = r.x + (r.w || 0);
+      });
+      return text.replace(/\s+/g, ' ').trim();
+    }
+
+    /**
+     * Pulls the line-item table out of the positioned runs.
+     * Returns {items, total_cents, sum_cents, matches, note}.
+     */
+    function parseInvoiceTable(pages, invoiceTotalCents) {
+      var lines = pdfLines(pages);
+      var res = { items: [], sum_cents: 0, total_cents: invoiceTotalCents || null,
+                  matches: false, note: '' };
+
+      // 1. The header row tells us where the money column begins.
+      var head = null;
+      for (var i = 0; i < lines.length; i++) {
+        if (/\bline\s*item\b|\bdescription\b/i.test(lines[i].text) && /\bprice\b|\bamount\b|\btotal\b/i.test(lines[i].text)) {
+          head = lines[i];
+          break;
+        }
+      }
+      if (!head) { res.note = 'No line-item table found in this PDF.'; return res; }
+
+      // Where the money column starts. Prices are RIGHT-aligned, so a longer number
+      // begins further left than the header word does -- "$179.99" starts at 502 under
+      // a "Price" header at 510, while "$14.99" starts at 507. Anchoring on the header
+      // x alone therefore drops exactly the biggest numbers on the invoice. The margin
+      // is wide enough for a seven-figure line and still far right of any description.
+      var headPriceX = head.runs.reduce(function (m, r) { return Math.max(m, r.x); }, 0);
+      var priceX = headPriceX - 80;
+
+      // 2. Everything between the header and the total row, on the header's page.
+      var body = [];
+      for (var j = lines.indexOf(head) + 1; j < lines.length; j++) {
+        var ln = lines[j];
+        if (ln.page !== head.page) break;
+        if (/\btotal\s*(due|amount)?\b|\bamount\s*due\b|\bbalance\s*due\b|\bsubtotal\b/i.test(ln.text)) break;
+        body.push(ln);
+      }
+      if (!body.length) { res.note = 'The table had no rows.'; return res; }
+
+      // 3. Split every line at the price column.
+      var prices = [];       // {y, cents}
+      var texts = [];        // {y, text}
+      body.forEach(function (ln) {
+        var left = [], right = [];
+        ln.runs.forEach(function (r) { (r.x >= priceX ? right : left).push(r); });
+        var rightTxt = right.map(function (r) { return r.str; }).join('').replace(/\s+/g, '');
+        if (rightTxt && MONEY_RE.test(rightTxt)) {
+          var c = moneyToCents(rightTxt);
+          if (c != null) prices.push({ y: ln.y, cents: c });
+        } else if (right.length) {
+          // Not money: it belongs with the description after all.
+          left = left.concat(right);
+        }
+        var t = glueRuns(left);
+        if (t) texts.push({ y: ln.y, text: t });
+      });
+      if (!prices.length) { res.note = 'No prices found in the table column.'; return res; }
+
+      // 4. Group the description lines into rows.
+      //
+      // The rows of a table are separated by a visible gap, and the lines INSIDE a
+      // wrapped description are not, so the gaps are the structure: cluster on them
+      // and the clusters are the rows. Nearest-price was the first attempt and it is
+      // ambiguous precisely where a description wraps -- a price centred against a
+      // three-line cell sits almost equidistant from that cell's last line and the
+      // next cell's first, which put "markup" at the head of the following row.
+      var rows = prices.map(function (p) { return { y: p.y, cents: p.cents, parts: [] }; });
+      texts.sort(function (a, b) { return b.y - a.y; });
+
+      var clusters = [];
+      if (texts.length) {
+        // The typical line spacing in this table, taken from the data rather than
+        // assumed, so it holds whatever font size the template uses.
+        var gaps = [];
+        for (var g = 1; g < texts.length; g++) gaps.push(texts[g - 1].y - texts[g].y);
+        var sorted = gaps.slice().sort(function (a, b) { return a - b; });
+        var median = sorted.length ? sorted[Math.floor(sorted.length / 2)] : 0;
+        var breakAt = median * 1.6;
+        var cur = [texts[0]];
+        for (var k = 1; k < texts.length; k++) {
+          if (median > 0 && (texts[k - 1].y - texts[k].y) > breakAt) { clusters.push(cur); cur = []; }
+          cur.push(texts[k]);
+        }
+        clusters.push(cur);
+      }
+
+      if (clusters.length === rows.length) {
+        clusters.forEach(function (cl, idx) {
+          cl.forEach(function (t) { rows[idx].parts.push(t.text); });
+        });
+      } else {
+        // The gaps did not agree with the prices -- an unusual template, or a row
+        // whose description is one line. Fall back to nearest, which is never worse
+        // than not reading the table at all, and say so.
+        res.note = res.note || 'Row grouping was approximate; check the descriptions.';
+        texts.forEach(function (t) {
+          var best = 0, bestD = Infinity;
+          rows.forEach(function (row, idx) {
+            var d = Math.abs(row.y - t.y);
+            if (d < bestD) { bestD = d; best = idx; }
+          });
+          rows[best].parts.push(t.text);
+        });
+      }
+
+      // 5. Rows in reading order, classified.
+      rows.sort(function (a, b) { return b.y - a.y; });
+      rows.forEach(function (row) {
+        var text = row.parts.join(' ').replace(/\s+/g, ' ').trim();
+        if (!text) return;
+        var c = classifyLine(text, row.cents);
+        c.description = text.slice(0, 400);
+        res.items.push(c);
+        res.sum_cents += row.cents;
+      });
+
+      // 6. Say whether it adds up. A table that does not reconcile is the one thing
+      //    worth refusing to present as fact.
+      if (invoiceTotalCents != null) {
+        res.matches = Math.abs(res.sum_cents - invoiceTotalCents) <= 1;
+        if (!res.matches) {
+          res.note = 'The lines add up to ' + (res.sum_cents / 100).toFixed(2) +
+            ' but the invoice total is ' + (invoiceTotalCents / 100).toFixed(2) + '. Check them.';
+        }
+      }
+      return res;
+    }
+
+
     function parseInvoicePdf(pages, filename) {
+      // The table is read after the header, because reconciling it needs the total.
       var lines = pdfLines(pages);
       var all = lines.map(function (l) { return l.text; }).join('\n');
       var out = { number: '', name: '', company: '', email: '', phone: '',
@@ -2212,6 +2464,17 @@
       ['number', 'email', 'company', 'name', 'issued', 'due', 'amount', 'service', 'description'].forEach(function (f) {
         (out[f] !== '' && out[f] != null ? out.found : out.missing).push(f);
       });
+
+      // The line-item table, read last because reconciling it needs the total above.
+      // A table that does not add up is reported rather than presented as fact.
+      try {
+        var tbl = parseInvoiceTable(pages, out.amount != null ? Math.round(out.amount * 100) : null);
+        out.items = tbl.items;
+        out.itemsNote = tbl.note;
+      } catch (e) {
+        out.items = [];
+        out.itemsNote = 'The line items could not be read from this PDF.';
+      }
       return out;
     }
 
@@ -2228,6 +2491,263 @@
 
     // Fills the form from what the parser found. Found values overwrite: a fresh
     // PDF is the newer truth about this invoice. Anything not found is left alone.
+    // ---- the line items on an invoice -------------------------------------
+    //
+    // What a line is FOR: an invoice is one amount, and one amount cannot say that
+    // $194.98 of it was hardware billed on at cost and $15.60 was sales tax collected
+    // for the state. Without that, Finance counts every dollar of a parts-heavy job as
+    // revenue. The two flags that decide it are `kind='tax'` and `at_cost`.
+    //
+    // The list is filled from the PDF where there is one, and every value in it is a
+    // suggestion sitting in an editable row.
+
+    var ITEM_KINDS = [['part', 'Part'], ['labor', 'Labor'], ['tax', 'Tax'],
+                      ['expense', 'Expense'], ['service', 'Service']];
+
+    function itemsEditor(host, opts) {
+      opts = opts || {};
+      var rows = [];
+      var wrap = el('div', 'li-wrap');
+
+      var head = el('div', 'li-head');
+      head.appendChild(el('h3', null, 'Line items'));
+      var addBtn = el('button', null, '+ Add line');
+      addBtn.type = 'button';
+      head.appendChild(addBtn);
+      wrap.appendChild(head);
+
+      var body = el('div');
+      wrap.appendChild(body);
+      var sum = el('div', 'li-sum');
+      wrap.appendChild(sum);
+      var note = el('div', 'li-note');
+      wrap.appendChild(note);
+      host.appendChild(wrap);
+
+      function liMoney(c) { return '$' + (Math.round(c) / 100).toFixed(2); }
+
+      function totals() {
+        var t = { total: 0, revenue: 0, at_cost: 0, tax: 0, labor: 0, minutes: 0 };
+        rows.forEach(function (r) {
+          var v = r.read();
+          t.total += v.line_cents;
+          if (v.kind === 'tax') t.tax += v.line_cents;
+          else if (v.at_cost) t.at_cost += v.line_cents;
+          else t.revenue += v.line_cents;
+          if (v.kind === 'labor') {
+            t.labor += v.line_cents;
+            if (/^h/i.test(v.unit || '') && v.unit_cents > 0) t.minutes += Math.round(v.qty * 60);
+          }
+        });
+        return t;
+      }
+
+      function redraw() {
+        var t = totals();
+        sum.textContent = '';
+        var add = function (label, val, cls) {
+          var s = el('span', null, label + ' ');
+          s.appendChild(el('b', cls || null, val));
+          sum.appendChild(s);
+        };
+        add('Lines', liMoney(t.total));
+        add('Yours', liMoney(t.revenue), 'ok');
+        if (t.at_cost) add('At cost', liMoney(t.at_cost));
+        if (t.tax) add('Tax', liMoney(t.tax));
+        if (t.minutes) add('Hours', (t.minutes / 60) + ' @ ' + liMoney(Math.round(t.labor / (t.minutes / 60))));
+
+        // The one check worth making loudly: do the lines equal the invoice.
+        var target = opts.totalCents ? opts.totalCents() : null;
+        note.className = 'li-note';
+        if (!rows.length) {
+          note.textContent = 'No lines. The whole invoice will count as revenue, which is right for pure labour and wrong for anything with parts on it.';
+        } else if (target == null || !target) {
+          note.textContent = 'Tax and anything marked at cost are excluded from revenue.';
+        } else if (Math.abs(t.total - target) <= 1) {
+          note.textContent = 'Lines match the invoice total.';
+        } else {
+          note.className = 'li-note warn';
+          note.textContent = 'Lines come to ' + liMoney(t.total) + ' but the invoice total is ' +
+            liMoney(target) + '. They do not have to match, but usually should.';
+        }
+        if (opts.onChange) opts.onChange(t);
+      }
+
+      function addRow(v) {
+        v = v || {};
+        var row = el('div', 'li-row');
+
+        var kind = document.createElement('select');
+        kind.setAttribute('aria-label', 'Line type');
+        ITEM_KINDS.forEach(function (k) {
+          var o = el('option', null, k[1]);
+          o.value = k[0];
+          kind.appendChild(o);
+        });
+        kind.value = v.kind || 'service';
+
+        var desc = document.createElement('input');
+        desc.type = 'text';
+        desc.placeholder = 'What it is';
+        desc.setAttribute('aria-label', 'Description');
+        desc.value = v.description || '';
+
+        var qty = document.createElement('input');
+        qty.type = 'text';
+        qty.className = 'num narrow';
+        qty.setAttribute('aria-label', 'Quantity');
+        qty.value = v.qty == null ? '1' : String(v.qty);
+
+        var unit = document.createElement('input');
+        unit.type = 'text';
+        unit.className = 'narrow';
+        unit.placeholder = 'ea';
+        unit.setAttribute('aria-label', 'Unit');
+        unit.value = v.unit || '';
+
+        var rate = document.createElement('input');
+        rate.type = 'text';
+        rate.className = 'num narrow';
+        rate.placeholder = 'each';
+        rate.setAttribute('aria-label', 'Unit price');
+        rate.value = v.unit_cents ? (v.unit_cents / 100).toFixed(2) : '';
+
+        var line = document.createElement('input');
+        line.type = 'text';
+        line.className = 'num';
+        line.placeholder = 'total';
+        line.setAttribute('aria-label', 'Line total');
+        line.value = v.line_cents ? (v.line_cents / 100).toFixed(2) : '';
+
+        [kind, desc, qty, unit, rate, line].forEach(function (n) { row.appendChild(n); });
+
+        // SKU, serial and the at-cost flag live on a second line so the money row
+        // stays readable. at_cost is the one that decides whether this is revenue.
+        var extra = el('div', 'li-extra');
+        var sku = document.createElement('input');
+        sku.type = 'text'; sku.placeholder = 'SKU';
+        sku.setAttribute('aria-label', 'SKU'); sku.value = v.sku || '';
+        var serial = document.createElement('input');
+        serial.type = 'text'; serial.placeholder = 'Serial';
+        serial.setAttribute('aria-label', 'Serial number'); serial.value = v.serial || '';
+        var atc = document.createElement('input');
+        atc.type = 'checkbox';
+        atc.checked = !!v.at_cost;
+        var atcLab = el('label');
+        atcLab.appendChild(atc);
+        atcLab.appendChild(document.createTextNode('billed at cost (not revenue)'));
+        var rm = el('button', 'rm', '×');
+        rm.type = 'button';
+        rm.setAttribute('aria-label', 'Remove this line');
+        extra.appendChild(sku); extra.appendChild(serial); extra.appendChild(atcLab); extra.appendChild(rm);
+        row.appendChild(extra);
+
+        var rec = {
+          el: row,
+          read: function () {
+            var q = parseFloat(qty.value);
+            var r = Math.round(parseFloat(String(rate.value).replace(/[^0-9.]/g, '')) * 100);
+            var l = Math.round(parseFloat(String(line.value).replace(/[^0-9.]/g, '')) * 100);
+            if (!isFinite(q) || q <= 0) q = 1;
+            if (!isFinite(r)) r = 0;
+            if (!isFinite(l)) l = r ? Math.round(q * r) : 0;
+            return { kind: kind.value, description: desc.value.trim(), qty: q,
+                     unit: unit.value.trim(), unit_cents: r, line_cents: l,
+                     sku: sku.value.trim(), serial: serial.value.trim(), at_cost: atc.checked ? 1 : 0 };
+          },
+        };
+
+        // Typing a rate fills the line total, but a total typed by hand is never
+        // overwritten -- a tax line is a lump with no rate behind it.
+        function recalc() {
+          var q = parseFloat(qty.value), r = Math.round(parseFloat(rate.value) * 100);
+          if (isFinite(q) && isFinite(r) && r > 0) line.value = ((q * r) / 100).toFixed(2);
+          redraw();
+        }
+        qty.addEventListener('input', recalc);
+        rate.addEventListener('input', recalc);
+        [desc, unit, line, sku, serial].forEach(function (n) { n.addEventListener('input', redraw); });
+        [kind, atc].forEach(function (n) { n.addEventListener('change', redraw); });
+        rm.addEventListener('click', function () {
+          row.remove();
+          rows = rows.filter(function (x) { return x !== rec; });
+          redraw();
+        });
+
+        rows.push(rec);
+        body.appendChild(row);
+        return rec;
+      }
+
+      addBtn.addEventListener('click', function () { addRow({}); redraw(); });
+
+      redraw();
+      return {
+        el: wrap,
+        set: function (list) {
+          body.textContent = '';
+          rows = [];
+          (list || []).forEach(addRow);
+          redraw();
+        },
+        get: function () {
+          return rows.map(function (r) { return r.read(); })
+            .filter(function (v) { return v.description; });
+        },
+        count: function () { return rows.length; },
+        redraw: redraw,
+      };
+    }
+
+    // The read-only view on an invoice card.
+    function itemsView(items, amountCents) {
+      if (!items || !items.length) return null;
+      var box = el('div', 'li-view');
+      var tbl = el('table');
+      var tb = el('tbody');
+      var t = { total: 0, revenue: 0, at_cost: 0, tax: 0 };
+      items.forEach(function (i) {
+        var tr = el('tr');
+        tr.appendChild(el('td', 'k', i.kind));
+        var d = el('td');
+        d.appendChild(document.createTextNode(i.description));
+        var bits = [];
+        if (i.qty && i.unit) bits.push(i.qty + ' ' + i.unit + (i.unit_cents ? ' @ $' + (i.unit_cents / 100).toFixed(2) : ''));
+        if (i.sku) bits.push('SKU ' + i.sku);
+        if (i.serial) bits.push('S/N ' + i.serial);
+        if (i.at_cost) bits.push('at cost');
+        if (bits.length) d.appendChild(el('div', 'sub', bits.join(' · ')));
+        tr.appendChild(d);
+        tr.appendChild(el('td', 'n', '$' + (i.line_cents / 100).toFixed(2)));
+        tb.appendChild(tr);
+        t.total += i.line_cents;
+        if (i.kind === 'tax') t.tax += i.line_cents;
+        else if (i.at_cost) t.at_cost += i.line_cents;
+        else t.revenue += i.line_cents;
+      });
+      tbl.appendChild(tb);
+      box.appendChild(tbl);
+      var pass = t.at_cost + t.tax;
+      box.appendChild(el('div', 'li-note',
+        pass
+          ? 'Revenue $' + (t.revenue / 100).toFixed(2) + ' · passed through at cost $' +
+            (pass / 100).toFixed(2) + (t.tax ? ' (including $' + (t.tax / 100).toFixed(2) + ' sales tax)' : '')
+          : 'All of it is revenue.'));
+      return box;
+    }
+
+    function ensureItemsEditor() {
+      if (invItems) return invItems;
+      invItems = itemsEditor(document.getElementById('invItems'), {
+        totalCents: function () {
+          var v = Math.round(parseFloat(document.getElementById('invAmount').value) * 100);
+          return isFinite(v) ? v : null;
+        },
+      });
+      document.getElementById('invAmount').addEventListener('input', function () { invItems.redraw(); });
+      return invItems;
+    }
+
     function applyParsed(p) {
       setIf('invNumber', p.number);
       setIf('invEmail', p.email);
@@ -2238,6 +2758,13 @@
       setIf('invIssued', p.issued);
       setIf('invDue', p.due);
       setIf('invDesc', p.description);
+      // The table, read the same way the header fields were: as a suggestion in an
+      // editable list, with a note saying whether it reconciles.
+      if (p.items && p.items.length) {
+        ensureItemsEditor().set(p.items);
+        p.found.push(p.items.length + ' line items');
+        if (p.itemsNote) p.missing.push(p.itemsNote);
+      }
       // The address on the PDF is the best key to an existing customer. One exact
       // match is picked automatically; anything else is left for a human. A pick
       // made before the drop, for a different address, is stale and is cleared
@@ -2439,6 +2966,7 @@
 
     function resetInvoiceForm() {
       invForm.reset();
+      if (invItems) invItems.set([]);
       clearPdf();
       invSelected = null;
       invCustSel.hidden = true;
@@ -2562,6 +3090,9 @@
       if (f.issued) payload.issued_at = dayToTs(f.issued);
       if (f.due) payload.due_at = dayToTs(f.due);
       if (invPending) payload.pdf = { filename: invPending.filename, data: invPending.data };
+      // The lines ride along with the create: one action, one request. A line with no
+      // description is dropped rather than stored blank.
+      if (invItems && invItems.get().length) payload.items = invItems.get();
 
       var btn = document.getElementById('invCreate');
       btn.disabled = true;
@@ -2631,6 +3162,24 @@
           (v.reported_at ? ' on ' + fmt(v.reported_at) : '') + ' — confirm before marking paid'));
       }
 
+      // The lines, if this invoice has any. Fetched per card rather than bloating the
+      // list response: most cards are glanced at, not read.
+      var liBox = el('div');
+      d.appendChild(liBox);
+      var liShown = false;
+      function loadItems() {
+        api('/admin/invoices/' + v.id + '/items').then(function (r) {
+          if (!r.ok || !r.items || !r.items.length) {
+            liBox.textContent = '';
+            liBox.appendChild(el('div', 'li-note', 'No line items on this invoice, so all of it counts as revenue.'));
+            return;
+          }
+          liBox.textContent = '';
+          var view = itemsView(r.items, v.amount_cents);
+          if (view) liBox.appendChild(view);
+        });
+      }
+
       // Staff notes. Rendered before the actions so a card carrying one reads as
       // carrying one, and editable in EVERY state -- how somebody actually paid, or a
       // credit carried over, is usually learned after the invoice closed.
@@ -2697,6 +3246,14 @@
         acts.appendChild(b);
         return b;
       }
+
+      act('Line items', null, function () {
+        if (liShown) { liBox.textContent = ''; liShown = false; return; }
+        liShown = true;
+        liBox.textContent = '';
+        liBox.appendChild(el('div', 'li-note', 'Loading…'));
+        loadItems();
+      });
 
       noteBtn = act('Add note', null, function () {
         noteOpen = !noteOpen;
