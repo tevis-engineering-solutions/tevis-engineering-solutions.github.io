@@ -14,6 +14,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Montserrat:wght@500;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+  <script src="../assets/js/portal.js" defer></script>
   <script src="https://www.paypal.com/sdk/js?client-id=Ab_dnVs8tumZ0eMkFfSuR9eR5ut5xYKPmEbgCRODAyopaxWByLowbaOpY9pgZJKAa_nliulcrbPBQ9IC&currency=USD&components=buttons&intent=capture" defer></script>
   <style>
     :root { --bg:#0d1710; --card:#142019; --card-2:#1c2e22; --line:#2c4232; --text:#e4ede5; --muted:#8aa48d; --green:#4aac65; --gold:#c89830; }
@@ -116,6 +117,19 @@
     .pay-panel.open { display:block; }
     .pay-note { color:var(--muted); font-size:0.8rem; margin-bottom:0.7rem; }
     .pp-box { max-width:460px; }
+    .alt-pay { margin-top:1rem; padding-top:1rem; border-top:1px solid var(--line); display:none; }
+    .alt-pay.open { display:block; }
+    .alt-way { padding:0.9rem 0; border-bottom:1px solid var(--line); }
+    .alt-way:last-child { border-bottom:0; padding-bottom:0; }
+    .alt-way h4 { margin:0 0 0.3rem; font-family:"Montserrat",sans-serif; font-size:0.9rem; color:var(--text); }
+    .alt-row { display:flex; flex-wrap:wrap; gap:0.5rem; align-items:center; margin-top:0.6rem; }
+    .alt-row input { flex:1 1 170px; min-width:0; padding:0.55rem 0.7rem; border-radius:8px; border:1px solid var(--line);
+      background:rgba(255,255,255,0.03); color:var(--text); font:inherit; font-size:0.9rem; }
+    .alt-row input:focus { outline:2px solid var(--blue); outline-offset:1px; }
+    .alt-row .btn { margin-top:0; }
+    .alt-note { color:var(--muted); font-size:0.8rem; margin:0.5rem 0 0; }
+    .alt-note.ok { color:#7fc98f; }
+    .alt-note.err { color:#e08a68; }
     .paid-ok { background:rgba(74,172,101,0.09); border:1px solid rgba(74,172,101,0.3); border-radius:12px; padding:1.1rem 1.2rem; }
     .paid-ok .tick { color:#6dc882; font-size:1.5rem; font-weight:800; line-height:1; }
     .paid-ok b { display:block; color:#fff; font-family:"Montserrat",sans-serif; margin:0.35rem 0 0.2rem; }
@@ -176,40 +190,6 @@
     </div>
   </nav>
   <div class="pannounce" id="pAnnounce" hidden></div>
-  <script>
-  // Shared on every portal page: what is waiting on the customer (tab dots) and any
-  // live announcement. One extra /me call, which every page already makes once.
-  (function () {
-    function dot(href, n) {
-      var a = document.querySelector('.ptab[href="' + href + '"]');
-      if (!a || !n) return;
-      var d = document.createElement('span'); d.className = 'pdot'; d.setAttribute('aria-label', n + ' waiting'); a.appendChild(d);
-    }
-    fetch('/portal-api/me', { credentials: 'same-origin' }).then(function (r) { return r.ok ? r.json() : null; }).then(function (me) {
-      if (!me || !me.ok || !me.waiting) return;
-      dot('messages.html', me.waiting.messages); dot('tickets.html', me.waiting.tickets); dot('equipment.html', me.waiting.equipment); dot('billing.html', me.waiting.invoices_due);
-      if (!me.waiting.announcements) return;
-      return fetch('/portal-api/announcements', { credentials: 'same-origin' }).then(function (r) { return r.ok ? r.json() : null; }).then(function (d) {
-        if (!d || !d.ok || !d.announcements.length) return;
-        var box = document.getElementById('pAnnounce');
-        var seen = {}; try { seen = JSON.parse(localStorage.getItem('tes_ann_seen') || '{}'); } catch (e) { seen = {}; }
-        d.announcements.forEach(function (a) {
-          if (seen[a.id]) return;
-          var row = document.createElement('div'); row.className = 'pann ' + a.kind;
-          var t = document.createElement('div'); t.className = 'pann-t';
-          var b = document.createElement('b'); b.textContent = (a.kind === 'maintenance' ? 'Maintenance: ' : a.kind === 'billing' ? 'Billing: ' : '') + a.title; t.appendChild(b);
-          var p = document.createElement('span'); p.textContent = ' ' + a.body; t.appendChild(p);
-          row.appendChild(t);
-          var x = document.createElement('button'); x.type = 'button'; x.className = 'pann-x'; x.setAttribute('aria-label', 'Dismiss'); x.textContent = '×';
-          x.addEventListener('click', function () { row.remove(); seen[a.id] = 1; try { localStorage.setItem('tes_ann_seen', JSON.stringify(seen)); } catch (e) { /* private mode */ } if (!box.childNodes.length) box.hidden = true; });
-          row.appendChild(x);
-          box.appendChild(row);
-        });
-        if (box.childNodes.length) box.hidden = false;
-      });
-    }).catch(function () { /* the strip is a courtesy */ });
-  })();
-  </script>
 
   <main class="pmain">
     <div class="phead">
@@ -371,6 +351,22 @@
         return card;
       }
 
+      /* The server says the customer has already told us they paid by check or
+         transfer. That is a claim, not cleared funds, so the invoice stays open --
+         but offering the buttons again would invite a second report. */
+      if (inv.status === 'pending') {
+        badge.className = 'badge pending';
+        badge.textContent = 'Payment reported';
+        var pnote = el('div', 'pay-note');
+        pnote.style.marginTop = '0.9rem';
+        pnote.textContent = 'You told us this was paid by ' +
+          (inv.method === 'check' ? 'check' : inv.method === 'wire' ? 'wire transfer' : 'bank transfer') +
+          (inv.ref ? ' (reference ' + inv.ref + ')' : '') +
+          '. It stays open until the funds land, then we mark it paid.';
+        card.appendChild(pnote);
+        return card;
+      }
+
       if (inv.amount === null || inv.amount <= 0) {
         var bad = el('div', 'pay-note');
         bad.style.marginTop = '0.9rem';
@@ -402,8 +398,132 @@
       panel.appendChild(box);
       card.appendChild(panel);
 
+      /* Check and ACH, the same two the public pay page offers. Both only REPORT a
+         payment: TES confirms the money arrived before anything is marked paid. */
+      var altBtn = el('button', 'btn btn-ghost');
+      altBtn.type = 'button';
+      altBtn.appendChild(el('i', 'fa-solid fa-building-columns'));
+      altBtn.appendChild(document.createTextNode(' Check or bank transfer'));
+      actions.appendChild(altBtn);
+
+      var alt = el('div', 'alt-pay');
+      card.appendChild(alt);
+
+      function note(parent, msg, cls) {
+        var n = parent.querySelector('.alt-note');
+        if (!n) { n = el('p', 'alt-note'); parent.appendChild(n); }
+        n.className = 'alt-note' + (cls ? ' ' + cls : '');
+        n.textContent = msg;
+        return n;
+      }
+      function reported(method, ref) {
+        badge.className = 'badge pending';
+        badge.textContent = 'Payment reported';
+        inv.status = 'pending';
+        actions.remove();
+        panel.remove();
+        alt.innerHTML = '';
+        alt.appendChild(el('p', 'alt-note ok',
+          'Thanks \u2014 noted. ' + (method === 'check'
+            ? 'The invoice stays open until the check clears, then we will mark it paid.'
+            : 'We will confirm once the transfer lands and mark the invoice paid.') +
+          (ref ? ' Reference ' + ref + '.' : '')));
+      }
+      function way(title, blurb) {
+        var w = el('div', 'alt-way');
+        w.appendChild(el('h4', null, title));
+        w.appendChild(el('p', 'alt-note', blurb));
+        alt.appendChild(w);
+        return w;
+      }
+
+      var built = false;
+      function buildAlt() {
+        // Check
+        var wc = way('Mailed a check',
+          'Send it to Tevis Engineering Solutions, Cleveland, OH. Tell us the check number and we will watch for it.');
+        var rowC = el('div', 'alt-row');
+        var numC = document.createElement('input');
+        numC.type = 'text';
+        numC.placeholder = 'Check number';
+        numC.setAttribute('aria-label', 'Check number for invoice ' + (inv.number || ''));
+        var btnC = el('button', 'btn btn-primary');
+        btnC.type = 'button';
+        btnC.textContent = 'I mailed it';
+        rowC.appendChild(numC);
+        rowC.appendChild(btnC);
+        wc.appendChild(rowC);
+        btnC.addEventListener('click', function () {
+          var ref = numC.value.trim();
+          if (!ref) { note(wc, 'Enter the check number first.', 'err'); return; }
+          btnC.disabled = true;
+          note(wc, 'Sending\u2026');
+          TESInvoices.reportPayment(inv, 'check', ref).then(function (res) {
+            if (!res || !res.ok) {
+              btnC.disabled = false;
+              note(wc, 'Could not record that. Email billing@tevisengineering.com so we can note it.', 'err');
+              return;
+            }
+            reported('check', ref);
+          });
+        });
+
+        // ACH / wire
+        var wb = way('Bank transfer',
+          'We will email the remittance details \u2014 account and routing numbers are never published on a page.');
+        var rowB = el('div', 'alt-row');
+        var askB = el('button', 'btn btn-ghost');
+        askB.type = 'button';
+        askB.textContent = 'Send me the details';
+        var refB = document.createElement('input');
+        refB.type = 'text';
+        refB.placeholder = 'Transfer reference (optional)';
+        refB.setAttribute('aria-label', 'Transfer reference for invoice ' + (inv.number || ''));
+        var btnB = el('button', 'btn btn-primary');
+        btnB.type = 'button';
+        btnB.textContent = 'I sent it';
+        rowB.appendChild(askB);
+        rowB.appendChild(refB);
+        rowB.appendChild(btnB);
+        wb.appendChild(rowB);
+        askB.addEventListener('click', function () {
+          askB.disabled = true;
+          note(wb, 'Sending\u2026');
+          TESInvoices.requestBankDetails(inv, 'ACH').then(function (res) {
+            askB.disabled = false;
+            if (!res || !res.ok) {
+              note(wb, 'Could not send that. Email billing@tevisengineering.com and we will reply with the details.', 'err');
+              return;
+            }
+            note(wb, 'Request sent (' + res.ticket_number + '). We will email the remittance details shortly.', 'ok');
+          });
+        });
+        btnB.addEventListener('click', function () {
+          btnB.disabled = true;
+          note(wb, 'Sending\u2026');
+          TESInvoices.reportPayment(inv, 'ach', refB.value.trim()).then(function (res) {
+            if (!res || !res.ok) {
+              btnB.disabled = false;
+              note(wb, 'Could not record that. Email billing@tevisengineering.com so we can note it.', 'err');
+              return;
+            }
+            reported('ach', refB.value.trim());
+          });
+        });
+      }
+
+      altBtn.addEventListener('click', function () {
+        panel.classList.remove('open');
+        if (alt.classList.contains('open')) { alt.classList.remove('open'); return; }
+        alt.classList.add('open');
+        if (built) return;
+        built = true;
+        buildAlt();
+      });
+
       var mounted = false;
       payBtn.addEventListener('click', function () {
+        alt.classList.remove('open');
         if (panel.classList.contains('open')) { panel.classList.remove('open'); return; }
         panel.classList.add('open');
         if (mounted) return;
@@ -649,24 +769,5 @@
   })();
   </script>
 
-  <script>
-  // Sign-out now ends the app-level session in the portal Worker. Cloudflare Access
-  // no longer gates portal/* -- it is reserved for the admin console.
-  (function () {
-    var links = document.querySelectorAll('.psignout, .signout-link');
-    Array.prototype.forEach.call(links, function (a) {
-      a.setAttribute('href', '#');
-      a.addEventListener('click', function (ev) {
-        ev.preventDefault();
-        fetch('/portal-api/auth/logout', {
-          method: 'POST',
-          credentials: 'same-origin',
-          headers: { 'content-type': 'application/json' },
-          body: '{}'
-        }).then(function () { location.href = '../login.html'; });
-      });
-    });
-  })();
-  </script>
 </body>
 </html>

@@ -396,6 +396,11 @@
     .fin-table td.warn { color:var(--gold); }
     .fin-table tr.pick { cursor:pointer; }
     .fin-table tr.pick:hover td, .fin-table tr.hi td { background:rgba(74,172,101,0.09); }
+    .kbd-list { display:grid; gap:0.35rem; margin-top:0.5rem; }
+    .kbd-row { display:flex; align-items:baseline; gap:0.6rem; }
+    .kbd-keys { display:inline-flex; gap:0.2rem; flex:0 0 auto; min-width:4.2rem; }
+    kbd { font-family:"Inter",monospace; font-size:0.68rem; padding:0.12rem 0.36rem; border-radius:5px;
+      border:1px solid var(--line); background:var(--bg); color:var(--text); }
     .fin-list .row b.num { font-family:"Montserrat",sans-serif; white-space:nowrap; }
     .pp-row .row-main { display:flex; gap:0.4rem; align-items:baseline; flex-wrap:wrap; }
     .pp-dir { font-family:"Montserrat",sans-serif; font-size:0.66rem; font-weight:800; text-transform:uppercase; letter-spacing:0.04em; padding:0.1rem 0.4rem; border-radius:6px; }
@@ -415,7 +420,7 @@
     @media print {
       @page { size: letter; margin: 0.5in; }
       html, body { background:#fff !important; color:#111 !important; }
-      .abar, .viewnav, .fin-bar, .inv-actions, .toast, #viewFinance button, #viewFinance select, .pp-review, .pp-hidden, details { display:none !important; }
+      .abar, .viewnav, .fin-bar, .inv-actions, .toast, #viewFinance button, #viewFinance select, #viewReports button, #viewReports select, .pp-review, .pp-hidden, details { display:none !important; }
       .wrap { max-width:none; padding:0; }
       .fin-print-head { display:block; margin-bottom:0.8rem; padding-bottom:0.5rem; border-bottom:2px solid #111; }
       .fin-print-head b { display:block; font-family:"Montserrat",sans-serif; font-size:1.1rem; }
@@ -646,6 +651,7 @@
       <button type="button" class="vbtn" id="navCalendar" data-view="calendar">Calendar</button>
       <button type="button" class="vbtn" id="navInventory" data-view="inventory">Inventory</button>
       <button type="button" class="vbtn" id="navFinance" data-view="finance">Finance<span class="nbadge" id="finBadge" hidden></span></button>
+      <button type="button" class="vbtn" id="navReports" data-view="reports">Reports</button>
       <button type="button" class="vbtn" id="navKeys" data-view="keys">Product Keys</button>
     </div>
   </nav>
@@ -1213,6 +1219,34 @@
     <div id="finBody"><div class="state">Loading&hellip;</div></div>
   </main>
 
+  <main class="wrap" id="viewReports" aria-label="Reports" hidden>
+    <div class="fin-bar">
+      <div class="filters fin-periods" id="rptPeriod">
+        <button type="button" class="fpill on" data-period="month">Month</button>
+        <button type="button" class="fpill" data-period="quarter">Quarter</button>
+        <button type="button" class="fpill" data-period="year">Year</button>
+      </div>
+      <div class="fin-nav">
+        <button type="button" class="fin-arrow" id="rptPrev" aria-label="Previous period">&lsaquo;</button>
+        <span class="fin-label" id="rptLabel">&nbsp;</span>
+        <button type="button" class="fin-arrow" id="rptNext" aria-label="Next period">&rsaquo;</button>
+        <button type="button" class="fin-today" id="rptToday">Today</button>
+      </div>
+      <div class="fin-export">
+        <label for="rptExport" class="sr-only">Export</label>
+        <select id="rptExport">
+          <option value="">Export&hellip;</option>
+          <option value="xlsx">Excel workbook (.xlsx)</option>
+          <option value="print">Print / Save as PDF</option>
+          <option value="summary">CSV: summary</option>
+          <option value="sla-misses">CSV: what we missed</option>
+          <option value="clients">CSV: clients</option>
+          <option value="trend">CSV: trend</option>
+        </select>
+      </div>
+    </div>
+    <div id="rptBody"><div class="state">Loading&hellip;</div></div>
+  </main>
   <main class="wrap" id="viewKeys" aria-label="Product keys" hidden>
     <section class="newinv">
       <h2>Issue a key &mdash; Ohio Crash Report Analysis Tool</h2>
@@ -6552,6 +6586,251 @@
       document.body.appendChild(a); a.click(); a.remove();
     });
 
+    // ---- reports ---------------------------------------------------------------
+    // Did we keep our promises, where did the time go, and how is each client doing.
+    // Same period vocabulary as Finance, so the two tabs always describe one window.
+    var rptPeriod = 'month';
+    var rptAnchor = '';
+    var rptReport = null;
+    var rptBody = document.getElementById('rptBody');
+    var rptLabel = document.getElementById('rptLabel');
+    var rptSort = { key: 'logged_minutes', dir: -1 };
+
+    function loadReports() {
+      rptBody.textContent = '';
+      rptBody.appendChild(el('div', 'state', 'Building the report…'));
+      var url = '/admin/reports?period=' + encodeURIComponent(rptPeriod) + (rptAnchor ? '&anchor=' + encodeURIComponent(rptAnchor) : '');
+      return api(url).then(function (r) {
+        if (!r.ok) { rptBody.textContent = ''; rptBody.appendChild(el('div', 'state', 'Could not build the report.')); return; }
+        rptReport = r.report;
+        rptAnchor = keyToAnchor(rptReport.key);
+        history.replaceState(null, '', '#reports=' + rptReport.key);
+        renderReports(rptReport);
+      });
+    }
+
+    function rptTile(parent, label, value, sub, warn) {
+      var t = el('div', 'tile');
+      t.appendChild(el('s', null, label));
+      var b = el('b', warn ? 'warn' : null, value);
+      t.appendChild(b);
+      if (sub) t.appendChild(el('div', 'sub', sub));
+      parent.appendChild(t);
+      return t;
+    }
+
+    function minsWords(m) {
+      if (m == null) return '—';
+      if (m < 90) return m + ' min';
+      var h = m / 60;
+      return h < 48 ? (h % 1 ? h.toFixed(1) : h) + ' h' : Math.round(h / 24) + ' days';
+    }
+
+    function renderReports(rp) {
+      rptBody.textContent = '';
+      rptLabel.textContent = rp.label;
+      document.querySelectorAll('#rptPeriod .fpill').forEach(function (b) { b.classList.toggle('on', b.getAttribute('data-period') === rp.period); });
+
+      var printHead = el('div', 'fin-print-head');
+      printHead.appendChild(el('b', null, 'Tevis Engineering Solutions, LLC · Report · ' + rp.label));
+      printHead.appendChild(el('span', null,
+        'Generated ' + new Date(rp.now * 1000).toLocaleString('en-US') +
+        '. Response times count only tickets that carried a promise from a service agreement. ' +
+        'Hours per working day divides by the business days that have happened, not the whole period.'));
+      rptBody.appendChild(printHead);
+
+      // ---- the numbers ----
+      var tiles = el('div', 'tiles fin-tiles');
+      var answeredSub = rp.sla.promised
+        ? rp.sla.answered + ' of ' + rp.sla.promised + ' answered'
+        : 'No agreements promised a response';
+      rptTile(tiles, 'Response promises met', rp.sla.promised ? rp.sla.met_percent + '%' : '—', answeredSub,
+        rp.sla.promised > 0 && rp.sla.met_percent < 90);
+      rptTile(tiles, 'Missed', String(rp.sla.missed + rp.sla.open_late),
+        rp.sla.open_late ? rp.sla.open_late + ' still unanswered' : (rp.sla.missed ? 'all answered, late' : 'none'),
+        rp.sla.missed + rp.sla.open_late > 0);
+      rptTile(tiles, 'Median response', minsWords(rp.sla.median_response_minutes), 'half were faster than this');
+      rptTile(tiles, 'Hours logged', rp.hours.logged_hours + ' h',
+        rp.hours.billable_hours + ' h billable · ' + rp.hours.internal_hours + ' h internal');
+      rptTile(tiles, 'Billable share', rp.hours.billable_percent + '%',
+        rp.hours.covered_hours ? rp.hours.covered_hours + ' h covered by a plan' : 'nothing covered by a plan');
+      rptTile(tiles, 'Hours per working day', String(rp.hours.hours_per_working_day), rp.hours.working_days + ' working days so far');
+      rptTile(tiles, 'Rating', rp.ratings.average == null ? '—' : rp.ratings.average + ' / 5',
+        rp.ratings.count ? 'from ' + rp.ratings.count + (rp.ratings.count === 1 ? ' rating' : ' ratings') : 'nobody rated a ticket');
+      rptTile(tiles, 'Appointments', String(rp.appointments.total),
+        rp.appointments.total ? rp.appointments.done + ' done · ' + rp.appointments.no_show + ' no-show' : 'nothing in the diary');
+      rptBody.appendChild(tiles);
+
+      var grid = el('div', 'tiles fin-grid');
+      grid.style.gridTemplateColumns = '';
+
+      // ---- trend: hours ----
+      var trendH = finPanel('Hours', 'logged against billable, by period');
+      trendH.classList.add('wide');
+      var shortLabel = function (b) {
+        return rp.period === 'month' ? b.label.replace(/^(\w{3})\w* (\d{4})$/, '$1 $2').replace(/ 20/, ' ’') : b.label;
+      };
+      svgBars(trendH, {
+        labels: rp.series.map(shortLabel),
+        series: [
+          { name: 'Logged', values: rp.series.map(function (b) { return b.logged_hours; }), color: '#4aac65' },
+          { name: 'Billable', values: rp.series.map(function (b) { return b.billable_hours; }), color: '#c89830' },
+        ],
+      }, {
+        fmt: function (v) { return v + ' h'; }, label: 'Hours logged and billable by period',
+        onPick: function (i) { rptAnchor = keyToAnchor(rp.series[i].key); loadReports(); },
+      });
+      grid.appendChild(trendH);
+
+      // ---- trend: promises kept. Its own chart because a percentage and a count of
+      // hours do not share an axis without one of them being misread.
+      var trendS = finPanel('Response promises kept', 'percent met, by period');
+      trendS.classList.add('wide');
+      var anyS = rp.series.some(function (b) { return b.sla_met_percent != null; });
+      if (!anyS) trendS.appendChild(el('div', 'row-sub', 'No service agreement has promised a response time yet.'));
+      else svgBars(trendS, {
+        labels: rp.series.map(shortLabel),
+        series: [{ name: 'Met on time', values: rp.series.map(function (b) { return b.sla_met_percent == null ? 0 : b.sla_met_percent; }), color: '#4aac65' }],
+      }, {
+        fmt: function (v) { return v + '%'; }, label: 'Percent of response promises met, by period',
+        onPick: function (i) { rptAnchor = keyToAnchor(rp.series[i].key); loadReports(); },
+      });
+      grid.appendChild(trendS);
+
+      // ---- the misses, named ----
+      var miss = finPanel('What we missed', rp.sla.misses.length ? 'worst first' : '');
+      miss.classList.add('wide');
+      if (!rp.sla.misses.length) {
+        miss.appendChild(el('div', 'row-sub', rp.sla.promised
+          ? 'Every promised response went out on time.'
+          : 'Nothing in this period carried a response promise.'));
+      } else {
+        var mlist = el('div', 'fin-list');
+        rp.sla.misses.forEach(function (m) {
+          var right = el('b', 'num' + (m.still_open ? ' warn' : ''), minsWords(m.late_minutes) + ' late');
+          mlist.appendChild(row(
+            (m.ticket_number || '#' + m.id) + ' · ' + (m.who || 'Unknown'),
+            m.subject + ' · ' + m.priority + ' · promised ' + minsWords(m.promised_minutes) +
+              (m.still_open ? ' · still unanswered' : ''),
+            right,
+            function () { openObject("ticket", m.id); }));
+        });
+        miss.appendChild(mlist);
+      }
+      grid.appendChild(miss);
+
+      // ---- clients ----
+      var cl = finPanel('Clients', 'where the time and the money went');
+      cl.classList.add('wide');
+      if (!rp.clients.length) cl.appendChild(el('div', 'row-sub', 'Nothing was logged or invoiced in this period.'));
+      else {
+        var cols = [
+          ['Client', 'name', false], ['Tickets', 'tickets', true], ['Hours', 'logged_minutes', true],
+          ['Billable', 'billable_minutes', true], ['Invoiced', 'invoiced_cents', true],
+          ['Paid', 'paid_cents', true], ['Promises met', 'sla_met_percent', true], ['Rating', 'rating_avg', true],
+        ];
+        var wrap = el('div', 'fin-table-wrap');
+        var tbl = el('table', 'fin-table');
+        var thead = el('thead'), hr = el('tr');
+        cols.forEach(function (c) {
+          var th = el('th', (c[2] ? 'num' : '') + (rptSort.key === c[1] ? ' sorted' : ''), c[0]);
+          th.addEventListener('click', function () {
+            if (rptSort.key === c[1]) rptSort.dir = -rptSort.dir; else { rptSort.key = c[1]; rptSort.dir = -1; }
+            renderReports(rp);
+          });
+          hr.appendChild(th);
+        });
+        thead.appendChild(hr); tbl.appendChild(thead);
+        var tb = el('tbody');
+        rp.clients.slice().sort(function (a, b) {
+          var x = a[rptSort.key], y = b[rptSort.key];
+          if (typeof x === 'string' || typeof y === 'string') return String(x || '').localeCompare(String(y || '')) * -rptSort.dir;
+          return ((y == null ? -1 : y) - (x == null ? -1 : x)) * (rptSort.dir < 0 ? 1 : -1);
+        }).forEach(function (c) {
+          var tr = el('tr');
+          var nameTd = el('td', null, c.name || '—');
+          if (c.email && c.email !== c.name) nameTd.appendChild(el('div', 'row-sub', c.email));
+          tr.appendChild(nameTd);
+          tr.appendChild(el('td', 'num', String(c.tickets)));
+          tr.appendChild(el('td', 'num', c.logged_hours + ' h'));
+          tr.appendChild(el('td', 'num', c.billable_hours + ' h'));
+          tr.appendChild(el('td', 'num', moneyShort(c.invoiced_cents)));
+          tr.appendChild(el('td', 'num', moneyShort(c.paid_cents)));
+          tr.appendChild(el('td', 'num' + (c.sla_met_percent != null && c.sla_met_percent < 90 ? ' warn' : ''),
+            c.sla_met_percent == null ? '—' : c.sla_met_percent + '%'));
+          tr.appendChild(el('td', 'num', c.rating_avg == null ? '—' : c.rating_avg + ' ★'));
+          if (c.org_id || c.account_id) {
+            tr.className = 'pick';
+            tr.addEventListener('click', function () { openObject(c.org_id ? "org" : "customer", c.org_id || c.account_id); });
+          }
+          tb.appendChild(tr);
+        });
+        tbl.appendChild(tb); wrap.appendChild(tbl); cl.appendChild(wrap);
+      }
+      grid.appendChild(cl);
+
+      // ---- how the ratings fell ----
+      if (rp.ratings.count) {
+        var rt = finPanel('How tickets were rated', rp.ratings.count + ' rated this period');
+        rp.ratings.distribution.slice().reverse().forEach(function (d) {
+          var track = el('div', 'stack-track');
+          var i = el('i');
+          i.style.width = (rp.ratings.count ? (d.count / rp.ratings.count * 100) : 0) + '%';
+          i.style.background = d.stars >= 4 ? '#4aac65' : d.stars === 3 ? '#c89830' : '#e08a68';
+          track.appendChild(i);
+          var line = el('div');
+          line.appendChild(el('div', 'row-sub', d.stars + ' ★ · ' + d.count));
+          line.appendChild(track);
+          rt.appendChild(line);
+        });
+        grid.appendChild(rt);
+      }
+
+      rptBody.appendChild(grid);
+    }
+
+    document.getElementById('rptPeriod').addEventListener('click', function (ev) {
+      var b = ev.target.closest('.fpill');
+      if (!b) return;
+      rptPeriod = b.getAttribute('data-period');
+      rptAnchor = '';
+      loadReports();
+    });
+    document.getElementById('rptPrev').addEventListener('click', function () { if (rptReport) { rptAnchor = keyToAnchor(rptReport.prev_key); loadReports(); } });
+    document.getElementById('rptNext').addEventListener('click', function () { if (rptReport) { rptAnchor = keyToAnchor(rptReport.next_key); loadReports(); } });
+    document.getElementById('rptToday').addEventListener('click', function () { rptAnchor = ''; loadReports(); });
+    var RPT_SHEETS = ['summary', 'sla-misses', 'clients', 'trend'];
+    function rptExportUrl(sheet) {
+      return API + '/admin/reports/export?period=' + encodeURIComponent(rptPeriod) + '&anchor=' + encodeURIComponent(rptAnchor) + '&sheet=' + sheet;
+    }
+    // Built from the same CSVs the Worker writes, so the workbook and a single-sheet
+    // download can never disagree about a figure. Same rule as the Finance export.
+    function exportRptXlsx() {
+      if (!rptReport) return;
+      var btn = document.getElementById('rptExport');
+      btn.disabled = true;
+      Promise.all([loadXlsx()].concat(RPT_SHEETS.map(function (s) { return fetch(rptExportUrl(s), { credentials: 'same-origin' }).then(function (r) { return r.text(); }); })))
+        .then(function (res) {
+          var X = res[0];
+          var wb = X.utils.book_new();
+          RPT_SHEETS.forEach(function (s, i) {
+            var ws = X.read(res[i + 1], { type: 'string' }).Sheets.Sheet1;
+            X.utils.book_append_sheet(wb, ws, s === 'sla-misses' ? 'Missed' : cap(s));
+          });
+          X.writeFile(wb, 'TES-' + rptReport.key + '-report.xlsx');
+          btn.disabled = false;
+        }, function () { btn.disabled = false; toast('Could not build the workbook'); });
+    }
+    document.getElementById('rptExport').addEventListener('change', function () {
+      var v = this.value; this.value = '';
+      if (!v || !rptReport) return;
+      if (v === 'xlsx') return exportRptXlsx();
+      if (v === 'print') return window.print();
+      var a = document.createElement('a');
+      a.href = rptExportUrl(v); a.download = '';
+      document.body.appendChild(a); a.click(); a.remove();
+    });
+
     // ---- home: what needs you, and what happened ------------------------------
     var homeAttentionEl = document.getElementById('homeAttention');
     var homeActivityEl = document.getElementById('homeActivity');
@@ -6906,6 +7185,49 @@
       else if (e.key === 'Escape' && !cmdk.hidden) closeSearch();
     });
 
+    // ---- keyboard ------------------------------------------------------------
+    // "g then a letter" to move, "/" to search, "r" to reply. Deliberately single
+    // keys: the console is used one-handed on a phone dock as often as at a desk.
+    var GO_TO = { h: 'home', i: 'inbox', t: 'tickets', c: 'customers', v: 'invoices',
+                  a: 'calendar', e: 'inventory', f: 'finance', r: 'reports', k: 'keys' };
+    var SHORTCUTS = [
+      ['g h', 'Home'], ['g i', 'Inbox'], ['g t', 'Tickets'], ['g c', 'Customers'],
+      ['g v', 'Invoices'], ['g a', 'Calendar'], ['g e', 'Equipment'], ['g f', 'Finance'],
+      ['g r', 'Reports'], ['g k', 'Product keys'],
+      ['/', 'Search'], ['r', 'Reply, on an open ticket or conversation'], ['Esc', 'Close search'],
+    ];
+    var goArmed = 0;
+
+    // A shortcut must never eat a character somebody is typing.
+    function typingIn(t) {
+      if (!t) return false;
+      var tag = (t.tagName || '').toLowerCase();
+      return tag === 'input' || tag === 'textarea' || tag === 'select' || t.isContentEditable;
+    }
+
+    document.addEventListener('keydown', function (e) {
+      if (e.ctrlKey || e.metaKey || e.altKey) return;
+      if (typingIn(e.target)) return;
+      if (!cmdk.hidden) return;                       // the overlay owns the keyboard
+      var k = (e.key || '').toLowerCase();
+
+      if (goArmed && Date.now() - goArmed < 1500) {
+        goArmed = 0;
+        if (GO_TO[k]) { e.preventDefault(); showView(GO_TO[k]); return; }
+        return;
+      }
+      goArmed = 0;
+
+      if (k === 'g') { goArmed = Date.now(); return; }
+      if (k === '/') { e.preventDefault(); openSearch(); return; }
+      if (k === 'r') {
+        // Whichever reply box the open detail is showing. Nothing open, nothing happens.
+        var boxes = document.querySelectorAll('#viewTickets textarea, #inboxDetail textarea');
+        var box = Array.prototype.filter.call(boxes, function (b) { return b.offsetParent !== null; })[0];
+        if (box) { e.preventDefault(); box.focus(); box.scrollIntoView({ block: 'center' }); }
+      }
+    });
+
     // ---- tickets: search box and load more ----
     var tkQ = document.getElementById('tkQ');
     var tkQTimer = null;
@@ -6931,6 +7253,10 @@
       else if ((m = /^#finance(?:=(\d{4}(?:-Q\d|-\d{2})?))?$/.exec(hash))) {
         if (m[1]) { finPeriod = /Q/.test(m[1]) ? 'quarter' : /-/.test(m[1]) ? 'month' : 'year'; finAnchor = keyToAnchor(m[1]); }
         showView('finance');
+      }
+      else if ((m = /^#reports(?:=(\d{4}(?:-Q\d|-\d{2})?))?$/.exec(hash))) {
+        if (m[1]) { rptPeriod = /Q/.test(m[1]) ? 'quarter' : /-/.test(m[1]) ? 'month' : 'year'; rptAnchor = keyToAnchor(m[1]); }
+        showView('reports');
       }
       else if ((m = /^#m=(\d+)/.exec(hash))) { openConversation(Number(m[1])); }
       else if (hash === '#inbox') showView('inbox');
@@ -7268,6 +7594,21 @@
       };
       d2.addEventListener('toggle', function () { if (d2.open) renderAnn(); });
       wrap.appendChild(d2);
+
+      // keyboard
+      var d3 = el('details');
+      d3.appendChild(el('summary', null, 'Keyboard shortcuts'));
+      var kl = el('div', 'kbd-list');
+      SHORTCUTS.forEach(function (row) {
+        var line = el('div', 'kbd-row');
+        var keys = el('span', 'kbd-keys');
+        row[0].split(' ').forEach(function (k) { keys.appendChild(el('kbd', null, k)); });
+        line.appendChild(keys);
+        line.appendChild(el('span', 'row-sub', row[1]));
+        kl.appendChild(line);
+      });
+      d3.appendChild(kl);
+      wrap.appendChild(d3);
       return wrap;
     }
 
@@ -7284,6 +7625,7 @@
       calendar: { view: 'viewCalendar', nav: 'navCalendar', load: loadCalendar, always: true },
       inventory: { view: 'viewInventory', nav: 'navInventory', load: loadInventory, always: true },
       finance: { view: 'viewFinance', nav: 'navFinance', load: loadFinance, always: true },
+      reports: { view: 'viewReports', nav: 'navReports', load: loadReports, always: true },
       keys: { view: 'viewKeys', nav: 'navKeys', load: loadKeys }
     };
     var loaded = {};
@@ -7292,7 +7634,8 @@
     // second, redundant history entry.
     var HASH_OF = {
       home: /^(#home|#|)$/, inbox: /^#(inbox|m=)/, tickets: /^#(tickets|t=)/, customers: /^#(customers|c=|o=)/,
-      invoices: /^#(invoices|inv=|q=)/, calendar: /^#(cal|a=)/, inventory: /^#(inventory|i=)/, finance: /^#finance/, keys: /^#keys/,
+      invoices: /^#(invoices|inv=|q=)/, calendar: /^#(cal|a=)/, inventory: /^#(inventory|i=)/, finance: /^#finance/,
+      reports: /^#reports/, keys: /^#keys/,
     };
 
     function showView(which) {
@@ -7443,6 +7786,35 @@
 
     buildNavWheel();
     if (document.fonts && document.fonts.ready) document.fonts.ready.then(buildNavWheel);
+
+    // A one-shot measurement at load is not enough: on a phone the bar was measured
+    // before layout settled, the wheel was never built, and the active tab sat off
+    // the right-hand edge until something fired a resize. Watching the bar catches
+    // first layout, the font swap and a rotation with one mechanism. Rebuilding
+    // changes the bar's own children, so only a genuine width change re-runs it --
+    // otherwise the observer feeds itself.
+    if (window.ResizeObserver) {
+      var navLastW = navWrap.clientWidth;
+      new ResizeObserver(function () {
+        if (navWrap.clientWidth === navLastW) return;
+        navLastW = navWrap.clientWidth;
+        buildNavWheel();
+      }).observe(navWrap);
+      // And the first tab itself, which is what changes width when the web font
+      // swaps in. With ten tabs the set is within ~20px of the bar at a laptop
+      // width, so a measurement taken against the fallback font decides it wrongly
+      // and nothing afterwards corrects it. A button is never touched by the
+      // rebuild, so watching one cannot feed the observer.
+      var navProbe = navTrack.querySelector('.vbtn');
+      if (navProbe) {
+        var navProbeW = navProbe.offsetWidth;
+        new ResizeObserver(function () {
+          if (navProbe.offsetWidth === navProbeW) return;
+          navProbeW = navProbe.offsetWidth;
+          buildNavWheel();
+        }).observe(navProbe);
+      }
+    }
 
     // One router for the load-time hash, Back/Forward, and search results.
     suppressHashPush = true;

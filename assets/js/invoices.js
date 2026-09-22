@@ -163,7 +163,11 @@
          public pay page), never by a storage key. */
       hasPdf:      !!inv.has_pdf,
       currency:    inv.currency || 'USD',
-      ref:         '',
+      /* Set when the customer has told us they paid by check or transfer. The
+         invoice is 'pending' until TES confirms the funds landed. */
+      method:      inv.payment_method || '',
+      ref:         inv.payment_ref || '',
+      reportedDate: inv.reported_at || null,
       /* Billed-to. Safe on the pay-link path: the recipient already holds this
          invoice, and nothing here reveals any other account. */
       email:       inv.email || '',

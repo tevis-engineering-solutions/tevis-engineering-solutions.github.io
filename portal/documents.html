@@ -14,6 +14,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Montserrat:wght@500;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+  <script src="../assets/js/portal.js" defer></script>
   <style>
     :root { --bg:#0d1710; --card:#142019; --card-2:#1c2e22; --line:#2c4232; --text:#e4ede5; --muted:#8aa48d; --green:#4aac65; --gold:#c89830; }
     * { box-sizing:border-box; margin:0; padding:0; }
@@ -170,40 +171,6 @@
     </div>
   </nav>
   <div class="pannounce" id="pAnnounce" hidden></div>
-  <script>
-  // Shared on every portal page: what is waiting on the customer (tab dots) and any
-  // live announcement. One extra /me call, which every page already makes once.
-  (function () {
-    function dot(href, n) {
-      var a = document.querySelector('.ptab[href="' + href + '"]');
-      if (!a || !n) return;
-      var d = document.createElement('span'); d.className = 'pdot'; d.setAttribute('aria-label', n + ' waiting'); a.appendChild(d);
-    }
-    fetch('/portal-api/me', { credentials: 'same-origin' }).then(function (r) { return r.ok ? r.json() : null; }).then(function (me) {
-      if (!me || !me.ok || !me.waiting) return;
-      dot('messages.html', me.waiting.messages); dot('tickets.html', me.waiting.tickets); dot('equipment.html', me.waiting.equipment); dot('billing.html', me.waiting.invoices_due);
-      if (!me.waiting.announcements) return;
-      return fetch('/portal-api/announcements', { credentials: 'same-origin' }).then(function (r) { return r.ok ? r.json() : null; }).then(function (d) {
-        if (!d || !d.ok || !d.announcements.length) return;
-        var box = document.getElementById('pAnnounce');
-        var seen = {}; try { seen = JSON.parse(localStorage.getItem('tes_ann_seen') || '{}'); } catch (e) { seen = {}; }
-        d.announcements.forEach(function (a) {
-          if (seen[a.id]) return;
-          var row = document.createElement('div'); row.className = 'pann ' + a.kind;
-          var t = document.createElement('div'); t.className = 'pann-t';
-          var b = document.createElement('b'); b.textContent = (a.kind === 'maintenance' ? 'Maintenance: ' : a.kind === 'billing' ? 'Billing: ' : '') + a.title; t.appendChild(b);
-          var p = document.createElement('span'); p.textContent = ' ' + a.body; t.appendChild(p);
-          row.appendChild(t);
-          var x = document.createElement('button'); x.type = 'button'; x.className = 'pann-x'; x.setAttribute('aria-label', 'Dismiss'); x.textContent = '×';
-          x.addEventListener('click', function () { row.remove(); seen[a.id] = 1; try { localStorage.setItem('tes_ann_seen', JSON.stringify(seen)); } catch (e) { /* private mode */ } if (!box.childNodes.length) box.hidden = true; });
-          row.appendChild(x);
-          box.appendChild(row);
-        });
-        if (box.childNodes.length) box.hidden = false;
-      });
-    }).catch(function () { /* the strip is a courtesy */ });
-  })();
-  </script>
 
   <main class="pmain">
     <div class="phead">
@@ -282,17 +249,5 @@
   })();
   </script>
 
-  <script>
-  (function () {
-    var links = document.querySelectorAll('.psignout, .signout-link');
-    Array.prototype.forEach.call(links, function (a) {
-      a.setAttribute('href', '#');
-      a.addEventListener('click', function (ev) {
-        ev.preventDefault();
-        fetch('/portal-api/auth/logout', { method: 'POST', credentials: 'same-origin', headers: { 'content-type': 'application/json' }, body: '{}' }).then(function () { location.href = '../login.html'; });
-      });
-    });
-  })();
-  </script>
 </body>
 </html>
