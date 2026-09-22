@@ -3,10 +3,10 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Equipment | TES Customer Portal</title>
-  <meta name="description" content="Equipment and subscriptions assigned to your Tevis Engineering Solutions account, and where to confirm you have received them.">
+  <title>Book a Time | TES Customer Portal</title>
+  <meta name="description" content="Book a remote session, a phone call or an on-site visit with Tevis Engineering Solutions.">
   <meta name="robots" content="noindex, nofollow">
-  <link rel="canonical" href="https://tevisengineering.com/portal/equipment.html">
+  <link rel="canonical" href="https://tevisengineering.com/portal/schedule.html">
   <link rel="icon" type="image/png" href="../assets/favicon.png">
   <meta http-equiv="X-Content-Type-Options" content="nosniff">
   <meta name="referrer" content="strict-origin-when-cross-origin">
@@ -138,6 +138,38 @@
     .pann-t b { color:#fff; }
     .pann-x { flex:0 0 auto; background:none; border:0; color:var(--muted); font-size:1.2rem; line-height:1; cursor:pointer; padding:0 0.2rem; }
     .pann-x:hover { color:#fff; }
+    /* --- booking --- */
+    .booker { background:var(--card); border:1px solid var(--line); border-radius:14px; padding:1.3rem 1.4rem; margin:1.4rem 0; }
+    .booker h2 { font-family:"Montserrat",sans-serif; font-size:1rem; color:#f1f7f1; margin-bottom:0.9rem; }
+    .bk-row { display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:0.8rem; margin-bottom:1rem; }
+    .bk-field label { display:block; font-size:0.68rem; text-transform:uppercase; letter-spacing:0.05em; color:var(--muted); font-weight:700; margin-bottom:0.3rem; }
+    .bk-field label .opt { text-transform:none; letter-spacing:0; font-weight:400; }
+    .bk-field select, .bk-field input, .bk-field textarea { width:100%; padding:0.6rem 0.75rem; border-radius:9px; border:1px solid var(--line); background:var(--bg); color:var(--text); font-family:inherit; font-size:0.9rem; min-height:44px; }
+    .bk-field textarea { min-height:60px; resize:vertical; }
+    .bk-field select:focus, .bk-field input:focus, .bk-field textarea:focus { outline:none; border-color:var(--green); }
+    .bk-days { display:flex; gap:0.5rem; overflow-x:auto; padding-bottom:0.5rem; margin-bottom:0.9rem; scrollbar-width:thin; }
+    .bk-day { flex:0 0 auto; display:flex; flex-direction:column; align-items:center; gap:0.1rem; min-width:76px; padding:0.6rem 0.5rem; border-radius:11px; border:1px solid var(--line); background:var(--bg); color:var(--muted); cursor:pointer; font-family:"Montserrat",sans-serif; }
+    .bk-day .wd { font-size:0.66rem; text-transform:uppercase; letter-spacing:0.06em; }
+    .bk-day .n { font-size:0.9rem; font-weight:800; color:#e4ede5; }
+    .bk-day .c { font-size:0.62rem; }
+    .bk-day.on { background:linear-gradient(135deg,var(--gold),#e0b840); border-color:transparent; color:#3a2c08; }
+    .bk-day.on .n { color:#0d1710; }
+    .bk-times { display:flex; flex-wrap:wrap; gap:0.5rem; }
+    .bk-time { padding:0.65rem 1rem; min-height:44px; border-radius:999px; border:1px solid var(--line); background:var(--bg); color:#e4ede5; font-family:"Montserrat",sans-serif; font-size:0.82rem; font-weight:700; cursor:pointer; }
+    .bk-time:hover { border-color:var(--green); color:#fff; }
+    .bk-none { color:var(--muted); font-size:0.88rem; }
+    .bk-none a { color:var(--gold); }
+    .bk-details { margin-top:1.2rem; padding-top:1.1rem; border-top:1px solid var(--line); }
+    .bk-chosen { font-family:"Montserrat",sans-serif; font-size:1rem; color:var(--gold); font-weight:800; margin-bottom:0.9rem; }
+    .bk-details .bk-field { margin-bottom:0.8rem; }
+    .bk-acts { display:flex; gap:0.7rem; flex-wrap:wrap; align-items:center; }
+    .bk-acts .btn { margin-top:0; }
+    .bk-back { background:none; border:0; color:var(--muted); font:600 0.8rem "Montserrat",sans-serif; text-decoration:underline; cursor:pointer; min-height:44px; padding:0 0.4rem; }
+    .bk-back:hover { color:#e4ede5; }
+    .bk-err { color:#ffb4a8; font-size:0.85rem; margin-top:0.7rem; }
+    .bk-cancel { background:none; border:1px solid var(--line); color:var(--muted); border-radius:999px; padding:0.5rem 0.9rem; min-height:40px; font:700 0.72rem "Montserrat",sans-serif; text-transform:uppercase; letter-spacing:0.04em; cursor:pointer; margin-top:0.4rem; }
+    .bk-cancel:hover { border-color:#d6785a; color:#e08585; }
+    .bk-late { font-size:0.72rem; color:var(--muted); margin-top:0.4rem; max-width:180px; }
   </style>
 </head>
 <body>
@@ -162,10 +194,10 @@
       <a class="ptab" href="plan.html"><i class="fa-solid fa-file-contract"></i> Plan</a>
       <a class="ptab" href="billing.html"><i class="fa-solid fa-credit-card"></i> Billing</a>
       <a class="ptab" href="tickets.html"><i class="fa-solid fa-headset"></i> Support</a>
-      <a class="ptab" href="schedule.html"><i class="fa-solid fa-calendar-day"></i> Book a Time</a>
+      <a class="ptab active" href="schedule.html"><i class="fa-solid fa-calendar-day"></i> Book a Time</a>
       <a class="ptab" href="messages.html"><i class="fa-solid fa-comments"></i> Messages</a>
       <a class="ptab" href="documents.html"><i class="fa-solid fa-folder-open"></i> Documents</a>
-      <a class="ptab active" href="equipment.html"><i class="fa-solid fa-laptop"></i> Equipment</a>
+      <a class="ptab" href="equipment.html"><i class="fa-solid fa-laptop"></i> Equipment</a>
       <a class="ptab" href="account.html"><i class="fa-solid fa-user-gear"></i> Account</a>
     </div>
   </nav>
@@ -207,19 +239,66 @@
 
   <main class="pmain">
     <div class="phead">
-      <h1>Equipment</h1>
-      <p>Hardware and subscriptions on your account. When something new is assigned to you, confirm here that you have it.</p>
+      <h1>Book a Time</h1>
+      <p>Pick a slot that suits you. You will get a confirmation with a calendar invite, and a reminder the day before.</p>
     </div>
 
-    <div class="state" id="stateBox"><span class="spin"></span><div><b>Loading your equipment&hellip;</b>One moment.</div></div>
+    <div class="state" id="stateBox"><span class="spin"></span><div><b>Loading&hellip;</b>One moment.</div></div>
 
-    <h2 class="sec-title" id="pendHead" hidden>Waiting for your confirmation <span class="count" id="pendCount">0</span></h2>
-    <div id="pendList"></div>
+    <h2 class="sec-title" id="upHead" hidden>Coming up <span class="count" id="upCount"></span></h2>
+    <div id="upList"></div>
 
-    <h2 class="sec-title" id="allHead" hidden>Everything on your account <span class="count" id="allCount">0</span></h2>
-    <div id="allList"></div>
+    <section class="booker" id="booker" hidden>
+      <h2>Book a new time</h2>
+      <div class="bk-row">
+        <div class="bk-field">
+          <label for="bkKind">What do you need?</label>
+          <select id="bkKind">
+            <option value="remote">Remote session</option>
+            <option value="call">Phone call</option>
+            <option value="onsite">On-site visit</option>
+          </select>
+        </div>
+        <div class="bk-field">
+          <label for="bkMinutes">How long?</label>
+          <select id="bkMinutes">
+            <option value="30">30 minutes</option>
+            <option value="60" selected>1 hour</option>
+            <option value="90">1.5 hours</option>
+            <option value="120">2 hours</option>
+          </select>
+        </div>
+      </div>
 
-    <p class="hist-foot" id="eqFoot" hidden>Something missing or wrong? <a href="tickets.html">Open a ticket</a> or reply to the email you received and we will sort it out.</p>
+      <div class="bk-days" id="bkDays" role="tablist" aria-label="Choose a day"></div>
+      <div class="bk-times" id="bkTimes" role="group" aria-label="Choose a time"></div>
+      <p class="bk-none" id="bkNone" hidden>No times free in the next two weeks. <a href="messages.html">Send us a message</a> and we will find one.</p>
+
+      <div class="bk-details" id="bkDetails" hidden>
+        <div class="bk-chosen" id="bkChosen"></div>
+        <div class="bk-field">
+          <label for="bkTitle">What is it about?</label>
+          <input type="text" id="bkTitle" maxlength="160" placeholder="Replace the closet switch">
+        </div>
+        <div class="bk-field" id="bkAddrWrap" hidden>
+          <label for="bkAddress">Address for the visit</label>
+          <input type="text" id="bkAddress" maxlength="300" placeholder="2200 Chagrin Blvd, Beachwood OH">
+        </div>
+        <div class="bk-field">
+          <label for="bkNotes">Anything we should know? <span class="opt">(optional)</span></label>
+          <textarea id="bkNotes" rows="2" maxlength="2000" placeholder="Gate code, where to park, who to ask for&hellip;"></textarea>
+        </div>
+        <div class="bk-acts">
+          <button type="button" class="btn btn-primary" id="bkConfirm"><i class="fa-solid fa-calendar-check"></i> Confirm this time</button>
+          <button type="button" class="bk-back" id="bkBack">Pick another time</button>
+        </div>
+        <p class="bk-err" id="bkErr" hidden></p>
+      </div>
+      <p class="hist-foot" id="bkFoot"></p>
+    </section>
+
+    <h2 class="sec-title" id="pastHead" hidden>Past <span class="count" id="pastCount"></span></h2>
+    <div id="pastList"></div>
   </main>
 
   <footer class="pfoot">
@@ -231,178 +310,191 @@
   <script>
   (function () {
     'use strict';
-
+    var API = '/portal-api';
     var stateBox = document.getElementById('stateBox');
-    var pendHead = document.getElementById('pendHead');
-    var pendList = document.getElementById('pendList');
-    var allHead = document.getElementById('allHead');
-    var allList = document.getElementById('allList');
-    var eqFoot = document.getElementById('eqFoot');
+    var chosen = null, slotData = null, activeDay = null;
 
-    function requireSession(id) {
-      if (!id || !id.email) { location.replace('../login.html'); return false; }
-      return true;
+    function el(tag, cls, text) { var n = document.createElement(tag); if (cls) n.className = cls; if (text != null) n.textContent = text; return n; }
+    function api(path, body) {
+      var o = { credentials: 'same-origin' };
+      if (body !== undefined) { o.method = 'POST'; o.headers = { 'content-type': 'application/json' }; o.body = JSON.stringify(body); }
+      return fetch(API + path, o).then(function (r) { return r.json().catch(function () { return { ok: false }; }); });
     }
-
-    function el(tag, cls, text) {
-      var n = document.createElement(tag);
-      if (cls) n.className = cls;
-      if (text != null) n.textContent = text;
-      return n;
-    }
-
     function showState(cls, icon, title, body) {
-      stateBox.hidden = false;
-      stateBox.className = 'state' + (cls ? ' ' + cls : '');
-      stateBox.textContent = '';
-      var i = el('i', icon);
-      stateBox.appendChild(i);
-      var d = el('div');
-      d.appendChild(el('b', null, title));
-      d.appendChild(document.createTextNode(body || ''));
-      stateBox.appendChild(d);
+      stateBox.hidden = false; stateBox.className = 'state' + (cls ? ' ' + cls : ''); stateBox.textContent = '';
+      stateBox.appendChild(el('i', icon)); var d = el('div'); d.appendChild(el('b', null, title)); d.appendChild(document.createTextNode(body || '')); stateBox.appendChild(d);
+    }
+    var TZ = 'America/New_York';
+    function timeOf(ts) { return new Date(ts * 1000).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', timeZone: TZ }).replace(' ', '').toLowerCase(); }
+    function dayLabel(key) {
+      var p = key.split('-');
+      var d = new Date(Date.UTC(p[0], p[1] - 1, p[2], 12));
+      return { wd: d.toLocaleDateString('en-US', { weekday: 'short', timeZone: 'UTC' }), n: d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', timeZone: 'UTC' }) };
     }
 
-    function fmtDayStr(d) {
-      if (!d) return '';
-      var p = String(d).split('-');
-      return new Date(Number(p[0]), Number(p[1]) - 1, Number(p[2])).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
-    }
-
-    function card(item) {
-      var c = el('div', 'inv' + (item.confirmed_at ? '' : ' open'));
+    function apptCard(a, canCancel) {
+      var c = el('div', 'inv' + (a.status === 'booked' ? ' open' : ''));
       var top = el('div', 'inv-top');
       var left = el('div');
-      left.appendChild(el('div', 'inv-id', item.name));
+      left.appendChild(el('div', 'inv-id', a.title));
       var meta = el('div', 'inv-meta');
-      var bits = [
-        'Asset tag ' + item.tag,
-        item.kind === 'subscription' ? 'Subscription' : (item.category ? item.category.charAt(0).toUpperCase() + item.category.slice(1) : 'Equipment'),
-        item.model ? 'Model ' + item.model : '',
-        item.serial ? 'S/N ' + item.serial : '',
-        item.vendor || '',
-      ].filter(Boolean);
-      bits.forEach(function (b) { meta.appendChild(el('span', null, b)); });
+      [a.when, a.kind_label, a.address || '', a.status !== 'booked' ? a.status.replace('_', ' ') : ''].filter(Boolean).forEach(function (t) { meta.appendChild(el('span', null, t)); });
       left.appendChild(meta);
-      if (item.holder_type === 'org' && item.holder_name) {
-        left.appendChild(el('div', 'inv-desc', 'Assigned to ' + item.holder_name + '.'));
-      }
-      if (item.recurring && item.next_charge_on) {
-        left.appendChild(el('div', 'inv-desc', 'Renews ' + item.recurring_interval + ', next on ' + fmtDayStr(item.next_charge_on) +
-          (item.paid_by === 'customer' ? '.' : ', billed through TES.')));
-      }
+      if (a.notes) left.appendChild(el('div', 'inv-desc', a.notes));
       top.appendChild(left);
       top.appendChild(el('div', 'inv-spacer'));
       var right = el('div', 'inv-right');
-      if (item.confirmed_at) {
-        var ok = el('span', 'badge paid');
-        ok.appendChild(el('i', 'fa-solid fa-circle-check'));
-        ok.appendChild(document.createTextNode(' Confirmed ' + TESInvoices.formatDate(new Date(item.confirmed_at * 1000))));
-        right.appendChild(ok);
-      } else {
-        var due = el('span', 'badge due');
-        due.appendChild(el('i', 'fa-solid fa-hand-point-right'));
-        due.appendChild(document.createTextNode(' Please confirm'));
-        right.appendChild(due);
+      var ics = el('a', 'btn btn-ghost');
+      ics.href = API + '/appointments/' + a.id + '/ics';
+      ics.appendChild(el('i', 'fa-solid fa-calendar-plus')); ics.appendChild(document.createTextNode(' Add to calendar'));
+      if (a.status === 'booked') right.appendChild(ics);
+      if (canCancel) {
+        var x = el('button', 'bk-cancel', 'Cancel'); x.type = 'button';
+        x.addEventListener('click', function () {
+          var why = prompt('Cancel "' + a.title + '"?\n\nAnything we should know? (optional)', '');
+          if (why === null) return;
+          x.disabled = true;
+          api('/appointments/' + a.id + '/cancel', { reason: why }).then(function (r) {
+            x.disabled = false;
+            if (!r.ok) { alert(r.error === 'too_late' ? 'That is inside the ' + r.hours + '-hour notice period, so please call us on (216) 302-8486 and we will sort it.' : 'That did not go through. Please try again.'); return; }
+            load();
+          });
+        });
+        right.appendChild(x);
+      } else if (a.status === 'booked') {
+        right.appendChild(el('div', 'bk-late', 'To change this, call (216) 302-8486'));
       }
       top.appendChild(right);
       c.appendChild(top);
-
-      if (!item.confirmed_at) {
-        var acts = el('div', 'inv-actions');
-        var btn = el('button', 'btn btn-primary', null);
-        btn.type = 'button';
-        btn.appendChild(el('i', 'fa-solid fa-check'));
-        btn.appendChild(document.createTextNode(' I have this'));
-        var err = el('span', 'err-msg');
-        err.hidden = true;
-        btn.addEventListener('click', function () {
-          btn.disabled = true;
-          err.hidden = true;
-          fetch('/portal-api/equipment/' + item.id + '/confirm', {
-            method: 'POST', credentials: 'same-origin',
-            headers: { 'content-type': 'application/json' }, body: '{}',
-          }).then(function (r) { return r.json(); }).then(function (d) {
-            if (!d || !d.ok) throw new Error((d && d.error) || 'failed');
-            item.confirmed_at = d.confirmed_at;
-            render(items);
-          }).catch(function () {
-            btn.disabled = false;
-            err.hidden = false;
-            err.textContent = 'That did not go through. Please try again, or reply to the email.';
-          });
-        });
-        acts.appendChild(btn);
-        acts.appendChild(el('span', 'pay-note', 'One click tells us the ' + (item.kind === 'subscription' ? 'subscription' : 'equipment') + ' reached you.'));
-        acts.appendChild(err);
-        c.appendChild(acts);
-      }
       return c;
     }
 
-    var items = [];
+    function renderSlots() {
+      var daysEl = document.getElementById('bkDays'), timesEl = document.getElementById('bkTimes');
+      daysEl.textContent = ''; timesEl.textContent = '';
+      var days = (slotData && slotData.days) || [];
+      document.getElementById('bkNone').hidden = days.length > 0;
+      if (!days.length) return;
+      if (!days.some(function (d) { return d.day === activeDay; })) activeDay = days[0].day;
+      days.forEach(function (d) {
+        var b = el('button', 'bk-day' + (d.day === activeDay ? ' on' : '')); b.type = 'button';
+        b.setAttribute('role', 'tab'); b.setAttribute('aria-selected', d.day === activeDay ? 'true' : 'false');
+        var lab = dayLabel(d.day);
+        b.appendChild(el('span', 'wd', lab.wd));
+        b.appendChild(el('span', 'n', lab.n));
+        b.appendChild(el('span', 'c', d.count + ' free'));
+        b.addEventListener('click', function () { activeDay = d.day; renderSlots(); });
+        daysEl.appendChild(b);
+      });
+      var day = days.find(function (d) { return d.day === activeDay; });
+      day.slots.forEach(function (s) {
+        var b = el('button', 'bk-time', timeOf(s.starts_at)); b.type = 'button';
+        b.addEventListener('click', function () { choose(s); });
+        timesEl.appendChild(b);
+      });
+    }
 
-    function render(list) {
-      items = list;
-      var pending = list.filter(function (i) { return !i.confirmed_at; });
-      pendList.textContent = '';
-      allList.textContent = '';
-      stateBox.hidden = true;
-      if (!list.length) {
-        showState('', 'fa-solid fa-box-open', 'Nothing on your account yet.',
-          ' When TES assigns equipment or a subscription to you, it appears here with a button to confirm you have it.');
-        pendHead.hidden = true; allHead.hidden = true; eqFoot.hidden = true;
-        return;
-      }
-      pendHead.hidden = !pending.length;
-      document.getElementById('pendCount').textContent = String(pending.length);
-      pending.forEach(function (i) { pendList.appendChild(card(i)); });
-      allHead.hidden = false;
-      document.getElementById('allCount').textContent = String(list.length);
-      list.filter(function (i) { return i.confirmed_at; }).forEach(function (i) { allList.appendChild(card(i)); });
-      if (!list.some(function (i) { return i.confirmed_at; })) {
-        allList.appendChild(el('div', 'empty-row', 'Everything on your account is listed above, waiting for a confirmation.'));
-      }
-      eqFoot.hidden = false;
+    function choose(s) {
+      chosen = s;
+      document.getElementById('bkDetails').hidden = false;
+      var lab = dayLabel(s.day);
+      document.getElementById('bkChosen').textContent = lab.wd + ' ' + lab.n + ', ' + timeOf(s.starts_at) + ' to ' + timeOf(s.ends_at);
+      document.getElementById('bkAddrWrap').hidden = document.getElementById('bkKind').value !== 'onsite';
+      document.getElementById('bkDetails').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      document.getElementById('bkTitle').focus();
+    }
+
+    function loadSlots() {
+      var kind = document.getElementById('bkKind').value;
+      var minutes = document.getElementById('bkMinutes').value;
+      document.getElementById('bkDetails').hidden = true; chosen = null;
+      return fetch(API + '/slots?minutes=' + minutes + '&kind=' + kind + '&days=14', { credentials: 'same-origin' })
+        .then(function (r) { return r.json(); })
+        .then(function (d) {
+          slotData = d.ok ? d : { days: [] };
+          document.getElementById('bkFoot').textContent = d.ok
+            ? 'Times are Eastern. We need at least ' + d.lead_hours + ' hours’ notice, and you can cancel online up to ' + d.cancel_hours + ' hours before.'
+            : '';
+          renderSlots();
+        });
+    }
+
+    document.getElementById('bkKind').addEventListener('change', function () {
+      document.getElementById('bkAddrWrap').hidden = this.value !== 'onsite';
+      loadSlots();
+    });
+    document.getElementById('bkMinutes').addEventListener('change', loadSlots);
+    document.getElementById('bkBack').addEventListener('click', function () {
+      document.getElementById('bkDetails').hidden = true; chosen = null;
+      document.getElementById('bkTimes').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    });
+
+    document.getElementById('bkConfirm').addEventListener('click', function () {
+      if (!chosen) return;
+      var err = document.getElementById('bkErr');
+      err.hidden = true;
+      var kind = document.getElementById('bkKind').value;
+      var address = document.getElementById('bkAddress').value.trim();
+      if (kind === 'onsite' && !address) { err.hidden = false; err.textContent = 'We need an address for an on-site visit.'; return; }
+      var btn = this; btn.disabled = true;
+      api('/appointments', {
+        starts_at: chosen.starts_at, minutes: chosen.minutes, kind: kind,
+        title: document.getElementById('bkTitle').value.trim() || null,
+        address: address || null, notes: document.getElementById('bkNotes').value.trim() || null,
+      }).then(function (r) {
+        btn.disabled = false;
+        if (!r.ok) {
+          err.hidden = false;
+          err.textContent = r.error === 'slot_taken' || r.error === 'slot_unavailable'
+            ? 'Somebody took that time while you were filling this in. Please pick another.'
+            : r.error === 'too_soon' ? 'That is too soon. Please pick a later time, or call us.'
+            : r.error === 'address_required' ? 'We need an address for an on-site visit.'
+            : 'That did not go through. Please try again, or call (216) 302-8486.';
+          if (r.error === 'slot_taken' || r.error === 'slot_unavailable') loadSlots();
+          return;
+        }
+        ['bkTitle', 'bkAddress', 'bkNotes'].forEach(function (i) { document.getElementById(i).value = ''; });
+        load();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }, function () { btn.disabled = false; err.hidden = false; err.textContent = 'Could not reach us. Please try again.'; });
+    });
+
+    function load() {
+      return api('/appointments').then(function (d) {
+        if (!d || !d.ok) throw new Error('unavailable');
+        stateBox.hidden = true;
+        document.getElementById('booker').hidden = false;
+        var up = document.getElementById('upList'), past = document.getElementById('pastList');
+        up.textContent = ''; past.textContent = '';
+        document.getElementById('upHead').hidden = !d.upcoming.length;
+        document.getElementById('upCount').textContent = d.upcoming.length + ' booked';
+        d.upcoming.forEach(function (a) { up.appendChild(apptCard(a, a.can_cancel)); });
+        document.getElementById('pastHead').hidden = !d.past.length;
+        document.getElementById('pastCount').textContent = d.past.length;
+        d.past.forEach(function (a) { past.appendChild(apptCard(a, false)); });
+        return loadSlots();
+      });
     }
 
     TESInvoices.getIdentity().then(function (id) {
-      if (!requireSession(id)) return null;
+      if (!id || !id.email) { location.replace('../login.html'); return null; }
       var display = id.name || id.email.split('@')[0];
-      var nameEl = document.getElementById('acctName');
-      var emailEl = document.getElementById('acctEmail');
-      var avatarEl = document.getElementById('acctAvatar');
-      if (nameEl) nameEl.textContent = display;
-      if (emailEl) emailEl.textContent = id.email;
-      if (avatarEl) avatarEl.textContent = display.replace(/[^A-Za-z]/g, '').slice(0, 2).toUpperCase() || 'TE';
-
-      return fetch('/portal-api/equipment', { credentials: 'same-origin' })
-        .then(function (r) { return r.ok ? r.json() : null; })
-        .then(function (d) {
-          if (!d || !d.ok) throw new Error('unavailable');
-          render(d.items || []);
-        });
-    }).catch(function () {
-      showState('bad', 'fa-solid fa-triangle-exclamation', 'Could not load your equipment.',
-        ' Please refresh in a moment. If it keeps happening, open a ticket.');
-    });
+      var n = document.getElementById('acctName'), e = document.getElementById('acctEmail'), a = document.getElementById('acctAvatar');
+      if (n) n.textContent = display; if (e) e.textContent = id.email;
+      if (a) a.textContent = display.replace(/[^A-Za-z]/g, '').slice(0, 2).toUpperCase() || 'TE';
+      return load();
+    }).catch(function () { showState('bad', 'fa-solid fa-triangle-exclamation', 'Could not load the diary.', ' Please refresh in a moment, or call (216) 302-8486.'); });
   })();
   </script>
 
   <script>
-  // Sign-out ends the app-level session in the portal Worker.
   (function () {
     var links = document.querySelectorAll('.psignout, .signout-link');
     Array.prototype.forEach.call(links, function (a) {
       a.setAttribute('href', '#');
       a.addEventListener('click', function (ev) {
         ev.preventDefault();
-        fetch('/portal-api/auth/logout', {
-          method: 'POST',
-          credentials: 'same-origin',
-          headers: { 'content-type': 'application/json' },
-          body: '{}'
-        }).then(function () { location.href = '../login.html'; });
+        fetch('/portal-api/auth/logout', { method: 'POST', credentials: 'same-origin', headers: { 'content-type': 'application/json' }, body: '{}' }).then(function () { location.href = '../login.html'; });
       });
     });
   })();

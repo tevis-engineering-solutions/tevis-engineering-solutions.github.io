@@ -574,6 +574,43 @@
     .agree-opts { display:flex; flex-direction:column; gap:0.35rem; margin:0.7rem 0 0.2rem; }
     .agree-opts label { display:flex; align-items:center; gap:0.5rem; font-size:0.78rem; color:#cfe0d2; cursor:pointer; min-height:38px; }
     .agree-opts input { width:17px; height:17px; accent-color:var(--gold); flex-shrink:0; }
+    /* ---- calendar (Phase 5) ---- */
+    .calbar { display:flex; align-items:center; gap:0.5rem; flex-wrap:wrap; margin-bottom:0.9rem; }
+    .calbar h2 { font-family:"Montserrat",sans-serif; font-size:0.95rem; min-width:11rem; }
+    .calbar button { font-family:"Montserrat",sans-serif; font-size:0.7rem; font-weight:700; text-transform:uppercase; letter-spacing:0.04em; padding:0.5rem 0.8rem; border-radius:999px; border:1px solid var(--line); background:var(--bg); color:var(--text); cursor:pointer; min-height:38px; }
+    .calbar button.prim { background:linear-gradient(135deg,var(--gold),#e0b840); color:#0d1710; border-color:transparent; }
+    .calbar button:hover { border-color:var(--green); }
+    .calsp { flex:1; }
+    .calweek { display:grid; grid-template-columns:repeat(7,1fr); gap:0.4rem; }
+    .calday { background:var(--card); border:1px solid var(--line); border-radius:12px; padding:0.5rem; min-height:7rem; }
+    .calday.today { border-color:var(--gold); }
+    .calday.off { background:var(--bg); }
+    .calday h4 { font-family:"Montserrat",sans-serif; font-size:0.68rem; text-transform:uppercase; letter-spacing:0.05em; color:var(--muted); margin-bottom:0.4rem; }
+    .calday.today h4 { color:var(--gold); }
+    .calday h4 span { display:block; font-size:1.05rem; color:var(--text); font-weight:800; }
+    .calappt { display:block; width:100%; text-align:left; border:1px solid rgba(74,172,101,0.35); background:rgba(74,172,101,0.09); border-radius:8px; padding:0.35rem 0.45rem; margin-bottom:0.3rem; cursor:pointer; color:var(--text); font-family:inherit; }
+    .calappt .t { font-family:"Montserrat",sans-serif; font-size:0.68rem; font-weight:800; color:#9fd3ae; }
+    .calappt .w { font-size:0.72rem; display:block; word-break:break-word; }
+    .calappt .k { font-size:0.64rem; color:var(--muted); }
+    .calappt.onsite { border-color:rgba(200,152,48,0.45); background:rgba(200,152,48,0.1); }
+    .calappt.onsite .t { color:#e6c68a; }
+    .calappt.done { opacity:0.55; }
+    .calappt.no_show { border-color:#7f2c2c; background:rgba(190,60,60,0.12); }
+    .calappt.no_show .t { color:#e08585; }
+    .calappt.canceled { opacity:0.45; text-decoration:line-through; }
+    .calblock { font-size:0.68rem; color:var(--muted); background:var(--bg); border:1px dashed var(--line); border-radius:8px; padding:0.3rem 0.45rem; margin-bottom:0.3rem; }
+    .calempty { font-size:0.68rem; color:#33513c; }
+    @media (max-width:900px) { .calweek { grid-template-columns:1fr; } .calday { min-height:0; } .calday.empty { display:none; } }
+    .hoursnote { font-size:0.76rem; color:var(--muted); line-height:1.55; margin-bottom:0.8rem; }
+    .blockhead { font-family:"Montserrat",sans-serif; font-size:0.78rem; text-transform:uppercase; letter-spacing:0.05em; color:var(--gold); margin:1rem 0 0.5rem; }
+    .rulerow { display:flex; align-items:center; gap:0.6rem; flex-wrap:wrap; padding:0.45rem 0; border-bottom:1px solid var(--line); font-size:0.8rem; }
+    .rulerow b { font-family:"Montserrat",sans-serif; min-width:5.5rem; }
+    .rulerow .k { color:var(--muted); font-size:0.72rem; }
+    .rulerow button { margin-left:auto; background:none; border:1px solid var(--line); color:var(--muted); border-radius:999px; padding:0.3rem 0.7rem; min-height:36px; cursor:pointer; font-size:0.68rem; font-family:"Montserrat",sans-serif; text-transform:uppercase; letter-spacing:0.04em; }
+    .rulerow button:hover { border-color:#7f2c2c; color:#e08585; }
+    .apptcard { border:1px solid var(--line); border-radius:12px; background:var(--card); padding:0.9rem 1rem; margin-bottom:0.6rem; }
+    .apptcard h3 { font-family:"Montserrat",sans-serif; font-size:0.9rem; margin-bottom:0.3rem; }
+    .apptcard .who { font-size:0.78rem; color:var(--muted); margin-bottom:0.5rem; }
   </style>
 </head>
 <body>
@@ -606,6 +643,7 @@
       <button type="button" class="vbtn on" id="navTickets" data-view="tickets">Tickets</button>
       <button type="button" class="vbtn" id="navCustomers" data-view="customers">Customers</button>
       <button type="button" class="vbtn" id="navInvoices" data-view="invoices">Invoices</button>
+      <button type="button" class="vbtn" id="navCalendar" data-view="calendar">Calendar</button>
       <button type="button" class="vbtn" id="navInventory" data-view="inventory">Inventory</button>
       <button type="button" class="vbtn" id="navFinance" data-view="finance">Finance<span class="nbadge" id="finBadge" hidden></span></button>
       <button type="button" class="vbtn" id="navKeys" data-view="keys">Product Keys</button>
@@ -871,6 +909,139 @@
       <div id="quoteList"><div class="state">Loading quotes&hellip;</div></div>
     </section>
 
+  </main>
+
+  <main class="wrap" id="viewCalendar" aria-label="Calendar" hidden>
+    <div class="calbar">
+      <button type="button" id="calPrev" aria-label="Previous week">&lsaquo;</button>
+      <h2 id="calRange">This week</h2>
+      <button type="button" id="calNext" aria-label="Next week">&rsaquo;</button>
+      <button type="button" id="calToday">Today</button>
+      <span class="calsp"></span>
+      <button type="button" class="prim" id="calBook">+ Book for a customer</button>
+      <button type="button" id="calHours">Working hours</button>
+    </div>
+
+    <section class="newinv" id="calBookForm" hidden>
+      <h2>Book an appointment</h2>
+      <div class="fwide custpick">
+        <label for="calCustQ">Customer</label>
+        <input type="search" id="calCustQ" placeholder="Search by name, company or email" autocomplete="off">
+        <div class="custpick-list" id="calCustList" hidden></div>
+        <div class="custpick-sel" id="calCustSel" hidden></div>
+      </div>
+      <div class="fgrid">
+        <div>
+          <label for="calEmail">Email</label>
+          <input id="calEmail" type="email" required placeholder="owner@client.com">
+        </div>
+        <div>
+          <label for="calName">Name</label>
+          <input id="calName" type="text" placeholder="Jane Roe">
+        </div>
+        <div>
+          <label for="calTitle">What is it</label>
+          <input id="calTitle" type="text" placeholder="Replace the closet switch">
+        </div>
+        <div>
+          <label for="calKind">Type</label>
+          <select id="calKind">
+            <option value="remote">Remote session</option>
+            <option value="call">Phone call</option>
+            <option value="onsite">On-site visit</option>
+          </select>
+        </div>
+        <div>
+          <label for="calDate">Date</label>
+          <input id="calDate" type="date">
+        </div>
+        <div>
+          <label for="calTime">Start time</label>
+          <input id="calTime" type="time" step="900">
+        </div>
+        <div>
+          <label for="calMins">Length (minutes)</label>
+          <input id="calMins" type="number" min="15" max="480" step="15" value="60">
+        </div>
+        <div>
+          <label for="calPhone">Phone</label>
+          <input id="calPhone" type="tel" placeholder="216-555-0100">
+        </div>
+      </div>
+      <div class="fwide">
+        <label for="calAddress">Address (on-site only)</label>
+        <input id="calAddress" type="text" placeholder="2200 Chagrin Blvd, Beachwood OH">
+      </div>
+      <div class="fwide">
+        <label for="calNotes">Notes</label>
+        <input id="calNotes" type="text" placeholder="Gate code, who to ask for">
+      </div>
+      <div class="inv-actions">
+        <button type="button" class="prim" id="calSave">Book it</button>
+        <button type="button" id="calCancelForm">Cancel</button>
+      </div>
+    </section>
+
+    <section class="newinv" id="calHoursForm" hidden>
+      <h2>When customers can book</h2>
+      <p class="hoursnote">These are the windows the booking page offers. Blocks below take time out of them for a holiday or a day off. Slots are offered on the half hour, at least 24 hours ahead, with 30 minutes either side of anything already booked.</p>
+      <div id="calRules"></div>
+      <div class="fgrid">
+        <div>
+          <label for="ruleDow">Day</label>
+          <select id="ruleDow">
+            <option value="1">Monday</option>
+            <option value="2">Tuesday</option>
+            <option value="3">Wednesday</option>
+            <option value="4">Thursday</option>
+            <option value="5">Friday</option>
+            <option value="6">Saturday</option>
+            <option value="0">Sunday</option>
+          </select>
+        </div>
+        <div>
+          <label for="ruleStart">From</label>
+          <input id="ruleStart" type="time" step="900" value="09:00">
+        </div>
+        <div>
+          <label for="ruleEnd">To</label>
+          <input id="ruleEnd" type="time" step="900" value="17:00">
+        </div>
+        <div>
+          <label for="ruleKind">For</label>
+          <select id="ruleKind">
+            <option value="any">Anything</option>
+            <option value="remote">Remote only</option>
+            <option value="onsite">On-site only</option>
+          </select>
+        </div>
+      </div>
+      <div class="inv-actions">
+        <button type="button" class="prim" id="ruleAdd">Add this window</button>
+      </div>
+      <h3 class="blockhead">Time off</h3>
+      <div id="calBlocks"></div>
+      <div class="fgrid">
+        <div>
+          <label for="blockFrom">From</label>
+          <input id="blockFrom" type="date">
+        </div>
+        <div>
+          <label for="blockTo">To (inclusive)</label>
+          <input id="blockTo" type="date">
+        </div>
+        <div>
+          <label for="blockWhy">Why</label>
+          <input id="blockWhy" type="text" placeholder="Holiday">
+        </div>
+      </div>
+      <div class="inv-actions">
+        <button type="button" class="prim" id="blockAdd">Block these days</button>
+        <button type="button" id="calHoursClose">Done</button>
+      </div>
+    </section>
+
+    <div id="calGrid"><div class="state">Loading the diary&hellip;</div></div>
   </main>
 
   <main class="wrap" id="viewInventory" aria-label="Inventory" hidden>
@@ -2743,6 +2914,280 @@
       if (host && host.parentNode) host.parentNode.insertBefore(box, host.nextSibling);
       return box;
     }
+
+    // ---- calendar (Phase 5) ----------------------------------------------
+    var calGrid = document.getElementById('calGrid');
+    var calAnchor = null;              // the Monday of the week on screen
+    var calSelected = null;            // the customer picked in the booking form
+    var calTimer = null;
+    var APPT_KIND = { remote: 'Remote', onsite: 'On-site', call: 'Call' };
+    var APPT_ERROR = {
+      slot_taken: 'Something else is booked in that window.',
+      slot_unavailable: 'That time is not on offer.',
+      too_soon: 'That is inside the notice period.',
+      address_required: 'An on-site visit needs an address.',
+      invalid_email: 'That email is not valid.',
+      bad_time: 'That date and time did not parse.',
+      too_late: 'Inside the notice period.',
+      not_booked: 'That is not a live booking any more.',
+      bad_day: 'Pick a day.', bad_time_hm: 'Use HH:MM.', end_before_start: 'The end is before the start.',
+      bad_window: 'The end is before the start.',
+    };
+
+    // Local midnight on the Monday of whatever week `ts` falls in.
+    function weekStart(ts) {
+      var d = new Date(ts * 1000);
+      d.setHours(0, 0, 0, 0);
+      d.setDate(d.getDate() - ((d.getDay() + 6) % 7));
+      return Math.floor(d.getTime() / 1000);
+    }
+    function dayStartOf(ts, offset) {
+      var d = new Date(ts * 1000);
+      d.setHours(0, 0, 0, 0);
+      d.setDate(d.getDate() + (offset || 0));
+      return Math.floor(d.getTime() / 1000);
+    }
+    function hhmmOf(ts) {
+      return new Date(ts * 1000).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' }).replace(' ', '').toLowerCase();
+    }
+
+    function loadCalendar() {
+      if (!calAnchor) calAnchor = weekStart(Math.floor(Date.now() / 1000));
+      var from = calAnchor, to = dayStartOf(calAnchor, 7);
+      return api('/admin/calendar?from=' + from + '&to=' + to).then(function (r) {
+        calGrid.textContent = '';
+        if (!r.ok) { calGrid.appendChild(el('div', 'state', 'Could not load the diary.')); return; }
+        document.getElementById('calRange').textContent =
+          new Date(from * 1000).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) + ' – ' +
+          new Date(dayStartOf(calAnchor, 6) * 1000).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+        var week = el('div', 'calweek');
+        var today = dayStartOf(Math.floor(Date.now() / 1000), 0);
+        for (var i = 0; i < 7; i++) {
+          var ds = dayStartOf(calAnchor, i), de = dayStartOf(calAnchor, i + 1);
+          var mine = (r.appointments || []).filter(function (a) { return a.starts_at < de && a.ends_at > ds; });
+          var blocks = (r.blocks || []).filter(function (b) { return b.starts_at < de && b.ends_at > ds; });
+          var hasRule = (r.rules || []).some(function (x) { return x.active && x.dow === new Date(ds * 1000).getDay(); });
+          var d = el('div', 'calday' + (ds === today ? ' today' : '') + (hasRule ? '' : ' off') + (mine.length || blocks.length ? '' : ' empty'));
+          var h = el('h4', null, new Date(ds * 1000).toLocaleDateString('en-US', { weekday: 'short' }));
+          h.appendChild(el('span', null, String(new Date(ds * 1000).getDate())));
+          d.appendChild(h);
+          blocks.forEach(function (b) { d.appendChild(el('div', 'calblock', b.reason || 'Unavailable')); });
+          mine.forEach(function (a) {
+            var b = el('button', 'calappt ' + a.kind + (a.status !== 'booked' ? ' ' + a.status : ''));
+            b.type = 'button';
+            b.appendChild(el('span', 't', hhmmOf(a.starts_at)));
+            b.appendChild(el('span', 'w', a.who));
+            b.appendChild(el('span', 'k', (APPT_KIND[a.kind] || a.kind) + ' · ' + a.title));
+            b.addEventListener('click', function () { openAppointment(a.id); });
+            d.appendChild(b);
+          });
+          if (!mine.length && !blocks.length) d.appendChild(el('div', 'calempty', hasRule ? 'Free' : 'Not bookable'));
+          week.appendChild(d);
+        }
+        calGrid.appendChild(week);
+      });
+    }
+
+    document.getElementById('calPrev').addEventListener('click', function () { calAnchor = dayStartOf(calAnchor, -7); loadCalendar(); });
+    document.getElementById('calNext').addEventListener('click', function () { calAnchor = dayStartOf(calAnchor, 7); loadCalendar(); });
+    document.getElementById('calToday').addEventListener('click', function () { calAnchor = weekStart(Math.floor(Date.now() / 1000)); loadCalendar(); });
+
+    function openAppointment(id) {
+      api('/admin/appointments/' + id).then(function (r) {
+        if (!r.ok) return toast('Could not open it');
+        var a = r.appointment;
+        calGrid.textContent = '';
+        var c = el('div', 'apptcard');
+        c.appendChild(el('h3', null, a.title));
+        c.appendChild(el('div', 'who', [a.when, APPT_KIND[a.kind] || a.kind, a.who, a.email, a.phone].filter(Boolean).join(' · ')));
+        if (a.address) c.appendChild(el('div', 'row-sub', a.address));
+        if (a.notes) c.appendChild(el('div', 'row-sub', a.notes));
+        c.appendChild(el('div', 'row-sub', 'Status: ' + a.status.replace('_', ' ') + (a.cancel_reason ? ' · ' + a.cancel_reason : '')));
+        var acts = el('div', 'inv-actions');
+        function aact(label, cls, fn) { var b = el('button', cls || null, label); b.type = 'button'; b.addEventListener('click', fn); acts.appendChild(b); return b; }
+        if (a.status === 'booked' || a.status === 'no_show') {
+          aact('Mark done', 'prim', function () {
+            api('/admin/appointments/' + id + '/status', { method: 'POST', body: { status: 'done' } }).then(function (x) { toast(x.ok ? 'Marked done' : 'Failed'); loadCalendar(); });
+          });
+        }
+        if (a.status === 'booked') {
+          aact('No show', null, function () {
+            api('/admin/appointments/' + id + '/status', { method: 'POST', body: { status: 'no_show' } }).then(function (x) { toast(x.ok ? 'Marked no-show' : 'Failed'); loadCalendar(); });
+          });
+          aact('Reschedule', null, function () {
+            var when = prompt('New start, as YYYY-MM-DD HH:MM (24h):', '');
+            if (!when) return;
+            var ts = Math.floor(new Date(when.replace(' ', 'T')).getTime() / 1000);
+            if (!ts) return toast('Could not read that date');
+            api('/admin/appointments/' + id + '/reschedule', { method: 'POST', body: { starts_at: ts } }).then(function (x) {
+              toast(x.ok ? 'Moved · the customer gets a new invite' : (APPT_ERROR[x.error] || 'Could not move it'));
+              loadCalendar();
+            });
+          });
+          aact('Cancel', 'danger', function () {
+            var why = prompt('Cancel this? The customer gets a cancellation and their calendar clears.\n\nReason (optional):', '');
+            if (why === null) return;
+            api('/admin/appointments/' + id + '/cancel', { method: 'POST', body: { reason: why } }).then(function (x) { toast(x.ok ? 'Canceled' : 'Failed'); loadCalendar(); });
+          });
+        }
+        var ics = el('a', 'pill', 'Invite'); ics.href = '/portal-api/admin/appointments/' + id + '/ics'; ics.target = '_blank'; ics.rel = 'noopener';
+        acts.appendChild(ics);
+        aact('Back to the week', null, function () { loadCalendar(); });
+        c.appendChild(acts);
+        if ((r.events || []).length) {
+          var ev = el('div', 'qevents');
+          r.events.forEach(function (e) { ev.appendChild(el('div', null, fmt(e.at) + ' · ' + (e.note || e.kind))); });
+          c.appendChild(ev);
+        }
+        calGrid.appendChild(c);
+      });
+    }
+
+    // ---- booking for a customer ----
+    document.getElementById('calBook').addEventListener('click', function () {
+      var f = document.getElementById('calBookForm');
+      f.hidden = !f.hidden;
+      document.getElementById('calHoursForm').hidden = true;
+      if (!f.hidden) document.getElementById('calCustQ').focus();
+    });
+    document.getElementById('calCancelForm').addEventListener('click', function () { document.getElementById('calBookForm').hidden = true; });
+
+    function calSelect(c) {
+      calSelected = c;
+      document.getElementById('calCustList').hidden = true;
+      document.getElementById('calCustQ').value = '';
+      var sel = document.getElementById('calCustSel');
+      sel.hidden = false; sel.textContent = '';
+      sel.appendChild(el('b', null, cpLabel(c)));
+      if (c.email) sel.appendChild(el('span', 'cp-s', c.email));
+      var ch = el('button', null, 'Change'); ch.type = 'button';
+      ch.addEventListener('click', function () { calSelected = null; sel.hidden = true; document.getElementById('calCustQ').focus(); });
+      sel.appendChild(ch);
+      if (c.email) document.getElementById('calEmail').value = c.email;
+      if (c.name) document.getElementById('calName').value = c.name;
+    }
+    document.getElementById('calCustQ').addEventListener('input', function () {
+      clearTimeout(calTimer);
+      var q = this.value.trim();
+      calTimer = setTimeout(function () {
+        var list = document.getElementById('calCustList');
+        if (!q) { list.hidden = true; return; }
+        api('/admin/customers?q=' + encodeURIComponent(q)).then(function (r) {
+          list.textContent = ''; list.hidden = false;
+          (r.ok ? r.customers || [] : []).slice(0, 10).forEach(function (c) {
+            var b = el('button'); b.type = 'button';
+            b.appendChild(el('div', 'cp-n', cpLabel(c)));
+            b.appendChild(el('div', 'cp-s', c.email));
+            b.addEventListener('click', function () { calSelect(c); });
+            list.appendChild(b);
+          });
+          if (!list.childNodes.length) list.appendChild(el('div', 'state', 'Nobody matches. Fill the email in below.'));
+        });
+      }, 250);
+    });
+
+    document.getElementById('calSave').addEventListener('click', function () {
+      var date = document.getElementById('calDate').value;
+      var time = document.getElementById('calTime').value;
+      if (!date || !time) return toast('Pick a date and a time');
+      var ts = Math.floor(new Date(date + 'T' + time).getTime() / 1000);
+      var email = document.getElementById('calEmail').value.trim();
+      if (!email) return toast('Whose appointment is it? Enter their email.');
+      var kind = document.getElementById('calKind').value;
+      var address = document.getElementById('calAddress').value.trim();
+      if (kind === 'onsite' && !address) return toast('An on-site visit needs an address');
+      var btn = this; btn.disabled = true;
+      api('/admin/appointments', { method: 'POST', body: {
+        starts_at: ts, minutes: Number(document.getElementById('calMins').value) || 60, kind: kind,
+        title: document.getElementById('calTitle').value.trim() || null, email: email,
+        contact_name: document.getElementById('calName').value.trim() || null,
+        phone: document.getElementById('calPhone').value.trim() || null,
+        address: address || null, notes: document.getElementById('calNotes').value.trim() || null,
+        account_id: calSelected && calSelected.account_id ? calSelected.account_id : null,
+      } }).then(function (r) {
+        btn.disabled = false;
+        if (!r.ok) return toast(APPT_ERROR[r.error] || 'Could not book it');
+        toast('Booked · invite sent to ' + email);
+        document.getElementById('calBookForm').hidden = true;
+        ['calTitle', 'calAddress', 'calNotes', 'calPhone'].forEach(function (i) { document.getElementById(i).value = ''; });
+        calAnchor = weekStart(ts);
+        loadCalendar();
+      });
+    });
+
+    // ---- working hours and time off ----
+    document.getElementById('calHours').addEventListener('click', function () {
+      var f = document.getElementById('calHoursForm');
+      f.hidden = !f.hidden;
+      document.getElementById('calBookForm').hidden = true;
+      if (!f.hidden) loadHours();
+    });
+    document.getElementById('calHoursClose').addEventListener('click', function () { document.getElementById('calHoursForm').hidden = true; });
+
+    var DOW = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+    function loadHours() {
+      api('/admin/availability/rules').then(function (r) {
+        var box = document.getElementById('calRules');
+        box.textContent = '';
+        if (!r.ok || !(r.rules || []).length) {
+          box.appendChild(el('div', 'row-sub', 'No windows set, so nothing is bookable yet. Add one below.'));
+          return;
+        }
+        r.rules.forEach(function (x) {
+          var row = el('div', 'rulerow');
+          row.appendChild(el('b', null, DOW[x.dow]));
+          row.appendChild(el('span', null, x.start_hm + ' – ' + x.end_hm));
+          row.appendChild(el('span', 'k', x.kind === 'any' ? 'anything' : x.kind + ' only'));
+          var del = el('button', null, 'Remove'); del.type = 'button';
+          del.addEventListener('click', function () {
+            if (!confirm('Remove ' + DOW[x.dow] + ' ' + x.start_hm + '-' + x.end_hm + '?')) return;
+            api('/admin/availability/rules/' + x.id, { method: 'DELETE' }).then(function () { loadHours(); loadCalendar(); });
+          });
+          row.appendChild(del);
+          box.appendChild(row);
+        });
+      });
+      api('/admin/availability/blocks').then(function (r) {
+        var box = document.getElementById('calBlocks');
+        box.textContent = '';
+        if (!r.ok || !(r.blocks || []).length) { box.appendChild(el('div', 'row-sub', 'Nothing blocked out.')); return; }
+        r.blocks.forEach(function (b) {
+          var row = el('div', 'rulerow');
+          row.appendChild(el('b', null, fmtDate(b.starts_at)));
+          row.appendChild(el('span', null, 'to ' + fmtDate(b.ends_at)));
+          row.appendChild(el('span', 'k', b.reason || ''));
+          var del = el('button', null, 'Remove'); del.type = 'button';
+          del.addEventListener('click', function () {
+            api('/admin/availability/blocks/' + b.id, { method: 'DELETE' }).then(function () { loadHours(); loadCalendar(); });
+          });
+          row.appendChild(del);
+          box.appendChild(row);
+        });
+      });
+    }
+    document.getElementById('ruleAdd').addEventListener('click', function () {
+      api('/admin/availability/rules', { method: 'POST', body: {
+        dow: Number(document.getElementById('ruleDow').value),
+        start_hm: document.getElementById('ruleStart').value,
+        end_hm: document.getElementById('ruleEnd').value,
+        kind: document.getElementById('ruleKind').value,
+      } }).then(function (r) {
+        toast(r.ok ? 'Added' : (APPT_ERROR[r.error] || 'Could not add it'));
+        if (r.ok) { loadHours(); loadCalendar(); }
+      });
+    });
+    document.getElementById('blockAdd').addEventListener('click', function () {
+      var a = document.getElementById('blockFrom').value, b = document.getElementById('blockTo').value;
+      if (!a) return toast('Pick a start date');
+      // Inclusive of the last day: a block to the 5th covers all of the 5th.
+      var starts = Math.floor(new Date(a + 'T00:00').getTime() / 1000);
+      var ends = Math.floor(new Date((b || a) + 'T00:00').getTime() / 1000) + 86400;
+      api('/admin/availability/blocks', { method: 'POST', body: { starts_at: starts, ends_at: ends, reason: document.getElementById('blockWhy').value.trim() } })
+        .then(function (r) {
+          toast(r.ok ? 'Blocked' : (APPT_ERROR[r.error] || 'Could not block it'));
+          if (r.ok) { document.getElementById('blockWhy').value = ''; loadHours(); loadCalendar(); }
+        });
+    });
 
     // ---- quotes (Phase 3) -----------------------------------------------
     var quoteForm = document.getElementById('quoteForm');
@@ -6130,6 +6575,7 @@
       else if (type === 'agreement') { showView('customers'); }
       else if (type === 'invoice') { var mnum = /^(\S+)/.exec(summary || ''); if (mnum) showInvoice(mnum[1]); else showView('invoices'); }
       else if (type === 'quote') { showQuote(Number(id)); }
+      else if (type === 'appointment') { showView('calendar'); openAppointment(Number(id)); }
       else if (type === 'inventory') { showView('inventory'); var go = function () { flashInvt(Number(id)); }; if (invtAll.length) go(); else loadInventory().then(go); }
       else if (type === 'license') { showView('keys'); }
       else if (type === 'paypal') { showView('finance'); }
@@ -6236,6 +6682,24 @@
           sQ.appendChild(row(q.number + ' · ' + q.title, q.who + ' · ' + (q.needs === 'convert' ? 'accepted, convert to an invoice' : q.unopened ? 'sent ' + ago(a.now - q.sent_at) + ' ago, not opened' : q.viewed ? 'opened, no decision yet' : 'sent ' + ago(a.now - (q.sent_at || a.now)) + ' ago') + (q.expires_in_sec != null && q.needs === 'decision' ? ' · ' + (q.expires_in_sec > 0 ? 'expires in ' + ago(q.expires_in_sec) : 'expired') : ''), right, function () { showQuote(q.id); }));
         });
         wrap.appendChild(sQ);
+      }
+      var appts = (a.appointments && a.appointments.upcoming) || [];
+      if (appts.length) {
+        any = true;
+        var sAp = attSection('In the diary', appts.length, false);
+        appts.forEach(function (ap) {
+          sAp.appendChild(row(ap.when + ' \u00b7 ' + ap.who, (ap.kind_label || ap.kind) + ' \u00b7 ' + ap.title + (ap.address ? ' \u00b7 ' + ap.address : ''), ap.today ? el('b', 'num', 'today') : null, function () { openObject('appointment', ap.id); }));
+        });
+        wrap.appendChild(sAp);
+      }
+      var unclosed = (a.appointments && a.appointments.unclosed) || [];
+      if (unclosed.length) {
+        any = true;
+        var sUn = attSection('Appointments to close out', unclosed.length, true);
+        unclosed.forEach(function (ap) {
+          sUn.appendChild(row(ap.when + ' \u00b7 ' + ap.who, 'Came and went while still marked booked', null, function () { openObject('appointment', ap.id); }));
+        });
+        wrap.appendChild(sUn);
       }
       if ((a.agreements || []).length) {
         any = true;
@@ -6461,6 +6925,8 @@
       else if ((m = /^#o=([A-Za-z0-9_-]{1,64})/.exec(hash))) { showView('customers'); custMode = 'orgs'; syncMode(); openOrg(m[1]); }
       else if ((m = /^#inv=(.+)/.exec(hash))) { showInvoice(decodeURIComponent(m[1])); }
       else if ((m = /^#q=(\d+)/.exec(hash))) { showQuote(Number(m[1])); }
+      else if ((m = /^#a=(\d+)/.exec(hash))) { showView('calendar'); openAppointment(Number(m[1])); }
+      else if (hash === '#cal') showView('calendar');
       else if ((m = /^#i=(\d+)/.exec(hash))) { loaded.inventory = true; showView('inventory'); loadInventory().then(function () { flashInvt(Number(m[1])); }); }
       else if ((m = /^#finance(?:=(\d{4}(?:-Q\d|-\d{2})?))?$/.exec(hash))) {
         if (m[1]) { finPeriod = /Q/.test(m[1]) ? 'quarter' : /-/.test(m[1]) ? 'month' : 'year'; finAnchor = keyToAnchor(m[1]); }
@@ -6815,6 +7281,7 @@
       // Inventory and Finance re-read on every visit: both are one request, and a
       // confirmation or a payment that landed while you were on another tab should
       // show without a refresh.
+      calendar: { view: 'viewCalendar', nav: 'navCalendar', load: loadCalendar, always: true },
       inventory: { view: 'viewInventory', nav: 'navInventory', load: loadInventory, always: true },
       finance: { view: 'viewFinance', nav: 'navFinance', load: loadFinance, always: true },
       keys: { view: 'viewKeys', nav: 'navKeys', load: loadKeys }
@@ -6825,7 +7292,7 @@
     // second, redundant history entry.
     var HASH_OF = {
       home: /^(#home|#|)$/, inbox: /^#(inbox|m=)/, tickets: /^#(tickets|t=)/, customers: /^#(customers|c=|o=)/,
-      invoices: /^#(invoices|inv=|q=)/, inventory: /^#(inventory|i=)/, finance: /^#finance/, keys: /^#keys/,
+      invoices: /^#(invoices|inv=|q=)/, calendar: /^#(cal|a=)/, inventory: /^#(inventory|i=)/, finance: /^#finance/, keys: /^#keys/,
     };
 
     function showView(which) {
