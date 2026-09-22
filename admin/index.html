@@ -5056,7 +5056,7 @@
       left.appendChild(main);
       left.appendChild(el('div', 'row-sub', fmtDate(tx.initiated_at) + ' · ' + tx.transaction_id +
         (tx.fee_cents ? ' · fee ' + money(-tx.fee_cents) : '') + (tx.invoice_number ? ' · invoice ' + tx.invoice_number : '') +
-        (tx.refund ? ' · refund' : '') + (tx.transfer ? ' · bank transfer' : '')));
+        (tx.refund ? ' · refund' : '') + (tx.transfer ? ' · funding transfer' : '')));
       d.appendChild(left);
       var right = el('div', 'cust-badges');
       right.appendChild(el('b', 'pp-amt ' + tx.direction, money(tx.gross_cents)));
