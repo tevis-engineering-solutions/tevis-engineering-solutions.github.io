@@ -402,6 +402,8 @@
     .pp-amt.in { color:#6dc882; }
     .pp-amt.out { color:#e08a68; }
     .pp-review { border:1px solid rgba(200,152,48,0.4); background:rgba(200,152,48,0.05); border-radius:12px; padding:0.7rem 0.8rem; margin-top:0.9rem; }
+    .pp-row { transition:opacity .2s, transform .2s; }
+    .pp-row.gone { opacity:0; transform:translateX(12px); pointer-events:none; }
     .pp-hidden { margin-top:0.6rem; }
     .pp-hidden summary { font-size:0.78rem; color:var(--muted); cursor:pointer; padding:0.3rem 0; }
     .vbtn .nbadge { display:inline-block; min-width:1.2rem; padding:0 0.3rem; margin-left:0.35rem; border-radius:999px; background:var(--gold); color:#0d1710; font-size:0.6rem; line-height:1.2rem; text-align:center; }
@@ -5043,12 +5045,59 @@
       api('/admin/finance/paypal/' + encodeURIComponent(tx.transaction_id), { method: 'PATCH', body: body }).then(function (r) {
         if (!r || !r.ok) { alert((r && r.message) || 'Could not update (' + ((r && r.error) || 'unknown') + ')'); return; }
         if (r.marked_paid) toast('Linked and marked ' + r.invoice_number + ' paid'); else toast(r.classification ? cap(r.classification) : 'Back to review');
-        if (done) done(r); else loadFinance();
+        if (done) done(r); else ppRowDone(tx, r);
       });
+    }
+
+    // A classified row leaves its list in place; the counts follow it, and the
+    // tiles catch up quietly a moment later without the page moving.
+    function ppRowDone(tx, r) {
+      var row = finBody.querySelector('.pp-row[data-txn="' + tx.transaction_id + '"]');
+      if (row) {
+        var wasReview = !!row.closest('.pp-review');
+        row.classList.add('gone');
+        setTimeout(function () {
+          row.remove();
+          if (wasReview) {
+            var left = finBody.querySelectorAll('.pp-review .pp-row').length;
+            var h = finBody.querySelector('.pp-review h3');
+            if (h) h.textContent = 'Needs review (' + left + ')';
+            Array.prototype.forEach.call(document.querySelectorAll('.vbtn[data-view="finance"] .nbadge'), function (nb) {
+              nb.hidden = !left; nb.textContent = String(left || '');
+            });
+            if (!left && finBody.querySelector('.pp-review')) finBody.querySelector('.pp-review').appendChild(el('div', 'row-sub', 'Everything imported has been classified.'));
+          }
+          var sm = finBody.querySelector('.pp-hidden summary');
+          if (sm) {
+            var m = /Hidden: (\d+)/.exec(sm.textContent);
+            var n = m ? Number(m[1]) : 0;
+            if (r.classification === 'personal' || r.classification === 'transfer') n += 1;
+            else if (tx.classification === 'personal' || tx.classification === 'transfer') n = Math.max(0, n - 1);
+            sm.textContent = 'Hidden: ' + n + ' personal or transfer';
+          }
+        }, 220);
+      }
+      finRefreshQuiet();
+    }
+
+    var finQuietTimer = null;
+    function finRefreshQuiet() {
+      clearTimeout(finQuietTimer);
+      finQuietTimer = setTimeout(function () {
+        var y = window.scrollY;
+        var url = '/admin/finance/statement?period=' + encodeURIComponent(finPeriod) + (finAnchor ? '&anchor=' + encodeURIComponent(finAnchor) : '');
+        api(url).then(function (r) {
+          if (!r.ok || !document.getElementById('viewFinance') || document.getElementById('viewFinance').hidden) return;
+          finStatement = r.statement;
+          renderFinance(finStatement);
+          window.scrollTo(0, y);
+        });
+      }, 1500);
     }
 
     function ppRow(tx, mode) {
       var d = el('div', 'row pp-row');
+      d.setAttribute('data-txn', tx.transaction_id);
       var left = el('div');
       var main = el('div', 'row-main');
       main.appendChild(el('span', 'pp-dir ' + tx.direction, tx.direction === 'in' ? '→ in' : '← out'));
