@@ -252,6 +252,18 @@
     .co-link .why { font-size:0.72rem; color:var(--muted); margin:0; line-height:1.45; }
     .co-link .reply-row { margin-top:0.5rem; }
     .co-link select { max-width:100%; }
+    /* Editing a customer's contact record in place, from the head of their file. */
+    .ced { margin:0.6rem 0 0.9rem; padding:0.75rem; border:1px solid var(--line); border-radius:12px; background:var(--bg); }
+    .ced-grid { display:grid; grid-template-columns:1fr 1fr; gap:0.55rem; }
+    @media (max-width:640px) { .ced-grid { grid-template-columns:1fr; } }
+    .ced-grid .wide { grid-column:1 / -1; }
+    .ced label { display:block; font-family:"Montserrat",sans-serif; font-size:0.6rem; font-weight:700;
+      text-transform:uppercase; letter-spacing:0.05em; color:var(--muted); margin-bottom:0.2rem; }
+    .ced input { width:100%; padding:0.5rem 0.6rem; border-radius:8px; border:1px solid var(--line);
+      background:var(--card); color:var(--text); font:inherit; font-size:0.85rem; min-height:38px; }
+    .ced input:focus { outline:none; border-color:var(--green); }
+    .ced .fixed { color:var(--muted); font-size:0.75rem; margin:0.1rem 0 0; }
+    .ced .reply-row { margin-top:0.7rem; }
     .cust-sec > h3 { font-family:"Montserrat",sans-serif; font-size:0.76rem; text-transform:uppercase; letter-spacing:0.05em; color:var(--muted); margin-bottom:0.4rem; }
     .row { width:100%; text-align:left; border:1px solid var(--line); border-radius:10px; background:var(--bg); padding:0.55rem 0.7rem; margin-bottom:0.35rem; color:inherit; font:inherit; display:flex; justify-content:space-between; gap:0.5rem; align-items:center; flex-wrap:wrap; }
     button.row { cursor:pointer; }
@@ -4348,7 +4360,22 @@
           : c.profile.source === 'ticket'
             ? 'Details read from their most recent ticket. No profile saved yet.'
             : 'No name on file. They have never filed a ticket.'));
+      var edRow = el('div', 'reply-row');
+      var edBtn = el('button', null, 'Edit details');
+      edBtn.type = 'button';
+      edRow.appendChild(edBtn);
+      head.appendChild(edRow);
       wrap.appendChild(head);
+
+      // The form replaces the button in place, so the rest of the file stays where it
+      // is rather than the panel jumping under whoever is reading it.
+      var edOpen = null;
+      edBtn.addEventListener('click', function () {
+        if (edOpen) { edOpen.remove(); edOpen = null; edBtn.textContent = 'Edit details'; return; }
+        edBtn.textContent = 'Close';
+        edOpen = contactEditor(c, function () { openCustomer(c.account.id); });
+        head.appendChild(edOpen);
+      });
 
       // Their company, or the offer to make one. Directly under who they are, because
       // it changes who gets billed for everything below it.
@@ -4400,6 +4427,74 @@
       tabs.count('Equipment', (c.inventory || []).length);
 
       // ---- records that belong to nobody ----
+      // Correcting a customer's own details from here. Until now this was portal-only,
+      // so a name or company read off a PDF could not be fixed without the customer
+      // signing in and doing it themselves -- which is not a thing you can ask of
+      // somebody you just invoiced.
+      //
+      // Writes the SAME ROW the portal writes. Two copies of a phone number is a
+      // support call waiting to happen.
+      var CONTACT_FIELDS = [
+        ['name', 'Name', 'wide'], ['company', 'Company', 'wide'],
+        ['job_title', 'Job title'], ['phone', 'Phone'],
+        ['alt_phone', 'Other phone'], ['address_line1', 'Address'],
+        ['address_line2', 'Address line 2'], ['city', 'City'],
+        ['region', 'State'], ['postal_code', 'ZIP'], ['country', 'Country'],
+      ];
+
+      function contactEditor(c, onDone) {
+        var box = el('div', 'ced');
+        var grid = el('div', 'ced-grid');
+        var inputs = {};
+        CONTACT_FIELDS.forEach(function (fdef) {
+          var cell = el('div', fdef[2] || null);
+          var id = 'ced-' + fdef[0] + '-' + c.account.id;
+          var lab = el('label', null, fdef[1]);
+          lab.setAttribute('for', id);
+          cell.appendChild(lab);
+          var inp = document.createElement('input');
+          inp.type = 'text';
+          inp.id = id;
+          inp.value = (c.profile && c.profile[fdef[0]]) || '';
+          inputs[fdef[0]] = inp;
+          cell.appendChild(inp);
+          grid.appendChild(cell);
+        });
+        box.appendChild(grid);
+        // Said plainly rather than left as a disabled box somebody tries to click.
+        box.appendChild(el('p', 'fixed',
+          'Sign-in address is ' + c.account.email + ' and cannot be changed here \u2014 every ' +
+          'ticket, invoice and key is claimed by it. Notes are on the Notes tab.'));
+
+        var row = el('div', 'reply-row');
+        var save = el('button', 'prim', 'Save details');
+        save.type = 'button';
+        var cancel = el('button', null, 'Cancel');
+        cancel.type = 'button';
+        row.appendChild(save);
+        row.appendChild(cancel);
+        box.appendChild(row);
+
+        save.addEventListener('click', function () {
+          var patch = {};
+          CONTACT_FIELDS.forEach(function (fdef) { patch[fdef[0]] = inputs[fdef[0]].value; });
+          save.disabled = true;
+          api('/admin/customers/' + c.account.id + '/profile', { method: 'PATCH', body: patch })
+            .then(function (r) {
+              save.disabled = false;
+              if (!r.ok) {
+                return toast(r.error === 'nothing_to_save' ? 'Nothing to save'
+                  : r.error === 'not_found' ? 'That account no longer exists' : 'Could not save');
+              }
+              toast('Details saved');
+              onDone();
+            });
+        });
+        cancel.addEventListener('click', onDone);
+        setTimeout(function () { inputs.name.focus(); }, 0);
+        return box;
+      }
+
       // A person's company. Intake puts the company NAME on their contact record but
       // never invents an organization, because "Acme Co" and "Acme Co." would become
       // two of them and bill separately. So when the name is there and the record is
