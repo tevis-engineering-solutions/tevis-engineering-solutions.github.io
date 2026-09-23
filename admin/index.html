@@ -504,6 +504,11 @@
     kbd { font-family:"Inter",monospace; font-size:0.68rem; padding:0.12rem 0.36rem; border-radius:5px;
       border:1px solid var(--line); background:var(--bg); color:var(--text); }
     .fin-list .row b.num { font-family:"Montserrat",sans-serif; white-space:nowrap; }
+    /* .row wraps by default, so in this narrow column a long merchant name pushed the
+       amount onto a line of its own and every row rendered as a tall card. The text
+       column shrinks instead. */
+    .fin-list .row { flex-wrap:nowrap; }
+    .fin-list .row > div:first-child { flex:1; min-width:0; }
     .pp-row .row-main { display:flex; gap:0.4rem; align-items:baseline; flex-wrap:wrap; }
     .pp-dir { font-family:"Montserrat",sans-serif; font-size:0.66rem; font-weight:800; text-transform:uppercase; letter-spacing:0.04em; padding:0.1rem 0.4rem; border-radius:6px; }
     .pp-dir.in { color:#6dc882; background:rgba(74,172,101,0.12); }
@@ -7930,9 +7935,27 @@
         if (x.kind === 'ledger') return x.account_label || 'card or cash';
         return 'PayPal purchase';
       }
+      // The server fills `name` and `vendor` from whatever the source had, and both
+      // fall back: a PayPal row with no subject is named "PayPal purchase", a card row
+      // with no vendor borrows the account label. Joined blindly that reads "PayPal
+      // purchase · Microsoft Corporation" over a line that says "PayPal purchase"
+      // again, and "ANTHROPIC · Anthropic". So: drop anything the line beneath already
+      // says, and drop either half that is a restatement of the other.
+      function expenseLabel(x) {
+        var norm = function (v) { return String(v || '').replace(/[^a-z0-9]/gi, '').toLowerCase(); };
+        var said = [norm(EXPENSE_KIND(x)), norm(x.account_label)];
+        var parts = [];
+        [x.name, x.vendor].forEach(function (v) {
+          var n = norm(v);
+          if (!n || said.indexOf(n) >= 0) return;
+          if (parts.some(function (p) { var q = norm(p); return q.indexOf(n) >= 0 || n.indexOf(q) >= 0; })) return;
+          parts.push(v);
+        });
+        return parts.join(' · ') || EXPENSE_KIND(x);
+      }
       st.expenses.items.slice(0, 60).forEach(function (x) {
         var right = el('b', 'num', money(x.cents));
-        exList.appendChild(row(x.name + (x.vendor ? ' · ' + x.vendor : ''),
+        exList.appendChild(row(expenseLabel(x),
           fmtDate(x.ts) + ' · ' + EXPENSE_KIND(x) + (x.tag ? ' · ' + x.tag : ''),
           right, x.item_id ? function () { showView('inventory'); var go = function () { flashInvt(x.item_id); }; if (invtAll.length) go(); else loadInventory().then(go); } : null));
       });
