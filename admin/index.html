@@ -9803,9 +9803,11 @@
       d2.appendChild(el('summary', null, 'Announcements'));
       var list2 = el('div');
       d2.appendChild(list2);
+      var annLists = [];
       var renderAnn = function () {
         list2.textContent = '';
         api('/admin/announcements').then(function (r) {
+          annLists = (r && r.lists) || [];
           var items = r.ok ? r.announcements : [];
           var nowS = Math.floor(Date.now() / 1000);
           if (!items.length) list2.appendChild(el('div', 'row-sub', 'None. An announcement shows on every portal page while it is live and can be emailed once.'));
@@ -9814,12 +9816,30 @@
             var right = el('div', 'cust-badges');
             right.appendChild(badge(live ? 'live' : a.starts_at > nowS ? 'scheduled' : 'ended', live ? '#22c55e' : '#6a8ba8'));
             right.appendChild(badge(a.kind, '#8aa48d'));
+            // Read it before anyone else does. The copy goes to the signed-in Access
+            // email and does NOT count as the send, so the real one is still available.
+            right.appendChild(licAction('Send me a test copy', null, function () {
+              api('/admin/announcements/' + a.id + '/test', { method: 'POST' }).then(function (x) {
+                toast(x.ok ? 'Test copy sent to ' + x.to : (x.error === 'send_failed' ? 'Resend refused it' : (x.error || 'Could not send')));
+              });
+            }));
             if (!a.emailed_at) right.appendChild(licAction('Email everyone', null, function () {
-              if (!confirm('Email "' + a.title + '" to every customer who accepts announcements?')) return;
+              // Say WHO and HOW MANY. "Everyone" is a number you should see first, and
+              // after this it can also be a named list rather than the whole base.
+              var re = a.reach || {};
+              var n = re.will_send;
+              var whoTo = (re.label || 'Everyone') + ' \u2014 '
+                + (n == null ? 'every customer who accepts announcements'
+                  : n + ' customer' + (n === 1 ? '' : 's')
+                    + (re.opted_out ? ' (' + re.opted_out + ' opted out)' : ''));
+              if (!confirm('Email "' + a.title + '" to ' + whoTo + '?\n\nThis cannot be unsent, and it can only be done once.')) return;
               api('/admin/announcements/' + a.id + '/email', { method: 'POST' }).then(function (x) { toast(x.ok ? 'Emailed ' + x.sent + (x.skipped ? ' · ' + x.skipped + ' opted out' : '') : (x.error || 'Could not send')); renderAnn(); });
             }));
             right.appendChild(licAction('Delete', null, function () { if (confirm('Delete "' + a.title + '"?')) api('/admin/announcements/' + a.id, { method: 'DELETE' }).then(renderAnn); }));
-            list2.appendChild(row(a.title, fmtDate(a.starts_at) + (a.ends_at ? ' to ' + fmtDate(a.ends_at) : ', no end') + (a.emailed_at ? ' · emailed ' + fmtDate(a.emailed_at) : '') + ' · ' + a.body.slice(0, 100), right, null));
+            var reach = a.reach || {};
+            list2.appendChild(row(a.title, fmtDate(a.starts_at) + (a.ends_at ? ' to ' + fmtDate(a.ends_at) : ', no end')
+              + ' \u00b7 ' + (reach.label || 'Everyone') + (reach.will_send != null ? ' (' + reach.will_send + ')' : '')
+              + (a.emailed_at ? ' \u00b7 emailed ' + fmtDate(a.emailed_at) : '') + ' \u00b7 ' + a.body.slice(0, 100), right, null));
           });
           var g = el('div', 'fgrid');
           var title = formField(g, 'anTitle', 'Title', 'text', 'Email maintenance Saturday');
@@ -9827,12 +9847,22 @@
           [['info', 'Notice'], ['maintenance', 'Maintenance'], ['billing', 'Billing']].forEach(function (k) { var o = document.createElement('option'); o.value = k[0]; o.textContent = k[1]; kind.appendChild(o); });
           var from = formField(g, 'anFrom', 'Show from', 'datetime-local', '');
           var to = formField(g, 'anTo', 'Until (optional)', 'datetime-local', '');
+          // Who it goes to, chosen when it is written rather than when it is sent, so
+          // the recipients cannot change underneath a notice that is already drafted.
+          var aud = formField(g, 'anAud', 'Send to', 'select');
+          var oAll = document.createElement('option'); oAll.value = 'all'; oAll.textContent = 'All clients';
+          aud.appendChild(oAll);
+          annLists.forEach(function (l) {
+            var o = document.createElement('option'); o.value = 'list:' + l.id;
+            o.textContent = l.name + ' (' + l.members + ')';
+            aud.appendChild(o);
+          });
           list2.appendChild(g);
           var ta = document.createElement('textarea'); ta.rows = 3; ta.placeholder = 'What customers should know'; ta.setAttribute('aria-label', 'Announcement text');
           list2.appendChild(ta);
           list2.appendChild(licAction('Publish', 'prim', function () {
             if (!title.value.trim() || !ta.value.trim()) return toast('Title and text, please');
-            var body = { title: title.value, body: ta.value, kind: kind.value };
+            var body = { title: title.value, body: ta.value, kind: kind.value, audience: aud.value };
             if (from.value) body.starts_at = Math.floor(new Date(from.value).getTime() / 1000);
             if (to.value) body.ends_at = Math.floor(new Date(to.value).getTime() / 1000);
             api('/admin/announcements', { method: 'POST', body: body }).then(function (r) { toast(r.ok ? 'Published' : (r.error === 'bad_window' ? 'The end is before the start' : 'Could not publish')); if (r.ok) renderAnn(); });
@@ -9840,6 +9870,78 @@
         });
       };
       d2.addEventListener('toggle', function () { if (d2.open) renderAnn(); });
+      // ---- distribution lists ----
+      var d3 = el('details');
+      d3.appendChild(el('summary', null, 'Distribution lists'));
+      var list3 = el('div');
+      d3.appendChild(list3);
+      var openList = function (id) {
+        api('/admin/lists/' + id).then(function (r) {
+          if (!r.ok) return toast('Could not open that list');
+          list3.textContent = '';
+          list3.appendChild(licAction('\u2039 All lists', null, renderLists));
+          list3.appendChild(el('div', 'sec-title', r.list.name + ' \u00b7 ' + r.list.members.length
+            + ' member' + (r.list.members.length === 1 ? '' : 's')));
+          if (r.list.description) list3.appendChild(el('div', 'row-sub', r.list.description));
+          if (!r.list.members.length) list3.appendChild(el('div', 'row-sub', 'Nobody on it yet. Add someone below.'));
+          r.list.members.forEach(function (m) {
+            var rr = el('div', 'cust-badges');
+            rr.appendChild(licAction('Remove', null, function () {
+              api('/admin/lists/' + id + '/members/' + m.account_id, { method: 'DELETE' })
+                .then(function (x) { if (x.ok) openList(id); else toast('Could not remove'); });
+            }));
+            list3.appendChild(row(m.company || m.name || m.email, m.email, rr, null));
+          });
+          // Anybody who qualifies for this list and is not on it. A list is explicit on
+          // purpose, so this is an offer rather than a rule, and it doubles as the
+          // warning that a list has gone stale since a customer arrived.
+          (r.suggestions || []).forEach(function (grp) {
+            if (!grp.accounts.length) return;
+            list3.appendChild(el('div', 'sec-title', 'Not on this list: ' + grp.group));
+            list3.appendChild(licAction('Add all ' + grp.accounts.length, 'prim', function () {
+              api('/admin/lists/' + id + '/members', { method: 'POST',
+                body: { account_ids: grp.accounts.map(function (x) { return x.account_id; }) } })
+                .then(function (x) { toast(x.ok ? 'Added ' + x.added : 'Could not add'); openList(id); });
+            }));
+            grp.accounts.forEach(function (x) {
+              var rr = el('div', 'cust-badges');
+              rr.appendChild(licAction('Add', null, function () {
+                api('/admin/lists/' + id + '/members', { method: 'POST', body: { account_ids: [x.account_id] } })
+                  .then(function (y) { if (y.ok) openList(id); else toast('Could not add'); });
+              }));
+              list3.appendChild(row(x.who, x.email, rr, null));
+            });
+          });
+        });
+      };
+      var renderLists = function () {
+        list3.textContent = '';
+        api('/admin/lists').then(function (r) {
+          var ls = r.ok ? r.lists : [];
+          if (!ls.length) list3.appendChild(el('div', 'row-sub',
+            'None yet. A list lets an announcement go to one group \u2014 the crash-tool customers, the managed-IT clients \u2014 instead of everybody.'));
+          ls.forEach(function (l) {
+            var rr = el('div', 'cust-badges');
+            rr.appendChild(badge(l.members + ' member' + (l.members === 1 ? '' : 's'), '#8aa48d'));
+            rr.appendChild(licAction('Delete', null, function () {
+              if (!confirm('Delete the list "' + l.name + '"? Announcements already sent to it are unaffected.')) return;
+              api('/admin/lists/' + l.id, { method: 'DELETE' }).then(function (x) { if (x.ok) renderLists(); });
+            }));
+            list3.appendChild(row(l.name, l.description || 'No description', rr, function () { openList(l.id); }));
+          });
+          var g = el('div', 'fgrid');
+          var nm = formField(g, 'dlName', 'New list', 'text', 'Crash tool customers');
+          var ds = formField(g, 'dlDesc', 'What it is for', 'text', 'Everyone running the Ohio Crash tool');
+          list3.appendChild(g);
+          list3.appendChild(licAction('Create list', 'prim', function () {
+            if (!nm.value.trim()) return toast('Give it a name');
+            api('/admin/lists', { method: 'POST', body: { name: nm.value, description: ds.value } })
+              .then(function (x) { if (x.ok) { toast('Created'); openList(x.id); } else toast('Could not create'); });
+          }));
+        });
+      };
+      d3.addEventListener('toggle', function () { if (d3.open) renderLists(); });
+      wrap.appendChild(d3);
       wrap.appendChild(d2);
 
       // keyboard
