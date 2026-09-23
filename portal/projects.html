@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Equipment | TES Customer Portal</title>
-  <meta name="description" content="Equipment and subscriptions assigned to your Tevis Engineering Solutions account, and where to confirm you have received them.">
+  <title>Projects | TES Customer Portal</title>
+  <meta name="description" content="Your projects with Tevis Engineering Solutions: status, milestones, and deliverables waiting for your sign-off.">
   <meta name="robots" content="noindex, nofollow">
   <link rel="canonical" href="https://tevisengineering.com/portal/equipment.html">
   <link rel="icon" type="image/png" href="../assets/favicon.png">
@@ -148,6 +148,24 @@
     .hist-foot { color:var(--muted); font-size:0.78rem; margin-top:0.6rem; }
     .ptab { position:relative; }
     .ptab[hidden] { display:none; }
+    .prj { background:var(--card); border:1px solid var(--line); border-radius:14px; padding:1.25rem 1.35rem; margin-bottom:0.9rem; }
+    .prj-top { display:flex; flex-wrap:wrap; gap:0.6rem 1rem; align-items:flex-start; justify-content:space-between; }
+    .prj h2 { font-family:"Montserrat",sans-serif; font-size:1.05rem; color:#fff; margin:0; }
+    .prj .meta { color:var(--muted); font-size:0.83rem; margin-top:0.2rem; }
+    .prj .desc { color:#c3d4c6; font-size:0.88rem; margin-top:0.6rem; }
+    .prj-bar { height:6px; border-radius:999px; background:var(--line); overflow:hidden; margin:0.9rem 0 0.4rem; }
+    .prj-bar span { display:block; height:100%; background:linear-gradient(90deg,var(--green),var(--gold)); }
+    .ms { display:flex; gap:0.8rem; align-items:flex-start; padding:0.7rem 0; border-top:1px solid rgba(44,66,50,0.55); }
+    .ms:first-of-type { border-top:0; }
+    .ms-dot { flex:0 0 auto; width:14px; height:14px; margin-top:0.25rem; border-radius:50%; border:2px solid var(--line); }
+    .ms.done .ms-dot { background:var(--green); border-color:var(--green); }
+    .ms.accepted .ms-dot { background:var(--gold); border-color:var(--gold); }
+    .ms-body { flex:1 1 auto; min-width:0; }
+    .ms-body b { color:#fff; display:block; }
+    .ms-body span { color:var(--muted); font-size:0.83rem; }
+    .ms-accept { margin-top:0.5rem; }
+    .ms-accept button { font-family:"Montserrat",sans-serif; font-weight:700; font-size:0.78rem; text-transform:uppercase; letter-spacing:0.04em; padding:0.6rem 1rem; min-height:44px; border-radius:999px; border:0; cursor:pointer; background:linear-gradient(135deg,#c89830,#e0b840); color:#0d1710; }
+    .ms-accept button:disabled { opacity:0.6; cursor:default; }
     .pdot { position:absolute; top:0.7rem; right:0.35rem; width:8px; height:8px; border-radius:50%; background:var(--gold); box-shadow:0 0 0 2px var(--bg); }
     .pannounce { max-width:1200px; margin:0.9rem auto 0; padding:0 5%; }
     .pann { display:flex; gap:0.8rem; align-items:flex-start; border:1px solid rgba(200,152,48,0.4); background:rgba(200,152,48,0.08); border-radius:12px; padding:0.7rem 0.9rem; margin-bottom:0.5rem; font-size:0.86rem; color:#e4ede5; }
@@ -184,8 +202,8 @@
       <a class="ptab" href="schedule.html"><i class="fa-solid fa-calendar-day"></i> Book a Time</a>
       <a class="ptab" href="messages.html"><i class="fa-solid fa-comments"></i> Messages</a>
       <a class="ptab" href="documents.html"><i class="fa-solid fa-folder-open"></i> Documents</a>
-      <a class="ptab active" href="equipment.html"><i class="fa-solid fa-laptop"></i> Equipment</a>
-      <a class="ptab" href="projects.html" hidden><i class="fa-solid fa-diagram-project"></i> Projects</a>
+      <a class="ptab" href="equipment.html"><i class="fa-solid fa-laptop"></i> Equipment</a>
+      <a class="ptab active" href="projects.html"><i class="fa-solid fa-diagram-project"></i> Projects</a>
       <a class="ptab" href="account.html"><i class="fa-solid fa-user-gear"></i> Account</a>
     </div>
   </nav>
@@ -193,19 +211,13 @@
 
   <main class="pmain">
     <div class="phead">
-      <h1>Equipment</h1>
-      <p>Hardware and subscriptions on your account. When something new is assigned to you, confirm here that you have it.</p>
+      <h1>Projects</h1>
+      <p>Work TES is doing for you, milestone by milestone. When a deliverable needs your sign-off, it has a button here.</p>
     </div>
 
-    <div class="state" id="stateBox"><span class="spin"></span><div><b>Loading your equipment&hellip;</b>One moment.</div></div>
-
-    <h2 class="sec-title" id="pendHead" hidden>Waiting for your confirmation <span class="count" id="pendCount">0</span></h2>
-    <div id="pendList"></div>
-
-    <h2 class="sec-title" id="allHead" hidden>Everything on your account <span class="count" id="allCount">0</span></h2>
-    <div id="allList"></div>
-
-    <p class="hist-foot" id="eqFoot" hidden>Something missing or wrong? <a href="tickets.html">Open a ticket</a> or reply to the email you received and we will sort it out.</p>
+    <div class="state" id="stateBox"><span class="spin"></span><div><b>Loading your projects&hellip;</b>One moment.</div></div>
+    <div id="prjList"></div>
+    <p class="hist-foot" id="prjFoot" hidden>A question about a project? <a href="messages.html">Send a message</a> or <a href="tickets.html">open a ticket</a>.</p>
   </main>
 
   <footer class="pfoot">
@@ -219,16 +231,10 @@
     'use strict';
 
     var stateBox = document.getElementById('stateBox');
-    var pendHead = document.getElementById('pendHead');
-    var pendList = document.getElementById('pendList');
-    var allHead = document.getElementById('allHead');
-    var allList = document.getElementById('allList');
-    var eqFoot = document.getElementById('eqFoot');
-
-    function requireSession(id) {
-      if (!id || !id.email) { location.replace('../login.html'); return false; }
-      return true;
-    }
+    var list = document.getElementById('prjList');
+    var foot = document.getElementById('prjFoot');
+    var STATUS = { planning: 'Planning', active: 'In progress', on_hold: 'On hold', complete: 'Complete' };
+    var MS = { pending: 'Not started', in_progress: 'In progress', done: 'Done', accepted: 'Accepted', missed: 'Missed' };
 
     function el(tag, cls, text) {
       var n = document.createElement(tag);
@@ -236,124 +242,75 @@
       if (text != null) n.textContent = text;
       return n;
     }
+    function day(ts) { return ts ? new Date(ts * 1000).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : ''; }
 
     function showState(cls, icon, title, body) {
       stateBox.hidden = false;
       stateBox.className = 'state' + (cls ? ' ' + cls : '');
       stateBox.textContent = '';
-      var i = el('i', icon);
-      stateBox.appendChild(i);
-      var d = el('div');
-      d.appendChild(el('b', null, title));
-      d.appendChild(document.createTextNode(body || ''));
-      stateBox.appendChild(d);
+      var i = el('i'); i.className = icon; stateBox.appendChild(i);
+      var d = el('div'); d.appendChild(el('b', null, title)); d.appendChild(document.createTextNode(body)); stateBox.appendChild(d);
     }
 
-    function fmtDayStr(d) {
-      if (!d) return '';
-      var p = String(d).split('-');
-      return new Date(Number(p[0]), Number(p[1]) - 1, Number(p[2])).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
-    }
-
-    function card(item) {
-      var c = el('div', 'inv' + (item.confirmed_at ? '' : ' open'));
-      var top = el('div', 'inv-top');
+    function card(p) {
+      var c = el('section', 'prj');
+      var top = el('div', 'prj-top');
       var left = el('div');
-      left.appendChild(el('div', 'inv-id', item.name));
-      var meta = el('div', 'inv-meta');
-      var bits = [
-        'Asset tag ' + item.tag,
-        item.kind === 'subscription' ? 'Subscription' : (item.category ? item.category.charAt(0).toUpperCase() + item.category.slice(1) : 'Equipment'),
-        item.model ? 'Model ' + item.model : '',
-        item.serial ? 'S/N ' + item.serial : '',
-        item.vendor || '',
-      ].filter(Boolean);
-      bits.forEach(function (b) { meta.appendChild(el('span', null, b)); });
-      left.appendChild(meta);
-      if (item.holder_type === 'org' && item.holder_name) {
-        left.appendChild(el('div', 'inv-desc', 'Assigned to ' + item.holder_name + '.'));
-      }
-      if (item.recurring && item.next_charge_on) {
-        left.appendChild(el('div', 'inv-desc', 'Renews ' + item.recurring_interval + ', next on ' + fmtDayStr(item.next_charge_on) +
-          (item.paid_by === 'customer' ? '.' : ', billed through TES.')));
-      }
+      left.appendChild(el('h2', null, p.name));
+      left.appendChild(el('div', 'meta', [p.number, STATUS[p.status] || p.status, p.target_on && p.status !== 'complete' ? 'target ' + day(p.target_on) : '', p.completed_at ? 'completed ' + day(p.completed_at) : ''].filter(Boolean).join(' · ')));
       top.appendChild(left);
-      top.appendChild(el('div', 'inv-spacer'));
-      var right = el('div', 'inv-right');
-      if (item.confirmed_at) {
-        var ok = el('span', 'badge paid');
-        ok.appendChild(el('i', 'fa-solid fa-circle-check'));
-        ok.appendChild(document.createTextNode(' Confirmed ' + TESInvoices.formatDate(new Date(item.confirmed_at * 1000))));
-        right.appendChild(ok);
-      } else {
-        var due = el('span', 'badge due');
-        due.appendChild(el('i', 'fa-solid fa-hand-point-right'));
-        due.appendChild(document.createTextNode(' Please confirm'));
-        right.appendChild(due);
-      }
-      top.appendChild(right);
       c.appendChild(top);
-
-      if (!item.confirmed_at) {
-        var acts = el('div', 'inv-actions');
-        var btn = el('button', 'btn btn-primary', null);
-        btn.type = 'button';
-        btn.appendChild(el('i', 'fa-solid fa-check'));
-        btn.appendChild(document.createTextNode(' I have this'));
-        var err = el('span', 'err-msg');
-        err.hidden = true;
-        btn.addEventListener('click', function () {
-          btn.disabled = true;
-          err.hidden = true;
-          fetch('/portal-api/equipment/' + item.id + '/confirm', {
-            method: 'POST', credentials: 'same-origin',
-            headers: { 'content-type': 'application/json' }, body: '{}',
-          }).then(function (r) { return r.json(); }).then(function (d) {
-            if (!d || !d.ok) throw new Error((d && d.error) || 'failed');
-            item.confirmed_at = d.confirmed_at;
-            render(items);
-          }).catch(function () {
-            btn.disabled = false;
-            err.hidden = false;
-            err.textContent = 'That did not go through. Please try again, or reply to the email.';
-          });
+      if (p.description) c.appendChild(el('p', 'desc', p.description));
+      var ms = p.milestones || [];
+      if (ms.length) {
+        var done = ms.filter(function (m) { return m.status === 'done' || m.status === 'accepted'; }).length;
+        var bar = el('div', 'prj-bar'); var f = el('span'); f.style.width = Math.round(done / ms.length * 100) + '%'; bar.appendChild(f);
+        bar.setAttribute('role', 'img'); bar.setAttribute('aria-label', done + ' of ' + ms.length + ' milestones done');
+        c.appendChild(bar);
+        ms.forEach(function (m) {
+          var r = el('div', 'ms ' + m.status);
+          r.appendChild(el('span', 'ms-dot'));
+          var b = el('div', 'ms-body');
+          b.appendChild(el('b', null, m.title));
+          b.appendChild(el('span', null, [MS[m.status] || m.status, m.due_on && ['done', 'accepted'].indexOf(m.status) < 0 ? 'due ' + day(m.due_on) : '',
+            m.accepted_at ? 'accepted ' + day(m.accepted_at) : ''].filter(Boolean).join(' · ')));
+          if (m.deliverable) b.appendChild(el('div', null, m.deliverable));
+          if (m.can_accept) {
+            var w = el('div', 'ms-accept');
+            var btn = el('button', null, 'Accept this deliverable');
+            btn.type = 'button';
+            btn.addEventListener('click', function () {
+              if (!confirm('Accept "' + m.title + '"? This records that the deliverable meets what was agreed.')) return;
+              btn.disabled = true;
+              fetch('/portal-api/projects/' + p.id + '/milestones/' + m.id + '/accept', { method: 'POST', credentials: 'same-origin', headers: { 'content-type': 'application/json' }, body: '{}' })
+                .then(function (res) { return res.json(); })
+                .then(function (d) { if (d && d.ok) render(d.projects); else { btn.disabled = false; alert('That could not be recorded. Please try again or send us a message.'); } },
+                  function () { btn.disabled = false; alert('No connection. Please try again.'); });
+            });
+            w.appendChild(btn);
+            b.appendChild(w);
+          }
+          r.appendChild(b);
+          c.appendChild(r);
         });
-        acts.appendChild(btn);
-        acts.appendChild(el('span', 'pay-note', 'One click tells us the ' + (item.kind === 'subscription' ? 'subscription' : 'equipment') + ' reached you.'));
-        acts.appendChild(err);
-        c.appendChild(acts);
       }
       return c;
     }
 
-    var items = [];
-
-    function render(list) {
-      items = list;
-      var pending = list.filter(function (i) { return !i.confirmed_at; });
-      pendList.textContent = '';
-      allList.textContent = '';
+    function render(projects) {
+      list.textContent = '';
       stateBox.hidden = true;
-      if (!list.length) {
-        showState('', 'fa-solid fa-box-open', 'Nothing on your account yet.',
-          ' When TES assigns equipment or a subscription to you, it appears here with a button to confirm you have it.');
-        pendHead.hidden = true; allHead.hidden = true; eqFoot.hidden = true;
+      if (!projects.length) {
+        showState('', 'fa-solid fa-diagram-project', 'No projects yet.', ' When TES starts a project for you, its milestones appear here.');
+        foot.hidden = true;
         return;
       }
-      pendHead.hidden = !pending.length;
-      document.getElementById('pendCount').textContent = String(pending.length);
-      pending.forEach(function (i) { pendList.appendChild(card(i)); });
-      allHead.hidden = false;
-      document.getElementById('allCount').textContent = String(list.length);
-      list.filter(function (i) { return i.confirmed_at; }).forEach(function (i) { allList.appendChild(card(i)); });
-      if (!list.some(function (i) { return i.confirmed_at; })) {
-        allList.appendChild(el('div', 'empty-row', 'Everything on your account is listed above, waiting for a confirmation.'));
-      }
-      eqFoot.hidden = false;
+      projects.forEach(function (p) { list.appendChild(card(p)); });
+      foot.hidden = false;
     }
 
     TESInvoices.getIdentity().then(function (id) {
-      if (!requireSession(id)) return null;
+      if (!id || !id.email) { location.replace('../login.html'); return null; }
       var display = id.name || id.email.split('@')[0];
       var nameEl = document.getElementById('acctName');
       var emailEl = document.getElementById('acctEmail');
@@ -361,16 +318,14 @@
       if (nameEl) nameEl.textContent = display;
       if (emailEl) emailEl.textContent = id.email;
       if (avatarEl) avatarEl.textContent = display.replace(/[^A-Za-z]/g, '').slice(0, 2).toUpperCase() || 'TE';
-
-      return fetch('/portal-api/equipment', { credentials: 'same-origin' })
+      return fetch('/portal-api/projects', { credentials: 'same-origin' })
         .then(function (r) { return r.ok ? r.json() : null; })
         .then(function (d) {
           if (!d || !d.ok) throw new Error('unavailable');
-          render(d.items || []);
+          render(d.projects || []);
         });
     }).catch(function () {
-      showState('bad', 'fa-solid fa-triangle-exclamation', 'Could not load your equipment.',
-        ' Please refresh in a moment. If it keeps happening, open a ticket.');
+      showState('bad', 'fa-solid fa-triangle-exclamation', 'Could not load your projects.', ' Please refresh in a moment. If it keeps happening, send us a message.');
     });
   })();
   </script>

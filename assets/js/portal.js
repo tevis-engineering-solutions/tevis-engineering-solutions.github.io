@@ -32,6 +32,12 @@
     dot('tickets.html', me.waiting.tickets);
     dot('equipment.html', me.waiting.equipment);
     dot('billing.html', me.waiting.invoices_due);
+    /* The Projects tab only appears for an account that has a project. */
+    if (me.waiting.projects) {
+      var pt = document.querySelector('.ptab[href="projects.html"]');
+      if (pt) pt.hidden = false;
+    }
+    dot('projects.html', me.waiting.signoff);
     if (!me.waiting.announcements) return;
     return fetch('/portal-api/announcements', { credentials: 'same-origin' }).then(function (r) {
       return r.ok ? r.json() : null;

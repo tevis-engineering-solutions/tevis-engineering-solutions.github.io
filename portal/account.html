@@ -121,6 +121,7 @@
     .pfoot a { color:var(--muted); text-decoration:none; }
     .pfoot a:hover { color:var(--green); }
     .ptab { position:relative; }
+    .ptab[hidden] { display:none; }
     .pdot { position:absolute; top:0.7rem; right:0.35rem; width:8px; height:8px; border-radius:50%; background:var(--gold); box-shadow:0 0 0 2px var(--bg); }
     .pannounce { max-width:1200px; margin:0.9rem auto 0; padding:0 5%; }
     .pann { display:flex; gap:0.8rem; align-items:flex-start; border:1px solid rgba(200,152,48,0.4); background:rgba(200,152,48,0.08); border-radius:12px; padding:0.7rem 0.9rem; margin-bottom:0.5rem; font-size:0.86rem; color:#e4ede5; }
@@ -158,6 +159,7 @@
       <a class="ptab" href="messages.html"><i class="fa-solid fa-comments"></i> Messages</a>
       <a class="ptab" href="documents.html"><i class="fa-solid fa-folder-open"></i> Documents</a>
       <a class="ptab" href="equipment.html"><i class="fa-solid fa-laptop"></i> Equipment</a>
+      <a class="ptab" href="projects.html" hidden><i class="fa-solid fa-diagram-project"></i> Projects</a>
       <a class="ptab active" href="account.html"><i class="fa-solid fa-user-gear"></i> Account</a>
     </div>
   </nav>

@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bid Response | Tevis Engineering Solutions</title>
+  <meta name="description" content="Bid response document, rendered from the admin console for printing to PDF.">
+  <meta name="author" content="Tyler Tevis, Tevis Engineering Solutions">
+  <!-- Staff-only: behind Cloudflare Access with the rest of /admin/. The data comes from
+       /portal-api/admin/bids/:id/document, which checks Access itself. -->
+  <meta name="robots" content="noindex, nofollow">
+  <link rel="icon" type="image/png" href="../assets/favicon.png">
+  <meta http-equiv="X-Content-Type-Options" content="nosniff">
+  <meta name="referrer" content="strict-origin-when-cross-origin">
+  <style>
+    /* The house bid format (CONTRACTING.md s4): Helvetica, a navy rule over a thinner
+       gold one, white-on-navy table headers, #F2F2F2 banding, #E8EDF5 totals. Light on
+       purpose: it is a document for an agency, printed to PDF. */
+    :root { --navy:#1F3864; --gold:#C09B2A; --ink:#1b1f24; --muted:#5b6470; --band:#F2F2F2; --total:#E8EDF5; --rule:#d5d9df; }
+    * { box-sizing:border-box; }
+    html, body { margin:0; padding:0; background:#e9ecef; color:var(--ink); }
+    body { font-family:Helvetica, Arial, sans-serif; font-size:10.5pt; line-height:1.45; }
+    .tools { max-width:8.5in; margin:0 auto; padding:0.6rem 1rem; display:flex; gap:0.5rem; justify-content:flex-end; align-items:center; flex-wrap:wrap; }
+    .tools p { margin:0 auto 0 0; font-size:0.8rem; color:var(--muted); }
+    .tools button { font:inherit; font-size:0.85rem; font-weight:700; padding:0.55rem 1rem; border-radius:6px; border:1px solid var(--navy); background:var(--navy); color:#fff; cursor:pointer; min-height:44px; }
+    .tools button.alt { background:#fff; color:var(--navy); }
+    .sheet { max-width:8.5in; margin:0 auto 2rem; background:#fff; padding:0.75in; box-shadow:0 1px 4px rgba(0,0,0,0.12); }
+    .mast img { width:3in; max-width:100%; height:auto; display:block; }
+    .tag { margin:0.35rem 0 0.4rem; font-size:8.5pt; color:var(--muted); letter-spacing:0.02em; }
+    .rule-navy { height:3px; background:var(--navy); }
+    .rule-gold { height:1.5px; background:var(--gold); margin-top:2px; margin-bottom:1.1rem; }
+    h1 { font-size:14pt; color:var(--navy); margin:0 0 0.6rem; }
+    h2 { font-size:11pt; color:var(--navy); margin:1.2rem 0 0.45rem; text-transform:uppercase; letter-spacing:0.04em; }
+    .ref { width:100%; border-collapse:collapse; margin-bottom:0.9rem; font-size:10pt; }
+    .ref th { text-align:left; width:1.1in; color:var(--muted); font-weight:700; padding:0.15rem 0.5rem 0.15rem 0; vertical-align:top; }
+    .ref td { padding:0.15rem 0; vertical-align:top; }
+    p { margin:0 0 0.6rem; }
+    table.grid { width:100%; border-collapse:collapse; margin:0.3rem 0 0.4rem; font-size:9.5pt; }
+    table.grid th { background:var(--navy); color:#fff; text-align:left; font-weight:700; padding:0.35rem 0.45rem; }
+    table.grid td { padding:0.3rem 0.45rem; border-bottom:1px solid var(--rule); vertical-align:top; }
+    table.grid tbody tr:nth-child(even) td { background:var(--band); }
+    table.grid .n { text-align:right; white-space:nowrap; font-variant-numeric:tabular-nums; }
+    table.grid tr.total td { background:var(--total); font-weight:700; }
+    table.grid td small { display:block; color:var(--muted); font-size:8.5pt; }
+    .note { font-size:9pt; color:var(--muted); }
+    dl.terms { margin:0; }
+    dl.terms dt { font-weight:700; color:var(--navy); margin-top:0.45rem; }
+    dl.terms dd { margin:0.1rem 0 0; }
+    dl.terms dt { break-after:avoid; }
+    .sig { margin-top:1.4rem; display:grid; grid-template-columns:1fr 1fr; gap:1.2rem; }
+    .sig .line { border-top:1px solid var(--ink); margin-top:1.6rem; padding-top:0.2rem; font-size:9.5pt; }
+    .contact { margin-top:1.4rem; padding-top:0.5rem; border-top:1px solid var(--rule); font-size:8.5pt; color:var(--muted); display:flex; gap:0.8rem; flex-wrap:wrap; }
+    .state { max-width:8.5in; margin:3rem auto; text-align:center; color:var(--muted); font-size:1rem; padding:0 1rem; }
+    .meets { color:#1f7a3a; font-weight:700; }
+    .short { color:#a33; font-weight:700; }
+    @media (max-width:640px) {
+      .sheet { padding:1.1rem 1rem; }
+      .table-wrap { overflow-x:auto; }
+      table.grid { min-width:520px; }
+      .sig { grid-template-columns:1fr; }
+    }
+    @media print {
+      html, body { background:#fff; }
+      .tools { display:none; }
+      .sheet { box-shadow:none; margin:0; padding:0; max-width:none; }
+      table.grid tr, dl.terms dd, .sig { break-inside:avoid; }
+      h2 { break-after:avoid; }
+      @page { size:letter; margin:0.6in 0.65in; }
+    }
+  </style>
+</head>
+<body>
+  <div class="tools" id="tools" hidden>
+    <p>Save as PDF from the print dialog, then upload it to the bid as <b>Our response</b>.</p>
+    <button type="button" class="alt" id="backBtn">Back to the bid</button>
+    <button type="button" id="printBtn">Print / Save as PDF</button>
+  </div>
+  <div class="state" id="state">Loading&hellip;</div>
+  <main class="sheet" id="sheet" hidden>
+    <header class="mast">
+      <img src="../assets/TES%20LG1.png" alt="Tevis Engineering Solutions" width="742" height="180" id="logo">
+      <div class="tag" id="tagline"></div>
+      <div class="rule-navy"></div>
+      <div class="rule-gold"></div>
+    </header>
+    <h1 id="docTitle"></h1>
+    <table class="ref" aria-label="Reference">
+      <tbody id="refBody"></tbody>
+    </table>
+    <p id="intro"></p>
+    <section id="pricingSec">
+      <h2 id="pricingH">Pricing</h2>
+      <div class="table-wrap"><table class="grid" id="priceTable"></table></div>
+      <p class="note" id="priceNote"></p>
+    </section>
+    <section id="matrixSec" hidden>
+      <h2>Meets Minimum Output Requirements</h2>
+      <div class="table-wrap"><table class="grid" id="matrixTable"></table></div>
+    </section>
+    <section id="subSec" hidden>
+      <h2>Substitution Notes</h2>
+      <p id="subText"></p>
+    </section>
+    <section>
+      <h2>Terms of This Response</h2>
+      <dl class="terms" id="terms"></dl>
+    </section>
+    <section>
+      <h2>About TES</h2>
+      <p id="about"></p>
+    </section>
+    <div class="sig">
+      <div>
+        <div>Respectfully submitted,</div>
+        <div class="line"><b id="signer"></b><br><span id="signerTitle"></span><br><span id="signerCo"></span></div>
+      </div>
+      <div>
+        <div>Date</div>
+        <div class="line" id="sigDate"></div>
+      </div>
+    </div>
+    <footer class="contact" id="contact"></footer>
+  </main>
+  <script>
+    (function () {
+      var id = Number(new URLSearchParams(location.search).get('id'));
+      var stateEl = document.getElementById('state');
+      function el(tag, text, cls) { var n = document.createElement(tag); if (text != null) n.textContent = text; if (cls) n.className = cls; return n; }
+      function usd(c) { return (Number(c || 0) / 100).toLocaleString('en-US', { style: 'currency', currency: 'USD' }); }
+      function day(ts) { return ts ? new Date(ts * 1000).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }) : ''; }
+      function qty(n) { return Number(n).toLocaleString('en-US', { maximumFractionDigits: 3 }); }
+      if (!id) { stateEl.textContent = 'No bid was named. Open this from a bid in the admin console.'; return; }
+      document.getElementById('backBtn').addEventListener('click', function () { location.href = './#b=' + id; });
+      document.getElementById('printBtn').addEventListener('click', function () { window.print(); });
+      // The masthead falls back to the square mark if the lockup is missing.
+      document.getElementById('logo').addEventListener('error', function () { this.src = '../assets/logo-mark.png'; this.style.width = '0.9in'; });
+
+      fetch('/portal-api/admin/bids/' + id + '/document', { credentials: 'same-origin' }).then(function (r) {
+        if (r.status === 401 || r.status === 403) throw new Error('Your sign-in expired. Open the admin console and sign in, then try again.');
+        if (r.status === 404) throw new Error('That bid does not exist.');
+        return r.json();
+      }).then(function (res) {
+        if (!res.ok) throw new Error(res.message || 'Could not build the document.');
+        render(res.document);
+      }).catch(function (e) { stateEl.textContent = e.message || 'Could not load the document.'; });
+
+      function render(d) {
+        var b = d.bid, c = d.company;
+        document.title = 'Response ' + (b.event_no ? 'Event ' + b.event_no : b.number) + ' | ' + c.legal;
+        document.getElementById('tagline').textContent = c.tagline;
+        document.getElementById('docTitle').textContent = 'Response to ' + b.title;
+        var ref = document.getElementById('refBody');
+        var rows = [['To', b.agency + (b.buyer_name ? ' — ' + b.buyer_name : '')],
+          ['From', c.legal + (d.identifiers.length ? ' · ' + d.identifiers.map(function (i) { var l = i.label.replace(/^Cuyahoga County /, ''); return l + (/#$/.test(l) ? '' : ' ') + i.value; }).join(' · ') : '')],
+          ['Event', (b.event_no ? b.event_no + ' · ' : '') + b.title],
+          ['Date', day(d.generated_at)]];
+        if (b.date_close) rows.push(['Due', day(b.date_close)]);
+        rows.forEach(function (r) { var tr = el('tr'); tr.appendChild(el('th', r[0])); tr.appendChild(el('td', r[1])); ref.appendChild(tr); });
+        document.getElementById('intro').textContent = d.intro;
+
+        var t = document.getElementById('priceTable');
+        var head = el('thead'), hr = el('tr');
+        var cols = d.rate_card ? ['Line', 'Description', 'UOM', 'Unit price'] : ['Line', 'Description', 'Qty', 'UOM', 'Unit price', 'Extended'];
+        cols.forEach(function (h, i) { hr.appendChild(el('th', h, i >= (d.rate_card ? 3 : 4) || h === 'Qty' ? 'n' : null)); });
+        head.appendChild(hr); t.appendChild(head);
+        var body = el('tbody');
+        d.lines.forEach(function (l) {
+          var tr = el('tr');
+          tr.appendChild(el('td', String(l.line_no)));
+          var desc = el('td', l.description);
+          if (l.sku) desc.appendChild(el('small', l.sku));
+          tr.appendChild(desc);
+          if (!d.rate_card) tr.appendChild(el('td', qty(l.qty), 'n'));
+          tr.appendChild(el('td', l.uom));
+          tr.appendChild(el('td', usd(l.unit_price_cents), 'n'));
+          if (!d.rate_card) tr.appendChild(el('td', usd(l.extended_cents), 'n'));
+          body.appendChild(tr);
+        });
+        t.appendChild(body);
+        if (!d.rate_card) {
+          var foot = el('tfoot');
+          var addTotal = function (label, cents, cls) {
+            var tr = el('tr', null, cls || null);
+            var td = el('td', label); td.colSpan = 5; tr.appendChild(td);
+            tr.appendChild(el('td', usd(cents), 'n'));
+            foot.appendChild(tr);
+          };
+          if (d.freight_cents) { addTotal('Subtotal', d.subtotal_cents); addTotal('Freight', d.freight_cents); }
+          addTotal('Total', d.total_cents, 'total');
+          t.appendChild(foot);
+        }
+        document.getElementById('pricingH').textContent = d.rate_card ? 'Rate Card' : 'Pricing';
+        document.getElementById('priceNote').textContent = d.rate_card
+          ? 'Unit prices are held for the term of the standing order' + (b.nte_cents ? ', not to exceed ' + usd(b.nte_cents) + ' in total' : '') + '.'
+          : (b.partial ? 'This response covers the lines listed above.' : '');
+
+        if (d.matrix.length) {
+          document.getElementById('matrixSec').hidden = false;
+          var m = document.getElementById('matrixTable');
+          var mh = el('thead'), mr = el('tr');
+          ['Stated minimum', 'Offered', 'Meets'].forEach(function (h) { mr.appendChild(el('th', h)); });
+          mh.appendChild(mr); m.appendChild(mh);
+          var mb = el('tbody');
+          d.matrix.forEach(function (r) {
+            var tr = el('tr');
+            tr.appendChild(el('td', r.requirement));
+            tr.appendChild(el('td', r.offered || ''));
+            tr.appendChild(el('td', r.meets ? 'Yes' : 'See note', r.meets ? 'meets' : 'short'));
+            mb.appendChild(tr);
+          });
+          m.appendChild(mb);
+        }
+        if (d.substitution_notes) { document.getElementById('subSec').hidden = false; document.getElementById('subText').textContent = d.substitution_notes; }
+
+        var dl = document.getElementById('terms');
+        d.terms.forEach(function (x) { dl.appendChild(el('dt', x.title)); dl.appendChild(el('dd', x.text)); });
+        document.getElementById('about').textContent = d.about;
+        document.getElementById('signer').textContent = d.signer.name;
+        document.getElementById('signerTitle').textContent = d.signer.title;
+        document.getElementById('signerCo').textContent = c.legal;
+        document.getElementById('sigDate').textContent = day(d.generated_at);
+        var ct = document.getElementById('contact');
+        [c.legal, c.city, c.phone, c.email, c.web].forEach(function (s) { ct.appendChild(el('span', s)); });
+        stateEl.hidden = true;
+        document.getElementById('sheet').hidden = false;
+        document.getElementById('tools').hidden = false;
+      }
+    })();
+  </script>
+</body>
+</html>

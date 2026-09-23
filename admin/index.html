@@ -781,6 +781,116 @@
     .apptcard { border:1px solid var(--line); border-radius:12px; background:var(--card); padding:0.9rem 1rem; margin-bottom:0.6rem; }
     .apptcard h3 { font-family:"Montserrat",sans-serif; font-size:0.9rem; margin-bottom:0.3rem; }
     .apptcard .who { font-size:0.78rem; color:var(--muted); margin-bottom:0.5rem; }
+
+    /* ---- Contracting (docs/CONTRACTING.md) ---- */
+    .ct-sites { border:1px solid var(--line); border-radius:12px; background:var(--card); padding:0.75rem 0.85rem; margin:0.4rem 0 0.8rem; }
+    .ct-sites-h { display:flex; align-items:baseline; gap:0.6rem; flex-wrap:wrap; margin-bottom:0.5rem; }
+    .ct-sites-h h2 { font-family:"Montserrat",sans-serif; font-size:0.85rem; margin:0; }
+    .ct-site-list { display:grid; grid-template-columns:repeat(auto-fill,minmax(210px,1fr)); gap:0.45rem; }
+    .ct-site { display:flex; align-items:center; gap:0.4rem; border:1px solid var(--line); border-radius:10px; background:var(--bg); padding:0.4rem 0.5rem; min-width:0; }
+    .ct-site a { flex:1; min-width:0; color:var(--text); text-decoration:none; font-size:0.8rem; font-weight:600; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; min-height:32px; display:flex; flex-direction:column; justify-content:center; }
+    .ct-site a:hover { color:var(--gold); }
+    .ct-site a small { font-weight:400; font-size:0.66rem; color:var(--muted); }
+    .ct-site a small.stale { color:var(--gold); }
+    .ct-site .fed { font-size:0.56rem; font-weight:800; text-transform:uppercase; letter-spacing:0.05em; color:#e08585; border:1px solid #7f2c2c; border-radius:999px; padding:0.1rem 0.4rem; white-space:nowrap; }
+    .ct-btn { font-family:"Montserrat",sans-serif; font-size:0.68rem; font-weight:700; text-transform:uppercase; letter-spacing:0.03em; padding:0.45rem 0.75rem; border-radius:999px; border:1px solid var(--line); background:var(--bg); color:var(--text); cursor:pointer; min-height:36px; white-space:nowrap; }
+    .ct-btn:hover { border-color:var(--green); }
+    .ct-btn.prim { background:linear-gradient(135deg,var(--gold),#e0b840); color:#0d1710; border-color:transparent; }
+    .ct-btn.danger { border-color:#7f2c2c; color:#e08585; }
+    .ct-btn.sm { min-height:32px; padding:0.3rem 0.6rem; font-size:0.62rem; }
+    .ct-btn:disabled { opacity:0.5; cursor:default; }
+    .ct-tiles .tile b.bad { color:#ef4444; }
+    .ct-bar { display:flex; gap:0.5rem; align-items:center; flex-wrap:wrap; justify-content:space-between; margin-bottom:0.6rem; }
+    .ct-filters { padding:0; margin:0; flex:1 1 auto; min-width:0; }
+    .ct-tools { display:flex; gap:0.4rem; align-items:center; flex:1 1 320px; justify-content:flex-end; min-width:0; }
+    .ct-tools input { flex:1 1 180px; min-width:0; min-height:36px; padding:0.45rem 0.65rem; border-radius:8px; border:1px solid var(--line); background:var(--bg); color:var(--text); font-family:inherit; font-size:0.85rem; }
+    .ct-err { color:#e08585; font-size:0.8rem; margin-top:0.5rem; }
+    .ct-sugg { margin-top:0.6rem; font-size:0.76rem; color:var(--muted); display:flex; flex-wrap:wrap; gap:0.35rem; align-items:center; }
+    .ct-sugg button { font:inherit; font-size:0.72rem; border:1px solid rgba(200,152,48,0.45); color:var(--gold); background:rgba(200,152,48,0.06); border-radius:999px; padding:0.25rem 0.6rem; cursor:pointer; min-height:30px; }
+    /* The board: one column per stage. Scrolls sideways on a phone rather than
+       squeezing five columns into 375px. */
+    .ct-board { display:grid; grid-template-columns:repeat(4,minmax(220px,1fr)); gap:0.6rem; overflow-x:auto; padding-bottom:0.3rem; }
+    .ct-col { background:var(--card); border:1px solid var(--line); border-radius:12px; padding:0.55rem; min-width:0; }
+    .ct-col h3 { font-family:"Montserrat",sans-serif; font-size:0.66rem; text-transform:uppercase; letter-spacing:0.06em; color:var(--muted); margin:0 0 0.45rem; display:flex; justify-content:space-between; }
+    .ct-col h3 span { color:var(--gold); }
+    .ct-card { width:100%; text-align:left; border:1px solid var(--line); border-radius:10px; background:var(--bg); padding:0.55rem 0.6rem; margin-bottom:0.4rem; color:inherit; font:inherit; cursor:pointer; display:block; }
+    .ct-card:hover { border-color:var(--green); }
+    .ct-card.sel { border-color:var(--gold); }
+    .ct-card .n { font-family:"Montserrat",sans-serif; font-size:0.66rem; font-weight:800; color:var(--muted); letter-spacing:0.02em; }
+    .ct-card .t { font-size:0.84rem; font-weight:600; margin:0.1rem 0; word-break:break-word; }
+    .ct-card .a { font-size:0.72rem; color:var(--muted); }
+    .ct-card .chips { display:flex; flex-wrap:wrap; gap:0.25rem; margin-top:0.35rem; }
+    .ct-chip { font-size:0.6rem; font-weight:800; text-transform:uppercase; letter-spacing:0.04em; border-radius:999px; padding:0.1rem 0.45rem; border:1px solid var(--line); color:var(--muted); white-space:nowrap; }
+    .ct-chip.gold { color:var(--gold); border-color:rgba(200,152,48,0.5); }
+    .ct-chip.red { color:#ef4444; border-color:rgba(239,68,68,0.5); }
+    .ct-chip.green { color:var(--green); border-color:rgba(74,172,101,0.5); }
+    .ct-card .v { font-family:"Montserrat",sans-serif; font-size:0.78rem; margin-top:0.3rem; display:flex; justify-content:space-between; gap:0.4rem; }
+    .ct-empty { font-size:0.74rem; color:var(--muted); padding:0.4rem 0.2rem; }
+    /* The workspace for one bid. */
+    .ct-panel { border:1px solid var(--line); border-radius:14px; background:var(--card); padding:1rem; margin-bottom:1rem; }
+    .ct-head { display:flex; justify-content:space-between; gap:0.6rem; flex-wrap:wrap; align-items:flex-start; }
+    .ct-head h2 { font-family:"Montserrat",sans-serif; font-size:1.05rem; margin:0.1rem 0; }
+    .ct-head .sub { font-size:0.78rem; color:var(--muted); }
+    .ct-moves { display:flex; flex-wrap:wrap; gap:0.35rem; margin:0.7rem 0; }
+    .ct-why { border:1px solid rgba(239,68,68,0.45); background:rgba(239,68,68,0.06); border-radius:10px; padding:0.6rem 0.75rem; margin:0.6rem 0; }
+    .ct-why.ok { border-color:rgba(74,172,101,0.45); background:rgba(74,172,101,0.07); }
+    .ct-why h4 { font-family:"Montserrat",sans-serif; font-size:0.72rem; text-transform:uppercase; letter-spacing:0.05em; margin:0 0 0.3rem; color:#ef9a9a; }
+    .ct-why.ok h4 { color:var(--green); }
+    .ct-why ul { margin:0; padding-left:1.1rem; font-size:0.8rem; }
+    .ct-why li { margin:0.15rem 0; }
+    .ct-prompt { border:1px solid rgba(200,152,48,0.45); background:rgba(200,152,48,0.05); border-radius:10px; padding:0.65rem 0.75rem; margin:0.4rem 0 0.7rem; }
+    .ct-prompt p { font-size:0.8rem; margin:0 0 0.4rem; }
+    .ct-prompt select { margin-bottom:0.4rem; min-height:36px; padding:0.35rem 0.5rem; border-radius:8px; border:1px solid var(--line); background:var(--bg); color:var(--text); }
+    .ct-grid { overflow-x:auto; border:1px solid var(--line); border-radius:10px; }
+    .ct-lines { border-collapse:collapse; font-size:0.78rem; min-width:1180px; width:100%; }
+    .ct-lines th { font-family:"Montserrat",sans-serif; font-size:0.58rem; text-transform:uppercase; letter-spacing:0.05em; color:var(--muted); text-align:left; padding:0.4rem 0.35rem; border-bottom:1px solid var(--line); white-space:nowrap; background:var(--bg); }
+    .ct-lines td { padding:0.25rem 0.3rem; border-bottom:1px solid rgba(44,66,50,0.6); vertical-align:middle; }
+    .ct-lines input, .ct-lines select { width:100%; min-width:0; padding:0.35rem 0.4rem; border-radius:6px; border:1px solid var(--line); background:var(--bg); color:var(--text); font-family:inherit; font-size:0.78rem; min-height:32px; }
+    .ct-lines input[type="checkbox"] { width:18px; height:18px; min-height:0; }
+    .ct-lines input.num { text-align:right; font-variant-numeric:tabular-nums; }
+    .ct-lines td.num { text-align:right; font-variant-numeric:tabular-nums; white-space:nowrap; }
+    .ct-lines tr.off td { opacity:0.45; }
+    .ct-lines tr.be td.m { color:#ef4444; font-weight:700; }
+    .ct-lines tr.tot td { font-weight:700; background:var(--bg); }
+    .ct-econ { display:grid; grid-template-columns:repeat(auto-fit,minmax(130px,1fr)); gap:0.45rem; margin:0.6rem 0; }
+    .ct-note { font-size:0.74rem; color:var(--muted); margin:0.4rem 0; line-height:1.45; }
+    .ct-step { border:1px solid var(--line); border-radius:10px; background:var(--bg); padding:0.55rem 0.65rem; margin-bottom:0.4rem; }
+    .ct-step.done { border-color:rgba(74,172,101,0.45); }
+    .ct-step label.chk { display:flex; gap:0.5rem; align-items:center; font-weight:700; font-size:0.84rem; min-height:32px; cursor:pointer; }
+    .ct-step label.chk input { width:18px; height:18px; }
+    .ct-step p { font-size:0.74rem; color:var(--muted); margin:0.1rem 0 0.35rem; }
+    .ct-step textarea { min-height:52px; font-size:0.82rem; }
+    .ct-risk { border:1px solid var(--line); border-radius:10px; background:var(--bg); padding:0.55rem 0.65rem; margin-bottom:0.4rem; }
+    .ct-risk.high { border-left:3px solid #ef4444; }
+    .ct-risk.med { border-left:3px solid var(--gold); }
+    .ct-risk.done { opacity:0.6; }
+    .ct-risk .d { font-size:0.82rem; margin:0.25rem 0; word-break:break-word; }
+    .ct-risk .ack { font-size:0.74rem; color:var(--green); }
+    .ct-form { display:grid; grid-template-columns:repeat(auto-fit,minmax(170px,1fr)); gap:0.45rem; margin:0.5rem 0; }
+    .ct-form label { display:block; font-size:0.62rem; text-transform:uppercase; letter-spacing:0.05em; color:var(--muted); font-weight:700; margin-bottom:0.2rem; }
+    .ct-form input, .ct-form select { width:100%; padding:0.45rem 0.6rem; border-radius:8px; border:1px solid var(--line); background:var(--bg); color:var(--text); font-family:inherit; font-size:0.84rem; min-height:36px; }
+    .ct-form .wide { grid-column:1 / -1; }
+    .ct-form .chk { display:flex; align-items:center; gap:0.45rem; font-size:0.8rem; color:var(--muted); min-height:36px; }
+    .ct-form .chk input { width:18px; height:18px; min-height:0; }
+    .ct-ref { margin-top:1rem; }
+    .ct-ref details { border:1px solid var(--line); border-radius:12px; background:var(--card); margin-bottom:0.5rem; }
+    .ct-ref summary { font-family:"Montserrat",sans-serif; font-size:0.74rem; font-weight:700; text-transform:uppercase; letter-spacing:0.05em; color:var(--muted); cursor:pointer; padding:0.7rem 0.85rem; min-height:44px; display:flex; align-items:center; }
+    .ct-ref-body { padding:0 0.85rem 0.85rem; }
+    .ct-cmp { display:grid; grid-template-columns:minmax(0,1.3fr) minmax(0,1.2fr) auto auto; gap:0.4rem; align-items:center; padding:0.35rem 0; border-bottom:1px solid rgba(44,66,50,0.6); font-size:0.8rem; }
+    .ct-cmp input, .ct-cmp select { width:100%; min-width:0; padding:0.35rem 0.5rem; border-radius:6px; border:1px solid var(--line); background:var(--bg); color:var(--text); font-family:inherit; font-size:0.8rem; min-height:34px; }
+    .ct-cmp .lbl b { display:block; font-size:0.8rem; }
+    .ct-cmp .lbl small { color:var(--muted); font-size:0.68rem; }
+    @media (max-width:640px) { .ct-cmp { grid-template-columns:1fr 1fr; } .ct-cmp .lbl { grid-column:1 / -1; } }
+    .ct-hist { font-size:0.78rem; }
+    .ct-hist .row-main b { font-family:"Montserrat",sans-serif; font-size:0.7rem; text-transform:uppercase; letter-spacing:0.03em; color:var(--gold); }
+    @media (max-width:560px) { .ct-tools { flex-basis:100%; } .ct-board { grid-template-columns:repeat(4,minmax(78vw,1fr)); } }
+    /* ---- Projects ---- */
+    .pj-bar { height:6px; border-radius:999px; background:var(--line); overflow:hidden; margin:0.45rem 0 0.1rem; }
+    .pj-bar span { display:block; height:100%; background:linear-gradient(90deg,var(--green),var(--gold)); }
+    .pj-status { min-height:36px; padding:0.35rem 0.55rem; border-radius:8px; border:1px solid var(--line); background:var(--bg); color:var(--text); font-family:inherit; }
+    .ct-step .reply-row select { min-height:40px; padding:0.35rem 0.5rem; border-radius:999px; border:1px solid var(--line); background:var(--bg); color:var(--text); font-family:inherit; font-size:0.78rem; }
+    #pjList .ct-card { margin-bottom:0.5rem; }
+    @media (min-width:760px) { #pjList { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:0.5rem; } #pjList .state { grid-column:1 / -1; } }
   </style>
 </head>
 <body>
@@ -816,6 +926,8 @@
       <button type="button" class="vbtn on" id="navTickets" data-view="tickets">Tickets</button>
       <button type="button" class="vbtn" id="navCustomers" data-view="customers">Customers</button>
       <button type="button" class="vbtn" id="navInvoices" data-view="invoices">Invoices</button>
+      <button type="button" class="vbtn" id="navContracting" data-view="contracting">Contracting</button>
+      <button type="button" class="vbtn" id="navProjects" data-view="projects">Projects</button>
       <button type="button" class="vbtn" id="navCalendar" data-view="calendar">Calendar</button>
       <button type="button" class="vbtn" id="navInventory" data-view="inventory">Inventory</button>
       <button type="button" class="vbtn" id="navFinance" data-view="finance">Finance<span class="nbadge" id="finBadge" hidden></span></button>
@@ -1438,6 +1550,95 @@
       </div>
     </div>
     <div id="rptBody"><div class="state">Loading&hellip;</div></div>
+  </main>
+  <main class="wrap" id="viewContracting" aria-label="Contracting" hidden>
+    <section class="ct-sites" aria-label="Where to find bids">
+      <div class="ct-sites-h"><h2>Where to look</h2><span class="row-sub">Stamp a site when you have checked it, so the weekly sweep has a trail.</span></div>
+      <div class="ct-site-list" id="ctSites"></div>
+    </section>
+    <div class="tiles ct-tiles" id="ctTiles"></div>
+    <div class="ct-bar">
+      <div class="filters ct-filters" id="ctFilters">
+        <button type="button" class="fpill on" data-view="active">Active</button>
+        <button type="button" class="fpill" data-view="pre_submit">Working</button>
+        <button type="button" class="fpill" data-view="submitted">Responded</button>
+        <button type="button" class="fpill" data-view="won">Won</button>
+        <button type="button" class="fpill" data-view="closed">Closed</button>
+        <button type="button" class="fpill" data-view="all">All</button>
+      </div>
+      <div class="ct-tools">
+        <label for="ctQ" class="sr-only">Search bids</label>
+        <input type="search" id="ctQ" placeholder="Search number, title, agency, event" autocomplete="off">
+        <button type="button" class="ct-btn" id="ctLayout" aria-pressed="false">List</button>
+        <button type="button" class="ct-btn prim" id="ctNewBtn">+ New bid</button>
+      </div>
+    </div>
+    <section class="newinv" id="ctNew" hidden>
+      <h2>New bid</h2>
+      <form id="ctNewForm" autocomplete="off">
+        <div class="fgrid">
+          <div><label for="ctnAgency">Agency</label><input type="text" id="ctnAgency" required maxlength="200" placeholder="Cuyahoga County"></div>
+          <div><label for="ctnTitle">Title</label><input type="text" id="ctnTitle" required maxlength="300" placeholder="What they are buying"></div>
+          <div><label for="ctnEvent">Event / solicitation number</label><input type="text" id="ctnEvent" maxlength="80"></div>
+          <div><label for="ctnSource">Found on</label><select id="ctnSource"></select></div>
+          <div><label for="ctnNaics">NAICS (capability statement)</label><select id="ctnNaics"></select></div>
+          <div><label for="ctnStructure">Structure</label>
+            <select id="ctnStructure"><option value="one_time">One-time fixed quantity</option><option value="nte_rate_card">NTE standing PO (rate card)</option></select></div>
+          <div><label for="ctnClose">Submission deadline</label><input id="ctnClose" type="datetime-local"></div>
+          <div><label for="ctnUrl">Posting link</label><input id="ctnUrl" type="url" maxlength="600" placeholder="https://"></div>
+        </div>
+        <div class="ct-sugg" id="ctnSugg" hidden></div>
+        <div class="reply-row">
+          <button type="submit" class="prim">Create bid</button>
+          <button type="button" id="ctNewCancel">Cancel</button>
+        </div>
+        <p class="ct-err" id="ctNewErr" hidden></p>
+      </form>
+    </section>
+    <div id="ctBoard"><div class="state">Loading&hellip;</div></div>
+    <div id="ctBid" hidden></div>
+    <section class="ct-ref" aria-label="Reference">
+      <details id="ctCompliance"><summary>Compliance &amp; credentials</summary><div class="ct-ref-body" id="ctComplianceBody"></div></details>
+      <details id="ctCodes"><summary>Service codes (capability statement)</summary><div class="ct-ref-body" id="ctCodesBody"></div></details>
+      <details id="ctSourcing"><summary>Sourcing accounts</summary><div class="ct-ref-body" id="ctSourcingBody"></div></details>
+      <details id="ctTabs"><summary>Tabulation log</summary><div class="ct-ref-body" id="ctTabsBody"></div></details>
+    </section>
+  </main>
+  <main class="wrap" id="viewProjects" aria-label="Projects" hidden>
+    <div class="ct-bar">
+      <div class="filters ct-filters" id="pjFilters">
+        <button type="button" class="fpill on" data-view="open">Open</button>
+        <button type="button" class="fpill" data-view="active">Active</button>
+        <button type="button" class="fpill" data-view="complete">Finished</button>
+        <button type="button" class="fpill" data-view="all">All</button>
+      </div>
+      <div class="ct-tools">
+        <label for="pjQ" class="sr-only">Search projects</label>
+        <input type="search" id="pjQ" placeholder="Search number or name" autocomplete="off">
+        <button type="button" class="ct-btn prim" id="pjNewBtn">+ New project</button>
+      </div>
+    </div>
+    <section class="newinv" id="pjNew" hidden>
+      <h2>New project</h2>
+      <form id="pjNewForm" autocomplete="off">
+        <div class="fgrid">
+          <div><label for="pjnName">Name</label><input type="text" id="pjnName" required maxlength="200" placeholder="Office move, server migration..."></div>
+          <div><label for="pjnHolderType">For</label>
+            <select id="pjnHolderType"><option value="org">A company</option><option value="account">A person</option><option value="tes">TES (internal)</option></select></div>
+          <div id="pjnOrgWrap"><label for="pjnOrg">Company</label><select id="pjnOrg"></select></div>
+          <div id="pjnPersonWrap" hidden><label for="pjnPersonQ">Person (search)</label><input type="search" id="pjnPersonQ" placeholder="Name or email"><select id="pjnPerson" aria-label="Matching people"></select></div>
+          <div><label for="pjnBudget">Budget ($)</label><input type="text" id="pjnBudget" inputmode="decimal"></div>
+          <div><label for="pjnTarget">Target date</label><input type="date" id="pjnTarget"></div>
+        </div>
+        <div class="reply-row">
+          <button type="submit" class="prim">Create project</button>
+          <button type="button" id="pjNewCancel">Cancel</button>
+        </div>
+        <p class="ct-err" id="pjNewErr" hidden></p>
+      </form>
+    </section>
+    <div id="pjList"><div class="state">Loading&hellip;</div></div>
+    <div id="pjOne" hidden></div>
   </main>
   <main class="wrap" id="viewKeys" aria-label="Product keys" hidden>
     <section class="newinv">
@@ -2258,7 +2459,7 @@
     // give each description line to the row whose price sits nearest it vertically.
     //
     // Nearest-price assignment rather than "a price starts a row" on purpose: a price
-    // is often vertically CENTRED against a four-line description, so it can sit in
+    // is often vertically CENTERED against a four-line description, so it can sit in
     // the middle of its own row. Rows cannot interleave, so nearest always lands right.
     //
     // Everything here is a SUGGESTION. It fills an editable list, the totals are
@@ -2403,7 +2604,7 @@
       // The rows of a table are separated by a visible gap, and the lines INSIDE a
       // wrapped description are not, so the gaps are the structure: cluster on them
       // and the clusters are the rows. Nearest-price was the first attempt and it is
-      // ambiguous precisely where a description wraps -- a price centred against a
+      // ambiguous precisely where a description wraps -- a price centered against a
       // three-line cell sits almost equidistant from that cell's last line and the
       // next cell's first, which put "markup" at the head of the following row.
       var rows = prices.map(function (p) { return { y: p.y, cents: p.cents, parts: [] }; });
@@ -4852,6 +5053,13 @@
           };
         };
         qact('Duplicate', null, dup(null, 'duplicate'));
+        if (q.status === 'accepted' || q.status === 'converted') qact('Start a project', null, function () {
+          api('/admin/quotes/' + q.id + '/project', { method: 'POST', body: {} }).then(function (r) {
+            if (r.ok) { toast('Project ' + r.number + ' started'); routeHash('#p=' + r.project_id, true); }
+            else if (r.error === 'already_converted') routeHash('#p=' + r.project_id, true);
+            else toast(r.message || 'Could not start a project');
+          });
+        });
         // An estimate is the first half of the job: a range, early. The firm quote that
         // follows repeats its scope, its exclusions and its deposit terms, so copying it
         // across beats retyping them. The range does not come with it -- on a quote the
@@ -5604,7 +5812,7 @@
       if (c.profile.address) head.appendChild(el('div', 'who', c.profile.address));
 
       // `plan` and `status` on an account are the software control plane's fields: a
-      // trial quota and whether a licence may activate. Every account carries them
+      // trial quota and whether a license may activate. Every account carries them
       // whether or not they have ever bought software, so on an IT-only customer they
       // read as a product relationship that does not exist. Shown only when one does.
       var hasSoftware = !!(
@@ -7812,7 +8020,7 @@
 
       // ---- headline tiles ----
       var tiles = el('div', 'tiles fin-tiles');
-      // Live, and labelled as such. Everything beside it is summed from rows we hold,
+      // Live, and labeled as such. Everything beside it is summed from rows we hold,
       // so a deposit made this morning would be missing from all of them; this asks
       // PayPal. Tap to re-ask.
       var bal = ppBalance;
@@ -9250,6 +9458,8 @@
       else if (type === 'inventory') { showView('inventory'); var go = function () { flashInvt(Number(id)); }; if (invtAll.length) go(); else loadInventory().then(go); }
       else if (type === 'license') { showView('keys'); }
       else if (type === 'paypal') { showView('finance'); }
+      else if (type === 'project') { routeHash('#p=' + id, true); }
+      else if (type === 'bid') { if (/^\d+$/.test(String(id))) routeHash('#b=' + id, true); else showView('contracting'); }
       else showView('home');
     }
 
@@ -9353,6 +9563,22 @@
           sQ.appendChild(row(q.number + ' · ' + q.title, q.who + ' · ' + (q.needs === 'convert' ? 'accepted, convert to an invoice' : q.unopened ? 'sent ' + ago(a.now - q.sent_at) + ' ago, not opened' : q.viewed ? 'opened, no decision yet' : 'sent ' + ago(a.now - (q.sent_at || a.now)) + ' ago') + (q.expires_in_sec != null && q.needs === 'decision' ? ' · ' + (q.expires_in_sec > 0 ? 'expires in ' + ago(q.expires_in_sec) : 'expired') : ''), right, function () { showQuote(q.id); }));
         });
         wrap.appendChild(sQ);
+      }
+      if ((a.bids || []).length) {
+        any = true;
+        var sB = attSection('Bids', a.bids.length, a.bids.some(function (b) { return b.urgent; }));
+        a.bids.forEach(function (b) {
+          sB.appendChild(row(b.number + ' · ' + b.title, b.agency + ' · ' + b.reason, b.urgent ? el('b', 'num', 'urgent') : null, function () { openObject('bid', b.id); }));
+        });
+        wrap.appendChild(sB);
+      }
+      if ((a.projects || []).length) {
+        any = true;
+        var sP = attSection('Projects', a.projects.length, a.projects.some(function (x) { return x.urgent; }));
+        a.projects.forEach(function (x) {
+          sP.appendChild(row(x.number + ' \u00b7 ' + x.name, x.reason, x.urgent ? el('b', 'num', 'late') : null, function () { openObject('project', x.project_id); }));
+        });
+        wrap.appendChild(sP);
       }
       var appts = (a.appointments && a.appointments.upcoming) || [];
       if (appts.length) {
@@ -9538,7 +9764,7 @@
         if (cmdkIn.value.trim() !== q) return;
         cmdkRes.textContent = ''; cmdkItems = []; cmdkIdx = -1;
         if (!r.ok) { cmdkRes.appendChild(el('div', 'cmdk-e', 'Search is not available right now.')); return; }
-        var groups = [['tickets', 'Tickets'], ['customers', 'People'], ['orgs', 'Companies'], ['invoices', 'Invoices'], ['inventory', 'Equipment'], ['licenses', 'Product keys']];
+        var groups = [['tickets', 'Tickets'], ['customers', 'People'], ['orgs', 'Companies'], ['invoices', 'Invoices'], ['inventory', 'Equipment'], ['licenses', 'Product keys'], ['bids', 'Bids'], ['projects', 'Projects']];
         groups.forEach(function (g) {
           var list = r[g[0]] || [];
           if (!list.length) return;
@@ -9581,11 +9807,11 @@
     // "g then a letter" to move, "/" to search, "r" to reply. Deliberately single
     // keys: the console is used one-handed on a phone dock as often as at a desk.
     var GO_TO = { h: 'home', i: 'inbox', t: 'tickets', c: 'customers', v: 'invoices',
-                  a: 'calendar', e: 'inventory', f: 'finance', r: 'reports', k: 'keys' };
+                  a: 'calendar', e: 'inventory', f: 'finance', r: 'reports', k: 'keys', b: 'contracting', p: 'projects' };
     var SHORTCUTS = [
       ['g h', 'Home'], ['g i', 'Inbox'], ['g t', 'Tickets'], ['g c', 'Customers'],
       ['g v', 'Invoices'], ['g a', 'Calendar'], ['g e', 'Equipment'], ['g f', 'Finance'],
-      ['g r', 'Reports'], ['g k', 'Product keys'],
+      ['g r', 'Reports'], ['g k', 'Product keys'], ['g b', 'Contracting (bids)'], ['g p', 'Projects'],
       ['/', 'Search'], ['r', 'Reply, on an open ticket or conversation'], ['Esc', 'Close search'],
     ];
     var goArmed = 0;
@@ -9651,6 +9877,10 @@
         showView('reports');
       }
       else if ((m = /^#m=(\d+)/.exec(hash))) { openConversation(Number(m[1])); }
+      else if ((m = /^#b=(\d+)/.exec(hash))) { ctBidId = Number(m[1]); suppressHashPush = true; showView('contracting'); suppressHashPush = false; }
+      else if (hash === '#contracting') { ctBidId = null; showView('contracting'); }
+      else if ((m = /^#p=(\d+)/.exec(hash))) { pjId = Number(m[1]); suppressHashPush = true; showView('projects'); suppressHashPush = false; }
+      else if (hash === '#projects') { pjId = null; showView('projects'); }
       else if (hash === '#inbox') showView('inbox');
       else if (hash === '#keys') showView('keys');
       else if (hash === '#customers') showView('customers');
@@ -10106,6 +10336,1679 @@
       return wrap;
     }
 
+    // ---- Contracting ------------------------------------------------------
+    // docs/CONTRACTING.md (Worker repo) is the methodology. The server owns the
+    // economics, the automatic risk flags and the readiness guard; this renders them
+    // and never decides anything the server would refuse.
+    var ctView = 'active';
+    var ctSearch = '';
+    var ctSearchTimer = null;
+    var ctLayoutMode = 'board';
+    var ctRef = null;
+    var ctBidId = null;
+    var ctDetail = null;
+    var ctBidsCache = [];
+    var CT_COLUMNS = [
+      ['Finding & triage', ['intake', 'triaging', 'qa_posted']],
+      ['Pricing', ['pricing', 'draft_ready']],
+      ['Responded', ['submitted']],
+      ['Won', ['awarded', 'funded']],
+    ];
+    var CT_PRE = ['intake', 'triaging', 'qa_posted', 'pricing', 'draft_ready'];
+    var CT_STATUS_COLOR = { intake: '#8aa48d', triaging: '#6a8ba8', qa_posted: '#6a8ba8', pricing: '#c89830', draft_ready: '#4aac65',
+      submitted: '#4fa2ff', awarded: '#22c55e', funded: '#22c55e', lost: '#fb923c', no_bid: '#8aa48d', closed: '#8aa48d' };
+    var CT_MOVE_LABEL = { intake: 'Back to intake', triaging: 'Start triage', qa_posted: 'Questions posted', pricing: 'Start pricing',
+      draft_ready: 'Mark draft ready', submitted: 'Mark responded', awarded: 'Awarded', lost: 'Lost', funded: 'Funded (PO in hand)',
+      no_bid: 'Pass (no bid)', closed: 'Close' };
+    var CT_ROLE_LABEL = { solicitation: 'Solicitation', spec: 'Spec / min. requirements', terms: 'Terms & Conditions', line_schedule: 'Line schedule',
+      addendum: 'Addendum', response: 'Our response', pricing: 'Pricing model', correspondence: 'Correspondence', award: 'Award / PO',
+      tabulation: 'Tabulation', screenshot: 'Screenshot', other: 'Other' };
+    var CT_FLAG_LABEL = { indemnity: 'Indemnity', insurance: 'Insurance', uncertified: 'Uncertified product', time_penalty: 'Time penalty',
+      cash_float: 'Cash float', spec_conflict: 'Spec conflict', substitution: 'Substitution', federal: 'Federal', fit: 'Fit', other: 'Other' };
+
+    function ctMoney(c) { return c == null ? '—' : money(c); }
+    function ctDollars(c) { return c == null || c === '' ? '' : (Number(c) / 100).toFixed(2); }
+    function ctCents(v) { var n = Number(String(v == null ? '' : v).replace(/[$,\s]/g, '')); return v === '' || v == null || isNaN(n) ? null : Math.round(n * 100); }
+    function ctDayVal(ts) {
+      if (!ts) return '';
+      var d = new Date(ts * 1000);
+      return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+    }
+    function ctDtVal(ts) {
+      if (!ts) return '';
+      var d = new Date(ts * 1000);
+      return ctDayVal(ts) + 'T' + String(d.getHours()).padStart(2, '0') + ':' + String(d.getMinutes()).padStart(2, '0');
+    }
+    function ctFromDt(v) { if (!v) return null; var t = new Date(v).getTime(); return isNaN(t) ? null : Math.floor(t / 1000); }
+    function ctDays(n) { return n === 1 ? '1 day' : n + ' days'; }
+    function ctErr(r) { return (r && (r.message || r.error)) || 'Something went wrong.'; }
+
+    function ctField(parent, label, input, cls) {
+      var d = el('div', cls || null);
+      var l = el('label', null, label);
+      if (!input.id) input.id = 'ctf' + Math.random().toString(36).slice(2, 9);
+      l.htmlFor = input.id;
+      d.appendChild(l);
+      d.appendChild(input);
+      parent.appendChild(d);
+      return input;
+    }
+    function ctInput(type, value, attrs) {
+      var i = document.createElement('input');
+      i.type = type || 'text';
+      if (value != null) i.value = value;
+      Object.keys(attrs || {}).forEach(function (k) { i.setAttribute(k, attrs[k]); });
+      return i;
+    }
+    function ctSelect(options, value) {
+      var s = document.createElement('select');
+      options.forEach(function (o) {
+        var opt = document.createElement('option');
+        opt.value = o[0]; opt.textContent = o[1];
+        if (String(o[0]) === String(value == null ? '' : value)) opt.selected = true;
+        s.appendChild(opt);
+      });
+      return s;
+    }
+    function ctCheck(label, checked) {
+      var l = el('label', 'chk');
+      var i = ctInput('checkbox');
+      i.checked = !!checked;
+      l.appendChild(i);
+      l.appendChild(document.createTextNode(label));
+      l.input = i;
+      return l;
+    }
+
+    function loadContracting() {
+      // The tab itself shows the board; only a #b= link reopens a bid.
+      if (!/^#b=/.test(location.hash)) ctBidId = null;
+      var refP = ctRef ? Promise.resolve({ ok: true, cached: true }) : api('/admin/contracting/reference');
+      return Promise.all([refP, api('/admin/bids/pipeline'), api('/admin/bids?view=' + ctView + (ctSearch ? '&q=' + encodeURIComponent(ctSearch) : ''))])
+        .then(function (res) {
+          if (res[0].ok && !res[0].cached) ctRef = res[0];
+          if (ctRef) { renderCtSites(); renderCtRef(); fillCtNewSelects(); }
+          if (res[1].ok) renderCtTiles(res[1].pipeline);
+          if (res[2].ok) { ctBidsCache = res[2].bids || []; renderCtBoard(); }
+          else document.getElementById('ctBoard').innerHTML = '<div class="state">Could not load bids.</div>';
+          if (ctBidId) openBid(ctBidId, true);
+        });
+    }
+    function reloadCtRef() { ctRef = null; return api('/admin/contracting/reference').then(function (r) { if (r.ok) { ctRef = r; renderCtSites(); renderCtRef(); fillCtNewSelects(); } }); }
+
+    function renderCtSites() {
+      var w = document.getElementById('ctSites');
+      w.textContent = '';
+      var now = Date.now() / 1000;
+      ctRef.sources.forEach(function (s) {
+        var d = el('div', 'ct-site');
+        var a = el('a');
+        a.href = s.url; a.target = '_blank'; a.rel = 'noopener noreferrer';
+        a.appendChild(document.createTextNode(s.label));
+        var age = s.last_checked_at ? Math.floor((now - s.last_checked_at) / 86400) : null;
+        var sm = el('small', age == null || age > 7 ? 'stale' : null, age == null ? 'never checked' : age === 0 ? 'checked today' : 'checked ' + ctDays(age) + ' ago');
+        // Federal sites are watched, not bid: the badge sits under the name so it
+        // cannot squeeze the name off a narrow chip.
+        if (s.federal) { var f = el('span', 'fed', 'Monitor only'); a.title = 'Federal prime bids are blocked (FAR 3.601) while VA employment continues.'; sm.appendChild(document.createTextNode(' ')); sm.appendChild(f); }
+        a.appendChild(sm);
+        d.appendChild(a);
+        var b = el('button', 'ct-btn sm', 'Checked');
+        b.type = 'button';
+        b.setAttribute('aria-label', 'Mark ' + s.label + ' as checked today');
+        b.addEventListener('click', function () {
+          b.disabled = true;
+          api('/admin/bid-sources/' + s.key, { method: 'PATCH', body: { checked: true } }).then(function (r) {
+            if (r.ok) { ctRef.sources = r.sources; renderCtSites(); } else { b.disabled = false; toast(ctErr(r)); }
+          });
+        });
+        d.appendChild(b);
+        w.appendChild(d);
+      });
+    }
+
+    function renderCtTiles(p) {
+      var w = document.getElementById('ctTiles');
+      w.textContent = '';
+      var t = function (label, val, sub, cls, go) {
+        var d = el('div', 'tile' + (go ? ' pick' : ''));
+        d.appendChild(el('s', null, label));
+        d.appendChild(el('b', cls || null, val));
+        if (sub) d.appendChild(el('div', 'sub', sub));
+        if (go) d.addEventListener('click', go);
+        w.appendChild(d);
+      };
+      t('Working', String(p.open), money(p.open_value_cents) + ' being priced', null, function () { ctSetView('pre_submit'); });
+      t('Responded', String(p.submitted), money(p.submitted_value_cents) + ' awaiting a decision', null, function () { ctSetView('submitted'); });
+      t('Cash exposure', money(p.exposure_cents), 'if everything out were awarded', p.exposure_cents > ((ctRef && ctRef.vocab.cash_ceiling_cents) || 500000) ? 'warn' : null);
+      t('Win rate', p.win_rate == null ? '—' : p.win_rate + '%', p.wins + ' of ' + p.decided + ' decided', null, function () { ctSetView('won'); });
+      if (p.next_deadline) {
+        var nd = p.next_deadline;
+        t('Next deadline', nd.days <= 0 ? 'today' : 'in ' + ctDays(nd.days), nd.number + ' · ' + nd.title, nd.days <= 2 ? 'bad' : nd.days <= 7 ? 'warn' : null, function () { openBid(nd.id); });
+      } else t('Next deadline', '—', 'nothing open');
+    }
+
+    function ctSetView(v) {
+      ctView = v;
+      Array.prototype.forEach.call(document.querySelectorAll('#ctFilters .fpill'), function (b) { b.classList.toggle('on', b.getAttribute('data-view') === v); });
+      closeBid();
+      api('/admin/bids?view=' + ctView + (ctSearch ? '&q=' + encodeURIComponent(ctSearch) : '')).then(function (r) {
+        if (r.ok) { ctBidsCache = r.bids || []; renderCtBoard(); }
+      });
+    }
+
+    function ctCard(b) {
+      var c = el('button', 'ct-card' + (ctBidId === b.id ? ' sel' : ''));
+      c.type = 'button';
+      c.appendChild(el('div', 'n', b.number + (b.event_no ? ' · Event ' + b.event_no : '')));
+      c.appendChild(el('div', 't', b.title));
+      c.appendChild(el('div', 'a', b.agency));
+      var chips = el('div', 'chips');
+      chips.appendChild(badge(b.status_label, CT_STATUS_COLOR[b.status] || '#8aa48d'));
+      if (b.tier) chips.appendChild(el('span', 'ct-chip' + (b.tier === 1 ? ' gold' : ''), 'Tier ' + b.tier));
+      else if (b.naics) chips.appendChild(el('span', 'ct-chip red', 'Off-statement'));
+      if (b.federal) chips.appendChild(el('span', 'ct-chip red', 'Federal'));
+      if (b.structure === 'nte_rate_card') chips.appendChild(el('span', 'ct-chip', 'Rate card'));
+      if (CT_PRE.indexOf(b.status) >= 0 && b.days_to_close != null) {
+        chips.appendChild(el('span', 'ct-chip ' + (b.days_to_close <= 2 ? 'red' : b.days_to_close <= 7 ? 'gold' : ''),
+          b.days_to_close < 0 ? 'Deadline passed' : 'Closes ' + (b.days_to_close === 0 ? 'today' : 'in ' + ctDays(b.days_to_close))));
+      }
+      if (b.days_to_need_by != null && ['awarded', 'funded', 'submitted'].indexOf(b.status) >= 0) {
+        chips.appendChild(el('span', 'ct-chip ' + (b.days_to_need_by <= 7 ? 'red' : ''), 'Need-by ' + (b.days_to_need_by < 0 ? 'passed' : 'in ' + ctDays(b.days_to_need_by))));
+      }
+      if (b.high_risks) chips.appendChild(el('span', 'ct-chip red', b.high_risks + ' high risk'));
+      if (CT_PRE.indexOf(b.status) >= 0 && b.not_ready) chips.appendChild(el('span', 'ct-chip', b.not_ready + ' to fix'));
+      c.appendChild(chips);
+      var v = el('div', 'v');
+      v.appendChild(el('span', null, b.lines ? ctMoney(b.total_bid_cents) : 'No lines yet'));
+      if (b.lines && b.gross_pct != null) v.appendChild(el('span', b.gross_cents < 0 ? 'bad' : null, b.gross_pct + '% gross'));
+      c.appendChild(v);
+      c.addEventListener('click', function () { openBid(b.id); });
+      return c;
+    }
+
+    function renderCtBoard() {
+      var w = document.getElementById('ctBoard');
+      w.textContent = '';
+      if (!ctBidsCache.length) {
+        w.appendChild(el('div', 'state', ctSearch ? 'No bids match that search.' : ctView === 'active' ? 'No bids yet. Check a site above, then add one with + New bid.' : 'Nothing here.'));
+        return;
+      }
+      if (ctLayoutMode === 'list') {
+        var list = el('div');
+        ctBidsCache.forEach(function (b) { list.appendChild(ctCard(b)); });
+        w.appendChild(list);
+        return;
+      }
+      var board = el('div', 'ct-board');
+      var placed = {};
+      var cols = CT_COLUMNS.slice();
+      var rest = ctBidsCache.filter(function (b) { return !CT_COLUMNS.some(function (c) { return c[1].indexOf(b.status) >= 0; }); });
+      if (rest.length) { cols.push(['Closed', rest.map(function (b) { return b.status; })]); board.style.gridTemplateColumns = 'repeat(5,minmax(220px,1fr))'; }
+      cols.forEach(function (col) {
+        var items = ctBidsCache.filter(function (b) { return col[1].indexOf(b.status) >= 0 && !placed[b.id]; });
+        items.forEach(function (b) { placed[b.id] = true; });
+        var c = el('div', 'ct-col');
+        var h = el('h3', null, col[0]);
+        h.appendChild(el('span', null, String(items.length)));
+        c.appendChild(h);
+        if (!items.length) c.appendChild(el('div', 'ct-empty', 'None'));
+        items.forEach(function (b) { c.appendChild(ctCard(b)); });
+        board.appendChild(c);
+      });
+      w.appendChild(board);
+    }
+
+    // ---- the new-bid form ----
+    function fillCtNewSelects() {
+      var src = document.getElementById('ctnSource');
+      var keep = src.value;
+      src.textContent = '';
+      src.appendChild(new Option('Direct / other', ''));
+      ctRef.sources.forEach(function (s) { src.appendChild(new Option(s.label + (s.federal ? ' (federal)' : ''), s.key)); });
+      src.value = keep;
+      var nc = document.getElementById('ctnNaics');
+      var keepN = nc.value;
+      nc.textContent = '';
+      nc.appendChild(new Option('Not set yet', ''));
+      ctRef.codes.filter(function (c) { return c.active; }).forEach(function (c) { nc.appendChild(new Option('Tier ' + c.tier + ' · ' + c.code + ' ' + c.description, c.code)); });
+      nc.appendChild(new Option('Other (off the capability statement)', '__other'));
+      nc.value = keepN;
+    }
+    document.getElementById('ctNewBtn').addEventListener('click', function () {
+      var f = document.getElementById('ctNew');
+      f.hidden = !f.hidden;
+      if (!f.hidden) document.getElementById('ctnAgency').focus();
+    });
+    document.getElementById('ctNewCancel').addEventListener('click', function () { document.getElementById('ctNew').hidden = true; });
+    var ctSuggTimer = null;
+    ['ctnTitle', 'ctnAgency'].forEach(function (id) {
+      document.getElementById(id).addEventListener('input', function () {
+        clearTimeout(ctSuggTimer);
+        ctSuggTimer = setTimeout(function () {
+          var text = document.getElementById('ctnTitle').value;
+          var box = document.getElementById('ctnSugg');
+          if (text.trim().length < 4) { box.hidden = true; return; }
+          api('/admin/bids/suggest-codes', { method: 'POST', body: { text: text } }).then(function (r) {
+            box.textContent = '';
+            if (!r.ok || !r.codes.length) { box.hidden = true; return; }
+            box.appendChild(document.createTextNode('Matches the capability statement:'));
+            r.codes.forEach(function (c) {
+              var b = el('button', null, c.code + ' · tier ' + c.tier);
+              b.type = 'button';
+              b.title = c.description + ' (' + c.hits.join(', ') + ')';
+              b.addEventListener('click', function () { document.getElementById('ctnNaics').value = c.code; });
+              box.appendChild(b);
+            });
+            box.hidden = false;
+          });
+        }, 350);
+      });
+    });
+    document.getElementById('ctNewForm').addEventListener('submit', function (e) {
+      e.preventDefault();
+      var err = document.getElementById('ctNewErr');
+      err.hidden = true;
+      var naics = document.getElementById('ctnNaics').value;
+      if (naics === '__other') { naics = (prompt('The NAICS code for this one (it is off the capability statement, so it will carry a fit flag):') || '').trim(); }
+      var body = {
+        agency: document.getElementById('ctnAgency').value, title: document.getElementById('ctnTitle').value,
+        event_no: document.getElementById('ctnEvent').value, source: document.getElementById('ctnSource').value || undefined,
+        naics: naics || undefined, structure: document.getElementById('ctnStructure').value,
+        date_close: ctFromDt(document.getElementById('ctnClose').value), posting_url: document.getElementById('ctnUrl').value,
+      };
+      var btn = e.target.querySelector('button[type="submit"]');
+      btn.disabled = true;
+      api('/admin/bids', { method: 'POST', body: body }).then(function (r) {
+        btn.disabled = false;
+        if (!r.ok) { err.textContent = ctErr(r); err.hidden = false; return; }
+        e.target.reset();
+        document.getElementById('ctnSugg').hidden = true;
+        document.getElementById('ctNew').hidden = true;
+        toast('Created ' + r.bid.number);
+        ctView = 'active';
+        loadContracting().then(function () { openBid(r.bid.id); });
+      });
+    });
+    Array.prototype.forEach.call(document.querySelectorAll('#ctFilters .fpill'), function (b) {
+      b.addEventListener('click', function () { ctSetView(b.getAttribute('data-view')); });
+    });
+    document.getElementById('ctQ').addEventListener('input', function (e) {
+      clearTimeout(ctSearchTimer);
+      ctSearchTimer = setTimeout(function () { ctSearch = e.target.value.trim(); ctSetView(ctView); }, 250);
+    });
+    document.getElementById('ctLayout').addEventListener('click', function (e) {
+      ctLayoutMode = ctLayoutMode === 'board' ? 'list' : 'board';
+      e.target.textContent = ctLayoutMode === 'board' ? 'List' : 'Board';
+      e.target.setAttribute('aria-pressed', ctLayoutMode === 'list' ? 'true' : 'false');
+      renderCtBoard();
+    });
+
+    // ---- one bid ----
+    function openBid(id, replace) {
+      ctBidId = Number(id);
+      if (!replace && location.hash !== '#b=' + ctBidId) history.replaceState(null, '', '#b=' + ctBidId);
+      return api('/admin/bids/' + ctBidId).then(function (r) {
+        if (!r.ok) { toast(ctErr(r)); closeBid(); return; }
+        ctDetail = r;
+        renderBid();
+      });
+    }
+    function closeBid() {
+      ctBidId = null; ctDetail = null;
+      var p = document.getElementById('ctBid');
+      p.hidden = true; p.textContent = '';
+      document.getElementById('ctBoard').hidden = false;
+      if (/^#b=/.test(location.hash)) history.replaceState(null, '', '#contracting');
+      renderCtBoard();
+    }
+    // Every write returns the whole workspace; this swaps it in and repaints.
+    function ctApply(r, msg) {
+      if (!r.ok) { toast(ctErr(r)); return false; }
+      if (r.bid) { ctDetail = r; renderBid(); }
+      if (msg) toast(msg);
+      return true;
+    }
+    function ctBidApi(path, method, body, msg) {
+      return api('/admin/bids/' + ctBidId + path, { method: method, body: body }).then(function (r) { ctApply(r, msg); return r; });
+    }
+
+    function renderBid() {
+      var d = ctDetail, b = d.bid;
+      var p = document.getElementById('ctBid');
+      document.getElementById('ctBoard').hidden = true;
+      p.hidden = false;
+      p.textContent = '';
+      var panel = el('div', 'ct-panel');
+      var back = el('button', 'ct-btn sm', '‹ All bids');
+      back.type = 'button';
+      back.addEventListener('click', closeBid);
+      panel.appendChild(back);
+
+      var head = el('div', 'ct-head');
+      var hl = el('div');
+      hl.appendChild(el('div', 'sub', b.number + (b.event_no ? ' · Event ' + b.event_no : '') + (b.naics ? ' · NAICS ' + b.naics : '')));
+      hl.appendChild(el('h2', null, b.title));
+      hl.appendChild(el('div', 'sub', b.agency + (b.date_close ? ' · due ' + fmt(b.date_close) : '')));
+      head.appendChild(hl);
+      head.appendChild(badge(b.status_label, CT_STATUS_COLOR[b.status] || '#8aa48d'));
+      panel.appendChild(head);
+
+      // The moves this status allows, each asking for its note.
+      var moves = el('div', 'ct-moves');
+      var prompt = el('div');
+      d.transitions.forEach(function (to) {
+        var mb = el('button', 'ct-btn' + (to === 'draft_ready' || to === 'submitted' || to === 'awarded' || to === 'funded' ? ' prim' : to === 'no_bid' || to === 'lost' ? ' danger' : ''), CT_MOVE_LABEL[to] || to);
+        mb.type = 'button';
+        mb.addEventListener('click', function () { ctMovePrompt(prompt, to); });
+        moves.appendChild(mb);
+      });
+      if (b.project_id) {
+        var op = el('button', 'ct-btn prim', 'Open project'); op.type = 'button';
+        op.addEventListener('click', function () { routeHash('#p=' + b.project_id, true); });
+        moves.appendChild(op);
+      } else if (b.status === 'funded' || b.status === 'awarded') {
+        var cv = el('button', 'ct-btn prim', 'Convert to project'); cv.type = 'button';
+        cv.addEventListener('click', function () {
+          if (!confirm('Create a contract project from ' + b.number + '? The agency becomes a company record and the bid lines become procurement lines.')) return;
+          cv.disabled = true;
+          api('/admin/bids/' + b.id + '/convert', { method: 'POST', body: {} }).then(function (r) {
+            cv.disabled = false;
+            if (r.ok) { toast('Project ' + r.number + ' created with ' + r.procurement_lines + ' procurement line' + (r.procurement_lines === 1 ? '' : 's')); routeHash('#p=' + r.project_id, true); }
+            else toast(ctErr(r));
+          });
+        });
+        moves.appendChild(cv);
+      }
+      if (d.transitions.length || b.project_id || b.status === 'funded' || b.status === 'awarded') panel.appendChild(moves);
+      panel.appendChild(prompt);
+
+      if (CT_PRE.indexOf(b.status) >= 0) {
+        var why = el('div', 'ct-why' + (d.readiness.length ? '' : ' ok'));
+        why.appendChild(el('h4', null, d.readiness.length ? 'Why this isn’t ready' : 'Ready to mark draft ready'));
+        if (d.readiness.length) {
+          var ul = el('ul');
+          d.readiness.forEach(function (s) { ul.appendChild(el('li', null, s)); });
+          why.appendChild(ul);
+        } else why.appendChild(el('div', 'row-sub', 'Every guardrail in CONTRACTING.md s6.5 is satisfied.'));
+        panel.appendChild(why);
+      }
+
+      var e = d.economics;
+      var econ = el('div', 'ct-econ');
+      var et = function (label, val, sub, cls) { var t = el('div', 'tile'); t.appendChild(el('s', null, label)); t.appendChild(el('b', cls || null, val)); if (sub) t.appendChild(el('div', 'sub', sub)); econ.appendChild(t); };
+      et(e.rate_card ? 'Bid at listed qty' : 'Total bid', ctMoney(e.total_bid_cents), e.rate_card && e.nte_cents ? 'NTE cap ' + money(e.nte_cents) : e.freight_quoted_cents ? money(e.freight_quoted_cents) + ' freight line' : null);
+      et('Landed cost', ctMoney(e.total_landed_cents), e.freight_cost_cents ? 'incl. ' + money(e.freight_cost_cents) + ' freight' : null);
+      et('Gross margin', ctMoney(e.gross_cents), e.gross_pct == null ? null : e.gross_pct + '%', e.gross_cents < 0 ? 'bad' : e.gross_pct != null && e.gross_pct < 10 ? 'warn' : null);
+      et('Cash fronted', ctMoney(e.cash_fronted_cents), 'out until net-30 after acceptance', e.cash_fronted_cents > ((ctRef && ctRef.vocab.cash_ceiling_cents) || 500000) ? 'warn' : null);
+      panel.appendChild(econ);
+      panel.appendChild(el('p', 'ct-note', e.payment_note));
+
+      var tabs = paneTabs(panel, ['Overview', 'Draft', 'Triage', 'Lines', 'Risk', 'Q&A', 'Files', 'Response', 'Tabulation', 'History'], 'bid');
+      var openRisks = d.risks.filter(function (x) { return !x.resolved && !x.acknowledged_note; }).length;
+      tabs.pane('Triage').btn.textContent = 'Triage ' + d.triage.filter(function (s) { return s.done; }).length + '/' + d.triage.length;
+      tabs.count('Lines', d.lines.length);
+      tabs.count('Risk', openRisks);
+      tabs.count('Q&A', d.qa.length);
+      tabs.count('Files', d.files.length);
+      tabs.count('Tabulation', d.tabulations.length);
+      ctOverview(tabs.pane('Overview'));
+      ctTriage(tabs.pane('Triage'));
+      ctLines(tabs.pane('Lines'));
+      ctRisk(tabs.pane('Risk'));
+      ctQa(tabs.pane('Q&A'));
+      ctFiles(tabs.pane('Files'));
+      ctDraft(tabs.pane('Draft'));
+      ctResponse(tabs.pane('Response'));
+      ctTabulation(tabs.pane('Tabulation'));
+      ctHistory(tabs.pane('History'));
+      p.appendChild(panel);
+      Array.prototype.forEach.call(document.querySelectorAll('.ct-card'), function (c) { c.classList.remove('sel'); });
+    }
+
+    function ctMovePrompt(host, to) {
+      host.textContent = '';
+      var box = el('div', 'ct-prompt');
+      box.appendChild(el('p', null, (CT_MOVE_LABEL[to] || to) + '. Every status change needs a note: what happened, and why.'));
+      var reason = null;
+      if (to === 'closed') {
+        reason = ctSelect([['', 'Why did it close?']].concat(((ctRef && ctRef.vocab.closed_reasons) || ['lost', 'canceled', 'expired', 'withdrawn', 'completed']).map(function (r) { return [r, r.charAt(0).toUpperCase() + r.slice(1)]; })), '');
+        reason.setAttribute('aria-label', 'Why it closed');
+        box.appendChild(reason);
+      }
+      var ta = el('textarea');
+      ta.rows = 2;
+      ta.setAttribute('aria-label', 'Note');
+      ta.placeholder = to === 'submitted' ? 'Submitted through the Infor portal at 1:40pm, confirmation #...' : to === 'no_bid' ? 'Why we are passing' : 'Note';
+      box.appendChild(ta);
+      var rr = el('div', 'reply-row');
+      var go = el('button', 'prim', 'Confirm');
+      go.type = 'button';
+      var cancel = el('button', null, 'Cancel');
+      cancel.type = 'button';
+      cancel.addEventListener('click', function () { host.textContent = ''; });
+      go.addEventListener('click', function () {
+        if (!ta.value.trim()) { ta.focus(); toast('Add a note first.'); return; }
+        if (reason && !reason.value) { reason.focus(); toast('Pick why it closed.'); return; }
+        go.disabled = true;
+        api('/admin/bids/' + ctBidId + '/transition', { method: 'POST', body: { to: to, note: ta.value, closed_reason: reason ? reason.value : undefined } }).then(function (r) {
+          go.disabled = false;
+          if (r.ok) { ctDetail = r; renderBid(); toast('Now ' + r.bid.status_label); reloadCtLists(); return; }
+          if (r.error === 'not_ready' && r.reasons) {
+            var why = el('div', 'ct-why');
+            why.appendChild(el('h4', null, 'Not ready yet'));
+            var ul = el('ul');
+            r.reasons.forEach(function (s) { ul.appendChild(el('li', null, s)); });
+            why.appendChild(ul);
+            box.appendChild(why);
+            return;
+          }
+          toast(ctErr(r));
+        });
+      });
+      rr.appendChild(go); rr.appendChild(cancel);
+      box.appendChild(rr);
+      host.appendChild(box);
+      ta.focus();
+    }
+    function reloadCtLists() {
+      api('/admin/bids/pipeline').then(function (r) { if (r.ok) renderCtTiles(r.pipeline); });
+      api('/admin/bids?view=' + ctView + (ctSearch ? '&q=' + encodeURIComponent(ctSearch) : '')).then(function (r) { if (r.ok) ctBidsCache = r.bids || []; });
+    }
+
+    function ctOverview(pane) {
+      var b = ctDetail.bid;
+      var f = el('div', 'ct-form');
+      var inp = {};
+      inp.agency = ctField(f, 'Agency', ctInput('text', b.agency, { maxlength: 200 }));
+      inp.title = ctField(f, 'Title', ctInput('text', b.title, { maxlength: 300 }));
+      inp.event_no = ctField(f, 'Event / solicitation #', ctInput('text', b.event_no || '', { maxlength: 80 }));
+      inp.source = ctField(f, 'Found on', ctSelect([['', 'Direct / other']].concat(((ctRef && ctRef.sources) || []).map(function (s) { return [s.key, s.label]; })), b.source || ''));
+      var codeOpts = [['', 'Not set']].concat(((ctRef && ctRef.codes) || []).map(function (c) { return [c.code, 'T' + c.tier + ' ' + c.code + ' ' + c.description]; }));
+      if (b.naics && !codeOpts.some(function (o) { return o[0] === b.naics; })) codeOpts.push([b.naics, b.naics + ' (off-statement)']);
+      inp.naics = ctField(f, 'NAICS', ctSelect(codeOpts, b.naics || ''));
+      inp.commodity_codes = ctField(f, 'Commodity codes', ctInput('text', b.commodity_codes || '', { maxlength: 300 }));
+      inp.structure = ctField(f, 'Structure', ctSelect([['one_time', 'One-time fixed quantity'], ['nte_rate_card', 'NTE rate card']], b.structure));
+      inp.submit_method = ctField(f, 'Submit by', ctSelect([['', '—'], ['portal', 'Portal'], ['email', 'Email'], ['paper', 'Paper']], b.submit_method || ''));
+      inp.date_open = ctField(f, 'Posted', ctInput('date', ctDayVal(b.date_open)));
+      inp.date_close = ctField(f, 'Submission deadline', ctInput('datetime-local', ctDtVal(b.date_close)));
+      inp.qa_close = ctField(f, 'Questions due', ctInput('datetime-local', ctDtVal(b.qa_close)));
+      inp.expected_po_date = ctField(f, 'Expected PO', ctInput('date', ctDayVal(b.expected_po_date)));
+      inp.need_by_date = ctField(f, 'Need-by date', ctInput('date', ctDayVal(b.need_by_date)));
+      inp.lead_time_days = ctField(f, 'Lead time we promise (business days)', ctInput('number', b.lead_time_days == null ? '' : b.lead_time_days, { min: 0, step: 1, inputmode: 'numeric' }));
+      inp.nte = ctField(f, 'NTE cap ($)', ctInput('text', ctDollars(b.nte_cents), { inputmode: 'decimal' }));
+      inp.freight_threshold = ctField(f, 'Freight pre-approval over ($)', ctInput('text', ctDollars(b.freight_threshold_cents), { inputmode: 'decimal' }));
+      inp.posting_url = ctField(f, 'Posting link', ctInput('url', b.posting_url || '', { maxlength: 600 }), 'wide');
+      var flags = el('div', 'wide');
+      var pOk = ctCheck('Partial bids allowed', b.partial_ok);
+      var fed = ctCheck('Federal prime (blocked under FAR 3.601)', b.federal);
+      pOk.className = fed.className = 'chk';
+      flags.appendChild(pOk); flags.appendChild(fed);
+      f.appendChild(flags);
+      inp.go_no_go = ctField(f, 'Go / no-go', ctSelect([['', 'Not decided'], ['go', 'Go'], ['no_go', 'No-go']], b.go_no_go || ''));
+      inp.go_no_go_reason = ctField(f, 'Why', ctInput('text', b.go_no_go_reason || '', { maxlength: 2000 }));
+      pane.appendChild(f);
+      var tf = el('div', 'ct-form');
+      var ta = function (label, key, ph) {
+        var t = el('textarea');
+        t.rows = 2; t.value = b[key] || ''; t.placeholder = ph || '';
+        inp[key] = ctField(tf, label, t, 'wide');
+      };
+      ta('Strategic override (why a negative-margin line is still bid)', 'strategic_override', 'First past performance with this agency; the recurring orders carry it.');
+      ta('Insurance / liability acknowledgment', 'liability_ack', 'Products-liability coverage in place before signing the indemnity.');
+      ta('Internal notes', 'internal_notes');
+      pane.appendChild(tf);
+      var rr = el('div', 'reply-row');
+      var save = el('button', 'prim', 'Save');
+      save.type = 'button';
+      save.addEventListener('click', function () {
+        var body = {
+          agency: inp.agency.value, title: inp.title.value, event_no: inp.event_no.value, source: inp.source.value, naics: inp.naics.value,
+          commodity_codes: inp.commodity_codes.value, structure: inp.structure.value, submit_method: inp.submit_method.value,
+          date_open: dayToTs(inp.date_open.value), date_close: ctFromDt(inp.date_close.value), qa_close: ctFromDt(inp.qa_close.value),
+          expected_po_date: dayToTs(inp.expected_po_date.value), need_by_date: dayToTs(inp.need_by_date.value),
+          lead_time_days: inp.lead_time_days.value, nte: inp.nte.value, freight_threshold: inp.freight_threshold.value,
+          posting_url: inp.posting_url.value, partial_ok: pOk.input.checked, federal: fed.input.checked,
+          go_no_go: inp.go_no_go.value, go_no_go_reason: inp.go_no_go_reason.value,
+          strategic_override: inp.strategic_override.value, liability_ack: inp.liability_ack.value,
+          internal_notes: inp.internal_notes.value,
+        };
+        save.disabled = true;
+        ctBidApi('', 'PATCH', body, 'Saved').then(function () { save.disabled = false; reloadCtLists(); });
+      });
+      rr.appendChild(save);
+      if (b.posting_url) { var open = el('a', 'ct-btn', 'Open posting'); open.href = b.posting_url; open.target = '_blank'; open.rel = 'noopener noreferrer'; rr.appendChild(open); }
+      if (['intake', 'no_bid'].indexOf(b.status) >= 0) {
+        var del = el('button', null, 'Delete bid');
+        del.type = 'button';
+        del.addEventListener('click', function () {
+          if (!confirm('Delete ' + b.number + ' and its files? This cannot be undone.')) return;
+          api('/admin/bids/' + b.id, { method: 'DELETE' }).then(function (r) { if (r.ok) { toast('Deleted'); closeBid(); loadContracting(); } else toast(ctErr(r)); });
+        });
+        rr.appendChild(del);
+      }
+      pane.appendChild(rr);
+      var nb = el('div', 'ct-form');
+      var note = el('textarea');
+      note.rows = 2;
+      ctField(nb, 'Add a note to the history', note, 'wide');
+      pane.appendChild(nb);
+      var nbtn = el('button', 'ct-btn', 'Add note');
+      nbtn.type = 'button';
+      nbtn.addEventListener('click', function () {
+        if (!note.value.trim()) return;
+        ctBidApi('/note', 'POST', { note: note.value }, 'Noted');
+      });
+      pane.appendChild(nbtn);
+    }
+
+    function ctTriage(pane) {
+      pane.appendChild(el('p', 'ct-note', 'Walk these in order and record what each found (CONTRACTING.md s2). Step 0 is the fit check against the capability statement.'));
+      ctDetail.triage.forEach(function (s) {
+        var box = el('div', 'ct-step' + (s.done ? ' done' : ''));
+        var c = ctCheck(s.step + '. ' + s.title, s.done);
+        box.appendChild(c);
+        box.appendChild(el('p', null, s.hint));
+        var ta = el('textarea');
+        ta.rows = 2;
+        ta.value = s.output || '';
+        ta.setAttribute('aria-label', 'What step ' + s.step + ' found');
+        box.appendChild(ta);
+        c.input.addEventListener('change', function () { ctBidApi('/triage/' + s.step, 'PUT', { done: c.input.checked, output: ta.value }); });
+        ta.addEventListener('blur', function () { if (ta.value !== (s.output || '')) { s.output = ta.value; api('/admin/bids/' + ctBidId + '/triage/' + s.step, { method: 'PUT', body: { output: ta.value } }); } });
+        pane.appendChild(box);
+      });
+    }
+
+    // The pricing grid. The page recomputes as you type so the margin is visible
+    // before saving; the server recomputes on save and its numbers are the record.
+    function ctLines(pane) {
+      var partial = ctDetail.bid.partial_ok;
+      pane.appendChild(el('p', 'ct-note', 'Landed cost is per unit, before freight. Leave the unit price to follow the markup, or tick Fix to type it. The freight line is what the bid form charges; freight cost is what shipping costs you. A line turns red when its margin does not cover its freight and handling.' + (partial ? ' Partial bids are allowed: untick Bid on a line to pass on it.' : '')));
+      var wrap = el('div', 'ct-grid');
+      var t = el('table', 'ct-lines');
+      var thead = el('thead');
+      var hr = el('tr');
+      ['Bid', '#', 'Description', 'SKU', 'Qty', 'UOM', 'Landed $', 'Markup %', 'Fix', 'Unit $', 'Ref $', 'Freight line $', 'Freight cost $', 'Lane', 'Vendor', 'Stock', 'Elec.', 'Listing', 'Extended', 'Margin', ''].forEach(function (h) { hr.appendChild(el('th', null, h)); });
+      thead.appendChild(hr);
+      t.appendChild(thead);
+      var tbody = el('tbody');
+      t.appendChild(tbody);
+      var totRow = el('tr', 'tot');
+      var rows = [];
+      function addRow(l) {
+        l = l || {};
+        var tr = el('tr');
+        var cell = function (node, cls) { var td = el('td', cls || null); td.appendChild(node); tr.appendChild(td); return node; };
+        var r = {};
+        r.bid = cell(ctInput('checkbox')); r.bid.checked = l.bid !== false; r.bid.setAttribute('aria-label', 'Bid this line');
+        r.line_no = cell(ctInput('number', l.line_no || rows.length + 1, { min: 1, style: 'width:48px' }));
+        r.description = cell(ctInput('text', l.description || '', { maxlength: 400, style: 'min-width:220px' }));
+        r.sku = cell(ctInput('text', l.sku || '', { maxlength: 120, style: 'width:90px' }));
+        r.qty = cell(ctInput('text', l.qty == null ? 1 : l.qty, { inputmode: 'decimal', style: 'width:64px' }));
+        r.qty.className = 'num';
+        r.uom = cell(ctInput('text', l.uom || '', { maxlength: 20, style: 'width:52px' }));
+        r.landed = cell(ctInput('text', ctDollars(l.landed_cost_cents), { inputmode: 'decimal', style: 'width:80px' })); r.landed.className = 'num';
+        r.markup = cell(ctInput('text', l.markup_bp == null ? '' : l.markup_bp / 100, { inputmode: 'decimal', style: 'width:64px' })); r.markup.className = 'num';
+        r.fix = cell(ctInput('checkbox')); r.fix.checked = !!l.price_override; r.fix.setAttribute('aria-label', 'Type the unit price');
+        r.unit = cell(ctInput('text', ctDollars(l.unit_price_cents), { inputmode: 'decimal', style: 'width:80px' })); r.unit.className = 'num';
+        r.ref = cell(ctInput('text', ctDollars(l.reference_cents), { inputmode: 'decimal', style: 'width:72px' })); r.ref.className = 'num';
+        r.freight = cell(ctInput('text', ctDollars(l.freight_cents), { inputmode: 'decimal', style: 'width:72px' })); r.freight.className = 'num';
+        r.fcost = cell(ctInput('text', ctDollars(l.freight_cost_cents), { inputmode: 'decimal', style: 'width:72px' })); r.fcost.className = 'num';
+        r.lane = cell(ctSelect([['', '—'], ['retail', 'Retail'], ['distributor', 'Distributor'], ['direct', 'Direct']], l.source_lane || ''));
+        r.vendor = cell(ctInput('text', l.vendor || '', { maxlength: 120, style: 'width:100px' }));
+        r.stock = cell(ctInput('checkbox')); r.stock.checked = !!l.stock_confirmed; r.stock.setAttribute('aria-label', 'Stock confirmed at quantity');
+        r.elec = cell(ctInput('checkbox')); r.elec.checked = !!l.electrical; r.elec.setAttribute('aria-label', 'Electrical');
+        r.listing = cell(ctSelect([['', '—'], ['ul', 'UL'], ['etl', 'ETL'], ['none', 'None'], ['unknown', 'Unknown']], l.listing || ''));
+        r.ext = el('td', 'num'); tr.appendChild(r.ext);
+        r.mar = el('td', 'num m'); tr.appendChild(r.mar);
+        var rm = el('button', 'ct-btn sm', '×'); rm.type = 'button'; rm.setAttribute('aria-label', 'Remove line');
+        rm.addEventListener('click', function () { rows.splice(rows.indexOf(r), 1); tr.remove(); recalc(); });
+        var tdr = el('td'); tdr.appendChild(rm); tr.appendChild(tdr);
+        r.tr = tr;
+        tr.addEventListener('input', recalc);
+        tr.addEventListener('change', recalc);
+        rows.push(r);
+        tbody.appendChild(tr);
+        return r;
+      }
+      function recalc() {
+        var tot = { bid: 0, landed: 0, net: 0 };
+        rows.forEach(function (r) {
+          var qty = Number(r.qty.value) || 0, landed = ctCents(r.landed.value) || 0;
+          var mk = r.markup.value === '' ? null : Number(r.markup.value);
+          r.unit.disabled = !r.fix.checked && mk != null;
+          if (!r.fix.checked && mk != null && !isNaN(mk)) r.unit.value = ctDollars(Math.round(landed * (1 + mk / 100)));
+          var unit = ctCents(r.unit.value) || 0, fl = ctCents(r.freight.value) || 0, fc = ctCents(r.fcost.value) || 0;
+          var ext = Math.round(unit * qty), gross = ext - Math.round(landed * qty), net = gross + fl - fc;
+          var unrec = Math.max(0, fc - fl);
+          r.ext.textContent = money(ext);
+          r.mar.textContent = money(net) + (ext ? ' (' + Math.round(gross / ext * 1000) / 10 + '%)' : '');
+          var on = r.bid.checked;
+          r.tr.classList.toggle('off', !on);
+          r.tr.classList.toggle('be', on && (net <= 0 || (unrec > 0 && gross <= unrec)));
+          if (on) { tot.bid += ext + fl; tot.landed += Math.round(landed * qty) + fc; tot.net += net; }
+        });
+        totRow.textContent = '';
+        var c = el('td', null, 'Totals'); c.colSpan = 18; totRow.appendChild(c);
+        totRow.appendChild(el('td', 'num', money(tot.bid)));
+        totRow.appendChild(el('td', 'num', money(tot.net) + (tot.bid ? ' (' + Math.round((tot.bid - tot.landed) / tot.bid * 1000) / 10 + '%)' : '')));
+        totRow.appendChild(el('td'));
+      }
+      ctDetail.lines.forEach(addRow);
+      if (!ctDetail.lines.length) addRow();
+      var tfoot = el('tfoot'); tfoot.appendChild(totRow); t.appendChild(tfoot);
+      wrap.appendChild(t);
+      pane.appendChild(wrap);
+      recalc();
+      var rr = el('div', 'reply-row');
+      var add = el('button', null, '+ Line'); add.type = 'button';
+      add.addEventListener('click', function () { var r = addRow(); recalc(); r.description.focus(); });
+      var save = el('button', 'prim', 'Save lines'); save.type = 'button';
+      save.addEventListener('click', function () {
+        var lines = rows.map(function (r) {
+          return { bid: r.bid.checked, line_no: r.line_no.value, description: r.description.value, sku: r.sku.value, qty: r.qty.value, uom: r.uom.value,
+            landed_cost: r.landed.value, markup_pct: r.markup.value, price_override: r.fix.checked, unit_price: r.unit.value, reference: r.ref.value,
+            freight: r.freight.value, freight_cost: r.fcost.value, source_lane: r.lane.value, vendor: r.vendor.value,
+            stock_confirmed: r.stock.checked, electrical: r.elec.checked, listing: r.listing.value };
+        }).filter(function (l) { return l.description.trim(); });
+        save.disabled = true;
+        ctBidApi('/lines', 'PUT', { lines: lines }, 'Lines saved').then(function () { save.disabled = false; reloadCtLists(); });
+      });
+      rr.appendChild(add); rr.appendChild(save);
+      pane.appendChild(rr);
+    }
+
+    function ctRisk(pane) {
+      pane.appendChild(el('p', 'ct-note', 'Server-raised flags come and go with their cause; they can be acknowledged but not deleted. A high flag blocks Draft ready until it is resolved or acknowledged with a note.'));
+      if (!ctDetail.risks.length) pane.appendChild(el('div', 'ct-empty', 'No risks recorded yet. Step 5 of triage is where most of them come from.'));
+      ctDetail.risks.forEach(function (rk) {
+        var box = el('div', 'ct-risk ' + rk.severity + (rk.resolved || rk.acknowledged_note ? ' done' : ''));
+        var top = el('div', 'chips');
+        top.appendChild(el('span', 'ct-chip ' + (rk.severity === 'high' ? 'red' : rk.severity === 'med' ? 'gold' : ''), rk.severity));
+        top.appendChild(el('span', 'ct-chip', CT_FLAG_LABEL[rk.flag_type] || rk.flag_type));
+        if (rk.auto) top.appendChild(el('span', 'ct-chip green', 'Raised by the server'));
+        if (rk.resolved) top.appendChild(el('span', 'ct-chip green', 'Resolved'));
+        top.style.display = 'flex'; top.style.gap = '0.25rem'; top.style.flexWrap = 'wrap';
+        box.appendChild(top);
+        box.appendChild(el('div', 'd', rk.detail));
+        if (rk.acknowledged_note) box.appendChild(el('div', 'ack', 'Acknowledged: ' + rk.acknowledged_note));
+        var rr = el('div', 'reply-row');
+        var res = el('button', null, rk.resolved ? 'Reopen' : 'Resolved'); res.type = 'button';
+        res.addEventListener('click', function () { ctBidApi('/risks/' + rk.id, 'PATCH', { resolved: !rk.resolved }); });
+        var ack = el('button', null, rk.acknowledged_note ? 'Edit acknowledgment' : 'Acknowledge'); ack.type = 'button';
+        ack.addEventListener('click', function () {
+          var n = prompt('Acknowledge this risk. Say why it is survivable:', rk.acknowledged_note || '');
+          if (n == null) return;
+          ctBidApi('/risks/' + rk.id, 'PATCH', { acknowledged_note: n });
+        });
+        rr.appendChild(res); rr.appendChild(ack);
+        if (!rk.auto) {
+          var del = el('button', null, 'Delete'); del.type = 'button';
+          del.addEventListener('click', function () { if (confirm('Delete this risk?')) ctBidApi('/risks/' + rk.id, 'DELETE'); });
+          rr.appendChild(del);
+        }
+        box.appendChild(rr);
+        pane.appendChild(box);
+      });
+      var f = el('div', 'ct-form');
+      var type = ctField(f, 'Type', ctSelect(((ctRef && ctRef.vocab.flag_types) || Object.keys(CT_FLAG_LABEL)).filter(function (k) { return k !== 'federal' && k !== 'fit'; }).map(function (k) { return [k, CT_FLAG_LABEL[k] || k]; }), 'indemnity'));
+      var sev = ctField(f, 'Severity', ctSelect([['high', 'High'], ['med', 'Medium'], ['low', 'Low']], 'med'));
+      var det = ctField(f, 'Detail (quote the clause)', ctInput('text', '', { maxlength: 2000 }), 'wide');
+      pane.appendChild(f);
+      var add = el('button', 'ct-btn', 'Add risk'); add.type = 'button';
+      add.addEventListener('click', function () {
+        if (!det.value.trim()) { det.focus(); return; }
+        ctBidApi('/risks', 'POST', { flag_type: type.value, severity: sev.value, detail: det.value }, 'Risk added');
+      });
+      pane.appendChild(add);
+    }
+
+    function ctQa(pane) {
+      pane.appendChild(el('p', 'ct-note', 'Post spec conflicts to the portal Q&A rather than guessing. Substitution without written approval voids a bid.'));
+      ctDetail.qa.forEach(function (q) {
+        var box = el('div', 'ct-step' + (q.answer ? ' done' : ''));
+        box.appendChild(el('div', 'row-main', q.question));
+        box.appendChild(el('p', null, (q.date_posted ? 'Posted ' + fmtDate(q.date_posted) : 'Not posted yet') + (q.date_answered ? ' · answered ' + fmtDate(q.date_answered) : '')));
+        var ta = el('textarea'); ta.rows = 2; ta.value = q.answer || ''; ta.placeholder = 'Their answer'; ta.setAttribute('aria-label', 'Answer');
+        box.appendChild(ta);
+        var rr = el('div', 'reply-row');
+        var sv = el('button', null, 'Save answer'); sv.type = 'button';
+        sv.addEventListener('click', function () { ctBidApi('/qa/' + q.id, 'PATCH', { answer: ta.value }, 'Saved'); });
+        rr.appendChild(sv);
+        if (!q.date_posted) {
+          var po = el('button', null, 'Mark posted'); po.type = 'button';
+          po.addEventListener('click', function () { ctBidApi('/qa/' + q.id, 'PATCH', { date_posted: Math.floor(Date.now() / 1000) }); });
+          rr.appendChild(po);
+        }
+        var del = el('button', null, 'Delete'); del.type = 'button';
+        del.addEventListener('click', function () { if (confirm('Delete this question?')) ctBidApi('/qa/' + q.id, 'DELETE'); });
+        rr.appendChild(del);
+        box.appendChild(rr);
+        pane.appendChild(box);
+      });
+      var f = el('div', 'ct-form');
+      var qi = el('textarea'); qi.rows = 2;
+      ctField(f, 'New question', qi, 'wide');
+      pane.appendChild(f);
+      var add = el('button', 'ct-btn', 'Add question'); add.type = 'button';
+      add.addEventListener('click', function () { if (qi.value.trim()) ctBidApi('/qa', 'POST', { question: qi.value }, 'Question added'); });
+      pane.appendChild(add);
+    }
+
+    function ctFiles(pane) {
+      var have = {};
+      ctDetail.files.forEach(function (f) { have[f.role] = true; });
+      var need = ['solicitation', 'spec', 'terms'].filter(function (r) { return !have[r]; });
+      pane.appendChild(el('p', 'ct-note', need.length ? 'Still needed before Draft ready: ' + need.map(function (r) { return CT_ROLE_LABEL[r]; }).join(', ') + '.' : 'The packet is complete. Addenda, the response you sent, the award and the tabulation belong here too.'));
+      ctDetail.files.forEach(function (f) {
+        var a = el('div', 'row');
+        var left = el('div');
+        var link = el('a', 'row-main', f.label || f.filename);
+        link.href = API + '/admin/bid-files/' + f.id; link.target = '_blank'; link.rel = 'noopener';
+        link.style.color = 'var(--text)';
+        left.appendChild(link);
+        left.appendChild(el('div', 'row-sub', (CT_ROLE_LABEL[f.role] || f.role) + ' · ' + fmtSize(f.size_bytes) + ' · ' + fmtDate(f.uploaded_at)));
+        a.appendChild(left);
+        var right = el('div', 'reply-row');
+        right.style.marginTop = '0';
+        var role = ctSelect(Object.keys(CT_ROLE_LABEL).map(function (k) { return [k, CT_ROLE_LABEL[k]]; }), f.role);
+        role.setAttribute('aria-label', 'What ' + f.filename + ' is');
+        role.addEventListener('change', function () { ctBidApi('/files/' + f.id, 'PATCH', { role: role.value }, 'Updated'); });
+        var del = el('button', null, 'Remove'); del.type = 'button';
+        del.addEventListener('click', function () { if (confirm('Remove ' + f.filename + '?')) ctBidApi('/files/' + f.id, 'DELETE', null, 'Removed'); });
+        right.appendChild(role); right.appendChild(del);
+        a.appendChild(right);
+        pane.appendChild(a);
+      });
+      var form = el('div', 'ct-form');
+      var role = ctField(form, 'What it is', ctSelect(Object.keys(CT_ROLE_LABEL).map(function (k) { return [k, CT_ROLE_LABEL[k]]; }), need[0] || 'addendum'));
+      var file = ctField(form, 'File (PDF, image, Word, Excel, CSV; 10 MB)', ctInput('file', null, { accept: '.pdf,.png,.jpg,.jpeg,.gif,.webp,.docx,.xlsx,.csv,.txt' }));
+      var label = ctField(form, 'Label (optional)', ctInput('text', '', { maxlength: 160 }));
+      pane.appendChild(form);
+      var up = el('button', 'ct-btn prim', 'Upload'); up.type = 'button';
+      up.addEventListener('click', function () {
+        var fl = file.files && file.files[0];
+        if (!fl) { file.focus(); return; }
+        if (fl.size > 10 * 1024 * 1024) { toast('That file is over the 10 MB limit.'); return; }
+        up.disabled = true; up.textContent = 'Uploading…';
+        fileToBase64(fl).then(function (b64) {
+          return ctBidApi('/files', 'POST', { filename: fl.name, role: role.value, label: label.value, content_type: fl.type, data: b64 }, 'Attached ' + fl.name);
+        }).then(function () { up.disabled = false; up.textContent = 'Upload'; }, function () { up.disabled = false; up.textContent = 'Upload'; toast('Could not read that file.'); });
+      });
+      pane.appendChild(up);
+    }
+
+    // The response document's own copy: who it is addressed to, delivery and warranty
+    // terms, the requirements matrix. The document is built on the server from these
+    // and the lines, so the agency never sees a cost or a margin.
+    function ctResponse(pane) {
+      var b = ctDetail.bid;
+      pane.appendChild(el('p', 'ct-note', 'The response prints in the house format: masthead, reference block, pricing table, requirements matrix, substitution notes, terms, About TES and signature. The compliance clause is built from the Compliance panel, present tense, active and public rows only. Lines you are not bidding are left off.'));
+      var f = el('div', 'ct-form');
+      var inp = {};
+      inp.buyer_name = ctField(f, 'To (buyer or contracting officer)', ctInput('text', b.buyer_name || '', { maxlength: 200 }));
+      inp.buyer_email = ctField(f, 'Buyer email', ctInput('email', b.buyer_email || '', { maxlength: 200 }));
+      inp.fob_terms = ctField(f, 'F.O.B. terms', ctInput('text', b.fob_terms || '', { maxlength: 1000, placeholder: 'F.O.B. Destination, freight prepaid and add' }), 'wide');
+      inp.warranty_terms = ctField(f, 'Warranty (blank uses the standard pass-through and advance-replacement wording)', ctInput('text', b.warranty_terms || '', { maxlength: 1000 }), 'wide');
+      var ta = function (label, key, ph) { var t = el('textarea'); t.rows = 3; t.value = b[key] || ''; t.placeholder = ph || ''; inp[key] = ctField(f, label, t, 'wide'); };
+      ta('Intro (blank uses a standard opening naming the agency and event)', 'intro');
+      ta('Substitution notes', 'substitution_notes', 'The specified unit is discontinued. The substitute meets or exceeds each stated minimum: ...');
+      ta('Additional terms', 'terms_notes');
+      pane.appendChild(f);
+
+      pane.appendChild(el('h4', 'addsec', 'Meets minimum requirements'));
+      pane.appendChild(el('p', 'ct-note', 'One row per stated minimum. Leave it empty if the solicitation has none.'));
+      var mx = [];
+      try { mx = JSON.parse(b.compliance_matrix || '[]') || []; } catch (e) { mx = []; }
+      var list = el('div');
+      var rows = [];
+      function addRow(r) {
+        r = r || {};
+        var d = el('div', 'ct-form');
+        var req = ctField(d, 'Stated minimum', ctInput('text', r.requirement || '', { maxlength: 300 }));
+        var off = ctField(d, 'What we offer', ctInput('text', r.offered || '', { maxlength: 300 }));
+        var meets = ctCheck('Meets or exceeds', r.meets !== false && !!r.requirement);
+        var w = el('div'); w.appendChild(meets); d.appendChild(w);
+        var rm = el('button', 'ct-btn sm', 'Remove'); rm.type = 'button';
+        rm.addEventListener('click', function () { rows.splice(rows.indexOf(o), 1); d.remove(); });
+        w.appendChild(rm);
+        var o = { req: req, off: off, meets: meets.input };
+        rows.push(o);
+        list.appendChild(d);
+      }
+      mx.forEach(addRow);
+      pane.appendChild(list);
+      var rr = el('div', 'reply-row');
+      var add = el('button', null, '+ Requirement'); add.type = 'button';
+      add.addEventListener('click', function () { addRow(); });
+      var save = el('button', 'prim', 'Save'); save.type = 'button';
+      save.addEventListener('click', function () {
+        var body = { compliance_matrix: rows.map(function (o) { return { requirement: o.req.value, offered: o.off.value, meets: o.meets.checked }; }) };
+        Object.keys(inp).forEach(function (k) { body[k] = inp[k].value; });
+        save.disabled = true;
+        ctBidApi('', 'PATCH', body, 'Saved').then(function () { save.disabled = false; });
+      });
+      var open = el('a', 'ct-btn', 'Open the response document');
+      open.href = 'bid-response.html?id=' + b.id; open.target = '_blank'; open.rel = 'noopener';
+      rr.appendChild(add); rr.appendChild(save); rr.appendChild(open);
+      pane.appendChild(rr);
+      pane.appendChild(el('p', 'ct-note', 'Save first, then open the document and print it to PDF. Upload the PDF under Files as Our response, so the bid keeps exactly what was sent.'));
+    }
+
+    // ---- BidBuilder: draft the workspace from the packet ----
+    // The packet's text is read here in the browser (pdf.js for PDFs, JSZip for Word),
+    // sent with Tyler's notes, and the draft comes back for review. Nothing is written
+    // until Apply, and Apply never confirms stock or ticks a triage step.
+    var CT_REF_KEYS = [
+      ['contracting-playbook', 'Contracting playbook (CONTRACTING.md)', true],
+      ['capability-statement', 'Capability statement', false],
+    ];
+    var ctPacketCache = {};
+
+    function ctPdfText(buf) {
+      return loadPdfjs().then(function (pdfjs) { return pdfjs.getDocument({ data: new Uint8Array(buf) }).promise; }).then(function (doc) {
+        var pages = [];
+        var chain = Promise.resolve();
+        for (var p = 1; p <= Math.min(doc.numPages, 80); p++) {
+          (function (n) {
+            chain = chain.then(function () { return doc.getPage(n); }).then(function (page) { return page.getTextContent(); }).then(function (tc) {
+              pages.push({ items: tc.items.filter(function (i) { return i.str && i.str.trim(); }).map(function (i) { return { str: i.str, x: i.transform[4], y: i.transform[5], w: i.width }; }) });
+            });
+          })(p);
+        }
+        return chain.then(function () {
+          var out = [], last = -1;
+          pdfLines(pages).forEach(function (ln) {
+            if (ln.page !== last) { out.push('--- page ' + (ln.page + 1) + ' ---'); last = ln.page; }
+            if (ln.text) out.push(ln.text);
+          });
+          return out.join('\n');
+        });
+      });
+    }
+    function ctFileText(name, type, buf) {
+      if (/pdf/i.test(type) || /\.pdf$/i.test(name)) return ctPdfText(buf);
+      if (/\.docx$/i.test(name)) return loadZip().then(function (Z) { return Z.loadAsync(buf); }).then(function (z) { return z.file('word/document.xml').async('string'); }).then(docxText);
+      if (/^text\//.test(type) || /\.(txt|csv|md)$/i.test(name)) return Promise.resolve(new TextDecoder().decode(new Uint8Array(buf)));
+      return Promise.resolve('');
+    }
+
+    function ctDraft(pane) {
+      pane.appendChild(el('p', 'ct-note', 'BidBuilder reads the packet against the contracting playbook and the capability statement, then drafts triage notes, risk flags with the clauses quoted, Q&A questions, the lines to price and a go / no-go. Nothing is saved until you apply it. It never fills in stock, lead time or a landed cost you did not give it.'));
+      var refBox = el('div', 'ct-step');
+      refBox.appendChild(el('div', 'row-main', 'Reference material'));
+      var refList = el('div');
+      refBox.appendChild(refList);
+      pane.appendChild(refBox);
+      function loadRefs() {
+        api('/admin/reference').then(function (r) {
+          refList.textContent = '';
+          var docs = (r && r.documents) || [];
+          CT_REF_KEYS.forEach(function (k) {
+            var have = docs.filter(function (d) { return d.key === k[0]; })[0];
+            var line = el('div', 'row');
+            var left = el('div');
+            left.appendChild(el('div', 'row-main', k[1] + (k[2] ? '' : ' (optional)')));
+            left.appendChild(el('div', 'row-sub', have ? (have.chars || 0).toLocaleString('en-US') + ' characters, updated ' + fmtDate(have.updated_at) + (have.filename ? ' from ' + have.filename : '') : 'Not uploaded yet.'));
+            line.appendChild(left);
+            var file = ctInput('file', null, { accept: '.md,.txt,.docx,.pdf', 'aria-label': 'Upload ' + k[1] });
+            file.style.maxWidth = '220px';
+            file.addEventListener('change', function () {
+              var fl = file.files && file.files[0];
+              if (!fl) return;
+              fl.arrayBuffer().then(function (buf) { return ctFileText(fl.name, fl.type, buf); }).then(function (text) {
+                if (!text || text.trim().length < 200) { toast('Could not read enough text from ' + fl.name + '.'); return; }
+                return api('/admin/reference/' + k[0], { method: 'PUT', body: { title: k[1], filename: fl.name, text: text } }).then(function (res) {
+                  if (res.ok) { toast('Saved ' + k[1]); loadRefs(); } else toast(ctErr(res));
+                });
+              }, function () { toast('Could not read ' + fl.name + '.'); });
+            });
+            line.appendChild(file);
+            refList.appendChild(line);
+          });
+        });
+      }
+      loadRefs();
+
+      var f = el('div', 'ct-form');
+      var packet = el('textarea'); packet.rows = 8; packet.placeholder = 'The solicitation text. Load it from the files on this bid, or paste it.';
+      packet.value = ctPacketCache[ctBidId] || '';
+      ctField(f, 'Solicitation packet', packet, 'wide');
+      var count = el('div', 'row-sub wide', '');
+      f.appendChild(count);
+      var notes = el('textarea'); notes.rows = 3;
+      notes.placeholder = 'What only you know: landed costs you have seen, stock you have confirmed, distributor terms, whether cash is tight this month.';
+      ctField(f, 'Your notes (optional)', notes, 'wide');
+      pane.appendChild(f);
+      var upd = function () { ctPacketCache[ctBidId] = packet.value; count.textContent = packet.value.length.toLocaleString('en-US') + ' characters' + (packet.value.length > 150000 ? ' (only the first 150,000 are read)' : ''); };
+      packet.addEventListener('input', upd); upd();
+
+      var rr = el('div', 'reply-row');
+      var load = el('button', null, 'Load text from the packet files'); load.type = 'button';
+      load.addEventListener('click', function () {
+        var files = ctDetail.files.filter(function (x) { return ['solicitation', 'spec', 'terms', 'line_schedule', 'addendum'].indexOf(x.role) >= 0; });
+        if (!files.length) { toast('Attach the solicitation, spec and terms under Files first.'); return; }
+        load.disabled = true; load.textContent = 'Reading ' + files.length + ' file' + (files.length === 1 ? '' : 's') + '…';
+        var parts = [];
+        files.reduce(function (p, x) {
+          return p.then(function () {
+            return fetch(API + '/admin/bid-files/' + x.id, { credentials: 'same-origin' }).then(function (r) { return r.arrayBuffer(); })
+              .then(function (buf) { return ctFileText(x.filename, x.content_type, buf); })
+              .then(function (t) { if (t) parts.push('===== ' + (CT_ROLE_LABEL[x.role] || x.role).toUpperCase() + ': ' + x.filename + ' =====\n' + t); }, function () { parts.push('===== ' + x.filename + ': could not be read ====='); });
+          });
+        }, Promise.resolve()).then(function () {
+          load.disabled = false; load.textContent = 'Load text from the packet files';
+          packet.value = parts.join('\n\n'); upd();
+          if (!packet.value.trim()) toast('None of those files had readable text. A scanned PDF has none; paste the text instead.');
+        });
+      });
+      var go = el('button', 'prim', 'Draft the workspace'); go.type = 'button';
+      var out = el('div');
+      go.addEventListener('click', function () {
+        if (packet.value.trim().length < 200) { toast('Load or paste the packet first.'); return; }
+        go.disabled = true; go.textContent = 'Reading the packet… (a minute or two)';
+        out.textContent = '';
+        api('/admin/bids/' + ctBidId + '/draft', { method: 'POST', body: { packet: packet.value, notes: notes.value } }).then(function (r) {
+          go.disabled = false; go.textContent = 'Draft the workspace';
+          if (!r.ok) { out.appendChild(el('div', 'ct-why', r.message || ctErr(r))); return; }
+          ctDraftPreview(out, r.draft);
+        });
+      });
+      rr.appendChild(load); rr.appendChild(go);
+      pane.appendChild(rr);
+      pane.appendChild(out);
+    }
+
+    function ctDraftPreview(host, d) {
+      host.textContent = '';
+      var box = el('div', 'ct-prompt');
+      var gn = d.go_no_go.recommendation;
+      box.appendChild(el('p', null, 'Recommendation: ' + (gn === 'go' ? 'Go' : gn === 'no_go' ? 'No-go' : 'Needs more information') + (d.go_no_go.reasons.length ? '. ' + d.go_no_go.reasons.join(' ') : '')));
+      box.appendChild(el('p', 'row-sub', 'Fit: NAICS ' + (d.fit.naics || '?') + (d.fit.tier ? ' (tier ' + d.fit.tier + ')' : d.fit.on_statement ? '' : ' (not on the capability statement)') + '. ' + d.fit.reason));
+      if (d.federal) box.appendChild(el('p', 'short', 'Federal solicitation: blocked under FAR 3.601.'));
+      if (d.notes_for_tyler) box.appendChild(el('p', 'row-sub', 'For you: ' + d.notes_for_tyler));
+      var sec = function (title, items, fn) {
+        if (!items.length) return;
+        box.appendChild(el('h4', 'addsec', title + ' (' + items.length + ')'));
+        var ul = el('ul'); ul.style.margin = '0.2rem 0 0.4rem'; ul.style.paddingLeft = '1.1rem'; ul.style.fontSize = '0.8rem';
+        items.forEach(function (i) { ul.appendChild(el('li', null, fn(i))); });
+        box.appendChild(ul);
+      };
+      sec('Lines', d.lines, function (l) { return l.line_no + '. ' + l.description + ' · ' + l.qty + ' ' + l.uom + (l.reference_cents != null ? ' · ref ' + money(l.reference_cents) : '') + (l.landed_cost_cents != null ? ' · landed ' + money(l.landed_cost_cents) : ' · cost to fill in') + (l.source_lane ? ' · ' + l.source_lane : '') + (l.markup_bp != null ? ' · ' + l.markup_bp / 100 + '%' : ''); });
+      sec('Risks', d.risks, function (r) { return r.severity.toUpperCase() + ' ' + (CT_FLAG_LABEL[r.flag_type] || r.flag_type) + ': ' + r.detail; });
+      sec('Questions for the agency', d.questions, function (q) { return q; });
+      sec('Triage notes', d.triage, function (t) { return 'Step ' + t.step + ': ' + t.output; });
+      var dates = [['Deadline', d.dates.date_close], ['Q&A', d.dates.qa_close], ['Need-by', d.dates.need_by]].filter(function (x) { return x[1]; });
+      if (dates.length) box.appendChild(el('p', 'row-sub', 'Dates in the packet: ' + dates.map(function (x) { return x[0] + ' ' + x[1]; }).join(', ') + '. Check them against the posting.'));
+      var opts = el('div');
+      var rep = ctCheck('Replace the lines already on this bid', false);
+      var ovr = ctCheck('Overwrite fields and triage notes I already wrote', false);
+      if (ctDetail.lines.length) opts.appendChild(rep);
+      opts.appendChild(ovr);
+      box.appendChild(opts);
+      var rr = el('div', 'reply-row');
+      var apply = el('button', 'prim', 'Apply to the bid'); apply.type = 'button';
+      apply.addEventListener('click', function () {
+        apply.disabled = true;
+        api('/admin/bids/' + ctBidId + '/apply', { method: 'POST', body: { draft: d, replace_lines: rep.input.checked, overwrite: ovr.input.checked } }).then(function (r) {
+          apply.disabled = false;
+          if (!r.ok) { toast(ctErr(r)); return; }
+          var a = r.applied || {};
+          ctDetail = r; renderBid();
+          var pl = function (n, w) { return n + ' ' + w + (n === 1 ? '' : 's'); };
+          toast('Applied: ' + [a.lines ? pl(a.lines, 'line') : null, a.triage ? pl(a.triage, 'triage note') : null, a.risks ? pl(a.risks, 'risk') : null, a.questions ? pl(a.questions, 'question') : null].filter(Boolean).join(', ') + (a.lines_skipped ? '. Lines kept as they were.' : '') || 'Applied');
+          reloadCtLists();
+        });
+      });
+      var discard = el('button', null, 'Discard'); discard.type = 'button';
+      discard.addEventListener('click', function () { host.textContent = ''; });
+      rr.appendChild(apply); rr.appendChild(discard);
+      box.appendChild(rr);
+      host.appendChild(box);
+    }
+
+    function ctTabulation(pane) {
+      pane.appendChild(el('p', 'ct-note', 'Win or lose, request the public bid tabulation after every award. Competitor pricing is free calibration data.'));
+      ctDetail.tabulations.forEach(function (t) {
+        var right = el('b', 'num', t.winning_cents != null ? money(t.winning_cents) : '');
+        var r = row((t.won ? 'Won' : 'Lost') + (t.competitor_name ? ' to ' + t.competitor_name : ''), 'Ours ' + ctMoney(t.our_cents) + ' · winning ' + ctMoney(t.winning_cents) + (t.lessons ? ' · ' + t.lessons : ''), right);
+        var del = el('button', 'ct-btn sm', 'Delete'); del.type = 'button';
+        del.addEventListener('click', function () { if (confirm('Delete this tabulation?')) ctBidApi('/tabulations/' + t.id, 'DELETE'); });
+        r.appendChild(del);
+        pane.appendChild(r);
+      });
+      if (['submitted', 'awarded', 'lost', 'funded', 'closed'].indexOf(ctDetail.bid.status) < 0) {
+        pane.appendChild(el('div', 'ct-empty', 'A tabulation is logged after the response has gone in.'));
+        return;
+      }
+      var f = el('div', 'ct-form');
+      var won = ctCheck('We won', ctDetail.bid.status === 'awarded' || ctDetail.bid.status === 'funded');
+      var wd = el('div', 'wide'); wd.appendChild(won); f.appendChild(wd);
+      var our = ctField(f, 'Our total ($)', ctInput('text', ctDollars(ctDetail.economics.total_bid_cents), { inputmode: 'decimal' }));
+      var win = ctField(f, 'Winning total ($)', ctInput('text', '', { inputmode: 'decimal' }));
+      var comp = ctField(f, 'Winning vendor', ctInput('text', '', { maxlength: 200 }));
+      var les = ctField(f, 'Lessons', ctInput('text', '', { maxlength: 4000 }), 'wide');
+      pane.appendChild(f);
+      var add = el('button', 'ct-btn', 'Log tabulation'); add.type = 'button';
+      add.addEventListener('click', function () {
+        ctBidApi('/tabulations', 'POST', { won: won.input.checked, our: our.value, winning: win.value, competitor_name: comp.value, lessons: les.value }, 'Logged').then(function (r) { if (r.ok) reloadCtRef(); });
+      });
+      pane.appendChild(add);
+    }
+
+    function ctHistory(pane) {
+      var w = el('div', 'ct-hist');
+      if (!ctDetail.events.length) w.appendChild(el('div', 'ct-empty', 'Nothing yet.'));
+      ctDetail.events.forEach(function (ev) {
+        var main = el('div', 'row-main');
+        main.appendChild(el('b', null, ev.kind === 'status' ? (ctRef && ctRef.vocab.status_label[ev.to_status]) || ev.to_status : ev.kind));
+        main.appendChild(document.createTextNode(' ' + (ev.note || '')));
+        var r = el('div', 'row');
+        var left = el('div'); left.appendChild(main); left.appendChild(el('div', 'row-sub', fmt(ev.at) + ' · ' + (ev.actor || '')));
+        r.appendChild(left);
+        w.appendChild(r);
+      });
+      pane.appendChild(w);
+    }
+
+    // ---- reference panels ----
+    function renderCtRef() {
+      // Compliance. Values are never shown anywhere but here; the EIN is not public.
+      var cb = document.getElementById('ctComplianceBody');
+      cb.textContent = '';
+      cb.appendChild(el('p', 'ct-note', 'Public rows may print on a response document, in present tense, only while Active. Federal eligibility stays Blocked until a VA ethics opinion is on file (FAR 3.601).'));
+      ctRef.compliance.forEach(function (c) {
+        var r = el('div', 'ct-cmp');
+        var lbl = el('div', 'lbl'); lbl.appendChild(el('b', null, c.label)); if (c.notes) lbl.appendChild(el('small', null, c.notes));
+        r.appendChild(lbl);
+        var v = ctInput('text', c.value || '', { maxlength: 300, 'aria-label': c.label + ' value' });
+        var st = ctSelect([['active', 'Active'], ['in_progress', 'In progress'], ['blocked', 'Blocked'], ['expired', 'Expired']], c.status);
+        st.setAttribute('aria-label', c.label + ' status');
+        var pub = ctCheck('Public', c.public);
+        pub.className = 'lg-check';
+        var right = el('div'); right.style.display = 'flex'; right.style.gap = '0.35rem'; right.style.alignItems = 'center';
+        var ex = ctInput('date', ctDayVal(c.expires_on), { 'aria-label': c.label + ' expires', title: 'Expires' });
+        right.appendChild(st); right.appendChild(ex);
+        r.appendChild(v); r.appendChild(right);
+        var sv = el('button', 'ct-btn sm', 'Save'); sv.type = 'button';
+        var act = el('div'); act.style.display = 'flex'; act.style.gap = '0.3rem'; act.style.alignItems = 'center';
+        act.appendChild(pub); act.appendChild(sv);
+        r.appendChild(act);
+        sv.addEventListener('click', function () {
+          api('/admin/compliance/' + c.key, { method: 'PATCH', body: { value: v.value, status: st.value, public: pub.input.checked, expires_on: dayToTs(ex.value) } }).then(function (res) {
+            if (res.ok) { ctRef.compliance = res.compliance; toast('Saved'); } else toast(ctErr(res));
+          });
+        });
+        cb.appendChild(r);
+      });
+      var addC = el('button', 'ct-btn sm', '+ Add credential'); addC.type = 'button';
+      addC.addEventListener('click', function () {
+        var label = prompt('Credential name (for example: Certificate of insurance):');
+        if (!label) return;
+        api('/admin/compliance', { method: 'POST', body: { label: label, status: 'active' } }).then(function (res) { if (res.ok) { ctRef.compliance = res.compliance; renderCtRef(); } else toast(ctErr(res)); });
+      });
+      cb.appendChild(addC);
+
+      var kb = document.getElementById('ctCodesBody');
+      kb.textContent = '';
+      kb.appendChild(el('p', 'ct-note', 'From the capability statement. Tier 1 is what to chase first. Keywords drive the suggestions on a new bid; a bid on a code not listed here carries a medium fit flag.'));
+      ctRef.codes.forEach(function (c) {
+        var r = el('div', 'ct-cmp');
+        var lbl = el('div', 'lbl'); lbl.appendChild(el('b', null, c.code + ' · ' + c.description)); lbl.appendChild(el('small', null, c.competency || ''));
+        r.appendChild(lbl);
+        var kw = ctInput('text', c.keywords || '', { 'aria-label': c.code + ' keywords' });
+        var tier = ctSelect([['1', 'Tier 1'], ['2', 'Tier 2'], ['3', 'Tier 3']], String(c.tier));
+        tier.setAttribute('aria-label', c.code + ' tier');
+        var sv = el('button', 'ct-btn sm', 'Save'); sv.type = 'button';
+        sv.addEventListener('click', function () {
+          api('/admin/service-codes', { method: 'POST', body: { code: c.code, scheme: c.scheme, description: c.description, competency: c.competency, tier: tier.value, keywords: kw.value, active: c.active } }).then(function (res) {
+            if (res.ok) { ctRef.codes = res.codes; toast('Saved'); fillCtNewSelects(); } else toast(ctErr(res));
+          });
+        });
+        r.appendChild(kw); r.appendChild(tier); r.appendChild(sv);
+        kb.appendChild(r);
+      });
+
+      var sb = document.getElementById('ctSourcingBody');
+      sb.textContent = '';
+      sb.appendChild(el('p', 'ct-note', 'Distributor and dealer accounts are the margin unlock on recurring goods. Track the progress of opening each.'));
+      ctRef.sourcing.forEach(function (s) {
+        var r = el('div', 'ct-cmp');
+        var lbl = el('div', 'lbl');
+        var nm = el('b'); if (s.url) { var a = el('a', null, s.vendor); a.href = s.url; a.target = '_blank'; a.rel = 'noopener noreferrer'; a.style.color = 'inherit'; nm.appendChild(a); } else nm.textContent = s.vendor;
+        lbl.appendChild(nm); lbl.appendChild(el('small', null, s.type + (s.notes ? ' · ' + s.notes : '')));
+        r.appendChild(lbl);
+        var terms = ctInput('text', s.terms || '', { placeholder: 'Terms (net-30...)', 'aria-label': s.vendor + ' terms' });
+        var st = ctSelect([['not_started', 'Not started'], ['applied', 'Applied'], ['open', 'Open'], ['declined', 'Declined']], s.account_status);
+        st.setAttribute('aria-label', s.vendor + ' status');
+        var sv = el('button', 'ct-btn sm', 'Save'); sv.type = 'button';
+        sv.addEventListener('click', function () {
+          api('/admin/sourcing/' + s.id, { method: 'PATCH', body: { account_status: st.value, terms: terms.value } }).then(function (res) { if (res.ok) { ctRef.sourcing = res.sourcing; toast('Saved'); } else toast(ctErr(res)); });
+        });
+        r.appendChild(terms); r.appendChild(st); r.appendChild(sv);
+        sb.appendChild(r);
+      });
+      var addS = el('button', 'ct-btn sm', '+ Add vendor'); addS.type = 'button';
+      addS.addEventListener('click', function () {
+        var v = prompt('Vendor name:');
+        if (!v) return;
+        api('/admin/sourcing', { method: 'POST', body: { vendor: v } }).then(function (res) { if (res.ok) { ctRef.sourcing = res.sourcing; renderCtRef(); } else toast(ctErr(res)); });
+      });
+      sb.appendChild(addS);
+
+      var tb = document.getElementById('ctTabsBody');
+      tb.textContent = '';
+      if (!ctRef.tabulations.length) tb.appendChild(el('div', 'ct-empty', 'No tabulations logged yet.'));
+      ctRef.tabulations.forEach(function (t) {
+        tb.appendChild(row(t.number + ' · ' + t.title, t.agency + ' · ' + (t.won ? 'won' : 'lost') + (t.competitor_name ? ' to ' + t.competitor_name : '') + ' · ours ' + ctMoney(t.our_cents) + ' vs ' + ctMoney(t.winning_cents) + (t.naics ? ' · ' + t.naics : ''),
+          null, function () { openBid(t.bid_id); window.scrollTo(0, 0); }));
+      });
+    }
+
+    // ---- Projects ------------------------------------------------------------
+    // One job and everything that belongs to it. The server sums the rollup from the
+    // rows; this renders it and asks for nothing it would refuse.
+    var pjView = 'open';
+    var pjSearch = '';
+    var pjSearchTimer = null;
+    var pjId = null;
+    var pjDetail = null;
+    var PJ_STATUS_LABEL = { planning: 'Planning', active: 'Active', on_hold: 'On hold', complete: 'Complete', canceled: 'Canceled' };
+    var PJ_STATUS_COLOR = { planning: '#6a8ba8', active: '#4aac65', on_hold: '#c89830', complete: '#22c55e', canceled: '#8aa48d' };
+    var MS_LABEL = { pending: 'Pending', in_progress: 'In progress', done: 'Done', accepted: 'Accepted', missed: 'Missed' };
+    var PL_LABEL = { planned: 'Planned', ordered: 'Ordered', partial: 'Partly received', received: 'Received', delivered: 'Delivered', returned: 'Returned', canceled: 'Canceled' };
+    var PJ_LINK_LABEL = { ticket: 'Ticket number', invoice: 'Invoice number', quote: 'Quote number', inventory: 'Equipment tag', conversation: 'Conversation id', appointment: 'Appointment id', document: 'File id' };
+
+    function loadProjects() {
+      if (!/^#p=/.test(location.hash)) pjId = null;
+      return api('/admin/projects?view=' + pjView + (pjSearch ? '&q=' + encodeURIComponent(pjSearch) : '')).then(function (r) {
+        var w = document.getElementById('pjList');
+        w.textContent = '';
+        if (!r.ok) { w.appendChild(el('div', 'state', 'Could not load projects.')); return; }
+        if (!r.projects.length) w.appendChild(el('div', 'state', pjSearch ? 'No projects match.' : pjView === 'open' ? 'No open projects. Start one with + New project, or convert a funded bid or an accepted quote.' : 'Nothing here.'));
+        r.projects.forEach(function (p) {
+          var c = el('button', 'ct-card');
+          c.type = 'button';
+          c.appendChild(el('div', 'n', p.number + ' · ' + p.holder));
+          c.appendChild(el('div', 't', p.name));
+          var chips = el('div', 'chips');
+          chips.appendChild(badge(PJ_STATUS_LABEL[p.status] || p.status, PJ_STATUS_COLOR[p.status] || '#8aa48d'));
+          if (p.kind === 'contract') chips.appendChild(el('span', 'ct-chip gold', 'Contract'));
+          if (p.overdue_milestones) chips.appendChild(el('span', 'ct-chip red', p.overdue_milestones + ' overdue'));
+          if (p.procurement_open) chips.appendChild(el('span', 'ct-chip', p.procurement_open + ' to arrive'));
+          if (p.days_to_target != null && ['planning', 'active', 'on_hold'].indexOf(p.status) >= 0) chips.appendChild(el('span', 'ct-chip ' + (p.days_to_target < 0 ? 'red' : p.days_to_target <= 7 ? 'gold' : ''), p.days_to_target < 0 ? 'Past target' : 'Target in ' + ctDays(p.days_to_target)));
+          c.appendChild(chips);
+          if (p.milestones) {
+            var bar = el('div', 'pj-bar'); var fill = el('span'); fill.style.width = (p.progress_pct || 0) + '%'; bar.appendChild(fill);
+            bar.setAttribute('role', 'img'); bar.setAttribute('aria-label', p.milestones_done + ' of ' + p.milestones + ' milestones done');
+            c.appendChild(bar);
+          }
+          var v = el('div', 'v');
+          v.appendChild(el('span', null, p.milestones ? p.milestones_done + '/' + p.milestones + ' milestones' : 'No milestones'));
+          v.appendChild(el('span', null, p.budget_cents ? money(p.invoiced_cents) + ' of ' + money(p.budget_cents) : money(p.invoiced_cents) + ' invoiced'));
+          c.appendChild(v);
+          c.addEventListener('click', function () { openProject(p.id); });
+          w.appendChild(c);
+        });
+        if (pjId) openProject(pjId, true);
+      });
+    }
+    Array.prototype.forEach.call(document.querySelectorAll('#pjFilters .fpill'), function (b) {
+      b.addEventListener('click', function () {
+        pjView = b.getAttribute('data-view');
+        Array.prototype.forEach.call(document.querySelectorAll('#pjFilters .fpill'), function (x) { x.classList.toggle('on', x === b); });
+        closeProject(); loadProjects();
+      });
+    });
+    document.getElementById('pjQ').addEventListener('input', function (e) {
+      clearTimeout(pjSearchTimer);
+      pjSearchTimer = setTimeout(function () { pjSearch = e.target.value.trim(); closeProject(); loadProjects(); }, 250);
+    });
+
+    // ---- new project ----
+    function pjFillOrgs(sel, keep) {
+      return api('/admin/orgs').then(function (r) {
+        sel.textContent = '';
+        ((r && r.orgs) || []).forEach(function (o) { sel.appendChild(new Option(o.name, o.id)); });
+        if (!sel.options.length) sel.appendChild(new Option('No companies yet: add one under Customers', ''));
+        if (keep) sel.value = keep;
+      });
+    }
+    document.getElementById('pjNewBtn').addEventListener('click', function () {
+      var f = document.getElementById('pjNew');
+      f.hidden = !f.hidden;
+      if (!f.hidden) { pjFillOrgs(document.getElementById('pjnOrg')); document.getElementById('pjnName').focus(); }
+    });
+    document.getElementById('pjNewCancel').addEventListener('click', function () { document.getElementById('pjNew').hidden = true; });
+    document.getElementById('pjnHolderType').addEventListener('change', function (e) {
+      document.getElementById('pjnOrgWrap').hidden = e.target.value !== 'org';
+      document.getElementById('pjnPersonWrap').hidden = e.target.value !== 'account';
+    });
+    var pjPersonTimer = null;
+    document.getElementById('pjnPersonQ').addEventListener('input', function (e) {
+      clearTimeout(pjPersonTimer);
+      pjPersonTimer = setTimeout(function () {
+        api('/admin/customers?q=' + encodeURIComponent(e.target.value.trim())).then(function (r) {
+          var s = document.getElementById('pjnPerson');
+          s.textContent = '';
+          ((r && r.customers) || []).filter(function (c) { return c.account_id; }).slice(0, 20).forEach(function (c) {
+            s.appendChild(new Option((c.name || c.company || c.email) + (c.email ? ' · ' + c.email : ''), c.account_id));
+          });
+          if (!s.options.length) s.appendChild(new Option('Nobody with an account matches', ''));
+        });
+      }, 250);
+    });
+    document.getElementById('pjNewForm').addEventListener('submit', function (e) {
+      e.preventDefault();
+      var err = document.getElementById('pjNewErr');
+      err.hidden = true;
+      var type = document.getElementById('pjnHolderType').value;
+      var holder = type === 'org' ? document.getElementById('pjnOrg').value : type === 'account' ? document.getElementById('pjnPerson').value : null;
+      if (type !== 'tes' && !holder) { err.textContent = 'Pick who the project is for.'; err.hidden = false; return; }
+      api('/admin/projects', { method: 'POST', body: { name: document.getElementById('pjnName').value, holder_type: type, holder_id: holder,
+        budget: document.getElementById('pjnBudget').value, target_on: dayToTs(document.getElementById('pjnTarget').value) } }).then(function (r) {
+        if (!r.ok) { err.textContent = ctErr(r); err.hidden = false; return; }
+        e.target.reset();
+        document.getElementById('pjNew').hidden = true;
+        toast('Created ' + r.project.number);
+        pjDetail = r; pjId = r.project.id;
+        history.replaceState(null, '', '#p=' + pjId);
+        renderProject();
+        loadProjects();
+      });
+    });
+
+    // ---- one project ----
+    function openProject(id, replace) {
+      pjId = Number(id);
+      if (!replace && location.hash !== '#p=' + pjId) history.replaceState(null, '', '#p=' + pjId);
+      return api('/admin/projects/' + pjId).then(function (r) {
+        if (!r.ok) { toast(ctErr(r)); closeProject(); return; }
+        pjDetail = r; renderProject();
+      });
+    }
+    function closeProject() {
+      pjId = null; pjDetail = null;
+      var p = document.getElementById('pjOne'); p.hidden = true; p.textContent = '';
+      document.getElementById('pjList').hidden = false;
+      if (/^#p=/.test(location.hash)) history.replaceState(null, '', '#projects');
+    }
+    function pjApi(path, method, body, msg) {
+      return api('/admin/projects/' + pjId + path, { method: method, body: body }).then(function (r) {
+        if (!r.ok) { toast(ctErr(r)); return r; }
+        if (r.project) { pjDetail = r; renderProject(); }
+        if (msg) toast(typeof msg === 'function' ? msg(r) : msg);
+        return r;
+      });
+    }
+
+    function renderProject() {
+      var d = pjDetail, p = d.project, ro = d.rollup;
+      var host = document.getElementById('pjOne');
+      document.getElementById('pjList').hidden = true;
+      host.hidden = false; host.textContent = '';
+      var panel = el('div', 'ct-panel');
+      var back = el('button', 'ct-btn sm', '‹ All projects'); back.type = 'button';
+      back.addEventListener('click', function () { closeProject(); loadProjects(); });
+      panel.appendChild(back);
+      var head = el('div', 'ct-head');
+      var hl = el('div');
+      hl.appendChild(el('div', 'sub', p.number + ' · ' + (p.kind === 'contract' ? 'Contract' : p.kind === 'internal' ? 'Internal' : 'Client')));
+      hl.appendChild(el('h2', null, p.name));
+      var who = el('div', 'sub');
+      if (d.holder.type === 'org' || d.holder.type === 'account') {
+        var a = el('a', null, d.holder.name); a.href = d.holder.type === 'org' ? '#o=' + d.holder.id : '#c=' + d.holder.id; a.style.color = 'inherit'; who.appendChild(a);
+      } else who.appendChild(document.createTextNode(d.holder.name));
+      if (d.bid) { who.appendChild(document.createTextNode(' · from ')); var bl = el('a', null, d.bid.number); bl.href = '#b=' + d.bid.id; bl.style.color = 'inherit'; who.appendChild(bl); }
+      hl.appendChild(who);
+      head.appendChild(hl);
+      var st = ctSelect(Object.keys(PJ_STATUS_LABEL).map(function (k) { return [k, PJ_STATUS_LABEL[k]]; }), p.status);
+      st.setAttribute('aria-label', 'Project status');
+      st.className = 'pj-status';
+      st.addEventListener('change', function () {
+        var note = st.value === 'canceled' || st.value === 'on_hold' ? prompt('Why?') : '';
+        if (note === null) { st.value = p.status; return; }
+        pjApi('', 'PATCH', { status: st.value, note: note }, 'Now ' + PJ_STATUS_LABEL[st.value]);
+      });
+      head.appendChild(st);
+      panel.appendChild(head);
+
+      var econ = el('div', 'ct-econ');
+      var et = function (label, val, sub, cls) { var t = el('div', 'tile'); t.appendChild(el('s', null, label)); t.appendChild(el('b', cls || null, val)); if (sub) t.appendChild(el('div', 'sub', sub)); econ.appendChild(t); };
+      et('Progress', ro.milestones ? ro.milestones_done + ' of ' + ro.milestones : '—', ro.overdue_milestones ? ro.overdue_milestones + ' overdue' : ro.days_to_target != null ? (ro.days_to_target < 0 ? 'past target' : 'target in ' + ctDays(ro.days_to_target)) : 'milestones', ro.overdue_milestones ? 'bad' : null);
+      et('Invoiced', money(ro.invoiced_cents), ro.budget_cents ? ro.budget_used_pct + '% of ' + money(ro.budget_cents) : money(ro.collected_cents) + ' collected', ro.budget_used_pct > 100 ? 'bad' : null);
+      et('Goods', money(ro.goods_received_cost_cents), 'received, of ' + money(ro.goods_cost_cents) + ' ordered');
+      et('Margin', money(ro.margin_cents), 'invoiced less goods received', ro.margin_cents < 0 ? 'bad' : null);
+      et('Time', (Math.round(ro.minutes / 6) / 10) + 'h', (Math.round(ro.billable_minutes / 6) / 10) + 'h billable' + (ro.unbilled_cents ? ', ' + money(ro.unbilled_cents) + ' unbilled' : ''));
+      panel.appendChild(econ);
+
+      var tabs = paneTabs(panel, ['Overview', 'Milestones', 'Procurement', 'Work', 'Money', 'Linked', 'History'], 'project');
+      tabs.count('Milestones', d.milestones.length);
+      tabs.count('Procurement', d.procurement.length);
+      tabs.count('Work', d.linked.tickets.length);
+      tabs.count('Linked', d.linked.conversations.length + d.linked.appointments.length + d.linked.inventory.length + d.linked.documents.length);
+      pjOverview(tabs.pane('Overview'));
+      pjMilestones(tabs.pane('Milestones'));
+      pjProcurement(tabs.pane('Procurement'));
+      pjWork(tabs.pane('Work'));
+      pjMoney(tabs.pane('Money'));
+      pjLinked(tabs.pane('Linked'));
+      pjHistory(tabs.pane('History'));
+      host.appendChild(panel);
+    }
+
+    function pjOverview(pane) {
+      var p = pjDetail.project;
+      var f = el('div', 'ct-form');
+      var name = ctField(f, 'Name', ctInput('text', p.name, { maxlength: 200 }), 'wide');
+      var kind = ctField(f, 'Kind', ctSelect([['client', 'Client work'], ['contract', 'Contract (from a bid)'], ['internal', 'Internal']], p.kind));
+      var budget = ctField(f, 'Budget ($)', ctInput('text', ctDollars(p.budget_cents), { inputmode: 'decimal' }));
+      var start = ctField(f, 'Start', ctInput('date', ctDayVal(p.start_on)));
+      var target = ctField(f, 'Target', ctInput('date', ctDayVal(p.target_on)));
+      var desc = el('textarea'); desc.rows = 3; desc.value = p.description || '';
+      ctField(f, 'Description', desc, 'wide');
+      var notes = el('textarea'); notes.rows = 3; notes.value = p.internal_notes || '';
+      ctField(f, 'Internal notes', notes, 'wide');
+      pane.appendChild(f);
+      var rr = el('div', 'reply-row');
+      var save = el('button', 'prim', 'Save'); save.type = 'button';
+      save.addEventListener('click', function () {
+        pjApi('', 'PATCH', { name: name.value, kind: kind.value, budget: budget.value, start_on: dayToTs(start.value), target_on: dayToTs(target.value), description: desc.value, internal_notes: notes.value }, 'Saved');
+      });
+      rr.appendChild(save);
+      var del = el('button', null, 'Delete project'); del.type = 'button';
+      del.addEventListener('click', function () {
+        if (!confirm('Delete ' + p.number + '? Only an empty project can be deleted.')) return;
+        api('/admin/projects/' + p.id, { method: 'DELETE' }).then(function (r) { if (r.ok) { toast('Deleted'); closeProject(); loadProjects(); } else toast(ctErr(r)); });
+      });
+      rr.appendChild(del);
+      pane.appendChild(rr);
+    }
+
+    function pjMilestones(pane) {
+      var d = pjDetail;
+      pane.appendChild(el('p', 'ct-note', 'A milestone with an amount can be invoiced once it is done. Tick "customer signs off" for a deliverable the customer should accept in their portal.'));
+      d.milestones.forEach(function (m) {
+        var box = el('div', 'ct-step' + (m.status === 'done' || m.status === 'accepted' ? ' done' : ''));
+        var top = el('div', 'chips'); top.style.display = 'flex'; top.style.gap = '0.25rem'; top.style.flexWrap = 'wrap'; top.style.alignItems = 'center';
+        top.appendChild(el('b', null, m.seq + '. ' + m.title));
+        top.appendChild(badge(MS_LABEL[m.status] || m.status, m.status === 'missed' ? '#ef4444' : m.status === 'done' || m.status === 'accepted' ? '#22c55e' : '#6a8ba8'));
+        if (m.due_on) {
+          var late = m.due_on < Date.now() / 1000 && ['done', 'accepted'].indexOf(m.status) < 0;
+          top.appendChild(el('span', 'ct-chip' + (late ? ' red' : ''), 'Due ' + fmtDate(m.due_on)));
+        }
+        if (m.billing_cents) top.appendChild(el('span', 'ct-chip gold', money(m.billing_cents) + (m.invoice_id ? ' invoiced' : '')));
+        if (m.needs_signoff) top.appendChild(el('span', 'ct-chip', m.accepted_at ? 'Accepted by ' + (m.accepted_by || 'customer') : 'Needs sign-off'));
+        box.appendChild(top);
+        if (m.deliverable) box.appendChild(el('p', null, 'Deliverable: ' + m.deliverable));
+        if (m.description) box.appendChild(el('p', null, m.description));
+        var rr = el('div', 'reply-row');
+        var st = ctSelect(Object.keys(MS_LABEL).map(function (k) { return [k, MS_LABEL[k]]; }), m.status);
+        st.setAttribute('aria-label', 'Status of ' + m.title);
+        st.addEventListener('change', function () { pjApi('/milestones/' + m.id, 'PATCH', { status: st.value }, 'Updated'); });
+        rr.appendChild(st);
+        if (m.billing_cents && !m.invoice_id && (m.status === 'done' || m.status === 'accepted')) {
+          var bill = el('button', 'prim', 'Invoice ' + money(m.billing_cents)); bill.type = 'button';
+          bill.addEventListener('click', function () {
+            if (!confirm('Raise an invoice for ' + money(m.billing_cents) + ' to ' + pjDetail.holder.name + ' (' + (pjDetail.holder.email || 'no billing contact') + ')?')) return;
+            bill.disabled = true;
+            api('/admin/projects/' + pjId + '/milestones/' + m.id + '/bill', { method: 'POST', body: { due_days: 14 } }).then(function (r) {
+              bill.disabled = false;
+              if (!r.ok) { toast(ctErr(r)); return; }
+              pjDetail = r; renderProject(); toast('Invoice ' + r.invoice_number + ' created. Send it from the Invoices tab.');
+            });
+          });
+          rr.appendChild(bill);
+        }
+        if (m.invoice_id) {
+          var inv = (pjDetail.linked.invoices || []).filter(function (i) { return i.id === m.invoice_id; })[0];
+          if (inv) { var go = el('button', null, 'Open ' + inv.number); go.type = 'button'; go.addEventListener('click', function () { showInvoice(inv.number); }); rr.appendChild(go); }
+        }
+        var ed = el('button', null, 'Edit'); ed.type = 'button';
+        ed.addEventListener('click', function () { pjMilestoneForm(box, m); });
+        rr.appendChild(ed);
+        if (!m.invoice_id) {
+          var del = el('button', null, 'Delete'); del.type = 'button';
+          del.addEventListener('click', function () { if (confirm('Delete milestone "' + m.title + '"?')) pjApi('/milestones/' + m.id, 'DELETE', null, 'Removed'); });
+          rr.appendChild(del);
+        }
+        box.appendChild(rr);
+        pane.appendChild(box);
+      });
+      var add = el('button', 'ct-btn', '+ Milestone'); add.type = 'button';
+      var slot = el('div');
+      add.addEventListener('click', function () { pjMilestoneForm(slot, null); });
+      pane.appendChild(slot);
+      pane.appendChild(add);
+    }
+    function pjMilestoneForm(host, m) {
+      var old = host.querySelector('.pj-msform'); if (old) { old.remove(); return; }
+      var f = el('div', 'ct-form pj-msform');
+      var title = ctField(f, 'Title', ctInput('text', m ? m.title : '', { maxlength: 200 }), 'wide');
+      var deliv = ctField(f, 'Deliverable', ctInput('text', m ? m.deliverable || '' : '', { maxlength: 1000 }), 'wide');
+      var due = ctField(f, 'Due', ctInput('date', m ? ctDayVal(m.due_on) : ''));
+      var amt = ctField(f, 'Bill on completion ($)', ctInput('text', m ? ctDollars(m.billing_cents) : '', { inputmode: 'decimal' }));
+      if (m && m.invoice_id) amt.disabled = true;
+      var so = ctCheck('Customer signs off in the portal', m && m.needs_signoff);
+      var w = el('div', 'wide'); w.appendChild(so); f.appendChild(w);
+      var rr = el('div', 'reply-row wide');
+      var save = el('button', 'prim', m ? 'Save milestone' : 'Add milestone'); save.type = 'button';
+      save.addEventListener('click', function () {
+        if (!title.value.trim()) { title.focus(); return; }
+        var body = { title: title.value, deliverable: deliv.value, due_on: dayToTs(due.value), needs_signoff: so.input.checked };
+        if (!(m && m.invoice_id)) body.billing = amt.value;
+        pjApi('/milestones' + (m ? '/' + m.id : ''), m ? 'PATCH' : 'POST', body, m ? 'Saved' : 'Milestone added');
+      });
+      rr.appendChild(save);
+      f.appendChild(rr);
+      host.appendChild(f);
+      title.focus();
+    }
+
+    function pjProcurement(pane) {
+      var d = pjDetail;
+      pane.appendChild(el('p', 'ct-note', 'What is being bought for this job. Receiving creates equipment records for ' + d.holder.name + ' under Inventory, and links them here. Unit cost is what TES pays; client price is what the job bills for it.'));
+      if (d.releases.length || (d.bid && d.procurement.some(function (l) { return /Rate card/.test(l.notes || ''); }))) pjReleases(pane);
+      if (!d.procurement.length) pane.appendChild(el('div', 'ct-empty', 'Nothing on order yet.'));
+      d.procurement.forEach(function (l) {
+        var box = el('div', 'ct-step' + (l.status === 'received' || l.status === 'delivered' ? ' done' : ''));
+        var top = el('div'); top.style.display = 'flex'; top.style.gap = '0.35rem'; top.style.flexWrap = 'wrap'; top.style.alignItems = 'center';
+        top.appendChild(el('b', null, l.line_no + '. ' + l.description));
+        top.appendChild(badge(PL_LABEL[l.status] || l.status, l.status === 'received' || l.status === 'delivered' ? '#22c55e' : l.status === 'partial' ? '#c89830' : l.status === 'canceled' || l.status === 'returned' ? '#8aa48d' : '#6a8ba8'));
+        if (l.eta_on && ['ordered', 'partial'].indexOf(l.status) >= 0) top.appendChild(el('span', 'ct-chip' + (l.eta_on < Date.now() / 1000 ? ' red' : ''), 'ETA ' + fmtDate(l.eta_on)));
+        box.appendChild(top);
+        box.appendChild(el('p', null, [l.qty_received + ' of ' + l.qty_ordered + ' received', l.vendor, l.part_no ? 'part ' + l.part_no : '', l.po_ref ? 'PO ' + l.po_ref : '',
+          money(l.unit_cents) + ' each' + (l.quoted_unit_cents != null ? ', billed at ' + money(l.quoted_unit_cents) : '')].filter(Boolean).join(' · ')));
+        (l.receipts || []).forEach(function (rc) { box.appendChild(el('p', null, 'Received ' + rc.qty + ' on ' + fmtDate(rc.received_on) + (rc.inventory_ids.length ? ' · ' + rc.inventory_ids.length + ' equipment record' + (rc.inventory_ids.length === 1 ? '' : 's') : '') + (rc.note ? ' · ' + rc.note : ''))); });
+        var rr = el('div', 'reply-row');
+        var remaining = Math.round((l.qty_ordered - l.qty_received) * 1000) / 1000;
+        if (remaining > 0 && ['canceled', 'returned'].indexOf(l.status) < 0) {
+          var rcv = el('button', 'prim', 'Receive'); rcv.type = 'button';
+          rcv.addEventListener('click', function () { pjReceiveForm(box, l, remaining); });
+          rr.appendChild(rcv);
+        }
+        var st = ctSelect(Object.keys(PL_LABEL).map(function (k) { return [k, PL_LABEL[k]]; }), l.status);
+        st.setAttribute('aria-label', 'Status of ' + l.description);
+        st.addEventListener('change', function () { pjApi('/procurement/' + l.id, 'PATCH', { status: st.value }, 'Updated'); });
+        rr.appendChild(st);
+        var ed = el('button', null, 'Edit'); ed.type = 'button';
+        ed.addEventListener('click', function () { pjLineForm(box, l); });
+        rr.appendChild(ed);
+        if (!l.qty_received) {
+          var del = el('button', null, 'Delete'); del.type = 'button';
+          del.addEventListener('click', function () { if (confirm('Remove "' + l.description + '"?')) pjApi('/procurement/' + l.id, 'DELETE', null, 'Removed'); });
+          rr.appendChild(del);
+        }
+        box.appendChild(rr);
+        pane.appendChild(box);
+      });
+      var slot = el('div');
+      pane.appendChild(slot);
+      var add = el('button', 'ct-btn', '+ Line'); add.type = 'button';
+      add.addEventListener('click', function () { pjLineForm(slot, null); });
+      pane.appendChild(add);
+    }
+    function pjLineForm(host, l) {
+      var old = host.querySelector('.pj-lform'); if (old) { old.remove(); return; }
+      var f = el('div', 'ct-form pj-lform');
+      var desc = ctField(f, 'Item', ctInput('text', l ? l.description : '', { maxlength: 400 }), 'wide');
+      var part = ctField(f, 'Part number', ctInput('text', l ? l.part_no || '' : '', { maxlength: 120 }));
+      var vendor = ctField(f, 'Vendor', ctInput('text', l ? l.vendor || '' : '', { maxlength: 120 }));
+      var qty = ctField(f, 'Quantity ordered', ctInput('text', l ? l.qty_ordered : '', { inputmode: 'decimal' }));
+      var unit = ctField(f, 'Unit cost ($)', ctInput('text', l ? ctDollars(l.unit_cents) : '', { inputmode: 'decimal' }));
+      var quoted = ctField(f, 'Client price ($)', ctInput('text', l ? ctDollars(l.quoted_unit_cents) : '', { inputmode: 'decimal' }));
+      var po = ctField(f, 'PO / order number', ctInput('text', l ? l.po_ref || '' : '', { maxlength: 120 }));
+      var eta = ctField(f, 'Expected delivery', ctInput('date', l ? ctDayVal(l.eta_on) : ''));
+      var lane = ctField(f, 'Lane', ctSelect([['', '—'], ['retail', 'Retail'], ['distributor', 'Distributor'], ['direct', 'Direct']], l ? l.source_lane || '' : ''));
+      var ms = ctField(f, 'Milestone', ctSelect([['', 'None']].concat(pjDetail.milestones.map(function (m) { return [String(m.id), m.seq + '. ' + m.title]; })), l && l.milestone_id ? String(l.milestone_id) : ''));
+      var ser = ctCheck('One equipment record per unit (serial numbers)', l && l.serial_tracked);
+      var w = el('div', 'wide'); w.appendChild(ser); f.appendChild(w);
+      var rr = el('div', 'reply-row wide');
+      var save = el('button', 'prim', l ? 'Save line' : 'Add line'); save.type = 'button';
+      save.addEventListener('click', function () {
+        if (!desc.value.trim()) { desc.focus(); return; }
+        pjApi('/procurement' + (l ? '/' + l.id : ''), l ? 'PATCH' : 'POST', { description: desc.value, part_no: part.value, vendor: vendor.value, qty_ordered: qty.value || 0,
+          unit: unit.value, quoted_unit: quoted.value, po_ref: po.value, eta_on: dayToTs(eta.value), source_lane: lane.value, milestone_id: ms.value || null, serial_tracked: ser.input.checked }, l ? 'Saved' : 'Line added');
+      });
+      rr.appendChild(save);
+      f.appendChild(rr);
+      host.appendChild(f);
+      desc.focus();
+    }
+    function pjReceiveForm(host, l, remaining) {
+      var old = host.querySelector('.pj-rform'); if (old) { old.remove(); return; }
+      var f = el('div', 'ct-form pj-rform');
+      var qty = ctField(f, 'How many arrived (' + remaining + ' outstanding)', ctInput('text', String(remaining), { inputmode: 'decimal' }));
+      var ser = null;
+      if (l.serial_tracked) { ser = el('textarea'); ser.rows = 3; ser.placeholder = 'One serial number per line (optional)'; ctField(f, 'Serial numbers', ser, 'wide'); }
+      var note = ctField(f, 'Note', ctInput('text', '', { maxlength: 500 }), 'wide');
+      var mk = ctCheck('Create equipment records for ' + pjDetail.holder.name, true);
+      var w = el('div', 'wide'); w.appendChild(mk); f.appendChild(w);
+      var rr = el('div', 'reply-row wide');
+      var go = el('button', 'prim', 'Record delivery'); go.type = 'button';
+      go.addEventListener('click', function () {
+        go.disabled = true;
+        api('/admin/projects/' + pjId + '/procurement/' + l.id + '/receive', { method: 'POST', body: { qty: qty.value, note: note.value, create_inventory: mk.input.checked,
+          serials: ser ? ser.value.split('\n').map(function (s) { return s.trim(); }).filter(Boolean) : [] } }).then(function (r) {
+          go.disabled = false;
+          if (!r.ok) { toast(ctErr(r)); return; }
+          pjDetail = r; renderProject();
+          toast('Received' + (r.inventory_ids.length ? ' · ' + r.inventory_ids.length + ' equipment record' + (r.inventory_ids.length === 1 ? '' : 's') + ' created' : ''));
+        });
+      });
+      rr.appendChild(go);
+      f.appendChild(rr);
+      host.appendChild(f);
+    }
+    // Releases against a rate card: order a quantity of the held lines under one PO.
+    function pjReleases(pane) {
+      var d = pjDetail;
+      var box = el('div', 'ct-step');
+      var cap = d.project.budget_cents;
+      box.appendChild(el('div', 'row-main', 'Rate card releases · ' + money(d.released_cents) + (cap ? ' of ' + money(cap) + ' used' : '')));
+      if (cap) { var bar = el('div', 'pj-bar'); var fill = el('span'); fill.style.width = Math.min(100, Math.round(d.released_cents / cap * 100)) + '%'; bar.appendChild(fill); box.appendChild(bar); }
+      d.releases.forEach(function (r) {
+        box.appendChild(el('p', r.freight_flag ? 'short' : null, fmtDate(r.created_at) + (r.po_ref ? ' · ' + r.po_ref : '') + ' · ' + money(r.amount_cents) + (r.freight_cents ? ' + ' + money(r.freight_cents) + ' freight' + (r.freight_flag ? ' (needs pre-approval)' : '') : '')));
+      });
+      var f = el('div', 'ct-form');
+      var po = ctField(f, 'PO number', ctInput('text', '', { maxlength: 120 }));
+      var fr = ctField(f, 'Freight ($)', ctInput('text', '', { inputmode: 'decimal' }));
+      var qtys = [];
+      d.procurement.forEach(function (l) { qtys.push([l, ctField(f, l.description + ' (' + money(l.quoted_unit_cents || 0) + ')', ctInput('text', '', { inputmode: 'decimal', placeholder: 'qty' }))]); });
+      box.appendChild(f);
+      var go = el('button', 'ct-btn prim', 'Record release'); go.type = 'button';
+      go.addEventListener('click', function () {
+        var items = qtys.filter(function (q) { return Number(q[1].value) > 0; }).map(function (q) { return { line_id: q[0].id, qty: q[1].value }; });
+        if (!items.length) { toast('Enter a quantity on at least one line.'); return; }
+        api('/admin/projects/' + pjId + '/releases', { method: 'POST', body: { po_ref: po.value, freight: fr.value, items: items } }).then(function (r) {
+          if (!r.ok) { toast(ctErr(r)); return; }
+          pjDetail = r; renderProject();
+          toast('Release recorded' + (r.release.freight_needs_approval ? '. Freight is over the pre-approval threshold: get approval before it ships.' : ''));
+        });
+      });
+      box.appendChild(go);
+      pane.appendChild(box);
+    }
+
+    function pjWork(pane) {
+      var d = pjDetail;
+      pane.appendChild(el('p', 'ct-note', 'Tickets linked here bring their time with them. New time on a ticket that is on exactly one open project counts toward it automatically.'));
+      if (!d.linked.tickets.length) pane.appendChild(el('div', 'ct-empty', 'No tickets linked. Link one below, or from Linked.'));
+      d.linked.tickets.forEach(function (t) {
+        var r = row(t.ticket_number + ' · ' + (t.subject || ''), t.status + ' · ' + t.priority, null, function () { routeHash('#t=' + t.id, true); });
+        pane.appendChild(r);
+      });
+      pane.appendChild(el('h4', 'addsec', 'Time'));
+      if (!d.time.length) pane.appendChild(el('div', 'ct-empty', 'No time logged against this project.'));
+      d.time.slice(0, 60).forEach(function (e) {
+        pane.appendChild(row((Math.round(e.minutes / 6) / 10) + 'h · ' + (e.note || ''), fmtDate(e.worked_on) + (e.ticket_number ? ' · ' + e.ticket_number : '') + (e.billable ? '' : ' · not billable') + (e.invoice_id || e.billed_at ? ' · billed' : ''), null));
+      });
+      pjLinkForm(pane, 'ticket');
+    }
+
+    function pjMoney(pane) {
+      var d = pjDetail, ro = d.rollup;
+      var list = [['Invoiced', ro.invoiced_cents], ['Collected', ro.collected_cents], ['Outstanding', ro.outstanding_cents], ['Goods ordered (cost)', ro.goods_cost_cents], ['Goods received (cost)', ro.goods_received_cost_cents], ['Goods at client price', ro.goods_quoted_cents], ['Unbilled time', ro.unbilled_cents], ['Margin (invoiced less goods received)', ro.margin_cents]];
+      list.forEach(function (x) { pane.appendChild(row(x[0], null, el('b', 'num', money(x[1] || 0)))); });
+      pane.appendChild(el('h4', 'addsec', 'Invoices'));
+      if (!d.linked.invoices.length) pane.appendChild(el('div', 'ct-empty', 'None linked.'));
+      d.linked.invoices.forEach(function (i) { pane.appendChild(row(i.number, i.status + (i.due_at ? ' · due ' + fmtDate(i.due_at) : ''), el('b', 'num', money(i.amount_cents)), function () { showInvoice(i.number); })); });
+      pane.appendChild(el('h4', 'addsec', 'Quotes'));
+      if (!d.linked.quotes.length) pane.appendChild(el('div', 'ct-empty', 'None linked.'));
+      d.linked.quotes.forEach(function (q) { pane.appendChild(row(q.number + ' · ' + q.title, q.status, el('b', 'num', money(q.accepted_cents || q.total_cents)), function () { showQuote(q.id); })); });
+      pjLinkForm(pane, 'invoice');
+    }
+
+    function pjLinked(pane) {
+      var d = pjDetail;
+      var groups = [['conversation', 'Conversations', d.linked.conversations, function (c) { return [c.subject || 'Conversation #' + c.id, c.status, function () { routeHash('#m=' + c.id, true); }]; }],
+        ['appointment', 'Appointments', d.linked.appointments, function (a) { return [a.title, fmt(a.starts_at) + ' · ' + a.status, function () { routeHash('#a=' + a.id, true); }]; }],
+        ['inventory', 'Equipment', d.linked.inventory, function (i) { return [i.tag + ' · ' + i.name, i.status + (i.confirmed_at ? ' · confirmed' : ''), function () { routeHash('#i=' + i.id, true); }]; }],
+        ['document', 'Files', d.linked.documents, function (f) { return [f.label || f.filename, fmtDate(f.uploaded_at), null]; }],
+        ['ticket', 'Tickets', d.linked.tickets, function (t) { return [t.ticket_number + ' · ' + (t.subject || ''), t.status, function () { routeHash('#t=' + t.id, true); }]; }],
+        ['invoice', 'Invoices', d.linked.invoices, function (i) { return [i.number, i.status, function () { showInvoice(i.number); }]; }],
+        ['quote', 'Quotes', d.linked.quotes, function (q) { return [q.number + ' · ' + q.title, q.status, function () { showQuote(q.id); }]; }]];
+      groups.forEach(function (g) {
+        if (!g[2].length) return;
+        pane.appendChild(el('h4', 'addsec', g[1]));
+        g[2].forEach(function (o) {
+          var v = g[3](o);
+          var r = row(v[0], v[1], null, v[2]);
+          var un = el('button', 'ct-btn sm', 'Unlink'); un.type = 'button';
+          un.addEventListener('click', function (e) { e.stopPropagation(); if (confirm('Unlink this from the project? The record itself is not changed.')) pjApi('/links/' + g[0] + '/' + o.id, 'DELETE', null, 'Unlinked'); });
+          r.appendChild(un);
+          pane.appendChild(r);
+        });
+      });
+      pjLinkForm(pane, 'conversation');
+    }
+
+    function pjLinkForm(pane, def) {
+      var f = el('div', 'ct-form');
+      var type = ctField(f, 'Link a', ctSelect(Object.keys(PJ_LINK_LABEL).map(function (k) { return [k, k.charAt(0).toUpperCase() + k.slice(1)]; }), def));
+      var ref = ctField(f, PJ_LINK_LABEL[def], ctInput('text', '', { maxlength: 80 }));
+      type.addEventListener('change', function () { ref.previousSibling.textContent = PJ_LINK_LABEL[type.value]; });
+      var go = el('button', 'ct-btn', 'Link'); go.type = 'button';
+      go.addEventListener('click', function () {
+        if (!ref.value.trim()) { ref.focus(); return; }
+        pjApi('/links', 'POST', { type: type.value, ref: ref.value }, 'Linked');
+      });
+      var w = el('div'); w.style.alignSelf = 'end'; w.appendChild(go); f.appendChild(w);
+      pane.appendChild(f);
+    }
+
+    function pjHistory(pane) {
+      if (!pjDetail.events.length) pane.appendChild(el('div', 'ct-empty', 'Nothing yet.'));
+      pjDetail.events.forEach(function (ev) {
+        var r = el('div', 'row');
+        var left = el('div');
+        var main = el('div', 'row-main'); main.appendChild(el('b', null, ev.kind)); main.appendChild(document.createTextNode(' ' + (ev.note || '')));
+        left.appendChild(main); left.appendChild(el('div', 'row-sub', fmt(ev.at) + ' · ' + (ev.actor || '')));
+        r.appendChild(left);
+        pane.appendChild(r);
+      });
+    }
+
     // ---- view switching --------------------------------------------------
     var VIEWS = {
       home: { view: 'viewHome', nav: 'navHome', load: loadHome, always: true },
@@ -10120,6 +12023,8 @@
       inventory: { view: 'viewInventory', nav: 'navInventory', load: loadInventory, always: true },
       finance: { view: 'viewFinance', nav: 'navFinance', load: loadFinance, always: true },
       reports: { view: 'viewReports', nav: 'navReports', load: loadReports, always: true },
+      contracting: { view: 'viewContracting', nav: 'navContracting', load: loadContracting, always: true },
+      projects: { view: 'viewProjects', nav: 'navProjects', load: loadProjects, always: true },
       keys: { view: 'viewKeys', nav: 'navKeys', load: loadKeys }
     };
     var loaded = {};
@@ -10129,7 +12034,7 @@
     var HASH_OF = {
       home: /^(#home|#|)$/, inbox: /^#(inbox|m=)/, tickets: /^#(tickets|t=)/, customers: /^#(customers|c=|o=)/,
       invoices: /^#(invoices|inv=|q=)/, calendar: /^#(cal|a=)/, inventory: /^#(inventory|i=)/, finance: /^#finance/,
-      reports: /^#reports/, keys: /^#keys/,
+      reports: /^#reports/, keys: /^#keys/, contracting: /^#(contracting|b=)/, projects: /^#(projects|p=)/,
     };
 
     function showView(which) {
