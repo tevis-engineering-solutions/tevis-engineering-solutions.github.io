@@ -844,6 +844,10 @@
     .ct-moves { display:flex; flex-wrap:wrap; gap:0.35rem; margin:0.7rem 0; }
     .ct-why { border:1px solid rgba(239,68,68,0.45); background:rgba(239,68,68,0.06); border-radius:10px; padding:0.6rem 0.75rem; margin:0.6rem 0; }
     .ct-why.ok { border-color:rgba(74,172,101,0.45); background:rgba(74,172,101,0.07); }
+    /* A bid tab with unsaved edits, and the bar at the top of it. */
+    #ctBid .ptab.dirty::after { content:" \2022"; color:#c89830; }
+    .ct-unsaved { display:flex; align-items:center; justify-content:space-between; gap:0.6rem; flex-wrap:wrap; border:1px solid rgba(200,152,48,0.45); background:rgba(200,152,48,0.07); border-radius:10px; padding:0.5rem 0.7rem; margin:0.4rem 0 0.6rem; font-size:0.8rem; }
+    .ct-draft-list { margin:0.2rem 0 0.4rem; padding-left:1.1rem; font-size:0.8rem; }
     .ct-why h4 { font-family:"Montserrat",sans-serif; font-size:0.72rem; text-transform:uppercase; letter-spacing:0.05em; margin:0 0 0.3rem; color:#ef9a9a; }
     .ct-why.ok h4 { color:var(--green); }
     .ct-why ul { margin:0; padding-left:1.1rem; font-size:0.8rem; }
@@ -9903,8 +9907,17 @@
         showView('reports');
       }
       else if ((m = /^#m=(\d+)/.exec(hash))) { openConversation(Number(m[1])); }
-      else if ((m = /^#b=(\d+)/.exec(hash))) { ctBidId = Number(m[1]); suppressHashPush = true; showView('contracting'); suppressHashPush = false; }
-      else if (hash === '#contracting') { ctBidId = null; showView('contracting'); }
+      // Leaving a bid with unsaved edits by Back / Forward asks first, like the buttons do;
+      // staying puts the hash back on the bid.
+      else if ((m = /^#b=(\d+)/.exec(hash))) {
+        if (ctBidId && Number(m[1]) !== ctBidId && !ctLeaveOk()) { history.replaceState(null, '', '#b=' + ctBidId); return; }
+        ctBidId = Number(m[1]); suppressHashPush = true; showView('contracting'); suppressHashPush = false;
+      }
+      else if (hash === '#contracting') {
+        if (ctBidId && !ctLeaveOk()) { history.replaceState(null, '', '#b=' + ctBidId); return; }
+        if (ctBidId) closeBid();
+        ctBidId = null; showView('contracting');
+      }
       else if ((m = /^#p=(\d+)/.exec(hash))) { pjId = Number(m[1]); suppressHashPush = true; showView('projects'); suppressHashPush = false; }
       else if (hash === '#projects') { pjId = null; showView('projects'); }
       else if (hash === '#inbox') showView('inbox');
@@ -10447,8 +10460,12 @@
     }
 
     function loadContracting() {
-      // The tab itself shows the board; only a #b= link reopens a bid.
-      if (!/^#b=/.test(location.hash)) ctBidId = null;
+      // The tab itself shows the board; only a #b= link reopens a bid. Leaving a bid with
+      // unsaved changes (Back to #contracting) asks first, and staying puts the hash back.
+      if (!/^#b=/.test(location.hash)) {
+        if (ctBidId && !ctLeaveOk()) { history.replaceState(null, '', '#b=' + ctBidId); return Promise.resolve(); }
+        ctBidId = null;
+      }
       var refP = ctRef ? Promise.resolve({ ok: true, cached: true }) : api('/admin/contracting/reference');
       return Promise.all([refP, api('/admin/bids/pipeline'), api('/admin/bids?view=' + ctView + (ctSearch ? '&q=' + encodeURIComponent(ctSearch) : ''))])
         .then(function (res) {
@@ -10688,6 +10705,7 @@
 
     // ---- one bid ----
     function openBid(id, replace) {
+      if (ctBidId && Number(id) !== ctBidId && !ctLeaveOk()) return Promise.resolve();
       ctBidId = Number(id);
       if (!replace && location.hash !== '#b=' + ctBidId) history.replaceState(null, '', '#b=' + ctBidId);
       return api('/admin/bids/' + ctBidId).then(function (r) {
@@ -10712,19 +10730,101 @@
       return true;
     }
     function ctBidApi(path, method, body, msg) {
-      return api('/admin/bids/' + ctBidId + path, { method: method, body: body }).then(function (r) { ctApply(r, msg); return r; });
+      return api('/admin/bids/' + ctBidId + path, { method: method, body: body }).then(function (r) {
+        // A failed save leaves its pane's unsaved changes marked as unsaved.
+        if (!r.ok) ctSavingPane = null;
+        ctApply(r, msg);
+        return r;
+      });
     }
+
+    // ---- unsaved changes ----
+    // Every write returns the whole workspace and renderBid redraws every pane, which used
+    // to wipe whatever was typed and not yet saved on another pane. A pane with unsaved
+    // edits is now carried across the redraw as it was, marked on its tab, and leaving the
+    // bid asks first. The pane whose own Save caused the redraw is rebuilt from the server.
+    var ctDirty = { bid: null, panes: {} };
+    var ctSavingPane = null;
+    var ctPanes = {};
+    var CT_BUILDERS = {};
+    function ctUnsaved() {
+      if (ctDirty.bid == null || ctDirty.bid !== ctBidId) return [];
+      return Object.keys(ctDirty.panes).filter(function (k) { return ctDirty.panes[k]; });
+    }
+    function ctClearDirty() { ctDirty = { bid: null, panes: {} }; }
+    function ctLeaveOk() {
+      var names = ctUnsaved();
+      if (!names.length) return true;
+      if (!confirm('You have unsaved changes on ' + names.join(', ') + '. Leave without saving them?')) return false;
+      ctClearDirty();
+      return true;
+    }
+    function ctForgetDirty(name) {
+      delete ctDirty.panes[name];
+      var p = ctPanes[name];
+      if (!p) return;
+      p.btn.classList.remove('dirty');
+      var bar = p.querySelector('.ct-unsaved');
+      if (bar) bar.remove();
+    }
+    function ctMarkDirty(name) {
+      if (ctDirty.bid !== ctBidId) ctDirty = { bid: ctBidId, panes: {} };
+      if (ctDirty.panes[name]) return;
+      ctDirty.panes[name] = true;
+      var p = ctPanes[name];
+      if (!p) return;
+      p.btn.classList.add('dirty');
+      var bar = el('div', 'ct-unsaved');
+      bar.appendChild(el('span', null, 'Unsaved changes on this tab. They are kept while you work on the other tabs; Save sends this form as shown.'));
+      var drop = el('button', 'ct-btn sm', 'Discard my changes'); drop.type = 'button';
+      drop.addEventListener('click', function () {
+        var cur = ctPanes[name];
+        delete ctDirty.panes[name];
+        cur.btn.classList.remove('dirty');
+        cur.textContent = '';
+        CT_BUILDERS[name](cur);
+      });
+      bar.appendChild(drop);
+      p.insertBefore(bar, p.firstChild);
+    }
+    // Typing in a tracked pane marks it; a file picker or a note that saves on its own
+    // (data-nodirty) does not.
+    function ctTrack(pane, name) {
+      var on = function (e) {
+        var t = e.target;
+        if (!t || t.type === 'file' || (t.closest && t.closest('[data-nodirty]'))) return;
+        ctMarkDirty(name);
+      };
+      pane.addEventListener('input', on);
+      pane.addEventListener('change', on);
+    }
+    // Which pane's Save is running, so the redraw it causes rebuilds that pane.
+    document.addEventListener('click', function (e) {
+      var b = e.target && e.target.closest && e.target.closest('[data-save]');
+      if (b) ctSavingPane = b.getAttribute('data-save');
+    }, true);
+    window.addEventListener('beforeunload', function (e) {
+      if (ctUnsaved().length || ctDraftPending()) { e.preventDefault(); e.returnValue = ''; }
+    });
 
     function renderBid() {
       var d = ctDetail, b = d.bid;
       var p = document.getElementById('ctBid');
       document.getElementById('ctBoard').hidden = true;
       p.hidden = false;
+      // Panes with unsaved edits are lifted out before the redraw and put back after it.
+      if (ctDirty.bid !== b.id) ctClearDirty();
+      if (ctSavingPane) { delete ctDirty.panes[ctSavingPane]; ctSavingPane = null; }
+      var keep = {};
+      ctUnsaved().forEach(function (n) {
+        if (!ctPanes[n]) return;
+        keep[n] = Array.prototype.slice.call(ctPanes[n].childNodes);
+      });
       p.textContent = '';
       var panel = el('div', 'ct-panel');
       var back = el('button', 'ct-btn sm', '‹ All bids');
       back.type = 'button';
-      back.addEventListener('click', closeBid);
+      back.addEventListener('click', function () { if (ctLeaveOk()) closeBid(); });
       panel.appendChild(back);
 
       var head = el('div', 'ct-head');
@@ -10794,16 +10894,18 @@
       tabs.count('Q&A', d.qa.length);
       tabs.count('Files', d.files.length);
       tabs.count('Tabulation', d.tabulations.length);
-      ctOverview(tabs.pane('Overview'));
-      ctTriage(tabs.pane('Triage'));
-      ctLines(tabs.pane('Lines'));
-      ctRisk(tabs.pane('Risk'));
-      ctQa(tabs.pane('Q&A'));
-      ctFiles(tabs.pane('Files'));
-      ctDraft(tabs.pane('Draft'));
-      ctResponse(tabs.pane('Response'));
-      ctTabulation(tabs.pane('Tabulation'));
-      ctHistory(tabs.pane('History'));
+      CT_BUILDERS = { Overview: ctOverview, Triage: ctTriage, Lines: ctLines, Risk: ctRisk, 'Q&A': ctQa, Files: ctFiles, Draft: ctDraft, Response: ctResponse, Tabulation: ctTabulation, History: ctHistory };
+      ctPanes = {};
+      Object.keys(CT_BUILDERS).forEach(function (n) {
+        var pane = tabs.pane(n);
+        ctPanes[n] = pane;
+        if (keep[n]) {
+          keep[n].forEach(function (node) { pane.appendChild(node); });
+          pane.btn.classList.add('dirty');
+          if (n === 'Overview' || n === 'Lines' || n === 'Response') ctTrack(pane, n);
+        } else CT_BUILDERS[n](pane);
+      });
+      if (d.saved_draft) tabs.pane('Draft').btn.textContent = 'Draft (saved)';
       p.appendChild(panel);
       Array.prototype.forEach.call(document.querySelectorAll('.ct-card'), function (c) { c.classList.remove('sel'); });
     }
@@ -10860,6 +10962,7 @@
 
     function ctOverview(pane) {
       var b = ctDetail.bid;
+      ctTrack(pane, 'Overview');
       var f = el('div', 'ct-form');
       var inp = {};
       inp.agency = ctField(f, 'Agency', ctInput('text', b.agency, { maxlength: 200 }));
@@ -10905,8 +11008,12 @@
       var rr = el('div', 'reply-row');
       var save = el('button', 'prim', 'Save');
       save.type = 'button';
-      save.addEventListener('click', function () {
-        var body = {
+      save.setAttribute('data-save', 'Overview');
+      // Only what was changed here is sent. The form can be carried across a redraw with
+      // older values than the bid now has (a draft applied from another tab), and sending
+      // every field would write those back over it.
+      var collect = function () {
+        return {
           agency: inp.agency.value, title: inp.title.value, event_no: inp.event_no.value, source: inp.source.value, naics: inp.naics.value,
           commodity_codes: inp.commodity_codes.value, structure: inp.structure.value, submit_method: inp.submit_method.value,
           date_open: dayToTs(inp.date_open.value), date_close: ctFromDt(inp.date_close.value), qa_close: ctFromDt(inp.qa_close.value), end_date: dayToTs(inp.end_date.value),
@@ -10917,6 +11024,12 @@
           strategic_override: inp.strategic_override.value, liability_ack: inp.liability_ack.value,
           internal_notes: inp.internal_notes.value,
         };
+      };
+      var initial = collect();
+      save.addEventListener('click', function () {
+        var now = collect(), body = {};
+        Object.keys(now).forEach(function (k) { if (JSON.stringify(now[k]) !== JSON.stringify(initial[k])) body[k] = now[k]; });
+        if (!Object.keys(body).length) { ctSavingPane = null; ctForgetDirty('Overview'); toast('Nothing changed'); return; }
         save.disabled = true;
         ctBidApi('', 'PATCH', body, 'Saved').then(function () { save.disabled = false; reloadCtLists(); });
       });
@@ -10933,6 +11046,7 @@
       }
       pane.appendChild(rr);
       var nb = el('div', 'ct-form');
+      nb.setAttribute('data-nodirty', '');
       var note = el('textarea');
       note.rows = 2;
       ctField(nb, 'Add a note to the history', note, 'wide');
@@ -10941,7 +11055,7 @@
       nbtn.type = 'button';
       nbtn.addEventListener('click', function () {
         if (!note.value.trim()) return;
-        ctBidApi('/note', 'POST', { note: note.value }, 'Noted');
+        ctBidApi('/note', 'POST', { note: note.value }, 'Noted').then(function (r) { if (r.ok) note.value = ''; });
       });
       pane.appendChild(nbtn);
     }
@@ -10968,6 +11082,7 @@
     // before saving; the server recomputes on save and its numbers are the record.
     function ctLines(pane) {
       var partial = ctDetail.bid.partial_ok;
+      ctTrack(pane, 'Lines');
       pane.appendChild(el('p', 'ct-note', 'Landed cost is per unit, before freight. Leave the unit price to follow the markup, or tick Fix to type it. The freight line is what the bid form charges; freight cost is what shipping costs you. A line turns red when its margin does not cover its freight and handling.' + (partial ? ' Partial bids are allowed: untick Bid on a line to pass on it.' : '')));
       var wrap = el('div', 'ct-grid');
       var t = el('table', 'ct-lines');
@@ -11007,7 +11122,7 @@
         r.ext = el('td', 'num'); tr.appendChild(r.ext);
         r.mar = el('td', 'num m'); tr.appendChild(r.mar);
         var rm = el('button', 'ct-btn sm', '×'); rm.type = 'button'; rm.setAttribute('aria-label', 'Remove line');
-        rm.addEventListener('click', function () { rows.splice(rows.indexOf(r), 1); tr.remove(); recalc(); });
+        rm.addEventListener('click', function () { rows.splice(rows.indexOf(r), 1); tr.remove(); recalc(); ctMarkDirty('Lines'); });
         var tdr = el('td'); tdr.appendChild(rm); tr.appendChild(tdr);
         r.tr = tr;
         tr.addEventListener('input', recalc);
@@ -11047,8 +11162,9 @@
       recalc();
       var rr = el('div', 'reply-row');
       var add = el('button', null, '+ Line'); add.type = 'button';
-      add.addEventListener('click', function () { var r = addRow(); recalc(); r.description.focus(); });
+      add.addEventListener('click', function () { var r = addRow(); recalc(); r.description.focus(); ctMarkDirty('Lines'); });
       var save = el('button', 'prim', 'Save lines'); save.type = 'button';
+      save.setAttribute('data-save', 'Lines');
       save.addEventListener('click', function () {
         var lines = rows.map(function (r) {
           return { bid: r.bid.checked, line_no: r.line_no.value, description: r.description.value, sku: r.sku.value, qty: r.qty.value, uom: r.uom.value,
@@ -11197,6 +11313,7 @@
     // and the lines, so the agency never sees a cost or a margin.
     function ctResponse(pane) {
       var b = ctDetail.bid;
+      ctTrack(pane, 'Response');
       pane.appendChild(el('p', 'ct-note', 'The response prints in the house format: masthead, reference block, pricing table, requirements matrix, substitution notes, terms, About TES and signature. The compliance clause is built from the Compliance panel, present tense, active and public rows only. Lines you are not bidding are left off.'));
       var f = el('div', 'ct-form');
       var inp = {};
@@ -11224,7 +11341,7 @@
         var meets = ctCheck('Meets or exceeds', r.meets !== false && !!r.requirement);
         var w = el('div'); w.appendChild(meets); d.appendChild(w);
         var rm = el('button', 'ct-btn sm', 'Remove'); rm.type = 'button';
-        rm.addEventListener('click', function () { rows.splice(rows.indexOf(o), 1); d.remove(); });
+        rm.addEventListener('click', function () { rows.splice(rows.indexOf(o), 1); d.remove(); ctMarkDirty('Response'); });
         w.appendChild(rm);
         var o = { req: req, off: off, meets: meets.input };
         rows.push(o);
@@ -11234,11 +11351,20 @@
       pane.appendChild(list);
       var rr = el('div', 'reply-row');
       var add = el('button', null, '+ Requirement'); add.type = 'button';
-      add.addEventListener('click', function () { addRow(); });
+      add.addEventListener('click', function () { addRow(); ctMarkDirty('Response'); });
       var save = el('button', 'prim', 'Save'); save.type = 'button';
+      save.setAttribute('data-save', 'Response');
+      // Only what was changed here is sent, for the same reason as Overview.
+      var collect = function () {
+        var o = { compliance_matrix: rows.map(function (r) { return { requirement: r.req.value, offered: r.off.value, meets: r.meets.checked }; }) };
+        Object.keys(inp).forEach(function (k) { o[k] = inp[k].value; });
+        return o;
+      };
+      var initial = collect();
       save.addEventListener('click', function () {
-        var body = { compliance_matrix: rows.map(function (o) { return { requirement: o.req.value, offered: o.off.value, meets: o.meets.checked }; }) };
-        Object.keys(inp).forEach(function (k) { body[k] = inp[k].value; });
+        var now = collect(), body = {};
+        Object.keys(now).forEach(function (k) { if (JSON.stringify(now[k]) !== JSON.stringify(initial[k])) body[k] = now[k]; });
+        if (!Object.keys(body).length) { ctSavingPane = null; ctForgetDirty('Response'); toast('Nothing changed'); return; }
         save.disabled = true;
         ctBidApi('', 'PATCH', body, 'Saved').then(function () { save.disabled = false; });
       });
@@ -11258,7 +11384,6 @@
       ['capability-statement', 'Capability statement', false],
       ['estimation-handbook', 'Estimation handbook (services pricing)', false],
     ];
-    var ctPacketCache = {};
 
     function ctPdfText(buf) {
       return loadPdfjs().then(function (pdfjs) { return pdfjs.getDocument({ data: new Uint8Array(buf) }).promise; }).then(function (doc) {
@@ -11334,22 +11459,79 @@
       loadRefs();
     }
 
+    // The packet and notes as last typed, per bid, saved to the bid as you type. A draft
+    // that is running is remembered per bid too, so moving between tabs or bids while it
+    // runs does not lose it; it is saved on the bid when it comes back either way.
+    var ctDraftIn = {};
+    var ctDrafting = {};
+    function ctDraftPending() {
+      return Object.keys(ctDrafting).length > 0 || Object.keys(ctDraftIn).some(function (k) { return ctDraftIn[k].timer || ctDraftIn[k].saving; });
+    }
+    function ctDraftState(id) { return ctDraftIn[id] || (ctDraftIn[id] = { packet: '', notes: '', loaded: false }); }
+    function ctSaveInput(id, now) {
+      var st = ctDraftState(id);
+      clearTimeout(st.timer); st.timer = null;
+      var go = function () {
+        st.timer = null; st.saving = true;
+        if (st.paint) st.paint();
+        api('/admin/bids/' + id + '/input', { method: 'PUT', body: { packet: st.packet, notes: st.notes } }).then(function (r) {
+          st.saving = false;
+          if (r.ok) { st.savedAt = r.updated_at; st.error = null; } else st.error = ctErr(r);
+          if (st.paint) st.paint();
+        });
+      };
+      if (now) go(); else { st.timer = setTimeout(go, 1200); if (st.paint) st.paint(); }
+    }
+    function ctRefreshDraftPane() {
+      var p = ctPanes.Draft;
+      if (!p || !ctDetail) return;
+      p.textContent = '';
+      ctDraft(p);
+      p.btn.textContent = ctDetail.saved_draft ? 'Draft (saved)' : 'Draft';
+    }
+
     function ctDraft(pane) {
-      pane.appendChild(el('p', 'ct-note', 'BidBuilder reads the packet against the contracting playbook and the capability statement, then drafts triage notes, risk flags with the clauses quoted, Q&A questions, the lines to price and a go / no-go. Nothing is saved until you apply it. It never fills in stock, lead time or a landed cost you did not give it.'));
-      ctRefUploader(pane);
+      var id = ctBidId, st = ctDraftState(id);
+      pane.appendChild(el('p', 'ct-note', 'BidBuilder reads the packet against the contracting playbook and the capability statement, then drafts triage notes, risk flags with the clauses quoted, Q&A questions, the lines to price and a go / no-go. Every draft is saved on this bid as soon as it comes back, so you can leave and come back to it. Nothing it proposes changes the bid until you apply it. Your packet and notes save as you type. It never fills in stock, lead time or a landed cost you did not give it.'));
+
+      var out = el('div');
+      pane.appendChild(out);
+      if (st.lastError) out.appendChild(el('div', 'ct-why', st.lastError));
+      if (ctDetail.saved_draft) ctDraftPreview(out, ctDetail.saved_draft.draft, ctDetail.saved_draft);
+      else if (st.unsaved) ctDraftPreview(out, st.unsaved, null);
 
       var f = el('div', 'ct-form');
       var packet = el('textarea'); packet.rows = 8; packet.placeholder = 'The solicitation text. Load it from the files on this bid, or paste it.';
-      packet.value = ctPacketCache[ctBidId] || '';
       ctField(f, 'Solicitation packet', packet, 'wide');
       var count = el('div', 'row-sub wide', '');
       f.appendChild(count);
       var notes = el('textarea'); notes.rows = 3;
       notes.placeholder = 'What only you know: landed costs you have seen, stock you have confirmed, distributor terms, whether cash is tight this month.';
       ctField(f, 'Your notes (optional)', notes, 'wide');
+      var status = el('div', 'row-sub wide', '');
+      f.appendChild(status);
       pane.appendChild(f);
-      var upd = function () { ctPacketCache[ctBidId] = packet.value; count.textContent = packet.value.length.toLocaleString('en-US') + ' characters' + (packet.value.length > 150000 ? ' (only the first 150,000 are read)' : ''); };
-      packet.addEventListener('input', upd); upd();
+      st.paint = function () {
+        count.textContent = packet.value.length.toLocaleString('en-US') + ' characters' + (packet.value.length > 150000 ? ' (only the first 150,000 are read)' : '');
+        status.textContent = st.error ? 'Not saved: ' + st.error
+          : st.saving ? 'Saving to this bid…'
+          : st.timer ? 'Unsaved typing, saving in a moment…'
+          : st.savedAt ? 'Packet and notes saved on this bid ' + fmt(st.savedAt) + '.'
+          : '';
+      };
+      var fill = function () { packet.value = st.packet; notes.value = st.notes; st.paint(); };
+      if (!st.loaded) {
+        packet.disabled = notes.disabled = true;
+        status.textContent = 'Loading what you saved…';
+        api('/admin/bids/' + id + '/input').then(function (r) {
+          st.loaded = true;
+          if (r.ok) { if (!st.packet) st.packet = r.packet || ''; if (!st.notes) st.notes = r.notes || ''; st.savedAt = r.updated_at; }
+          packet.disabled = notes.disabled = false;
+          fill();
+        });
+      } else fill();
+      packet.addEventListener('input', function () { st.packet = packet.value; ctSaveInput(id); });
+      notes.addEventListener('input', function () { st.notes = notes.value; ctSaveInput(id); });
 
       var rr = el('div', 'reply-row');
       var load = el('button', null, 'Load text from the packet files'); load.type = 'button';
@@ -11366,39 +11548,62 @@
           });
         }, Promise.resolve()).then(function () {
           load.disabled = false; load.textContent = 'Load text from the packet files';
-          packet.value = parts.join('\n\n'); upd();
+          packet.value = st.packet = parts.join('\n\n');
+          ctSaveInput(id, true);
           if (!packet.value.trim()) toast('None of those files had readable text. A scanned PDF has none; paste the text instead.');
         });
       });
-      var go = el('button', 'prim', 'Draft the workspace'); go.type = 'button';
-      var out = el('div');
+      var go = el('button', 'prim', ctDetail.saved_draft ? 'Draft again' : 'Draft the workspace'); go.type = 'button';
+      var running = function () {
+        go.disabled = true;
+        go.textContent = 'Drafting since ' + new Date(ctDrafting[id]).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' }) + '… (a minute or two)';
+      };
+      if (ctDrafting[id]) running();
       go.addEventListener('click', function () {
         if (packet.value.trim().length < 200) { toast('Load or paste the packet first.'); return; }
-        go.disabled = true; go.textContent = 'Reading the packet… (a minute or two)';
-        out.textContent = '';
-        api('/admin/bids/' + ctBidId + '/draft', { method: 'POST', body: { packet: packet.value, notes: notes.value } }).then(function (r) {
-          go.disabled = false; go.textContent = 'Draft the workspace';
-          if (!r.ok) { out.appendChild(el('div', 'ct-why', r.message || ctErr(r))); return; }
-          ctDraftPreview(out, r.draft);
+        if (ctDetail.saved_draft && !ctDetail.saved_draft.applied_at && !confirm('Draft again? The new draft replaces the saved one on this tab. The old one stays in the bid history.')) return;
+        var bidNo = ctDetail.bid.number;
+        ctSaveInput(id, true);
+        st.lastError = null; st.unsaved = null;
+        ctDrafting[id] = Date.now();
+        running();
+        api('/admin/bids/' + id + '/draft', { method: 'POST', body: { packet: packet.value, notes: notes.value } }).then(function (r) {
+          delete ctDrafting[id];
+          var here = ctBidId === id && ctDetail && ctDetail.bid.id === id;
+          if (!r.ok) {
+            st.lastError = r.message || ctErr(r);
+            if (here) ctRefreshDraftPane(); else toast('BidBuilder could not draft ' + bidNo + ': ' + st.lastError);
+            return;
+          }
+          if (r.draft_id) {
+            if (here) ctDetail.saved_draft = { id: r.draft_id, created_at: r.saved_at, draft: r.draft, notes: notes.value, model: r.model, usage: r.usage, applied_at: null };
+          } else st.unsaved = r.draft;
+          if (here) { ctRefreshDraftPane(); toast(r.draft_id ? 'Draft ready, and saved on this bid.' : 'Draft ready, but it could not be saved. Apply it before you leave.'); }
+          else toast('BidBuilder finished ' + bidNo + (r.draft_id ? '. The draft is saved on that bid.' : ', but the draft could not be saved.'));
         });
       });
       rr.appendChild(load); rr.appendChild(go);
       pane.appendChild(rr);
-      pane.appendChild(out);
+      ctRefUploader(pane);
     }
 
-    function ctDraftPreview(host, d) {
+    // One draft, saved (sd) or not. A saved one applies by its id and can be discarded
+    // from the tab; it stays in the bid history either way.
+    function ctDraftPreview(host, d, sd) {
       host.textContent = '';
+      if (!d) return;
       var box = el('div', 'ct-prompt');
+      if (sd) box.appendChild(el('p', 'row-sub', 'Saved draft from ' + fmt(sd.created_at) + (sd.applied_at ? ' · applied ' + fmt(sd.applied_at) : ' · not applied yet') + (sd.notes ? ' · drafted with your notes' : '')));
+      else box.appendChild(el('p', 'short', 'This draft is not saved on the bid. Apply it before you leave, or draft again.'));
       var gn = d.go_no_go.recommendation;
       box.appendChild(el('p', null, 'Recommendation: ' + (gn === 'go' ? 'Go' : gn === 'no_go' ? 'No-go' : 'Needs more information') + (d.go_no_go.reasons.length ? '. ' + d.go_no_go.reasons.join(' ') : '')));
       box.appendChild(el('p', 'row-sub', 'Fit: NAICS ' + (d.fit.naics || '?') + (d.fit.tier ? ' (tier ' + d.fit.tier + ')' : d.fit.on_statement ? '' : ' (not on the capability statement)') + '. ' + d.fit.reason));
       if (d.federal) box.appendChild(el('p', 'short', 'Federal solicitation: blocked under FAR 3.601.'));
       if (d.notes_for_tyler) box.appendChild(el('p', 'row-sub', 'For you: ' + d.notes_for_tyler));
       var sec = function (title, items, fn) {
-        if (!items.length) return;
+        if (!items || !items.length) return;
         box.appendChild(el('h4', 'addsec', title + ' (' + items.length + ')'));
-        var ul = el('ul'); ul.style.margin = '0.2rem 0 0.4rem'; ul.style.paddingLeft = '1.1rem'; ul.style.fontSize = '0.8rem';
+        var ul = el('ul', 'ct-draft-list');
         items.forEach(function (i) { ul.appendChild(el('li', null, fn(i))); });
         box.appendChild(ul);
       };
@@ -11415,13 +11620,16 @@
       opts.appendChild(ovr);
       box.appendChild(opts);
       var rr = el('div', 'reply-row');
-      var apply = el('button', 'prim', 'Apply to the bid'); apply.type = 'button';
+      var apply = el('button', 'prim', sd && sd.applied_at ? 'Apply again' : 'Apply to the bid'); apply.type = 'button';
       apply.addEventListener('click', function () {
         apply.disabled = true;
-        api('/admin/bids/' + ctBidId + '/apply', { method: 'POST', body: { draft: d, replace_lines: rep.input.checked, overwrite: ovr.input.checked } }).then(function (r) {
+        var body = { replace_lines: rep.input.checked, overwrite: ovr.input.checked };
+        if (sd) body.draft_id = sd.id; else body.draft = d;
+        api('/admin/bids/' + ctBidId + '/apply', { method: 'POST', body: body }).then(function (r) {
           apply.disabled = false;
           if (!r.ok) { toast(ctErr(r)); return; }
           var a = r.applied || {};
+          if (!sd) ctDraftState(ctBidId).unsaved = null;
           ctDetail = r; renderBid();
           var pl = function (n, w) { return n + ' ' + w + (n === 1 ? '' : 's'); };
           toast('Applied: ' + [a.lines ? pl(a.lines, 'line') : null, a.triage ? pl(a.triage, 'triage note') : null, a.risks ? pl(a.risks, 'risk') : null, a.questions ? pl(a.questions, 'question') : null].filter(Boolean).join(', ') + (a.lines_skipped ? '. Lines kept as they were.' : '') || 'Applied');
@@ -11429,7 +11637,15 @@
         });
       });
       var discard = el('button', null, 'Discard'); discard.type = 'button';
-      discard.addEventListener('click', function () { host.textContent = ''; });
+      discard.addEventListener('click', function () {
+        if (!sd) { ctDraftState(ctBidId).unsaved = null; host.textContent = ''; return; }
+        if (!confirm('Discard this saved draft? It leaves this tab. The history still records that it was made.')) return;
+        discard.disabled = true;
+        api('/admin/bids/' + ctBidId + '/drafts/' + sd.id, { method: 'DELETE', body: {} }).then(function (r) {
+          discard.disabled = false;
+          if (r.ok) { ctDetail = r; renderBid(); toast('Draft discarded'); } else toast(ctErr(r));
+        });
+      });
       rr.appendChild(apply); rr.appendChild(discard);
       box.appendChild(rr);
       host.appendChild(box);
@@ -12111,6 +12327,11 @@
 
     function showView(which) {
       if (!VIEWS[which]) return;
+      // Leaving Contracting with a bid half edited asks first; staying puts the hash back.
+      if (which !== 'contracting' && !document.getElementById('viewContracting').hidden && !ctLeaveOk()) {
+        if (ctBidId) history.replaceState(null, '', '#b=' + ctBidId);
+        return;
+      }
       Object.keys(VIEWS).forEach(function (k) {
         var on = k === which;
         document.getElementById(VIEWS[k].view).hidden = !on;
