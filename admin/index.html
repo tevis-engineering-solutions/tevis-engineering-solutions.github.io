@@ -1634,8 +1634,8 @@
             <div class="reply-row"><button type="submit" class="prim">Add to the queue</button></div>
           </form>
         </details>
-        <details class="ct-q-add" id="ctqOhb"><summary>OhioBuys capture bookmark</summary>
-          <p class="ct-note">OhioBuys checks every visitor&rsquo;s browser, so the queue cannot read it on its own. Drag this button to your bookmarks bar once. Then, on an OhioBuys post or on the solicitation list (filter Solicitation Status to Open for Bidding), click the bookmark: it reads the page you have open, including a post&rsquo;s documents, and opens this console to add it to the queue or build a bid. It reads only what your browser is showing you.</p>
+        <details class="ct-q-add" id="ctqOhb"><summary>Capture bookmark (OhioBuys, BidNet)</summary>
+          <p class="ct-note">For the sites the queue cannot read on its own. Drag this button to your bookmarks bar once, then click it on: an <b>OhioBuys</b> post (reads the post and its documents) or its solicitation list (filter Solicitation Status to Open for Bidding first); or the <b>BidNet</b> open solicitations list, where it reads every page one at a time with a pause between them (about a minute and a half for 55 pages). It opens this console to add what it read to the queue or build a bid. BidNet&rsquo;s terms bar reproducing its listings electronically; this keeps a private copy for your own evaluation, read at a person&rsquo;s pace.</p>
           <a class="ct-btn prim" id="ctqBookmark" href="#ohb">TES capture</a>
         </details>
       </div>
@@ -10565,7 +10565,9 @@
         var auto = ctFeed && ctFeed.sources.filter(function (f) { return f.source === s.key; })[0];
         var age = s.last_checked_at ? Math.floor((now - s.last_checked_at) / 86400) : null;
         var sm;
-        if (auto && !auto.needs_key) {
+        if (auto && auto.captured) {
+          sm = el('small', auto.last_ok ? 'auto' : (age == null || age > 7 ? 'stale' : null), auto.last_ok ? 'captured ' + ctAgo(auto.last_ok) : (age == null ? 'never checked' : age === 0 ? 'checked today' : 'checked ' + ctDays(age) + ' ago'));
+        } else if (auto && !auto.needs_key) {
           var failed = auto.last_run && !auto.last_run.ok && auto.last_run.error && auto.last_run.error !== 'no_key';
           sm = el('small', failed ? 'stale' : 'auto', failed ? 'last read failed' : 'read by the queue ' + ctAgo(auto.last_ok));
         } else sm = el('small', age == null || age > 7 ? 'stale' : null, (auto && auto.needs_key ? 'needs an API key · ' : '') + (age == null ? 'never checked' : age === 0 ? 'checked today' : 'checked ' + ctDays(age) + ' ago'));
@@ -10579,7 +10581,7 @@
         var stamp = function () {
           api('/admin/bid-sources/' + s.key, { method: 'PATCH', body: { checked: true } }).then(function (r) { if (r.ok) { ctRef.sources = r.sources; renderCtSites(); } });
         };
-        if (!(auto && !auto.needs_key)) {
+        if (!(auto && !auto.needs_key && !auto.captured)) {
           var b = el('a', 'ct-btn sm', 'Open ↗');
           b.href = s.url; b.target = '_blank'; b.rel = 'noopener noreferrer';
           b.setAttribute('aria-label', 'Open ' + s.label + ' (marks it checked today)');
@@ -10801,7 +10803,7 @@
     var ctqSearch = '';
     var ctqTimer = null;
     var ctqShowAll = false;
-    var CT_FEED_LABEL = { cleveland: 'City of Cleveland', samgov: 'SAM.gov' };
+    var CT_FEED_LABEL = { cleveland: 'City of Cleveland', cuyahoga: 'Cuyahoga County', samgov: 'SAM.gov', ohiobuys: 'OhioBuys', bidnet: 'BidNet', manual: 'Added by hand' };
 
     function loadQueue() {
       var list = document.getElementById('ctqList');
@@ -10826,8 +10828,9 @@
     function renderCtQueueStatus() {
       var st = document.getElementById('ctqStatus');
       if (!ctFeed) return;
-      var parts = ctFeed.sources.map(function (s) {
+      var parts = ctFeed.sources.filter(function (s) { return !s.captured || s.last_ok; }).map(function (s) {
         var name = CT_FEED_LABEL[s.source] || s.source;
+        if (s.captured) return name + ': captured ' + ctAgo(s.last_ok);
         if (s.needs_key) return name + ': add a SAM.gov API key to read it';
         var lr = s.last_run;
         if (lr && !lr.ok && lr.error && lr.error !== 'no_key') return name + ': last read failed (' + lr.error + ')';
@@ -10979,18 +10982,47 @@
     // result over with postMessage. The console checks that the message came from OhioBuys
     // and from the tab that opened it, shows what was read, and saves nothing until he says.
     var OHB_ORIGIN = 'https://ohiobuys.ohio.gov';
+    // Where a capture may come from: OhioBuys, and BidNet's open list read in Tyler's browser.
+    var CAPTURE_ORIGINS = [OHB_ORIGIN, 'https://www.bidnetdirect.com'];
 
     // Runs on ohiobuys.ohio.gov, never here. Kept free of anything outside itself, since it
     // is turned into a bookmark from its own source.
     function ohbCapture() {
       var TES = '__TES__';
-      if (location.hostname !== 'ohiobuys.ohio.gov') { alert('Open an OhioBuys solicitation, or the solicitation list, first.'); return; }
+      if (location.hostname !== 'ohiobuys.ohio.gov' && location.hostname !== 'www.bidnetdirect.com') { alert('Open an OhioBuys solicitation or list, or the BidNet open solicitations list, first.'); return; }
       var w = window.open(TES + '/admin/#ohb-import', '_blank');
-      if (!w) { alert('Allow pop-ups for ohiobuys.ohio.gov so the capture can open the TES console.'); return; }
+      if (!w) { alert('Allow pop-ups for ' + location.hostname + ' so the capture can open the TES console.'); return; }
       var clean = function (s) { return String(s || '').replace(/\s+/g, ' ').trim(); };
       var abs = function (h) { try { return new URL(h, location.href).href; } catch (e) { return null; } };
       var data = { v: 1, page: location.href, postings: [], docs: [] };
       var ready = Promise.resolve();
+      var bidnet = location.hostname === 'www.bidnetdirect.com';
+      if (bidnet) {
+        var bm = /^(\/[a-z-]+\/solicitations\/open-bids)/.exec(location.pathname);
+        if (!bm) { w.close(); alert('Open the BidNet open solicitations list first (for example bidnetdirect.com/ohio/solicitations/open-bids).'); return; }
+        var pg = /Page\s+\d+\s+of\s+(\d+)/i.exec(document.body.innerText);
+        var total = pg ? Math.min(Number(pg[1]), 80) : 1;
+        var box = document.createElement('div');
+        box.style.cssText = 'position:fixed;top:12px;right:12px;z-index:2147483647;background:#0d1710;color:#e4ede5;border:1px solid #c89830;border-radius:10px;padding:10px 14px;font:14px system-ui,sans-serif;max-width:320px';
+        document.body.appendChild(box);
+        data.kind = 'list'; data.site = 'bidnet'; data.pages = total;
+        var readPage = function (doc) {
+          [].forEach.call(doc.querySelectorAll('tr.mets-table-row'), function (r) {
+            var a = r.querySelector('a.solicitation-link'); if (!a) return;
+            var pub = r.querySelector('.sol-publication-date .date-value'), clo = r.querySelector('.sol-closing-date .date-value'), reg = r.querySelector('.sol-region-item');
+            data.postings.push({ title: clean(a.innerText), url: abs(a.getAttribute('href')), posted: pub ? clean(pub.innerText) : '', end_date: clo ? clean(clo.innerText) : '', region: reg ? clean(reg.innerText) : '' });
+          });
+        };
+        var walk = function (n) {
+          box.textContent = 'TES capture: reading BidNet page ' + n + ' of ' + total + '…';
+          return fetch(bm[1] + (n === 1 ? '' : '/page' + n), { credentials: 'include' }).then(function (r) { return r.text(); }).then(function (h) {
+            readPage(new DOMParser().parseFromString(h, 'text/html'));
+            if (n >= total) { box.textContent = 'TES capture: ' + data.postings.length + ' listings read. Finish in the TES tab.'; return; }
+            return new Promise(function (res) { setTimeout(res, 1500); }).then(function () { return walk(n + 1); });
+          }, function () { data.stopped = n; box.textContent = 'TES capture: page ' + n + ' could not be read. Sending the ' + data.postings.length + ' read so far.'; });
+        };
+        ready = walk(1);
+      } else {
       var grid = document.getElementById('body_x_grid_grd');
       if (grid && grid.tHead && grid.tBodies[0]) {
         var hd = [].map.call(grid.tHead.rows[0].cells, function (c) { return clean(c.innerText); });
@@ -11028,6 +11060,7 @@
           });
         }, Promise.resolve());
       }
+      }
       var sent = false;
       window.addEventListener('message', function (e) {
         if (sent || e.origin !== TES || e.source !== w || !e.data || e.data.type !== 'tes-ohb-ready') return;
@@ -11048,16 +11081,18 @@
       var box = document.getElementById('ctqImport');
       box.hidden = false; box.textContent = '';
       var wait = el('div', 'ct-prompt');
-      wait.appendChild(el('p', null, window.opener ? 'Waiting for OhioBuys…' : 'Nothing to import here. Open an OhioBuys post, or the solicitation list, and click the TES capture bookmark.'));
+      wait.appendChild(el('p', null, window.opener ? 'Waiting for the capture… A full BidNet list takes about a minute and a half; the other tab shows its progress.' : 'Nothing to import here. Open an OhioBuys post or list, or the BidNet open solicitations list, and click the TES capture bookmark.'));
       box.appendChild(wait);
       if (!window.opener) return;
       var got = false, tries = 0;
       var ping = setInterval(function () {
-        if (got || ++tries > 75 || !window.opener) { clearInterval(ping); if (!got) { wait.firstChild.textContent = 'OhioBuys did not answer. Go back to the OhioBuys tab and click the bookmark again.'; } return; }
-        try { window.opener.postMessage({ type: 'tes-ohb-ready' }, OHB_ORIGIN); } catch (e) { /* the opener went away */ }
+        if (got || ++tries > 900 || !window.opener) { clearInterval(ping); if (!got) { wait.firstChild.textContent = 'The capture did not answer. Go back to that tab and click the bookmark again.'; } return; }
+        // A ready signal carries nothing, so it can go to whichever site opened this tab; what
+        // comes back is checked against CAPTURE_ORIGINS.
+        try { window.opener.postMessage({ type: 'tes-ohb-ready' }, '*'); } catch (e) { /* the opener went away */ }
       }, 400);
       window.addEventListener('message', function onMsg(e) {
-        if (got || e.origin !== OHB_ORIGIN || e.source !== window.opener || !e.data || e.data.type !== 'tes-ohb-data') return;
+        if (got || CAPTURE_ORIGINS.indexOf(e.origin) < 0 || e.source !== window.opener || !e.data || e.data.type !== 'tes-ohb-data') return;
         var d = e.data.payload;
         if (!d || !Array.isArray(d.postings)) return;
         got = true; clearInterval(ping);
@@ -11072,7 +11107,7 @@
       box.textContent = '';
       var p = el('div', 'ct-prompt');
       var docs = (d.docs || []).filter(function (x) { return x && x.bytes instanceof ArrayBuffer && x.bytes.byteLength && x.bytes.byteLength <= 10 * 1024 * 1024; });
-      var postings = d.postings.slice(0, 300);
+      var postings = d.postings.slice(0, 3000);
       var open = postings.filter(function (x) { return !/^(closed|cancell?ed|under evaluation|awarded)$/i.test(String(x.status || '').trim()); });
       if (d.kind === 'post') {
         var x = postings[0] || {};
@@ -11084,13 +11119,27 @@
           : (x.docs && x.docs.length ? 'The documents are listed but could not be read. You can attach them to the bid by hand.' : 'No documents on the post.')));
         if (!open.length) p.appendChild(el('p', 'short', 'This post is ' + (x.status || 'not open') + ', so it is not added to the queue.'));
       } else {
-        p.appendChild(el('h4', 'addsec', 'From the OhioBuys list'));
+        p.appendChild(el('h4', 'addsec', d.site === 'bidnet' ? 'From BidNet' : 'From the OhioBuys list'));
+        if (d.site === 'bidnet') p.appendChild(el('p', 'row-sub', 'Titles and dates only: BidNet shows the agency, number and description to registered members. The queue scores on the title.' + (d.stopped ? ' Reading stopped at page ' + d.stopped + ' of ' + d.pages + '.' : '')));
         p.appendChild(el('p', null, open.length + ' open post' + (open.length === 1 ? '' : 's') + ' read' + (postings.length > open.length ? ' (' + (postings.length - open.length) + ' closed, cancelled or under evaluation left out)' : '') + '.'));
-        if (d.more) p.appendChild(el('p', 'short', 'The list has another page. Filter Solicitation Status to Open for Bidding, or go to the next page and click the bookmark again.'));
+        if (d.more && d.site !== 'bidnet') p.appendChild(el('p', 'short', 'The list has another page. Filter Solicitation Status to Open for Bidding, or go to the next page and click the bookmark again.'));
       }
       var rr = el('div', 'reply-row');
       var send = function (thenBuild) {
-        return api('/admin/feed/import', { method: 'POST', body: { via: 'capture', postings: postings } }).then(function (r) {
+        var batches = [];
+        for (var i = 0; i < postings.length; i += 200) batches.push(postings.slice(i, i + 200));
+        var sum = { ok: true, added: 0, updated: 0, skipped: 0, ids: [] };
+        return batches.reduce(function (chain, b, n) {
+          return chain.then(function (acc) {
+            if (!acc || !acc.ok) return acc;
+            if (batches.length > 1) toast('Saving ' + (n + 1) + ' of ' + batches.length + '…');
+            return api('/admin/feed/import', { method: 'POST', body: { via: 'capture', postings: b } }).then(function (r) {
+              if (!r.ok) return r;
+              acc.added += r.added; acc.updated += r.updated; acc.skipped += r.skipped; acc.ids = acc.ids.concat(r.ids || []);
+              return acc;
+            });
+          });
+        }, Promise.resolve(sum)).then(function (r) {
           if (!r.ok) { toast(ctErr(r)); return null; }
           if (!thenBuild) { toast(r.added + ' new, ' + r.updated + ' updated' + (r.skipped ? ', ' + r.skipped + ' left out' : '')); box.hidden = true; box.textContent = ''; loadQueue(); return null; }
           return r;
