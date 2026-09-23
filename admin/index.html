@@ -7160,8 +7160,11 @@
           { name: 'Invoiced', values: st.series.map(function (b) { return b.issued_cents; }), color: '#c89830' },
           { name: 'Collected', values: st.series.map(function (b) { return b.collected_cents; }), color: '#4aac65' },
         ],
-        line: { name: 'Expenses', values: st.series.map(function (b) { return b.expenses_cents; }), color: '#e08a68' },
-      }, { fmt: moneyShort, label: 'Invoiced, collected and expenses by period', onPick: function (i) { finAnchor = keyToAnchor(st.series[i].key); loadFinance(); } });
+        // Everything Net subtracts, not just the expense half of it, so the gap
+        // between the Collected bar and this line IS the net for that period.
+        line: { name: 'Money out', values: st.series.map(function (b) { return b.out_cents; }), color: '#e08a68' },
+      }, { fmt: moneyShort, label: 'Invoiced, collected and money out by period', onPick: function (i) { finAnchor = keyToAnchor(st.series[i].key); loadFinance(); } });
+      trend.appendChild(el('p', 'fin-note', 'Money out is expenses plus parts bought for customers plus PayPal fees — everything Net subtracts, so the gap between it and Collected is the net for that period.'));
       grid.appendChild(trend);
 
       // ---- clients ----
