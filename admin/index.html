@@ -3435,6 +3435,23 @@
             api('/admin/invoices/' + v.id, { method: 'PATCH', body: { status: 'open' } })
               .then(function (r) { toast(r.ok ? 'Reopened' : 'Failed'); loadInvoices(); });
           });
+          // Only offered on a voided invoice, which is the only kind the Worker will
+          // delete. The number is typed back because this is the one action here that
+          // cannot be undone.
+          act('Delete', 'danger', function () {
+            var typed = prompt('Delete ' + v.number + ' permanently?\n\n' +
+              'This cannot be undone. Line items and the PDF go with it; a parts purchase filed ' +
+              'against it is kept and goes back to being unrecovered.\n\n' +
+              'Type the invoice number to confirm:');
+            if (typed === null) return;
+            api('/admin/invoices/' + v.id, { method: 'DELETE', body: { confirm: typed } })
+              .then(function (r) {
+                if (!r || !r.ok) return alert((r && r.message) || 'Could not delete it.');
+                var n = r.detached && r.detached.parts;
+                toast('Deleted ' + r.number + (n ? ' · ' + n + ' parts purchase unlinked' : ''));
+                loadInvoices();
+              });
+          });
         }
       }
       d.appendChild(acts);
