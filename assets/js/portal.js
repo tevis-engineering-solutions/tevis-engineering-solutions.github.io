@@ -74,6 +74,113 @@
     });
   }).catch(function () { /* the strip is a courtesy, never the page */ });
 
+  /* ---- the tab strip ------------------------------------------------------ */
+  /* Eleven tabs stopped fitting a laptop, never mind a phone. The strip has always
+     scrolled, but with the scrollbar hidden there was nothing on screen saying so,
+     so a tab past the right edge simply looked missing -- which is how Tyler found
+     it, on a desktop.
+
+     The affordance is a fade at whichever end still has somewhere to go, applied as
+     a MASK on the strip rather than a colored overlay: the bar is translucent over
+     the page's radial gradient, so a fade painted in a fixed color would band
+     visibly against it at some scroll positions and not others. A mask fades the
+     content itself and does not care what is behind it.
+
+     Arrows appear only for a pointer that can hover. On a touch screen the strip is
+     already swipeable and a pair of buttons would just cover two tabs. */
+  (function tabStrip() {
+    var bar = document.querySelector('.ptabs');
+    var strip = bar && bar.querySelector('.ptabs-inner');
+    if (!bar || !strip) return;
+
+    var EDGE = 4; // a pixel or two of rounding should not light up an arrow
+
+    function paint() {
+      var over = strip.scrollWidth - strip.clientWidth;
+      var x = strip.scrollLeft;
+      bar.classList.toggle('fade-l', over > EDGE && x > EDGE);
+      bar.classList.toggle('fade-r', over > EDGE && x < over - EDGE);
+    }
+
+    function nudge(dir) {
+      // Most of a screen, not all of it: a tab kept in view is what tells you where
+      // the jump landed.
+      strip.scrollBy({ left: dir * Math.round(strip.clientWidth * 0.7), behavior: 'smooth' });
+    }
+
+    ['\u2039', '\u203a'].forEach(function (glyph, i) {
+      var b = document.createElement('button');
+      b.type = 'button';
+      b.className = 'pscroll ' + (i ? 'right' : 'left');
+      b.textContent = glyph;
+      b.setAttribute('aria-label', i ? 'Scroll tabs right' : 'Scroll tabs left');
+      // The strip is a duplicate of links already reachable by keyboard, so the
+      // buttons are decoration to a screen reader and a tab stop it does not need.
+      b.tabIndex = -1;
+      b.setAttribute('aria-hidden', 'true');
+      b.addEventListener('click', function () { touched = true; nudge(i ? 1 : -1); });
+      bar.appendChild(b);
+    });
+
+    // Land on the page with the tab you are on in view.
+    var touched = false;
+    function center() {
+      var here = strip.querySelector('.ptab.active');
+      if (!here || touched) return;
+      // scrollIntoView rather than arithmetic off offsetLeft: the strip is centered
+      // with auto margins and padded 5% a side, so hand-computing a scroll position
+      // has to account for both and came up short on the last tab at every width
+      // below 1280. `block:'nearest'` so it cannot drag the page vertically, and the
+      // page's own scroll is put back either way.
+      //
+      // The strip deliberately does NOT set scroll-behavior:smooth in CSS: with that
+      // on the element every programmatic scroll is queued as an animation, which is
+      // how the first cut of this silently did nothing at all. The arrows ask for
+      // smooth per call instead.
+      var y = window.scrollY;
+      here.scrollIntoView({ inline: 'center', block: 'nearest', behavior: 'auto' });
+      if (window.scrollY !== y) window.scrollTo(0, y);
+    }
+
+    strip.addEventListener('scroll', paint, { passive: true });
+    window.addEventListener('resize', function () { paint(); center(); });
+    if (window.ResizeObserver) {
+      // Observe a TAB, not just the strip. The strip is 100% of the bar, so when the
+      // web font swaps in and every tab gets wider the strip's own box does not
+      // change at all and an observer on it never fires -- which is how the first
+      // measurement, taken against the fallback font, was the one that stuck and the
+      // last tab ended up 80px short of on screen.
+      var ro = new ResizeObserver(function () { paint(); center(); });
+      ro.observe(strip);
+      var one = strip.querySelector('.ptab');
+      if (one) ro.observe(one);
+    }
+    // And the same thing said directly, for a browser that reflows some other way.
+    if (document.fonts && document.fonts.ready) {
+      document.fonts.ready.then(function () { paint(); center(); });
+    }
+    // Once somebody has moved the strip themselves, it stays where they left it.
+    ['pointerdown', 'touchstart', 'keydown'].forEach(function (ev) {
+      strip.addEventListener(ev, function () { touched = true; }, { passive: true });
+    });
+
+    // A vertical wheel over the strip turns it sideways. Only when there is
+    // somewhere to go, or the page would stop scrolling under the cursor.
+    bar.addEventListener('wheel', function (e) {
+      if (e.deltaY === 0 || e.ctrlKey) return;
+      var over = strip.scrollWidth - strip.clientWidth;
+      if (over <= EDGE) return;
+      var x = strip.scrollLeft;
+      if ((e.deltaY > 0 && x >= over - EDGE) || (e.deltaY < 0 && x <= EDGE)) return;
+      e.preventDefault();
+      touched = true;
+      strip.scrollLeft = x + e.deltaY;
+    }, { passive: false });
+
+    center();
+    paint();
+  })();
+
   /* ---- sign out ----------------------------------------------------------- */
   /* A POST, not a link: it has to end the session server-side, and a GET that
      changes state is a link a prefetcher can follow. */
