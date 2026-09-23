@@ -4069,7 +4069,7 @@
     var qtTimer = null;
     var quoteView = 'open';
     var QUOTE_COLOR = { draft: '#8aa48d', sent: '#4fa2ff', viewed: '#4aac65', accepted: '#22c55e', converted: '#22c55e', declined: '#6a8ba8', expired: '#c89830' };
-    var QUOTE_ERROR = { invalid_email: 'That email is not valid', title_required: 'Give the quote a title', items_required: 'Add at least one line with a description', bad_qty: 'A quantity is not a number', bad_price: 'A price is not a number', bad_interval: 'A line has an interval nobody recognises', bad_range: 'A line has a high price below its low price', not_editable: 'This quote has been decided and cannot be edited', not_sendable: 'This quote cannot be sent in its current state', send_failed: 'Resend refused the email', mail_unconfigured: 'Email is not configured on the Worker', not_accepted: 'The customer has not accepted; tick the verbal box to convert anyway', already_converted: 'Already converted', duplicate_number: 'An invoice with that number already exists', not_draft: 'Only a draft can be deleted', not_open: 'This quote is no longer open' };
+    var QUOTE_ERROR = { invalid_email: 'That email is not valid', title_required: 'Give the quote a title', items_required: 'Add at least one line with a description', bad_qty: 'A quantity is not a number', bad_price: 'A price is not a number', bad_interval: 'A line has an interval nobody recognises', bad_range: 'A line has a high price below its low price', not_editable: 'This quote has been decided and cannot be edited', not_sendable: 'This quote cannot be sent in its current state', send_failed: 'Resend refused the email', mail_unconfigured: 'Email is not configured on the Worker', not_accepted: 'The customer has not accepted; tick the verbal box to convert anyway', already_converted: 'Already converted', duplicate_number: 'An invoice with that number already exists', not_draft: 'Only a draft can be deleted', not_open: 'This quote is no longer open', nothing_to_convert: 'Everything on this quote is recurring, and the service agreement could not be started, so there is nothing to convert it into yet' };
     // Byte-identical to CONFIG.quoteTerms in the Worker (src/config.js). The two must
     // move together: this is what a new quote is seeded with, that is what the server
     // falls back to.
@@ -4589,36 +4589,69 @@
           });
         });
       }
-      // What the conversion left off. A monthly line is a service agreement, not a
-      // charge on day one, so it never reaches the invoice -- but it must not vanish
-      // silently either, or nobody sets it up.
-      function sayRecurring(r) {
-        if (!r.recurring || !r.recurring.length) return '';
-        return ' · ' + r.recurring.length + ' recurring line' + (r.recurring.length > 1 ? 's' : '')
-          + ' left off (' + r.recurring.map(function (i) { return money(i.line_cents) + ' / ' + i.interval; }).join(', ')
-          + ') — set it up as an agreement';
+      // What became of the recurring half. A monthly line is a standing commitment, so
+      // it never reaches the invoice; it becomes the service agreement instead. Either
+      // way it has to be said out loud, because money nobody mentions is money nobody
+      // sets up.
+      var PERIOD_WORD = { monthly: 'month', quarterly: 'quarter', annual: 'year' };
+      var AGREEMENT_SKIP = {
+        already_active: 'they already have an active agreement, so add the line to it',
+        mixed_intervals: 'the lines bill on different intervals, so build it by hand',
+        range_not_agreed: 'the estimate prices them as a range, so confirm the figure first',
+        no_holder: 'there is no customer account to hold an agreement',
+        unknown_holder: 'there is no customer account to hold an agreement',
+        invalid_fee: 'the recurring total is not a usable fee',
+      };
+      function sayAgreement(r) {
+        var a = r.agreement;
+        if (!a) return '';
+        if (a.ok) {
+          return ' \u00b7 service agreement started (' + money(a.fee_cents)
+            + ' / ' + (PERIOD_WORD[a.period] || a.period)
+            + (a.included_minutes ? ', ' + (a.included_minutes / 60) + ' h included' : '') + ')';
+        }
+        if (a.skipped === 'no_recurring' || a.skipped === 'not_attempted') return '';
+        return ' \u00b7 recurring lines left off: ' + (AGREEMENT_SKIP[a.skipped] || a.skipped);
       }
-      if (q.status === 'accepted') {
-        qact('Convert to invoice', 'prim', function () {
+
+      // Whether there is any one-time money on it. After acceptance that is what the
+      // customer actually took; before it, the required one-time lines.
+      function agreementOnlyQuote(x) {
+        return !(x.status === 'accepted' ? x.accepted_cents : x.total_cents);
+      }
+
+      // Both convert buttons do the same thing; only how the acceptance was recorded
+      // differs. An all-recurring quote is not asked for an invoice number, because
+      // no invoice is raised for it.
+      function runConvert(extra, lead, tail) {
+        var body = { due_days: 14 };
+        for (var k in extra) body[k] = extra[k];
+        if (agreementOnlyQuote(q)) {
+          if (!confirm('Everything on this quote is recurring, so no invoice is raised now.\n\n'
+            + 'Convert it into a service agreement? The first invoice goes out on its bill day.')) return;
+        } else {
           var num = prompt('Invoice number:', q.number.replace(/^TES-(QT|EST|Q)-/, 'TES-INV-'));
           if (num === null) return;
-          api('/admin/quotes/' + q.id + '/convert', { method: 'POST', body: { invoice_number: num.trim(), due_days: 14 } }).then(function (r) {
-            if (!r.ok) return toast(QUOTE_ERROR[r.error] || 'Could not convert');
-            toast('Invoice ' + r.invoice_number + ' created' + (r.pay_url ? ' with a pay link' : '') + sayRecurring(r));
-            reload();
-          });
+          body.invoice_number = num.trim();
+        }
+        api('/admin/quotes/' + q.id + '/convert', { method: 'POST', body: body }).then(function (r) {
+          if (!r.ok) return toast(QUOTE_ERROR[r.error] || 'Could not convert');
+          toast(r.invoice_number
+            ? lead + r.invoice_number + (tail || '') + (r.pay_url ? ' with a pay link' : '') + sayAgreement(r)
+            : 'Converted' + sayAgreement(r));
+          reload();
+        });
+      }
+      if (q.status === 'accepted') {
+        qact(agreementOnlyQuote(q) ? 'Start the agreement' : 'Convert to invoice', 'prim', function () {
+          runConvert({}, 'Invoice ', ' created');
         });
       }
       if (open) {
         qact('Accepted by phone', null, function () {
           var note = prompt('How did they accept? (recorded on the quote as your note, never as their signature)', 'agreed by phone');
           if (note === null) return;
-          var num = prompt('Invoice number:', q.number.replace(/^TES-(QT|EST|Q)-/, 'TES-INV-'));
-          if (num === null) return;
-          api('/admin/quotes/' + q.id + '/convert', { method: 'POST', body: { verbal: note.trim() || 'verbal', invoice_number: num.trim(), due_days: 14 } }).then(function (r) {
-            if (!r.ok) return toast(QUOTE_ERROR[r.error] || 'Could not convert');
-            toast('Marked accepted and invoiced as ' + r.invoice_number + sayRecurring(r)); reload();
-          });
+          runConvert({ verbal: note.trim() || 'verbal' }, 'Marked accepted and invoiced as ');
         });
         qact('Mark declined', null, function () {
           var reason = prompt('Reason, if they gave one:', '');
