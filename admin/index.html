@@ -32,6 +32,12 @@
 
     .filters { display:flex; gap:0.35rem; padding:0.6rem 1rem; max-width:1100px; margin:0 auto; overflow-x:auto; scrollbar-width:none; }
     .filters::-webkit-scrollbar { display:none; }
+    .rule-host:empty { display:none; }
+    .rule-ed { border:1px solid rgba(200,152,48,0.4); background:rgba(200,152,48,0.05); padding:0.7rem 0.8rem; margin-top:0.6rem; }
+    .rule-ed > p { margin:0 0 0.6rem; }
+    .rule-list { margin-top:0.9rem; border-top:1px solid var(--line); padding-top:0.6rem; }
+    .rule-list summary { font-family:"Montserrat",sans-serif; font-size:0.68rem; font-weight:700; text-transform:uppercase; letter-spacing:0.05em; color:var(--muted); cursor:pointer; min-height:36px; display:flex; align-items:center; }
+    .rule-list .row-main { font-family:"Inter",sans-serif; }
     .lg-bal { display:flex; flex-wrap:wrap; gap:0.5rem; margin:0.3rem 0 0.5rem; }
     .lg-bal-i { flex:1 1 200px; border:1px solid var(--line); background:var(--bg); padding:0.5rem 0.6rem; }
     .lg-bal-l { display:block; font-family:"Montserrat",sans-serif; font-size:0.62rem; text-transform:uppercase; letter-spacing:0.06em; color:var(--muted); }
@@ -43,6 +49,13 @@
     .lg-box h4 { margin:0 0 0.3rem; font-family:"Montserrat",sans-serif; font-size:0.82rem; }
     .lg-box > p { margin:0 0 0.6rem; }
     .lg-form { display:flex; flex-wrap:wrap; gap:0.45rem; align-items:center; }
+    /* Every other form in the console is dark; these were left on the browser
+       default when the panel was built. Same values as .addgrid. */
+    .lg-form input, .lg-form select, .lg-tools input, .lg-tools select,
+    .rule-ed input, .rule-ed select { padding:0.5rem 0.65rem; border-radius:8px;
+      border:1px solid var(--line); background:var(--bg); color:var(--text);
+      font-family:inherit; font-size:0.85rem; }
+    .lg-form input::placeholder, .lg-tools input::placeholder { color:var(--muted); }
     .lg-form input, .lg-form select { min-height:38px; }
     .lg-form input[type="text"] { flex:1 1 150px; min-width:0; }
     .lg-form input[type="file"] { flex:1 1 220px; min-width:0; font-size:0.8rem; }
@@ -7321,6 +7334,132 @@
       return p;
     }
 
+    // ---- standing rules -----------------------------------------------------
+    //
+    // The PayPal account carries business income and personal spending through the
+    // same door, so the same counterparties come back every month and get filed the
+    // same way every month. A rule says it once.
+    //
+    // A rule only ever fills in a row NOBODY has classified. It cannot overwrite a
+    // decision already made, which is what makes "always do this" safe to offer from
+    // a row you are looking at.
+
+    var RULE_CLASS_OPTS = [['personal', 'Personal'], ['transfer', 'Transfer'],
+                           ['expense', 'Business expense'], ['business', 'Business income']];
+
+    // The inline "always file this" form, opened from a transaction row.
+    function ruleEditor(host, opts) {
+      host.textContent = '';
+      var box = el('div', 'rule-ed');
+
+      var lead = el('p', 'row-sub',
+        'Anything whose name contains this text gets filed automatically, on this account and on future imports. ' +
+        'Transactions you have already filed yourself are never changed.');
+      box.appendChild(lead);
+
+      var form = el('div', 'lg-form');
+      var text = document.createElement('input');
+      text.type = 'text';
+      text.setAttribute('aria-label', 'Text to match');
+      text.value = opts.matchText || '';
+      var cls = document.createElement('select');
+      cls.setAttribute('aria-label', 'File it as');
+      RULE_CLASS_OPTS.forEach(function (c) {
+        var o = el('option', null, c[1]);
+        o.value = c[0];
+        cls.appendChild(o);
+      });
+      cls.value = opts.classification || 'personal';
+      var scope = document.createElement('select');
+      scope.setAttribute('aria-label', 'Which account');
+      [['any', 'Every account'], ['paypal', 'PayPal only'], ['ledger', 'Card and cash only']]
+        .forEach(function (c) {
+          var o = el('option', null, c[1]);
+          o.value = c[0];
+          scope.appendChild(o);
+        });
+      scope.value = opts.scope || 'any';
+      form.appendChild(text);
+      form.appendChild(cls);
+      form.appendChild(scope);
+      box.appendChild(form);
+
+      var bar = el('div', 'inv-actions');
+      var save = el('button', 'prim', 'Save rule');
+      save.type = 'button';
+      var cancel = el('button', null, 'Cancel');
+      cancel.type = 'button';
+      bar.appendChild(save);
+      bar.appendChild(cancel);
+      box.appendChild(bar);
+      host.appendChild(box);
+      text.focus();
+      text.select();
+
+      cancel.addEventListener('click', function () { host.textContent = ''; });
+      save.addEventListener('click', function () {
+        var t = text.value.trim();
+        if (t.length < 3) return alert('Use at least three characters, or the rule will file things you did not mean.');
+        save.disabled = true;
+        api('/admin/rules', { method: 'POST', body: { match_text: t, classification: cls.value, scope: scope.value } })
+          .then(function (r) {
+            save.disabled = false;
+            if (!r || !r.ok) return alert((r && r.message) || 'Could not save the rule.');
+            var n = r.swept ? (r.swept.paypal + r.swept.ledger) : 0;
+            toast('Rule saved' + (n ? ' · ' + n + ' filed' : ''));
+            host.textContent = '';
+            if (opts.after) opts.after();
+          });
+      });
+    }
+
+    // The list, in a drawer under the accounts panel.
+    function rulesSection() {
+      var d = el('details', 'rule-list');
+      var sum = el('summary', null, 'Filing rules');
+      d.appendChild(sum);
+      var body = el('div');
+      d.appendChild(body);
+
+      var loaded = false;
+      function loadRuleList() {
+        body.textContent = '';
+        body.appendChild(el('div', 'row-sub', 'Loading…'));
+        api('/admin/rules').then(function (r) {
+          body.textContent = '';
+          if (!r || !r.ok) return body.appendChild(el('div', 'row-sub', 'Could not load the rules.'));
+          sum.textContent = 'Filing rules (' + r.rules.length + ')';
+          if (!r.rules.length) {
+            body.appendChild(el('div', 'row-sub',
+              'None yet. On a transaction you keep seeing, press "Always…" and it will be filed for you from then on.'));
+          }
+          r.rules.forEach(function (rule) {
+            var row = el('div', 'row');
+            var left = el('div');
+            left.appendChild(el('div', 'row-main', '“' + rule.match_text + '”'));
+            var bits = ['file as ' + (RULE_CLASS_OPTS.filter(function (c) { return c[0] === rule.classification; })[0] || [0, rule.classification])[1].toLowerCase()];
+            bits.push(rule.scope === 'any' ? 'every account' : rule.scope === 'paypal' ? 'PayPal only' : 'card and cash only');
+            bits.push(rule.hits ? rule.hits + (rule.hits === 1 ? ' transaction filed' : ' transactions filed') : 'nothing filed yet');
+            left.appendChild(el('div', 'row-sub', bits.join(' · ')));
+            row.appendChild(left);
+            var right = el('div', 'cust-badges');
+            right.appendChild(licAction('Remove', null, function () {
+              if (!confirm('Stop filing “' + rule.match_text + '” automatically?\n\nWhat it has already filed keeps its classification.')) return;
+              api('/admin/rules/' + rule.id, { method: 'DELETE' }).then(function (res) {
+                if (!res || !res.ok) return alert((res && res.message) || 'Could not remove it.');
+                toast('Rule removed');
+                loadRuleList();
+              });
+            }));
+            row.appendChild(right);
+            body.appendChild(row);
+          });
+        });
+      }
+      d.addEventListener('toggle', function () { if (d.open && !loaded) { loaded = true; loadRuleList(); } });
+      return d;
+    }
+
     // ---- the ledger: the Chase card, cash, anything not synced from PayPal ------
     //
     // PayPal is where income arrives. Hardware bought for customers and the recurring
@@ -7435,6 +7574,7 @@
       var list = el('div', 'lg-list');
       p.appendChild(list);
       loadLedger(list);
+      p.appendChild(rulesSection());
       return p;
     }
 
@@ -7489,6 +7629,7 @@
         }
         right.appendChild(licAction('Transfer', null, function () { lgClassify(e, { classification: 'transfer' }); }));
         right.appendChild(licAction('Personal', null, function () { lgClassify(e, { classification: 'personal' }); }));
+        right.appendChild(licAction('Always\u2026', null, function () { lgAlways(e); }));
       } else {
         if (e.classification === 'job_parts') {
           right.appendChild(licAction(e.invoice_id ? 'Change invoice…' : 'Link to an invoice…', null, function () { lgLinkParts(e); }));
@@ -7505,6 +7646,7 @@
             document.getElementById('invtFormBox').scrollIntoView({ behavior: 'smooth', block: 'start' });
           }));
         }
+        right.appendChild(licAction('Always\u2026', null, function () { lgAlways(e); }));
         right.appendChild(licAction('Review again', null, function () { lgClassify(e, { classification: null }); }));
         if (e.source === 'manual') {
           right.appendChild(licAction('Delete', null, function () {
@@ -7518,7 +7660,21 @@
         }
       }
       d.appendChild(right);
+      var ruleBox = el('div', 'rule-host');
+      d.appendChild(ruleBox);
+      d._ruleHost = ruleBox;
       return d;
+    }
+
+    function lgAlways(e) {
+      var row = finBody.querySelector('.lg-row[data-lg="' + e.id + '"]');
+      if (!row || !row._ruleHost) return;
+      ruleEditor(row._ruleHost, {
+        matchText: e.vendor || e.description || '',
+        classification: e.classification && e.classification !== 'job_parts' ? e.classification : 'expense',
+        scope: 'ledger',
+        after: function () { lgRefresh(); },
+      });
     }
 
     function lgClassify(e, body) {
@@ -7891,7 +8047,9 @@
           right.appendChild(licAction('Business expense', null, function () { ppClassify(tx, { classification: 'expense' }); }));
         }
         if (tx.transfer) right.appendChild(licAction('Transfer', null, function () { ppClassify(tx, { classification: 'transfer' }); }));
+        right.appendChild(licAction('Always\u2026', null, function () { ppAlways(tx); }));
       } else if (mode === 'hidden') {
+        right.appendChild(licAction('Always\u2026', null, function () { ppAlways(tx); }));
         right.appendChild(licAction('Undo', null, function () { ppClassify(tx, { classification: null }); }));
       } else if (mode === 'business') {
         if (tx.classification === 'expense') {
@@ -7906,10 +8064,26 @@
             document.getElementById('invtFormBox').scrollIntoView({ behavior: 'smooth', block: 'start' });
           }));
         }
+        right.appendChild(licAction('Always\u2026', null, function () { ppAlways(tx); }));
         right.appendChild(licAction('Review again', null, function () { ppClassify(tx, { classification: null }); }));
       }
       d.appendChild(right);
+      var ruleBox = el('div', 'rule-host');
+      d.appendChild(ruleBox);
+      d._ruleHost = ruleBox;
       return d;
+    }
+
+    // Opens the rule form under the row it came from, prefilled with who it was with.
+    function ppAlways(tx) {
+      var row = finBody.querySelector('.pp-row[data-txn="' + tx.transaction_id + '"]');
+      if (!row || !row._ruleHost) return;
+      ruleEditor(row._ruleHost, {
+        matchText: tx.counterparty || tx.subject || '',
+        classification: tx.classification && tx.classification !== 'business' ? tx.classification : 'personal',
+        scope: 'paypal',
+        after: function () { loadFinance(); },
+      });
     }
 
     // Links a payment to one of our open invoices. The Worker only accepts an exact
