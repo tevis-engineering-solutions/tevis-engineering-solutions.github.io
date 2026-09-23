@@ -275,6 +275,8 @@
 
     .tiles { display:grid; grid-template-columns:repeat(auto-fit,minmax(120px,1fr)); gap:0.5rem; margin-bottom:0.9rem; }
     .tile { border:1px solid var(--line); border-radius:12px; background:var(--bg); padding:0.65rem 0.75rem; }
+    .tile.pick { cursor:pointer; }
+    .tile.pick:hover { border-color:rgba(74,172,101,.45); }
     .tile s { display:block; text-decoration:none; font-size:0.64rem; text-transform:uppercase; letter-spacing:0.05em; color:var(--muted); font-weight:700; }
     .tile b { display:block; font-family:"Montserrat",sans-serif; font-size:1.05rem; margin-top:0.15rem; }
     .tile .warn { color:var(--gold); }
@@ -7697,9 +7699,26 @@
       return '';
     }
 
+    // The live PayPal balance, held here rather than on the statement. renderFinance
+    // runs again on every column sort, so a fetch inside it would call PayPal each
+    // time somebody reordered a table.
+    var ppBalance = null;
+
+    function loadPpBalance(fresh) {
+      return api('/admin/finance/paypal-balance' + (fresh ? '?fresh=1' : '')).then(function (r) {
+        ppBalance = r || null;
+        return r;
+      });
+    }
+
     function loadFinance() {
       finBody.textContent = '';
       finBody.appendChild(el('div', 'state', 'Building the statement…'));
+      // Fired alongside, not awaited: a slow or unreachable PayPal must not hold up
+      // a statement built entirely from rows we already hold.
+      loadPpBalance(false).then(function () {
+        if (finStatement && !document.getElementById('viewFinance').hidden) renderFinance(finStatement);
+      });
       var url = '/admin/finance/statement?period=' + encodeURIComponent(finPeriod) + (finAnchor ? '&anchor=' + encodeURIComponent(finAnchor) : '');
       return api(url).then(function (r) {
         if (!r.ok) { finBody.textContent = ''; finBody.appendChild(el('div', 'state', 'Could not build the statement.')); return; }
@@ -7753,6 +7772,22 @@
 
       // ---- headline tiles ----
       var tiles = el('div', 'tiles fin-tiles');
+      // Live, and labelled as such. Everything beside it is summed from rows we hold,
+      // so a deposit made this morning would be missing from all of them; this asks
+      // PayPal. Tap to re-ask.
+      var bal = ppBalance;
+      var balT = finTile(tiles, 'PayPal balance',
+        bal && bal.ok && bal.total_cents != null ? money(bal.total_cents) : bal && !bal.ok ? '—' : '…',
+        !bal ? 'asking PayPal…'
+          : !bal.ok ? (bal.error === 'paypal_reporting_disabled' ? 'Transaction Search is off' : 'PayPal did not answer')
+          : bal.stale ? 'last known, ' + ago(bal.age_sec || 0) + ' ago — PayPal did not answer'
+          : bal.withheld_cents ? money(bal.available_cents) + ' available · ' + money(bal.withheld_cents) + ' on hold'
+          : 'live · tap to refresh');
+      balT.classList.add('pick');
+      balT.addEventListener('click', function () {
+        balT.querySelector('b').textContent = '…';
+        loadPpBalance(true).then(function () { renderFinance(st); });
+      });
       finTile(tiles, 'Invoiced', money(st.revenue.issued_cents), st.revenue.count + (st.revenue.count === 1 ? ' invoice' : ' invoices'), st.deltas.issued_cents);
       finTile(tiles, 'Collected', money(st.revenue.collected_cents), st.revenue.pass_through_cents ? st.revenue.paid_count + ' paid · ' + money(st.revenue.pass_through_cents) + ' of it passed through' : st.revenue.paid_count + ' paid', st.deltas.collected_cents);
       finTile(tiles, 'Outstanding', money(st.revenue.outstanding_cents), 'issued this period, still owed', st.deltas.outstanding_cents, true);
@@ -7762,6 +7797,13 @@
       if (st.net_cents < 0) netT.querySelector('b').classList.add('neg');
       finTile(tiles, 'Billable hours', hoursOf(st.hours.billable_minutes), st.hours.effective_rate_cents != null ? money(st.hours.effective_rate_cents) + ' per billed hour' : st.hours.invoiced_labor_minutes ? 'from invoice line items, not the work log' : 'nothing billed yet', st.deltas.billable_minutes);
       finTile(tiles, 'PayPal fees', money(st.paypal.fee_cents), st.paypal.count + (st.paypal.count === 1 ? ' payment' : ' payments'), st.deltas.fee_cents, true);
+      // Equity, not income, so it sits beside the P&L figures rather than inside one.
+      if (st.paypal.owner_count) {
+        finTile(tiles, 'Owner funding', money(st.paypal.owner_in_cents),
+          st.paypal.owner_out_cents
+            ? money(st.paypal.owner_out_cents) + ' drawn back out · net ' + money(st.paypal.owner_net_cents)
+            : 'your own money in · not revenue');
+      }
       finTile(tiles, 'Days to pay', st.days_to_pay.average != null ? String(st.days_to_pay.average) : '—', st.days_to_pay.count ? 'average · median ' + st.days_to_pay.median + ' · ' + st.days_to_pay.count + ' paid' : 'nothing paid this period');
       finBody.appendChild(tiles);
 
@@ -8579,7 +8621,7 @@
       rv.appendChild(el('h3', null, 'Needs review (' + pp.needs_review + ')'));
       if (!pp.needs_review) rv.appendChild(el('div', 'row-sub', 'Everything imported has been classified.'));
       else {
-        rv.appendChild(el('div', 'row-sub', 'New imports. Personal hides a row from every figure here; Business counts it as income; Expense counts it as a purchase; Link settles one of our invoices.'));
+        rv.appendChild(el('div', 'row-sub', 'New imports. Personal hides a row from every figure here; Business counts it as income; Expense counts it as a purchase; Owner funding records your own money in without counting it as revenue; Link settles one of our invoices.'));
         var rvList = el('div');
         rv.appendChild(rvList);
         api('/admin/finance/paypal?which=review').then(function (r) {
@@ -8593,6 +8635,25 @@
       if (!pp.rows.length) bz.appendChild(el('div', 'row-sub', 'No classified business rows in ' + st.label + '.'));
       pp.rows.forEach(function (tx) { bz.appendChild(ppRow(tx, 'business')); });
       p.appendChild(bz);
+
+      if (pp.owner_all_time) {
+        var ow = el('details', 'pp-owner');
+        ow.appendChild(el('summary', null, 'Owner funding: ' + money(pp.owner_in_cents) + ' in ' + st.label +
+          ' · ' + pp.owner_all_time + ' row' + (pp.owner_all_time === 1 ? '' : 's') + ' all time'));
+        var owList = el('div');
+        ow.appendChild(el('div', 'row-sub', 'Your own money into the business. Equity, not income — it is deliberately outside revenue and net.'));
+        ow.appendChild(owList);
+        var owLoaded = false;
+        ow.addEventListener('toggle', function () {
+          if (!ow.open || owLoaded) return;
+          owLoaded = true;
+          api('/admin/finance/paypal?which=owner&from=' + st.start + '&to=' + st.end).then(function (r) {
+            (r.transactions || []).forEach(function (tx) { owList.appendChild(ppRow(tx, 'hidden')); });
+            if (!(r.transactions || []).length) owList.appendChild(el('div', 'row-sub', 'None in ' + st.label + '.'));
+          });
+        });
+        p.appendChild(ow);
+      }
 
       var hd = el('details', 'pp-hidden');
       var sm = el('summary', null, 'Hidden: ' + pp.hidden + ' personal or transfer');
@@ -8612,7 +8673,9 @@
       return p;
     }
 
-    var PP_CLASS_COLOR = { business: '#22c55e', expense: '#e0c98a', personal: '#6a8ba8', transfer: '#4fa2ff' };
+    var PP_CLASS_COLOR = { business: '#22c55e', expense: '#e0c98a', personal: '#6a8ba8', transfer: '#4fa2ff',
+                           owner_funding: '#c89830', job_parts: '#e08a68' };
+    var PP_CLASS_LABEL = { owner_funding: 'owner funding', job_parts: 'parts for a job' };
 
     function ppClassify(tx, body, done) {
       api('/admin/finance/paypal/' + encodeURIComponent(tx.transaction_id), { method: 'PATCH', body: body }).then(function (r) {
@@ -8682,11 +8745,15 @@
       d.appendChild(left);
       var right = el('div', 'cust-badges');
       right.appendChild(el('b', 'pp-amt ' + tx.direction, money(tx.gross_cents)));
-      if (tx.classification) right.appendChild(badge(tx.classification, PP_CLASS_COLOR[tx.classification] || '#8aa48d'));
+      if (tx.classification) right.appendChild(badge(PP_CLASS_LABEL[tx.classification] || tx.classification, PP_CLASS_COLOR[tx.classification] || '#8aa48d'));
       if (mode === 'review') {
         right.appendChild(licAction('Personal', null, function () { ppClassify(tx, { classification: 'personal' }); }));
         if (tx.direction === 'in') {
           right.appendChild(licAction('Business', null, function () { ppClassify(tx, { classification: 'business' }); }));
+          // Offered on money IN only, which is what self-funding is. The
+          // classification itself takes either sign, so a draw filed here later is
+          // still reported as a draw rather than added to the contributions.
+          right.appendChild(licAction('Owner funding', null, function () { ppClassify(tx, { classification: 'owner_funding' }); }));
           right.appendChild(licAction('Link to invoice…', 'prim', function () { ppLink(tx); }));
         } else {
           right.appendChild(licAction('Business expense', null, function () { ppClassify(tx, { classification: 'expense' }); }));
