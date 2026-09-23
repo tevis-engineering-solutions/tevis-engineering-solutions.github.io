@@ -3013,6 +3013,70 @@
 
     function pdfHref(v) { return API + '/admin/invoices/' + v.id + '/pdf'; }
 
+    // The lines on an invoice that already exists.
+    //
+    // Needed for every invoice raised before line items existed -- their PDF is
+    // already in R2 and has the table in it, so "Read the PDF" re-runs the same
+    // parser the drop zone uses rather than asking anybody to retype it.
+    function editItemsFor(v, host, after) {
+      host.textContent = '';
+      var panel = el('div', 'ced');
+      host.appendChild(panel);
+
+      var bar = el('div', 'reply-row');
+      var readBtn = el('button', null, v.has_pdf ? 'Read the PDF' : 'No PDF on file');
+      readBtn.type = 'button';
+      readBtn.disabled = !v.has_pdf;
+      var saveBtn = el('button', 'prim', 'Save lines');
+      saveBtn.type = 'button';
+      var cancelBtn = el('button', null, 'Cancel');
+      cancelBtn.type = 'button';
+      bar.appendChild(readBtn);
+      bar.appendChild(saveBtn);
+      bar.appendChild(cancelBtn);
+
+      var ed = itemsEditor(panel, { totalCents: function () { return v.amount_cents; } });
+      panel.appendChild(bar);
+
+      // Whatever is stored now.
+      api('/admin/invoices/' + v.id + '/items').then(function (r) {
+        if (r.ok && r.items && r.items.length) ed.set(r.items);
+      });
+
+      readBtn.addEventListener('click', function () {
+        readBtn.disabled = true;
+        readBtn.textContent = 'Reading\u2026';
+        fetch(pdfHref(v), { credentials: 'same-origin' })
+          .then(function (r) { if (!r.ok) throw new Error('pdf'); return r.blob(); })
+          .then(function (b) { return readPdfRuns(new File([b], (v.number || 'invoice') + '.pdf', { type: 'application/pdf' })); })
+          .then(function (pages) {
+            var t = parseInvoiceTable(pages, v.amount_cents);
+            readBtn.disabled = false;
+            readBtn.textContent = 'Read the PDF';
+            if (!t.items.length) return toast(t.note || 'No line items found in that PDF');
+            ed.set(t.items);
+            toast(t.items.length + ' lines read' + (t.matches ? ', and they add up' : ' \u2014 check the total'));
+          })
+          .catch(function () {
+            readBtn.disabled = false;
+            readBtn.textContent = 'Read the PDF';
+            toast('Could not read that PDF');
+          });
+      });
+
+      saveBtn.addEventListener('click', function () {
+        saveBtn.disabled = true;
+        api('/admin/invoices/' + v.id + '/items', { method: 'PUT', body: { items: ed.get() } })
+          .then(function (r) {
+            saveBtn.disabled = false;
+            if (!r.ok) return toast(r.error === 'negative_line' ? 'A line has a negative amount' : 'Could not save the lines');
+            toast(ed.get().length ? 'Lines saved' + (r.reconciles ? '' : ' (they do not match the total)') : 'Lines cleared');
+            if (after) after();
+          });
+      });
+      cancelBtn.addEventListener('click', function () { host.textContent = ''; if (after) after(true); });
+    }
+
     // Attach or replace a PDF on an existing invoice, from its card.
     function attachPdfTo(v, after) {
       var input = document.createElement('input');
@@ -3247,12 +3311,18 @@
         return b;
       }
 
-      act('Line items', null, function () {
-        if (liShown) { liBox.textContent = ''; liShown = false; return; }
+      var liBtn = act('Line items', null, function () {
+        if (liShown) { liBox.textContent = ''; liShown = false; liBtn.textContent = 'Line items'; return; }
         liShown = true;
-        liBox.textContent = '';
-        liBox.appendChild(el('div', 'li-note', 'Loading…'));
-        loadItems();
+        liBtn.textContent = 'Close lines';
+        // Edit, not just view: an invoice raised before line items existed has its
+        // table sitting in the PDF already on file, and "Read the PDF" runs the same
+        // parser the drop zone does rather than asking anybody to retype it.
+        editItemsFor(v, liBox, function (canceled) {
+          liShown = false;
+          liBtn.textContent = 'Line items';
+          if (!canceled) loadInvoices();
+        });
       });
 
       noteBtn = act('Add note', null, function () {
