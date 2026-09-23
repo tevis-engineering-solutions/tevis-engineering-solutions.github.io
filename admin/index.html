@@ -7874,16 +7874,24 @@
       grid.appendChild(hs);
 
       // ---- expenses ----
-      var ex = finPanel('Expenses', money(st.expenses.total_cents) + ' · ' + money(st.expenses.purchases_cents) + ' equipment · ' + money(st.expenses.recurring_cents) + ' subscriptions · ' + money(st.expenses.paypal_cents) + ' PayPal purchases');
+      var ex = finPanel('Expenses', money(st.expenses.total_cents) + ' · ' + money(st.expenses.purchases_cents) + ' equipment · ' + money(st.expenses.recurring_cents) + ' subscriptions · ' + money(st.expenses.ledger_cents) + ' card and cash · ' + money(st.expenses.paypal_cents) + ' PayPal');
       var exWrap = el('div', 'fin-clients');
       var exDonut = el('div', 'fin-donut');
       svgDonut(exDonut, st.expenses.by_category.map(function (c) { return { label: cap(c.category), value: c.cents }; }), { fmt: money, label: 'Expenses by category', empty: 'No expenses this period.' });
       exWrap.appendChild(exDonut);
       var exList = el('div', 'fin-list');
+      // Four kinds reach this list and only three had a label, so ledger rows -- the
+      // Chase card and cash, which is most of what TES spends -- read "PayPal purchase".
+      function EXPENSE_KIND(x) {
+        if (x.kind === 'purchase') return 'purchase';
+        if (x.kind === 'recurring') return 'subscription charge';
+        if (x.kind === 'ledger') return x.account_label || 'card or cash';
+        return 'PayPal purchase';
+      }
       st.expenses.items.slice(0, 60).forEach(function (x) {
         var right = el('b', 'num', money(x.cents));
         exList.appendChild(row(x.name + (x.vendor ? ' · ' + x.vendor : ''),
-          fmtDate(x.ts) + ' · ' + (x.kind === 'purchase' ? 'purchase' : x.kind === 'recurring' ? 'subscription charge' : 'PayPal purchase') + (x.tag ? ' · ' + x.tag : ''),
+          fmtDate(x.ts) + ' · ' + EXPENSE_KIND(x) + (x.tag ? ' · ' + x.tag : ''),
           right, x.item_id ? function () { showView('inventory'); var go = function () { flashInvt(x.item_id); }; if (invtAll.length) go(); else loadInventory().then(go); } : null));
       });
       if (!st.expenses.items.length) exList.appendChild(el('div', 'row-sub', 'Nothing spent this period. Purchases come from the Inventory tab (TES-paid items) and from PayPal rows marked as expenses.'));
