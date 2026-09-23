@@ -4802,9 +4802,22 @@
         });
       }
       if (q.status !== 'draft') {
-        qact('Duplicate', null, function () {
-          api('/admin/quotes/' + q.id + '/duplicate', { method: 'POST' }).then(function (r) { if (!r.ok) return toast('Could not duplicate'); toast('Drafted ' + r.quote.number); showView('invoices'); quoteFormOpen(r.quote); loadQuotes(); });
-        });
+        var dup = function (as, label) {
+          return function () {
+            api('/admin/quotes/' + q.id + '/duplicate', { method: 'POST', body: as ? { as: as } : {} })
+              .then(function (r) {
+                if (!r.ok) return toast('Could not ' + label);
+                toast('Drafted ' + r.quote.number);
+                showView('invoices'); quoteFormOpen(r.quote); loadQuotes();
+              });
+          };
+        };
+        qact('Duplicate', null, dup(null, 'duplicate'));
+        // An estimate is the first half of the job: a range, early. The firm quote that
+        // follows repeats its scope, its exclusions and its deposit terms, so copying it
+        // across beats retyping them. The range does not come with it -- on a quote the
+        // low side is the price.
+        if (q.doc_type === 'estimate') qact('Turn into a quote', null, dup('quote', 'convert it'));
       }
       if (q.status === 'draft') {
         qact('Delete', 'danger', function () {
