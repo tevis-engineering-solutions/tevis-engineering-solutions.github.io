@@ -711,6 +711,8 @@
     .stmt-head{margin:14px 0 4px;font-size:.72rem;letter-spacing:.06em;text-transform:uppercase;color:var(--green);border-bottom:1px solid var(--line);padding-bottom:4px}
     .stmt-row{padding:6px 0;border-bottom:1px solid var(--line);font-size:.85rem;line-height:1.5}
     .stmt-row:last-child{border-bottom:0}
+    .ag-stranded { border:1px solid var(--gold); border-left:3px solid var(--gold); border-radius:8px; padding:0.7rem 0.85rem; margin:0.2rem 0 0.6rem; font-size:0.86rem; line-height:1.5; background:rgba(200,152,48,0.07); }
+    .ag-stranded b { display:block; margin-bottom:0.25rem; color:var(--gold); }
     .agreeform { border:1px solid var(--gold); border-radius:12px; background:rgba(200,152,48,0.06); padding:0.9rem 1rem; margin:0.6rem 0; }
     .agreeform h3 { font-family:"Montserrat",sans-serif; font-size:0.8rem; text-transform:uppercase; letter-spacing:0.05em; color:var(--gold); margin-bottom:0.6rem; }
     .agreeform .fgrid { grid-template-columns:repeat(auto-fit,minmax(190px,1fr)); }
@@ -5895,6 +5897,35 @@
           ags.appendChild(agreementNote(c.unbilled));
           if (c.agreement_usage) ags.appendChild(usageMeter(c.agreement_usage));
         }
+      } else if (c.stranded_agreement && c.unbilled && c.unbilled.org_id) {
+        // A plan on the person, and their work billing at the company. It covers
+        // nothing, so their included hours have quietly stopped being honoured.
+        var sa = c.stranded_agreement;
+        var warn = el('div', 'ag-stranded');
+        warn.appendChild(el('b', null, 'This plan is not being used.'));
+        warn.appendChild(el('div', null, '\u201c' + (sa.name || 'Service agreement') + '\u201d is on '
+          + c.account.email + ', but their work bills at ' + (c.unbilled.org_name || 'their company')
+          + ', so the company\u2019s plan decides. Their '
+          + fmtDur(sa.included_minutes) + ' included is not being applied and the hours below are charged in full.'));
+        ags.appendChild(warn);
+        ags.appendChild(licAction('Move it to ' + (c.unbilled.org_name || 'the company'), 'prim', function () {
+          if (!confirm('Move \u201c' + (sa.name || 'Service agreement') + '\u201d onto '
+            + (c.unbilled.org_name || 'the company') + '?\n\n'
+            + 'It ends here and starts there on the same terms. Work already invoiced or covered is not re-priced.')) return;
+          api('/admin/agreements/' + sa.id + '/move', { method: 'POST', body: { holder_type: 'org', holder_id: c.unbilled.org_id } })
+            .then(function (r) {
+              if (!r.ok) return toast(AGREE_ERROR[r.error] || r.message || 'Could not move it');
+              toast('Moved to ' + (c.unbilled.org_name || 'the company'));
+              openCustomer(c.account.id);
+            });
+        }));
+        ags.appendChild(licAction('End it instead', null, function () {
+          if (!confirm('End \u201c' + (sa.name || 'Service agreement') + '\u201d?')) return;
+          api('/admin/agreements/' + sa.id, { method: 'DELETE' }).then(function (r) {
+            if (!r.ok) return toast(AGREE_ERROR[r.error] || 'Could not end it');
+            toast('Ended'); openCustomer(c.account.id);
+          });
+        }));
       } else if (c.unbilled && c.unbilled.org_id) {
         // In a company but no plan: the agreement belongs on the company, where it is
         // also billed, so this points there rather than offering a second one here.
