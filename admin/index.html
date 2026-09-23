@@ -1609,7 +1609,7 @@
           <div><label for="ctnStructure">Structure</label>
             <select id="ctnStructure"><option value="one_time">One-time fixed quantity</option><option value="nte_rate_card">NTE standing PO (rate card)</option></select></div>
           <div><label for="ctnClose">Submission deadline</label><input id="ctnClose" type="datetime-local"></div>
-          <div><label for="ctnEnd">End date (award window closes)</label><input id="ctnEnd" type="date"></div>
+          <div><label for="ctnEnd">End date (10 days after the deadline unless changed)</label><input id="ctnEnd" type="date"></div>
           <div><label for="ctnUrl">Posting link</label><input id="ctnUrl" type="url" maxlength="600" placeholder="https://"></div>
         </div>
         <div class="ct-sugg" id="ctnSugg" hidden></div>
@@ -10637,6 +10637,16 @@
         }, 350);
       });
     });
+    // The end date follows the deadline, 10 days on, until it is typed over. The server
+    // applies the same default, so this is only so the form shows what will be saved.
+    var ctnEndAuto = '';
+    document.getElementById('ctnClose').addEventListener('change', function (e) {
+      var endEl = document.getElementById('ctnEnd');
+      if (endEl.value && endEl.value !== ctnEndAuto) return;
+      var t = ctFromDt(e.target.value);
+      ctnEndAuto = t ? ctDayVal(t + 10 * 86400) : '';
+      endEl.value = ctnEndAuto;
+    });
     document.getElementById('ctNewForm').addEventListener('submit', function (e) {
       e.preventDefault();
       var err = document.getElementById('ctNewErr');
@@ -10865,7 +10875,7 @@
       inp.date_open = ctField(f, 'Posted', ctInput('date', ctDayVal(b.date_open)));
       inp.date_close = ctField(f, 'Submission deadline', ctInput('datetime-local', ctDtVal(b.date_close)));
       inp.qa_close = ctField(f, 'Questions due', ctInput('datetime-local', ctDtVal(b.qa_close)));
-      inp.end_date = ctField(f, 'End date (award window closes)', ctInput('date', ctDayVal(b.end_date)));
+      inp.end_date = ctField(f, 'End date (award window closes; default deadline + 10 days)', ctInput('date', ctDayVal(b.end_date)));
       inp.expected_po_date = ctField(f, 'Expected PO', ctInput('date', ctDayVal(b.expected_po_date)));
       inp.need_by_date = ctField(f, 'Need-by date', ctInput('date', ctDayVal(b.need_by_date)));
       inp.lead_time_days = ctField(f, 'Lead time we promise (business days)', ctInput('number', b.lead_time_days == null ? '' : b.lead_time_days, { min: 0, step: 1, inputmode: 'numeric' }));
@@ -10881,7 +10891,7 @@
       inp.go_no_go = ctField(f, 'Go / no-go', ctSelect([['', 'Not decided'], ['go', 'Go'], ['no_go', 'No-go']], b.go_no_go || ''));
       inp.go_no_go_reason = ctField(f, 'Why', ctInput('text', b.go_no_go_reason || '', { maxlength: 2000 }));
       pane.appendChild(f);
-      pane.appendChild(el('p', 'ct-note', 'After the end date, a responded bid moves to Pending decision by itself. Two weeks later, with no award or loss recorded, it closes out as expired and leaves the active board. Leave it empty and nothing moves on its own.'));
+      pane.appendChild(el('p', 'ct-note', 'The end date defaults to 10 days after the submission deadline and moves with it until you type a different one. After it, a responded bid moves to Pending decision by itself; two weeks later, with no award or loss recorded, it closes out as expired and leaves the active board. Clear it and nothing moves on its own.'));
       var tf = el('div', 'ct-form');
       var ta = function (label, key, ph) {
         var t = el('textarea');
