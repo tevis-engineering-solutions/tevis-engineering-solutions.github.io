@@ -703,6 +703,14 @@
     .meter-fill.warn { background:linear-gradient(90deg,var(--gold),#e0b840); }
     .meter-fill.over { background:linear-gradient(90deg,#d6785a,#ef4444); }
     .meter-sub { font-size:0.72rem; color:var(--muted); margin-top:0.3rem; }
+    .stmt{border:1px solid var(--line);border-radius:10px;padding:14px;margin-top:12px;background:rgba(255,255,255,.02)}
+    .stmt h4{margin:0 0 2px;font-size:.95rem}
+    .stmt-hours{display:flex;flex-wrap:wrap;gap:6px 14px;margin:10px 0;font-size:.85rem;color:var(--text)}
+    .stmt-hours span::before{content:"";display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--green);margin-right:6px;vertical-align:middle}
+    .stmt-hours .over::before{background:var(--gold)}
+    .stmt-head{margin:14px 0 4px;font-size:.72rem;letter-spacing:.06em;text-transform:uppercase;color:var(--green);border-bottom:1px solid var(--line);padding-bottom:4px}
+    .stmt-row{padding:6px 0;border-bottom:1px solid var(--line);font-size:.85rem;line-height:1.5}
+    .stmt-row:last-child{border-bottom:0}
     .agreeform { border:1px solid var(--gold); border-radius:12px; background:rgba(200,152,48,0.06); padding:0.9rem 1rem; margin:0.6rem 0; }
     .agreeform h3 { font-family:"Montserrat",sans-serif; font-size:0.8rem; text-transform:uppercase; letter-spacing:0.05em; color:var(--gold); margin-bottom:0.6rem; }
     .agreeform .fgrid { grid-template-columns:repeat(auto-fit,minmax(190px,1fr)); }
@@ -3695,6 +3703,18 @@
           });
         });
       }
+      // What the customer will read on the next invoice. Worth seeing before it goes,
+      // because the whole point of the statement is that somebody stands behind it.
+      agact('Preview the statement', null, function () {
+        var host = d.querySelector('.ag-statement') || el('div', 'ag-statement');
+        if (!host.parentNode) d.appendChild(host);
+        host.textContent = 'Building it...';
+        api('/admin/agreements/' + a.id + '/statement').then(function (r) {
+          host.textContent = '';
+          if (!r.ok) { host.appendChild(el('div', 'row-sub', AGREE_ERROR[r.error] || 'Could not build it')); return; }
+          host.appendChild(statementPanel(r.statement));
+        });
+      });
       agact('Edit terms', null, function () { agreementForm(a, reload); });
       agact('Email the plan', null, function () {
         api('/admin/agreements/' + a.id + '/announce', { method: 'POST' }).then(function (r) {
@@ -3722,6 +3742,83 @@
     }
 
     // One form for both adding and editing. `a` null means a new one.
+    /**
+     * The statement, as the customer will see it. Same data the invoice email carries,
+     * so what is checked here is what goes out.
+     */
+    function statementPanel(st) {
+      var box = el('div', 'stmt');
+      box.appendChild(el('h4', null, 'On the invoice for ' + st.period.label));
+      box.appendChild(el('div', 'row-sub', st.period.from + ' to ' + st.period.to));
+
+      if (st.empty) {
+        box.appendChild(el('p', 'row-sub',
+          'Nothing was logged in this period. The invoice says the plan covers the time either way.'));
+        return box;
+      }
+
+      var h = st.hours;
+      var hb = el('div', 'stmt-hours');
+      if (h.included_minutes) {
+        hb.appendChild(el('span', null, fmtDur(h.included_minutes) + ' included in ' + h.allowance_period_label));
+        hb.appendChild(el('span', null, fmtDur(h.used_minutes) + ' used'));
+        hb.appendChild(el('span', h.over_minutes > 0 ? 'over' : null,
+          h.over_minutes > 0 ? fmtDur(h.over_minutes) + ' over' : fmtDur(h.remaining_minutes || 0) + ' left'));
+      }
+      hb.appendChild(el('span', null, fmtDur(h.logged_minutes) + ' worked this billing period'));
+      if (h.internal_minutes) hb.appendChild(el('span', null, fmtDur(h.internal_minutes) + ' not charged'));
+      box.appendChild(hb);
+
+      function section(title, rows) {
+        if (!rows.length) return;
+        box.appendChild(el('div', 'stmt-head', title));
+        var ul = el('div', 'stmt-list');
+        rows.forEach(function (r) { ul.appendChild(r); });
+        box.appendChild(ul);
+      }
+
+      section('Support requests (' + st.tickets.opened + ' opened, ' + st.tickets.resolved
+        + ' resolved, ' + st.tickets.still_open + ' open)', st.tickets.items.map(function (t) {
+        var r = el('div', 'stmt-row');
+        r.appendChild(el('b', null, (t.number ? t.number + ' ' : '') + t.subject));
+        var meta = [];
+        if (t.opened_before) meta.push('carried in'); else if (t.opened_on) meta.push('opened ' + t.opened_on);
+        if (t.resolved_on) meta.push('resolved ' + t.resolved_on); else meta.push(String(t.status).toLowerCase());
+        if (t.minutes) meta.push(fmtDur(t.minutes) + ' logged');
+        if (t.replies) meta.push(t.replies + ' replies');
+        r.appendChild(el('div', 'row-sub', meta.join(' \u00b7 ')));
+        if (t.resolution) r.appendChild(el('div', 'row-sub', 'What we did: ' + t.resolution));
+        t.work.forEach(function (w) {
+          r.appendChild(el('div', 'row-sub', w.on + ' \u2014 ' + fmtDur(w.minutes)
+            + (w.billable ? '' : ' (not charged)') + (w.note ? ': ' + w.note : '')));
+        });
+        return r;
+      }));
+
+      section('Other work', st.loose_work.map(function (w) {
+        return el('div', 'stmt-row', w.on + ' \u2014 ' + fmtDur(w.minutes)
+          + (w.billable ? '' : ' (not charged)') + ' ' + (w.note || w.subject || 'Work logged'));
+      }));
+
+      section('Messages (' + st.messages.from_you + ' from them, ' + st.messages.from_us + ' from us)',
+        st.messages.items.map(function (m) {
+          return el('div', 'stmt-row', m.on + ' \u2014 ' + m.who + ': ' + m.excerpt);
+        }));
+
+      section('Equipment and subscriptions', st.equipment.map(function (e) {
+        return el('div', 'stmt-row', e.on + ' \u2014 ' + (e.tag ? e.tag + ' ' : '') + e.name + ' ' + e.event);
+      }));
+
+      section('Visits and calls', st.visits.map(function (v) {
+        return el('div', 'stmt-row', v.on + ' \u2014 ' + (v.title || v.kind) + ' (' + v.status + ')');
+      }));
+
+      box.appendChild(el('div', 'row-sub', st.agreement.rollover
+        ? 'The invoice says unused hours carry into the next ' + st.agreement.allowance_label + '.'
+        : 'The invoice says unused hours do not carry into the next ' + st.agreement.allowance_label + '.'));
+      return box;
+    }
+
     function agreementForm(a, reload, holder) {
       var box = el('div', 'agreeform');
       box.appendChild(el('h3', null, a ? 'Edit the agreement' : 'New service agreement'));
