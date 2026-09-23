@@ -11124,7 +11124,8 @@
       var have = {};
       ctDetail.files.forEach(function (f) { have[f.role] = true; });
       var need = ['solicitation', 'spec', 'terms'].filter(function (r) { return !have[r]; });
-      pane.appendChild(el('p', 'ct-note', need.length ? 'Still needed before Draft ready: ' + need.map(function (r) { return CT_ROLE_LABEL[r]; }).join(', ') + '.' : 'The packet is complete. Addenda, the response you sent, the award and the tabulation belong here too.'));
+      var pre = CT_PRE.indexOf(ctDetail.bid.status) >= 0;
+      pane.appendChild(el('p', 'ct-note', !pre ? 'Everything kept on this bid: the packet, addenda, the response you sent, the award and the tabulation.' : need.length ? 'Still needed before Draft ready: ' + need.map(function (r) { return CT_ROLE_LABEL[r]; }).join(', ') + '.' : 'The packet is complete. Addenda, the response you sent, the award and the tabulation belong here too.'));
       ctDetail.files.forEach(function (f) {
         var a = el('div', 'row');
         var left = el('div');
@@ -11147,7 +11148,15 @@
       });
       var form = el('div', 'ct-form');
       var role = ctField(form, 'What it is', ctSelect(Object.keys(CT_ROLE_LABEL).map(function (k) { return [k, CT_ROLE_LABEL[k]]; }), need[0] || 'addendum'));
-      var file = ctField(form, 'File (PDF, image, Word, Excel, CSV; 10 MB)', ctInput('file', null, { accept: '.pdf,.png,.jpg,.jpeg,.gif,.webp,.docx,.xlsx,.csv,.txt' }));
+      var file = ctInput('file', null, { accept: '.pdf,.png,.jpg,.jpeg,.gif,.webp,.docx,.xlsx,.csv,.txt', 'aria-label': 'Choose a file to attach' });
+      var pickWrap = el('div');
+      pickWrap.appendChild(el('label', null, 'File (PDF, image, Word, Excel, CSV; 10 MB)'));
+      var pick = el('span', 'ct-btn ct-upload', 'Choose file\u2026');
+      pick.appendChild(file);
+      var picked = el('span', 'row-sub', ' No file chosen');
+      file.addEventListener('change', function () { picked.textContent = ' ' + (file.files && file.files[0] ? file.files[0].name : 'No file chosen'); });
+      pickWrap.appendChild(pick); pickWrap.appendChild(picked);
+      form.appendChild(pickWrap);
       var label = ctField(form, 'Label (optional)', ctInput('text', '', { maxlength: 160 }));
       pane.appendChild(form);
       var up = el('button', 'ct-btn prim', 'Upload'); up.type = 'button';
