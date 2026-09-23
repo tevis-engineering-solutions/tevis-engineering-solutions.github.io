@@ -41,7 +41,7 @@
     .psignout:hover { color:#e4ede5; border-color:var(--green); }
     @media (max-width:640px) { .pacct .who { display:none; } }
     .ptabs { background:rgba(9,18,12,0.55); border-bottom:1px solid var(--line); position:sticky; top:55px; z-index:40; }
-    .ptabs-inner { display:flex; gap:0.2rem; max-width:1200px; margin:0 auto; padding:0 5%; overflow-x:auto; scrollbar-width:none; }
+    .ptabs-inner { display:flex; gap:0.2rem; max-width:1200px; margin:0 auto; padding:0 5%; overflow-x:auto; overscroll-behavior-x:contain; scrollbar-width:none; }
     .ptabs-inner::-webkit-scrollbar { display:none; }
     .ptab { padding:0.85rem 1rem; font-family:"Montserrat",sans-serif; font-size:0.8rem; text-transform:uppercase; letter-spacing:0.04em; font-weight:700; color:var(--muted); text-decoration:none; border-bottom:2px solid transparent; white-space:nowrap; display:inline-flex; align-items:center; gap:0.5rem; transition:color .2s; }
     .ptab:hover { color:#e4ede5; }
@@ -70,6 +70,9 @@
     .pgrid { display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); gap:1rem; }
     .pcard { background:var(--card); border:1px solid var(--line); border-radius:14px; padding:1.35rem; display:flex; flex-direction:column; }
     .pcard.feat { border-color:rgba(200,152,48,0.4); }
+    a.pcard { color:inherit; text-decoration:none; transition:border-color .15s, transform .15s, background .15s; }
+    a.pcard:hover { border-color:rgba(200,152,48,0.45); background:#17251c; transform:translateY(-2px); }
+    a.pcard:focus-visible { outline:2px solid var(--gold); outline-offset:3px; }
     .pcard .ic { width:42px; height:42px; border-radius:11px; background:rgba(74,172,101,0.1); border:1px solid rgba(74,172,101,0.22); color:var(--green); display:grid; place-items:center; font-size:1.1rem; margin-bottom:0.9rem; }
     .pcard.feat .ic { background:rgba(200,152,48,0.12); border-color:rgba(200,152,48,0.3); color:var(--gold); }
     .pcard h2 { font-family:"Montserrat",sans-serif; font-size:1.1rem; color:#fff; margin-bottom:0.4rem; }
@@ -262,25 +265,24 @@
 
     <h2 class="sec-title">More billing options</h2>
     <div class="pgrid">
-      <div class="pcard feat">
+      <a class="pcard feat" href="mailto:billing@tevisengineering.com?subject=Payment%20link%20request">
         <div class="ic"><i class="fa-solid fa-file-invoice-dollar"></i></div>
         <h2>Invoice not listed?</h2>
         <p>An invoice billed to a different email &mdash; a one-off project, say &mdash; is paid from the secure payment link in that invoice email. It opens without signing in.</p>
-        <a class="btn btn-primary" href="mailto:billing@tevisengineering.com?subject=Payment%20link%20request"><i class="fa-solid fa-envelope"></i> Request a Payment Link</a>
-      </div>
-      <div class="pcard">
+        <span class="btn btn-primary"><i class="fa-solid fa-envelope"></i> Request a Payment Link</span>
+      </a>
+      <a class="pcard" href="../software.html">
         <div class="ic"><i class="fa-solid fa-arrows-rotate"></i></div>
         <h2>Subscription</h2>
         <p>Change your plan, add counties or agencies, or update your billing cadence for a software subscription.</p>
-        <span class="pill muted">No active subscription</span>
-        <a class="btn btn-ghost" href="../software.html"><i class="fa-solid fa-laptop-code"></i> View Plans</a>
-      </div>
-      <div class="pcard">
+        <span class="btn btn-ghost"><i class="fa-solid fa-laptop-code"></i> View Plans</span>
+      </a>
+      <a class="pcard" href="../pay_invoice.html#billing-support">
         <div class="ic"><i class="fa-solid fa-headset"></i></div>
         <h2>Billing support</h2>
         <p>A question about a charge, invoice, or receipt? Reach billing directly and we'll sort it out.</p>
-        <a class="btn btn-ghost" href="../pay_invoice.html#billing-support"><i class="fa-solid fa-envelope"></i> Contact Billing</a>
-      </div>
+        <span class="btn btn-ghost"><i class="fa-solid fa-envelope"></i> Contact Billing</span>
+      </a>
     </div>
   </main>
 

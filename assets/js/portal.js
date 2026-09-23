@@ -164,17 +164,18 @@
       strip.addEventListener(ev, function () { touched = true; }, { passive: true });
     });
 
-    // A vertical wheel over the strip turns it sideways. Only when there is
-    // somewhere to go, or the page would stop scrolling under the cursor.
+    // A vertical wheel over the strip turns it sideways. While the strip has
+    // anywhere to scroll, the wheel belongs to it even at either end: reaching
+    // the last tab must not hand the wheel to the page. To scroll the page,
+    // move the pointer off the bar. When every tab fits, the wheel is left alone.
     bar.addEventListener('wheel', function (e) {
       if (e.deltaY === 0 || e.ctrlKey) return;
-      var over = strip.scrollWidth - strip.clientWidth;
-      if (over <= EDGE) return;
-      var x = strip.scrollLeft;
-      if ((e.deltaY > 0 && x >= over - EDGE) || (e.deltaY < 0 && x <= EDGE)) return;
+      if (strip.scrollWidth - strip.clientWidth <= EDGE) return;
       e.preventDefault();
       touched = true;
-      strip.scrollLeft = x + e.deltaY;
+      // Firefox reports line-mode deltas (about 3 per notch), not pixels.
+      var dy = e.deltaMode === 1 ? e.deltaY * 16 : e.deltaMode === 2 ? e.deltaY * strip.clientWidth : e.deltaY;
+      strip.scrollLeft += dy;
     }, { passive: false });
 
     center();

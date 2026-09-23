@@ -40,7 +40,7 @@
     @media (max-width:640px) { .pacct .who { display:none; } }
     /* tabs */
     .ptabs { background:rgba(9,18,12,0.55); border-bottom:1px solid var(--line); position:sticky; top:55px; z-index:40; }
-    .ptabs-inner { display:flex; gap:0.2rem; max-width:1200px; margin:0 auto; padding:0 5%; overflow-x:auto; scrollbar-width:none; }
+    .ptabs-inner { display:flex; gap:0.2rem; max-width:1200px; margin:0 auto; padding:0 5%; overflow-x:auto; overscroll-behavior-x:contain; scrollbar-width:none; }
     .ptabs-inner::-webkit-scrollbar { display:none; }
     .ptab { padding:0.85rem 1rem; font-family:"Montserrat",sans-serif; font-size:0.8rem; text-transform:uppercase; letter-spacing:0.04em; font-weight:700; color:var(--muted); text-decoration:none; border-bottom:2px solid transparent; white-space:nowrap; display:inline-flex; align-items:center; gap:0.5rem; transition:color .2s; }
     .ptab:hover { color:#e4ede5; }
@@ -79,13 +79,15 @@
     .pstrip a:hover { border-color:var(--gold); }
     .pstrip a i { color:var(--gold); }
     .pgrid { display:grid; grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); gap:1rem; }
-    .pcard { background:var(--card); border:1px solid var(--line); border-radius:14px; padding:1.3rem; display:flex; flex-direction:column; }
+    .pcard { background:var(--card); border:1px solid var(--line); border-radius:14px; padding:1.3rem; display:flex; flex-direction:column; color:inherit; text-decoration:none; transition:border-color .15s, transform .15s, background .15s; }
+    a.pcard:hover { border-color:rgba(200,152,48,0.45); background:#17251c; transform:translateY(-2px); }
+    a.pcard:focus-visible { outline:2px solid var(--gold); outline-offset:3px; }
     .pcard .ic { width:40px; height:40px; border-radius:11px; background:rgba(74,172,101,0.1); border:1px solid rgba(74,172,101,0.22); color:var(--green); display:grid; place-items:center; font-size:1.05rem; margin-bottom:0.9rem; }
     .pcard h2 { font-family:"Montserrat",sans-serif; font-size:1.05rem; color:#fff; margin-bottom:0.35rem; }
     .pcard p { color:var(--muted); font-size:0.9rem; margin-bottom:0.9rem; }
     .pcard .status { font-size:0.82rem; color:#cfe0d2; margin-bottom:0.9rem; }
     .pcard .plink { margin-top:auto; display:inline-flex; align-items:center; gap:0.45rem; font-family:"Montserrat",sans-serif; font-weight:700; font-size:0.8rem; text-transform:uppercase; letter-spacing:0.04em; color:var(--green); text-decoration:none; }
-    .pcard .plink:hover { color:var(--gold); }
+    a.pcard:hover .plink { color:var(--gold); }
     .quick { margin-top:1.5rem; display:flex; gap:0.7rem; flex-wrap:wrap; }
     .qbtn { display:inline-flex; align-items:center; gap:0.5rem; font-family:"Montserrat",sans-serif; font-weight:700; font-size:0.8rem; text-transform:uppercase; letter-spacing:0.03em; text-decoration:none; border-radius:999px; padding:0.7rem 1.1rem; }
     .qbtn.primary { background:linear-gradient(135deg,#c89830,#e0b840); color:#0d1710; }
@@ -149,62 +151,61 @@
     <div class="pstrip" id="pStrip" hidden></div>
 
     <div class="pgrid">
-      <div class="pcard">
+      <a class="pcard" href="messages.html">
         <div class="ic"><i class="fa-solid fa-comments"></i></div>
         <h2>Messages</h2>
         <p>A direct line to us for anything that is not a ticket. We reply here and by email.</p>
-        <div class="status"><span class="pill muted" id="messagesPill">Checking&hellip;</span></div>
-        <a class="plink" href="messages.html">Open Messages <i class="fa-solid fa-arrow-right"></i></a>
-      </div>
-      <div class="pcard">
+        <div class="status" hidden><span class="pill" id="messagesPill"></span></div>
+        <span class="plink">Open Messages <i class="fa-solid fa-arrow-right"></i></span>
+      </a>
+      <a class="pcard" href="schedule.html">
         <div class="ic"><i class="fa-solid fa-calendar-day"></i></div>
         <h2>Book a Time</h2>
         <p>Pick a slot for a remote session, a call or a visit. You get a calendar invite and a reminder the day before.</p>
-        <div class="status"><span class="pill muted" id="schedPill">Checking&hellip;</span></div>
-        <a class="plink" href="schedule.html">Open the diary <i class="fa-solid fa-arrow-right"></i></a>
-      </div>
-      <div class="pcard">
+        <div class="status" hidden><span class="pill" id="schedPill"></span></div>
+        <span class="plink">Open the diary <i class="fa-solid fa-arrow-right"></i></span>
+      </a>
+      <a class="pcard" href="plan.html">
         <div class="ic"><i class="fa-solid fa-file-contract"></i></div>
         <h2>Your Plan</h2>
         <p>What your agreement covers, the hours you have used this period, and when it renews.</p>
-        <div class="status"><span class="pill muted" id="planPill">Checking&hellip;</span></div>
-        <a class="plink" href="plan.html">See your plan <i class="fa-solid fa-arrow-right"></i></a>
-      </div>
-      <div class="pcard">
+        <div class="status" hidden><span class="pill" id="planPill"></span></div>
+        <span class="plink">See your plan <i class="fa-solid fa-arrow-right"></i></span>
+      </a>
+      <a class="pcard" href="software.html">
         <div class="ic"><i class="fa-solid fa-cubes"></i></div>
         <h2>My Software</h2>
         <p>License keys, downloads, activation, and usage for your TES applications.</p>
-        <div class="status"><span class="pill muted" id="softwarePill">Checking&hellip;</span></div>
-        <a class="plink" href="software.html">Open My Software <i class="fa-solid fa-arrow-right"></i></a>
-      </div>
-      <div class="pcard">
+        <div class="status" hidden><span class="pill" id="softwarePill"></span></div>
+        <span class="plink">Open My Software <i class="fa-solid fa-arrow-right"></i></span>
+      </a>
+      <a class="pcard" href="billing.html">
         <div class="ic"><i class="fa-solid fa-credit-card"></i></div>
         <h2>Billing</h2>
         <p>Pay an invoice, manage your subscription, and review payment history.</p>
-        <div class="status"><span class="pill ok" id="billingPill"><i class="fa-solid fa-circle-check"></i> Active</span></div>
-        <a class="plink" href="billing.html">Open Billing <i class="fa-solid fa-arrow-right"></i></a>
-      </div>
-      <div class="pcard">
+        <div class="status" hidden><span class="pill" id="billingPill"></span></div>
+        <span class="plink">Open Billing <i class="fa-solid fa-arrow-right"></i></span>
+      </a>
+      <a class="pcard" href="tickets.html">
         <div class="ic"><i class="fa-solid fa-headset"></i></div>
         <h2>Support</h2>
         <p>Open a support ticket and track its status through to resolution.</p>
-        <div class="status"><span class="pill ok"><i class="fa-solid fa-circle-check"></i> Active</span></div>
-        <a class="plink" href="tickets.html">Open Support <i class="fa-solid fa-arrow-right"></i></a>
-      </div>
-      <div class="pcard">
+        <span class="plink">Open Support <i class="fa-solid fa-arrow-right"></i></span>
+      </a>
+      <a class="pcard" href="equipment.html">
         <div class="ic"><i class="fa-solid fa-laptop"></i></div>
         <h2>Equipment</h2>
         <p>Hardware and subscriptions on your account, and where to confirm you have received them.</p>
-        <div class="status"><span class="pill muted" id="equipmentPill">Checking&hellip;</span></div>
-        <a class="plink" href="equipment.html">Open Equipment <i class="fa-solid fa-arrow-right"></i></a>
-      </div>
-      <div class="pcard">
+        <div class="status" hidden><span class="pill" id="equipmentPill"></span></div>
+        <span class="plink">Open Equipment <i class="fa-solid fa-arrow-right"></i></span>
+      </a>
+      <a class="pcard" href="account.html">
         <div class="ic"><i class="fa-solid fa-user-gear"></i></div>
         <h2>Account</h2>
         <p>Your profile, company details, and notification preferences.</p>
-        <div class="status"><span class="pill muted" id="accountPill">Profile</span></div>
-        <a class="plink" href="account.html">Open Account <i class="fa-solid fa-arrow-right"></i></a>
-      </div>
+        <div class="status" hidden><span class="pill" id="accountPill"></span></div>
+        <span class="plink">Open Account <i class="fa-solid fa-arrow-right"></i></span>
+      </a>
     </div>
 
     <div class="quick">
@@ -230,6 +231,7 @@
         if (!pill) return;
         pill.className = 'pill ' + cls;
         pill.textContent = '';
+        pill.parentNode.hidden = false;
         var i = document.createElement('i');
         i.className = icon;
         pill.appendChild(i);
@@ -244,26 +246,23 @@
       if (!id || !id.email) { location.replace('../login.html'); return false; }
       return true;
     }
-      // The Software and Account cards used to carry hardcoded pills reading "No
-      // active products yet" and "Profile". Both are read from the API now: a
-      // customer holding a license was being told they held none.
+      // A tile only carries a tag when there is something to say: a count, a
+      // date, an amount, or something to do. "Nothing waiting", "No plan" and
+      // a failed lookup leave the tag off rather than filling the space.
       function pill(id, cls, label) {
         var el = document.getElementById(id);
         if (!el) return;
         el.className = 'pill ' + cls;
         el.textContent = label;
+        el.parentNode.hidden = false;
       }
 
       function loadSoftware() {
         return fetch('/portal-api/software', { credentials: 'same-origin' })
           .then(function (r) { return r.ok ? r.json() : null; })
           .then(function (d) {
-            if (!d || !d.ok) { pill('softwarePill', 'muted', 'Unavailable'); return; }
-            var products = d.products || [];
-            if (!products.length) {
-              pill('softwarePill', 'muted', 'No active products yet');
-              return;
-            }
+            var products = (d && d.ok && d.products) || [];
+            if (!products.length) return;
             var active = products.filter(function (pr) { return pr.status === 'active'; });
             if (active.length === products.length) {
               pill('softwarePill', 'ok', products.length +
@@ -275,21 +274,20 @@
                    ' active');
             }
           })
-          .catch(function () { pill('softwarePill', 'muted', 'Unavailable'); });
+          .catch(function () {});
       }
 
       function loadEquipment() {
         return fetch('/portal-api/equipment', { credentials: 'same-origin' })
           .then(function (r) { return r.ok ? r.json() : null; })
           .then(function (d) {
-            if (!d || !d.ok) { pill('equipmentPill', 'muted', 'Unavailable'); return; }
-            var list = d.items || [];
+            var list = (d && d.ok && d.items) || [];
             var waiting = list.filter(function (i) { return !i.confirmed_at; }).length;
-            if (!list.length) pill('equipmentPill', 'muted', 'Nothing assigned');
-            else if (waiting) pill('equipmentPill', 'gold', waiting + ' awaiting your confirmation');
+            if (!list.length) return;
+            if (waiting) pill('equipmentPill', 'gold', waiting + ' awaiting your confirmation');
             else pill('equipmentPill', 'ok', list.length + ' item' + (list.length === 1 ? '' : 's') + ' confirmed');
           })
-          .catch(function () { pill('equipmentPill', 'muted', 'Unavailable'); });
+          .catch(function () {});
       }
 
       function loadProfile() {
@@ -302,8 +300,6 @@
               pill('accountPill', 'gold', 'Add your details');
             } else if (!pf.phone || !pf.address_line1) {
               pill('accountPill', 'gold', 'Finish your profile');
-            } else {
-              pill('accountPill', 'ok', 'Details on file');
             }
           })
           .catch(function () {});
@@ -324,15 +320,13 @@
         loadProfile();
         loadEquipment();
         fetch('/portal-api/appointments', { credentials: 'same-origin' }).then(function (r) { return r.ok ? r.json() : null; }).then(function (d) {
-          if (!d || !d.ok) { pill('schedPill', 'muted', 'Unavailable'); return; }
-          if (!d.upcoming.length) { pill('schedPill', 'muted', 'Nothing booked'); return; }
+          if (!d || !d.ok || !d.upcoming || !d.upcoming.length) return;
           pill('schedPill', 'gold', d.upcoming[0].when);
-        }).catch(function () { pill('schedPill', 'muted', 'Unavailable'); });
+        }).catch(function () {});
         // The plan pill says where their hours are, which is the question the card
-        // exists to answer; no plan is a normal answer and says so.
+        // exists to answer. No plan is a normal answer and gets no tag.
         fetch('/portal-api/plan', { credentials: 'same-origin' }).then(function (r) { return r.ok ? r.json() : null; }).then(function (d) {
-          if (!d || !d.ok) { pill('planPill', 'muted', 'Unavailable'); return; }
-          if (!d.plan) { pill('planPill', 'muted', 'No plan - billed as we go'); return; }
+          if (!d || !d.ok || !d.plan) return;
           var u = d.plan.usage;
           if (!u || !u.allowance_minutes) { pill('planPill', 'ok', d.plan.name); return; }
           var left = Math.max(0, u.remaining_minutes);
@@ -340,7 +334,7 @@
             ? Math.round(u.over_minutes / 60 * 10) / 10 + ' h beyond the plan'
             : Math.round(left / 60 * 10) / 10 + ' h left this ' + d.plan.period_label;
           pill('planPill', u.percent >= 100 ? 'gold' : 'ok', txt);
-        }).catch(function () { pill('planPill', 'muted', 'Unavailable'); });
+        }).catch(function () {});
         // What is waiting on them, from the same /me the identity came from.
         if (id.waiting) {
           var w = id.waiting, strip = document.getElementById('pStrip');
@@ -352,15 +346,12 @@
           if (w.equipment) items.push(['equipment.html', 'fa-laptop', w.equipment + (w.equipment === 1 ? ' item' : ' items') + ' to confirm']);
           items.forEach(function (it) { var a = document.createElement('a'); a.href = it[0]; var i = document.createElement('i'); i.className = 'fa-solid ' + it[1]; a.appendChild(i); a.appendChild(document.createTextNode(' ' + it[2])); strip.appendChild(a); });
           strip.hidden = !items.length;
-          pill('messagesPill', w.messages ? 'gold' : 'ok', w.messages ? 'New message' : 'Nothing waiting');
+          if (w.messages) pill('messagesPill', 'gold', 'New message');
         }
 
         return TESInvoices.fetchForEmail(email).then(function (invoices) {
           var open = invoices.filter(function (inv) { return !inv.paid; });
-          if (!open.length) {
-            if (invoices.length) setPill('ok', 'fa-solid fa-circle-check', 'No balance due');
-            return;
-          }
+          if (!open.length) return;
           var due = open.reduce(function (sum, inv) { return sum + (inv.amount || 0); }, 0);
           setPill('gold', 'fa-solid fa-file-invoice-dollar',
                   TESInvoices.formatUSD(due) + ' due · ' + open.length +
