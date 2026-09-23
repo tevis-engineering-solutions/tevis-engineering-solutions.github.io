@@ -5880,27 +5880,43 @@
         pOverview.appendChild(o);
       }
 
+      // ---- the agreement ----
+      // Its own section, and always present. It used to hang off Outstanding work,
+      // which meant a client you had just signed had no way to be given a plan until
+      // somebody had logged an hour against them -- exactly backwards.
+      var ags = sec('Service agreement');
+      var govAg = c.unbilled && c.unbilled.agreement;
+      if (govAg) {
+        // Their own is editable here; a company's is edited on the company, which is
+        // also where it is billed, so there is one place it can change.
+        if (govAg.holder_type === 'account' && govAg.holder_id === c.account.id) {
+          ags.appendChild(agreementPanel(govAg, c.agreement_usage, function () { openCustomer(c.account.id); }));
+        } else {
+          ags.appendChild(agreementNote(c.unbilled));
+          if (c.agreement_usage) ags.appendChild(usageMeter(c.agreement_usage));
+        }
+      } else if (c.unbilled && c.unbilled.org_id) {
+        // In a company but no plan: the agreement belongs on the company, where it is
+        // also billed, so this points there rather than offering a second one here.
+        ags.appendChild(el('div', 'row-sub', 'No plan yet. ' + (c.unbilled.org_name || 'Their company')
+          + ' is the client, so the agreement goes on the company.'));
+        ags.appendChild(licAction('Open ' + (c.unbilled.org_name || 'the company'), null, function () {
+          custMode = 'orgs'; syncMode(); openOrg(c.unbilled.org_id);
+        }));
+      } else {
+        ags.appendChild(el('div', 'row-sub', 'No plan. Work is billed per ticket at the standard rate.'));
+        ags.appendChild(licAction('Add an agreement', null, function () {
+          ags.appendChild(agreementForm(null, function () { openCustomer(c.account.id); }, { type: 'account', id: c.account.id }));
+        }));
+      }
+      pOverview.appendChild(ags);
+
       // ---- unbilled work ----
       // The ticket is where you log an hour; this is where you notice you never charged
       // for it. Work belonging to an organization is billed from the ORG, so this only
       // offers the buttons when the client is this person.
       if (owed.minutes) {
         var us = sec('Outstanding work');
-        if (c.unbilled && c.unbilled.agreement) {
-          // Their own agreement is editable here; a company's is edited on the company,
-          // which is also where it is billed, so there is one place it can change.
-          var gov = c.unbilled.agreement;
-          if (gov.holder_type === 'account' && gov.holder_id === c.account.id) {
-            us.appendChild(agreementPanel(gov, c.agreement_usage, function () { openCustomer(c.account.id); }));
-          } else {
-            us.appendChild(agreementNote(c.unbilled));
-            if (c.agreement_usage) us.appendChild(usageMeter(c.agreement_usage));
-          }
-        } else {
-          us.appendChild(licAction('Add an agreement', null, function () {
-            us.appendChild(agreementForm(null, function () { openCustomer(c.account.id); }, { type: 'account', id: c.account.id }));
-          }));
-        }
         (owed.periods || []).forEach(function (pd) { us.appendChild(periodLine(pd)); });
         owed.tickets.forEach(function (g) {
           us.appendChild(row(g.ticket_number,
