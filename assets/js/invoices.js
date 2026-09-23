@@ -162,6 +162,9 @@
       /* A PDF copy is on file. Fetched by invoice id (or by the pay token on the
          public pay page), never by a storage key. */
       hasPdf:      !!inv.has_pdf,
+      // An agreement fee invoice has a record of the period behind it. Fetched on
+      // demand rather than with the list: most people never open it.
+      hasStatement: !!inv.has_statement,
       currency:    inv.currency || 'USD',
       /* Set when the customer has told us they paid by check or transfer. The
          invoice is 'pending' until TES confirms the funds landed. */
@@ -204,6 +207,18 @@
       if (!d || !d.ok) return { ok: false, error: (d && d.error) || 'not_found' };
       return { ok: true, invoice: fromApi(d.invoice) };
     });
+  }
+
+  /* What an agreement invoice covered: the tickets, the time, the messages, the
+     equipment and the visits. Authorized by the session and keyed on the invoice --
+     the caller never names a period, so there is nothing to point at somebody else's.
+     Resolves to null on any failure; a missing statement must not break the page. */
+  function fetchStatement(inv) {
+    return fetch(API + '/invoices/' + encodeURIComponent(inv.id) + '/statement', {
+      credentials: 'same-origin', headers: { accept: 'application/json' },
+    }).then(function (r) { return r.json(); })
+      .then(function (r) { return r && r.ok ? r.statement : null; })
+      .catch(function () { return null; });
   }
 
   /* Where the PDF copy of an invoice is served from. On the pay page the signed
@@ -329,6 +344,7 @@
     lookup: lookup,
     lookupFromPayLink: lookupFromPayLink,
     pdfUrl: pdfUrl,
+    fetchStatement: fetchStatement,
     notifyPaid: notifyPaid,
     getIdentity: getIdentity,
     mountPayPal: mountPayPal,
