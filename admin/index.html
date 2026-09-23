@@ -32,6 +32,30 @@
 
     .filters { display:flex; gap:0.35rem; padding:0.6rem 1rem; max-width:1100px; margin:0 auto; overflow-x:auto; scrollbar-width:none; }
     .filters::-webkit-scrollbar { display:none; }
+    .lg-bal { display:flex; flex-wrap:wrap; gap:0.5rem; margin:0.3rem 0 0.5rem; }
+    .lg-bal-i { flex:1 1 200px; border:1px solid var(--line); background:var(--bg); padding:0.5rem 0.6rem; }
+    .lg-bal-l { display:block; font-family:"Montserrat",sans-serif; font-size:0.62rem; text-transform:uppercase; letter-spacing:0.06em; color:var(--muted); }
+    .lg-bal-i b { display:block; font-size:1.05rem; font-variant-numeric:tabular-nums; }
+    .jobs-table th { cursor:default; }
+    .jobs-table td b.ok { color:var(--green); }
+    .jobs-table td b.warn { color:var(--gold); }
+    .lg-box { border:1px solid var(--line); background:var(--bg); padding:0.8rem; margin:0.6rem 0; }
+    .lg-box h4 { margin:0 0 0.3rem; font-family:"Montserrat",sans-serif; font-size:0.82rem; }
+    .lg-box > p { margin:0 0 0.6rem; }
+    .lg-form { display:flex; flex-wrap:wrap; gap:0.45rem; align-items:center; }
+    .lg-form input, .lg-form select { min-height:38px; }
+    .lg-form input[type="text"] { flex:1 1 150px; min-width:0; }
+    .lg-form input[type="file"] { flex:1 1 220px; min-width:0; font-size:0.8rem; }
+    .lg-check { display:inline-flex; align-items:center; gap:0.4rem; font-size:0.78rem; color:var(--muted); min-height:38px; }
+    .lg-check input { width:18px; height:18px; }
+    .lg-prev { margin-top:0.6rem; }
+    .lg-ptable { width:100%; border-collapse:collapse; margin-top:0.35rem; font-size:0.8rem; }
+    .lg-ptable td { padding:0.25rem 0.4rem; border-bottom:1px solid var(--line); }
+    .lg-ptable td.n { text-align:right; white-space:nowrap; font-variant-numeric:tabular-nums; }
+    .lg-tools { display:flex; gap:0.45rem; margin:0.5rem 0; }
+    .lg-tools select { flex:0 0 auto; min-height:38px; }
+    .lg-tools input { flex:1 1 auto; min-width:0; min-height:38px; }
+    .lg-list .lg-row { align-items:flex-start; }
     .fpill { flex:0 0 auto; font-family:"Montserrat",sans-serif; font-size:0.72rem; font-weight:700; text-transform:uppercase; letter-spacing:0.04em; padding:0.45rem 0.8rem; border-radius:999px; border:1px solid var(--line); background:transparent; color:var(--muted); cursor:pointer; }
     .fpill.on { color:#0d1710; background:linear-gradient(135deg,var(--gold),#e0b840); border-color:transparent; }
 
@@ -314,8 +338,8 @@
     /* An action button sitting straight on top of the list it acts on reads as part of
        the first row. Give it room, but only when something follows it. */
     .cust-sec > button:not(.row):not(:last-child) { margin-bottom:0.75rem; }
-    .cust-sec .row button { font-family:"Montserrat",sans-serif; font-size:0.66rem; font-weight:700; text-transform:uppercase; letter-spacing:0.03em; padding:0.35rem 0.7rem; border-radius:999px; border:1px solid var(--line); background:var(--bg); color:var(--text); cursor:pointer; min-height:36px; }
-    .cust-sec > button:not(.row):hover, .cust-sec .row button:hover { border-color:var(--green); }
+    .cust-sec .row button, .lg-list .row button { font-family:"Montserrat",sans-serif; font-size:0.66rem; font-weight:700; text-transform:uppercase; letter-spacing:0.03em; padding:0.35rem 0.7rem; border-radius:999px; border:1px solid var(--line); background:var(--bg); color:var(--text); cursor:pointer; min-height:36px; }
+    .cust-sec > button:not(.row):hover, .cust-sec .row button:hover, .lg-list .row button:hover { border-color:var(--green); }
     .cust-sec > button.prim:not(.row) { background:linear-gradient(135deg,var(--gold),#e0b840); color:#0d1710; border-color:transparent; }
 
     .danger-zone { border:1px solid rgba(239,68,68,0.4); background:rgba(239,68,68,0.06); border-radius:12px; padding:0.8rem 0.9rem; margin-top:1rem; }
@@ -7219,7 +7243,498 @@
 
       // ---- PayPal ----
       grid.appendChild(paypalPanel(st));
+
+      // ---- the ledger: Chase, cash, anything not synced ----
+      grid.appendChild(ledgerPanel(st));
+
+      // ---- what each job actually made ----
+      grid.appendChild(jobsPanel(st));
       finBody.appendChild(grid);
+    }
+
+    // ---- what each job made -------------------------------------------------
+    //
+    // An invoice total answers nothing on a hardware job: most of it can be a part
+    // bought last week on the card. This lines the two up. Profit is revenue minus
+    // anything spent on the job the invoice did NOT bill back, so billing back exactly
+    // what you spent leaves the labour, and billing back less shows the shortfall
+    // instead of quietly flattering the figure.
+    function jobsPanel(st) {
+      var j = st.jobs || { rows: [], totals: { count: 0 } };
+      var p = finPanel('Jobs with parts on them', j.totals.count
+        ? j.totals.count + (j.totals.count === 1 ? ' job' : ' jobs') + ' in ' + st.label
+        : 'nothing to reconcile in ' + st.label);
+      p.classList.add('wide');
+      if (!j.rows.length) {
+        p.appendChild(el('p', 'fin-note',
+          'Nothing here yet. A job appears once its invoice has line items on it, or a card purchase has been filed against it — that is what lets the profit be separated from the parts you were just holding.'));
+        return p;
+      }
+
+      var t = el('div', 'tiles');
+      finTile(t, 'Profit', money(j.totals.profit_cents),
+        'revenue minus anything spent and not billed back');
+      finTile(t, 'Of that, collected', money(j.totals.collected_profit_cents), 'on invoices that have been paid');
+      finTile(t, 'Spent on parts', money(j.totals.parts_spent_cents),
+        j.totals.billed_back_cents ? money(j.totals.billed_back_cents) + ' billed back' : 'none billed back yet');
+      if (j.totals.shortfall_cents) {
+        finTile(t, 'Absorbed', money(j.totals.shortfall_cents), 'spent on jobs and not billed back', null, true);
+      }
+      p.appendChild(t);
+
+      var wrap = el('div', 'fin-table-wrap');
+      var tbl = el('table', 'fin-table jobs-table');
+      var th = el('thead');
+      var hr = el('tr');
+      ['Job', 'Invoiced', 'Parts', 'Billed back', 'Revenue', 'Profit'].forEach(function (h, i) {
+        hr.appendChild(el('th', i ? 'num' : null, h));
+      });
+      th.appendChild(hr);
+      tbl.appendChild(th);
+      var tb = el('tbody');
+      j.rows.forEach(function (row) {
+        var tr = el('tr');
+        tr.classList.add('pick');
+        tr.addEventListener('click', function () { showInvoicesView('all', row.number); });
+        var c0 = el('td');
+        c0.appendChild(el('b', null, row.number));
+        var sub = [row.client];
+        if (!row.itemized) sub.push('no line items, so the whole invoice reads as revenue');
+        if (row.status !== 'paid') sub.push(row.status);
+        c0.appendChild(el('div', 'row-sub', sub.join(' · ')));
+        tr.appendChild(c0);
+        tr.appendChild(el('td', 'num', money(row.invoiced_cents)));
+        tr.appendChild(el('td', 'num', row.parts_spent_cents ? money(row.parts_spent_cents) : '—'));
+        tr.appendChild(el('td', 'num', row.billed_back_cents ? money(row.billed_back_cents) : '—'));
+        tr.appendChild(el('td', 'num', money(row.revenue_cents)));
+        var pc = el('td', 'num');
+        pc.appendChild(el('b', row.shortfall_cents ? 'warn' : 'ok', money(row.profit_cents)));
+        if (row.shortfall_cents) pc.appendChild(el('div', 'row-sub', money(row.shortfall_cents) + ' absorbed'));
+        tr.appendChild(pc);
+        tb.appendChild(tr);
+      });
+      tbl.appendChild(tb);
+      wrap.appendChild(tbl);
+      p.appendChild(wrap);
+      p.appendChild(el('p', 'fin-note',
+        'Parts is what came off an account for this job. Billed back is the at-cost lines plus any sales tax on the invoice. Neither counts as revenue.'));
+      return p;
+    }
+
+    // ---- the ledger: the Chase card, cash, anything not synced from PayPal ------
+    //
+    // PayPal is where income arrives. Hardware bought for customers and the recurring
+    // software go out on the Chase Business Cash card, and no sync can see that: Chase
+    // publishes no API a small-business card can use without a paid aggregator holding
+    // the banking credentials. So the two ways a card transaction gets on the books are
+    // a CSV downloaded from the bank and typing one in as it is made.
+    //
+    // A purchase filed as "parts for a job" is neither an expense nor income. Billing a
+    // part back at cost already keeps it out of revenue; counting the card charge as a
+    // cost as well turns a job that made $150 into a $45 loss. What it IS is float:
+    // money fronted and not yet recovered, which is what the tiles at the top report.
+
+    var LG_VIEWS = [['review', 'Needs review'], ['expense', 'Expenses'], ['job_parts', 'Parts for jobs'],
+                    ['hidden', 'Hidden'], ['all', 'All']];
+    var LG_CLASS_COLOR = { expense: '#e0c98a', job_parts: '#4fa2ff', transfer: '#6a8ba8', personal: '#6a8ba8' };
+    var LG_CLASS_LABEL = { expense: 'expense', job_parts: 'parts for a job', transfer: 'transfer', personal: 'personal' };
+    var lgView = 'review';
+    var lgAccount = '';
+    var lgQ = '';
+    var lgAccounts = [{ id: 'chase_business_cash', label: 'Chase Business Cash' }];
+
+    function ledgerPanel(st) {
+      var fl = st.parts_float || { outstanding_cents: 0, recovered_cents: 0, spent_cents: 0, written_off_cents: 0, unlinked: 0, by_account: [] };
+      var p = finPanel('Accounts and card', 'Chase, cash, and anything PayPal does not sync');
+      p.classList.add('wide');
+
+      var accts = st.accounts || [];
+      if (accts.length) {
+        var ab = el('div', 'lg-bal');
+        accts.forEach(function (a) {
+          var one = el('div', 'lg-bal-i');
+          one.appendChild(el('span', 'lg-bal-l', a.label));
+          one.appendChild(el('b', a.owed_cents ? 'warn' : 'ok',
+            a.owed_cents ? money(a.owed_cents) + ' owed' : money(a.credit_cents) + ' in credit'));
+          one.appendChild(el('span', 'row-sub', a.count + ' transactions' +
+            (a.last_at ? ', latest ' + fmtDate(a.last_at) : '')));
+          ab.appendChild(one);
+        });
+        p.appendChild(ab);
+        p.appendChild(el('p', 'fin-note', 'Balances are the sum of everything imported, so they are as current as the last statement you brought in \u2014 not live from the bank.'));
+      }
+
+      var t = el('div', 'tiles');
+      finTile(t, 'Fronted for customers', money(fl.outstanding_cents),
+        fl.outstanding_cents
+          ? (fl.by_account.map(function (a) { return a.label + ' ' + money(a.cents); }).join(' · ') +
+             (fl.unlinked ? ' · ' + fl.unlinked + ' not linked to an invoice yet' : ''))
+          : 'nothing out of pocket');
+      finTile(t, 'Paid back', money(fl.recovered_cents), 'parts on invoices that have been paid');
+      finTile(t, 'Spent on parts', money(fl.spent_cents), 'this period');
+      if (fl.written_off_cents) finTile(t, 'Written off', money(fl.written_off_cents), 'on voided invoices');
+      p.appendChild(t);
+
+      var bar = el('div', 'inv-actions');
+      var impBox = el('div', 'lg-box');
+      impBox.hidden = true;
+      var addBox = el('div', 'lg-box');
+      addBox.hidden = true;
+      bar.appendChild(licAction('Import a statement', null, function () {
+        impBox.hidden = !impBox.hidden; addBox.hidden = true;
+      }));
+      bar.appendChild(licAction('Add a purchase', null, function () {
+        addBox.hidden = !addBox.hidden; impBox.hidden = true;
+      }));
+      p.appendChild(bar);
+      buildLedgerImport(impBox);
+      buildLedgerAdd(addBox);
+      p.appendChild(impBox);
+      p.appendChild(addBox);
+
+      var pills = el('div', 'filters');
+      LG_VIEWS.forEach(function (v) {
+        var b = el('button', 'fpill' + (lgView === v[0] ? ' on' : ''), v[1]);
+        b.type = 'button';
+        b.addEventListener('click', function () {
+          lgView = v[0];
+          Array.prototype.forEach.call(pills.children, function (c) { c.classList.toggle('on', c === b); });
+          loadLedger(list);
+        });
+        pills.appendChild(b);
+      });
+      p.appendChild(pills);
+
+      var tools = el('div', 'lg-tools');
+      var acct = document.createElement('select');
+      acct.setAttribute('aria-label', 'Account');
+      var any = el('option', null, 'Every account');
+      any.value = '';
+      acct.appendChild(any);
+      lgAccounts.forEach(function (a) {
+        var o = el('option', null, a.label);
+        o.value = a.id;
+        acct.appendChild(o);
+      });
+      acct.value = lgAccount;
+      acct.addEventListener('change', function () { lgAccount = acct.value; loadLedger(list); });
+      var search = document.createElement('input');
+      search.type = 'search';
+      search.placeholder = 'Search descriptions';
+      search.setAttribute('aria-label', 'Search the ledger');
+      search.value = lgQ;
+      var sTimer = null;
+      search.addEventListener('input', function () {
+        clearTimeout(sTimer);
+        sTimer = setTimeout(function () { lgQ = search.value.trim(); loadLedger(list); }, 250);
+      });
+      tools.appendChild(acct);
+      tools.appendChild(search);
+      p.appendChild(tools);
+
+      var list = el('div', 'lg-list');
+      p.appendChild(list);
+      loadLedger(list);
+      return p;
+    }
+
+    function loadLedger(list) {
+      list.textContent = '';
+      list.appendChild(el('div', 'row-sub', 'Loading…'));
+      var url = '/admin/ledger?view=' + encodeURIComponent(lgView) +
+        (lgAccount ? '&account=' + encodeURIComponent(lgAccount) : '') +
+        (lgQ ? '&q=' + encodeURIComponent(lgQ) : '');
+      api(url).then(function (r) {
+        list.textContent = '';
+        if (!r || !r.ok) return list.appendChild(el('div', 'row-sub', 'Could not load the ledger.'));
+        if (r.accounts && r.accounts.length) lgAccounts = r.accounts;
+        if (!r.entries.length) {
+          list.appendChild(el('div', 'row-sub',
+            lgView === 'review'
+              ? (r.total ? 'Everything on file has been filed.' : 'Nothing here yet. Import a statement from the bank, or add a purchase as you make it.')
+              : 'Nothing matches.'));
+          return;
+        }
+        r.entries.forEach(function (e) { list.appendChild(lgRow(e)); });
+      });
+    }
+
+    function lgRow(e) {
+      var d = el('div', 'row lg-row');
+      d.setAttribute('data-lg', String(e.id));
+      var left = el('div');
+      var main = el('div', 'row-main');
+      main.appendChild(el('span', 'pp-dir ' + (e.amount_cents < 0 ? 'out' : 'in'), e.amount_cents < 0 ? '← out' : '→ in'));
+      main.appendChild(document.createTextNode(' ' + (e.vendor || e.description)));
+      left.appendChild(main);
+      var sub = [e.day, e.account_label];
+      if (e.vendor && e.description !== e.vendor) sub.push(e.description);
+      if (e.category) sub.push(e.category);
+      if (e.invoice_number) sub.push('billed back on ' + e.invoice_number + (e.invoice_status === 'paid' ? ', paid' : e.invoice_status === 'void' ? ', voided' : ', still open'));
+      if (e.source === 'manual') sub.push('typed in');
+      left.appendChild(el('div', 'row-sub', sub.join(' · ')));
+      if (e.note) left.appendChild(el('div', 'row-sub', e.note));
+      d.appendChild(left);
+
+      var right = el('div', 'cust-badges');
+      right.appendChild(el('b', 'pp-amt ' + (e.amount_cents < 0 ? 'out' : 'in'), money(e.amount_cents)));
+      if (e.classification) right.appendChild(badge(LG_CLASS_LABEL[e.classification] || e.classification, LG_CLASS_COLOR[e.classification] || '#8aa48d'));
+
+      if (!e.classification) {
+        if (e.amount_cents < 0) {
+          right.appendChild(licAction('Business expense', null, function () { lgClassify(e, { classification: 'expense' }); }));
+          right.appendChild(licAction('Parts for a job…', 'prim', function () { lgLinkParts(e); }));
+        } else {
+          right.appendChild(licAction('Refund or credit', null, function () { lgClassify(e, { classification: 'expense' }); }));
+        }
+        right.appendChild(licAction('Transfer', null, function () { lgClassify(e, { classification: 'transfer' }); }));
+        right.appendChild(licAction('Personal', null, function () { lgClassify(e, { classification: 'personal' }); }));
+      } else {
+        if (e.classification === 'job_parts') {
+          right.appendChild(licAction(e.invoice_id ? 'Change invoice…' : 'Link to an invoice…', null, function () { lgLinkParts(e); }));
+        }
+        if (e.classification === 'expense' && e.amount_cents < 0) {
+          right.appendChild(licAction('Add to inventory', null, function () {
+            showView('inventory');
+            resetInvtForm();
+            invtF.name.value = e.description;
+            invtF.vendor.value = e.vendor || '';
+            invtF.price.value = (Math.abs(e.amount_cents) / 100).toFixed(2);
+            invtF.purchase.value = e.day;
+            invtF.notes.value = e.account_label + (e.external_ref ? ' · ' + e.external_ref : '');
+            document.getElementById('invtFormBox').scrollIntoView({ behavior: 'smooth', block: 'start' });
+          }));
+        }
+        right.appendChild(licAction('Review again', null, function () { lgClassify(e, { classification: null }); }));
+        if (e.source === 'manual') {
+          right.appendChild(licAction('Delete', null, function () {
+            if (!confirm('Remove ' + money(e.amount_cents) + ' ' + e.description + ' from the ledger?')) return;
+            api('/admin/ledger/' + e.id, { method: 'DELETE' }).then(function (r) {
+              if (!r || !r.ok) return alert((r && r.message) || 'Could not remove it.');
+              toast('Removed');
+              lgRefresh();
+            });
+          }));
+        }
+      }
+      d.appendChild(right);
+      return d;
+    }
+
+    function lgClassify(e, body) {
+      api('/admin/ledger/' + e.id, { method: 'PATCH', body: body }).then(function (r) {
+        if (!r || !r.ok) return alert((r && r.message) || 'Could not file it (' + ((r && r.error) || 'unknown') + ').');
+        toast(body.classification ? 'Filed as ' + (LG_CLASS_LABEL[body.classification] || body.classification) : 'Back to review');
+        lgRefresh();
+      });
+    }
+
+    // A parts purchase names the invoice that BILLS IT BACK, which is the opposite of
+    // linking a payment: nothing about that invoice changes. It is not paid by this,
+    // it is what will repay this, so an invoice at any status is a valid target.
+    function lgLinkParts(e) {
+      api('/admin/invoices?view=all').then(function (r) {
+        var list = ((r && r.invoices) || []).filter(function (v) { return v.status !== 'void'; }).slice(0, 25);
+        if (!list.length) {
+          if (!confirm('There are no invoices to bill this back on yet. File it as parts for a job anyway and link it later?')) return;
+          return lgClassify(e, { classification: 'job_parts' });
+        }
+        var lines = list.map(function (v, i) {
+          return (i + 1) + '. ' + v.number + ' · ' + money(v.amount_cents) + ' · ' +
+            (v.customer_name || v.email) + ' · ' + v.status;
+        });
+        var pick = prompt('Which invoice bills ' + money(Math.abs(e.amount_cents)) + ' from ' + (e.vendor || e.description) +
+          ' back to the customer?\n\nLeave blank to file it as parts with no invoice named yet.\n\n' +
+          lines.join('\n') + '\n\nType the number:');
+        if (pick === null) return;
+        var body = { classification: 'job_parts' };
+        var n = Number(pick);
+        if (String(pick).trim() !== '') {
+          if (!(n >= 1 && n <= list.length)) return;
+          body.invoice_id = list[n - 1].id;
+        }
+        lgClassify(e, body);
+      });
+    }
+
+    function lgRefresh() {
+      var list = finBody.querySelector('.lg-list');
+      if (list) loadLedger(list);
+      finRefreshQuiet();
+    }
+
+    function lgAccountSelect(name) {
+      var s = document.createElement('select');
+      s.setAttribute('aria-label', name);
+      lgAccounts.forEach(function (a) {
+        var o = el('option', null, a.label);
+        o.value = a.id;
+        s.appendChild(o);
+      });
+      s.value = 'chase_business_cash';
+      return s;
+    }
+
+    // A statement is previewed before it is committed. Importing three hundred rows
+    // with the sign inverted is not something to find out afterwards, which is also
+    // why "these are backwards" is a checkbox rather than a guess.
+    function buildLedgerImport(box) {
+      box.appendChild(el('h4', null, 'Import a statement'));
+      box.appendChild(el('p', 'row-sub',
+        'Download your activity from the bank as CSV and drop it here. Rows already on file are counted and skipped, so overlapping downloads are fine.'));
+
+      var row = el('div', 'lg-form');
+      var acct = lgAccountSelect('Account');
+      var file = document.createElement('input');
+      file.type = 'file';
+      file.accept = '.csv,text/csv,text/plain';
+      file.setAttribute('aria-label', 'Statement CSV');
+      var flipLab = el('label', 'lg-check');
+      var flip = document.createElement('input');
+      flip.type = 'checkbox';
+      flipLab.appendChild(flip);
+      flipLab.appendChild(document.createTextNode('purchases are listed as positive in this file'));
+      row.appendChild(acct);
+      row.appendChild(file);
+      row.appendChild(flipLab);
+      box.appendChild(row);
+
+      var prev = el('div', 'lg-prev');
+      box.appendChild(prev);
+      var actions = el('div', 'inv-actions');
+      box.appendChild(actions);
+      var text = null;
+
+      function preview() {
+        prev.textContent = '';
+        actions.textContent = '';
+        if (!text) return;
+        prev.appendChild(el('div', 'row-sub', 'Reading…'));
+        api('/admin/ledger/preview', { method: 'POST', body: { csv: text, flip: flip.checked } }).then(function (r) {
+          prev.textContent = '';
+          if (!r || !r.ok) return prev.appendChild(el('div', 'li-note warn', (r && r.message) || 'That file could not be read.'));
+          var head = r.count + (r.count === 1 ? ' transaction' : ' transactions') + ', ' + money(r.total_cents) + ' net';
+          prev.appendChild(el('div', 'row-sub', head + (r.skipped.length ? ' · ' + r.skipped.length + ' rows skipped' : '')));
+          var tbl = el('table', 'lg-ptable');
+          var tb = el('tbody');
+          r.rows.slice(0, 8).forEach(function (x) {
+            var tr = el('tr');
+            tr.appendChild(el('td', null, x.day));
+            tr.appendChild(el('td', null, x.description));
+            tr.appendChild(el('td', 'n', money(x.amount_cents)));
+            tb.appendChild(tr);
+          });
+          tbl.appendChild(tb);
+          prev.appendChild(tbl);
+          if (r.count > 8) prev.appendChild(el('div', 'row-sub', 'and ' + (r.count - 8) + ' more'));
+          if (r.rows.length && r.rows.filter(function (x) { return x.amount_cents > 0; }).length > r.count / 2) {
+            prev.appendChild(el('div', 'li-note warn',
+              'Most rows in this file are positive. If those are purchases, tick the box above before importing.'));
+          }
+          var go = el('button', 'prim', 'Import ' + r.count + (r.count === 1 ? ' transaction' : ' transactions'));
+          go.type = 'button';
+          go.addEventListener('click', function () {
+            go.disabled = true;
+            go.textContent = 'Importing…';
+            api('/admin/ledger/import', {
+              method: 'POST',
+              body: { account: acct.value, filename: file.files[0] ? file.files[0].name : null, csv: text, flip: flip.checked },
+            }).then(function (res) {
+              go.disabled = false;
+              if (!res || !res.ok) { go.textContent = 'Import'; return alert((res && res.message) || 'Import failed.'); }
+              toast(res.added + ' added' + (res.duplicate ? ' · ' + res.duplicate + ' already on file' : '') +
+                (res.skipped && res.skipped.length ? ' · ' + res.skipped.length + ' skipped' : ''));
+              box.hidden = true;
+              file.value = '';
+              text = null;
+              prev.textContent = '';
+              actions.textContent = '';
+              lgView = 'review';
+              lgRefresh();
+            });
+          });
+          actions.appendChild(go);
+        });
+      }
+
+      file.addEventListener('change', function () {
+        var f = file.files && file.files[0];
+        if (!f) { text = null; prev.textContent = ''; actions.textContent = ''; return; }
+        var rd = new FileReader();
+        rd.onload = function () { text = String(rd.result || ''); preview(); };
+        rd.onerror = function () { prev.textContent = ''; prev.appendChild(el('div', 'li-note warn', 'That file could not be read.')); };
+        rd.readAsText(f);
+      });
+      flip.addEventListener('change', preview);
+    }
+
+    function buildLedgerAdd(box) {
+      box.appendChild(el('h4', null, 'Add a purchase'));
+      box.appendChild(el('p', 'row-sub',
+        'For something bought on the card right now, before the statement catches up. If it later arrives in an import it collapses into this one rather than doubling.'));
+      var f = el('div', 'lg-form');
+      var acct = lgAccountSelect('Account');
+      var day = document.createElement('input');
+      day.type = 'date';
+      day.setAttribute('aria-label', 'Date');
+      // toISOString is UTC, and after 8pm in Cleveland that is already tomorrow. A
+      // purchase dated a day late lands in the wrong month at a month end, which is
+      // the one place these figures are read.
+      day.value = (function () {
+        var n = new Date();
+        return n.getFullYear() + '-' + String(n.getMonth() + 1).padStart(2, '0') + '-' + String(n.getDate()).padStart(2, '0');
+      })();
+      var desc = document.createElement('input');
+      desc.type = 'text';
+      desc.placeholder = 'What it was';
+      desc.setAttribute('aria-label', 'Description');
+      var vendor = document.createElement('input');
+      vendor.type = 'text';
+      vendor.placeholder = 'Where from';
+      vendor.setAttribute('aria-label', 'Vendor');
+      var amt = document.createElement('input');
+      amt.type = 'text';
+      amt.className = 'num';
+      amt.placeholder = '0.00';
+      amt.setAttribute('aria-label', 'Amount');
+      var cls = document.createElement('select');
+      cls.setAttribute('aria-label', 'What it is');
+      [['', 'File it later'], ['expense', 'Business expense'], ['job_parts', 'Parts for a job'],
+       ['transfer', 'Transfer'], ['personal', 'Personal']].forEach(function (c) {
+        var o = el('option', null, c[1]);
+        o.value = c[0];
+        cls.appendChild(o);
+      });
+      cls.value = 'job_parts';
+      [acct, day, desc, vendor, amt, cls].forEach(function (n) { f.appendChild(n); });
+      box.appendChild(f);
+      box.appendChild(el('div', 'row-sub', 'The amount is what you spent; it is recorded as money going out.'));
+
+      var actions = el('div', 'inv-actions');
+      var save = el('button', 'prim', 'Add it');
+      save.type = 'button';
+      save.addEventListener('click', function () {
+        var cents = Math.round(parseFloat(String(amt.value).replace(/[^0-9.]/g, '')) * 100);
+        if (!isFinite(cents) || cents <= 0) return alert('Enter what it cost.');
+        if (!desc.value.trim()) return alert('Say what it was.');
+        save.disabled = true;
+        api('/admin/ledger', {
+          method: 'POST',
+          body: {
+            account: acct.value, day: day.value, description: desc.value.trim(),
+            vendor: vendor.value.trim(), amount_cents: -cents, classification: cls.value || null,
+          },
+        }).then(function (r) {
+          save.disabled = false;
+          if (!r || !r.ok) return alert((r && r.message) || 'Could not add it (' + ((r && r.error) || 'unknown') + ').');
+          toast('Added');
+          desc.value = ''; vendor.value = ''; amt.value = '';
+          lgView = cls.value === 'job_parts' ? 'job_parts' : 'all';
+          lgRefresh();
+        });
+      });
+      actions.appendChild(save);
+      box.appendChild(actions);
     }
 
     // The PayPal panel: business totals, sync, and the three lists. Nothing here counts
