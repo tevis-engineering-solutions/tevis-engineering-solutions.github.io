@@ -711,6 +711,7 @@
     .stmt-head{margin:14px 0 4px;font-size:.72rem;letter-spacing:.06em;text-transform:uppercase;color:var(--green);border-bottom:1px solid var(--line);padding-bottom:4px}
     .stmt-row{padding:6px 0;border-bottom:1px solid var(--line);font-size:.85rem;line-height:1.5}
     .stmt-row:last-child{border-bottom:0}
+    .del-note { font-size:0.82rem; line-height:1.5; color:var(--muted); margin:0.15rem 0 0.35rem; }
     .ag-stranded { border:1px solid var(--gold); border-left:3px solid var(--gold); border-radius:8px; padding:0.7rem 0.85rem; margin:0.2rem 0 0.6rem; font-size:0.86rem; line-height:1.5; background:rgba(200,152,48,0.07); }
     .ag-stranded b { display:block; margin-bottom:0.25rem; color:var(--gold); }
     .agreeform { border:1px solid var(--gold); border-radius:12px; background:rgba(200,152,48,0.06); padding:0.9rem 1rem; margin:0.6rem 0; }
@@ -6420,15 +6421,27 @@
         z.appendChild(ackWrap);
       }
 
-      var relWrap = el('label');
+      // A free trial is claimed against the NORMALIZED address, so a claim shown on this
+      // customer can belong to another account that is still live -- dana+billing@ and
+      // dana@ are one human and one trial. Releasing it here would give that surviving
+      // account a second one, so the server refuses and the tick is not offered.
+      var sharedOnly = pv.trial_claims > 0 && pv.trial_claims_shared >= pv.trial_claims;
       var rel = document.createElement('input');
       rel.type = 'checkbox';
-      relWrap.appendChild(rel);
-      relWrap.appendChild(document.createTextNode(
-        pv.trial_claims
-          ? ' Also release their free-trial claim, so this address can start another trial.'
-          : ' Also release any free-trial claim for this address.'));
-      z.appendChild(relWrap);
+      if (sharedOnly) {
+        var shareNote = el('div', 'del-note',
+          'Their free-trial claim is held by another account that still exists, so it stays '
+          + 'where it is. Delete that account to release it.');
+        z.appendChild(shareNote);
+      } else {
+        var relWrap = el('label');
+        relWrap.appendChild(rel);
+        relWrap.appendChild(document.createTextNode(
+          pv.trial_claims
+            ? ' Also release their free-trial claim, so this address can start another trial.'
+            : ' Also release any free-trial claim for this address.'));
+        z.appendChild(relWrap);
+      }
 
       var typed = document.createElement('input');
       typed.type = 'text';
