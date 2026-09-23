@@ -7138,12 +7138,13 @@
       // ---- headline tiles ----
       var tiles = el('div', 'tiles fin-tiles');
       finTile(tiles, 'Invoiced', money(st.revenue.issued_cents), st.revenue.count + (st.revenue.count === 1 ? ' invoice' : ' invoices'), st.deltas.issued_cents);
-      finTile(tiles, 'Collected', money(st.revenue.collected_cents), st.revenue.paid_count + ' paid', st.deltas.collected_cents);
+      finTile(tiles, 'Collected', money(st.revenue.collected_cents), st.revenue.pass_through_cents ? st.revenue.paid_count + ' paid · ' + money(st.revenue.pass_through_cents) + ' of it passed through' : st.revenue.paid_count + ' paid', st.deltas.collected_cents);
       finTile(tiles, 'Outstanding', money(st.revenue.outstanding_cents), 'issued this period, still owed', st.deltas.outstanding_cents, true);
       finTile(tiles, 'Expenses', money(st.expenses.total_cents), st.expenses.count + (st.expenses.count === 1 ? ' item' : ' items'), st.deltas.expenses_cents, true);
-      var netT = finTile(tiles, 'Net (cash basis)', money(st.net_cents), 'collected − expenses − fees');
+      finTile(tiles, 'Parts for customers', money(st.parts_float.spent_cents), st.parts_float.outstanding_cents ? money(st.parts_float.outstanding_cents) + ' not back yet' : 'all recovered', null, true);
+      var netT = finTile(tiles, 'Net (cash basis)', money(st.net_cents), 'collected − expenses − parts − fees');
       if (st.net_cents < 0) netT.querySelector('b').classList.add('neg');
-      finTile(tiles, 'Billable hours', hoursOf(st.hours.billable_minutes), st.hours.effective_rate_cents != null ? money(st.hours.effective_rate_cents) + ' per billed hour' : 'nothing billed yet', st.deltas.billable_minutes);
+      finTile(tiles, 'Billable hours', hoursOf(st.hours.billable_minutes), st.hours.effective_rate_cents != null ? money(st.hours.effective_rate_cents) + ' per billed hour' : st.hours.invoiced_labor_minutes ? 'from invoice line items, not the work log' : 'nothing billed yet', st.deltas.billable_minutes);
       finTile(tiles, 'PayPal fees', money(st.paypal.fee_cents), st.paypal.count + (st.paypal.count === 1 ? ' payment' : ' payments'), st.deltas.fee_cents, true);
       finTile(tiles, 'Days to pay', st.days_to_pay.average != null ? String(st.days_to_pay.average) : '—', st.days_to_pay.count ? 'average · median ' + st.days_to_pay.median + ' · ' + st.days_to_pay.count + ' paid' : 'nothing paid this period');
       finBody.appendChild(tiles);
