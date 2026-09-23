@@ -8761,6 +8761,12 @@
         if (tx.transfer) right.appendChild(licAction('Transfer', null, function () { ppClassify(tx, { classification: 'transfer' }); }));
         right.appendChild(licAction('Always\u2026', null, function () { ppAlways(tx); }));
       } else if (mode === 'hidden') {
+        // A deposit from your own bank arrives as a T03xx and is auto-filed as a
+        // transfer. That is right for the P&L either way, but it says nothing about
+        // whose money it was, so give it one click rather than Undo and back again.
+        if (tx.direction === 'in' && tx.classification !== 'owner_funding') {
+          right.appendChild(licAction('Owner funding', null, function () { ppClassify(tx, { classification: 'owner_funding' }); }));
+        }
         right.appendChild(licAction('Always\u2026', null, function () { ppAlways(tx); }));
         right.appendChild(licAction('Undo', null, function () { ppClassify(tx, { classification: null }); }));
       } else if (mode === 'business') {
