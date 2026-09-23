@@ -96,6 +96,9 @@
       .q-items td { font-size: 13px; }
     }
 
+    .q-excl { margin:0; padding-left:1.15rem; font-size:0.92rem; line-height:1.65; color:#333; }
+    .q-excl li { margin-bottom:0.3rem; }
+    .q-totals .row.int { color:#555; }
     .q-terms { font-size: 13px; color: #4a5f53; white-space: pre-wrap; }
 
     .q-accept { background: var(--brand-dark); color: #d8e6da; border-radius: 14px; padding: 22px 24px; }
@@ -200,17 +203,27 @@
         <div class="q-totals" id="qTotals"></div>
       </section>
 
+      <section class="q-sec" id="qExclSec" hidden>
+        <h2 id="qExclH">What this does not include</h2>
+        <ul class="q-excl" id="qExcl"></ul>
+      </section>
+
+      <section class="q-sec" id="qNextSec" hidden>
+        <h2>Next step</h2>
+        <div class="q-intro" id="qNext"></div>
+      </section>
+
       <section class="q-sec" id="qTermsSec" hidden>
         <h2>Terms</h2>
         <div class="q-terms" id="qTerms"></div>
       </section>
 
       <section class="q-accept noprint" id="qAccept" hidden>
-        <h2>Accept this quote</h2>
-        <p>Type your name as your signature and tick the box. Nothing is charged now; the work is invoiced on the terms above.</p>
+        <h2 id="qAcceptH">Accept this quote</h2>
+        <p id="qAcceptLede">This is a preliminary, non-binding estimate. It is not a Statement of Work and it does not authorize work to begin. Accepting records that you want to proceed; we then send a Statement of Work for signature, and work starts once that is signed and the deposit is received.</p>
         <label for="qSig">Your full name</label>
         <input type="text" id="qSig" autocomplete="name" maxlength="120" placeholder="Jane Roe">
-        <label class="q-agree"><input type="checkbox" id="qAgree"> <span>I have read this quote and I agree to the work and the terms as described<span id="qAgreeTotal"></span>.</span></label>
+        <label class="q-agree"><input type="checkbox" id="qAgree"> <span>I have read this <span id="qAgreeWord">quote</span> and I want to proceed with the work and the terms as described<span id="qAgreeTotal"></span>.</span></label>
         <div class="q-acts">
           <button type="button" class="tbtn alt" id="qAcceptBtn">Accept quote</button>
           <button type="button" class="q-decline" id="qDeclineToggle">I would like to decline</button>
@@ -224,7 +237,7 @@
           </div>
         </div>
         <div class="q-err" id="qErr" hidden></div>
-        <p class="q-fine">Accepting online records your name, the time, and the network address it came from, the same as a signed acceptance. Questions first? Reply to the email or call (216)&nbsp;302&#8209;8486.</p>
+        <p class="q-fine">Accepting online records your name, the time, and the network address it came from. Questions first? Reply to the email or call (216)&nbsp;302&#8209;8486.</p>
       </section>
 
       <section class="q-done" id="qDone" hidden></section>
@@ -250,24 +263,70 @@
     }
 
     // What the customer would owe with the optional lines currently ticked.
+    var INTERVAL_SUFFIX = { once: '', month: ' / month', quarter: ' / quarter', year: ' / year' };
+    var INTERVAL_ORDER = ['once', 'month', 'quarter', 'year'];
+
+    /** The one-time amount, which is what the deposit and the invoice are taken against. */
     function chosenTotal() {
       var base = 0;
-      quote.items.forEach(function (i) { if (!i.optional || i.accepted) base += i.line_cents; });
+      quote.items.forEach(function (i) {
+        if ((i.interval || 'once') !== 'once') return;
+        if (!i.optional || i.accepted) base += i.line_cents;
+      });
       return base + Math.round(base * (quote.tax_rate_bp || 0) / 10000);
+    }
+
+    /**
+     * Buckets what the customer has actually ticked, by interval. Mirrors byInterval()
+     * in the Worker, except it counts the optional lines that are ticked right now --
+     * this figure has to follow the checkboxes as they are clicked.
+     */
+    function chosenByInterval() {
+      var by = {};
+      quote.items.forEach(function (i) {
+        if (i.optional && !i.accepted) return;
+        var k = i.interval || 'once';
+        var b = by[k] || (by[k] = { low: 0, high: 0 });
+        b.low += i.line_cents;
+        b.high += i.high_line_cents == null ? i.line_cents : i.high_line_cents;
+      });
+      return by;
+    }
+
+    function sayAmount(b) {
+      return b.high && b.high !== b.low ? money(b.low) + ' to ' + money(b.high) : money(b.low);
     }
 
     function renderTotals() {
       var t = $('qTotals'); t.textContent = '';
       var decided = quote.status === 'accepted' || quote.status === 'converted';
       var row = function (l, v, cls) { var r = el('div', 'row' + (cls ? ' ' + cls : '')); r.appendChild(el('span', null, l)); r.appendChild(el('span', cls === 'big' ? 'q-total-n' : null, v)); t.appendChild(r); };
+      var by = chosenByInterval();
       if (decided) {
         row('Accepted total' + (quote.tax_cents ? ' (incl. tax)' : ''), money(quote.accepted_cents), 'big');
+        INTERVAL_ORDER.forEach(function (k) {
+          if (k === 'once' || !by[k] || !by[k].low) return;
+          row('Then ' + sayAmount(by[k]) + INTERVAL_SUFFIX[k], '', 'int');
+        });
       } else {
-        var taken = 0; quote.items.forEach(function (i) { if (i.optional && i.accepted) taken += i.line_cents; });
-        row('Subtotal', money(quote.subtotal_cents));
+        var taken = 0;
+        quote.items.forEach(function (i) { if (i.optional && i.accepted && (i.interval || 'once') === 'once') taken += i.line_cents; });
+        if (by.once) row('One-time', sayAmount(by.once));
         if (taken) row('Optional items selected', money(taken), 'opt');
-        if (quote.tax_rate_bp) row('Tax (' + (quote.tax_rate_bp / 100).toFixed(2).replace(/\.?0+$/, '') + '%)', money(Math.round((quote.subtotal_cents + taken) * quote.tax_rate_bp / 10000)));
-        row('Total', money(chosenTotal()), 'big');
+        if (quote.tax_rate_bp) row('Tax (' + (quote.tax_rate_bp / 100).toFixed(2).replace(/\.?0+$/, '') + '%)', money(Math.round(((by.once ? by.once.low : 0)) * quote.tax_rate_bp / 10000)));
+        // A recurring line is its own line on the total, never folded into the
+        // one-time figure: "$3,650 one-time + $100 / month" is two commitments.
+        INTERVAL_ORDER.forEach(function (k) {
+          if (k === 'once' || !by[k] || !by[k].low) return;
+          row('Ongoing', sayAmount(by[k]) + INTERVAL_SUFFIX[k], 'int');
+        });
+        var head = [];
+        if (by.once && by.once.low) head.push(sayAmount(by.once) + ' one-time');
+        INTERVAL_ORDER.forEach(function (k) {
+          if (k === 'once' || !by[k] || !by[k].low) return;
+          head.push(sayAmount(by[k]) + INTERVAL_SUFFIX[k]);
+        });
+        row('Total', head.join('  +  ') || money(0), 'big');
       }
       $('qAgreeTotal').textContent = decided ? '' : ' for ' + money(chosenTotal());
     }
@@ -290,22 +349,47 @@
         }
         tr.appendChild(d);
         tr.appendChild(el('td', 'qty num', i.qty !== 1 || i.unit ? String(i.qty) + (i.unit ? ' ' + i.unit : '') + ' x ' + money(i.unit_cents) : ''));
-        tr.appendChild(el('td', 'num', money(i.line_cents)));
+        var amount = i.high_line_cents != null && i.high_line_cents !== i.line_cents
+          ? money(i.line_cents) + ' to ' + money(i.high_line_cents)
+          : money(i.line_cents);
+        tr.appendChild(el('td', 'num', amount + INTERVAL_SUFFIX[i.interval || 'once']));
         tb.appendChild(tr);
       });
     }
 
     function render() {
       $('qLoading').hidden = true; $('qBody').hidden = false;
-      document.title = 'Quote ' + quote.number + ' | Tevis Engineering Solutions';
+      // An estimate is the earlier document: a range, for a job not yet fully scoped.
+      // It says so everywhere the word "quote" would otherwise appear.
+      var isEst = quote.doc_type === 'estimate';
+      var word = isEst ? 'Estimate' : 'Quote';
+      document.title = word + ' ' + quote.number + ' | Tevis Engineering Solutions';
       $('qTitle').textContent = quote.title;
-      $('qNumber').textContent = 'Quote ' + quote.number + (quote.sent_at ? ' · ' + longDate(quote.sent_at) : '');
+      $('qNumber').textContent = word + ' ' + quote.number + (quote.sent_at ? ' · ' + longDate(quote.sent_at) : '');
+      $('qAcceptH').textContent = 'Accept this ' + word.toLowerCase();
+      $('qAgreeWord').textContent = word.toLowerCase();
+      if (isEst) {
+        $('qAcceptLede').textContent = 'This is a preliminary, non-binding estimate. Prices are a range and will be '
+          + 'confirmed in a Statement of Work once the scope is fully defined. It does not authorize work to begin. '
+          + 'Accepting records that you want to proceed.';
+        $('qExclH').textContent = 'What this estimate does not include';
+      }
       var who = $('qWho'); who.textContent = '';
       who.appendChild(el('span', null, 'Prepared for '));
       who.appendChild(el('b', null, quote.contact_name || quote.email));
       if (quote.company) { who.appendChild(document.createTextNode(', ')); who.appendChild(el('b', null, quote.company)); }
       if (quote.intro) { $('qIntroSec').hidden = false; $('qIntro').textContent = quote.intro; }
       if (quote.terms) { $('qTermsSec').hidden = false; $('qTerms').textContent = quote.terms; }
+      // One exclusion per line, because that is how they are typed and how they read.
+      var excl = String(quote.exclusions || '').split('\n')
+        .map(function (l) { return l.replace(/^[\s\u2022\-\u00b7]+/, '').trim(); })
+        .filter(Boolean);
+      if (excl.length) {
+        $('qExclSec').hidden = false;
+        var ul = $('qExcl'); ul.textContent = '';
+        excl.forEach(function (e) { ul.appendChild(el('li', null, e)); });
+      }
+      if (quote.next_step) { $('qNextSec').hidden = false; $('qNext').textContent = quote.next_step; }
 
       var open = (quote.status === 'sent' || quote.status === 'viewed') && !quote.expired;
       var pill = $('qPill'), valid = $('qValid'), done = $('qDone');
@@ -315,7 +399,7 @@
         valid.textContent = 'Accepted ' + longDate(quote.decided_at) + (quote.signature_name ? ' by ' + quote.signature_name : '');
         done.hidden = false; done.className = 'q-done';
         done.appendChild(el('h2', null, 'Thank you. This quote is accepted.'));
-        done.appendChild(el('p', null, 'You accepted it on ' + longDate(quote.decided_at) + (quote.signature_name ? ', signed as ' + quote.signature_name : '') + '. We will be in touch to schedule the work' + (quote.invoice_number ? '. Invoice ' + quote.invoice_number + ' has been raised for it' : '; an invoice follows on the terms above') + '.'));
+        done.appendChild(el('p', null, 'You accepted it on ' + longDate(quote.decided_at) + (quote.signature_name ? ', signed as ' + quote.signature_name : '') + '. We will send a Statement of Work setting out the deliverables and the timeline' + (quote.invoice_number ? '. Invoice ' + quote.invoice_number + ' has been raised' : '; work starts once it is signed and the deposit is received') + '.'));
         done.appendChild(el('p', null, 'Keep this page or print it for your records.'));
         $('qToolMsg').textContent = 'This quote has been accepted.';
       } else if (quote.status === 'declined') {

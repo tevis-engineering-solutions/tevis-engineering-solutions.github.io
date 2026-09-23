@@ -149,12 +149,12 @@
     .inv-note .reply-row { margin-top:0.45rem; }
     .newinv { border:1px solid var(--line); border-radius:14px; background:var(--card); padding:1rem; margin-bottom:1rem; }
     .newinv h2 { font-family:"Montserrat",sans-serif; font-size:1rem; margin-bottom:0.8rem; }
-    .fgrid { display:grid; grid-template-columns:1fr 1fr; gap:0.6rem; }
+    .fgrid { display:grid; grid-template-columns:1fr 1fr; column-gap:0.9rem; row-gap:0.9rem; }
     @media (max-width:640px) { .fgrid { grid-template-columns:1fr; } }
-    .fgrid label, .fwide label { display:block; font-size:0.68rem; text-transform:uppercase; letter-spacing:0.05em; color:var(--muted); font-weight:700; margin-bottom:0.2rem; }
+    .fgrid label, .fwide label { display:block; font-size:0.68rem; text-transform:uppercase; letter-spacing:0.05em; color:var(--muted); font-weight:700; margin-bottom:0.3rem; }
     .fgrid input, .fwide input { width:100%; padding:0.55rem 0.7rem; border-radius:8px; border:1px solid var(--line); background:var(--bg); color:var(--text); font-family:inherit; font-size:0.88rem; }
     .fgrid input:focus, .fwide input:focus { outline:none; border-color:var(--green); }
-    .fwide { margin-top:0.6rem; }
+    .fwide { margin-top:0.9rem; }
     .paylink { margin-top:0.7rem; padding:0.6rem 0.75rem; border-radius:8px; background:rgba(74,172,101,0.1); border:1px solid rgba(74,172,101,0.35); font-size:0.78rem; word-break:break-all; color:#cdeed6; }
     .fgrid select, .fwide select { width:100%; padding:0.55rem 0.7rem; border-radius:8px; border:1px solid var(--line); background:var(--bg); color:var(--text); font-family:inherit; font-size:0.88rem; }
     .fgrid select:focus, .fwide select:focus { outline:none; border-color:var(--green); }
@@ -626,12 +626,42 @@
     .quotes .qhead h2 { margin-bottom:0; }
     .quotes .qhead button.prim { font-family:"Montserrat",sans-serif; font-size:0.7rem; font-weight:700; text-transform:uppercase; letter-spacing:0.03em; padding:0.5rem 0.9rem; border-radius:999px; border:1px solid transparent; background:linear-gradient(135deg,var(--gold),#e0b840); color:#0d1710; cursor:pointer; min-height:36px; }
     .quotes .filters { margin-top:0.8rem; }
-    .fwide textarea { width:100%; padding:0.55rem 0.7rem; border-radius:8px; border:1px solid var(--line); background:var(--bg); color:var(--text); font-family:inherit; font-size:0.88rem; resize:vertical; }
-    .fwide textarea:focus { outline:none; border-color:var(--green); }
+    /* Which document this is. The number encodes it, so it is chosen once. */
+    .qdoc { display:flex; align-items:center; gap:0.5rem; flex-wrap:wrap; margin-bottom:0.2rem; }
+    .qdoc-l { font-family:"Montserrat",sans-serif; font-size:0.68rem; text-transform:uppercase; letter-spacing:0.05em; color:var(--muted); font-weight:700; }
+    .qdoc-h { font-size:0.74rem; color:var(--muted); flex:1 1 14rem; min-width:0; }
+
+    /* Drafting from the handbook. Gold, because it writes the document. */
+    .qai { margin:0.9rem 0; padding:0.75rem 0.8rem; border:1px solid rgba(200,152,48,0.4); background:rgba(200,152,48,0.05); border-radius:10px; }
+    .qai-h { display:flex; justify-content:space-between; align-items:baseline; gap:0.6rem; flex-wrap:wrap; font-family:"Montserrat",sans-serif; font-size:0.68rem; text-transform:uppercase; letter-spacing:0.05em; color:var(--gold); font-weight:700; margin-bottom:0.45rem; }
+    .qai-s { text-transform:none; letter-spacing:0; font-weight:400; font-size:0.72rem; color:var(--muted); }
+    .qai-s.warn { color:var(--gold); }
+    .qai textarea { width:100%; padding:0.55rem 0.7rem; border-radius:8px; border:1px solid var(--line); background:var(--bg); color:var(--text); font-family:inherit; font-size:0.88rem; line-height:1.5; resize:vertical; }
+    .qai textarea:focus { outline:none; border-color:var(--green); }
+    .qai input[type="file"] { width:100%; margin:0.5rem 0; font-size:0.8rem; color:var(--text); }
+    .qai-wait { font-size:0.8rem; color:var(--muted); padding:0.6rem 0; }
+    .qai-err { font-size:0.8rem; color:#e08585; padding:0.5rem 0; }
+    .qai-out { margin-top:0.7rem; padding:0.75rem 0.8rem; border:1px solid var(--line); border-radius:10px; background:var(--bg); }
+    .qai-out h4 { font-family:"Montserrat",sans-serif; font-size:0.92rem; margin:0 0 0.4rem; }
+    .qai-sum { font-size:0.84rem; line-height:1.55; margin:0 0 0.6rem; color:var(--text); }
+    .qai-lbl { font-family:"Montserrat",sans-serif; font-size:0.64rem; text-transform:uppercase; letter-spacing:0.06em; color:var(--muted); font-weight:700; margin:0.7rem 0 0.25rem; }
+    .qai-tbl { width:100%; border-collapse:collapse; font-size:0.82rem; }
+    .qai-tbl td { padding:0.4rem 0.3rem; border-bottom:1px solid rgba(44,66,50,0.6); vertical-align:top; }
+    .qai-tbl td.n { text-align:right; white-space:nowrap; font-variant-numeric:tabular-nums; font-family:"Montserrat",sans-serif; font-weight:700; }
+    .qai-tbl .sub { font-size:0.72rem; color:var(--muted); margin-top:0.15rem; }
+    .qai-ul { margin:0; padding-left:1.1rem; font-size:0.82rem; line-height:1.5; }
+    /* The model's notes to Tyler. Never leaves the console. */
+    .qai-note { margin-top:0.7rem; padding:0.5rem 0.6rem; border-left:3px solid var(--gold); background:rgba(200,152,48,0.06); font-size:0.78rem; color:var(--muted); }
+    .qline-high[hidden] { display:none; }
+
     .qlines { margin:0.8rem 0; padding:0.7rem 0.75rem; border:1px solid var(--line); border-radius:10px; background:var(--bg); }
     .qlines-h { display:flex; justify-content:space-between; gap:0.6rem; flex-wrap:wrap; font-size:0.68rem; text-transform:uppercase; letter-spacing:0.05em; color:var(--muted); font-weight:700; margin-bottom:0.5rem; }
     .qlines-hint { text-transform:none; letter-spacing:0; font-weight:400; }
-    .qline { display:grid; grid-template-columns:minmax(0,3fr) 4.6rem 4rem 6rem 6.5rem auto auto; gap:0.4rem; align-items:center; margin-bottom:0.4rem; }
+    /* Nine children on a quote (description, kind, qty, unit, price, interval,
+       amount, optional, remove) and ten on an estimate, where the high price
+       shows. One track short and the remove button wraps to a row of its own. */
+    .qline { display:grid; grid-template-columns:minmax(0,3fr) 6.6rem 4rem 4.4rem 5.6rem 6.4rem auto auto auto; gap:0.45rem; align-items:center; margin-bottom:0.55rem; }
+    #qtLines.ranged .qline { grid-template-columns:minmax(0,2.4fr) 6.4rem 3.6rem 4rem 5rem 5rem 6.2rem auto auto auto; }
     .qline input, .qline select { width:100%; padding:0.45rem 0.55rem; border-radius:7px; border:1px solid var(--line); background:var(--card); color:var(--text); font-family:inherit; font-size:0.84rem; min-height:38px; }
     .qline input:focus, .qline select:focus { outline:none; border-color:var(--green); }
     .qline .qline-amt { font-family:"Montserrat",sans-serif; font-weight:800; font-size:0.8rem; text-align:right; white-space:nowrap; color:var(--text); min-width:5.5rem; }
@@ -953,6 +983,12 @@
       </div>
       <form id="quoteForm" hidden>
         <input type="hidden" id="quoteId" value="">
+        <div class="qdoc">
+          <span class="qdoc-l">Document</span>
+          <button type="button" class="fpill on" id="qtTypeQuote">Quote</button>
+          <button type="button" class="fpill" id="qtTypeEstimate">Estimate</button>
+          <span class="qdoc-h" id="qtTypeHint">Firm prices. Non-binding until a Statement of Work is signed.</span>
+        </div>
         <div class="fwide custpick">
           <label for="qtCustQ">Customer</label>
           <input type="search" id="qtCustQ" placeholder="Search by name, company or email" autocomplete="off">
@@ -977,10 +1013,6 @@
             <input id="qtTitle" type="text" required placeholder="Office network refresh">
           </div>
           <div>
-            <label for="qtTax">Tax rate (%)</label>
-            <input id="qtTax" type="number" step="0.01" min="0" max="100" value="0">
-          </div>
-          <div>
             <label for="qtValid">Valid for (days)</label>
             <input id="qtValid" type="number" min="1" max="365" value="30">
           </div>
@@ -990,6 +1022,19 @@
           <textarea id="qtIntro" rows="2" placeholder="What the job is and what it solves, in a sentence or two."></textarea>
         </div>
 
+        <div class="qai" id="qtAi">
+          <div class="qai-h">
+            <span>Draft it from the handbook</span>
+            <span class="qai-s" id="qtRefState">Checking reference material&hellip;</span>
+          </div>
+          <label for="qtBrief" class="sr-only">Describe the job</label>
+          <textarea id="qtBrief" rows="3" placeholder="What the client asked for, what you found, anything that changes the price. Plain notes are fine."></textarea>
+          <div class="inv-actions">
+            <button type="button" class="prim" id="qtDraft">Draft</button>
+            <button type="button" id="qtRefEdit">Reference material</button>
+          </div>
+          <div id="qtDraftOut"></div>
+        </div>
         <div class="qlines">
           <div class="qlines-h"><span>Line items</span><span class="qlines-hint">Tick Optional for add-ons the customer can choose. Tax applies to the required lines.</span></div>
           <div id="qtLines"></div>
@@ -997,6 +1042,14 @@
           <div class="qtotals" id="qtTotals"></div>
         </div>
 
+        <div class="fwide">
+          <label for="qtExclusions">What this does not include (one per line)</label>
+          <textarea id="qtExclusions" rows="3" placeholder="Any commitment to begin work &mdash; no work starts without a signed Statement of Work and deposit"></textarea>
+        </div>
+        <div class="fwide">
+          <label for="qtNextStep">Next step</label>
+          <textarea id="qtNextStep" rows="2" placeholder="Left blank, this is written from the total: 50/50 up to $5,000, 40/30/30 above."></textarea>
+        </div>
         <div class="fwide">
           <label for="qtTerms">Terms (printed on the quote)</label>
           <textarea id="qtTerms" rows="3"></textarea>
@@ -4016,8 +4069,14 @@
     var qtTimer = null;
     var quoteView = 'open';
     var QUOTE_COLOR = { draft: '#8aa48d', sent: '#4fa2ff', viewed: '#4aac65', accepted: '#22c55e', converted: '#22c55e', declined: '#6a8ba8', expired: '#c89830' };
-    var QUOTE_ERROR = { invalid_email: 'That email is not valid', title_required: 'Give the quote a title', items_required: 'Add at least one line with a description', bad_qty: 'A quantity is not a number', bad_price: 'A price is not a number', not_editable: 'This quote has been decided and cannot be edited', not_sendable: 'This quote cannot be sent in its current state', send_failed: 'Resend refused the email', mail_unconfigured: 'Email is not configured on the Worker', not_accepted: 'The customer has not accepted; tick the verbal box to convert anyway', already_converted: 'Already converted', duplicate_number: 'An invoice with that number already exists', not_draft: 'Only a draft can be deleted', not_open: 'This quote is no longer open' };
-    var DEFAULT_TERMS = 'This quote is valid until the date shown. Prices are for the work described; anything outside it is quoted separately before it starts. Work is invoiced on completion unless the quote says otherwise, and invoices are due on receipt. Accepting this quote online has the same effect as a signed acceptance.';
+    var QUOTE_ERROR = { invalid_email: 'That email is not valid', title_required: 'Give the quote a title', items_required: 'Add at least one line with a description', bad_qty: 'A quantity is not a number', bad_price: 'A price is not a number', bad_interval: 'A line has an interval nobody recognises', bad_range: 'A line has a high price below its low price', not_editable: 'This quote has been decided and cannot be edited', not_sendable: 'This quote cannot be sent in its current state', send_failed: 'Resend refused the email', mail_unconfigured: 'Email is not configured on the Worker', not_accepted: 'The customer has not accepted; tick the verbal box to convert anyway', already_converted: 'Already converted', duplicate_number: 'An invoice with that number already exists', not_draft: 'Only a draft can be deleted', not_open: 'This quote is no longer open' };
+    // Byte-identical to CONFIG.quoteTerms in the Worker (src/config.js). The two must
+    // move together: this is what a new quote is seeded with, that is what the server
+    // falls back to.
+    var DEFAULT_TERMS = 'This is a preliminary, non-binding estimate based on the information available at this time. It is not a Statement of Work and does not authorize TES to begin billable work. Prices cover the scope described; anything outside it is quoted separately before it starts. Accepting this document records your intent to proceed, after which TES issues a Statement of Work for signature. Work begins once that is signed and the deposit is received.';
+    var qtDocType = 'quote';
+    var INTERVAL_OPTS = [['once', 'One-time'], ['month', 'Per month'], ['quarter', 'Per quarter'], ['year', 'Per year']];
+    var INTERVAL_SUFFIX = { once: ' one-time', month: ' / month', quarter: ' / quarter', year: ' / year' };
 
     function qtLine(item) {
       item = item || {};
@@ -4028,39 +4087,77 @@
       kind.value = item.kind || 'service';
       var qty = document.createElement('input'); qty.type = 'number'; qty.step = '0.001'; qty.min = '0'; qty.placeholder = 'Qty'; qty.value = item.qty != null ? item.qty : 1; qty.setAttribute('aria-label', 'Quantity');
       var unit = document.createElement('input'); unit.type = 'text'; unit.placeholder = 'Unit'; unit.value = item.unit || ''; unit.maxLength = 12; unit.setAttribute('aria-label', 'Unit');
-      var price = document.createElement('input'); price.type = 'number'; price.step = '0.01'; price.min = '0'; price.placeholder = 'Unit price'; price.value = item.unit_cents != null ? (item.unit_cents / 100).toFixed(2) : ''; price.setAttribute('aria-label', 'Unit price');
+      var price = document.createElement('input'); price.type = 'number'; price.step = '0.01'; price.min = '0'; price.placeholder = qtDocType === 'estimate' ? 'Low' : 'Unit price'; price.value = item.unit_cents != null ? (item.unit_cents / 100).toFixed(2) : ''; price.setAttribute('aria-label', qtDocType === 'estimate' ? 'Low unit price' : 'Unit price');
+      // Only an estimate carries a high side. On a quote the input is present but
+      // hidden, so switching document type does not rebuild every row.
+      var high = document.createElement('input'); high.type = 'number'; high.step = '0.01'; high.min = '0'; high.placeholder = 'High'; high.className = 'qline-high'; high.value = item.high_unit_cents != null ? (item.high_unit_cents / 100).toFixed(2) : ''; high.setAttribute('aria-label', 'High unit price');
+      high.hidden = qtDocType !== 'estimate';
+      var iv = document.createElement('select'); iv.className = 'qline-iv'; iv.setAttribute('aria-label', 'How often');
+      INTERVAL_OPTS.forEach(function (o) { var n = el('option', null, o[1]); n.value = o[0]; iv.appendChild(n); });
+      iv.value = item.interval || 'once';
       var amt = el('span', 'qline-amt', '');
       var optL = el('label', 'opt'); var opt = document.createElement('input'); opt.type = 'checkbox'; opt.checked = !!item.optional; optL.appendChild(opt); optL.appendChild(document.createTextNode('Optional'));
       var x = el('button', 'qline-x', '×'); x.type = 'button'; x.setAttribute('aria-label', 'Remove line');
       x.addEventListener('click', function () { row.remove(); if (!qtLinesEl.children.length) qtLinesEl.appendChild(qtLine()); qtRecalc(); });
-      [desc, kind, qty, unit, price, amt, optL, x].forEach(function (n) { row.appendChild(n); });
-      [qty, price, opt].forEach(function (n) { n.addEventListener('input', qtRecalc); n.addEventListener('change', qtRecalc); });
+      [desc, kind, qty, unit, price, high, iv, amt, optL, x].forEach(function (n) { row.appendChild(n); });
+      [qty, price, high, opt, iv].forEach(function (n) { n.addEventListener('input', qtRecalc); n.addEventListener('change', qtRecalc); });
       kind.addEventListener('change', function () { if (kind.value === 'hours' && !unit.value) unit.value = 'hr'; if (kind.value === 'hours' && !price.value) price.value = '80.00'; qtRecalc(); });
-      row.read = function () { return { description: desc.value.trim(), kind: kind.value, qty: qty.value === '' ? 1 : Number(qty.value), unit: unit.value.trim(), unit_price: Number(price.value || 0), optional: opt.checked }; };
+      row.read = function () {
+        var o = { description: desc.value.trim(), kind: kind.value, qty: qty.value === '' ? 1 : Number(qty.value),
+          unit: unit.value.trim(), unit_price: Number(price.value || 0), interval: iv.value, optional: opt.checked };
+        // Only sent on an estimate. A high side on a quote would be refused by
+        // priceItems as a range whose ends are equal, or worse, quietly kept.
+        if (qtDocType === 'estimate' && high.value !== '') o.high_unit_price = Number(high.value);
+        return o;
+      };
       row.amtEl = amt;
+      row.highEl = high;
+      row.priceEl = price;
       return row;
     }
 
-    // Mirrors src/quotes.js priceItems: qty * unit rounded once, tax on the required lines.
+    // Mirrors src/quotes.js priceItems: qty * unit, rounded once. Sales tax is a LINE
+    // ITEM here, not a rate, the same way it is on a TES invoice.
     function qtRecalc() {
-      var sub = 0, optTotal = 0;
+      // Buckets by interval, the same shape as byInterval() in src/quotes.js, so the
+      // figure on screen and the figure the server stores cannot disagree.
+      var by = {}, optBy = {};
+      var qty = function (v) { return Math.round(Number(v) * 1000) / 1000; };
       Array.prototype.forEach.call(qtLinesEl.children, function (row) {
         var it = row.read();
-        var cents = Math.round(Math.round(Number(it.qty) * 1000) / 1000 * Math.round(it.unit_price * 100));
-        if (!Number.isFinite(cents)) cents = 0;
-        row.amtEl.textContent = it.description || cents ? money(cents) : '';
+        var low = Math.round(qty(it.qty) * Math.round(it.unit_price * 100));
+        var hi = it.high_unit_price != null && it.high_unit_price > it.unit_price
+          ? Math.round(qty(it.qty) * Math.round(it.high_unit_price * 100)) : low;
+        if (!Number.isFinite(low)) low = 0;
+        if (!Number.isFinite(hi)) hi = low;
+        row.amtEl.textContent = it.description || low
+          ? (hi !== low ? money(low) + '-' + money(hi) : money(low)) + (it.interval === 'once' ? '' : INTERVAL_SUFFIX[it.interval])
+          : '';
         if (!it.description) return;
-        if (it.optional) optTotal += cents; else sub += cents;
+        var into = it.optional ? optBy : by;
+        var b = into[it.interval] || (into[it.interval] = { low: 0, high: 0 });
+        b.low += low; b.high += hi;
       });
-      var bp = Math.round(Number(document.getElementById('qtTax').value || 0) * 100);
-      var tax = Math.round(sub * bp / 10000);
       var t = document.getElementById('qtTotals'); t.textContent = '';
-      t.appendChild(el('span', null, 'Subtotal ' + money(sub)));
-      if (tax) t.appendChild(el('span', null, 'Tax ' + money(tax)));
-      var tot = el('span'); tot.appendChild(document.createTextNode('Total ')); tot.appendChild(el('b', null, money(sub + tax))); t.appendChild(tot);
-      if (optTotal) t.appendChild(el('span', 'optl', '+ ' + money(optTotal) + ' in optional items if taken'));
+      var say = function (b) { return b.high !== b.low ? money(b.low) + ' to ' + money(b.high) : money(b.low); };
+      var parts = [];
+      ['once', 'month', 'quarter', 'year'].forEach(function (k) {
+        if (!by[k] || (!by[k].low && !by[k].high)) return;
+        parts.push(say(by[k]) + INTERVAL_SUFFIX[k]);
+      });
+      var tot = el('span');
+      tot.appendChild(document.createTextNode('Total '));
+      tot.appendChild(el('b', null, parts.length ? parts.join('  +  ') : money(0)));
+      t.appendChild(tot);
+      ['once', 'month', 'quarter', 'year'].forEach(function (k) {
+        if (!optBy[k] || !optBy[k].low) return;
+        t.appendChild(el('span', 'optl', '+ ' + say(optBy[k]) + INTERVAL_SUFFIX[k] + ' in optional items if taken'));
+      });
     }
-    document.getElementById('qtTax').addEventListener('input', qtRecalc);
+    document.getElementById('qtTypeQuote').addEventListener('click', function () { qtSetDocType('quote'); });
+    document.getElementById('qtTypeEstimate').addEventListener('click', function () { qtSetDocType('estimate'); });
+    document.getElementById('qtDraft').addEventListener('click', qtDraftRun);
+    document.getElementById('qtRefEdit').addEventListener('click', qtRefPanel);
     document.getElementById('qtAddLine').addEventListener('click', function () { var r = qtLine(); qtLinesEl.appendChild(r); r.querySelector('input').focus(); });
 
     function qtSelect(c) {
@@ -4109,8 +4206,10 @@
       quoteForm.hidden = false;
       document.getElementById('quoteId').value = q ? q.id : '';
       document.getElementById('quoteFormTitle').textContent = q ? 'Edit ' + q.number : 'New quote';
-      ['qtEmail', 'qtName', 'qtCompany', 'qtTitle', 'qtIntro'].forEach(function (id) { document.getElementById(id).value = ''; });
-      document.getElementById('qtTax').value = q ? (q.tax_rate_bp / 100) : 0;
+      ['qtEmail', 'qtName', 'qtCompany', 'qtTitle', 'qtIntro', 'qtExclusions', 'qtNextStep', 'qtBrief'].forEach(function (id) { document.getElementById(id).value = ''; });
+      document.getElementById('qtDraftOut').textContent = '';
+      qtSetDocType(q ? (q.doc_type || 'quote') : 'quote');
+      if (!qtRefLoaded) qtRefState();
       document.getElementById('qtValid').value = 30;
       document.getElementById('qtTerms').value = q ? (q.terms || '') : DEFAULT_TERMS;
       qtSelected = null; qtCustSel.hidden = true;
@@ -4121,6 +4220,8 @@
         document.getElementById('qtCompany').value = q.company || '';
         document.getElementById('qtTitle').value = q.title || '';
         document.getElementById('qtIntro').value = q.intro || '';
+        document.getElementById('qtExclusions').value = q.exclusions || '';
+        document.getElementById('qtNextStep').value = q.next_step || '';
         if (q.valid_until) document.getElementById('qtValid').value = Math.max(1, Math.round((q.valid_until - Date.now() / 1000) / 86400));
         (q.items || []).forEach(function (i) { qtLinesEl.appendChild(qtLine(i)); });
       } else {
@@ -4135,13 +4236,279 @@
     document.getElementById('quoteNewBtn').addEventListener('click', function () { quoteFormOpen(null, null); });
     document.getElementById('qtCancel').addEventListener('click', quoteFormClose);
 
+    // ---- drafting from the handbook ----------------------------------------
+    //
+    // Claude reads the TES Estimation Handbook and returns a whole document. It lands in
+    // a PREVIEW, not in the form: the brief is usually written after some line items are
+    // already typed, and a draft that overwrote them the instant it arrived would lose
+    // work every time the wording came back wrong.
+
+    var qtRefLoaded = false;
+
+    function qtSetDocType(t) {
+      qtDocType = t === 'estimate' ? 'estimate' : 'quote';
+      document.getElementById('qtTypeQuote').classList.toggle('on', qtDocType === 'quote');
+      document.getElementById('qtTypeEstimate').classList.toggle('on', qtDocType === 'estimate');
+      document.getElementById('qtTypeHint').textContent = qtDocType === 'estimate'
+        ? 'A price range, for a job not yet fully scoped. Confirmed later in the quote.'
+        : 'Firm prices. Non-binding until a Statement of Work is signed.';
+      // The high-price input exists on every row and is shown or hidden, so switching
+      // type keeps whatever is already typed on both sides.
+      Array.prototype.forEach.call(qtLinesEl.children, function (row) {
+        if (!row.highEl) return;
+        row.highEl.hidden = qtDocType !== 'estimate';
+        row.priceEl.placeholder = qtDocType === 'estimate' ? 'Low' : 'Unit price';
+      });
+      qtLinesEl.classList.toggle('ranged', qtDocType === 'estimate');
+      qtRecalc();
+    }
+
+    function qtRefState() {
+      var box = document.getElementById('qtRefState');
+      api('/admin/reference').then(function (r) {
+        qtRefLoaded = true;
+        var doc = r && r.ok && (r.documents || []).filter(function (d) { return d.key === 'estimation-handbook'; })[0];
+        if (!doc) {
+          box.textContent = 'No handbook on file yet';
+          box.className = 'qai-s warn';
+          return;
+        }
+        box.className = 'qai-s';
+        box.textContent = (doc.chars || 0).toLocaleString('en-US') + ' characters · updated ' + fmtDate(doc.updated_at);
+      });
+    }
+
+    function qtDraftRun() {
+      var btn = document.getElementById('qtDraft');
+      var outBox = document.getElementById('qtDraftOut');
+      var brief = document.getElementById('qtBrief').value.trim();
+      if (!brief) { toast('Describe the job first'); return; }
+      btn.disabled = true;
+      btn.textContent = 'Drafting…';
+      outBox.textContent = '';
+      outBox.appendChild(el('div', 'qai-wait', 'Reading the handbook and pricing the job. This takes a minute.'));
+      api('/admin/quotes/draft', { method: 'POST', body: {
+        doc_type: qtDocType, brief: brief,
+        title: document.getElementById('qtTitle').value.trim(),
+        company: document.getElementById('qtCompany').value.trim(),
+        contact_name: document.getElementById('qtName').value.trim(),
+        email: document.getElementById('qtEmail').value.trim(),
+        items: qtItems(),
+      } }).then(function (r) {
+        btn.disabled = false;
+        btn.textContent = 'Draft';
+        outBox.textContent = '';
+        if (!r || !r.ok) {
+          outBox.appendChild(el('div', 'qai-err', (r && r.message) || 'Could not draft that.'));
+          return;
+        }
+        qtDraftPreview(r.draft, outBox);
+      });
+    }
+
+    // The preview. Everything the model returned, as it would read on the document,
+    // plus its own notes to Tyler which never go anywhere near the customer.
+    function qtDraftPreview(d, host) {
+      var box = el('div', 'qai-out');
+      box.appendChild(el('h4', null, d.title || 'Untitled'));
+      if (d.summary) box.appendChild(el('p', 'qai-sum', d.summary));
+
+      var tbl = el('table', 'qai-tbl');
+      var tb = el('tbody');
+      d.items.forEach(function (i) {
+        var tr = el('tr');
+        var td = el('td');
+        td.appendChild(document.createTextNode(i.description));
+        var bits = [];
+        if (i.qty !== 1 || i.unit) bits.push(i.qty + (i.unit ? ' ' + i.unit : ''));
+        if (i.optional) bits.push('optional');
+        if (bits.length) td.appendChild(el('div', 'sub', bits.join(' · ')));
+        tr.appendChild(td);
+        var price = i.high_unit_cents != null
+          ? money(i.unit_cents) + ' to ' + money(i.high_unit_cents)
+          : money(i.unit_cents);
+        tr.appendChild(el('td', 'n', price + (i.interval === 'once' ? '' : INTERVAL_SUFFIX[i.interval])));
+        tb.appendChild(tr);
+      });
+      tbl.appendChild(tb);
+      box.appendChild(tbl);
+
+      if (d.exclusions && d.exclusions.length) {
+        box.appendChild(el('div', 'qai-lbl', 'Does not include'));
+        var ul = el('ul', 'qai-ul');
+        d.exclusions.forEach(function (e) { ul.appendChild(el('li', null, e)); });
+        box.appendChild(ul);
+      }
+      if (d.next_step) {
+        box.appendChild(el('div', 'qai-lbl', 'Next step'));
+        box.appendChild(el('p', 'qai-sum', d.next_step));
+      }
+      if (d.notes_for_tyler) {
+        box.appendChild(el('div', 'qai-note', 'For you, not the client: ' + d.notes_for_tyler));
+      }
+
+      var bar = el('div', 'inv-actions');
+      var apply = el('button', 'prim', 'Apply to the form');
+      apply.type = 'button';
+      apply.addEventListener('click', function () { qtApplyDraft(d); host.textContent = ''; });
+      var drop = el('button', null, 'Discard');
+      drop.type = 'button';
+      drop.addEventListener('click', function () { host.textContent = ''; });
+      bar.appendChild(apply);
+      bar.appendChild(drop);
+      box.appendChild(bar);
+      host.appendChild(box);
+    }
+
+    // Replaces the form wholesale, which is the point: the model was given the current
+    // lines and asked to produce the finished list, so applying half of it would leave
+    // a document neither of you wrote.
+    function qtApplyDraft(d) {
+      if (d.title) document.getElementById('qtTitle').value = d.title;
+      if (d.summary) document.getElementById('qtIntro').value = d.summary;
+      if (d.exclusions && d.exclusions.length) document.getElementById('qtExclusions').value = d.exclusions.join('\n');
+      if (d.next_step) document.getElementById('qtNextStep').value = d.next_step;
+      qtLinesEl.textContent = '';
+      d.items.forEach(function (i) { qtLinesEl.appendChild(qtLine(i)); });
+      if (!qtLinesEl.children.length) qtLinesEl.appendChild(qtLine());
+      qtRecalc();
+      toast('Draft applied · check the prices before sending');
+    }
+
+    // ---- reference material -------------------------------------------------
+    //
+    // The handbook arrives as the .docx Tyler already keeps. A .docx is a zip with the
+    // text in word/document.xml, so it is unpacked in the browser the way the invoice
+    // PDF is read here: a library from cdnjs, loaded by dynamic import on first use,
+    // never on page load.
+
+    // JSZip is UMD, not an ES module, so a script tag rather than import() -- the same
+    // shape as loadXlsx() below. Loaded the first time a .docx is dropped, never on
+    // page load.
+    var JSZIP_SRC = 'https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js';
+    var zipLoading = null;
+    function loadZip() {
+      if (window.JSZip) return Promise.resolve(window.JSZip);
+      if (!zipLoading) {
+        zipLoading = new Promise(function (resolve, reject) {
+          var sc = document.createElement('script');
+          sc.src = JSZIP_SRC; sc.async = true;
+          sc.onload = function () { resolve(window.JSZip); };
+          sc.onerror = function () { zipLoading = null; reject(new Error('zip_load_failed')); };
+          document.head.appendChild(sc);
+        });
+      }
+      return zipLoading;
+    }
+
+    /** word/document.xml to plain text: paragraphs become lines, tabs become separators. */
+    function docxText(xml) {
+      var t = xml.replace(/<\/w:p>/g, '\n')
+        .replace(/<w:tab[^>]*\/>/g, ' | ')
+        .replace(/<w:br[^>]*\/>/g, '\n')
+        .replace(/<[^>]+>/g, '');
+      var box = document.createElement('textarea');
+      box.innerHTML = t;
+      var lines = box.value.split('\n');
+      var out = [];
+      for (var i = 0; i < lines.length; i++) {
+        var l = lines[i].replace(/\s+$/, '');
+        if (!l.trim() && out.length && !out[out.length - 1]) continue;
+        out.push(l);
+      }
+      return out.join('\n').trim();
+    }
+
+    function qtRefPanel() {
+      var host = document.getElementById('qtDraftOut');
+      host.textContent = '';
+      var box = el('div', 'qai-out');
+      box.appendChild(el('h4', null, 'Reference material'));
+      box.appendChild(el('p', 'row-sub',
+        'The estimation handbook the drafting reads. Internal only — it is never shown to a customer and never quoted back on a document.'));
+
+      var file = document.createElement('input');
+      file.type = 'file';
+      file.accept = '.docx,.txt,.md,text/plain';
+      file.setAttribute('aria-label', 'Handbook file');
+      box.appendChild(file);
+
+      var ta = document.createElement('textarea');
+      ta.rows = 6;
+      ta.placeholder = 'Or paste the text here.';
+      ta.setAttribute('aria-label', 'Handbook text');
+      box.appendChild(ta);
+      var note = el('div', 'row-sub', '');
+      box.appendChild(note);
+
+      file.addEventListener('change', function () {
+        var fl = file.files && file.files[0];
+        if (!fl) return;
+        note.textContent = 'Reading ' + fl.name + '…';
+        if (!/\.docx$/i.test(fl.name)) {
+          fl.text().then(function (t) { ta.value = t; note.textContent = t.length.toLocaleString('en-US') + ' characters read.'; });
+          return;
+        }
+        loadZip()
+          .then(function (Z) { return Z.loadAsync(fl); })
+          .then(function (zip) { return zip.file('word/document.xml').async('string'); })
+          .then(function (xml) {
+            ta.value = docxText(xml);
+            note.textContent = ta.value.length.toLocaleString('en-US') + ' characters read from ' + fl.name + '. Check it looks right, then save.';
+          })
+          .catch(function () {
+            note.textContent = 'Could not read that .docx. Open it in Word, select all, and paste below.';
+          });
+      });
+
+      var bar = el('div', 'inv-actions');
+      var save = el('button', 'prim', 'Save handbook');
+      save.type = 'button';
+      save.addEventListener('click', function () {
+        var text = ta.value.trim();
+        if (text.length < 200) return alert('That does not look like the handbook. Paste the whole document.');
+        save.disabled = true;
+        api('/admin/reference/estimation-handbook', { method: 'PUT', body: {
+          title: 'TES Internal Estimation Handbook',
+          filename: file.files && file.files[0] ? file.files[0].name : null,
+          text: text,
+        } }).then(function (r) {
+          save.disabled = false;
+          if (!r || !r.ok) return alert((r && r.message) || 'Could not save it.');
+          toast('Handbook saved · ' + r.chars.toLocaleString('en-US') + ' characters');
+          host.textContent = '';
+          qtRefState();
+        });
+      });
+      var close = el('button', null, 'Close');
+      close.type = 'button';
+      close.addEventListener('click', function () { host.textContent = ''; });
+      bar.appendChild(save);
+      bar.appendChild(close);
+      box.appendChild(bar);
+      host.appendChild(box);
+
+      // Show what is on file now, so a replacement is a decision rather than a guess.
+      api('/admin/reference/estimation-handbook').then(function (r) {
+        if (r && r.ok) note.textContent = 'On file: ' + r.chars.toLocaleString('en-US')
+          + ' characters, updated ' + fmtDate(r.updated_at) + (r.filename ? ' from ' + r.filename : '') + '.';
+      });
+    }
+
+    /** The lines as the API wants them. Shared so drafting sees exactly what saving would send. */
+    function qtItems() {
+      return Array.prototype.map.call(qtLinesEl.children, function (r) { return r.read(); })
+        .filter(function (i) { return i.description; });
+    }
+
     function quotePayload() {
-      var items = Array.prototype.map.call(qtLinesEl.children, function (row) { return row.read(); }).filter(function (i) { return i.description; });
       var p = {
         email: document.getElementById('qtEmail').value.trim(), contact_name: document.getElementById('qtName').value.trim(), company: document.getElementById('qtCompany').value.trim(),
         title: document.getElementById('qtTitle').value.trim(), intro: document.getElementById('qtIntro').value.trim(), terms: document.getElementById('qtTerms').value.trim(),
-        tax_rate_bp: Math.round(Number(document.getElementById('qtTax').value || 0) * 100), valid_days: Number(document.getElementById('qtValid').value || 30), items: items,
+        exclusions: document.getElementById('qtExclusions').value.trim(), next_step: document.getElementById('qtNextStep').value.trim(),
+        valid_days: Number(document.getElementById('qtValid').value || 30), items: qtItems(),
       };
+      if (!document.getElementById('quoteId').value) p.doc_type = qtDocType;
       if (qtSelected && qtSelected.account_id) p.account_id = qtSelected.account_id;
       if (qtSelected && qtSelected.org_id) p.org_id = qtSelected.org_id;
       return p;
