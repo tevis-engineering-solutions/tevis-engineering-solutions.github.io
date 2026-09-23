@@ -3613,9 +3613,18 @@
     }
 
     // ---- agreements: terms, the meter, billing (Phase 4) ------------------
+    // The HOURS clock.
     var PERIOD_WORD = { monthly: 'month', quarterly: 'quarter', annual: 'year' };
+    // The INVOICE clock, which since migration 032 is a separate decision.
+    var SCHEDULE_WORD = { weekly: 'week', biweekly: '2 weeks', monthly: 'month', quarterly: 'quarter', annual: 'year' };
+    /** A unix timestamp as the YYYY-MM-DD a date input wants, in local time. */
+    function isoDay(ts) {
+      var d = new Date(ts * 1000);
+      return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+    }
     var AGREE_ERROR = {
       invalid_fee: 'That fee is not a number', invalid_bill_day: 'The bill day has to be 1 to 28',
+      invalid_schedule: 'That billing cadence is not one we have', invalid_bill_anchor: 'The billing start day is not a date', invalid_started_at: 'That start date is not a date', no_schedule: 'This agreement has no billing cadence set, so there is no period to bill',
       invalid_term: 'The term has to be 1 to 120 months', invalid_renews_on: 'Use YYYY-MM-DD for the renewal date',
       invalid_minutes: 'Included hours are not a number', invalid_rate: 'That rate is not a number',
       invalid_sla: 'Response hours have to be 1 to 400', already_ended: 'This agreement has ended',
@@ -3651,14 +3660,21 @@
       var d = el('div', 'agree');
       d.appendChild(el('h3', null, a.name || 'Service agreement'));
       var word = PERIOD_WORD[a.period] || 'month';
+      // The fee is what ONE INVOICE is for, which is not the same clock as the hours.
+      var billWord = SCHEDULE_WORD[a.bill_every] || word;
 
       var terms = el('div', 'agree-terms');
       var row = function (k, v) { var r = el('div'); r.appendChild(el('span', 'k', k)); r.appendChild(el('b', null, v)); terms.appendChild(r); };
-      if (a.fee_cents) row('Fee', money(a.fee_cents) + ' / ' + word);
+      if (a.fee_cents) row('Fee', money(a.fee_cents) + ' / ' + billWord);
       row('Included', fmtDur(a.included_minutes) + ' / ' + word + (a.rollover ? ', rolls over' : ''));
       row('Overage', money(a.rate_cents) + '/hr');
       if (a.sla_response_hours) row('Response', a.sla_response_hours + 'h on a Medium ticket');
-      if (a.bill_day && a.fee_cents) row('Bills on', 'day ' + a.bill_day + (a.last_invoiced_period ? ' · last ' + a.last_invoiced_period : ''));
+      if (a.fee_cents && a.bill_every && a.bill_every !== 'none') {
+        row('Bills', 'every ' + (SCHEDULE_WORD[a.bill_every] || a.bill_every)
+          + (a.bill_day ? ' on day ' + a.bill_day : a.bill_anchor ? ' from ' + a.bill_anchor : '')
+          + (a.last_invoiced_period ? ' · last ' + a.last_invoiced_period : ''));
+      }
+      if (a.started_at) row('Started', fmtDate(a.started_at));
       if (a.renews_on) row(a.auto_renew ? 'Renews' : 'Ends', a.renews_on + (a.term_months ? ' · ' + a.term_months + ' month term' : ''));
       d.appendChild(terms);
       if (usage) d.appendChild(usageMeter(usage));
@@ -3722,13 +3738,31 @@
       var fName = fld('Plan name', 'name', 'text', a ? a.name : '', 'Managed IT - Growth');
       var fHours = fld('Included hours per period', 'hours', 'number', a ? (a.included_minutes / 60) : '', '10');
       fHours.step = '0.25'; fHours.min = '0';
-      var fPeriod = fld('Period', 'period', 'select');
+      var fPeriod = fld('Hours reset every', 'period', 'select');
       [['monthly', 'Monthly'], ['quarterly', 'Quarterly'], ['annual', 'Annual']].forEach(function (o) { var op = el('option', null, o[1]); op.value = o[0]; fPeriod.appendChild(op); });
       fPeriod.value = a ? a.period : 'monthly';
-      var fFee = fld('Fee per period ($)', 'fee', 'number', a && a.fee_cents ? (a.fee_cents / 100).toFixed(2) : '', '1500.00');
+      var fFee = fld('Fee per invoice ($)', 'fee', 'number', a && a.fee_cents ? (a.fee_cents / 100).toFixed(2) : '', '1500.00');
       fFee.step = '0.01'; fFee.min = '0';
+      // Two clocks, and the form says so: Period is when the HOURS reset, Bill every is
+      // when the FEE goes out. They are usually the same and do not have to be.
+      var fStart = fld('Starts on', 'start', 'date', a && a.started_at ? isoDay(a.started_at) : isoDay(Math.floor(Date.now() / 1000)));
+      var fEvery = fld('Bill every', 'every', 'select');
+      [['none', 'Not automatically'], ['weekly', 'Week'], ['biweekly', '2 weeks'],
+       ['monthly', 'Month'], ['quarterly', 'Quarter'], ['annual', 'Year']].forEach(function (o) {
+        var op = el('option', null, o[1]); op.value = o[0]; fEvery.appendChild(op);
+      });
+      fEvery.value = a && a.bill_every ? a.bill_every : 'monthly';
       var fBill = fld('Bills on day (1-28)', 'billday', 'number', a ? a.bill_day : 1, '1');
       fBill.min = '1'; fBill.max = '28';
+      // A day of the calendar month decides nothing for a schedule counted in days from
+      // a start date, so it is hidden rather than left there to be filled in.
+      function syncSchedule() {
+        var dayAnchored = fEvery.value === 'weekly' || fEvery.value === 'biweekly';
+        fBill.parentNode.hidden = dayAnchored || fEvery.value === 'none';
+        fStart.parentNode.querySelector('label').textContent =
+          dayAnchored ? 'Starts on (and bills from)' : 'Starts on';
+      }
+      fEvery.addEventListener('change', syncSchedule);
       var fRate = fld('Overage $/hr (blank = standard)', 'rate', 'number', a && !a.rate_is_default ? (a.rate_cents / 100).toFixed(2) : '', '80.00');
       fRate.step = '0.01'; fRate.min = '0';
       var fSla = fld('Response hours (blank = no SLA)', 'sla', 'number', a ? a.sla_response_hours : '', '4');
@@ -3737,6 +3771,7 @@
       fTerm.min = '1';
       var fRenew = fld('Renews / ends on', 'renews', 'date', a ? a.renews_on : '');
       box.appendChild(grid);
+      syncSchedule();
 
       var opts = el('div', 'agree-opts');
       var cbAuto = document.createElement('input'); cbAuto.type = 'checkbox'; cbAuto.checked = a ? !!a.auto_renew : true; cbAuto.id = 'ag_auto';
@@ -3755,6 +3790,8 @@
           name: fName.value.trim(), included_minutes: Math.round(hrs * 60), period: fPeriod.value,
           fee_cents: fFee.value.trim() === '' ? 0 : Math.round(parseFloat(fFee.value) * 100),
           bill_day: fBill.value.trim() === '' ? null : parseInt(fBill.value, 10),
+          bill_every: fEvery.value,
+          started_at: fStart.value ? Math.floor(Date.parse(fStart.value + 'T12:00:00') / 1000) : undefined,
           rate_cents: fRate.value.trim() === '' ? null : Math.round(parseFloat(fRate.value) * 100),
           sla_response_hours: fSla.value.trim() === '' ? null : parseFloat(fSla.value),
           term_months: fTerm.value.trim() === '' ? null : parseInt(fTerm.value, 10),

@@ -280,7 +280,7 @@
       if (p.fee_cents) {
         document.getElementById('planFee').hidden = false;
         document.getElementById('planFeeAmt').textContent = money(p.fee_cents);
-        document.getElementById('planFeePer').textContent = 'per ' + p.period_label;
+        document.getElementById('planFeePer').textContent = 'per ' + (p.bill_label || p.period_label);
       }
 
       var u = p.usage;
@@ -311,7 +311,7 @@
       }
       term('Included', hrs(p.included_minutes) + ' per ' + p.period_label, p.rollover ? 'Unused time carries into the next ' + p.period_label + '.' : 'Resets at the start of each ' + p.period_label + '.');
       term('Additional work', money(p.rate_cents) + ' per hour', 'Only what goes beyond your included time.');
-      if (p.fee_cents) term('Fee', money(p.fee_cents) + ' per ' + p.period_label, p.next_invoice_on ? 'Next invoice ' + longDate(p.next_invoice_on) + '.' : null);
+      if (p.fee_cents) term('Fee', money(p.fee_cents) + ' per ' + (p.bill_label || p.period_label), p.next_invoice_on ? 'Next invoice ' + longDate(p.next_invoice_on) + '.' : null);
       if (p.sla_response_hours) term('First response', 'within ' + p.sla_response_hours + ' business hours', 'On a Medium ticket. Critical gets a quarter of that, High a half, Low double.');
       if (p.started_at) term('Started', new Date(p.started_at * 1000).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }), null);
       if (p.renews_on) term(p.auto_renew ? 'Renews' : 'Ends', longDate(p.renews_on), p.auto_renew ? 'It continues on the same terms unless you tell us otherwise.' : 'It will not renew on its own. Message us if you would like to continue.');
