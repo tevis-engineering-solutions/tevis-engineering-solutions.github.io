@@ -882,6 +882,15 @@
     .ct-form .wide { grid-column:1 / -1; }
     .ct-form .chk { display:flex; align-items:center; gap:0.45rem; font-size:0.8rem; color:var(--muted); min-height:36px; }
     .ct-form .chk input { width:18px; height:18px; min-height:0; }
+    /* Every select in Contracting and Projects: dark, with a gold chevron, never the
+    browser default. In a row of pill buttons (a file's role, a milestone's status) it is
+    a pill itself; in a form it keeps the form field's shape. */
+    #viewContracting select, #viewProjects select { -webkit-appearance:none; appearance:none; background:var(--bg) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' fill='none' stroke='%23c89830' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") no-repeat right 0.7rem center / 10px 6px; color:var(--text); border:1px solid var(--line); border-radius:8px; padding:0.45rem 2rem 0.45rem 0.65rem; font-family:inherit; font-size:0.84rem; min-height:36px; cursor:pointer; max-width:100%; }
+    #viewContracting select:hover, #viewProjects select:hover { border-color:rgba(74,172,101,0.55); }
+    #viewContracting select:focus, #viewProjects select:focus { outline:none; border-color:var(--green); }
+    #viewContracting select option, #viewProjects select option { background:var(--card); color:var(--text); }
+    #viewContracting .reply-row select, #viewProjects .reply-row select { border-radius:999px; font-family:"Montserrat",sans-serif; font-size:0.72rem; font-weight:700; text-transform:uppercase; letter-spacing:0.03em; min-height:40px; padding:0.45rem 2.1rem 0.45rem 0.95rem; }
+    #viewContracting .ct-lines select { border-radius:6px; font-size:0.78rem; min-height:32px; padding:0.3rem 1.6rem 0.3rem 0.45rem; background-position:right 0.45rem center; }
     .ct-upload { position:relative; overflow:hidden; display:inline-flex; align-items:center; }
     .ct-upload input[type="file"] { position:absolute; inset:0; opacity:0; cursor:pointer; font-size:0; }
     .ct-ref { margin-top:1rem; }
