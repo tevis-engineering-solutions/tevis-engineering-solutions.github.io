@@ -882,6 +882,8 @@
     .ct-form .wide { grid-column:1 / -1; }
     .ct-form .chk { display:flex; align-items:center; gap:0.45rem; font-size:0.8rem; color:var(--muted); min-height:36px; }
     .ct-form .chk input { width:18px; height:18px; min-height:0; }
+    .ct-upload { position:relative; overflow:hidden; display:inline-flex; align-items:center; }
+    .ct-upload input[type="file"] { position:absolute; inset:0; opacity:0; cursor:pointer; font-size:0; }
     .ct-ref { margin-top:1rem; }
     .ct-ref details { border:1px solid var(--line); border-radius:12px; background:var(--card); margin-bottom:0.5rem; }
     .ct-ref summary { font-family:"Montserrat",sans-serif; font-size:0.74rem; font-weight:700; text-transform:uppercase; letter-spacing:0.05em; color:var(--muted); cursor:pointer; padding:0.7rem 0.85rem; min-height:44px; display:flex; align-items:center; }
@@ -1614,6 +1616,7 @@
       <details id="ctCompliance"><summary>Compliance &amp; credentials</summary><div class="ct-ref-body" id="ctComplianceBody"></div></details>
       <details id="ctCodes"><summary>Service codes (capability statement)</summary><div class="ct-ref-body" id="ctCodesBody"></div></details>
       <details id="ctSourcing"><summary>Sourcing accounts</summary><div class="ct-ref-body" id="ctSourcingBody"></div></details>
+      <details id="ctRefs"><summary>Reference material (what BidBuilder reads)</summary><div class="ct-ref-body" id="ctRefsBody"></div></details>
       <details id="ctTabs"><summary>Tabulation log</summary><div class="ct-ref-body" id="ctTabsBody"></div></details>
     </section>
   </main>
@@ -11215,6 +11218,7 @@
     var CT_REF_KEYS = [
       ['contracting-playbook', 'Contracting playbook (CONTRACTING.md)', true],
       ['capability-statement', 'Capability statement', false],
+      ['estimation-handbook', 'Estimation handbook (services pricing)', false],
     ];
     var ctPacketCache = {};
 
@@ -11246,13 +11250,16 @@
       return Promise.resolve('');
     }
 
-    function ctDraft(pane) {
-      pane.appendChild(el('p', 'ct-note', 'BidBuilder reads the packet against the contracting playbook and the capability statement, then drafts triage notes, risk flags with the clauses quoted, Q&A questions, the lines to price and a go / no-go. Nothing is saved until you apply it. It never fills in stock, lead time or a landed cost you did not give it.'));
+    // The reference material BidBuilder reads. Shown on the Contracting page itself
+    // (Reference material, under the board) and at the top of every bid's Draft tab.
+    // A .docx or .pdf is turned into text in the browser; only the text is stored.
+    function ctRefUploader(host) {
       var refBox = el('div', 'ct-step');
       refBox.appendChild(el('div', 'row-main', 'Reference material'));
+      refBox.appendChild(el('p', null, 'What BidBuilder reads before it drafts. Internal only: never shown on a response or to a customer. Upload a .md, .txt, .docx or .pdf; a new upload replaces the old one.'));
       var refList = el('div');
       refBox.appendChild(refList);
-      pane.appendChild(refBox);
+      host.appendChild(refBox);
       function loadRefs() {
         api('/admin/reference').then(function (r) {
           refList.textContent = '';
@@ -11264,24 +11271,34 @@
             left.appendChild(el('div', 'row-main', k[1] + (k[2] ? '' : ' (optional)')));
             left.appendChild(el('div', 'row-sub', have ? (have.chars || 0).toLocaleString('en-US') + ' characters, updated ' + fmtDate(have.updated_at) + (have.filename ? ' from ' + have.filename : '') : 'Not uploaded yet.'));
             line.appendChild(left);
+            // A real button, with the file input inside its label, rather than the
+            // browser's bare "Choose file" control that read as no button at all.
+            var pick = el('label', 'ct-btn sm ct-upload', have ? 'Replace\u2026' : 'Upload\u2026');
             var file = ctInput('file', null, { accept: '.md,.txt,.docx,.pdf', 'aria-label': 'Upload ' + k[1] });
-            file.style.maxWidth = '220px';
+            pick.appendChild(file);
             file.addEventListener('change', function () {
               var fl = file.files && file.files[0];
               if (!fl) return;
+              pick.firstChild.textContent = 'Reading\u2026';
               fl.arrayBuffer().then(function (buf) { return ctFileText(fl.name, fl.type, buf); }).then(function (text) {
-                if (!text || text.trim().length < 200) { toast('Could not read enough text from ' + fl.name + '.'); return; }
+                if (!text || text.trim().length < 200) { toast('Could not read enough text from ' + fl.name + '.'); loadRefs(); return; }
                 return api('/admin/reference/' + k[0], { method: 'PUT', body: { title: k[1], filename: fl.name, text: text } }).then(function (res) {
-                  if (res.ok) { toast('Saved ' + k[1]); loadRefs(); } else toast(ctErr(res));
+                  if (res.ok) toast('Saved ' + k[1] + ' \u00b7 ' + res.chars.toLocaleString('en-US') + ' characters'); else toast(ctErr(res));
+                  loadRefs();
                 });
-              }, function () { toast('Could not read ' + fl.name + '.'); });
+              }, function () { toast('Could not read ' + fl.name + '.'); loadRefs(); });
             });
-            line.appendChild(file);
+            line.appendChild(pick);
             refList.appendChild(line);
           });
         });
       }
       loadRefs();
+    }
+
+    function ctDraft(pane) {
+      pane.appendChild(el('p', 'ct-note', 'BidBuilder reads the packet against the contracting playbook and the capability statement, then drafts triage notes, risk flags with the clauses quoted, Q&A questions, the lines to price and a go / no-go. Nothing is saved until you apply it. It never fills in stock, lead time or a landed cost you did not give it.'));
+      ctRefUploader(pane);
 
       var f = el('div', 'ct-form');
       var packet = el('textarea'); packet.rows = 8; packet.placeholder = 'The solicitation text. Load it from the files on this bid, or paste it.';
@@ -11508,6 +11525,10 @@
         api('/admin/sourcing', { method: 'POST', body: { vendor: v } }).then(function (res) { if (res.ok) { ctRef.sourcing = res.sourcing; renderCtRef(); } else toast(ctErr(res)); });
       });
       sb.appendChild(addS);
+
+      var rb = document.getElementById('ctRefsBody');
+      rb.textContent = '';
+      ctRefUploader(rb);
 
       var tb = document.getElementById('ctTabsBody');
       tb.textContent = '';
