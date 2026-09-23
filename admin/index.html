@@ -1609,6 +1609,7 @@
           <div><label for="ctnStructure">Structure</label>
             <select id="ctnStructure"><option value="one_time">One-time fixed quantity</option><option value="nte_rate_card">NTE standing PO (rate card)</option></select></div>
           <div><label for="ctnClose">Submission deadline</label><input id="ctnClose" type="datetime-local"></div>
+          <div><label for="ctnEnd">End date (award window closes)</label><input id="ctnEnd" type="date"></div>
           <div><label for="ctnUrl">Posting link</label><input id="ctnUrl" type="url" maxlength="600" placeholder="https://"></div>
         </div>
         <div class="ct-sugg" id="ctnSugg" hidden></div>
@@ -10376,14 +10377,14 @@
     var CT_COLUMNS = [
       ['Finding & triage', ['intake', 'triaging', 'qa_posted']],
       ['Pricing', ['pricing', 'draft_ready']],
-      ['Responded', ['submitted']],
+      ['Responded', ['submitted', 'pending']],
       ['Won', ['awarded', 'funded']],
     ];
     var CT_PRE = ['intake', 'triaging', 'qa_posted', 'pricing', 'draft_ready'];
     var CT_STATUS_COLOR = { intake: '#8aa48d', triaging: '#6a8ba8', qa_posted: '#6a8ba8', pricing: '#c89830', draft_ready: '#4aac65',
-      submitted: '#4fa2ff', awarded: '#22c55e', funded: '#22c55e', lost: '#fb923c', no_bid: '#8aa48d', closed: '#8aa48d' };
+      submitted: '#4fa2ff', pending: '#c89830', awarded: '#22c55e', funded: '#22c55e', lost: '#fb923c', no_bid: '#8aa48d', closed: '#8aa48d' };
     var CT_MOVE_LABEL = { intake: 'Back to intake', triaging: 'Start triage', qa_posted: 'Questions posted', pricing: 'Start pricing',
-      draft_ready: 'Mark draft ready', submitted: 'Mark responded', awarded: 'Awarded', lost: 'Lost', funded: 'Funded (PO in hand)',
+      draft_ready: 'Mark draft ready', submitted: 'Mark responded', pending: 'Pending decision', awarded: 'Awarded', lost: 'Lost', funded: 'Funded (PO in hand)',
       no_bid: 'Pass (no bid)', closed: 'Close' };
     var CT_ROLE_LABEL = { solicitation: 'Solicitation', spec: 'Spec / min. requirements', terms: 'Terms & Conditions', line_schedule: 'Line schedule',
       addendum: 'Addendum', response: 'Our response', pricing: 'Pricing model', correspondence: 'Correspondence', award: 'Award / PO',
@@ -10537,6 +10538,13 @@
         chips.appendChild(el('span', 'ct-chip ' + (b.days_to_close <= 2 ? 'red' : b.days_to_close <= 7 ? 'gold' : ''),
           b.days_to_close < 0 ? 'Deadline passed' : 'Closes ' + (b.days_to_close === 0 ? 'today' : 'in ' + ctDays(b.days_to_close))));
       }
+      if (b.status === 'pending' && b.closes_out_at) {
+        var co = Math.ceil((b.closes_out_at - Date.now() / 1000) / 86400);
+        chips.appendChild(el('span', 'ct-chip gold', co <= 0 ? 'Closes out today' : 'Closes out in ' + ctDays(co)));
+      } else if (b.status === 'submitted' && b.end_date) {
+        var eo = Math.ceil((b.end_date - Date.now() / 1000) / 86400);
+        if (eo >= 0) chips.appendChild(el('span', 'ct-chip', 'Decision by ' + (eo === 0 ? 'today' : 'in ' + ctDays(eo))));
+      }
       if (b.days_to_need_by != null && ['awarded', 'funded', 'submitted'].indexOf(b.status) >= 0) {
         chips.appendChild(el('span', 'ct-chip ' + (b.days_to_need_by <= 7 ? 'red' : ''), 'Need-by ' + (b.days_to_need_by < 0 ? 'passed' : 'in ' + ctDays(b.days_to_need_by))));
       }
@@ -10639,7 +10647,7 @@
         agency: document.getElementById('ctnAgency').value, title: document.getElementById('ctnTitle').value,
         event_no: document.getElementById('ctnEvent').value, source: document.getElementById('ctnSource').value || undefined,
         naics: naics || undefined, structure: document.getElementById('ctnStructure').value,
-        date_close: ctFromDt(document.getElementById('ctnClose').value), posting_url: document.getElementById('ctnUrl').value,
+        date_close: ctFromDt(document.getElementById('ctnClose').value), end_date: dayToTs(document.getElementById('ctnEnd').value), posting_url: document.getElementById('ctnUrl').value,
       };
       var btn = e.target.querySelector('button[type="submit"]');
       btn.disabled = true;
@@ -10857,6 +10865,7 @@
       inp.date_open = ctField(f, 'Posted', ctInput('date', ctDayVal(b.date_open)));
       inp.date_close = ctField(f, 'Submission deadline', ctInput('datetime-local', ctDtVal(b.date_close)));
       inp.qa_close = ctField(f, 'Questions due', ctInput('datetime-local', ctDtVal(b.qa_close)));
+      inp.end_date = ctField(f, 'End date (award window closes)', ctInput('date', ctDayVal(b.end_date)));
       inp.expected_po_date = ctField(f, 'Expected PO', ctInput('date', ctDayVal(b.expected_po_date)));
       inp.need_by_date = ctField(f, 'Need-by date', ctInput('date', ctDayVal(b.need_by_date)));
       inp.lead_time_days = ctField(f, 'Lead time we promise (business days)', ctInput('number', b.lead_time_days == null ? '' : b.lead_time_days, { min: 0, step: 1, inputmode: 'numeric' }));
@@ -10872,6 +10881,7 @@
       inp.go_no_go = ctField(f, 'Go / no-go', ctSelect([['', 'Not decided'], ['go', 'Go'], ['no_go', 'No-go']], b.go_no_go || ''));
       inp.go_no_go_reason = ctField(f, 'Why', ctInput('text', b.go_no_go_reason || '', { maxlength: 2000 }));
       pane.appendChild(f);
+      pane.appendChild(el('p', 'ct-note', 'After the end date, a responded bid moves to Pending decision by itself. Two weeks later, with no award or loss recorded, it closes out as expired and leaves the active board. Leave it empty and nothing moves on its own.'));
       var tf = el('div', 'ct-form');
       var ta = function (label, key, ph) {
         var t = el('textarea');
@@ -10889,7 +10899,7 @@
         var body = {
           agency: inp.agency.value, title: inp.title.value, event_no: inp.event_no.value, source: inp.source.value, naics: inp.naics.value,
           commodity_codes: inp.commodity_codes.value, structure: inp.structure.value, submit_method: inp.submit_method.value,
-          date_open: dayToTs(inp.date_open.value), date_close: ctFromDt(inp.date_close.value), qa_close: ctFromDt(inp.qa_close.value),
+          date_open: dayToTs(inp.date_open.value), date_close: ctFromDt(inp.date_close.value), qa_close: ctFromDt(inp.qa_close.value), end_date: dayToTs(inp.end_date.value),
           expected_po_date: dayToTs(inp.expected_po_date.value), need_by_date: dayToTs(inp.need_by_date.value),
           lead_time_days: inp.lead_time_days.value, nte: inp.nte.value, freight_threshold: inp.freight_threshold.value,
           posting_url: inp.posting_url.value, partial_ok: pOk.input.checked, federal: fed.input.checked,
