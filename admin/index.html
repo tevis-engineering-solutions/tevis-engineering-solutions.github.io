@@ -4589,13 +4589,22 @@
           });
         });
       }
+      // What the conversion left off. A monthly line is a service agreement, not a
+      // charge on day one, so it never reaches the invoice -- but it must not vanish
+      // silently either, or nobody sets it up.
+      function sayRecurring(r) {
+        if (!r.recurring || !r.recurring.length) return '';
+        return ' · ' + r.recurring.length + ' recurring line' + (r.recurring.length > 1 ? 's' : '')
+          + ' left off (' + r.recurring.map(function (i) { return money(i.line_cents) + ' / ' + i.interval; }).join(', ')
+          + ') — set it up as an agreement';
+      }
       if (q.status === 'accepted') {
         qact('Convert to invoice', 'prim', function () {
-          var num = prompt('Invoice number:', q.number.replace('TES-Q-', 'TES-INV-Q-'));
+          var num = prompt('Invoice number:', q.number.replace(/^TES-(QT|EST|Q)-/, 'TES-INV-'));
           if (num === null) return;
           api('/admin/quotes/' + q.id + '/convert', { method: 'POST', body: { invoice_number: num.trim(), due_days: 14 } }).then(function (r) {
             if (!r.ok) return toast(QUOTE_ERROR[r.error] || 'Could not convert');
-            toast('Invoice ' + r.invoice_number + ' created' + (r.pay_url ? ' with a pay link' : ''));
+            toast('Invoice ' + r.invoice_number + ' created' + (r.pay_url ? ' with a pay link' : '') + sayRecurring(r));
             reload();
           });
         });
@@ -4604,11 +4613,11 @@
         qact('Accepted by phone', null, function () {
           var note = prompt('How did they accept? (recorded on the quote as your note, never as their signature)', 'agreed by phone');
           if (note === null) return;
-          var num = prompt('Invoice number:', q.number.replace('TES-Q-', 'TES-INV-Q-'));
+          var num = prompt('Invoice number:', q.number.replace(/^TES-(QT|EST|Q)-/, 'TES-INV-'));
           if (num === null) return;
           api('/admin/quotes/' + q.id + '/convert', { method: 'POST', body: { verbal: note.trim() || 'verbal', invoice_number: num.trim(), due_days: 14 } }).then(function (r) {
             if (!r.ok) return toast(QUOTE_ERROR[r.error] || 'Could not convert');
-            toast('Marked accepted and invoiced as ' + r.invoice_number); reload();
+            toast('Marked accepted and invoiced as ' + r.invoice_number + sayRecurring(r)); reload();
           });
         });
         qact('Mark declined', null, function () {

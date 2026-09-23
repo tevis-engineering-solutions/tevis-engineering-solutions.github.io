@@ -293,6 +293,17 @@
       return by;
     }
 
+    /** "$3,650.00 one-time + $100.00 / month" -- every commitment, in order. */
+    function headline() {
+      var by = chosenByInterval(), out = [];
+      if (by.once && by.once.low) out.push(sayAmount(by.once) + ' one-time');
+      INTERVAL_ORDER.forEach(function (k) {
+        if (k === 'once' || !by[k] || !by[k].low) return;
+        out.push(sayAmount(by[k]) + INTERVAL_SUFFIX[k]);
+      });
+      return out.join('  +  ');
+    }
+
     function sayAmount(b) {
       return b.high && b.high !== b.low ? money(b.low) + ' to ' + money(b.high) : money(b.low);
     }
@@ -320,15 +331,11 @@
           if (k === 'once' || !by[k] || !by[k].low) return;
           row('Ongoing', sayAmount(by[k]) + INTERVAL_SUFFIX[k], 'int');
         });
-        var head = [];
-        if (by.once && by.once.low) head.push(sayAmount(by.once) + ' one-time');
-        INTERVAL_ORDER.forEach(function (k) {
-          if (k === 'once' || !by[k] || !by[k].low) return;
-          head.push(sayAmount(by[k]) + INTERVAL_SUFFIX[k]);
-        });
-        row('Total', head.join('  +  ') || money(0), 'big');
+        row('Total', headline() || money(0), 'big');
       }
-      $('qAgreeTotal').textContent = decided ? '' : ' for ' + money(chosenTotal());
+      // The box names what they are agreeing to, which is BOTH commitments when there
+      // is a recurring line -- naming only the one-time figure would understate it.
+      $('qAgreeTotal').textContent = decided ? '' : ' for ' + (headline() || money(chosenTotal()));
     }
 
     function renderItems(canPick) {
