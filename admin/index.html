@@ -7818,11 +7818,16 @@
       finTile(tiles, 'Billable hours', hoursOf(st.hours.billable_minutes), st.hours.effective_rate_cents != null ? money(st.hours.effective_rate_cents) + ' per billed hour' : st.hours.invoiced_labor_minutes ? 'from invoice line items, not the work log' : 'nothing billed yet', st.deltas.billable_minutes);
       finTile(tiles, 'PayPal fees', money(st.paypal.fee_cents), st.paypal.count + (st.paypal.count === 1 ? ' payment' : ' payments'), st.deltas.fee_cents, true);
       // Equity, not income, so it sits beside the P&L figures rather than inside one.
-      if (st.paypal.owner_count) {
-        finTile(tiles, 'Owner funding', money(st.paypal.owner_in_cents),
-          st.paypal.owner_out_cents
-            ? money(st.paypal.owner_out_cents) + ' drawn back out · net ' + money(st.paypal.owner_net_cents)
-            : 'your own money in · not revenue');
+      // Across every account — PayPal, the card, cash — because a figure covering one
+      // of them would read as the whole picture.
+      var own = st.owner_funding || { count: 0, by_account: [] };
+      if (own.count) {
+        finTile(tiles, 'Owner funding', money(own.in_cents),
+          own.out_cents
+            ? money(own.out_cents) + ' drawn back out · net ' + money(own.net_cents)
+            : own.by_account.length > 1
+              ? own.by_account.map(function (a) { return a.label + ' ' + money(a.cents); }).join(' · ')
+              : 'your own money in · not revenue');
       }
       finTile(tiles, 'Days to pay', st.days_to_pay.average != null ? String(st.days_to_pay.average) : '—', st.days_to_pay.count ? 'average · median ' + st.days_to_pay.median + ' · ' + st.days_to_pay.count + ' paid' : 'nothing paid this period');
       finBody.appendChild(tiles);
@@ -8199,9 +8204,9 @@
     // money fronted and not yet recovered, which is what the tiles at the top report.
 
     var LG_VIEWS = [['review', 'Needs review'], ['expense', 'Expenses'], ['job_parts', 'Parts for jobs'],
-                    ['hidden', 'Hidden'], ['all', 'All']];
-    var LG_CLASS_COLOR = { expense: '#e0c98a', job_parts: '#4fa2ff', transfer: '#6a8ba8', personal: '#6a8ba8' };
-    var LG_CLASS_LABEL = { expense: 'expense', job_parts: 'parts for a job', transfer: 'transfer', personal: 'personal' };
+                    ['owner_funding', 'Owner funding'], ['hidden', 'Hidden'], ['all', 'All']];
+    var LG_CLASS_COLOR = { expense: '#e0c98a', job_parts: '#4fa2ff', transfer: '#6a8ba8', personal: '#6a8ba8', owner_funding: '#c89830' };
+    var LG_CLASS_LABEL = { expense: 'expense', job_parts: 'parts for a job', transfer: 'transfer', personal: 'personal', owner_funding: 'owner funding' };
     var lgView = 'review';
     var lgAccount = '';
     var lgQ = '';
@@ -8351,6 +8356,10 @@
           right.appendChild(licAction('Parts for a job…', 'prim', function () { lgLinkParts(e); }));
         } else {
           right.appendChild(licAction('Refund or credit', null, function () { lgClassify(e, { classification: 'expense' }); }));
+          // Money in from your own pocket. Offered on money IN only, which is what
+          // self-funding is; the classification itself takes either sign, so a draw
+          // filed here is still reported as a draw.
+          right.appendChild(licAction('Owner funding', null, function () { lgClassify(e, { classification: 'owner_funding' }); }));
         }
         right.appendChild(licAction('Transfer', null, function () { lgClassify(e, { classification: 'transfer' }); }));
         right.appendChild(licAction('Personal', null, function () { lgClassify(e, { classification: 'personal' }); }));
@@ -8370,6 +8379,11 @@
             invtF.notes.value = e.account_label + (e.external_ref ? ' · ' + e.external_ref : '');
             document.getElementById('invtFormBox').scrollIntoView({ behavior: 'smooth', block: 'start' });
           }));
+        }
+        // A deposit from your own bank files itself as a transfer, which is right for
+        // the P&L either way but says nothing about whose money it was.
+        if (e.amount_cents > 0 && e.classification !== 'owner_funding') {
+          right.appendChild(licAction('Owner funding', null, function () { lgClassify(e, { classification: 'owner_funding' }); }));
         }
         right.appendChild(licAction('Always\u2026', null, function () { lgAlways(e); }));
         right.appendChild(licAction('Review again', null, function () { lgClassify(e, { classification: null }); }));
@@ -8581,7 +8595,7 @@
       var cls = document.createElement('select');
       cls.setAttribute('aria-label', 'What it is');
       [['', 'File it later'], ['expense', 'Business expense'], ['job_parts', 'Parts for a job'],
-       ['transfer', 'Transfer'], ['personal', 'Personal']].forEach(function (c) {
+       ['owner_funding', 'Owner funding'], ['transfer', 'Transfer'], ['personal', 'Personal']].forEach(function (c) {
         var o = el('option', null, c[1]);
         o.value = c[0];
         cls.appendChild(o);
