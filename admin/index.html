@@ -489,6 +489,18 @@
     .fin-clients { display:grid; grid-template-columns:minmax(0,240px) minmax(0,1fr); gap:1rem; align-items:start; }
     @media (max-width:720px) { .fin-clients { grid-template-columns:1fr; } }
     .fin-donut .chart-donut { flex-direction:column; align-items:flex-start; }
+    /* The donut column is capped at 240px, but stacking the legend under the chart
+       makes width the CROSS axis, and align-items:flex-start sizes it to its widest
+       row -- so a long client name pushed the value and the percent out over the
+       table beside it. Give it the column's width and .legend-l ellipsizes as it was
+       always meant to. */
+    .fin-donut .chart-donut, .fin-donut .chart-legend { width:100%; }
+    .fin-donut .chart-legend { align-self:stretch; }
+    /* A full-width panel has room the table does not need, and 240px clips most
+       client names. The narrow panels keep 240, where the list beside it does.
+       Inside a min-width query because this out-specifies the 720px rule above and
+       would otherwise keep two columns on a phone. */
+    @media (min-width:721px) { .fin-sec.wide .fin-clients { grid-template-columns:minmax(0,300px) minmax(0,1fr); } }
     .fin-table-wrap { overflow-x:auto; }
     .fin-table { width:100%; border-collapse:collapse; font-size:0.8rem; min-width:520px; }
     .fin-table th { text-align:left; font-family:"Montserrat",sans-serif; font-size:0.62rem; text-transform:uppercase; letter-spacing:0.06em; color:var(--muted); padding:0.45rem 0.5rem; border-bottom:1px solid var(--line); cursor:pointer; white-space:nowrap; }
@@ -6859,7 +6871,10 @@
         var dot = el('i');
         dot.style.background = s.color || CHART_COLORS[i % CHART_COLORS.length];
         li.appendChild(dot);
-        li.appendChild(el('span', 'legend-l', s.label));
+        var lbl = el('span', 'legend-l', s.label);
+        // It ellipsizes in a narrow column, so keep the full text reachable.
+        lbl.title = s.label;
+        li.appendChild(lbl);
         li.appendChild(el('b', null, fmt(s.value)));
         li.appendChild(el('span', 'legend-p', Math.round(s.value / total * 100) + '%'));
         if (opts.onPick) { li.classList.add('pick'); li.addEventListener('click', function () { opts.onPick(s, i); }); }
