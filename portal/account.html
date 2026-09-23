@@ -401,7 +401,7 @@
 
       // One switch per category. Each saves on its own and reverts visibly if the
       // save fails, rather than showing a preference that was never stored.
-      var LABELS = { tickets: 'Ticket status changes', messages: 'New messages from us', invoices: 'New invoices', reminders: 'Past-due reminders', equipment: 'Equipment assigned to me', documents: 'Files shared with me', announcements: 'Service notices' };
+      var LABELS = { tickets: 'Ticket status changes', messages: 'New messages from us', invoices: 'New invoices', reminders: 'Past-due reminders', appointments: 'Appointment reminders', equipment: 'Equipment assigned to me', documents: 'Files shared with me', announcements: 'Service notices' };
       function renderPrefs(d) {
         prefRows.textContent = '';
         (d.categories || Object.keys(LABELS)).forEach(function (c) {
