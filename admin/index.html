@@ -70,7 +70,7 @@
     .tk-id { font-family:"Montserrat",sans-serif; font-weight:800; font-size:0.78rem; letter-spacing:0.03em; }
     .tk-sub { font-size:0.9rem; font-weight:600; color:#f0f4f0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
     .tk-meta { font-size:0.72rem; color:var(--muted); margin-top:0.25rem; }
-    .badge { font-size:0.62rem; font-weight:800; text-transform:uppercase; letter-spacing:0.05em; padding:0.15rem 0.5rem; border-radius:999px; border:1px solid transparent; white-space:nowrap; }
+    .badge { display:inline-flex; align-items:center; justify-content:center; font-size:0.62rem; font-weight:800; text-transform:uppercase; letter-spacing:0.05em; padding:0.15rem 0.5rem; border-radius:999px; border:1px solid transparent; white-space:nowrap; }
 
     .panel { border:1px solid var(--line); border-radius:14px; background:var(--card); padding:1rem; }
     .panel h2 { font-family:"Montserrat",sans-serif; font-size:1.05rem; margin-bottom:0.15rem; }
@@ -257,7 +257,7 @@
 
     .cust-head { border-bottom:1px solid var(--line); padding-bottom:0.8rem; margin-bottom:0.9rem; }
     .cust-head h2 { font-family:"Montserrat",sans-serif; font-size:1.1rem; margin-bottom:0.15rem; word-break:break-word; }
-    .cust-badges { display:flex; flex-wrap:wrap; gap:0.35rem; margin-top:0.5rem; }
+    .cust-badges { display:flex; flex-wrap:wrap; align-items:center; gap:0.35rem; margin-top:0.5rem; }
     .cust-src { font-size:0.7rem; color:var(--muted); margin-top:0.5rem; }
 
     .tiles { display:grid; grid-template-columns:repeat(auto-fit,minmax(120px,1fr)); gap:0.5rem; margin-bottom:0.9rem; }
@@ -338,7 +338,7 @@
     /* An action button sitting straight on top of the list it acts on reads as part of
        the first row. Give it room, but only when something follows it. */
     .cust-sec > button:not(.row):not(:last-child) { margin-bottom:0.75rem; }
-    .cust-sec .row button, .lg-list .row button { font-family:"Montserrat",sans-serif; font-size:0.66rem; font-weight:700; text-transform:uppercase; letter-spacing:0.03em; padding:0.35rem 0.7rem; border-radius:999px; border:1px solid var(--line); background:var(--bg); color:var(--text); cursor:pointer; min-height:36px; }
+    .cust-sec .row button, .lg-list .row button { display:inline-flex; align-items:center; justify-content:center; font-family:"Montserrat",sans-serif; font-size:0.66rem; font-weight:700; text-transform:uppercase; letter-spacing:0.03em; padding:0.35rem 0.7rem; border-radius:999px; border:1px solid var(--line); background:var(--bg); color:var(--text); cursor:pointer; min-height:36px; }
     .cust-sec > button:not(.row):hover, .cust-sec .row button:hover, .lg-list .row button:hover { border-color:var(--green); }
     .cust-sec > button.prim:not(.row) { background:linear-gradient(135deg,var(--gold),#e0b840); color:#0d1710; border-color:transparent; }
 
