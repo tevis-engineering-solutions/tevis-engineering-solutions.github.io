@@ -819,22 +819,46 @@
     .ct-sugg button { font:inherit; font-size:0.72rem; border:1px solid rgba(200,152,48,0.45); color:var(--gold); background:rgba(200,152,48,0.06); border-radius:999px; padding:0.25rem 0.6rem; cursor:pointer; min-height:30px; }
     /* The board: one column per stage. Scrolls sideways on a phone rather than
        squeezing five columns into 375px. */
-    .ct-board { display:grid; grid-template-columns:repeat(4,minmax(220px,1fr)); gap:0.6rem; overflow-x:auto; padding-bottom:0.3rem; }
-    .ct-col { background:var(--card); border:1px solid var(--line); border-radius:12px; padding:0.55rem; min-width:0; }
-    .ct-col h3 { font-family:"Montserrat",sans-serif; font-size:0.66rem; text-transform:uppercase; letter-spacing:0.06em; color:var(--muted); margin:0 0 0.45rem; display:flex; justify-content:space-between; }
+    /* Columns are set by renderCtBoard: a stage with bids gets room, an empty one a narrow
+       column, and each column is only as tall as what is in it. */
+    .ct-board { display:grid; grid-template-columns:repeat(4,minmax(220px,1fr)); gap:0.7rem; overflow-x:auto; padding-bottom:0.3rem; align-items:start; }
+    .ct-col { background:var(--card); border:1px solid var(--line); border-radius:12px; padding:0.6rem; min-width:0; }
+    .ct-col.empty { background:transparent; border-style:dashed; }
+    .ct-col.empty .ct-empty { padding:0.1rem 0.1rem 0; }
+    .ct-col h3 { font-family:"Montserrat",sans-serif; font-size:0.68rem; text-transform:uppercase; letter-spacing:0.06em; color:#b9cdbb; margin:0 0 0.5rem; display:flex; justify-content:space-between; gap:0.4rem; }
     .ct-col h3 span { color:var(--gold); }
-    .ct-card { width:100%; text-align:left; border:1px solid var(--line); border-radius:10px; background:var(--bg); padding:0.55rem 0.6rem; margin-bottom:0.4rem; color:inherit; font:inherit; cursor:pointer; display:block; }
+    .ct-card { width:100%; text-align:left; border:1px solid rgba(74,172,101,0.28); border-radius:10px; background:var(--card-2); padding:0.7rem 0.75rem; margin-bottom:0.55rem; color:inherit; font:inherit; cursor:pointer; display:block; box-shadow:0 1px 0 rgba(0,0,0,0.25); }
     .ct-card:hover { border-color:var(--green); }
     .ct-card.sel { border-color:var(--gold); }
     .ct-card .n { font-family:"Montserrat",sans-serif; font-size:0.66rem; font-weight:800; color:var(--muted); letter-spacing:0.02em; }
-    .ct-card .t { font-size:0.84rem; font-weight:600; margin:0.1rem 0; word-break:break-word; }
-    .ct-card .a { font-size:0.72rem; color:var(--muted); }
-    .ct-card .chips { display:flex; flex-wrap:wrap; gap:0.25rem; margin-top:0.35rem; }
+    .ct-card .t { font-size:0.9rem; font-weight:600; margin:0.2rem 0 0.15rem; word-break:break-word; line-height:1.35; }
+    .ct-card .a { font-size:0.74rem; color:#a9bfac; line-height:1.4; }
+    .ct-card .chips { display:flex; flex-wrap:wrap; gap:0.3rem; margin-top:0.5rem; }
+    .ct-card .chips > * { max-width:100%; overflow:hidden; text-overflow:ellipsis; }
     .ct-chip { font-size:0.6rem; font-weight:800; text-transform:uppercase; letter-spacing:0.04em; border-radius:999px; padding:0.1rem 0.45rem; border:1px solid var(--line); color:var(--muted); white-space:nowrap; }
     .ct-chip.gold { color:var(--gold); border-color:rgba(200,152,48,0.5); }
     .ct-chip.red { color:#ef4444; border-color:rgba(239,68,68,0.5); }
     .ct-chip.green { color:var(--green); border-color:rgba(74,172,101,0.5); }
-    .ct-card .v { font-family:"Montserrat",sans-serif; font-size:0.78rem; margin-top:0.3rem; display:flex; justify-content:space-between; gap:0.4rem; }
+    .ct-card .v { font-family:"Montserrat",sans-serif; font-size:0.8rem; margin-top:0.5rem; padding-top:0.45rem; border-top:1px solid var(--line); display:flex; justify-content:space-between; gap:0.4rem; flex-wrap:wrap; }
+    /* The solicitation queue. */
+    .ct-queue { border:1px solid rgba(200,152,48,0.35); border-radius:14px; background:var(--card); padding:0.85rem 0.9rem 0.5rem; margin:0 0 1.1rem; }
+    .ct-q-head { display:flex; justify-content:space-between; gap:0.6rem; align-items:flex-start; flex-wrap:wrap; margin-bottom:0.5rem; }
+    .ct-q-head h2, .ct-sec-h { font-family:"Montserrat",sans-serif; font-size:0.92rem; text-transform:uppercase; letter-spacing:0.05em; margin:0 0 0.15rem; display:flex; align-items:center; gap:0.45rem; flex-wrap:wrap; }
+    .ct-sec-h { margin:0 0 0.5rem; }
+    .ct-q-card { border:1px solid rgba(74,172,101,0.28); border-radius:10px; background:var(--card-2); padding:0.7rem 0.75rem; margin-bottom:0.55rem; }
+    .ct-q-card.new { border-left:3px solid var(--gold); }
+    .ct-q-card .n { font-family:"Montserrat",sans-serif; font-size:0.64rem; font-weight:800; color:var(--muted); letter-spacing:0.02em; }
+    .ct-q-card .t { font-size:0.92rem; font-weight:600; margin:0.2rem 0 0.1rem; line-height:1.35; word-break:break-word; }
+    .ct-q-card .a { font-size:0.74rem; color:#a9bfac; }
+    .ct-q-card .chips { display:flex; flex-wrap:wrap; gap:0.3rem; margin-top:0.45rem; }
+    .ct-q-card .chips > * { max-width:100%; overflow:hidden; text-overflow:ellipsis; }
+    .ct-q-card .reply-row { margin-top:0.5rem; }
+    .ct-q-card .reply-row a.ct-btn { text-decoration:none; display:inline-flex; align-items:center; }
+    .ct-q-det summary { font-size:0.74rem; color:var(--muted); cursor:pointer; margin-top:0.35rem; }
+    .ct-q-det p { font-size:0.78rem; margin:0.3rem 0 0; white-space:pre-line; }
+    .ct-q-empty { padding:0.6rem 0.2rem 0.8rem; font-size:0.82rem; }
+    .ct-site a small.auto { color:var(--green); }
+    .ct-site a.ct-btn { text-decoration:none; display:inline-flex; align-items:center; }
     .ct-empty { font-size:0.74rem; color:var(--muted); padding:0.4rem 0.2rem; }
     /* The workspace for one bid. */
     .ct-panel { border:1px solid var(--line); border-radius:14px; background:var(--card); padding:1rem; margin-bottom:1rem; }
@@ -908,7 +932,7 @@
     @media (max-width:640px) { .ct-cmp { grid-template-columns:1fr 1fr; } .ct-cmp .lbl { grid-column:1 / -1; } }
     .ct-hist { font-size:0.78rem; }
     .ct-hist .row-main b { font-family:"Montserrat",sans-serif; font-size:0.7rem; text-transform:uppercase; letter-spacing:0.03em; color:var(--gold); }
-    @media (max-width:560px) { .ct-tools { flex-basis:100%; } .ct-board { grid-template-columns:repeat(4,minmax(78vw,1fr)); } }
+    @media (max-width:560px) { .ct-tools { flex-basis:100%; } }
     /* ---- Projects ---- */
     .pj-bar { height:6px; border-radius:999px; background:var(--line); overflow:hidden; margin:0.45rem 0 0.1rem; }
     .pj-bar span { display:block; height:100%; background:linear-gradient(90deg,var(--green),var(--gold)); }
@@ -1581,10 +1605,32 @@
   </main>
   <main class="wrap" id="viewContracting" aria-label="Contracting" hidden>
     <section class="ct-sites" aria-label="Where to find bids">
-      <div class="ct-sites-h"><h2>Where to look</h2><span class="row-sub">Stamp a site when you have checked it, so the weekly sweep has a trail.</span></div>
+      <div class="ct-sites-h"><h2>Where to look</h2><span class="row-sub">The queue below reads the City of Cleveland on its own (and SAM.gov once it has a key). The rest need you: Open marks a site checked today.</span></div>
       <div class="ct-site-list" id="ctSites"></div>
     </section>
     <div class="tiles ct-tiles" id="ctTiles"></div>
+    <section class="ct-queue" id="ctQueue" aria-labelledby="ctqTitle">
+      <div class="ct-q-head">
+        <div><h2 id="ctqTitle">Queue: posts to evaluate <span class="ct-chip gold" id="ctqCount" hidden></span></h2><div class="row-sub" id="ctqStatus">Loading&hellip;</div></div>
+        <button type="button" class="ct-btn" id="ctqRefresh">Refresh now</button>
+      </div>
+      <div class="ct-bar">
+        <div class="filters ct-filters" id="ctqFilters">
+          <button type="button" class="fpill on" data-view="queue">Matches</button>
+          <button type="button" class="fpill" data-view="watching">Watching</button>
+          <button type="button" class="fpill" data-view="open">Everything open</button>
+          <button type="button" class="fpill" data-view="federal">Federal</button>
+          <button type="button" class="fpill" data-view="passed">Passed</button>
+          <button type="button" class="fpill" data-view="promoted">Built</button>
+        </div>
+        <div class="ct-tools">
+          <label for="ctqQ" class="sr-only">Search posts</label>
+          <input type="search" id="ctqQ" placeholder="Search posts" autocomplete="off">
+        </div>
+      </div>
+      <div id="ctqList"><div class="state">Loading&hellip;</div></div>
+    </section>
+    <h2 class="ct-sec-h" id="ctBidsH">Bids</h2>
     <div class="ct-bar">
       <div class="filters ct-filters" id="ctFilters">
         <button type="button" class="fpill on" data-view="active">Active</button>
@@ -10475,6 +10521,7 @@
           if (res[2].ok) { ctBidsCache = res[2].bids || []; renderCtBoard(); }
           else document.getElementById('ctBoard').innerHTML = '<div class="state">Could not load bids.</div>';
           if (ctBidId) openBid(ctBidId, true);
+          loadQueue();
         });
     }
     function reloadCtRef() { ctRef = null; return api('/admin/contracting/reference').then(function (r) { if (r.ok) { ctRef = r; renderCtSites(); renderCtRef(); fillCtNewSelects(); } }); }
@@ -10488,23 +10535,31 @@
         var a = el('a');
         a.href = s.url; a.target = '_blank'; a.rel = 'noopener noreferrer';
         a.appendChild(document.createTextNode(s.label));
+        var auto = ctFeed && ctFeed.sources.filter(function (f) { return f.source === s.key; })[0];
         var age = s.last_checked_at ? Math.floor((now - s.last_checked_at) / 86400) : null;
-        var sm = el('small', age == null || age > 7 ? 'stale' : null, age == null ? 'never checked' : age === 0 ? 'checked today' : 'checked ' + ctDays(age) + ' ago');
+        var sm;
+        if (auto && !auto.needs_key) {
+          var failed = auto.last_run && !auto.last_run.ok && auto.last_run.error && auto.last_run.error !== 'no_key';
+          sm = el('small', failed ? 'stale' : 'auto', failed ? 'last read failed' : 'read by the queue ' + ctAgo(auto.last_ok));
+        } else sm = el('small', age == null || age > 7 ? 'stale' : null, (auto && auto.needs_key ? 'needs an API key · ' : '') + (age == null ? 'never checked' : age === 0 ? 'checked today' : 'checked ' + ctDays(age) + ' ago'));
         // Federal sites are watched, not bid: the badge sits under the name so it
         // cannot squeeze the name off a narrow chip.
         if (s.federal) { var f = el('span', 'fed', 'Monitor only'); a.title = 'Federal prime bids are blocked (FAR 3.601) while VA employment continues.'; sm.appendChild(document.createTextNode(' ')); sm.appendChild(f); }
         a.appendChild(sm);
         d.appendChild(a);
-        var b = el('button', 'ct-btn sm', 'Checked');
-        b.type = 'button';
-        b.setAttribute('aria-label', 'Mark ' + s.label + ' as checked today');
-        b.addEventListener('click', function () {
-          b.disabled = true;
-          api('/admin/bid-sources/' + s.key, { method: 'PATCH', body: { checked: true } }).then(function (r) {
-            if (r.ok) { ctRef.sources = r.sources; renderCtSites(); } else { b.disabled = false; toast(ctErr(r)); }
-          });
-        });
-        d.appendChild(b);
+        // A site the queue reads needs no button. Any other site is opened from here (OhioBuys
+        // has a CAPTCHA, Cuyahoga's portal a login), and opening it stamps it as checked today.
+        var stamp = function () {
+          api('/admin/bid-sources/' + s.key, { method: 'PATCH', body: { checked: true } }).then(function (r) { if (r.ok) { ctRef.sources = r.sources; renderCtSites(); } });
+        };
+        if (!(auto && !auto.needs_key)) {
+          var b = el('a', 'ct-btn sm', 'Open ↗');
+          b.href = s.url; b.target = '_blank'; b.rel = 'noopener noreferrer';
+          b.setAttribute('aria-label', 'Open ' + s.label + ' (marks it checked today)');
+          b.addEventListener('click', stamp);
+          a.addEventListener('click', stamp);
+          d.appendChild(b);
+        }
         w.appendChild(d);
       });
     }
@@ -10593,11 +10648,18 @@
       var placed = {};
       var cols = CT_COLUMNS.slice();
       var rest = ctBidsCache.filter(function (b) { return !CT_COLUMNS.some(function (c) { return c[1].indexOf(b.status) >= 0; }); });
-      if (rest.length) { cols.push(['Closed', rest.map(function (b) { return b.status; })]); board.style.gridTemplateColumns = 'repeat(5,minmax(220px,1fr))'; }
+      if (rest.length) cols.push(['Closed', rest.map(function (b) { return b.status; })]);
+      // An empty stage is a narrow column; the stages with bids share the rest, so a card
+      // is never squeezed or pushed off the edge by four columns of 'None'.
+      var phone = window.matchMedia('(max-width:560px)').matches;
+      board.style.gridTemplateColumns = cols.map(function (col) {
+        var n = ctBidsCache.filter(function (b) { return col[1].indexOf(b.status) >= 0; }).length;
+        return n ? (phone ? 'minmax(82vw,1fr)' : 'minmax(260px,1fr)') : (phone ? '140px' : 'minmax(120px,150px)');
+      }).join(' ');
       cols.forEach(function (col) {
         var items = ctBidsCache.filter(function (b) { return col[1].indexOf(b.status) >= 0 && !placed[b.id]; });
         items.forEach(function (b) { placed[b.id] = true; });
-        var c = el('div', 'ct-col');
+        var c = el('div', 'ct-col' + (items.length ? '' : ' empty'));
         var h = el('h3', null, col[0]);
         h.appendChild(el('span', null, String(items.length)));
         c.appendChild(h);
@@ -10703,6 +10765,186 @@
       renderCtBoard();
     });
 
+    // ---- the solicitation queue ----
+    // Postings read from the sites that publish them openly (Cleveland every 6 hours,
+    // SAM.gov daily with a key), scored against the service codes below. Matches land
+    // here to evaluate: build a bid, watch it, or pass with a note.
+    var ctFeed = null;
+    var ctqView = 'queue';
+    var ctqSearch = '';
+    var ctqTimer = null;
+    var ctqShowAll = false;
+    var CT_FEED_LABEL = { cleveland: 'City of Cleveland', samgov: 'SAM.gov' };
+
+    function loadQueue() {
+      var list = document.getElementById('ctqList');
+      return api('/admin/feed?view=' + ctqView + (ctqSearch ? '&q=' + encodeURIComponent(ctqSearch) : '')).then(function (r) {
+        if (!r.ok) { list.innerHTML = '<div class="state">Could not load the queue.</div>'; return; }
+        ctFeed = r.summary;
+        renderQueue(r.postings || []);
+        renderCtQueueStatus();
+        if (ctRef) renderCtSites();
+      });
+    }
+
+    function ctAgo(ts) {
+      if (!ts) return 'never';
+      var s = Math.max(0, Date.now() / 1000 - ts);
+      if (s < 90) return 'just now';
+      if (s < 5400) return Math.round(s / 60) + ' min ago';
+      if (s < 129600) return Math.round(s / 3600) + ' h ago';
+      return ctDays(Math.round(s / 86400)) + ' ago';
+    }
+
+    function renderCtQueueStatus() {
+      var st = document.getElementById('ctqStatus');
+      if (!ctFeed) return;
+      var parts = ctFeed.sources.map(function (s) {
+        var name = CT_FEED_LABEL[s.source] || s.source;
+        if (s.needs_key) return name + ': add a SAM.gov API key to read it';
+        var lr = s.last_run;
+        if (lr && !lr.ok && lr.error && lr.error !== 'no_key') return name + ': last read failed (' + lr.error + ')';
+        return name + ': read ' + ctAgo(s.last_ok) + (s.last_ok ? ', every ' + s.every_hours + ' h' : '');
+      });
+      st.textContent = parts.join(' · ');
+      var nb = document.getElementById('ctqCount');
+      nb.textContent = ctFeed.new_matches ? ctFeed.new_matches + ' new' : '';
+      nb.hidden = !ctFeed.new_matches;
+    }
+
+    function renderQueue(rows) {
+      var list = document.getElementById('ctqList');
+      list.textContent = '';
+      if (!rows.length) {
+        var msg = ctqSearch ? 'No posts match that search.'
+          : ctqView === 'queue' ? 'No open post matches your codes right now.' + (ctFeed && ctFeed.open_local ? ' ' + ctFeed.open_local + ' are open on the sites the queue reads; see Everything open.' : '') + ' New ones arrive on their own.'
+          : ctqView === 'federal' ? (ctFeed && ctFeed.sources.some(function (s) { return s.source === 'samgov' && s.needs_key; }) ? 'SAM.gov is not being read yet: it needs an API key.' : 'No open federal notices on your NAICS codes in Ohio.')
+          : 'Nothing here.';
+        list.appendChild(el('div', 'ct-empty ct-q-empty', msg));
+        return;
+      }
+      var shown = ctqShowAll ? rows : rows.slice(0, 12);
+      shown.forEach(function (p) { list.appendChild(ctqCard(p)); });
+      if (rows.length > shown.length) {
+        var more = el('button', 'ct-btn sm', 'Show all ' + rows.length); more.type = 'button';
+        more.addEventListener('click', function () { ctqShowAll = true; renderQueue(rows); });
+        list.appendChild(more);
+      }
+    }
+
+    function ctqCard(p) {
+      var c = el('article', 'ct-q-card' + (p.status === 'new' ? ' new' : ''));
+      var top = el('div', 'n', [p.kind, p.event_no].filter(Boolean).join(' ') + ' · ' + (CT_FEED_LABEL[p.source] || p.source) + ' · first seen ' + ctAgo(p.first_seen_at));
+      c.appendChild(top);
+      c.appendChild(el('div', 't', p.title));
+      if (p.agency) c.appendChild(el('div', 'a', p.agency));
+      var chips = el('div', 'chips');
+      if (p.due_at) {
+        var d = Math.ceil((p.due_at - Date.now() / 1000) / 86400);
+        chips.appendChild(el('span', 'ct-chip ' + (d <= 3 ? 'red' : d <= 10 ? 'gold' : ''), d < 0 ? 'Closed' : 'Closes ' + (d === 0 ? 'today' : 'in ' + ctDays(d)) + ' · ' + fmtDate(p.due_at)));
+      } else chips.appendChild(el('span', 'ct-chip', 'No closing date listed'));
+      (p.matches || []).slice(0, 3).forEach(function (m) {
+        var chip = el('span', 'ct-chip ' + (m.tier === 1 ? 'gold' : 'green'), m.code + ' · ' + m.hits.slice(0, 3).join(', '));
+        chip.title = 'Tier ' + m.tier + ' · ' + (m.description || '');
+        chips.appendChild(chip);
+      });
+      if (p.federal) chips.appendChild(el('span', 'ct-chip red', 'Federal · monitor only'));
+      if (p.set_aside) chips.appendChild(el('span', 'ct-chip', p.set_aside));
+      if (p.status === 'watching') chips.appendChild(el('span', 'ct-chip gold', 'Watching'));
+      if (p.status === 'passed') chips.appendChild(el('span', 'ct-chip', 'Passed' + (p.note ? ': ' + p.note : '')));
+      if (p.gone_at) chips.appendChild(el('span', 'ct-chip', 'No longer listed'));
+      c.appendChild(chips);
+      var det = el('details', 'ct-q-det');
+      det.appendChild(el('summary', null, 'Details'));
+      if (p.description) det.appendChild(el('p', null, p.description));
+      var who = [p.contact_name, p.contact_email, p.contact_phone].filter(Boolean).join(' · ');
+      if (who) det.appendChild(el('p', 'row-sub', 'Contact: ' + who));
+      if (p.place) det.appendChild(el('p', 'row-sub', 'Place of performance: ' + p.place));
+      c.appendChild(det);
+
+      var rr = el('div', 'reply-row');
+      if (p.status === 'promoted' && p.bid_id) {
+        var ob = el('button', 'prim', 'Open the bid'); ob.type = 'button';
+        ob.addEventListener('click', function () { routeHash('#b=' + p.bid_id, true); });
+        rr.appendChild(ob);
+      } else if (!p.federal) {
+        var build = el('button', 'prim', 'Build a bid'); build.type = 'button';
+        build.addEventListener('click', function () {
+          if (!confirm('Create a bid from "' + p.title + '"?' + (p.doc_url ? ' Its bid document is attached as the solicitation.' : ''))) return;
+          build.disabled = true; build.textContent = 'Building…';
+          api('/admin/feed/' + p.id + '/build', { method: 'POST', body: {} }).then(function (r) {
+            build.disabled = false; build.textContent = 'Build a bid';
+            if (!r.ok) { toast(ctErr(r)); return; }
+            toast('Bid ' + r.number + ' created' + (r.document ? (r.document.ok ? ' with the bid document' : ', but the document could not be fetched: ' + r.document.error) : ''));
+            loadQueue();
+            reloadCtLists();
+            routeHash('#b=' + r.bid_id, true);
+          });
+        });
+        rr.appendChild(build);
+      }
+      var setStatus = function (status, note) {
+        api('/admin/feed/' + p.id, { method: 'PATCH', body: note === undefined ? { status: status } : { status: status, note: note } }).then(function (r) {
+          if (!r.ok) { toast(ctErr(r)); return; }
+          toast(status === 'passed' ? 'Passed' : status === 'watching' ? 'Watching' : 'Back in the queue');
+          loadQueue();
+        });
+      };
+      if (p.status === 'new') {
+        var w = el('button', null, 'Watch'); w.type = 'button';
+        w.addEventListener('click', function () { setStatus('watching'); });
+        rr.appendChild(w);
+      }
+      if (p.status === 'new' || p.status === 'watching') {
+        var pass = el('button', null, 'Pass'); pass.type = 'button';
+        pass.addEventListener('click', function () {
+          var n = prompt('Pass on this one. Why? (optional)', '');
+          if (n === null) return;
+          setStatus('passed', n);
+        });
+        rr.appendChild(pass);
+      }
+      if (p.status === 'watching' || p.status === 'passed') {
+        var back = el('button', null, p.status === 'passed' ? 'Put back' : 'Stop watching'); back.type = 'button';
+        back.addEventListener('click', function () { setStatus('new'); });
+        rr.appendChild(back);
+      }
+      if (p.url) { var op = el('a', 'ct-btn sm', 'Open posting ↗'); op.href = p.url; op.target = '_blank'; op.rel = 'noopener noreferrer'; rr.appendChild(op); }
+      if (p.doc_url) { var dc = el('a', 'ct-btn sm', 'Bid document ↗'); dc.href = p.doc_url; dc.target = '_blank'; dc.rel = 'noopener noreferrer'; rr.appendChild(dc); }
+      c.appendChild(rr);
+      return c;
+    }
+
+    Array.prototype.forEach.call(document.querySelectorAll('#ctqFilters .fpill'), function (b) {
+      b.addEventListener('click', function () {
+        ctqView = b.getAttribute('data-view');
+        ctqShowAll = false;
+        Array.prototype.forEach.call(document.querySelectorAll('#ctqFilters .fpill'), function (x) { x.classList.toggle('on', x === b); });
+        loadQueue();
+      });
+    });
+    document.getElementById('ctqQ').addEventListener('input', function (e) {
+      clearTimeout(ctqTimer);
+      ctqTimer = setTimeout(function () { ctqSearch = e.target.value.trim(); loadQueue(); }, 250);
+    });
+    document.getElementById('ctqRefresh').addEventListener('click', function (e) {
+      var b = e.currentTarget;
+      b.disabled = true; b.textContent = 'Reading the sites…';
+      api('/admin/feed/refresh', { method: 'POST', body: {} }).then(function (r) {
+        b.disabled = false; b.textContent = 'Refresh now';
+        if (!r.ok) { toast(ctErr(r)); return; }
+        var said = (r.results || []).map(function (x) {
+          var name = CT_FEED_LABEL[x.source] || x.source;
+          if (x.skipped === 'no_key') return name + ' needs a key';
+          if (x.skipped === 'recent') return name + ' read recently';
+          if (!x.ok) return name + ' failed';
+          return name + ': ' + x.seen + ' read, ' + x.added + ' new';
+        });
+        toast(said.join(' · '));
+        loadQueue();
+      });
+    });
+
     // ---- one bid ----
     function openBid(id, replace) {
       if (ctBidId && Number(id) !== ctBidId && !ctLeaveOk()) return Promise.resolve();
@@ -10719,6 +10961,8 @@
       var p = document.getElementById('ctBid');
       p.hidden = true; p.textContent = '';
       document.getElementById('ctBoard').hidden = false;
+      document.getElementById('ctQueue').hidden = false;
+      document.getElementById('ctBidsH').hidden = false;
       if (/^#b=/.test(location.hash)) history.replaceState(null, '', '#contracting');
       renderCtBoard();
     }
@@ -10811,6 +11055,8 @@
       var d = ctDetail, b = d.bid;
       var p = document.getElementById('ctBid');
       document.getElementById('ctBoard').hidden = true;
+      document.getElementById('ctQueue').hidden = true;
+      document.getElementById('ctBidsH').hidden = true;
       p.hidden = false;
       // Panes with unsaved edits are lifted out before the redraw and put back after it.
       if (ctDirty.bid !== b.id) ctClearDirty();
@@ -11735,7 +11981,7 @@
 
       var kb = document.getElementById('ctCodesBody');
       kb.textContent = '';
-      kb.appendChild(el('p', 'ct-note', 'From the capability statement. Tier 1 is what to chase first. Keywords drive the suggestions on a new bid; a bid on a code not listed here carries a medium fit flag.'));
+      kb.appendChild(el('p', 'ct-note', 'From the capability statement. Tier 1 is what to chase first. The queue scores every posting against these keywords (whole words, plurals included) and against the NAICS code on federal notices; saving a code rescores the queue. A bid on a code not listed here carries a medium fit flag.'));
       ctRef.codes.forEach(function (c) {
         var r = el('div', 'ct-cmp');
         var lbl = el('div', 'lbl'); lbl.appendChild(el('b', null, c.code + ' · ' + c.description)); lbl.appendChild(el('small', null, c.competency || ''));
@@ -11746,12 +11992,29 @@
         var sv = el('button', 'ct-btn sm', 'Save'); sv.type = 'button';
         sv.addEventListener('click', function () {
           api('/admin/service-codes', { method: 'POST', body: { code: c.code, scheme: c.scheme, description: c.description, competency: c.competency, tier: tier.value, keywords: kw.value, active: c.active } }).then(function (res) {
-            if (res.ok) { ctRef.codes = res.codes; toast('Saved'); fillCtNewSelects(); } else toast(ctErr(res));
+            if (res.ok) { ctRef.codes = res.codes; toast('Saved · the queue was rescored'); fillCtNewSelects(); loadQueue(); } else toast(ctErr(res));
           });
         });
         r.appendChild(kw); r.appendChild(tier); r.appendChild(sv);
         kb.appendChild(r);
       });
+
+      var addK = el('button', 'ct-btn sm', '+ Add code'); addK.type = 'button';
+      addK.addEventListener('click', function () {
+        var code = prompt('NAICS code (6 digits):', '');
+        if (!code) return;
+        if (!/^\d{2,6}$/.test(code.trim())) { toast('A NAICS code is 2 to 6 digits.'); return; }
+        var desc = prompt('What it covers (for example: Office equipment merchant wholesalers):', '');
+        if (!desc) return;
+        var kws = prompt('Keywords the queue should look for, separated by commas:', '');
+        if (kws === null) return;
+        var t = prompt('Tier: 1 chase first, 2, or 3', '2');
+        if (t === null) return;
+        api('/admin/service-codes', { method: 'POST', body: { code: code.trim(), scheme: 'naics', description: desc, tier: t, keywords: kws, active: true } }).then(function (res) {
+          if (res.ok) { ctRef.codes = res.codes; renderCtRef(); fillCtNewSelects(); toast('Added ' + code.trim() + ' · the queue was rescored'); loadQueue(); } else toast(ctErr(res));
+        });
+      });
+      kb.appendChild(addK);
 
       var sb = document.getElementById('ctSourcingBody');
       sb.textContent = '';
