@@ -874,6 +874,24 @@
     .ct-empty { font-size:0.74rem; color:var(--muted); padding:0.4rem 0.2rem; }
     /* The workspace for one bid. */
     .ct-panel { border:1px solid var(--line); border-radius:14px; background:var(--card); padding:1rem; margin-bottom:1rem; }
+    /* Marketing */
+    .mk-stages { grid-template-columns:repeat(auto-fit,minmax(92px,1fr)); }
+    .mk-stages .tile { font:inherit; color:inherit; text-align:left; }
+    .mk-stages .tile.on { border-color:var(--gold); }
+    #viewMarketing .ct-tools select { max-width:10rem; }
+    .mk-chips { display:flex; flex-wrap:wrap; gap:0.3rem; margin:0.6rem 0 0.8rem; }
+    .mk-stagebox select { min-height:40px; }
+    .mk-notes { margin-top:0.9rem; }
+    .mk-notes textarea { width:100%; box-sizing:border-box; }
+    .mk-check { display:flex; align-items:center; gap:0.45rem; margin-top:0.7rem; font-size:0.85rem; }
+    .mk-audit { border:1px solid var(--line); border-radius:10px; padding:0.55rem 0.7rem; margin-bottom:0.6rem; }
+    .mk-audit summary { cursor:pointer; font-weight:600; font-size:0.88rem; }
+    .mk-sub-h { font-size:0.72rem; font-weight:800; text-transform:uppercase; letter-spacing:0.04em; color:var(--muted); margin:0.7rem 0 0.2rem; }
+    .mk-email { white-space:pre-wrap; word-break:break-word; font-family:inherit; font-size:0.88rem; line-height:1.5; background:var(--card-2); border:1px solid var(--line); border-radius:8px; padding:0.7rem; margin:0.6rem 0; max-height:28rem; overflow:auto; }
+    .row.mk-verify .row-main { color:var(--gold); }
+    .row.mk-reply { border-left:3px solid var(--green); }
+    .mk-import { margin-top:1.2rem; }
+    .mk-import input[type=file] { display:block; margin:0.4rem 0; }
     .ct-head { display:flex; justify-content:space-between; gap:0.6rem; flex-wrap:wrap; align-items:flex-start; }
     .ct-head h2 { font-family:"Montserrat",sans-serif; font-size:1.05rem; margin:0.1rem 0; }
     .ct-head .sub { font-size:0.78rem; color:var(--muted); }
@@ -1046,6 +1064,7 @@
       <button type="button" class="vbtn" id="navInvoices" data-view="invoices"><i class="fa-solid fa-file-invoice-dollar" aria-hidden="true"></i> Invoices</button>
       <button type="button" class="vbtn" id="navProjects" data-view="projects"><i class="fa-solid fa-diagram-project" aria-hidden="true"></i> Projects</button>
       <button type="button" class="vbtn" id="navContracting" data-view="contracting"><i class="fa-solid fa-landmark" aria-hidden="true"></i> Contracting</button>
+      <button type="button" class="vbtn" id="navMarketing" data-view="marketing"><i class="fa-solid fa-bullhorn" aria-hidden="true"></i> Marketing</button>
       <span class="vsep" aria-hidden="true"></span>
       <button type="button" class="vbtn" id="navInventory" data-view="inventory"><i class="fa-solid fa-laptop" aria-hidden="true"></i> Inventory</button>
       <button type="button" class="vbtn" id="navFinance" data-view="finance"><i class="fa-solid fa-chart-line" aria-hidden="true"></i> Finance<span class="nbadge" id="finBadge" hidden></span></button>
@@ -1835,6 +1854,58 @@
     </section>
     <div id="pjList"><div class="state">Loading&hellip;</div></div>
     <div id="pjOne" hidden></div>
+  </main>
+  <main class="wrap" id="viewMarketing" aria-label="Marketing" hidden>
+    <div class="tiles mk-stages" id="mkStages"></div>
+    <div class="ct-bar">
+      <div class="filters ct-filters" id="mkFilters">
+        <button type="button" class="fpill on" data-view="open">Open</button>
+        <button type="button" class="fpill" data-view="due">Follow-ups due <span class="ct-chip gold" id="mkDueN" hidden></span></button>
+        <button type="button" class="fpill" data-view="hot">Hot</button>
+        <button type="button" class="fpill" data-view="won">Won</button>
+        <button type="button" class="fpill" data-view="closed">Lost / parked</button>
+        <button type="button" class="fpill" data-view="all">All</button>
+      </div>
+      <div class="ct-tools">
+        <label for="mkVertical" class="sr-only">Vertical</label>
+        <select id="mkVertical"><option value="">All verticals</option></select>
+        <label for="mkSource" class="sr-only">Source</label>
+        <select id="mkSource"><option value="">All sources</option></select>
+        <label for="mkQ" class="sr-only">Search leads</label>
+        <input type="search" id="mkQ" placeholder="Company, domain, name" autocomplete="off">
+        <button type="button" class="ct-btn prim" id="mkNewBtn">+ Add lead</button>
+      </div>
+    </div>
+    <section class="newinv" id="mkNew" hidden>
+      <h2>New lead</h2>
+      <form id="mkNewForm" autocomplete="off">
+        <div class="fgrid">
+          <div><label for="mknDomain">Website</label><input type="text" id="mknDomain" maxlength="300" placeholder="example.com"></div>
+          <div><label for="mknCompany">Company</label><input type="text" id="mknCompany" maxlength="160"></div>
+          <div><label for="mknName">Contact name</label><input type="text" id="mknName" maxlength="120"></div>
+          <div><label for="mknEmail">Email</label><input type="email" id="mknEmail" maxlength="200"></div>
+          <div><label for="mknPhone">Phone</label><input type="tel" id="mknPhone" maxlength="40"></div>
+          <div><label for="mknCity">City</label><input type="text" id="mknCity" maxlength="80"></div>
+          <div><label for="mknVertical">Vertical</label><input type="text" id="mknVertical" maxlength="60" list="mkVerticalList" placeholder="plumbing, law, dental"></div>
+          <div><label for="mknSource">Source</label><select id="mknSource"></select></div>
+        </div>
+        <datalist id="mkVerticalList"></datalist>
+        <div class="reply-row">
+          <button type="submit" class="prim">Add lead</button>
+          <button type="button" id="mkNewCancel">Cancel</button>
+        </div>
+        <p class="ct-err" id="mkNewErr" hidden></p>
+      </form>
+    </section>
+    <div id="mkList"><div class="state">Loading&hellip;</div></div>
+    <div id="mkOne" hidden></div>
+    <details class="ct-q-add mk-import" id="mkImport">
+      <summary>Import from the local prospecting files</summary>
+      <p class="ct-note">Run <code>node scripts/build-marketing-import.mjs</code> in <code>C:\dev\tes-portal</code>. It reads the contact index, the registry, the hot list, the report cards, the chat drafts and the style rules, and writes <code>marketing-import.json</code>. Pick that file here. Running it again adds nothing new and never overwrites what you have typed.</p>
+      <label for="mkImportFile">Import file</label>
+      <input type="file" id="mkImportFile" accept="application/json,.json">
+      <div class="row-sub" id="mkImportOut"></div>
+    </details>
   </main>
   <main class="wrap" id="viewKeys" aria-label="Product keys" hidden>
     <section class="newinv">
@@ -4738,7 +4809,7 @@
       qtCustList.hidden = true; qtCustQ.value = '';
       qtCustSel.hidden = false; qtCustSel.textContent = '';
       qtCustSel.appendChild(el('b', null, cpLabel(c)));
-      var sub = [c.org_id ? 'Company' : '', c.company && c.company !== cpLabel(c) ? c.company : '', c.email].filter(Boolean).join(' · ');
+      var sub = [c.lead_id ? 'Lead (stays out of Customers)' : '', c.org_id ? 'Company' : '', c.company && c.company !== cpLabel(c) ? c.company : '', c.email].filter(Boolean).join(' · ');
       if (sub) qtCustSel.appendChild(el('span', 'cp-s', sub));
       var ch = el('button', null, 'Change'); ch.type = 'button';
       ch.addEventListener('click', function () { qtSelected = null; qtCustSel.hidden = true; qtCustQ.focus(); });
@@ -5084,6 +5155,7 @@
       if (!document.getElementById('quoteId').value) p.doc_type = qtDocType;
       if (qtSelected && qtSelected.account_id) p.account_id = qtSelected.account_id;
       if (qtSelected && qtSelected.org_id) p.org_id = qtSelected.org_id;
+      if (qtSelected && qtSelected.lead_id && !document.getElementById('quoteId').value) p.lead_id = qtSelected.lead_id;
       return p;
     }
     function quoteSave(thenSend) {
@@ -9655,6 +9727,7 @@
       else if (type === 'license') { showView('keys'); }
       else if (type === 'paypal') { showView('finance'); }
       else if (type === 'project') { routeHash('#p=' + id, true); }
+      else if (type === 'lead') { routeHash('#l=' + id, true); }
       else if (type === 'bid') { if (/^\d+$/.test(String(id))) routeHash('#b=' + id, true); else showView('contracting'); }
       else showView('home');
     }
@@ -9767,6 +9840,14 @@
           sB.appendChild(row(b.number + ' · ' + b.title, b.agency + ' · ' + b.reason, b.urgent ? el('b', 'num', 'urgent') : null, function () { openObject('bid', b.id); }));
         });
         wrap.appendChild(sB);
+      }
+      var lr = (a.leads && a.leads.replied) || [], ld = (a.leads && a.leads.due) || [];
+      if (lr.length || ld.length) {
+        any = true;
+        var sL = attSection('Leads', lr.length + ld.length, lr.length > 0);
+        lr.forEach(function (x) { sL.appendChild(row(x.who, 'Replied ' + fmtDate(x.replied_at) + ', not answered yet', el('b', 'num', 'reply'), function () { openObject('lead', x.id); })); });
+        ld.forEach(function (x) { sL.appendChild(row(x.who, (x.next_action || 'Follow up') + ' · ' + (x.days_late ? x.days_late + ' days late' : 'due today'), null, function () { openObject('lead', x.id); })); });
+        wrap.appendChild(sL);
       }
       if ((a.projects || []).length) {
         any = true;
@@ -9961,7 +10042,7 @@
         if (cmdkIn.value.trim() !== q) return;
         cmdkRes.textContent = ''; cmdkItems = []; cmdkIdx = -1;
         if (!r.ok) { cmdkRes.appendChild(el('div', 'cmdk-e', 'Search is not available right now.')); return; }
-        var groups = [['tickets', 'Tickets'], ['customers', 'People'], ['orgs', 'Companies'], ['invoices', 'Invoices'], ['inventory', 'Equipment'], ['licenses', 'Product keys'], ['bids', 'Bids'], ['projects', 'Projects']];
+        var groups = [['tickets', 'Tickets'], ['customers', 'People'], ['orgs', 'Companies'], ['invoices', 'Invoices'], ['inventory', 'Equipment'], ['licenses', 'Product keys'], ['bids', 'Bids'], ['projects', 'Projects'], ['leads', 'Leads']];
         groups.forEach(function (g) {
           var list = r[g[0]] || [];
           if (!list.length) return;
@@ -10004,11 +10085,11 @@
     // "g then a letter" to move, "/" to search, "r" to reply. Deliberately single
     // keys: the console is used one-handed on a phone dock as often as at a desk.
     var GO_TO = { h: 'home', i: 'inbox', t: 'tickets', c: 'customers', v: 'invoices',
-                  a: 'calendar', e: 'inventory', f: 'finance', r: 'reports', k: 'keys', b: 'contracting', p: 'projects' };
+                  a: 'calendar', e: 'inventory', f: 'finance', r: 'reports', k: 'keys', b: 'contracting', p: 'projects', m: 'marketing' };
     var SHORTCUTS = [
       ['g h', 'Home'], ['g i', 'Inbox'], ['g t', 'Tickets'], ['g c', 'Customers'],
       ['g v', 'Invoices'], ['g a', 'Calendar'], ['g e', 'Equipment'], ['g f', 'Finance'],
-      ['g r', 'Reports'], ['g k', 'Product keys'], ['g b', 'Contracting (bids)'], ['g p', 'Projects'],
+      ['g r', 'Reports'], ['g k', 'Product keys'], ['g b', 'Contracting (bids)'], ['g p', 'Projects'], ['g m', 'Marketing'],
       ['/', 'Search'], ['r', 'Reply, on an open ticket or conversation'], ['Esc', 'Close search'],
     ];
     var goArmed = 0;
@@ -10088,6 +10169,8 @@
       }
       else if ((m = /^#p=(\d+)/.exec(hash))) { pjId = Number(m[1]); suppressHashPush = true; showView('projects'); suppressHashPush = false; }
       else if (hash === '#projects') { pjId = null; showView('projects'); }
+      else if ((m = /^#l=(\d+)/.exec(hash))) { mkId = Number(m[1]); suppressHashPush = true; showView('marketing'); suppressHashPush = false; }
+      else if (hash === '#marketing') { mkId = null; showView('marketing'); }
       else if (hash === '#inbox') showView('inbox');
       else if (hash === '#keys') showView('keys');
       else if (hash === '#customers') showView('customers');
@@ -13222,6 +13305,498 @@
       });
     }
 
+    // ---- marketing: leads before they are customers ---------------------------
+    //
+    // A lead is NOT a customer. Nothing on this tab creates an account except the
+    // Convert button, and a quote written for a lead (quotes.lead_id) leaves Customers
+    // alone. Sending stays in Proton: the console records what went out, it never sends.
+    var mkView = 'open', mkSearch = '', mkSearchTimer = null, mkId = null, mkDetail = null;
+    var mkVocab = null, mkStageFilter = '';
+    var MK_STAGE_COLOR = { new: '#8aa48d', researching: '#6a8ba8', ready: '#4fa2ff', contacted: '#c89830', replied: '#22c55e',
+      meeting: '#22c55e', quoted: '#a78bfa', won: '#4aac65', lost: '#ef4444', parked: '#6b7280' };
+    var MK_CHANNEL_LABEL = { email: 'Email', text: 'Text', call: 'Call', form: 'Contact form', letter: 'Letter', linkedin: 'LinkedIn', 'in-person': 'In person' };
+    var MK_ERROR = {
+      duplicate: 'That website is already a lead.', name_required: 'Give the lead a website, a company or an email.',
+      bad_domain: 'That does not look like a website address.', invalid_email: 'That email address does not look right.',
+      bad_channel: 'Pick how you reached them.', has_quotes: 'This lead has quotes. Mark it lost or parked instead.',
+      converted: 'A converted lead is kept as the record of how the customer arrived.',
+      convert_first: 'Use Convert to customer; that marks it won.', email_required: 'Converting needs their email address.',
+      already_converted: 'Already a customer.', nothing_to_save: 'Nothing changed.', nothing_to_import: 'That file has no leads or rules in it.',
+    };
+    function mkErr(r) { return MK_ERROR[r && r.error] || ctErr(r); }
+    function mkStageLabel(s) { return (mkVocab && mkVocab.stage_label[s]) || s; }
+    function mkName(l) { return l.company || l.domain || l.email || l.number; }
+
+    function loadMarketing() {
+      if (!/^#l=/.test(location.hash)) mkId = null;
+      var qs = '?view=' + mkView + (mkSearch ? '&q=' + encodeURIComponent(mkSearch) : '');
+      var v = document.getElementById('mkVertical').value, src = document.getElementById('mkSource').value;
+      if (v) qs += '&vertical=' + encodeURIComponent(v);
+      if (src) qs += '&source=' + encodeURIComponent(src);
+      if (mkStageFilter) qs += '&stage=' + encodeURIComponent(mkStageFilter);
+      return Promise.all([api('/admin/leads/summary'), api('/admin/leads' + qs)]).then(function (res) {
+        var s = res[0], r = res[1];
+        if (s.ok) { mkVocab = s.vocab; mkSummary(s.summary); }
+        var w = document.getElementById('mkList');
+        w.textContent = '';
+        if (!r.ok) { w.appendChild(el('div', 'state', 'Could not load leads.')); return; }
+        if (!r.leads.length) w.appendChild(el('div', 'state', mkSearch || mkStageFilter ? 'No leads match.' : mkView === 'open' ? 'No open leads. Add one, or import the local prospecting files below.' : 'Nothing here.'));
+        var now = Date.now() / 1000;
+        r.leads.forEach(function (l) {
+          var c = el('button', 'ct-card');
+          c.type = 'button';
+          c.appendChild(el('div', 'n', [l.number, l.vertical, l.city].filter(Boolean).join(' · ')));
+          c.appendChild(el('div', 't', mkName(l)));
+          var sub = [l.company && l.domain ? l.domain : '', l.contact_name, l.email].filter(Boolean).join(' · ');
+          if (sub) c.appendChild(el('div', 'row-sub', sub));
+          var chips = el('div', 'chips');
+          chips.appendChild(badge(mkStageLabel(l.stage), MK_STAGE_COLOR[l.stage] || '#8aa48d'));
+          if (l.verdict) chips.appendChild(el('span', 'ct-chip' + (l.verdict === 'COLD' ? '' : ' gold'), l.verdict));
+          if (l.engine_priority) chips.appendChild(el('span', 'ct-chip', 'Scan ' + l.engine_priority));
+          if (l.grade) chips.appendChild(el('span', 'ct-chip' + (/[DF]/.test(l.grade) ? ' red' : ''), 'Grade ' + l.grade));
+          if (l.eyeballed) chips.appendChild(el('span', 'ct-chip green', 'Eyeballed'));
+          if (l.next_due) {
+            var late = l.next_due <= now;
+            chips.appendChild(el('span', 'ct-chip ' + (late ? 'red' : ''), (l.next_action || 'Follow up') + ' ' + (late ? 'due ' + fmtDate(l.next_due) : fmtDate(l.next_due))));
+          }
+          c.appendChild(chips);
+          c.addEventListener('click', function () { mkOpen(l.id); });
+          w.appendChild(c);
+        });
+        if (mkId) mkOpen(mkId, true);
+      });
+    }
+
+    function mkSummary(s) {
+      var t = document.getElementById('mkStages');
+      t.textContent = '';
+      (mkVocab.stages || []).forEach(function (st) {
+        var n = s.by_stage[st] || 0;
+        var b = el('button', 'tile pick' + (mkStageFilter === st ? ' on' : ''));
+        b.type = 'button';
+        b.appendChild(el('s', null, mkStageLabel(st)));
+        b.appendChild(el('b', null, String(n)));
+        b.setAttribute('aria-pressed', mkStageFilter === st ? 'true' : 'false');
+        b.addEventListener('click', function () {
+          mkStageFilter = mkStageFilter === st ? '' : st;
+          if (mkStageFilter) mkSetView('all', true);
+          mkClose(); loadMarketing();
+        });
+        t.appendChild(b);
+      });
+      var due = document.getElementById('mkDueN');
+      due.hidden = !s.due; due.textContent = String(s.due || '');
+      // Filters are filled once, from the vocabulary and the verticals actually on file.
+      var vs = document.getElementById('mkVertical'), keep = vs.value;
+      vs.textContent = ''; vs.appendChild(new Option('All verticals', ''));
+      (s.verticals || []).forEach(function (v) { vs.appendChild(new Option(v.vertical + ' (' + v.n + ')', v.vertical)); });
+      vs.value = keep;
+      var dl = document.getElementById('mkVerticalList'); dl.textContent = '';
+      (s.verticals || []).forEach(function (v) { dl.appendChild(new Option(v.vertical)); });
+      var ss = document.getElementById('mkSource');
+      if (ss.options.length < 2) (mkVocab.sources || []).forEach(function (x) { ss.appendChild(new Option(x, x)); });
+      var ns = document.getElementById('mknSource');
+      if (!ns.options.length) (mkVocab.sources || []).forEach(function (x) { ns.appendChild(new Option(x, x)); });
+      if (!ns.value) ns.value = 'manual';
+    }
+
+    function mkSetView(v, quiet) {
+      mkView = v;
+      Array.prototype.forEach.call(document.querySelectorAll('#mkFilters .fpill'), function (x) { x.classList.toggle('on', x.getAttribute('data-view') === v); });
+      if (!quiet) { mkStageFilter = ''; }
+    }
+    Array.prototype.forEach.call(document.querySelectorAll('#mkFilters .fpill'), function (b) {
+      b.addEventListener('click', function () { mkSetView(b.getAttribute('data-view')); mkClose(); loadMarketing(); });
+    });
+    ['mkVertical', 'mkSource'].forEach(function (id) {
+      document.getElementById(id).addEventListener('change', function () { mkClose(); loadMarketing(); });
+    });
+    document.getElementById('mkQ').addEventListener('input', function (e) {
+      clearTimeout(mkSearchTimer);
+      mkSearchTimer = setTimeout(function () { mkSearch = e.target.value.trim(); mkClose(); loadMarketing(); }, 250);
+    });
+
+    // ---- new lead ----
+    document.getElementById('mkNewBtn').addEventListener('click', function () {
+      var f = document.getElementById('mkNew');
+      f.hidden = !f.hidden;
+      if (!f.hidden) document.getElementById('mknDomain').focus();
+    });
+    document.getElementById('mkNewCancel').addEventListener('click', function () { document.getElementById('mkNew').hidden = true; });
+    document.getElementById('mkNewForm').addEventListener('submit', function (e) {
+      e.preventDefault();
+      var err = document.getElementById('mkNewErr');
+      err.hidden = true;
+      var g = function (id) { return document.getElementById(id).value.trim(); };
+      var body = { domain: g('mknDomain'), company: g('mknCompany'), contact_name: g('mknName'), email: g('mknEmail'),
+        phone: g('mknPhone'), city: g('mknCity'), vertical: g('mknVertical'), source: document.getElementById('mknSource').value };
+      api('/admin/leads', { method: 'POST', body: body }).then(function (r) {
+        if (!r.ok) {
+          err.textContent = mkErr(r); err.hidden = false;
+          if (r.error === 'duplicate' && r.id) {
+            var a = el('a', null, ' Open ' + (r.number || 'it')); a.href = '#l=' + r.id; err.appendChild(a);
+          }
+          return;
+        }
+        e.target.reset();
+        document.getElementById('mkNew').hidden = true;
+        toast('Added ' + r.lead.number);
+        mkOpen(r.lead.id);
+        loadMarketing();
+      });
+    });
+
+    // ---- import ----
+    document.getElementById('mkImportFile').addEventListener('change', function (e) {
+      var f = e.target.files && e.target.files[0];
+      var out = document.getElementById('mkImportOut');
+      if (!f) return;
+      out.textContent = 'Reading ' + f.name + '…';
+      f.text().then(function (txt) {
+        var data;
+        try { data = JSON.parse(txt); } catch (x) { out.textContent = 'That is not a JSON file.'; return; }
+        var n = (data.leads || []).length, rn = (data.rules || []).length;
+        if (!window.confirm('Import ' + n + ' leads and ' + rn + ' style rules? Existing leads are matched by website and only their blank fields are filled.')) { out.textContent = ''; e.target.value = ''; return; }
+        out.textContent = 'Importing ' + n + ' leads…';
+        api('/admin/leads/import', { method: 'POST', body: data }).then(function (r) {
+          e.target.value = '';
+          if (!r.ok) { out.textContent = mkErr(r); return; }
+          out.textContent = 'Added ' + r.created + ' leads, filled in ' + r.updated + ', ' + r.touches + ' contacts, ' + r.audits + ' report cards, ' + r.drafts + ' email drafts, ' + r.rules + ' style rules.' +
+            (r.skipped && r.skipped.length ? ' Skipped ' + r.skipped.length + '.' : '');
+          loadMarketing();
+        });
+      });
+    });
+
+    // ---- one lead ----
+    function mkOpen(id, replace) {
+      mkId = Number(id);
+      if (!replace && location.hash !== '#l=' + mkId) history.replaceState(null, '', '#l=' + mkId);
+      return api('/admin/leads/' + mkId).then(function (r) {
+        if (!r.ok) { toast(mkErr(r)); mkClose(); return; }
+        mkDetail = r; mkRender();
+      });
+    }
+    function mkClose() {
+      mkId = null; mkDetail = null;
+      var p = document.getElementById('mkOne'); p.hidden = true; p.textContent = '';
+      document.getElementById('mkList').hidden = false;
+      if (/^#l=/.test(location.hash)) history.replaceState(null, '', '#marketing');
+    }
+    function mkApi(path, method, body, msg) {
+      return api('/admin/leads/' + mkId + path, { method: method, body: body }).then(function (r) {
+        if (!r.ok) { toast(mkErr(r)); return r; }
+        if (msg) toast(typeof msg === 'function' ? msg(r) : msg);
+        return mkOpen(mkId, true).then(function () { return r; });
+      });
+    }
+
+    function mkRender() {
+      var d = mkDetail, l = d.lead;
+      var host = document.getElementById('mkOne');
+      document.getElementById('mkList').hidden = true;
+      host.hidden = false; host.textContent = '';
+      var panel = el('div', 'ct-panel');
+      var back = el('button', 'ct-btn sm', '‹ All leads'); back.type = 'button';
+      back.addEventListener('click', function () { mkClose(); loadMarketing(); });
+      panel.appendChild(back);
+
+      var head = el('div', 'ct-head');
+      var hl = el('div');
+      hl.appendChild(el('div', 'sub', [l.number, l.source, l.vertical, l.city].filter(Boolean).join(' · ')));
+      hl.appendChild(el('h2', null, mkName(l)));
+      var who = el('div', 'sub');
+      if (l.domain) {
+        var site = el('a', null, l.domain); site.href = 'https://' + l.domain; site.target = '_blank'; site.rel = 'noopener noreferrer'; site.style.color = 'inherit';
+        who.appendChild(site);
+      }
+      var bits = [l.contact_name, l.email, l.phone].filter(Boolean).join(' · ');
+      if (bits) who.appendChild(document.createTextNode((l.domain ? ' · ' : '') + bits));
+      if (l.account_id) {
+        who.appendChild(document.createTextNode(' · '));
+        var ca = el('a', null, 'Customer file'); ca.href = l.org_id ? '#o=' + l.org_id : '#c=' + l.account_id; ca.style.color = 'inherit';
+        who.appendChild(ca);
+      }
+      hl.appendChild(who);
+      head.appendChild(hl);
+
+      // Stage. Won is reached through Convert, not picked here.
+      var stageBox = el('div', 'mk-stagebox');
+      var st = ctSelect((mkVocab ? mkVocab.stages : [l.stage]).filter(function (s) { return s !== 'won' || l.stage === 'won'; })
+        .map(function (s) { return [s, mkStageLabel(s)]; }), l.stage);
+      st.setAttribute('aria-label', 'Stage');
+      st.addEventListener('change', function () {
+        var to = st.value, note = '';
+        if (to === 'lost') { note = window.prompt('Why was it lost? (optional)') ; if (note === null) { st.value = l.stage; return; } }
+        mkApi('/stage', 'POST', { stage: to, note: note || '' }, 'Moved to ' + mkStageLabel(to));
+      });
+      stageBox.appendChild(st);
+      head.appendChild(stageBox);
+      panel.appendChild(head);
+
+      var chips = el('div', 'chips mk-chips');
+      chips.appendChild(badge(mkStageLabel(l.stage), MK_STAGE_COLOR[l.stage] || '#8aa48d'));
+      if (l.verdict) chips.appendChild(el('span', 'ct-chip gold', l.verdict));
+      if (l.engine_priority) chips.appendChild(el('span', 'ct-chip', 'Scan ' + l.engine_priority));
+      if (l.grade) chips.appendChild(el('span', 'ct-chip', 'Grade ' + l.grade + (l.score != null ? ' (' + l.score + ')' : '')));
+      if (l.archetype) chips.appendChild(el('span', 'ct-chip', l.archetype));
+      if (l.next_due) chips.appendChild(el('span', 'ct-chip ' + (l.next_due <= Date.now() / 1000 ? 'red' : ''), (l.next_action || 'Follow up') + ' · ' + fmtDate(l.next_due)));
+      if (l.replied_at) chips.appendChild(el('span', 'ct-chip green', 'Replied ' + fmtDate(l.replied_at)));
+      panel.appendChild(chips);
+
+      var tabs = paneTabs(panel, ['Overview', 'Contact log', 'Report card', 'Emails', 'Quotes'], 'lead');
+      tabs.count('Contact log', d.events.filter(function (e) { return ['touch', 'reply', 'note'].indexOf(e.kind) >= 0; }).length);
+      tabs.count('Report card', d.audits.length);
+      tabs.count('Emails', d.drafts.length);
+      tabs.count('Quotes', d.quotes.length);
+      mkOverview(tabs.pane('Overview'), d);
+      mkLog(tabs.pane('Contact log'), d);
+      mkAudits(tabs.pane('Report card'), d);
+      mkEmails(tabs.pane('Emails'), d);
+      mkQuotes(tabs.pane('Quotes'), d);
+      host.appendChild(panel);
+    }
+
+    function mkOverview(p, d) {
+      var l = d.lead;
+      var sec = el('section', 'cust-sec');
+      sec.appendChild(el('h3', null, 'Details'));
+      var f = el('form'); f.autocomplete = 'off';
+      var g = el('div', 'fgrid');
+      var inputs = {};
+      var text = function (k, label, type) { inputs[k] = ctField(g, label, ctInput(type || 'text', l[k] == null ? '' : l[k])); };
+      text('company', 'Company'); text('domain', 'Website'); text('contact_name', 'Contact name'); text('email', 'Email', 'email');
+      text('phone', 'Phone', 'tel'); text('city', 'City'); text('zip', 'ZIP'); text('vertical', 'Vertical');
+      inputs.vertical.setAttribute('list', 'mkVerticalList');
+      inputs.verdict = ctField(g, 'Triage verdict', ctSelect([['', '—']].concat(((mkVocab && mkVocab.verdicts) || []).map(function (v) { return [v, v]; })), l.verdict || ''));
+      inputs.engine_priority = ctField(g, 'Scanner priority', ctSelect([['', '—']].concat(((mkVocab && mkVocab.priorities) || []).map(function (v) { return [v, v]; })), l.engine_priority || ''));
+      text('next_action', 'Next action');
+      var due = ctInput('date', l.next_due ? new Date(l.next_due * 1000).toISOString().slice(0, 10) : '');
+      inputs.next_due = ctField(g, 'Next action due', due);
+      f.appendChild(g);
+      var notes = document.createElement('textarea');
+      notes.rows = 6; notes.maxLength = 8000; notes.value = l.owner_notes || '';
+      inputs.owner_notes = ctField(f, 'Notes', notes, 'mk-notes');
+      var eye = document.createElement('input'); eye.type = 'checkbox'; eye.checked = !!l.eyeballed;
+      var eyeL = el('label', 'mk-check'); eyeL.appendChild(eye); eyeL.appendChild(document.createTextNode(' Eyeballed: I have looked at the site myself'));
+      f.appendChild(eyeL);
+      var rr = el('div', 'reply-row');
+      var save = el('button', 'prim', 'Save details'); save.type = 'submit';
+      rr.appendChild(save);
+      f.appendChild(rr);
+      f.addEventListener('submit', function (e) {
+        e.preventDefault();
+        var body = {};
+        Object.keys(inputs).forEach(function (k) {
+          var v = inputs[k].value.trim ? inputs[k].value.trim() : inputs[k].value;
+          if (k === 'next_due') { var t = dayToTs(v); if ((t || null) !== (l.next_due || null) && !(t && l.next_due && Math.abs(t - l.next_due) < 86400)) body.next_due = t; return; }
+          if (String(v) !== String(l[k] == null ? '' : l[k])) body[k] = v;
+        });
+        if (eye.checked !== !!l.eyeballed) body.eyeballed = eye.checked;
+        if (!Object.keys(body).length) return toast('Nothing changed.');
+        save.disabled = true;
+        api('/admin/leads/' + l.id, { method: 'PATCH', body: body }).then(function (r) {
+          save.disabled = false;
+          if (!r.ok) return toast(mkErr(r));
+          toast('Saved'); mkOpen(l.id, true);
+        });
+      });
+      sec.appendChild(f);
+      p.appendChild(sec);
+
+      // Convert. Manual, deliberate, and the only way a lead becomes a customer.
+      var cs = el('section', 'cust-sec');
+      cs.appendChild(el('h3', null, 'Customer'));
+      if (l.account_id) {
+        cs.appendChild(el('div', 'row-sub', 'Converted ' + fmtDate(l.converted_at) + '. Their tickets, invoices and quotes live on the customer file now.'));
+        cs.appendChild(licAction('Open the customer file', 'prim', function () { routeHash(l.org_id ? '#o=' + l.org_id : '#c=' + l.account_id, true); }));
+      } else {
+        cs.appendChild(el('div', 'row-sub', 'When a deal is being worked, convert the lead. That creates their account (or adopts the one they already have), optionally a company, and moves this lead’s quotes onto it. Quoting alone does not.'));
+        var cf = el('form'); cf.autocomplete = 'off';
+        var cg = el('div', 'fgrid');
+        var cEmail = ctField(cg, 'Email', ctInput('email', l.email || ''));
+        var cName = ctField(cg, 'Contact name', ctInput('text', l.contact_name || ''));
+        var cOrg = ctField(cg, 'Create a company named (optional)', ctInput('text', l.company || ''));
+        cf.appendChild(cg);
+        var crr = el('div', 'reply-row');
+        var cb = el('button', 'prim', 'Convert to customer'); cb.type = 'submit';
+        crr.appendChild(cb); cf.appendChild(crr);
+        cf.addEventListener('submit', function (e) {
+          e.preventDefault();
+          if (!cEmail.value.trim()) return toast('Converting needs their email address.');
+          if (!window.confirm('Make ' + mkName(l) + ' a customer' + (cOrg.value.trim() ? ', with a company named "' + cOrg.value.trim() + '"' : '') + '?')) return;
+          cb.disabled = true;
+          api('/admin/leads/' + l.id + '/convert', { method: 'POST', body: { email: cEmail.value.trim(), name: cName.value.trim(), new_org_name: cOrg.value.trim() } }).then(function (r) {
+            cb.disabled = false;
+            if (!r.ok) return toast(mkErr(r));
+            var failed = (r.steps || []).filter(function (s) { return !s.ok; });
+            toast('Converted' + (r.created ? ': new customer' : ': existing customer') + (r.quotes_moved ? ', ' + r.quotes_moved + ' quote(s) moved' : ''));
+            if (failed.length) window.alert('Converted, but these steps did not complete: ' + failed.map(function (s) { return s.step + ' (' + s.error + ')'; }).join(', '));
+            mkOpen(l.id, true);
+          });
+        });
+        cs.appendChild(cf);
+        if (!d.quotes.length) {
+          var del = licAction('Delete this lead', 'ct-btn danger', function () {
+            if (!window.confirm('Delete ' + mkName(l) + ' and its contact log? This cannot be undone.')) return;
+            api('/admin/leads/' + l.id, { method: 'DELETE' }).then(function (r) {
+              if (!r.ok) return toast(mkErr(r));
+              toast('Deleted'); mkClose(); loadMarketing();
+            });
+          });
+          cs.appendChild(del);
+        }
+      }
+      p.appendChild(cs);
+    }
+
+    function mkLog(p, d) {
+      var l = d.lead;
+      var sec = el('section', 'cust-sec');
+      sec.appendChild(el('h3', null, 'Log a contact'));
+      sec.appendChild(el('div', 'row-sub', 'Sending stays in Proton. Record what went out, or what came back, so the follow-up clock is right: a call or text on day 4, an email nudge on day 14, then every 90 days until they reply.'));
+      var f = el('form'); f.autocomplete = 'off';
+      var g = el('div', 'fgrid');
+      var dir = ctField(g, 'What happened', ctSelect([['out', 'I reached out'], ['reply', 'They replied']], 'out'));
+      var ch = ctField(g, 'How', ctSelect(((mkVocab && mkVocab.channels) || ['email']).map(function (c) { return [c, MK_CHANNEL_LABEL[c] || c]; }), 'email'));
+      var day = ctField(g, 'When', ctInput('date', new Date(Date.now() - new Date().getTimezoneOffset() * 60000).toISOString().slice(0, 10)));
+      var subj = ctField(g, 'Subject (optional)', ctInput('text', ''));
+      f.appendChild(g);
+      var note = document.createElement('textarea'); note.rows = 2; note.maxLength = 1000;
+      ctField(f, 'Note (optional)', note, 'mk-notes');
+      var rr = el('div', 'reply-row');
+      var b = el('button', 'prim', 'Log it'); b.type = 'submit';
+      rr.appendChild(b); f.appendChild(rr);
+      f.addEventListener('submit', function (e) {
+        e.preventDefault();
+        b.disabled = true;
+        mkApi('/touch', 'POST', { channel: ch.value, reply: dir.value === 'reply', at: dayToTs(day.value), subject: subj.value.trim(), note: note.value.trim() },
+          dir.value === 'reply' ? 'Reply logged' : 'Contact logged').then(function () { b.disabled = false; });
+      });
+      sec.appendChild(f);
+      p.appendChild(sec);
+
+      var ns = el('section', 'cust-sec');
+      ns.appendChild(el('h3', null, 'Add a note'));
+      var nf = el('form');
+      var nt = document.createElement('textarea'); nt.rows = 3; nt.maxLength = 4000; nt.setAttribute('aria-label', 'Note');
+      nf.appendChild(nt);
+      var nrr = el('div', 'reply-row');
+      var nb = el('button', null, 'Add note'); nb.type = 'submit';
+      nrr.appendChild(nb); nf.appendChild(nrr);
+      nf.addEventListener('submit', function (e) {
+        e.preventDefault();
+        if (!nt.value.trim()) return;
+        mkApi('/note', 'POST', { note: nt.value.trim() }, 'Note added');
+      });
+      ns.appendChild(nf);
+      p.appendChild(ns);
+
+      var hs = el('section', 'cust-sec');
+      hs.appendChild(el('h3', null, 'History'));
+      if (!d.events.length) hs.appendChild(el('div', 'row-sub', 'Nothing yet.'));
+      d.events.forEach(function (e) {
+        var main = e.kind === 'touch' ? (MK_CHANNEL_LABEL[e.channel] || e.channel || 'Contact') + (e.subject ? ': ' + e.subject : '')
+          : e.kind === 'reply' ? 'They replied' + (e.channel ? ' (' + (MK_CHANNEL_LABEL[e.channel] || e.channel) + ')' : '')
+          : e.kind === 'note' ? 'Note' : e.kind.charAt(0).toUpperCase() + e.kind.slice(1);
+        var sub = [fmtDate(e.at), e.note, e.actor && e.actor !== 'system' ? e.actor : ''].filter(Boolean).join(' · ');
+        var right = null;
+        if (['touch', 'reply', 'note'].indexOf(e.kind) >= 0) {
+          right = el('button', 'ct-btn sm', 'Remove'); right.type = 'button';
+          right.addEventListener('click', function () {
+            if (!window.confirm('Remove this ' + (e.kind === 'note' ? 'note' : 'entry') + '? The follow-up dates are recalculated from what is left.')) return;
+            mkApi('/events/' + e.id, 'DELETE', {}, 'Removed');
+          });
+        }
+        var r = row(main, sub, right);
+        if (e.kind === 'reply') r.classList.add('mk-reply');
+        hs.appendChild(r);
+      });
+      p.appendChild(hs);
+    }
+
+    function mkAudits(p, d) {
+      var sec = el('section', 'cust-sec');
+      sec.appendChild(el('h3', null, 'Report cards'));
+      if (!d.audits.length) sec.appendChild(el('div', 'row-sub', d.lead.domain ? 'No report card yet.' : 'No website on file.'));
+      d.audits.forEach(function (a, i) {
+        var box = el('details', 'mk-audit');
+        if (i === 0) box.open = true;
+        var sm = el('summary');
+        sm.textContent = 'Grade ' + (a.grade || '?') + (a.score != null ? ' (' + a.score + ')' : '') + ' · ' + (a.priority || '') + ' · ' + fmtDate(a.at) + (a.source === 'engine' ? ' · desktop engine' : '');
+        box.appendChild(sm);
+        if (a.priority_reason) box.appendChild(el('div', 'row-sub', a.priority_reason));
+        if (a.archetype || a.platform) box.appendChild(el('div', 'row-sub', [a.archetype && 'Archetype: ' + a.archetype, a.platform && 'Platform: ' + a.platform].filter(Boolean).join(' · ')));
+        (a.findings || []).forEach(function (f) {
+          var r = row((f.title || f.id) + (f.verify_class ? '  [' + f.verify_class + ']' : ''), [f.severity, f.category, f.detail].filter(Boolean).join(' · '));
+          if (f.verify_class && f.verify_class !== 'A') r.classList.add('mk-verify');
+          box.appendChild(r);
+        });
+        if ((a.hooks || []).length) {
+          box.appendChild(el('div', 'mk-sub-h', 'Rapport hooks'));
+          a.hooks.forEach(function (h) { box.appendChild(el('div', 'row-sub', '• ' + h)); });
+        }
+        sec.appendChild(box);
+      });
+      sec.appendChild(el('div', 'row-sub', 'Class A findings are safe to state. B needs a look in a browser first; C needs a receipt.'));
+      p.appendChild(sec);
+    }
+
+    function mkEmailText(dr) {
+      return [dr.greeting, '', dr.body, '', dr.signoff].filter(function (x, i, a) { return x != null; }).join('\n').replace(/\n{3,}/g, '\n\n').trim();
+    }
+    function mkEmails(p, d) {
+      var sec = el('section', 'cust-sec');
+      sec.appendChild(el('h3', null, 'Email drafts'));
+      if (!d.drafts.length) sec.appendChild(el('div', 'row-sub', 'No drafts yet.'));
+      d.drafts.forEach(function (x, i) {
+        var dr = x.draft || {};
+        var box = el('details', 'mk-audit');
+        if (i === 0) box.open = true;
+        var sm = el('summary');
+        sm.textContent = (dr.subject || '(no subject)') + ' · ' + (x.source === 'conversation' ? 'chat draft' : x.source === 'engine' ? 'desktop engine' : x.source) + ' · ' + fmtDate(x.created_at) + (x.status === 'sent' ? ' · sent' : '');
+        box.appendChild(sm);
+        var pre = el('pre', 'mk-email', mkEmailText(dr));
+        box.appendChild(pre);
+        var rr = el('div', 'reply-row');
+        var cp = el('button', null, 'Copy email'); cp.type = 'button';
+        cp.addEventListener('click', function () {
+          var txt = mkEmailText(dr);
+          (navigator.clipboard ? navigator.clipboard.writeText(txt) : Promise.reject()).then(function () { toast('Copied'); }, function () { toast('Select the text and copy it.'); });
+        });
+        rr.appendChild(cp);
+        var cs = el('button', null, 'Copy subject'); cs.type = 'button';
+        cs.addEventListener('click', function () {
+          (navigator.clipboard ? navigator.clipboard.writeText(dr.subject || '') : Promise.reject()).then(function () { toast('Copied'); }, function () {});
+        });
+        rr.appendChild(cs);
+        box.appendChild(rr);
+        if (dr.strategic_notes) box.appendChild(el('div', 'row-sub', 'Notes: ' + dr.strategic_notes));
+        if ((dr.verification_checklist || []).length) {
+          box.appendChild(el('div', 'mk-sub-h', 'Check before sending'));
+          dr.verification_checklist.forEach(function (v) { box.appendChild(el('div', 'row-sub', '☐ ' + (typeof v === 'string' ? v : JSON.stringify(v)))); });
+        }
+        sec.appendChild(box);
+      });
+      p.appendChild(sec);
+    }
+
+    function mkQuotes(p, d) {
+      var l = d.lead;
+      var sec = el('section', 'cust-sec');
+      sec.appendChild(el('h3', null, 'Quotes'));
+      sec.appendChild(licAction('New quote for this lead', 'prim', function () {
+        showView('invoices');
+        quoteFormOpen(null, { lead_id: l.id, account_id: l.account_id || null, org_id: l.org_id || null, email: l.email || '', name: l.contact_name || '', company: l.company || l.domain || '' });
+      }));
+      if (!l.account_id) sec.appendChild(el('div', 'row-sub', 'A quote for a lead does not add them to Customers. Converting the quote to an invoice does, and marks the lead won.'));
+      if (!d.quotes.length) sec.appendChild(el('div', 'row-sub', 'None yet.'));
+      d.quotes.forEach(function (q) {
+        sec.appendChild(row(q.number + ' · ' + q.title, [q.status, fmtDate(q.created_at)].join(' · '), el('b', 'num', money(q.total_cents)), function () { showQuote(q.id); }));
+      });
+      p.appendChild(sec);
+    }
+
     // ---- view switching --------------------------------------------------
     var VIEWS = {
       home: { view: 'viewHome', nav: 'navHome', load: loadHome, always: true },
@@ -13238,6 +13813,7 @@
       reports: { view: 'viewReports', nav: 'navReports', load: loadReports, always: true },
       contracting: { view: 'viewContracting', nav: 'navContracting', load: loadContracting, always: true },
       projects: { view: 'viewProjects', nav: 'navProjects', load: loadProjects, always: true },
+      marketing: { view: 'viewMarketing', nav: 'navMarketing', load: loadMarketing, always: true },
       keys: { view: 'viewKeys', nav: 'navKeys', load: loadKeys }
     };
     var loaded = {};
@@ -13247,7 +13823,7 @@
     var HASH_OF = {
       home: /^(#home|#|)$/, inbox: /^#(inbox|m=)/, tickets: /^#(tickets|t=)/, customers: /^#(customers|c=|o=)/,
       invoices: /^#(invoices|inv=|q=)/, calendar: /^#(cal|a=)/, inventory: /^#(inventory|i=)/, finance: /^#finance/,
-      reports: /^#reports/, keys: /^#keys/, contracting: /^#(contracting|b=)/, projects: /^#(projects|p=)/,
+      reports: /^#reports/, keys: /^#keys/, contracting: /^#(contracting|b=)/, projects: /^#(projects|p=)/, marketing: /^#(marketing|l=)/,
     };
 
     function showView(which) {
