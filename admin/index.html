@@ -890,25 +890,33 @@
     .mk-row:hover { background:rgba(74,172,101,0.07); box-shadow:inset 3px 0 0 var(--green); }
     .mk-row.sel { background:rgba(200,152,48,0.10); }
     .mk-open { flex:1; min-width:0; display:flex; align-items:center; gap:0.75rem; background:none; border:0; color:inherit; font:inherit; text-align:left; padding:0.55rem 0; cursor:pointer; min-height:44px; }
-    .mk-who { flex:0 0 13.5rem; font-size:0.88rem; font-weight:500; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+    .mk-who { flex:0 0 var(--mk-who,13.5rem); text-align:center; font-size:0.88rem; font-weight:500; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
     .mk-row.unread .mk-who { font-weight:800; }
-    .mk-snip { flex:1; min-width:0; font-size:0.83rem; color:var(--muted); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+    .mk-snip { flex:1; min-width:0; text-align:center; font-size:0.83rem; color:var(--muted); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
     .mk-stage { color:var(--text); font-weight:600; }
-    .mk-tags { display:flex; flex-wrap:wrap; gap:0.25rem; row-gap:0.2rem; flex:0 0 16rem; justify-content:flex-start; }
+    .mk-tags { display:flex; flex-wrap:wrap; gap:0.25rem; row-gap:0.2rem; flex:0 0 var(--mk-tags,16rem); min-width:0; justify-content:center; }
     .mk-head { background:var(--card); border-top:0; border-bottom:1px solid rgba(138,164,141,0.35); min-height:34px; }
     .mk-head:hover { background:var(--card); box-shadow:none; }
     .mk-head .mk-cbspace { flex:0 0 18px; }
     .mk-head .mk-open { cursor:default; min-height:34px; padding:0.4rem 0; }
     .mk-head span { font-family:"Montserrat",sans-serif; font-size:0.64rem; font-weight:800; text-transform:uppercase; letter-spacing:0.05em; color:var(--muted); font-weight:800; }
     .mk-head + .mk-row { border-top:0; }
-    .mk-when { flex:0 0 4.6rem; text-align:right; font-size:0.78rem; color:var(--muted); white-space:nowrap; }
+    /* Column boundaries you can drag. The handle straddles the gap between two columns. */
+    .mk-head .mk-who, .mk-head .mk-snip, .mk-head .mk-tags { position:relative; overflow:visible; }
+    .mk-head .mk-grip { position:absolute; top:-0.4rem; bottom:-0.4rem; right:-12px; width:12px; cursor:col-resize; z-index:1; touch-action:none; }
+    .mk-head .mk-grip::after { content:""; position:absolute; top:22%; bottom:22%; left:5px; width:2px; border-radius:1px; background:rgba(138,164,141,0.35); }
+    .mk-head .mk-grip:hover::after, body.mk-resizing .mk-grip::after { background:var(--gold); }
+    body.mk-resizing { cursor:col-resize; user-select:none; }
+    .mk-when { flex:0 0 var(--mk-when,4.6rem); text-align:center; font-size:0.78rem; color:var(--muted); white-space:nowrap; }
     .mk-when.late { color:#ef4444; font-weight:700; }
     @media (max-width:720px) {
       .mk-open { flex-wrap:wrap; row-gap:0.15rem; }
       .mk-who { flex:1 1 60%; }
       .mk-when { flex:0 0 auto; }
       .mk-snip { flex:1 1 100%; order:3; }
-      .mk-tags { order:4; flex:1 1 auto; flex-wrap:wrap; }
+      .mk-tags { order:4; flex:1 1 auto; flex-wrap:wrap; justify-content:flex-start; }
+      .mk-who, .mk-snip { text-align:left; }
+      .mk-when { text-align:right; }
       .mk-head { display:none; }
     }
     .mk-chips { display:flex; flex-wrap:wrap; gap:0.3rem; margin:0.6rem 0 0.8rem; }
@@ -13563,7 +13571,8 @@
       if (!mkRows.length) { w.appendChild(el('div', 'state', mkSearch || mkStageFilter ? 'No leads match.' : mkView === 'open' ? 'No open leads. Add one, or import the local prospecting files below.' : 'Nothing here.')); return; }
       var now = Date.now() / 1000;
       var ul = el('div', 'mk-rows');
-      ul.appendChild(mkListHead(['Business', 'Stage and details', 'Tags', 'Date']));
+      ul.appendChild(mkListHead(['Business', 'Stage and details', 'Tags', 'Date'], 'leads'));
+      mkColsApply(ul, 'leads');
       ul.setAttribute('role', 'list');
       mkRows.forEach(function (l) {
         var li = el('div', 'mk-row' + (mkSel[l.id] ? ' sel' : '') + (l.stage === 'replied' ? ' unread' : ''));
@@ -13604,13 +13613,75 @@
       w.appendChild(ul);
     }
 
-    function mkListHead(cols) {
+    // Column widths on the marketing lists, dragged from the header like a spreadsheet.
+    // The details column takes whatever is left, so each boundary moves only the columns
+    // on its own side: Business|details sets Business, details|Tags sets Tags (the details
+    // column gives or takes), Tags|Date trades width between Tags and Date. Saved per list
+    // in this browser; double-click a boundary to put it back.
+    var MK_COL_DEF = { who: 216, tags: 256, when: 74 };
+    var MK_COL_MIN = { who: 90, tags: 70, when: 56 };
+    function mkColsLoad(key) {
+      var w = {};
+      try { w = JSON.parse(localStorage.getItem('tes_mkcols_' + key) || '{}') || {}; } catch (e) { w = {}; }
+      return { who: w.who || MK_COL_DEF.who, tags: w.tags || MK_COL_DEF.tags, when: w.when || MK_COL_DEF.when };
+    }
+    function mkColsApply(list, key, w) {
+      w = w || mkColsLoad(key);
+      ['who', 'tags', 'when'].forEach(function (k) { list.style.setProperty('--mk-' + k, Math.round(w[k]) + 'px'); });
+    }
+    function mkColsGrip(h, key, edge) {
+      var g = el('span', 'mk-grip');
+      g.title = 'Drag to resize. Double-click to reset.';
+      g.addEventListener('dblclick', function (e) {
+        e.stopPropagation();
+        var w = mkColsLoad(key);
+        if (edge === 'who') w.who = MK_COL_DEF.who;
+        else if (edge === 'snip') w.tags = MK_COL_DEF.tags;
+        else { w.tags = MK_COL_DEF.tags; w.when = MK_COL_DEF.when; }
+        try { localStorage.setItem('tes_mkcols_' + key, JSON.stringify(w)); } catch (err) { /* this browser only */ }
+        mkColsApply(h.parentNode, key, w);
+      });
+      g.addEventListener('pointerdown', function (e) {
+        if (e.button !== 0) return;
+        e.preventDefault(); e.stopPropagation();
+        var list = h.parentNode, start = mkColsLoad(key), x0 = e.clientX;
+        var open = h.querySelector('.mk-open'), room = open ? open.clientWidth : 800;
+        var detailsMin = 120, gaps = 3 * 12;
+        var w = { who: start.who, tags: start.tags, when: start.when };
+        g.setPointerCapture(e.pointerId);
+        document.body.classList.add('mk-resizing');
+        function clampAll() {
+          // Keep the details column at least detailsMin wide.
+          var over = w.who + w.tags + w.when + gaps + detailsMin - room;
+          return over > 0 ? over : 0;
+        }
+        function move(ev) {
+          var dx = ev.clientX - x0;
+          if (edge === 'who') { w.who = Math.max(MK_COL_MIN.who, start.who + dx); w.who -= clampAll(); }
+          else if (edge === 'snip') { w.tags = Math.max(MK_COL_MIN.tags, start.tags - dx); w.tags -= clampAll(); }
+          else {
+            var d = Math.max(MK_COL_MIN.tags - start.tags, Math.min(start.when - MK_COL_MIN.when, dx));
+            w.tags = start.tags + d; w.when = start.when - d;
+          }
+          mkColsApply(list, key, w);
+        }
+        function up() {
+          g.removeEventListener('pointermove', move); g.removeEventListener('pointerup', up); g.removeEventListener('pointercancel', up);
+          document.body.classList.remove('mk-resizing');
+          try { localStorage.setItem('tes_mkcols_' + key, JSON.stringify(w)); } catch (err) { /* this browser only */ }
+        }
+        g.addEventListener('pointermove', move); g.addEventListener('pointerup', up); g.addEventListener('pointercancel', up);
+      });
+      return g;
+    }
+    function mkListHead(cols, key) {
       var h = el('div', 'mk-row mk-head');
       h.setAttribute('aria-hidden', 'true');
       h.appendChild(el('span', 'mk-cbspace'));
       var o = el('div', 'mk-open');
-      o.appendChild(el('span', 'mk-who', cols[0])); o.appendChild(el('span', 'mk-snip', cols[1]));
-      o.appendChild(el('span', 'mk-tags', cols[2])); o.appendChild(el('span', 'mk-when', cols[3]));
+      var who = el('span', 'mk-who', cols[0]), snip = el('span', 'mk-snip', cols[1]), tags = el('span', 'mk-tags', cols[2]);
+      if (key) { who.appendChild(mkColsGrip(h, key, 'who')); snip.appendChild(mkColsGrip(h, key, 'snip')); tags.appendChild(mkColsGrip(h, key, 'tags')); }
+      o.appendChild(who); o.appendChild(snip); o.appendChild(tags); o.appendChild(el('span', 'mk-when', cols[3]));
       h.appendChild(o);
       return h;
     }
@@ -14854,7 +14925,8 @@
       w.appendChild(bar);
       if (!mksRows.length) { w.appendChild(el('div', 'state', mksSearch ? 'No business matches.' : 'Nothing here yet. The feed reads the Secretary of State files about half an hour after a new month is published.')); return; }
       var list = el('div', 'mk-rows');
-      list.appendChild(mkListHead(['Business', 'Type, place and people', 'Tags', 'Filed']));
+      list.appendChild(mkListHead(['Business', 'Type, place and people', 'Tags', 'Filed'], 'sos'));
+      mkColsApply(list, 'sos');
       list.setAttribute('role', 'list');
       mksRows.forEach(function (f) {
         var li = el('div', 'mk-row' + (mksSel[f.charter] ? ' sel' : ''));
