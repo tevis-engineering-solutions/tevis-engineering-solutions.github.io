@@ -452,12 +452,17 @@
     .danger-zone button:hover { background:rgba(239,68,68,0.12); }
     .danger-zone button[disabled] { opacity:0.45; cursor:not-allowed; }
 
-    .addgrid { display:grid; grid-template-columns:1fr 1fr; gap:0.5rem; margin-top:0.6rem; }
+    .addgrid { display:grid; grid-template-columns:1fr 1fr; column-gap:0.9rem; row-gap:0.85rem; margin-top:0.55rem; align-items:start; }
     @media (max-width:640px) { .addgrid { grid-template-columns:1fr; } }
-    .addgrid label, .addwide label { display:block; font-size:0.66rem; text-transform:uppercase; letter-spacing:0.05em; color:var(--muted); font-weight:700; margin-bottom:0.2rem; }
+    /* One line each, the same height, so the fields in both columns start level. */
+    .addgrid label, .addwide label, .addgrid .addlbl { display:block; font-size:0.66rem; line-height:1.3; text-transform:uppercase; letter-spacing:0.05em; color:var(--muted); font-weight:700; margin-bottom:0.3rem; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+    .addgrid input:not([type=checkbox]), .addgrid select { min-height:40px; box-sizing:border-box; }
+    .addgrid label.addcheck { display:flex; align-items:center; gap:0.5rem; min-height:40px; margin:0; font-family:inherit; font-size:0.84rem; font-weight:400; text-transform:none; letter-spacing:0; color:var(--text); cursor:pointer; white-space:normal; }
+    .addgrid label.addcheck input { width:18px; height:18px; min-height:0; margin:0; accent-color:var(--gold); flex:0 0 auto; }
+    .custfind .orgbar.addactions { margin-top:1.1rem; padding-top:0.9rem; border-top:1px solid rgba(138,164,141,0.18); }
     .addgrid input, .addgrid select, .addwide input { width:100%; padding:0.5rem 0.65rem; border-radius:8px; border:1px solid var(--line); background:var(--bg); color:var(--text); font-family:inherit; font-size:0.85rem; }
     .addwide { margin-top:0.5rem; }
-    .addsec { font-family:"Montserrat",sans-serif; font-size:0.68rem; text-transform:uppercase; letter-spacing:0.05em; color:var(--gold); margin-top:0.9rem; }
+    .addsec { font-family:"Montserrat",sans-serif; font-size:0.68rem; font-weight:700; text-transform:uppercase; letter-spacing:0.05em; color:var(--gold); margin-top:1.2rem; padding-top:0.9rem; border-top:1px solid rgba(138,164,141,0.14); }
 
     .sla-line { font-size:0.76rem; color:var(--muted); margin-bottom:0.7rem; }
     .sla-line b { color:var(--text); }
@@ -842,7 +847,36 @@
     .agree-opts input { width:17px; height:17px; accent-color:var(--gold); flex-shrink:0; }
     /* ---- calendar (Phase 5) ---- */
     .calbar { display:flex; align-items:center; gap:0.5rem; flex-wrap:wrap; margin-bottom:0.9rem; }
-    .calbar h2 { font-family:"Montserrat",sans-serif; font-size:0.95rem; min-width:11rem; }
+    .calbar h2 { font-family:"Montserrat",sans-serif; font-size:0.95rem; margin-left:0.3rem; }
+    .calbar #calPrev, .calbar #calNext { width:38px; padding:0; font-size:1rem; }
+    .calviews { padding:0; margin:0 0 0 0.2rem; flex:0 0 auto; }
+    .calviews .fpill { min-height:38px; }
+    .calbar button.fpill { border-radius:999px; }
+    .calnum { background:none; border:0; padding:0; margin:0 0 0.25rem; font-family:"Montserrat",sans-serif; font-weight:800; font-size:0.9rem; color:var(--text); cursor:pointer; min-width:28px; min-height:24px; text-align:left; border-radius:6px; }
+    .calnum:hover, .calnum:focus-visible { color:var(--gold); outline:none; text-decoration:underline; }
+    .calday.today .calnum { color:var(--gold); }
+    .calday.out .calnum { color:var(--muted); }
+    .calwkhead { display:flex; align-items:baseline; gap:0.4rem; background:none; border:0; padding:0; margin-bottom:0.2rem; cursor:pointer; color:var(--muted); font-family:"Montserrat",sans-serif; }
+    .calwkhead .dw { font-size:0.68rem; text-transform:uppercase; letter-spacing:0.05em; font-weight:700; }
+    .calwkhead .dn { font-size:1.05rem; font-weight:800; color:var(--text); }
+    .calday.today .calwkhead, .calday.today .calwkhead .dn { color:var(--gold); }
+    .calwkhead:hover .dn { text-decoration:underline; }
+    .calweek .calappt .w { white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+    .calhrs { font-size:0.64rem; color:var(--muted); margin-bottom:0.4rem; line-height:1.4; }
+    .calagenda { border:1px solid var(--line); border-radius:12px; background:var(--card); padding:0.9rem; }
+    .calagenda.today { border-color:var(--gold); }
+    .calag-hours { display:flex; flex-wrap:wrap; gap:0.3rem 0.8rem; align-items:baseline; font-size:0.82rem; color:var(--muted); padding-bottom:0.7rem; border-bottom:1px solid var(--line); margin-bottom:0.4rem; }
+    .calag-hours b { font-family:"Montserrat",sans-serif; font-size:0.68rem; text-transform:uppercase; letter-spacing:0.05em; color:var(--gold); }
+    .calag-row { display:flex; gap:0.9rem; align-items:flex-start; width:100%; text-align:left; padding:0.65rem 0.2rem; border:0; border-bottom:1px dashed rgba(138,164,141,0.25); background:none; color:var(--text); font:inherit; }
+    .calag-row:last-child { border-bottom:0; }
+    button.calag-row { cursor:pointer; }
+    button.calag-row:hover { background:rgba(74,172,101,0.07); }
+    .calag-t { flex:0 0 9.5rem; font-family:"Montserrat",sans-serif; font-size:0.78rem; font-weight:700; color:#9fd3ae; }
+    .calag-row.busy .calag-t, .calag-row.block .calag-t { color:var(--muted); }
+    .calag-b { flex:1; min-width:0; display:flex; flex-direction:column; gap:0.1rem; font-size:0.8rem; color:var(--muted); }
+    .calag-b b { color:var(--text); font-size:0.88rem; }
+    .calag-empty { color:var(--muted); font-size:0.84rem; padding:0.8rem 0.2rem; }
+    @media (max-width:560px) { .calag-t { flex-basis:6.5rem; } .calbar h2 { flex-basis:100%; margin:0.2rem 0 0; order:5; } }
     .calbar button { font-family:"Montserrat",sans-serif; font-size:0.7rem; font-weight:700; text-transform:uppercase; letter-spacing:0.04em; padding:0.5rem 0.8rem; border-radius:999px; border:1px solid var(--line); background:var(--bg); color:var(--text); cursor:pointer; min-height:38px; }
     .calbar button.prim { background:linear-gradient(135deg,var(--gold),#e0b840); color:#0d1710; border-color:transparent; }
     .calbar button:hover { border-color:var(--green); }
@@ -885,6 +919,14 @@
     .calappt.canceled { opacity:0.45; text-decoration:line-through; }
     .calblock { font-size:0.68rem; color:var(--muted); background:var(--bg); border:1px dashed var(--line); border-radius:8px; padding:0.3rem 0.45rem; margin-bottom:0.3rem; }
     .calempty { font-size:0.68rem; color:#33513c; }
+    .calformnote { margin:-0.4rem 0 0.8rem; }
+    .calopts { margin-top:0.8rem; }
+    .calopts .fcheck { align-items:flex-start; line-height:1.45; }
+    .calopts .fcheck input { margin-top:0.1rem; flex:0 0 auto; }
+    .calpastnote { margin:0 0 0.2rem; color:#e0c98a; }
+    .apptcard .linkish { display:block; background:none; border:0; padding:0.2rem 0; color:var(--green); font:inherit; font-size:0.78rem; cursor:pointer; text-align:left; }
+    .apptcard .linkish:hover { text-decoration:underline; }
+    .row.appt-hist .row-sub { white-space:normal; }
     .calbusy { font-size:0.62rem; color:var(--muted); background:repeating-linear-gradient(135deg, rgba(138,164,141,0.10) 0 6px, rgba(138,164,141,0.04) 6px 12px); border:1px solid rgba(138,164,141,0.25); border-radius:6px; padding:0.15rem 0.35rem; margin-bottom:0.2rem; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
     @media (max-width:640px) { .calmonth .calbusy { font-size:0; padding:0; height:4px; border:0; background:rgba(138,164,141,0.45); } }
     .calfeeds { border:1px solid var(--line); border-radius:10px; padding:0.6rem 0.75rem; margin-bottom:0.9rem; background:var(--bg); }
@@ -1678,16 +1720,22 @@
   <main class="wrap" id="viewCalendar" aria-label="Calendar" hidden>
     <div class="calbar">
       <button type="button" id="calPrev" aria-label="Previous month">&lsaquo;</button>
-      <h2 id="calRange">This month</h2>
       <button type="button" id="calNext" aria-label="Next month">&rsaquo;</button>
       <button type="button" id="calToday">Today</button>
+      <div class="filters calviews" id="calViews" role="group" aria-label="Calendar view">
+        <button type="button" class="fpill" data-view="day">Day</button>
+        <button type="button" class="fpill" data-view="week">Week</button>
+        <button type="button" class="fpill on" data-view="month">Month</button>
+      </div>
+      <h2 id="calRange" aria-live="polite">This month</h2>
       <span class="calsp"></span>
       <button type="button" class="prim" id="calBook">+ Book for a customer</button>
       <button type="button" id="calHours">Working hours</button>
     </div>
 
     <section class="newinv" id="calBookForm" hidden>
-      <h2>Book an appointment</h2>
+      <h2>Book or record an appointment</h2>
+      <p class="fnote calformnote">Any day, any time, any length. A time that has already passed is recorded as done: no invite goes out, and its time can go on their account for billing.</p>
       <div class="fwide custpick">
         <label for="calCustQ">Customer</label>
         <input type="search" id="calCustQ" placeholder="Search by name, company or email" autocomplete="off">
@@ -1725,7 +1773,7 @@
         </div>
         <div>
           <label for="calMins">Length (minutes)</label>
-          <input id="calMins" type="number" min="15" max="480" step="15" value="60">
+          <input id="calMins" type="number" min="5" max="1440" step="5" value="60">
         </div>
         <div>
           <label for="calPhone">Phone</label>
@@ -1739,6 +1787,14 @@
       <div class="fwide">
         <label for="calNotes">Notes</label>
         <input id="calNotes" type="text" placeholder="Gate code, who to ask for">
+      </div>
+      <div class="calopts">
+        <label class="fcheck" id="calInviteRow"><input type="checkbox" id="calInvite" checked> Email them a calendar invite</label>
+        <div id="calPastRow" hidden>
+          <p class="fnote calpastnote"><b>This time has passed,</b> so it is recorded as done.</p>
+          <label class="fcheck"><input type="checkbox" id="calLogTime" checked> Log the time on their account (a closed ticket, so it reaches their unbilled work and their plan's hours)</label>
+          <label class="fcheck"><input type="checkbox" id="calBillable" checked> Billable</label>
+        </div>
       </div>
       <div class="inv-actions">
         <button type="button" class="prim" id="calSave">Book it</button>
@@ -4862,7 +4918,8 @@
 
     // ---- calendar (Phase 5) ----------------------------------------------
     var calGrid = document.getElementById('calGrid');
-    var calAnchor = null;              // local midnight on the 1st of the month on screen
+    var calAnchor = null;              // local midnight on the 1st of the month on screen (Month view)
+    var calFocus = null;               // the day the view is built around
     var calSelected = null;            // the customer picked in the booking form
     var calTimer = null;
     var APPT_KIND = { remote: 'Remote', onsite: 'On-site', call: 'Call' };
@@ -4913,61 +4970,218 @@
     // The month as a grid of whole weeks, Monday first, with the days of the months
     // either side filling the first and last rows (muted, but live: an appointment on
     // the 1st of next month shows on the last row).
+    // Three views over one focus day. Month and Week start from the Monday on or before
+    // it; Day is just that day. Prev / Next move by the view's own unit.
+    var CAL_VIEWS = ['day', 'week', 'month'];
+    var calView = (function () { try { var v = localStorage.getItem('tes_cal_view'); return CAL_VIEWS.indexOf(v) >= 0 ? v : 'month'; } catch (e) { return 'month'; } })();
+    function calSetView(v) {
+      calView = v;
+      try { localStorage.setItem('tes_cal_view', v); } catch (e) { /* this browser only */ }
+      loadCalendar();
+    }
+    function calRangeLabel(from, to) {
+      if (calView === 'day') return new Date(from * 1000).toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' });
+      if (calView === 'month') return new Date(calAnchor * 1000).toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+      var a = new Date(from * 1000), b = new Date(dayStartOf(to, -1) * 1000);
+      var sameMonth = a.getMonth() === b.getMonth(), sameYear = a.getFullYear() === b.getFullYear();
+      // Built by hand: Chrome renders a day and a year with no month as '2026 (day: 27)'.
+      var mon = function (d) { return d.toLocaleDateString('en-US', { month: 'short' }); };
+      if (sameMonth && sameYear) return mon(a) + ' ' + a.getDate() + ' – ' + b.getDate() + ', ' + b.getFullYear();
+      if (sameYear) return mon(a) + ' ' + a.getDate() + ' – ' + mon(b) + ' ' + b.getDate() + ', ' + b.getFullYear();
+      return mon(a) + ' ' + a.getDate() + ', ' + a.getFullYear() + ' – ' + mon(b) + ' ' + b.getDate() + ', ' + b.getFullYear();
+    }
+    function calSyncBar() {
+      [].forEach.call(document.querySelectorAll('#calViews .fpill'), function (b) {
+        var on = b.getAttribute('data-view') === calView;
+        b.classList.toggle('on', on);
+        b.setAttribute('aria-pressed', on ? 'true' : 'false');
+      });
+      var unit = calView === 'day' ? 'day' : calView === 'week' ? 'week' : 'month';
+      document.getElementById('calPrev').setAttribute('aria-label', 'Previous ' + unit);
+      document.getElementById('calNext').setAttribute('aria-label', 'Next ' + unit);
+      // The weekly pattern is edited against a week, so it is offered only there.
+      var hoursBtn = document.getElementById('calHours');
+      hoursBtn.hidden = calView !== 'week';
+      if (calView !== 'week') document.getElementById('calHoursForm').hidden = true;
+    }
+
+    // Everything on one day, from a /admin/calendar answer: appointments, time off, busy
+    // time from other calendars, and the working windows for that weekday.
+    function calDayParts(r, ds, de) {
+      var dow = new Date(ds * 1000).getDay();
+      return {
+        mine: (r.appointments || []).filter(function (a) { return a.starts_at < de && a.ends_at > ds; }),
+        blocks: (r.blocks || []).filter(function (b) { return b.starts_at < de && b.ends_at > ds; }),
+        busy: (r.busy || []).filter(function (b) { return b.starts_at < de && b.ends_at > ds; }),
+        rules: (r.rules || []).filter(function (x) { return x.active && x.dow === dow; }).sort(function (a, b) { return a.start_hm < b.start_hm ? -1 : 1; }),
+      };
+    }
+    function busyChip(b, ds, de) {
+      var whole = b.all_day || (b.starts_at <= ds && b.ends_at >= de);
+      var c = el('div', 'calbusy', whole ? 'Busy all day' : hhmmOf(Math.max(b.starts_at, ds)) + '–' + hhmmOf(Math.min(b.ends_at, de)));
+      c.title = 'Busy on your ' + (b.source === 'google' ? 'Google' : b.source) + ' calendar. Not offered for booking.';
+      return c;
+    }
+    function apptChip(a, full) {
+      var b = el('button', 'calappt ' + a.kind + (a.status !== 'booked' ? ' ' + a.status : ''));
+      b.type = 'button';
+      b.title = hhmmOf(a.starts_at) + ' · ' + a.who + ' · ' + (APPT_KIND[a.kind] || a.kind) + ' · ' + a.title;
+      b.appendChild(el('span', 't', hhmmOf(a.starts_at) + (full ? '–' + hhmmOf(a.ends_at) : '')));
+      b.appendChild(el('span', 'w', a.who));
+      if (full) b.appendChild(el('span', 'k', (APPT_KIND[a.kind] || a.kind) + ' · ' + a.title));
+      b.addEventListener('click', function (e) { e.stopPropagation(); openAppointment(a.id); });
+      return b;
+    }
+    function hoursText(rules) {
+      if (!rules.length) return 'Not bookable';
+      return rules.map(function (x) { return x.start_hm + '–' + x.end_hm + (x.kind === 'any' ? '' : ' (' + (KIND_LABEL[x.kind] || x.kind) + ')'); }).join(', ');
+    }
+    function goDay(ds) { calFocus = ds; calSetView('day'); }
+
     function loadCalendar() {
-      if (!calAnchor) calAnchor = monthStart(Math.floor(Date.now() / 1000));
-      var first = calAnchor;
-      var gridStart = weekStart(first);
-      var nextMonth = shiftMonth(first, 1);
-      var weeks = Math.ceil((Math.round((nextMonth - gridStart) / 86400)) / 7);
-      var gridEnd = dayStartOf(gridStart, weeks * 7);
-      return api('/admin/calendar?from=' + gridStart + '&to=' + gridEnd).then(function (r) {
+      calDetailOpen = false;
+      if (!calFocus) calFocus = dayStartOf(Math.floor(Date.now() / 1000), 0);
+      calSyncBar();
+      var from, to, weeks = 0;
+      if (calView === 'day') { from = calFocus; to = dayStartOf(calFocus, 1); }
+      else if (calView === 'week') { from = weekStart(calFocus); to = dayStartOf(from, 7); }
+      else {
+        calAnchor = monthStart(calFocus);
+        from = weekStart(calAnchor);
+        weeks = Math.ceil(Math.round((shiftMonth(calAnchor, 1) - from) / 86400) / 7);
+        to = dayStartOf(from, weeks * 7);
+      }
+      return api('/admin/calendar?from=' + from + '&to=' + to).then(function (r) {
         calGrid.textContent = '';
         if (!r.ok) { calGrid.appendChild(el('div', 'state', 'Could not load the diary.')); return; }
-        document.getElementById('calRange').textContent =
-          new Date(first * 1000).toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
-        var month = el('div', 'calmonth');
-        ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'].forEach(function (n) { month.appendChild(el('div', 'caldow', n)); });
+        document.getElementById('calRange').textContent = calRangeLabel(from, to);
         var today = dayStartOf(Math.floor(Date.now() / 1000), 0);
-        var thisMonth = new Date(first * 1000).getMonth();
-        for (var i = 0; i < weeks * 7; i++) {
-          var ds = dayStartOf(gridStart, i), de = dayStartOf(gridStart, i + 1);
-          var date = new Date(ds * 1000);
-          var mine = (r.appointments || []).filter(function (a) { return a.starts_at < de && a.ends_at > ds; });
-          var blocks = (r.blocks || []).filter(function (b) { return b.starts_at < de && b.ends_at > ds; });
-          var hasRule = (r.rules || []).some(function (x) { return x.active && x.dow === date.getDay(); });
-          var d = el('div', 'calday' + (ds === today ? ' today' : '') + (hasRule ? '' : ' off') +
-            (date.getMonth() !== thisMonth ? ' out' : '') + (mine.length || blocks.length ? '' : ' empty'));
-          var h = el('h4', null, null);
-          h.appendChild(el('span', null, String(date.getDate())));
-          h.setAttribute('aria-label', date.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' }));
-          d.appendChild(h);
-          blocks.forEach(function (b) { d.appendChild(el('div', 'calblock', b.reason || 'Unavailable')); });
-          (r.busy || []).filter(function (b) { return b.starts_at < de && b.ends_at > ds; }).forEach(function (b) {
-            var whole = b.all_day || (b.starts_at <= ds && b.ends_at >= de);
-            var c = el('div', 'calbusy', whole ? 'Busy all day' : hhmmOf(Math.max(b.starts_at, ds)) + '–' + hhmmOf(Math.min(b.ends_at, de)));
-            c.title = 'Busy on your ' + (b.source === 'google' ? 'Google' : b.source) + ' calendar. Not offered for booking.';
-            d.appendChild(c);
-          });
-          mine.forEach(function (a) {
-            var b = el('button', 'calappt ' + a.kind + (a.status !== 'booked' ? ' ' + a.status : ''));
-            b.type = 'button';
-            b.title = hhmmOf(a.starts_at) + ' · ' + a.who + ' · ' + (APPT_KIND[a.kind] || a.kind) + ' · ' + a.title;
-            b.appendChild(el('span', 't', hhmmOf(a.starts_at)));
-            b.appendChild(el('span', 'w', a.who));
-            b.addEventListener('click', function () { openAppointment(a.id); });
-            d.appendChild(b);
-          });
-          month.appendChild(d);
-        }
-        calGrid.appendChild(month);
+        if (calView === 'month') renderMonth(r, from, weeks, today);
+        else if (calView === 'week') renderWeek(r, from, today);
+        else renderDay(r, from, today);
       });
     }
 
-    document.getElementById('calPrev').addEventListener('click', function () { calAnchor = shiftMonth(calAnchor, -1); loadCalendar(); });
-    document.getElementById('calNext').addEventListener('click', function () { calAnchor = shiftMonth(calAnchor, 1); loadCalendar(); });
-    document.getElementById('calToday').addEventListener('click', function () { calAnchor = monthStart(Math.floor(Date.now() / 1000)); loadCalendar(); });
+    function renderMonth(r, gridStart, weeks, today) {
+      var month = el('div', 'calmonth');
+      ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'].forEach(function (n) { month.appendChild(el('div', 'caldow', n)); });
+      var thisMonth = new Date(calAnchor * 1000).getMonth();
+      for (var i = 0; i < weeks * 7; i++) {
+        (function (ds, de) {
+          var date = new Date(ds * 1000);
+          var x = calDayParts(r, ds, de);
+          var d = el('div', 'calday' + (ds === today ? ' today' : '') + (x.rules.length ? '' : ' off') +
+            (date.getMonth() !== thisMonth ? ' out' : '') + (x.mine.length || x.blocks.length || x.busy.length ? '' : ' empty'));
+          var h = el('button', 'calnum', String(date.getDate()));
+          h.type = 'button';
+          h.setAttribute('aria-label', 'Open ' + date.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' }));
+          h.addEventListener('click', function () { goDay(ds); });
+          d.appendChild(h);
+          x.blocks.forEach(function (b) { d.appendChild(el('div', 'calblock', b.reason || 'Unavailable')); });
+          x.busy.forEach(function (b) { d.appendChild(busyChip(b, ds, de)); });
+          x.mine.forEach(function (a) { d.appendChild(apptChip(a, false)); });
+          month.appendChild(d);
+        })(dayStartOf(gridStart, i), dayStartOf(gridStart, i + 1));
+      }
+      calGrid.appendChild(month);
+    }
+
+    function renderWeek(r, from, today) {
+      var week = el('div', 'calweek');
+      for (var i = 0; i < 7; i++) {
+        (function (ds, de) {
+          var date = new Date(ds * 1000);
+          var x = calDayParts(r, ds, de);
+          var d = el('div', 'calday' + (ds === today ? ' today' : '') + (x.rules.length ? '' : ' off') +
+            (x.mine.length || x.blocks.length || x.busy.length ? '' : ' empty'));
+          var h = el('button', 'calwkhead');
+          h.type = 'button';
+          h.setAttribute('aria-label', 'Open ' + date.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' }));
+          h.appendChild(el('span', 'dw', date.toLocaleDateString('en-US', { weekday: 'short' })));
+          h.appendChild(el('span', 'dn', String(date.getDate())));
+          h.addEventListener('click', function () { goDay(ds); });
+          d.appendChild(h);
+          d.appendChild(el('div', 'calhrs', hoursText(x.rules)));
+          x.blocks.forEach(function (b) { d.appendChild(el('div', 'calblock', b.reason || 'Unavailable')); });
+          // Busy time and appointments in time order.
+          var items = x.busy.map(function (b) { return { at: b.starts_at, node: busyChip(b, ds, de) }; })
+            .concat(x.mine.map(function (a) { return { at: a.starts_at, node: apptChip(a, true) }; }))
+            .sort(function (p, q) { return p.at - q.at; });
+          items.forEach(function (it) { d.appendChild(it.node); });
+          // The hours line already says 'Not bookable' on a day with no windows.
+          if (!items.length && !x.blocks.length && x.rules.length) d.appendChild(el('div', 'calempty', 'Free'));
+          week.appendChild(d);
+        })(dayStartOf(from, i), dayStartOf(from, i + 1));
+      }
+      calGrid.appendChild(week);
+    }
+
+    // One day as an agenda: working hours up top, then everything in time order.
+    function renderDay(r, ds, today) {
+      var de = dayStartOf(ds, 1);
+      var x = calDayParts(r, ds, de);
+      var p = el('div', 'calagenda' + (ds === today ? ' today' : ''));
+      var hrs = el('div', 'calag-hours');
+      hrs.appendChild(el('b', null, 'Working hours'));
+      hrs.appendChild(el('span', null, hoursText(x.rules)));
+      p.appendChild(hrs);
+      var items = [];
+      x.blocks.forEach(function (b) { items.push({ at: Math.max(b.starts_at, ds), kind: 'block', b: b }); });
+      x.busy.forEach(function (b) { items.push({ at: Math.max(b.starts_at, ds), kind: 'busy', b: b }); });
+      x.mine.forEach(function (a) { items.push({ at: a.starts_at, kind: 'appt', a: a }); });
+      items.sort(function (m, n) { return m.at - n.at; });
+      if (!items.length) p.appendChild(el('div', 'calag-empty', x.rules.length ? 'Nothing booked or busy. Every working window is open.' : 'No working hours on this day, and nothing on it.'));
+      items.forEach(function (it) {
+        var row = el(it.kind === 'appt' ? 'button' : 'div', 'calag-row ' + it.kind);
+        if (it.kind === 'appt') {
+          var a = it.a;
+          row.type = 'button';
+          row.appendChild(el('span', 'calag-t', hhmmOf(a.starts_at) + '–' + hhmmOf(a.ends_at)));
+          var body = el('span', 'calag-b');
+          body.appendChild(el('b', null, a.title || 'Appointment'));
+          body.appendChild(el('span', null, [APPT_KIND[a.kind] || a.kind, a.who, a.status !== 'booked' ? a.status.replace('_', ' ') : ''].filter(Boolean).join(' · ')));
+          row.appendChild(body);
+          row.addEventListener('click', function () { openAppointment(a.id); });
+        } else {
+          var b = it.b;
+          var whole = b.all_day || (b.starts_at <= ds && b.ends_at >= de);
+          row.appendChild(el('span', 'calag-t', whole ? 'All day' : hhmmOf(Math.max(b.starts_at, ds)) + '–' + hhmmOf(Math.min(b.ends_at, de))));
+          var bd = el('span', 'calag-b');
+          bd.appendChild(el('b', null, it.kind === 'busy' ? 'Busy' : (b.reason || 'Time off')));
+          bd.appendChild(el('span', null, it.kind === 'busy' ? 'On your ' + (b.source === 'google' ? 'Google' : b.source) + ' calendar. Not offered for booking.' : 'Blocked out. Not offered for booking.'));
+          row.appendChild(bd);
+        }
+        p.appendChild(row);
+      });
+      calGrid.appendChild(p);
+    }
+
+    function calStep(n) {
+      if (calView === 'day') calFocus = dayStartOf(calFocus, n);
+      else if (calView === 'week') calFocus = dayStartOf(calFocus, 7 * n);
+      else calFocus = shiftMonth(monthStart(calFocus), n);
+      loadCalendar();
+    }
+    // An open Calendar tab refreshes itself every 5 minutes, so busy time read from Google
+    // (every 15 minutes on the Worker) and new bookings appear without a reload. Skipped
+    // while an appointment is open or a form is showing, so nothing is lost mid-edit.
+    var calDetailOpen = false;
+    setInterval(function () {
+      if (document.visibilityState !== 'visible') return;
+      if (document.getElementById('viewCalendar').hidden || calDetailOpen) return;
+      if (!document.getElementById('calBookForm').hidden || !document.getElementById('calHoursForm').hidden) return;
+      loadCalendar();
+    }, 5 * 60 * 1000);
+    document.getElementById('calPrev').addEventListener('click', function () { calStep(-1); });
+    document.getElementById('calNext').addEventListener('click', function () { calStep(1); });
+    document.getElementById('calViews').addEventListener('click', function (e) {
+      var b = e.target.closest('.fpill');
+      if (b) calSetView(b.getAttribute('data-view'));
+    });
+    document.getElementById('calToday').addEventListener('click', function () { calFocus = dayStartOf(Math.floor(Date.now() / 1000), 0); loadCalendar(); });
 
     function openAppointment(id) {
+      calDetailOpen = true;
       api('/admin/appointments/' + id).then(function (r) {
         if (!r.ok) return toast('Could not open it');
         var a = r.appointment;
@@ -4977,7 +5191,18 @@
         c.appendChild(el('div', 'who', [a.when, APPT_KIND[a.kind] || a.kind, a.who, a.email, a.phone].filter(Boolean).join(' · ')));
         if (a.address) c.appendChild(el('div', 'row-sub', a.address));
         if (a.notes) c.appendChild(el('div', 'row-sub', a.notes));
-        c.appendChild(el('div', 'row-sub', 'Status: ' + a.status.replace('_', ' ') + (a.cancel_reason ? ' · ' + a.cancel_reason : '')));
+        c.appendChild(el('div', 'row-sub', 'Status: ' + a.status.replace('_', ' ') +
+          (a.status === 'canceled' && a.canceled_by ? ' by ' + (a.canceled_by === 'customer' ? 'the customer' : String(a.canceled_by).split('@')[0]) : '') +
+          (a.cancel_reason ? ' · ' + a.cancel_reason : '')));
+        [['rescheduled_from', 'Moved here from '], ['rescheduled_to', 'Moved to ']].forEach(function (k) {
+          var l = a[k[0]];
+          if (!l) return;
+          var link = el('button', 'linkish', k[1] + l.when);
+          link.type = 'button';
+          link.addEventListener('click', function () { openAppointment(l.id); });
+          c.appendChild(link);
+        });
+        if (a.ticket_number) c.appendChild(el('div', 'row-sub', 'Time logged on ' + a.ticket_number));
         var acts = el('div', 'inv-actions');
         function aact(label, cls, fn) { var b = el('button', cls || null, label); b.type = 'button'; b.addEventListener('click', fn); acts.appendChild(b); return b; }
         if (a.status === 'booked' || a.status === 'no_show') {
@@ -4994,10 +5219,20 @@
             if (!when) return;
             var ts = Math.floor(new Date(when.replace(' ', 'T')).getTime() / 1000);
             if (!ts) return toast('Could not read that date');
-            api('/admin/appointments/' + id + '/reschedule', { method: 'POST', body: { starts_at: ts } }).then(function (x) {
-              toast(x.ok ? 'Moved · the customer gets a new invite' : (APPT_ERROR[x.error] || 'Could not move it'));
-              loadCalendar();
-            });
+            var why = prompt('Why is it moving? (optional, kept on their file)', '');
+            if (why === null) return;
+            var rbody = { starts_at: ts, reason: why };
+            var go = function () {
+              api('/admin/appointments/' + id + '/reschedule', { method: 'POST', body: rbody }).then(function (x) {
+                if (!x.ok && x.error === 'slot_taken' && !rbody.allow_overlap) {
+                  if (confirm('The new time overlaps ' + overlapText(x) + '.\n\nMove it anyway?')) { rbody.allow_overlap = true; return go(); }
+                  return;
+                }
+                toast(x.ok ? 'Moved · the customer gets a new invite' : (APPT_ERROR[x.error] || 'Could not move it'));
+                loadCalendar();
+              });
+            };
+            go();
           });
           aact('Cancel', 'danger', function () {
             var why = prompt('Cancel this? The customer gets a cancellation and their calendar clears.\n\nReason (optional):', '');
@@ -5007,7 +5242,7 @@
         }
         var ics = el('a', 'pill', 'Invite'); ics.href = '/portal-api/admin/appointments/' + id + '/ics'; ics.target = '_blank'; ics.rel = 'noopener';
         acts.appendChild(ics);
-        aact('Back to the month', null, function () { loadCalendar(); });
+        aact('Back to the calendar', null, function () { loadCalendar(); });
         c.appendChild(acts);
         if ((r.events || []).length) {
           var ev = el('div', 'qevents');
@@ -5061,34 +5296,110 @@
       }, 250);
     });
 
+    // A time that has passed is recorded rather than booked (the server decides the
+    // same way). The form says so and offers to log the time instead of an invite.
+    function calFormTs() {
+      var date = document.getElementById('calDate').value, time = document.getElementById('calTime').value;
+      return date && time ? Math.floor(new Date(date + 'T' + time).getTime() / 1000) : null;
+    }
+    function calSyncPast() {
+      var ts = calFormTs();
+      var past = ts != null && ts <= Math.floor(Date.now() / 1000);
+      document.getElementById('calPastRow').hidden = !past;
+      document.getElementById('calInviteRow').hidden = past;
+      document.getElementById('calBillable').disabled = !document.getElementById('calLogTime').checked;
+      document.getElementById('calSave').textContent = past ? 'Record it' : 'Book it';
+    }
+    ['calDate', 'calTime'].forEach(function (i) {
+      document.getElementById(i).addEventListener('input', calSyncPast);
+      document.getElementById(i).addEventListener('change', calSyncPast);
+    });
+    document.getElementById('calLogTime').addEventListener('change', calSyncPast);
+
+    function overlapText(r) {
+      var w = (r.with || [])[0];
+      return w ? '"' + (w.title || 'Another appointment') + '" at ' + hhmmOf(w.starts_at) + '–' + hhmmOf(w.ends_at) : 'another appointment';
+    }
+
     document.getElementById('calSave').addEventListener('click', function () {
-      var date = document.getElementById('calDate').value;
-      var time = document.getElementById('calTime').value;
-      if (!date || !time) return toast('Pick a date and a time');
-      var ts = Math.floor(new Date(date + 'T' + time).getTime() / 1000);
+      var ts = calFormTs();
+      if (!ts) return toast('Pick a date and a time');
       var email = document.getElementById('calEmail').value.trim();
       if (!email) return toast('Whose appointment is it? Enter their email.');
       var kind = document.getElementById('calKind').value;
       var address = document.getElementById('calAddress').value.trim();
       if (kind === 'onsite' && !address) return toast('An on-site visit needs an address');
+      var mins = Math.round(Number(document.getElementById('calMins').value));
+      if (!(mins >= 5 && mins <= 1440)) return toast('The length must be between 5 minutes and 24 hours');
+      var past = ts <= Math.floor(Date.now() / 1000);
       var btn = this; btn.disabled = true;
-      api('/admin/appointments', { method: 'POST', body: {
-        starts_at: ts, minutes: Number(document.getElementById('calMins').value) || 60, kind: kind,
+      var body = {
+        starts_at: ts, minutes: mins, kind: kind,
         title: document.getElementById('calTitle').value.trim() || null, email: email,
         contact_name: document.getElementById('calName').value.trim() || null,
         phone: document.getElementById('calPhone').value.trim() || null,
         address: address || null, notes: document.getElementById('calNotes').value.trim() || null,
         account_id: calSelected && calSelected.account_id ? calSelected.account_id : null,
-      } }).then(function (r) {
-        btn.disabled = false;
-        if (!r.ok) return toast(APPT_ERROR[r.error] || 'Could not book it');
-        toast('Booked · invite sent to ' + email);
-        document.getElementById('calBookForm').hidden = true;
-        ['calTitle', 'calAddress', 'calNotes', 'calPhone'].forEach(function (i) { document.getElementById(i).value = ''; });
-        calAnchor = monthStart(ts);
-        loadCalendar();
-      });
+        lead_id: calSelected && calSelected.lead_id ? calSelected.lead_id : null,
+        email_invite: past ? false : document.getElementById('calInvite').checked,
+        log_time: past && document.getElementById('calLogTime').checked,
+        billable: document.getElementById('calBillable').checked,
+      };
+      var send = function () {
+        api('/admin/appointments', { method: 'POST', body: body }).then(function (r) {
+          if (!r.ok && r.error === 'slot_taken' && !body.allow_overlap) {
+            if (confirm('This overlaps ' + overlapText(r) + '.\n\nBook it anyway?')) { body.allow_overlap = true; return send(); }
+            btn.disabled = false;
+            return;
+          }
+          btn.disabled = false;
+          if (!r.ok) return toast(APPT_ERROR[r.error] || 'Could not book it');
+          if (r.recorded) {
+            var t = r.time;
+            toast('Recorded' + (t ? (t.error ? ' · the time could not be logged' : ' · ' + t.minutes + ' min logged on ' + t.ticket_number + (t.billable ? '' : ' (not billable)')) : ''));
+          } else toast(r.emailed ? 'Booked · invite sent to ' + email : 'Booked · no invite sent');
+          document.getElementById('calBookForm').hidden = true;
+          ['calTitle', 'calAddress', 'calNotes', 'calPhone'].forEach(function (i) { document.getElementById(i).value = ''; });
+          calFocus = dayStartOf(ts, 0);
+          loadCalendar();
+        });
+      };
+      send();
     });
+
+    // From a customer's, company's or lead's file: the booking form, already filled.
+    function startApptFor(c) {
+      showView('calendar');
+      var f = document.getElementById('calBookForm');
+      f.hidden = false;
+      document.getElementById('calHoursForm').hidden = true;
+      calSelect(c);
+      calSyncPast();
+      f.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+
+    // Every appointment on a file, canceled and moved ones included (Worker:
+    // appointmentHistory). A row opens the appointment.
+    var APPT_STATUS = { booked: ['Booked', '#4fa2ff'], done: ['Done', '#22c55e'], no_show: ['No-show', '#ef4444'], canceled: ['Canceled', '#6a8ba8'] };
+    function apptHistoryRows(host, list) {
+      if (!list.length) { host.appendChild(el('div', 'row-sub', 'No appointments yet.')); return; }
+      list.forEach(function (h) {
+        var st = h.status === 'canceled' && h.rescheduled_to ? ['Moved', '#c89830'] : (APPT_STATUS[h.status] || [h.status, '#8aa48d']);
+        var bits = [h.kind_label + ' · ' + h.minutes + ' min'];
+        if (h.address) bits.push(h.address);
+        if (h.notes) bits.push(h.notes);
+        if (h.rescheduled_from) bits.push('Moved here from ' + h.rescheduled_from.when);
+        if (h.rescheduled_to) {
+          var why = String(h.cancel_reason || '').split(' · ').slice(1).join(' · ');
+          bits.push('Moved to ' + h.rescheduled_to.when + (why ? ': ' + why : ''));
+        }
+        else if (h.status === 'canceled') bits.push('Canceled' + (h.canceled_by ? ' by ' + (h.canceled_by === 'customer' ? 'the customer' : String(h.canceled_by).split('@')[0]) : '') + (h.cancel_reason ? ': ' + h.cancel_reason : ''));
+        if (h.ticket_number) bits.push('Time on ' + h.ticket_number);
+        var r = row(h.when + ' · ' + (h.title || 'Appointment'), bits.join(' · '), badge(st[0], st[1]), function () { openObject('appointment', h.id); });
+        r.classList.add('appt-hist');
+        host.appendChild(r);
+      });
+    }
 
     // ---- working hours and time off ----
     document.getElementById('calHours').addEventListener('click', function () {
@@ -6945,7 +7256,16 @@
       // The file is tabbed: what needs attention first, then the money, the work,
       // the paperwork, and what you want to remember about them.
       var allInv = c.all_invoices || c.invoices || [];
-      var tabs = paneTabs(wrap, ['Overview', 'Quotes', 'Invoices', 'Tickets', 'Equipment', 'Files', 'Notes', 'Activity'], 'cust:' + c.account.id);
+      var tabs = paneTabs(wrap, ['Overview', 'Quotes', 'Invoices', 'Tickets', 'Appointments', 'Equipment', 'Files', 'Notes', 'Activity'], 'cust:' + c.account.id);
+      tabs.count('Appointments', (c.appointments || []).length);
+      (function () {
+        var ap = sec('Appointments (' + (c.appointments || []).length + ')');
+        ap.appendChild(licAction('Book or record an appointment', 'prim', function () {
+          startApptFor({ email: c.account.email, account_id: c.account.id, name: (c.profile && c.profile.name) || '', company: (c.profile && c.profile.company) || '' });
+        }));
+        apptHistoryRows(ap, c.appointments || []);
+        tabs.pane('Appointments').appendChild(ap);
+      })();
       tabs.count('Quotes', (c.quotes || []).length);
       var pOverview = tabs.pane('Overview');
       var pInv = tabs.pane('Invoices');
@@ -7528,7 +7848,7 @@
       var fPlanName = formField(g3, 'addPlanName', 'Plan name', 'text', 'Managed IT - Growth');
       box.appendChild(g3);
 
-      box.appendChild(el('div', 'addsec', 'license key (optional)'));
+      box.appendChild(el('div', 'addsec', 'License key (optional)'));
       var g4 = el('div', 'addgrid');
       var fLic = formField(g4, 'addLic', 'Ohio Crash plan', 'select');
       ['', 'trial', 'starter', 'pro', 'enterprise', 'owned'].forEach(function (v) {
@@ -7536,20 +7856,21 @@
         op.value = v; op.textContent = v === '' ? 'No key' : v;
         fLic.appendChild(op);
       });
+      // Same shape as the fields beside it (a label line, then a 40px row), so the
+      // checkbox sits level with the plan select rather than floating above it.
       var mailWrap = el('div');
-      var mailLbl = el('label', null, ' Email the key to them');
-      mailLbl.setAttribute('for', 'addMail');
+      mailWrap.appendChild(el('span', 'addlbl', 'Delivery'));
       var fMail = document.createElement('input');
       fMail.type = 'checkbox'; fMail.id = 'addMail';
-      mailWrap.appendChild(el('label', null, 'Delivery'));
-      var inline = el('div', 'worklog-bill');
+      var inline = el('label', 'addcheck');
+      inline.setAttribute('for', 'addMail');
       inline.appendChild(fMail);
-      inline.appendChild(document.createTextNode(' Email the key to them'));
+      inline.appendChild(document.createTextNode('Email the key to them'));
       mailWrap.appendChild(inline);
       g4.appendChild(mailWrap);
       box.appendChild(g4);
 
-      var actions = el('div', 'orgbar');
+      var actions = el('div', 'orgbar addactions');
       var save = licAction('Create customer', 'prim', function () {
         var email = fEmail.value.trim();
         if (!email) return toast('An email address is required');
@@ -7922,7 +8243,17 @@
       var oInv = extra.invoices || [];
       var oTk = extra.tickets || [];
       var oDocs = extra.documents || [];
-      var otabs = paneTabs(wrap, ['Overview', 'Quotes', 'Invoices', 'Tickets', 'Equipment', 'Files', 'Notes', 'Activity'], 'org:' + o.id);
+      var otabs = paneTabs(wrap, ['Overview', 'Quotes', 'Invoices', 'Tickets', 'Appointments', 'Equipment', 'Files', 'Notes', 'Activity'], 'org:' + o.id);
+      otabs.count('Appointments', ((extra || {}).appointments || []).length);
+      (function () {
+        var list = (extra || {}).appointments || [];
+        var ap = sec('Appointments (' + list.length + ')');
+        if (o.billing_email) ap.appendChild(licAction('Book or record an appointment', 'prim', function () {
+          startApptFor({ email: o.billing_email, account_id: null, name: '', company: o.name });
+        }));
+        apptHistoryRows(ap, list);
+        otabs.pane('Appointments').appendChild(ap);
+      })();
       otabs.count('Quotes', (extra.quotes || []).length);
       var oOverview = otabs.pane('Overview');
       otabs.count('Invoices', oInv.length);
@@ -14677,7 +15008,17 @@
       if (l.replied_at) chips.appendChild(el('span', 'ct-chip green', 'Replied ' + fmtDate(l.replied_at)));
       panel.appendChild(chips);
 
-      var tabs = paneTabs(panel, ['Overview', 'Contact log', 'Report card', 'Emails', 'Quotes'], 'lead');
+      var tabs = paneTabs(panel, ['Overview', 'Contact log', 'Report card', 'Emails', 'Quotes', 'Appointments'], 'lead');
+      tabs.count('Appointments', (d.appointments || []).length);
+      (function () {
+        var host = tabs.pane('Appointments');
+        var l = d.lead || {};
+        if (l.email) host.appendChild(licAction('Book or record an appointment', 'prim', function () {
+          startApptFor({ email: l.email, account_id: l.account_id || null, lead_id: l.id, name: l.contact_name || '', company: l.company || '' });
+        }));
+        else host.appendChild(el('div', 'row-sub', 'Add an email to this lead to book an appointment with them.'));
+        apptHistoryRows(host, d.appointments || []);
+      })();
       tabs.count('Contact log', d.events.filter(function (e) { return ['touch', 'reply', 'note'].indexOf(e.kind) >= 0; }).length);
       tabs.count('Report card', d.audits.length);
       tabs.count('Emails', d.drafts.length);
