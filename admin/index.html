@@ -963,6 +963,44 @@
     .ct-step .reply-row select { min-height:40px; padding:0.35rem 0.5rem; border-radius:999px; border:1px solid var(--line); background:var(--bg); color:var(--text); font-family:inherit; font-size:0.78rem; }
     #pjList .ct-card { margin-bottom:0.5rem; }
     @media (min-width:760px) { #pjList { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:0.5rem; } #pjList .state { grid-column:1 / -1; } }
+    /* Home: Claude API usage tile */
+    .ai-tile { margin-top:0.6rem; }
+    .ai-top { display:inline-flex; align-items:center; min-height:36px; padding:0 0.9rem; border-radius:8px; font-family:"Montserrat",sans-serif; font-size:0.72rem; font-weight:700; text-transform:uppercase; letter-spacing:0.05em; text-decoration:none; color:#0d1710; background:linear-gradient(135deg,var(--gold),#e0b840); white-space:nowrap; }
+    .ai-top:hover { filter:brightness(1.08); }
+    .ai-top:focus-visible, .ai-hero:focus-visible { outline:2px solid var(--gold); outline-offset:2px; }
+    .ai-lbl { display:block; font-family:"Montserrat",sans-serif; font-size:0.68rem; text-transform:uppercase; letter-spacing:0.06em; color:var(--muted); }
+    .ai-hero { display:block; width:100%; text-align:left; margin:0.4rem 0 0.6rem; padding:0.75rem 0.85rem; border:1px solid var(--line); border-radius:12px; background:var(--bg); color:var(--text); font:inherit; cursor:pointer; }
+    .ai-hero:disabled { opacity:0.6; cursor:progress; }
+    .ai-hero b { display:block; font-family:"Montserrat",sans-serif; font-size:1.7rem; font-weight:800; margin:0.15rem 0 0.35rem; }
+    .ai-hero.is-good b { color:var(--green); }
+    .ai-hero.is-warn b { color:var(--gold); }
+    .ai-hero.is-low { border-color:#d9534f; }
+    .ai-hero.is-low b { color:#e46a66; }
+    .ai-meter { height:8px; border-radius:4px; background:var(--card-2); overflow:hidden; margin-bottom:0.4rem; }
+    .ai-meter span { display:block; height:100%; border-radius:4px; background:var(--green); }
+    .ai-hero.is-warn .ai-meter span { background:var(--gold); }
+    .ai-hero.is-low .ai-meter span { background:#e46a66; }
+    .ai-nums { display:grid; grid-template-columns:1fr 1fr; gap:0.5rem; margin-bottom:0.6rem; }
+    .ai-nums .tile b { display:block; font-family:"Montserrat",sans-serif; font-size:1.1rem; font-weight:800; margin:0.1rem 0; }
+    .ai-sparkwrap { margin-bottom:0.6rem; }
+    .ai-spark { display:block; width:100%; height:44px; }
+    .ai-spark rect { fill:var(--green); opacity:0.85; }
+    .ai-spark rect:hover { fill:var(--gold); opacity:1; }
+    .ai-sparkcap { font-size:0.74rem; color:var(--muted); margin-top:0.2rem; }
+    .ai-bar { display:flex; height:10px; border-radius:5px; overflow:hidden; background:var(--card-2); margin-bottom:0.5rem; }
+    .ai-bar span { display:block; height:100%; }
+    .ai-legend { display:grid; grid-template-columns:1fr 1fr; gap:0.3rem 0.9rem; margin-bottom:0.5rem; }
+    .ai-lrow { display:flex; align-items:center; gap:0.45rem; font-size:0.82rem; min-width:0; }
+    .ai-lrow i { width:9px; height:9px; border-radius:2px; flex-shrink:0; }
+    .ai-lrow span { flex:1; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; color:var(--muted); }
+    .ai-lrow b { font-weight:600; }
+    .ai-note { font-size:0.76rem; color:var(--muted); border-left:2px solid var(--line); padding-left:0.55rem; margin:0.4rem 0; }
+    .ai-acts { display:flex; flex-wrap:wrap; gap:0.5rem; margin-top:0.5rem; }
+    .ai-acts button { min-height:40px; padding:0 0.9rem; border-radius:8px; border:1px solid var(--line); background:var(--card-2); color:var(--text); font-family:"Montserrat",sans-serif; font-size:0.74rem; font-weight:700; text-transform:uppercase; letter-spacing:0.04em; cursor:pointer; }
+    .ai-acts button.prim { background:linear-gradient(135deg,var(--gold),#e0b840); color:#0d1710; border-color:transparent; }
+    .ai-form { margin-top:0.6rem; }
+    .ai-form .row-sub { margin-top:0.4rem; }
+    @media (max-width:420px) { .ai-legend { grid-template-columns:1fr; } .ai-hero b { font-size:1.45rem; } }
   </style>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
 </head>
@@ -9814,6 +9852,7 @@
       setNavBadge('inbox', a.counts.inbox || 0);
       setNavBadge('finance', a.counts.paypal_review);
       homeAttentionEl.appendChild(mgmtPanel());
+      homeAttentionEl.appendChild(aiTile());
     }
 
     function actRow(a) {
@@ -10299,6 +10338,190 @@
         });
       });
       return b;
+    }
+
+    // ---- Home: Claude API usage and credit ------------------------------------
+    // The Worker logs every Claude call it makes (src/ai_usage.js), so the split by
+    // feature is ours; the billed figure comes from Anthropic's cost report when
+    // ANTHROPIC_ADMIN_KEY is set. Anthropic has no balance API, so the credit left is the
+    // balance entered after a top-up, minus spend since.
+    var AI_FEATURES = [
+      ['scanner', 'Website scanner', 'var(--green)'],
+      ['quote', 'Quote drafts', 'var(--gold)'],
+      ['bid', 'BidBuilder', 'var(--text)'],
+      ['other', 'Other apps', 'var(--muted)'],
+    ];
+    var AI_DASHBOARD = 'https://platform.claude.com/dashboard';
+
+    function aiTile() {
+      var box = el('section', 'chart-panel ai-tile');
+      box.setAttribute('aria-label', 'Claude API usage');
+      var head = el('div', 'fin-sec-h');
+      head.appendChild(el('h3', null, 'Claude API'));
+      var top = el('a', 'ai-top', 'Top up / manage ↗');
+      top.href = AI_DASHBOARD; top.target = '_blank'; top.rel = 'noopener noreferrer';
+      head.appendChild(top);
+      box.appendChild(head);
+      var body = el('div');
+      body.appendChild(el('div', 'state', 'Loading…'));
+      box.appendChild(body);
+      var load = function (fresh) {
+        return api('/admin/ai-usage' + (fresh ? '?fresh=1' : '')).then(function (r) {
+          body.textContent = '';
+          if (!r.ok) { body.appendChild(el('div', 'state', r.error === 'session_expired' ? 'Signed out.' : 'Could not load Claude usage.')); return; }
+          renderAiTile(body, r, load);
+        });
+      };
+      load(false);
+      return box;
+    }
+
+    function renderAiTile(body, r, load) {
+      var w = r.worker, b = r.billed, c = r.credit;
+
+      // Credit left, the headline figure. Tap to ask Anthropic again.
+      var hero = el('button', 'ai-hero');
+      hero.type = 'button';
+      hero.title = 'Refresh from Anthropic';
+      hero.addEventListener('click', function () { hero.disabled = true; load(true); });
+      var lbl = el('span', 'ai-lbl', 'Credit left');
+      hero.appendChild(lbl);
+      if (c.remaining_cents == null) {
+        hero.appendChild(el('b', null, '—'));
+        hero.appendChild(el('span', 'row-sub', 'Enter your balance to track what is left.'));
+      } else {
+        var left = c.remaining_cents;
+        var state = left < c.low_cents ? 'low' : left < c.low_cents * 2 ? 'warn' : 'good';
+        hero.classList.add('is-' + state);
+        hero.appendChild(el('b', null, money(Math.max(0, left))));
+        var meter = el('div', 'ai-meter');
+        var fill = el('span');
+        fill.style.width = Math.max(0, Math.min(100, c.balance_cents ? left / c.balance_cents * 100 : 0)).toFixed(1) + '%';
+        meter.appendChild(fill);
+        hero.appendChild(meter);
+        hero.appendChild(el('span', 'row-sub',
+          money(c.spent_since_cents || 0) + ' spent of ' + money(c.balance_cents) + ' since ' + fmtDate(c.set_at)
+          + (c.basis === 'billed' ? ' (billed)' : ' (estimated)')
+          + (state === 'low' ? '. Under your ' + money(c.low_cents) + ' alert line.' : '')));
+      }
+      body.appendChild(hero);
+
+      // Month and today.
+      var nums = el('div', 'ai-nums');
+      var monthC = b.ok ? b.month_cents : w.month_cents;
+      var todayC = b.ok ? b.today_cents : w.today_cents;
+      var t1 = el('div', 'tile');
+      t1.appendChild(el('span', 'ai-lbl', 'This month'));
+      t1.appendChild(el('b', null, money(monthC)));
+      t1.appendChild(el('span', 'row-sub', b.ok ? 'billed' + (b.stale ? ', ' + ago(b.age_sec) + ' old' : '') : 'estimated'));
+      nums.appendChild(t1);
+      var t2 = el('div', 'tile');
+      t2.appendChild(el('span', 'ai-lbl', 'Today'));
+      t2.appendChild(el('b', null, money(todayC)));
+      t2.appendChild(el('span', 'row-sub', w.calls + ' calls this month' + (w.failures ? ', ' + w.failures + ' failed' : '')));
+      nums.appendChild(t2);
+      body.appendChild(nums);
+
+      // 30 days, one bar a day.
+      var days = (b.ok && b.days && b.days.length ? b.days : w.days).slice(-30);
+      var max = days.reduce(function (m, d) { return Math.max(m, d.cents); }, 0);
+      var W = 300, H = 44, bw = W / 30;
+      var svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+      svg.setAttribute('viewBox', '0 0 ' + W + ' ' + H);
+      svg.setAttribute('class', 'ai-spark');
+      svg.setAttribute('preserveAspectRatio', 'none');
+      svg.setAttribute('role', 'img');
+      svg.setAttribute('aria-label', 'Spend per day, last 30 days');
+      days.forEach(function (d, i) {
+        var h = max ? Math.max(d.cents ? 2 : 0, d.cents / max * (H - 2)) : 0;
+        var rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+        rect.setAttribute('x', (i * bw + 1).toFixed(1));
+        rect.setAttribute('y', (H - h).toFixed(1));
+        rect.setAttribute('width', (bw - 2).toFixed(1));
+        rect.setAttribute('height', h.toFixed(1));
+        rect.setAttribute('rx', '1.5');
+        var t = document.createElementNS('http://www.w3.org/2000/svg', 'title');
+        t.textContent = d.day + ': ' + money(d.cents);
+        rect.appendChild(t);
+        svg.appendChild(rect);
+      });
+      var sp = el('div', 'ai-sparkwrap');
+      sp.appendChild(svg);
+      sp.appendChild(el('div', 'ai-sparkcap', max ? 'Last 30 days, busiest day ' + money(max) : 'No spend in the last 30 days.'));
+      body.appendChild(sp);
+
+      // Where this month went.
+      var parts = AI_FEATURES.map(function (f) {
+        var v = f[0] === 'other' ? (b.ok ? b.other_cents : null) : w.month_by_feature[f[0]];
+        return { key: f[0], label: f[1], color: f[2], cents: v };
+      }).filter(function (p) { return p.cents != null; });
+      var total = parts.reduce(function (s, p) { return s + p.cents; }, 0);
+      var bar = el('div', 'ai-bar');
+      var legend = el('div', 'ai-legend');
+      parts.forEach(function (p) {
+        if (total && p.cents) {
+          var seg = el('span');
+          seg.style.width = (p.cents / total * 100).toFixed(2) + '%';
+          seg.style.background = p.color;
+          seg.title = p.label + ': ' + money(p.cents);
+          bar.appendChild(seg);
+        }
+        var row = el('div', 'ai-lrow');
+        var dot = el('i'); dot.style.background = p.color;
+        row.appendChild(dot);
+        row.appendChild(el('span', null, p.label));
+        row.appendChild(el('b', null, money(p.cents)));
+        legend.appendChild(row);
+      });
+      if (!total) bar.classList.add('empty');
+      body.appendChild(bar);
+      body.appendChild(legend);
+
+      // Footer notes.
+      if (!b.ok) {
+        body.appendChild(el('div', 'ai-note', b.error === 'admin_key_unset'
+          ? 'Figures are estimated from the Worker’s own calls. Add an Admin API key (ANTHROPIC_ADMIN_KEY) to see the bill, including other apps.'
+          : 'Anthropic’s cost report did not answer, so these are estimates. ' + (b.message || '')));
+      }
+      if (w.unknown_models && w.unknown_models.length) {
+        body.appendChild(el('div', 'ai-note', 'Priced as Opus 5 until the price table knows them: ' + w.unknown_models.join(', ') + '.'));
+      }
+
+      // Enter the balance after a top-up.
+      var acts = el('div', 'ai-acts');
+      var form = el('div', 'ai-form');
+      form.hidden = true;
+      var g = el('div', 'fgrid');
+      var bal = formField(g, 'aiBal', 'Balance now ($)', 'number', '107.52');
+      bal.step = '0.01'; bal.min = '0'; bal.inputMode = 'decimal';
+      var low = formField(g, 'aiLow', 'Alert me under ($)', 'number', '10');
+      low.step = '1'; low.min = '0'; low.inputMode = 'decimal';
+      low.value = (c.low_cents / 100).toString();
+      form.appendChild(g);
+      form.appendChild(el('div', 'row-sub', 'Copy the figure from the Claude dashboard. Spend is counted from now, and Telegram pages you once if it drops under the alert line.'));
+      var save = licAction('Save balance', 'prim', function () {
+        var v = parseFloat(bal.value), l = parseFloat(low.value);
+        if (!isFinite(v) || v < 0) return toast('Enter the balance in dollars');
+        save.disabled = true;
+        api('/admin/ai-usage/credit', { method: 'PUT', body: { balance_cents: Math.round(v * 100), low_cents: isFinite(l) && l >= 0 ? Math.round(l * 100) : null } })
+          .then(function (x) {
+            save.disabled = false;
+            if (!x.ok) return toast(x.message || 'Could not save');
+            toast('Balance saved');
+            body.textContent = '';
+            renderAiTile(body, x, load);
+          });
+      });
+      var cancel = licAction('Cancel', null, function () { form.hidden = true; setBtn.hidden = false; });
+      var fa = el('div', 'ai-acts');
+      fa.appendChild(save); fa.appendChild(cancel);
+      form.appendChild(fa);
+      var setBtn = licAction(c.balance_cents == null ? 'Enter balance' : 'Update balance', null, function () {
+        form.hidden = false; setBtn.hidden = true; bal.focus();
+      });
+      acts.appendChild(setBtn);
+      body.appendChild(acts);
+      body.appendChild(form);
     }
 
     // ---- Home: replies and notices, managed in place ---------------------------
