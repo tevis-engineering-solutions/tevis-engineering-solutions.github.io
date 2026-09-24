@@ -1118,7 +1118,9 @@
     .ai-form { margin-top:0.6rem; }
     .ai-form .row-sub { margin-top:0.4rem; }
     @media (max-width:420px) { .ai-legend { grid-template-columns:1fr; } .ai-hero b { font-size:1.45rem; } }
-  </style>
+  .mks-auto { display:flex; align-items:flex-start; justify-content:space-between; gap:12px; flex-wrap:wrap; }
+  .mks-auto .row-sub { flex:1 1 20rem; min-width:0; }
+</style>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
 </head>
 <body>
@@ -1961,7 +1963,7 @@
         <div>
           <div class="row-sub">Every new LLC, corporation and nonprofit filed with the Ohio Secretary of State in Cuyahoga, Lake, Lorain, Summit, Geauga and Medina counties. Kept apart from your leads: pick the ones worth reaching and make them leads. Each filing stays 60 days from when it first appears here; after that only the ones you made into leads are kept.</div>
           <div class="row-sub" id="mksFeed">Checking the feed&hellip;</div>
-          <div class="row-sub" id="mksLookupLine"></div>
+          <div class="mks-auto"><div class="row-sub" id="mksLookupLine"></div><button type="button" class="ct-btn sm" id="mksAutoBtn" hidden>Pause automatic search</button></div>
           <a class="brave-badge" href="https://brave.com/search/api/" target="_blank" rel="noopener noreferrer"><i class="fa-brands fa-brave" aria-hidden="true"></i> POWERED BY BRAVE</a>
         </div>
         <button type="button" class="ct-btn" id="mksCheck">Check for a new month</button>
@@ -1980,12 +1982,13 @@
           <label for="mksMonth" class="sr-only">Month</label>
           <select id="mksMonth"><option value="">Every month</option></select>
           <label for="mksVertical" class="sr-only">What the name says</label>
-          <select id="mksVertical"><option value="">Any kind of business</option></select>
+          <select id="mksVertical"><option value="">Any kind of business</option><option value="none">Unclassified (name says nothing)</option></select>
           <label for="mksSite" class="sr-only">Website</label>
-          <select id="mksSite"><option value="">Any website</option><option value="found">Website found</option><option value="email">Has an email</option><option value="none">No website</option><option value="pending">Not looked up yet</option></select>
+          <select id="mksSite"><option value="">Any website</option><option value="found">Website found</option><option value="email">Has an email</option><option value="none">No website</option><option value="pending">Not looked up yet</option><option value="skipped">Skipped (holdings, finance, realty)</option></select>
           <label for="mksSort" class="sr-only">Sort</label>
           <select id="mksSort"><option value="score">Best fit first</option><option value="newest">Newest first</option><option value="name">A to Z</option></select>
-          <label class="mk-check mk-inline"><input type="checkbox" id="mksHideHold" checked> Hide holding companies</label>
+          <label class="mk-check mk-inline"><input type="checkbox" id="mksHideHold" checked> Hide holdings, finance and realty</label>
+          <label class="mk-check mk-inline"><input type="checkbox" id="mksHideUncl" checked> Hide unclassified</label>
           <label for="mksQ" class="sr-only">Search new businesses</label>
           <input type="search" id="mksQ" placeholder="Name, city, owner, charter" autocomplete="off">
         </div>
@@ -14764,6 +14767,7 @@
       var st = document.getElementById('mksSite').value;
       if (st) qs += '&site=' + st;
       if (document.getElementById('mksHideHold').checked) qs += '&hide_holdings=1';
+      if (document.getElementById('mksHideUncl').checked && v !== 'none') qs += '&hide_unclassified=1';
       if (mksSearch) qs += '&q=' + encodeURIComponent(mksSearch);
       return qs;
     }
@@ -14786,6 +14790,17 @@
       });
     }
 
+    document.getElementById('mksAutoBtn').addEventListener('click', function () {
+      var b = this, pause = b.dataset.paused !== '1';
+      if (pause && !window.confirm('Pause the automatic website search? Nothing is searched until you restart it. Looking one up by hand still works.')) return;
+      b.disabled = true;
+      api('/admin/sos/lookup/auto', { method: 'POST', body: { paused: pause } }).then(function (r) {
+        b.disabled = false;
+        toast(r.ok ? (r.paused ? 'Automatic search paused' : 'Automatic search restarted') : mkErr(r));
+        mksSummary();
+      });
+    });
+
     function mksSummary() {
       api('/admin/sos/summary').then(function (r) {
         if (!r.ok) return;
@@ -14797,8 +14812,13 @@
           (f.last_check ? 'Last checked ' + fmt(f.last_check) + '.' : '') + (f.last_error ? ' Last problem: ' + f.last_error + '.' : '');
         var lk = r.lookup || {}, ll = document.getElementById('mksLookupLine');
         ll.textContent = !lk.configured ? 'Website lookup is off until a Brave Search key is set on the Worker.'
-          : 'Websites found for ' + lk.found + ' (' + lk.with_email + ' with an email), none for ' + lk.none + ', ' + lk.waiting + ' still to look up. ' +
-            lk.used_this_month + ' of ' + lk.cap + ' searches used this month.';
+          : 'Websites found for ' + lk.found + ' (' + lk.with_email + ' with an email), none for ' + lk.none + ', ' + lk.waiting + ' still to look up, ' + (lk.skipped || 0) + ' skipped (holdings, finance, realty), ' + (lk.unclassified || 0) + ' unclassified and not searched. ' +
+            lk.used_this_month + ' of ' + lk.cap + ' searches used this month. ' +
+            (lk.paused ? 'Automatic search is paused.' : (lk.window ? 'Automatic search: ' + lk.window.used + ' of ' + lk.window.limit + ' in this ' + lk.window.hours + '-hour window' + (lk.window.next_at ? ', next batch ' + fmt(lk.window.next_at) : '') + '.' : ''));
+        var ab = document.getElementById('mksAutoBtn');
+        ab.hidden = !lk.configured;
+        ab.textContent = lk.paused ? 'Restart automatic search' : 'Pause automatic search';
+        ab.dataset.paused = lk.paused ? '1' : '0';
         var cs = document.getElementById('mksCounty');
         if (cs.options.length < 2) r.summary.counties.forEach(function (c) { cs.appendChild(new Option(c.charAt(0) + c.slice(1).toLowerCase(), c)); });
         var ms = document.getElementById('mksMonth'), keep = ms.value;
@@ -14928,9 +14948,11 @@
         } else s.appendChild(el('div', 'row-sub', 'No email published on the pages we read (home, contact, about).'));
       } else if (f.site_status === 'none' || f.site_status === 'rejected') {
         s.appendChild(el('div', 'row-sub', f.site_status === 'rejected' ? 'Marked not their site.' : 'No website found' + ((ev.reasons || []).length ? ': ' + ev.reasons.join('; ') : '') + '.'));
+      } else if (f.site_status === 'skipped') {
+        s.appendChild(el('div', 'row-sub', ((ev.reasons || [])[0] || 'Not looked up') + '. No search was spent on it; Look up will spend one.'));
       } else if (f.site_status === 'error') {
         s.appendChild(el('div', 'row-sub', 'The lookup had a problem (' + ((ev.reasons || [])[0] || 'unknown') + '). It tries again tomorrow.'));
-      } else s.appendChild(el('div', 'row-sub', 'Not looked up yet.'));
+      } else s.appendChild(el('div', 'row-sub', f.vertical ? 'Not looked up yet.' : 'Not searched automatically: the name does not say what the business does. Find website spends one search.'));
       if (ev.social) {
         var so = el('a', null, 'Social page'); so.href = ev.social; so.target = '_blank'; so.rel = 'noopener noreferrer';
         var sl = el('div', 'row-sub'); sl.appendChild(document.createTextNode('Also found: ')); sl.appendChild(so); s.appendChild(sl);
@@ -15043,7 +15065,7 @@
         mksLoad();
       });
     });
-    ['mksCounty', 'mksMonth', 'mksVertical', 'mksSite', 'mksSort', 'mksHideHold'].forEach(function (id) {
+    ['mksCounty', 'mksMonth', 'mksVertical', 'mksSite', 'mksSort', 'mksHideHold', 'mksHideUncl'].forEach(function (id) {
       document.getElementById(id).addEventListener('change', function () { mksLoad(); });
     });
     document.getElementById('mksQ').addEventListener('input', function (e) {
