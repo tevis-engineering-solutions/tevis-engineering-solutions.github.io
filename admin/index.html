@@ -916,6 +916,26 @@
     .row.mk-verify .row-main { color:var(--gold); }
     .row.mk-reply { border-left:3px solid var(--green); }
     .mk-import { margin-top:1.2rem; }
+    .mk-modes { display:flex; gap:0.3rem; border-bottom:1px solid var(--line); margin-bottom:0.9rem; }
+    .mk-mode { background:none; border:0; border-bottom:2px solid transparent; color:var(--muted); font:inherit; font-family:"Montserrat",sans-serif; font-weight:700; font-size:0.85rem; padding:0.55rem 0.8rem; cursor:pointer; min-height:44px; }
+    .mk-mode.on { color:var(--text); border-bottom-color:var(--gold); }
+    .mk-sos-head { display:flex; justify-content:space-between; align-items:flex-start; gap:0.8rem; flex-wrap:wrap; margin-bottom:0.7rem; }
+    .mk-sos-head .row-sub { max-width:62rem; margin-bottom:0.25rem; }
+    .mk-inline { margin-top:0; white-space:nowrap; font-size:0.8rem; }
+    .mk-sos-detail { padding:0.4rem 0.8rem 0.8rem 2.6rem; background:var(--card); border-top:1px solid var(--line); }
+    .mk-sos-detail .row { padding:0.3rem 0; }
+    .mk-rules { margin-bottom:1rem; }
+    #mkRulesBtn[aria-expanded=true] { border-color:var(--gold); color:var(--gold); }
+    .mk-scope { margin:0.4rem 0 0.8rem; }
+    .mk-scope > summary { cursor:pointer; font-weight:700; font-size:0.85rem; padding:0.35rem 0; }
+    .mk-rule { border:1px solid var(--line); border-radius:10px; padding:0.6rem 0.7rem; margin:0.5rem 0; background:var(--card-2); }
+    .mk-rule.proposed { border-color:rgba(200,152,48,0.45); }
+    .mk-rule.rejected, .mk-rule.retired { opacity:0.7; }
+    .mk-rule-top { display:flex; flex-wrap:wrap; gap:0.3rem; margin-bottom:0.4rem; }
+    .mk-rule-text { font-size:0.87rem; line-height:1.5; white-space:pre-wrap; word-break:break-word; }
+    .mk-rule-ex { font-size:0.8rem; color:var(--muted); margin-top:0.35rem; padding-left:0.6rem; border-left:2px solid var(--line); white-space:pre-wrap; word-break:break-word; }
+    .mk-rule-acts { display:flex; flex-wrap:wrap; gap:0.4rem; margin-top:0.55rem; }
+    .mk-rule-acts .ct-btn { min-height:36px; }
     .mk-actions { display:flex; align-items:center; gap:0.8rem; flex-wrap:wrap; margin-bottom:0.8rem; }
     .mk-actions .mk-check { margin-top:0; }
     .mk-editor { margin-top:0.7rem; display:grid; gap:0.7rem; }
@@ -1890,6 +1910,52 @@
     <div id="pjOne" hidden></div>
   </main>
   <main class="wrap" id="viewMarketing" aria-label="Marketing" hidden>
+    <div class="mk-modes" role="tablist" aria-label="Marketing">
+      <button type="button" class="mk-mode on" id="mkModeLeads" role="tab" aria-selected="true">Leads</button>
+      <button type="button" class="mk-mode" id="mkModeSos" role="tab" aria-selected="false">New businesses</button>
+    </div>
+    <section id="mkSos" hidden aria-label="New Ohio businesses">
+      <div class="mk-sos-head">
+        <div>
+          <div class="row-sub">Every new LLC, corporation and nonprofit filed with the Ohio Secretary of State in Cuyahoga, Lake, Lorain, Summit, Geauga and Medina counties. Kept apart from your leads: pick the ones worth reaching and make them leads. A filing you have not shortlisted or made a lead drops off 60 days after it first appears.</div>
+          <div class="row-sub" id="mksFeed">Checking the feed&hellip;</div>
+        </div>
+        <button type="button" class="ct-btn" id="mksCheck">Check for a new month</button>
+      </div>
+      <div class="ct-bar">
+        <div class="filters ct-filters" id="mksFilters">
+          <button type="button" class="fpill on" data-status="">Not passed</button>
+          <button type="button" class="fpill" data-status="shortlist">Shortlist</button>
+          <button type="button" class="fpill" data-status="promoted">Made leads</button>
+          <button type="button" class="fpill" data-status="passed">Passed</button>
+          <button type="button" class="fpill" data-status="all">Everything</button>
+        </div>
+        <div class="ct-tools">
+          <label for="mksCounty" class="sr-only">County</label>
+          <select id="mksCounty"><option value="">All six counties</option></select>
+          <label for="mksMonth" class="sr-only">Month</label>
+          <select id="mksMonth"><option value="">Every month</option></select>
+          <label for="mksVertical" class="sr-only">What the name says</label>
+          <select id="mksVertical"><option value="">Any kind of business</option></select>
+          <label for="mksSort" class="sr-only">Sort</label>
+          <select id="mksSort"><option value="score">Best fit first</option><option value="newest">Newest first</option><option value="name">A to Z</option></select>
+          <label class="mk-check mk-inline"><input type="checkbox" id="mksHideHold" checked> Hide holding companies</label>
+          <label for="mksQ" class="sr-only">Search new businesses</label>
+          <input type="search" id="mksQ" placeholder="Name, city, owner, charter" autocomplete="off">
+        </div>
+      </div>
+      <div id="mksList"><div class="state">Loading&hellip;</div></div>
+      <details class="ct-q-add mk-import" id="mksTemplates">
+        <summary>Letter and email templates, and the mail-merge export</summary>
+        <p class="ct-note">Merge fields: <code>{{greeting}}</code> (&ldquo;Dear Dana,&rdquo; when a person is named on the filing, &ldquo;Hello,&rdquo; otherwise) <code>{{company}}</code> <code>{{contact}}</code> <code>{{first_name}}</code> <code>{{address}}</code> <code>{{city}}</code> <code>{{zip}}</code> <code>{{county}}</code> <code>{{effective_date}}</code> <code>{{vertical}}</code>. The export is a CSV of the shortlist (or the ones you select) with the template filled in, ready for a Word mail merge or a postcard service.</p>
+        <div id="mksTplList"></div>
+        <div class="reply-row">
+          <label for="mksExportTpl" class="sr-only">Template for the export</label>
+          <select id="mksExportTpl"><option value="">No template (addresses only)</option></select>
+          <button type="button" class="ct-btn prim" id="mksExport">Download the shortlist as CSV</button>
+        </div>
+      </details>
+    </section>
     <div class="tiles mk-stages" id="mkStages"></div>
     <div class="ct-bar">
       <div class="filters ct-filters" id="mkFilters">
@@ -1911,6 +1977,7 @@
         <select id="mkAudited"><option value="">Any report card</option><option value="yes">Report card run</option><option value="no">No report card yet</option></select>
         <label for="mkQ" class="sr-only">Search leads</label>
         <input type="search" id="mkQ" placeholder="Company, domain, name" autocomplete="off">
+        <button type="button" class="ct-btn" id="mkRulesBtn" aria-expanded="false" aria-controls="mkRules">Style rules <span class="ct-chip gold" id="mkRulesN" hidden></span></button>
         <button type="button" class="ct-btn prim" id="mkNewBtn">+ Add lead</button>
       </div>
     </div>
@@ -1935,6 +2002,7 @@
         <p class="ct-err" id="mkNewErr" hidden></p>
       </form>
     </section>
+    <section class="ct-panel mk-rules" id="mkRules" aria-label="Style rules" hidden></section>
     <div id="mkList"><div class="state">Loading&hellip;</div></div>
     <div id="mkOne" hidden></div>
     <details class="ct-q-add mk-import" id="mkImport">
@@ -9880,9 +9948,11 @@
         wrap.appendChild(sB);
       }
       var lr = (a.leads && a.leads.replied) || [], ld = (a.leads && a.leads.due) || [];
-      if (lr.length || ld.length) {
+      var lRules = (a.leads && a.leads.rules_proposed) || 0, lSends = (a.leads && a.leads.sends_to_review) || 0;
+      if (lr.length || ld.length || lRules || lSends) {
         any = true;
         var sL = attSection('Leads', lr.length + ld.length, lr.length > 0);
+        if (lRules || lSends) sL.appendChild(row('Style rules', [lRules ? lRules + ' proposed rule' + (lRules === 1 ? '' : 's') + ' to accept or reject' : '', lSends ? lSends + ' sent email' + (lSends === 1 ? '' : 's') + ' not reviewed' : ''].filter(Boolean).join(' · '), null, function () { showView('marketing'); mkRulesToggle(true); }));
         lr.forEach(function (x) { sL.appendChild(row(x.who, 'Replied ' + fmtDate(x.replied_at) + ', not answered yet', el('b', 'num', 'reply'), function () { openObject('lead', x.id); })); });
         ld.forEach(function (x) { sL.appendChild(row(x.who, (x.next_action || 'Follow up') + ' · ' + (x.days_late ? x.days_late + ' days late' : 'due today'), null, function () { openObject('lead', x.id); })); });
         wrap.appendChild(sL);
@@ -10207,8 +10277,9 @@
       }
       else if ((m = /^#p=(\d+)/.exec(hash))) { pjId = Number(m[1]); suppressHashPush = true; showView('projects'); suppressHashPush = false; }
       else if (hash === '#projects') { pjId = null; showView('projects'); }
-      else if ((m = /^#l=(\d+)/.exec(hash))) { mkId = Number(m[1]); suppressHashPush = true; showView('marketing'); suppressHashPush = false; }
-      else if (hash === '#marketing') { mkId = null; showView('marketing'); }
+      else if ((m = /^#l=(\d+)/.exec(hash))) { mkId = Number(m[1]); if (mkMode !== 'leads') mkSetMode('leads', true); suppressHashPush = true; showView('marketing'); suppressHashPush = false; }
+      else if (hash === '#marketing') { mkId = null; if (mkMode !== 'leads') mkSetMode('leads', true); showView('marketing'); }
+      else if (hash === '#sos') { if (mkMode !== 'sos') mkSetMode('sos', true); suppressHashPush = true; showView('marketing'); suppressHashPush = false; }
       else if (hash === '#inbox') showView('inbox');
       else if (hash === '#keys') showView('keys');
       else if (hash === '#customers') showView('customers');
@@ -13382,7 +13453,7 @@
       if (aud) qs += '&audited=' + aud;
       return Promise.all([api('/admin/leads/summary'), api('/admin/leads' + qs)]).then(function (res) {
         var s = res[0], r = res[1];
-        if (s.ok) { mkVocab = s.vocab; mkSummary(s.summary); }
+        if (s.ok) { mkVocab = s.vocab; mkSummary(s.summary); mkRulesBadge(s.summary.rules_proposed); }
         var w = document.getElementById('mkList');
         w.textContent = '';
         if (!r.ok) { w.appendChild(el('div', 'state', 'Could not load leads.')); return; }
@@ -14072,6 +14143,471 @@
       p.appendChild(sec);
     }
 
+    // ---- style rules: what the drafts follow, and the review that proposes more ----
+    //
+    // Proposed rules wait here for a decision. Only confirmed rules reach a draft;
+    // rejected and retired ones are kept so the review does not propose them again.
+    var mkRulesOpen = false, mkReviewing = false;
+    var MK_RULE_ERROR = { bad_scope: 'A scope is "global", "vertical:<name>" or "archetype:<name>".', empty: 'The rule has no text.', duplicate: 'That rule is already on file.', bad_status: 'Unknown status.' };
+
+    function mkRulesToggle(open) {
+      mkRulesOpen = open == null ? !mkRulesOpen : open;
+      var w = document.getElementById('mkRules');
+      w.hidden = !mkRulesOpen;
+      document.getElementById('mkRulesBtn').setAttribute('aria-expanded', mkRulesOpen ? 'true' : 'false');
+      if (mkRulesOpen) mkRulesLoad();
+    }
+    document.getElementById('mkRulesBtn').addEventListener('click', function () { mkRulesToggle(); });
+
+    function mkRulesBadge(n) {
+      var b = document.getElementById('mkRulesN');
+      b.hidden = !n; b.textContent = String(n || '');
+    }
+
+    function mkRulesLoad() {
+      var w = document.getElementById('mkRules');
+      return api('/admin/leads/rules').then(function (r) {
+        w.textContent = '';
+        if (!r.ok) { w.appendChild(el('div', 'state', 'Could not load the style rules.')); return; }
+        var proposed = r.rules.filter(function (x) { return x.status === 'proposed'; });
+        var confirmed = r.rules.filter(function (x) { return x.status === 'confirmed'; });
+        var closed = r.rules.filter(function (x) { return x.status === 'rejected' || x.status === 'retired'; });
+        mkRulesBadge(proposed.length);
+
+        var head = el('div', 'ct-head');
+        var hl = el('div');
+        hl.appendChild(el('h2', null, 'Style rules'));
+        hl.appendChild(el('div', 'sub', 'The intro drafts follow the confirmed rules. The review reads what you changed before sending and proposes new ones; nothing is confirmed until you accept it.'));
+        head.appendChild(hl);
+        var close = el('button', 'ct-btn sm', 'Close'); close.type = 'button';
+        close.addEventListener('click', function () { mkRulesToggle(false); });
+        head.appendChild(close);
+        w.appendChild(head);
+
+        // The review.
+        var rv = el('section', 'cust-sec');
+        rv.appendChild(el('h3', null, 'Review new sends'));
+        rv.appendChild(el('div', 'row-sub', r.pending_reviews
+          ? r.pending_reviews + ' sent email' + (r.pending_reviews === 1 ? '' : 's') + ' not reviewed yet. Emails sent exactly as drafted are counted without asking Claude.'
+          : 'Every sent email has been reviewed.'));
+        var go = el('button', 'prim', mkReviewing ? 'Reviewing… (about a minute)' : 'Review new sends');
+        go.type = 'button'; go.disabled = mkReviewing || !r.pending_reviews;
+        go.addEventListener('click', function () {
+          mkReviewing = true; go.disabled = true; go.textContent = 'Reviewing… (about a minute)';
+          api('/admin/leads/rules/review', { method: 'POST' }).then(function (x) {
+            mkReviewing = false;
+            if (!x.ok) { toast(x.message || mkErr(x)); mkRulesLoad(); return; }
+            toast('Reviewed ' + x.reviewed + ': ' + x.new_rules + ' new rule' + (x.new_rules === 1 ? '' : 's') + ', ' + x.reinforced + ' reinforced');
+            mkRulesLoad();
+          });
+        });
+        var rrow = el('div', 'reply-row'); rrow.appendChild(go); rv.appendChild(rrow);
+        var lr = r.last_review;
+        if (lr && lr.at) {
+          var lb = el('details', 'mk-audit');
+          var ls = el('summary'); ls.textContent = 'Last review ' + fmtDate(lr.at) + ': ' + lr.reviewed + ' sends, ' + lr.new_rules + ' new, ' + lr.reinforced + ' reinforced';
+          lb.appendChild(ls);
+          if (lr.summary) lb.appendChild(el('div', 'row-sub', lr.summary));
+          if ((lr.defects || []).length) {
+            lb.appendChild(el('div', 'mk-sub-h', 'Drafts that broke a confirmed rule'));
+            lr.defects.forEach(function (x) { lb.appendChild(el('div', 'mk-diff', x)); });
+          }
+          if ((lr.one_offs || []).length) {
+            lb.appendChild(el('div', 'mk-sub-h', 'One-offs, not rules'));
+            lr.one_offs.forEach(function (x) { lb.appendChild(el('div', 'mk-diff', x)); });
+          }
+          rv.appendChild(lb);
+        }
+        w.appendChild(rv);
+
+        // Waiting for a decision.
+        var ps = el('section', 'cust-sec');
+        ps.appendChild(el('h3', null, 'Proposed (' + proposed.length + ')'));
+        if (!proposed.length) ps.appendChild(el('div', 'row-sub', 'Nothing waiting.'));
+        proposed.forEach(function (x) { ps.appendChild(mkRuleCard(x, r.promote_at)); });
+        w.appendChild(ps);
+
+        // Confirmed, grouped by scope.
+        var cs = el('section', 'cust-sec');
+        cs.appendChild(el('h3', null, 'Confirmed (' + confirmed.length + ')'));
+        var scopes = {};
+        confirmed.forEach(function (x) { (scopes[x.scope] = scopes[x.scope] || []).push(x); });
+        Object.keys(scopes).sort(function (a, b) { return a === 'global' ? -1 : b === 'global' ? 1 : a < b ? -1 : 1; }).forEach(function (sc) {
+          var g = el('details', 'mk-scope');
+          g.open = sc === 'global';
+          var sm = el('summary'); sm.textContent = mkScopeLabel(sc) + ' (' + scopes[sc].length + ')';
+          g.appendChild(sm);
+          scopes[sc].forEach(function (x) { g.appendChild(mkRuleCard(x, r.promote_at)); });
+          cs.appendChild(g);
+        });
+        cs.appendChild(mkRuleForm());
+        w.appendChild(cs);
+
+        if (closed.length) {
+          var xs = el('details', 'cust-sec mk-scope');
+          var xm = el('summary'); xm.textContent = 'Rejected and retired (' + closed.length + ')';
+          xs.appendChild(xm);
+          closed.forEach(function (x) { xs.appendChild(mkRuleCard(x, r.promote_at)); });
+          w.appendChild(xs);
+        }
+      });
+    }
+
+    function mkScopeLabel(sc) {
+      if (sc === 'global') return 'Every email';
+      var m = /^(vertical|archetype):(.+)$/.exec(sc);
+      return m ? (m[1] === 'vertical' ? 'Vertical: ' : 'Archetype: ') + m[2] : sc;
+    }
+
+    function mkRulePatch(id, body, msg) {
+      return api('/admin/leads/rules/' + id, { method: 'PATCH', body: body }).then(function (r) {
+        if (!r.ok) { toast(MK_RULE_ERROR[r.error] || mkErr(r)); return r; }
+        toast(msg); mkRulesLoad(); return r;
+      });
+    }
+
+    function mkRuleCard(x, promoteAt) {
+      var c = el('div', 'mk-rule ' + x.status);
+      var top = el('div', 'mk-rule-top');
+      top.appendChild(el('span', 'ct-chip', mkScopeLabel(x.scope)));
+      if (x.instances > 1) top.appendChild(el('span', 'ct-chip', x.instances + ' sends'));
+      if (x.promote) top.appendChild(el('span', 'ct-chip gold', 'Seen ' + x.instances + ' times: promote?'));
+      if (x.imported) top.appendChild(el('span', 'ct-chip', 'imported'));
+      if (x.status === 'rejected' || x.status === 'retired') top.appendChild(el('span', 'ct-chip red', x.status));
+      c.appendChild(top);
+      var text = el('div', 'mk-rule-text', x.rule);
+      c.appendChild(text);
+      if (x.example) c.appendChild(el('div', 'mk-rule-ex', x.example));
+      if ((x.evidence || []).length) {
+        var ev = el('div', 'row-sub');
+        ev.appendChild(document.createTextNode('From: '));
+        x.evidence.forEach(function (e, i) {
+          if (i) ev.appendChild(document.createTextNode(', '));
+          var a = el('a', null, e.name || ('lead ' + e.lead_id)); a.href = '#l=' + e.lead_id; a.style.color = 'inherit';
+          ev.appendChild(a);
+        });
+        c.appendChild(ev);
+      }
+      var acts = el('div', 'mk-rule-acts');
+      var btn = function (label, cls, fn) { var b = el('button', 'ct-btn sm' + (cls ? ' ' + cls : ''), label); b.type = 'button'; b.addEventListener('click', fn); acts.appendChild(b); };
+      if (x.status === 'proposed') {
+        btn('Accept', 'prim', function () { mkRulePatch(x.id, { status: 'confirmed' }, 'Confirmed: drafts follow it from now on'); });
+        btn('Reject', 'danger', function () { mkRulePatch(x.id, { status: 'rejected' }, 'Rejected'); });
+      } else if (x.status === 'confirmed') {
+        btn('Retire', 'danger', function () { if (window.confirm('Retire this rule? Drafts stop following it.')) mkRulePatch(x.id, { status: 'retired' }, 'Retired'); });
+      } else {
+        btn('Restore as proposed', null, function () { mkRulePatch(x.id, { status: 'proposed' }, 'Back in Proposed'); });
+      }
+      btn('Edit', null, function () {
+        acts.hidden = true;
+        var f = el('form', 'mk-editor');
+        var ta = document.createElement('textarea'); ta.rows = 4; ta.value = x.rule;
+        ctField(f, 'Rule', ta, 'mk-notes');
+        var sc = ctField(f, 'Scope: global, vertical:<name> or archetype:<name>', ctInput('text', x.scope));
+        var ex = ctField(f, 'Example', ctInput('text', x.example || ''));
+        var rr = el('div', 'reply-row');
+        var sv = el('button', 'prim', 'Save'); sv.type = 'submit';
+        var cn = el('button', null, 'Cancel'); cn.type = 'button';
+        cn.addEventListener('click', function () { f.remove(); acts.hidden = false; });
+        rr.appendChild(sv); rr.appendChild(cn); f.appendChild(rr);
+        f.addEventListener('submit', function (e) {
+          e.preventDefault();
+          mkRulePatch(x.id, { rule: ta.value.trim(), scope: sc.value.trim(), example: ex.value.trim() }, 'Saved');
+        });
+        c.appendChild(f);
+        ta.focus();
+      });
+      c.appendChild(acts);
+      return c;
+    }
+
+    function mkRuleForm() {
+      var d = el('details', 'mk-scope');
+      var sm = el('summary'); sm.textContent = '+ Add a rule by hand';
+      d.appendChild(sm);
+      var f = el('form', 'mk-editor'); f.autocomplete = 'off';
+      var ta = document.createElement('textarea'); ta.rows = 3; ta.maxLength = 4000;
+      ctField(f, 'Rule', ta, 'mk-notes');
+      var sc = ctField(f, 'Scope: global, vertical:<name> or archetype:<name>', ctInput('text', 'global'));
+      var ex = ctField(f, 'Example (optional)', ctInput('text', ''));
+      var rr = el('div', 'reply-row');
+      var sv = el('button', 'prim', 'Add as confirmed'); sv.type = 'submit';
+      rr.appendChild(sv); f.appendChild(rr);
+      f.addEventListener('submit', function (e) {
+        e.preventDefault();
+        if (!ta.value.trim()) return toast('The rule has no text.');
+        api('/admin/leads/rules', { method: 'POST', body: { rule: ta.value.trim(), scope: sc.value.trim(), example: ex.value.trim() } }).then(function (r) {
+          if (!r.ok) return toast(MK_RULE_ERROR[r.error] || mkErr(r));
+          toast('Rule added'); mkRulesLoad();
+        });
+      });
+      d.appendChild(f);
+      return d;
+    }
+
+    // ---- marketing: the new-business index --------------------------------------
+    //
+    // Filings from the Ohio Secretary of State, kept apart from the leads on purpose:
+    // thousands a month, most of them not worth a letter. Searched and cherry-picked;
+    // only "Make a lead" puts one in the pipeline.
+    var mkMode = 'leads', mksStatus = '', mksSearch = '', mksTimer = null, mksSel = {}, mksRows = [], mksTotal = 0, mksOpenRow = null;
+    var MKS_VERTICALS = ['plumbing', 'hvac', 'electrical', 'roofing', 'construction', 'landscaping', 'trades', 'dental', 'medical', 'law', 'financial',
+      'automotive', 'cleaning', 'beauty', 'fitness', 'food', 'realty', 'it'];
+    var MKS_STATUS_LABEL = { 'new': 'New', shortlist: 'Shortlist', passed: 'Passed', promoted: 'Lead' };
+
+    function mkSetMode(mode, quiet) {
+      mkMode = mode;
+      var sos = mode === 'sos';
+      document.getElementById('mkModeLeads').classList.toggle('on', !sos);
+      document.getElementById('mkModeSos').classList.toggle('on', sos);
+      document.getElementById('mkModeLeads').setAttribute('aria-selected', sos ? 'false' : 'true');
+      document.getElementById('mkModeSos').setAttribute('aria-selected', sos ? 'true' : 'false');
+      document.getElementById('mkSos').hidden = !sos;
+      ['mkStages', 'mkList', 'mkImport'].forEach(function (id) { document.getElementById(id).hidden = sos; });
+      document.querySelector('#viewMarketing > .ct-bar').hidden = sos;
+      if (sos) { document.getElementById('mkNew').hidden = true; document.getElementById('mkRules').hidden = true; if (mkId) mkClose(); }
+      if (!quiet) history.replaceState(null, '', sos ? '#sos' : '#marketing');
+      if (sos) mksLoad(); else loadMarketing();
+    }
+    document.getElementById('mkModeLeads').addEventListener('click', function () { mkSetMode('leads'); });
+    document.getElementById('mkModeSos').addEventListener('click', function () { mkSetMode('sos'); });
+
+    (function () {
+      var v = document.getElementById('mksVertical');
+      MKS_VERTICALS.forEach(function (x) { v.appendChild(new Option(x === 'it' ? 'IT and tech' : x, x)); });
+    })();
+
+    function mksQuery(offset) {
+      var qs = '?sort=' + document.getElementById('mksSort').value + '&offset=' + (offset || 0) + '&limit=200';
+      if (mksStatus) qs += '&status=' + mksStatus;
+      var c = document.getElementById('mksCounty').value, m = document.getElementById('mksMonth').value, v = document.getElementById('mksVertical').value;
+      if (c) qs += '&county=' + c;
+      if (m) qs += '&month=' + m;
+      if (v) qs += '&vertical=' + v;
+      if (document.getElementById('mksHideHold').checked) qs += '&hide_holdings=1';
+      if (mksSearch) qs += '&q=' + encodeURIComponent(mksSearch);
+      return qs;
+    }
+
+    function mksLoad() {
+      mksSummary();
+      mksTemplates();
+      return api('/admin/sos' + mksQuery(0)).then(function (r) {
+        if (!r.ok) { document.getElementById('mksList').textContent = ''; document.getElementById('mksList').appendChild(el('div', 'state', 'Could not load the index.')); return; }
+        mksRows = r.filings; mksTotal = r.total;
+        var on = {}; mksRows.forEach(function (f) { on[f.charter] = true; });
+        Object.keys(mksSel).forEach(function (k) { if (!on[k]) delete mksSel[k]; });
+        mksRender();
+      });
+    }
+    function mksMore() {
+      return api('/admin/sos' + mksQuery(mksRows.length)).then(function (r) {
+        if (!r.ok) return toast('Could not load more.');
+        mksRows = mksRows.concat(r.filings); mksTotal = r.total; mksRender();
+      });
+    }
+
+    function mksSummary() {
+      api('/admin/sos/summary').then(function (r) {
+        if (!r.ok) return;
+        var f = r.feed, line = document.getElementById('mksFeed');
+        var reading = f.files.filter(function (x) { return x.month && !x.done; });
+        var month = (f.files[0] && f.files[0].month) || null;
+        line.textContent = (month ? 'Latest reports: published ' + month + '. ' : 'Nothing read yet. ') +
+          (reading.length ? 'Reading now: ' + reading.map(function (x) { return x.type + ' ' + x.progress + '%'; }).join(', ') + ' (a piece every two minutes). ' : '') +
+          (f.last_check ? 'Last checked ' + fmt(f.last_check) + '.' : '') + (f.last_error ? ' Last problem: ' + f.last_error + '.' : '');
+        var cs = document.getElementById('mksCounty');
+        if (cs.options.length < 2) r.summary.counties.forEach(function (c) { cs.appendChild(new Option(c.charAt(0) + c.slice(1).toLowerCase(), c)); });
+        var ms = document.getElementById('mksMonth'), keep = ms.value;
+        ms.textContent = ''; ms.appendChild(new Option('Every month', ''));
+        r.summary.months.forEach(function (m) { ms.appendChild(new Option(m.month + ' (' + m.n + ')', m.month)); });
+        ms.value = keep;
+      });
+    }
+
+    function mksRender() {
+      var w = document.getElementById('mksList');
+      w.textContent = '';
+      var nSel = Object.keys(mksSel).length;
+      var bar = el('div', 'mk-bar');
+      var all = document.createElement('input'); all.type = 'checkbox';
+      all.setAttribute('aria-label', 'Select every business shown');
+      all.checked = mksRows.length > 0 && nSel === mksRows.length;
+      all.indeterminate = nSel > 0 && nSel < mksRows.length;
+      all.addEventListener('change', function () { mksSel = {}; if (all.checked) mksRows.forEach(function (f) { mksSel[f.charter] = true; }); mksRender(); });
+      bar.appendChild(all);
+      if (nSel) {
+        bar.appendChild(el('span', 'mk-bar-n', nSel + ' selected'));
+        var b = function (label, cls, fn) { var x = el('button', 'ct-btn sm' + (cls ? ' ' + cls : ''), label); x.type = 'button'; x.addEventListener('click', fn); bar.appendChild(x); };
+        b('Make leads', 'prim', function () { mksPromote(Object.keys(mksSel)); });
+        b('Shortlist', null, function () { mksDecide(Object.keys(mksSel), 'shortlist'); });
+        b('Pass', null, function () { mksDecide(Object.keys(mksSel), 'passed'); });
+        b('Export CSV', null, function () { mksExport(Object.keys(mksSel)); });
+        b('Clear', null, function () { mksSel = {}; mksRender(); });
+      } else {
+        bar.appendChild(el('span', 'mk-bar-n', mksTotal.toLocaleString('en-US') + (mksTotal === 1 ? ' business' : ' businesses') + (mksRows.length < mksTotal ? ', showing ' + mksRows.length : '')));
+      }
+      w.appendChild(bar);
+      if (!mksRows.length) { w.appendChild(el('div', 'state', mksSearch ? 'No business matches.' : 'Nothing here yet. The feed reads the Secretary of State files about half an hour after a new month is published.')); return; }
+      var list = el('div', 'mk-rows');
+      list.setAttribute('role', 'list');
+      mksRows.forEach(function (f) {
+        var li = el('div', 'mk-row' + (mksSel[f.charter] ? ' sel' : ''));
+        li.setAttribute('role', 'listitem');
+        var cb = document.createElement('input'); cb.type = 'checkbox'; cb.checked = !!mksSel[f.charter];
+        cb.setAttribute('aria-label', 'Select ' + f.display_name);
+        cb.addEventListener('change', function () { if (cb.checked) mksSel[f.charter] = true; else delete mksSel[f.charter]; mksRender(); });
+        li.appendChild(cb);
+        var open = el('button', 'mk-open'); open.type = 'button';
+        open.setAttribute('aria-expanded', mksOpenRow === f.charter ? 'true' : 'false');
+        open.appendChild(el('span', 'mk-who', f.display_name));
+        var cityTxt = f.city ? f.city.toLowerCase().replace(/\b\w/g, function (c) { return c.toUpperCase(); }) : '';
+        open.appendChild(el('span', 'mk-snip', [f.entity_type, [cityTxt, f.county ? f.county.charAt(0) + f.county.slice(1).toLowerCase() + ' Co.' : ''].filter(Boolean).join(', '), f.associates ? f.associates.toLowerCase().replace(/\b\w/g, function (c) { return c.toUpperCase(); }) : ''].filter(Boolean).join(' · ')));
+        var tags = el('span', 'mk-tags');
+        if (f.vertical) tags.appendChild(el('span', 'ct-chip gold', f.vertical === 'it' ? 'IT' : f.vertical));
+        if (f.notes.indexOf('holding') >= 0) tags.appendChild(el('span', 'ct-chip', 'holding'));
+        if (f.status !== 'new') tags.appendChild(el('span', 'ct-chip' + (f.status === 'promoted' ? ' green' : f.status === 'passed' ? ' red' : ''), MKS_STATUS_LABEL[f.status]));
+        open.appendChild(tags);
+        var when = el('span', 'mk-when', f.effective_date ? new Date(f.effective_date + 'T12:00:00').toLocaleDateString(undefined, { month: 'short', day: 'numeric' }) : '');
+        when.title = 'Effective ' + (f.effective_date || '?');
+        open.appendChild(when);
+        open.addEventListener('click', function () { mksOpenRow = mksOpenRow === f.charter ? null : f.charter; mksRender(); });
+        li.appendChild(open);
+        list.appendChild(li);
+        if (mksOpenRow === f.charter) list.appendChild(mksDetail(f));
+      });
+      w.appendChild(list);
+      if (mksRows.length < mksTotal) {
+        var more = el('button', 'ct-btn', 'Show 200 more'); more.type = 'button';
+        more.addEventListener('click', mksMore);
+        var mr = el('div', 'reply-row'); mr.appendChild(more); w.appendChild(mr);
+      }
+    }
+
+    function mksDetail(f) {
+      var d = el('div', 'mk-sos-detail');
+      var t = function (s) { return String(s || '').toLowerCase().replace(/\b\w/g, function (c) { return c.toUpperCase(); }); };
+      [
+        ['Filed', f.entity_type + ', effective ' + (f.effective_date || '?') + ', charter ' + f.charter],
+        ['Address', [t(f.address), t(f.city), f.zip].filter(Boolean).join(', ') || 'Not on the filing'],
+        ['People', t(f.associates) || 'None named'],
+        ['Statutory agent', [t(f.agent_name), t(f.agent_city)].filter(Boolean).join(', ')],
+        ['Notes', (f.notes || []).join(', ')],
+      ].forEach(function (x) { if (x[1]) d.appendChild(row(x[0], x[1])); });
+      var acts = el('div', 'mk-rule-acts');
+      var b = function (label, cls, fn) { var x = el('button', 'ct-btn sm' + (cls ? ' ' + cls : ''), label); x.type = 'button'; x.addEventListener('click', fn); acts.appendChild(x); };
+      if (f.status === 'promoted' && f.lead_id) b('Open the lead', 'prim', function () { mkSetMode('leads', true); routeHash('#l=' + f.lead_id, true); });
+      else {
+        b('Make a lead', 'prim', function () { mksPromote([f.charter]); });
+        if (f.status !== 'shortlist') b('Shortlist', null, function () { mksDecide([f.charter], 'shortlist'); });
+        if (f.status !== 'passed') b('Pass', null, function () { mksDecide([f.charter], 'passed'); });
+        if (f.status !== 'new') b('Clear', null, function () { mksDecide([f.charter], 'new'); });
+      }
+      var g = el('a', 'ct-btn sm', 'Search the web'); g.target = '_blank'; g.rel = 'noopener noreferrer';
+      g.href = 'https://www.google.com/search?q=' + encodeURIComponent(f.display_name.replace(/,?\s+(LLC|Inc\.?|Co\.?|Ltd\.?)$/i, '') + ' ' + (f.city || '') + ' Ohio');
+      acts.appendChild(g);
+      d.appendChild(acts);
+      return d;
+    }
+
+    function mksDecide(charters, status) {
+      api('/admin/sos/decide', { method: 'POST', body: { charters: charters, status: status } }).then(function (r) {
+        if (!r.ok) return toast(mkErr(r));
+        charters.forEach(function (c) { delete mksSel[c]; });
+        toast((status === 'shortlist' ? 'Shortlisted ' : status === 'passed' ? 'Passed on ' : 'Cleared ') + r.done);
+        mksLoad();
+      });
+    }
+    function mksPromote(charters) {
+      if (charters.length > 1 && !window.confirm('Make ' + charters.length + ' leads? They join the lead list with no website yet.')) return;
+      api('/admin/sos/promote', { method: 'POST', body: { charters: charters } }).then(function (r) {
+        if (!r.ok) return toast(mkErr(r));
+        charters.forEach(function (c) { delete mksSel[c]; });
+        toast('Made ' + r.done + ' lead' + (r.done === 1 ? '' : 's') + ((r.refused || []).length ? '; ' + r.refused.length + ' already were' : ''));
+        if (charters.length === 1 && r.made && r.made[0]) { mkSetMode('leads', true); routeHash('#l=' + r.made[0].lead_id, true); return; }
+        mksLoad();
+      });
+    }
+    function mksExport(charters) {
+      var t = document.getElementById('mksExportTpl').value;
+      var url = API + '/admin/sos/export?' + (t ? 'template_id=' + t + '&' : '') + (charters && charters.length ? 'charters=' + encodeURIComponent(charters.join(',')) : '');
+      var a = document.createElement('a'); a.href = url; a.download = 'new-businesses.csv';
+      document.body.appendChild(a); a.click(); a.remove();
+    }
+    document.getElementById('mksExport').addEventListener('click', function () { mksExport(null); });
+
+    function mksTemplates() {
+      return api('/admin/outreach-templates').then(function (r) {
+        if (!r.ok) return;
+        var sel = document.getElementById('mksExportTpl'), keep = sel.value;
+        sel.textContent = ''; sel.appendChild(new Option('No template (addresses only)', ''));
+        r.templates.forEach(function (t) { sel.appendChild(new Option(t.name + ' (' + t.kind + ')', t.id)); });
+        sel.value = keep;
+        var w = document.getElementById('mksTplList');
+        w.textContent = '';
+        r.templates.forEach(function (t) { w.appendChild(mksTplForm(t)); });
+        w.appendChild(mksTplForm(null));
+      });
+    }
+    function mksTplForm(t) {
+      var d = el('details', 'mk-scope');
+      var sm = el('summary'); sm.textContent = t ? t.name + ' (' + t.kind + ')' : '+ New template';
+      d.appendChild(sm);
+      var f = el('form', 'mk-editor'); f.autocomplete = 'off';
+      var name = ctField(f, 'Name', ctInput('text', t ? t.name : ''));
+      var kind = ctField(f, 'Kind', ctSelect([['letter', 'Letter'], ['postcard', 'Postcard'], ['email', 'Email']], t ? t.kind : 'letter'));
+      var subj = ctField(f, 'Subject (emails)', ctInput('text', t ? t.subject || '' : ''));
+      var body = document.createElement('textarea'); body.rows = 8; body.value = t ? t.body : '{{greeting}}\n\nCongratulations on opening {{company}} in {{city}}. ';
+      ctField(f, 'Text', body, 'mk-notes');
+      var rr = el('div', 'reply-row');
+      var sv = el('button', 'prim', t ? 'Save' : 'Add template'); sv.type = 'submit';
+      rr.appendChild(sv);
+      if (t) {
+        var del = el('button', 'ct-btn danger', 'Delete'); del.type = 'button';
+        del.addEventListener('click', function () {
+          if (!window.confirm('Delete the template "' + t.name + '"?')) return;
+          api('/admin/outreach-templates/' + t.id, { method: 'DELETE' }).then(function (r) { toast(r.ok ? 'Deleted' : mkErr(r)); mksTemplates(); });
+        });
+        rr.appendChild(del);
+      }
+      f.appendChild(rr);
+      f.addEventListener('submit', function (e) {
+        e.preventDefault();
+        var p = { name: name.value.trim(), kind: kind.value, subject: subj.value.trim(), body: body.value };
+        (t ? api('/admin/outreach-templates/' + t.id, { method: 'PATCH', body: p }) : api('/admin/outreach-templates', { method: 'POST', body: p })).then(function (r) {
+          if (!r.ok) return toast(r.error === 'name_and_body' ? 'A template needs a name and text.' : mkErr(r));
+          toast('Template saved'); mksTemplates();
+        });
+      });
+      d.appendChild(f);
+      return d;
+    }
+
+    Array.prototype.forEach.call(document.querySelectorAll('#mksFilters .fpill'), function (b) {
+      b.addEventListener('click', function () {
+        mksStatus = b.getAttribute('data-status');
+        Array.prototype.forEach.call(document.querySelectorAll('#mksFilters .fpill'), function (x) { x.classList.toggle('on', x === b); });
+        mksLoad();
+      });
+    });
+    ['mksCounty', 'mksMonth', 'mksVertical', 'mksSort', 'mksHideHold'].forEach(function (id) {
+      document.getElementById(id).addEventListener('change', function () { mksLoad(); });
+    });
+    document.getElementById('mksQ').addEventListener('input', function (e) {
+      clearTimeout(mksTimer);
+      mksTimer = setTimeout(function () { mksSearch = e.target.value.trim(); mksLoad(); }, 250);
+    });
+    document.getElementById('mksCheck').addEventListener('click', function () {
+      var b = document.getElementById('mksCheck');
+      b.disabled = true; b.textContent = 'Checking…';
+      api('/admin/sos/check', { method: 'POST' }).then(function (r) {
+        b.disabled = false; b.textContent = 'Check for a new month';
+        if (!r.ok) return toast(mkErr(r));
+        toast(r.changed.length ? 'New reports found; reading ' + r.changed.length + ' file' + (r.changed.length === 1 ? '' : 's') + '. The rest finishes on its own.' : 'No new month yet.');
+        mksLoad();
+      });
+    });
+
     // ---- view switching --------------------------------------------------
     var VIEWS = {
       home: { view: 'viewHome', nav: 'navHome', load: loadHome, always: true },
@@ -14088,7 +14624,7 @@
       reports: { view: 'viewReports', nav: 'navReports', load: loadReports, always: true },
       contracting: { view: 'viewContracting', nav: 'navContracting', load: loadContracting, always: true },
       projects: { view: 'viewProjects', nav: 'navProjects', load: loadProjects, always: true },
-      marketing: { view: 'viewMarketing', nav: 'navMarketing', load: loadMarketing, always: true },
+      marketing: { view: 'viewMarketing', nav: 'navMarketing', load: function () { if (mkMode === 'sos') mksLoad(); else loadMarketing(); }, always: true },
       keys: { view: 'viewKeys', nav: 'navKeys', load: loadKeys }
     };
     var loaded = {};
@@ -14098,7 +14634,7 @@
     var HASH_OF = {
       home: /^(#home|#|)$/, inbox: /^#(inbox|m=)/, tickets: /^#(tickets|t=)/, customers: /^#(customers|c=|o=)/,
       invoices: /^#(invoices|inv=|q=)/, calendar: /^#(cal|a=)/, inventory: /^#(inventory|i=)/, finance: /^#finance/,
-      reports: /^#reports/, keys: /^#keys/, contracting: /^#(contracting|b=)/, projects: /^#(projects|p=)/, marketing: /^#(marketing|l=)/,
+      reports: /^#reports/, keys: /^#keys/, contracting: /^#(contracting|b=)/, projects: /^#(projects|p=)/, marketing: /^#(marketing|l=|sos)/,
     };
 
     function showView(which) {
