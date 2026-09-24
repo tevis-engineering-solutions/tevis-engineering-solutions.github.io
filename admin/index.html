@@ -885,6 +885,8 @@
     .mk-bar { display:flex; align-items:center; gap:0.55rem; flex-wrap:wrap; padding:0.45rem 0.75rem; border:1px solid var(--line); border-bottom:0; border-radius:10px 10px 0 0; background:var(--card); min-height:44px; }
     .mk-bar input[type=checkbox], .mk-row input[type=checkbox] { width:18px; height:18px; accent-color:var(--gold); flex:0 0 auto; margin:0; cursor:pointer; }
     .mk-bar-n { font-size:0.8rem; color:var(--muted); margin-right:auto; }
+    .mk-bar .mk-export { margin-left:auto; min-width:8.5rem; }
+    .mk-bar-n + .mk-export { margin-left:0; }
     .mk-bar select { min-height:32px; font-size:0.8rem; }
     .mk-rows { border:1px solid var(--line); border-radius:0 0 10px 10px; overflow:hidden; margin-bottom:1rem; }
     .mk-row { display:flex; align-items:center; gap:0.6rem; padding:0 0.75rem; border-top:1px solid rgba(138,164,141,0.24); background:var(--card-2); }
@@ -13609,6 +13611,7 @@
       } else {
         bar.appendChild(el('span', 'mk-bar-n', mkRows.length + (mkRows.length === 1 ? ' lead' : ' leads') + (mkRows.length === 500 ? ' (first 500)' : '')));
       }
+      bar.appendChild(mkExportPick('leads'));
       w.appendChild(bar);
       if (!mkRows.length) { w.appendChild(el('div', 'state', mkSearch || mkStageFilter ? 'No leads match.' : mkView === 'open' ? 'No open leads. Add one, or import the local prospecting files below.' : 'Nothing here.')); return; }
       var now = Date.now() / 1000;
@@ -13721,6 +13724,50 @@
     }
     // sort: {col: 'who'|'snip'|'tags'|'when'|null, dir: 'asc'|'desc', on: fn(col)}. Clicking a
     // header sorts by it; clicking it again reverses. Text starts A to Z, dates newest first.
+    // Export the list as it is shown (every matching row, every column, the search and
+    // report-card findings) as CSV or an Excel workbook. Leads go by id in the on-screen
+    // order; the new-business index goes by its filters and sort, so it covers every
+    // matching filing and not just the 200 loaded.
+    function mkExportPick(which) {
+      var sel = ctSelect([['', 'Export…'], ['csv', 'CSV'], ['xlsx', 'Excel (.xlsx)']], '');
+      sel.classList.add('mk-export');
+      sel.setAttribute('aria-label', 'Export this list');
+      sel.addEventListener('change', function () { var f = sel.value; sel.value = ''; if (f) mkExportView(which, f); });
+      return sel;
+    }
+    function mkExportView(which, fmt) {
+      var name = (which === 'leads' ? 'leads' : 'new-businesses') + '-' + new Date().toISOString().slice(0, 10);
+      var req = which === 'leads'
+        ? fetch('/portal-api/admin/leads/export', { method: 'POST', credentials: 'same-origin', headers: { 'content-type': 'application/json' },
+            body: JSON.stringify({ ids: mkSorted(mkRows).map(function (l) { return l.id; }) }) })
+        : fetch('/portal-api/admin/sos/view.csv' + mksQuery(0), { credentials: 'same-origin' });
+      toast('Preparing the export…');
+      req.then(function (r) {
+        if (!r.ok) throw new Error(r.status === 401 || r.status === 403 ? 'Your sign-in expired; reload the page.' : 'The export failed (' + r.status + ').');
+        return r.text();
+      }).then(function (text) {
+        if (fmt === 'csv') return mkSave(new Blob(['\ufeff' + text], { type: 'text/csv;charset=utf-8' }), name + '.csv');
+        return loadXlsx().then(function (XLSX) {
+          var wb = XLSX.read(text, { type: 'string' });
+          var ws = wb.Sheets[wb.SheetNames[0]];
+          // The CSV guards formula-looking text with a leading apostrophe; in a workbook the
+          // cell is typed as text already, so the guard comes off.
+          Object.keys(ws).forEach(function (k) { var c = ws[k]; if (k[0] !== '!' && c && c.t === 's' && /^'[=+\-@\t]/.test(c.v)) { c.v = c.v.slice(1); delete c.w; } });
+          ws['!freeze'] = { xSplit: 0, ySplit: 1 };
+          wb.SheetNames[0] = which === 'leads' ? 'Leads' : 'New businesses';
+          wb.Sheets[wb.SheetNames[0]] = ws;
+          delete wb.Sheets.Sheet1;
+          XLSX.writeFile(wb, name + '.xlsx');
+        });
+      }).catch(function (e) { toast(e && e.message && !/xlsx_load/.test(e.message) ? e.message : 'The export failed.'); });
+    }
+    function mkSave(blob, filename) {
+      var a = document.createElement('a');
+      a.href = URL.createObjectURL(blob); a.download = filename;
+      document.body.appendChild(a); a.click(); a.remove();
+      setTimeout(function () { URL.revokeObjectURL(a.href); }, 5000);
+    }
+
     function mkListHead(cols, key, sort) {
       var h = el('div', 'mk-row mk-head');
       h.appendChild(el('span', 'mk-cbspace'));
@@ -14986,12 +15033,13 @@
         b('Make leads', 'prim', function () { mksPromote(Object.keys(mksSel)); });
         b('Shortlist', null, function () { mksDecide(Object.keys(mksSel), 'shortlist'); });
         b('Pass', null, function () { mksDecide(Object.keys(mksSel), 'passed'); });
-        b('Export CSV', null, function () { mksExport(Object.keys(mksSel)); });
+        b('Mail merge', null, function () { mksExport(Object.keys(mksSel)); });
         b('Find websites', null, function () { mksLookup(Object.keys(mksSel)); });
         b('Clear', null, function () { mksSel = {}; mksRender(); });
       } else {
         bar.appendChild(el('span', 'mk-bar-n', mksTotal.toLocaleString('en-US') + (mksTotal === 1 ? ' business' : ' businesses') + (mksRows.length < mksTotal ? ', showing ' + mksRows.length : '')));
       }
+      bar.appendChild(mkExportPick('sos'));
       w.appendChild(bar);
       if (!mksRows.length) { w.appendChild(el('div', 'state', mksSearch ? 'No business matches.' : 'Nothing here yet. The feed reads the Secretary of State files about half an hour after a new month is published.')); return; }
       var list = el('div', 'mk-rows');
