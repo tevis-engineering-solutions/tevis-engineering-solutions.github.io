@@ -885,7 +885,7 @@
     .mk-bar-n { font-size:0.8rem; color:var(--muted); margin-right:auto; }
     .mk-bar select { min-height:32px; font-size:0.8rem; }
     .mk-rows { border:1px solid var(--line); border-radius:0 0 10px 10px; overflow:hidden; margin-bottom:1rem; }
-    .mk-row { display:flex; align-items:center; gap:0.6rem; padding:0 0.75rem; border-top:1px solid var(--line); background:var(--card-2); }
+    .mk-row { display:flex; align-items:center; gap:0.6rem; padding:0 0.75rem; border-top:1px solid rgba(138,164,141,0.24); background:var(--card-2); }
     .mk-row:first-child { border-top:0; }
     .mk-row:hover { background:rgba(74,172,101,0.07); box-shadow:inset 3px 0 0 var(--green); }
     .mk-row.sel { background:rgba(200,152,48,0.10); }
@@ -894,7 +894,13 @@
     .mk-row.unread .mk-who { font-weight:800; }
     .mk-snip { flex:1; min-width:0; font-size:0.83rem; color:var(--muted); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
     .mk-stage { color:var(--text); font-weight:600; }
-    .mk-tags { display:flex; gap:0.25rem; flex:0 0 auto; }
+    .mk-tags { display:flex; gap:0.25rem; flex:0 0 12.5rem; justify-content:flex-start; overflow:hidden; }
+    .mk-head { background:var(--card); border-top:0; border-bottom:1px solid rgba(138,164,141,0.35); min-height:34px; }
+    .mk-head:hover { background:var(--card); box-shadow:none; }
+    .mk-head .mk-cbspace { flex:0 0 18px; }
+    .mk-head .mk-open { cursor:default; min-height:34px; padding:0.4rem 0; }
+    .mk-head span { font-family:"Montserrat",sans-serif; font-size:0.64rem; font-weight:800; text-transform:uppercase; letter-spacing:0.05em; color:var(--muted); font-weight:800; }
+    .mk-head + .mk-row { border-top:0; }
     .mk-when { flex:0 0 4.6rem; text-align:right; font-size:0.78rem; color:var(--muted); white-space:nowrap; }
     .mk-when.late { color:#ef4444; font-weight:700; }
     @media (max-width:720px) {
@@ -902,7 +908,8 @@
       .mk-who { flex:1 1 60%; }
       .mk-when { flex:0 0 auto; }
       .mk-snip { flex:1 1 100%; order:3; }
-      .mk-tags { order:4; flex-wrap:wrap; }
+      .mk-tags { order:4; flex:1 1 auto; flex-wrap:wrap; }
+      .mk-head { display:none; }
     }
     .mk-chips { display:flex; flex-wrap:wrap; gap:0.3rem; margin:0.6rem 0 0.8rem; }
     .mk-stagebox select { min-height:40px; }
@@ -933,9 +940,13 @@
     .mt-table td.rate .mc-bar { display:inline-block; width:5rem; vertical-align:middle; margin:0 0.4rem 0 0; }
     .mt-two { display:grid; grid-template-columns:1fr 1fr; gap:1rem; }
     @media (max-width:860px) { .mt-two { grid-template-columns:1fr; } }
-    .mt-right { display:flex; align-items:center; gap:0.5rem; min-width:8rem; }
-    .mt-right .mc-bar { width:5rem; margin:0; }
-    .mt-right span { font-size:0.8rem; white-space:nowrap; }
+    /* A fixed right-hand column, so every bar starts at the same place and is the same length. */
+    .row.mt-row { flex-wrap:nowrap; }
+    .row.mt-row > div:first-child { flex:1 1 auto; min-width:0; }
+    .mt-right { display:flex; align-items:center; gap:0.6rem; flex:0 0 12rem; }
+    .mt-right .mc-bar { flex:0 0 6.5rem; width:6.5rem; margin:0; }
+    .mt-right span { flex:1 1 auto; font-size:0.8rem; white-space:nowrap; text-align:right; font-variant-numeric:tabular-nums; }
+    @media (max-width:480px) { .mt-right { flex-basis:8.5rem; gap:0.4rem; } .mt-right .mc-bar { flex-basis:3.5rem; width:3.5rem; } }
     .mk-modes { display:flex; gap:0.3rem; border-bottom:1px solid var(--line); margin-bottom:0.9rem; overflow-x:auto; scrollbar-width:none; }
     .mk-modes::-webkit-scrollbar { display:none; }
     .mk-mode { white-space:nowrap; flex:0 0 auto; }
@@ -13539,6 +13550,7 @@
       if (!mkRows.length) { w.appendChild(el('div', 'state', mkSearch || mkStageFilter ? 'No leads match.' : mkView === 'open' ? 'No open leads. Add one, or import the local prospecting files below.' : 'Nothing here.')); return; }
       var now = Date.now() / 1000;
       var ul = el('div', 'mk-rows');
+      ul.appendChild(mkListHead(['Business', 'Stage and details', 'Tags', 'Date']));
       ul.setAttribute('role', 'list');
       mkRows.forEach(function (l) {
         var li = el('div', 'mk-row' + (mkSel[l.id] ? ' sel' : '') + (l.stage === 'replied' ? ' unread' : ''));
@@ -13577,6 +13589,17 @@
         ul.appendChild(li);
       });
       w.appendChild(ul);
+    }
+
+    function mkListHead(cols) {
+      var h = el('div', 'mk-row mk-head');
+      h.setAttribute('aria-hidden', 'true');
+      h.appendChild(el('span', 'mk-cbspace'));
+      var o = el('div', 'mk-open');
+      o.appendChild(el('span', 'mk-who', cols[0])); o.appendChild(el('span', 'mk-snip', cols[1]));
+      o.appendChild(el('span', 'mk-tags', cols[2])); o.appendChild(el('span', 'mk-when', cols[3]));
+      h.appendChild(o);
+      return h;
     }
 
     function mkBulk(action, stage, campaignId) {
@@ -14686,7 +14709,8 @@
         if (!t.channels.length) chs.appendChild(el('div', 'row-sub', 'No contacts logged yet.'));
         t.channels.forEach(function (c) {
           var right = el('div', 'mt-right'); right.appendChild(mcBar(c.reply_rate || 0, (c.reply_rate || 0) + '% replied')); right.appendChild(el('span', null, (c.reply_rate != null ? c.reply_rate : 0) + '%'));
-          chs.appendChild(row((MK_CHANNEL_LABEL[c.key] || c.key), c.first_contacts + ' first contacts · ' + c.replied + ' replied · ' + c.won + ' won', right));
+          var cr = row((MK_CHANNEL_LABEL[c.key] || c.key), c.first_contacts + ' first contacts · ' + c.replied + ' replied · ' + c.won + ' won', right);
+          cr.classList.add('mt-row'); chs.appendChild(cr);
         });
         two.appendChild(chs);
         var fs = el('section', 'cust-sec');
@@ -14695,7 +14719,8 @@
         if (!t.top_findings.length) fs.appendChild(el('div', 'row-sub', 'No report cards yet.'));
         t.top_findings.forEach(function (f) {
           var right = el('div', 'mt-right'); right.appendChild(mcBar(f.share || 0, (f.share || 0) + '% of scanned leads')); right.appendChild(el('span', null, f.count + ' (' + f.share + '%)'));
-          fs.appendChild(row(f.title, f.category || '', right));
+          var fr = row(f.title, f.category || '', right);
+          fr.classList.add('mt-row'); fs.appendChild(fr);
         });
         two.appendChild(fs);
         w.appendChild(two);
@@ -14792,6 +14817,7 @@
       w.appendChild(bar);
       if (!mksRows.length) { w.appendChild(el('div', 'state', mksSearch ? 'No business matches.' : 'Nothing here yet. The feed reads the Secretary of State files about half an hour after a new month is published.')); return; }
       var list = el('div', 'mk-rows');
+      list.appendChild(mkListHead(['Business', 'Type, place and people', 'Tags', 'Filed']));
       list.setAttribute('role', 'list');
       mksRows.forEach(function (f) {
         var li = el('div', 'mk-row' + (mksSel[f.charter] ? ' sel' : ''));
