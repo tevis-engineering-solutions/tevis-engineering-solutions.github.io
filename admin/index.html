@@ -892,7 +892,8 @@
     .mk-row:hover { background:rgba(74,172,101,0.07); box-shadow:inset 3px 0 0 var(--green); }
     .mk-row.sel { background:rgba(200,152,48,0.10); }
     .mk-open { flex:1; min-width:0; display:flex; align-items:center; gap:0.75rem; background:none; border:0; color:inherit; font:inherit; text-align:left; padding:0.55rem 0; cursor:pointer; min-height:44px; }
-    .mk-who { flex:0 0 var(--mk-who,13.5rem); text-align:center; font-size:0.88rem; font-weight:500; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+    /* Business reads left-aligned so the list scans down one edge (Tyler); the rest center. */
+    .mk-who { flex:0 0 var(--mk-who,13.5rem); text-align:left; font-size:0.88rem; font-weight:500; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
     .mk-row.unread .mk-who { font-weight:800; }
     .mk-snip { flex:1; min-width:0; text-align:center; font-size:0.83rem; color:var(--muted); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
     .mk-stage { color:var(--text); font-weight:600; }
@@ -14205,8 +14206,14 @@
       ctField(sec, 'Field notes (optional, weighted heavily)', notes, 'mk-notes');
       var rr = el('div', 'reply-row');
       var go = el('button', 'prim', mkRunning['draft' + l.id] ? 'Drafting… (about a minute)' : 'Draft the email');
-      go.type = 'button'; go.disabled = !!mkRunning['draft' + l.id] || !d.audits.length;
-      if (!d.audits.length) sec.appendChild(el('div', 'row-sub', 'Run the report card first; the draft is written from it.'));
+      // A new business from the state filings drafts without a report card (the email is about getting set up).
+      var newBiz = l.source === 'sos';
+      go.type = 'button'; go.disabled = !!mkRunning['draft' + l.id] || (!d.audits.length && !newBiz) || (newBiz && !l.email);
+      if (!d.audits.length && !newBiz) sec.appendChild(el('div', 'row-sub', 'Run the report card first; the draft is written from it.'));
+      else if (newBiz && !l.email) sec.appendChild(el('div', 'row-sub', 'A new business is drafted by email: add their email address on the Overview first.'));
+      else if (newBiz) sec.appendChild(el('div', 'row-sub', l.domain
+        ? 'New business with a website and an email: the draft congratulates them and offers to help them get the most from the site early' + (d.audits.length ? ', using the report card where it helps.' : '.')
+        : 'New business with an email and no website: the draft congratulates them and offers to build the website and set up their online presence.'));
       go.addEventListener('click', function () {
         mkRunning['draft' + l.id] = true;
         go.disabled = true; go.textContent = 'Drafting… (about a minute)';
