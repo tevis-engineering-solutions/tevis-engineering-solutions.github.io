@@ -1640,14 +1640,21 @@
         </details>
         <details class="ct-q-add" id="ctqOhb"><summary>Capture bookmark (OhioBuys, BidNet)</summary>
           <p class="ct-note">For the sites the queue cannot read on its own: OhioBuys, which checks for a browser, and BidNet. The bookmark runs in your own signed-in tab, reads what that site is showing you, and hands it to this console.</p>
-          <ol class="ct-note ct-steps">
-            <li><b>Once:</b> show your bookmarks bar (Ctrl+Shift+B) and drag the gold <b>TES capture</b> button below onto it. Drag it again after an update here, since the bookmark holds its own copy of the code.</li>
-            <li>Open the <b>OhioBuys</b> solicitation list (<i>View Public Solicitations</i>) or the <b>BidNet</b> Ohio open solicitations list, and click <b>TES capture</b> on the bar.</li>
-            <li>A new tab opens on this console and waits. The site&rsquo;s tab shows a progress box: OhioBuys takes about 10 seconds and stops at the first page with nothing open; BidNet about a minute and a half.</li>
-            <li>In the new tab, click <b>Add N to the queue</b>. Closed posts are left out, and a post that is on both sites is kept once, with its OhioBuys link.</li>
-          </ol>
-          <p class="ct-note">On a single OhioBuys post, the same click also reads its documents and offers <b>Build a bid with the documents</b>. BidNet&rsquo;s terms bar reproducing its listings electronically; this keeps a private copy for your own evaluation, read at a person&rsquo;s pace.</p>
-          <a class="ct-btn prim" id="ctqBookmark" href="#ohb">TES capture</a>
+          <p class="ct-note">BidNet&rsquo;s terms bar reproducing its listings electronically; this keeps a private copy for your own evaluation, read at a person&rsquo;s pace.</p>
+          <div class="ct-bm-row">
+            <a class="ct-btn prim" id="ctqBookmark" href="#ohb">TES capture</a>
+            <button type="button" class="ct-help-btn" id="ctqBmHelp" aria-expanded="false" aria-controls="ctqBmSteps" title="How to use the capture bookmark"><i class="fa-regular fa-circle-question" aria-hidden="true"></i><span class="sr-only">How to use the capture bookmark</span></button>
+          </div>
+          <div class="ct-help" id="ctqBmSteps" hidden>
+            <h4>Using the capture bookmark</h4>
+            <ol class="ct-steps">
+              <li><b>Once:</b> show your bookmarks bar (Ctrl+Shift+B) and drag the gold <b>TES capture</b> button onto it. Drag it again after an update here, since the bookmark holds its own copy of the code.</li>
+              <li>Open the <b>OhioBuys</b> solicitation list (<i>View Public Solicitations</i>) or the <b>BidNet</b> Ohio open solicitations list, and click <b>TES capture</b> on the bar. Allow pop-ups if Chrome asks.</li>
+              <li>A new tab opens on this console and waits. The site&rsquo;s tab shows a small progress box: OhioBuys takes about 10 seconds and stops at the first page with nothing open; BidNet about a minute and a half.</li>
+              <li>In the new tab, click <b>Add N to the queue</b>. Closed posts are left out, and a post that is on both sites is kept once, with its OhioBuys link.</li>
+            </ol>
+            <p>On a single OhioBuys post, the same click also reads its documents and offers <b>Build a bid with the documents</b>.</p>
+          </div>
         </details>
       </div>
       <div id="ctqImport" hidden></div>
@@ -11244,7 +11251,12 @@
     (function () {
       var bm = document.getElementById('ctqBookmark');
       bm.href = ohbBookmarkHref();
-      bm.addEventListener('click', function (e) { e.preventDefault(); toast('Drag this button to your bookmarks bar, then click it on an OhioBuys page.'); });
+      bm.addEventListener('click', function (e) { e.preventDefault(); toast('Drag this button to your bookmarks bar, then click it on an OhioBuys or BidNet page.'); });
+      var bmHelp = document.getElementById('ctqBmHelp'), bmSteps = document.getElementById('ctqBmSteps');
+      var setBmHelp = function (open) { bmSteps.hidden = !open; bmHelp.setAttribute('aria-expanded', open ? 'true' : 'false'); bmHelp.classList.toggle('on', open); };
+      bmHelp.addEventListener('click', function () { setBmHelp(bmSteps.hidden); });
+      bmSteps.addEventListener('keydown', function (e) { if (e.key === 'Escape') { setBmHelp(false); bmHelp.focus(); } });
+      bmHelp.addEventListener('keydown', function (e) { if (e.key === 'Escape') setBmHelp(false); });
       document.getElementById('ctqAddForm').addEventListener('submit', function (e) {
         e.preventDefault();
         var v = function (id) { return document.getElementById(id).value.trim(); };
