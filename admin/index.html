@@ -916,7 +916,30 @@
     .row.mk-verify .row-main { color:var(--gold); }
     .row.mk-reply { border-left:3px solid var(--green); }
     .mk-import { margin-top:1.2rem; }
-    .mk-modes { display:flex; gap:0.3rem; border-bottom:1px solid var(--line); margin-bottom:0.9rem; }
+    .mc-bar { height:6px; border-radius:3px; background:var(--card-2); border:1px solid var(--line); overflow:hidden; margin:0.45rem 0 0.3rem; }
+    .mc-bar > span { display:block; height:100%; background:var(--green); }
+    .mc-bar.over > span { background:#ef4444; }
+    .mc-link input { width:100%; box-sizing:border-box; margin:0.4rem 0; }
+    .mc-cands { max-height:22rem; overflow:auto; margin-bottom:0.8rem; }
+    .mc-cost-r { display:flex; align-items:center; gap:0.5rem; }
+    .mt-note { margin:-0.4rem 0 0.9rem; }
+    .mt-scroll { overflow-x:auto; }
+    .mt-table { width:100%; border-collapse:collapse; font-size:0.84rem; }
+    .mt-table th { text-align:left; font-family:"Montserrat",sans-serif; font-size:0.68rem; text-transform:uppercase; letter-spacing:0.04em; color:var(--muted); padding:0.45rem 0.5rem; border-bottom:1px solid var(--line); white-space:nowrap; }
+    .mt-table td { padding:0.5rem; border-bottom:1px solid var(--line); white-space:nowrap; }
+    .mt-table td.num { text-align:right; font-variant-numeric:tabular-nums; }
+    .mt-table td.k { font-weight:600; }
+    .mt-table td.rate { min-width:9rem; }
+    .mt-table td.rate .mc-bar { display:inline-block; width:5rem; vertical-align:middle; margin:0 0.4rem 0 0; }
+    .mt-two { display:grid; grid-template-columns:1fr 1fr; gap:1rem; }
+    @media (max-width:860px) { .mt-two { grid-template-columns:1fr; } }
+    .mt-right { display:flex; align-items:center; gap:0.5rem; min-width:8rem; }
+    .mt-right .mc-bar { width:5rem; margin:0; }
+    .mt-right span { font-size:0.8rem; white-space:nowrap; }
+    .mk-modes { display:flex; gap:0.3rem; border-bottom:1px solid var(--line); margin-bottom:0.9rem; overflow-x:auto; scrollbar-width:none; }
+    .mk-modes::-webkit-scrollbar { display:none; }
+    .mk-mode { white-space:nowrap; flex:0 0 auto; }
+    @media (max-width:480px) { .mk-mode { padding:0.55rem 0.45rem; font-size:0.78rem; } }
     .mk-mode { background:none; border:0; border-bottom:2px solid transparent; color:var(--muted); font:inherit; font-family:"Montserrat",sans-serif; font-weight:700; font-size:0.85rem; padding:0.55rem 0.8rem; cursor:pointer; min-height:44px; }
     .mk-mode.on { color:var(--text); border-bottom-color:var(--gold); }
     .mk-sos-head { display:flex; justify-content:space-between; align-items:flex-start; gap:0.8rem; flex-wrap:wrap; margin-bottom:0.7rem; }
@@ -1913,11 +1936,13 @@
     <div class="mk-modes" role="tablist" aria-label="Marketing">
       <button type="button" class="mk-mode on" id="mkModeLeads" role="tab" aria-selected="true">Leads</button>
       <button type="button" class="mk-mode" id="mkModeSos" role="tab" aria-selected="false">New businesses</button>
+      <button type="button" class="mk-mode" id="mkModeCamp" role="tab" aria-selected="false">Campaigns</button>
+      <button type="button" class="mk-mode" id="mkModeTrends" role="tab" aria-selected="false">Trends</button>
     </div>
     <section id="mkSos" hidden aria-label="New Ohio businesses">
       <div class="mk-sos-head">
         <div>
-          <div class="row-sub">Every new LLC, corporation and nonprofit filed with the Ohio Secretary of State in Cuyahoga, Lake, Lorain, Summit, Geauga and Medina counties. Kept apart from your leads: pick the ones worth reaching and make them leads. A filing you have not shortlisted or made a lead drops off 60 days after it first appears.</div>
+          <div class="row-sub">Every new LLC, corporation and nonprofit filed with the Ohio Secretary of State in Cuyahoga, Lake, Lorain, Summit, Geauga and Medina counties. Kept apart from your leads: pick the ones worth reaching and make them leads. Each filing stays 60 days from when it first appears here; after that only the ones you made into leads are kept.</div>
           <div class="row-sub" id="mksFeed">Checking the feed&hellip;</div>
         </div>
         <button type="button" class="ct-btn" id="mksCheck">Check for a new month</button>
@@ -1956,6 +1981,8 @@
         </div>
       </details>
     </section>
+    <section id="mkCamp" hidden aria-label="Campaigns"></section>
+    <section id="mkTrends" hidden aria-label="Trends"></section>
     <div class="tiles mk-stages" id="mkStages"></div>
     <div class="ct-bar">
       <div class="filters ct-filters" id="mkFilters">
@@ -10280,6 +10307,8 @@
       else if ((m = /^#l=(\d+)/.exec(hash))) { mkId = Number(m[1]); if (mkMode !== 'leads') mkSetMode('leads', true); suppressHashPush = true; showView('marketing'); suppressHashPush = false; }
       else if (hash === '#marketing') { mkId = null; if (mkMode !== 'leads') mkSetMode('leads', true); showView('marketing'); }
       else if (hash === '#sos') { if (mkMode !== 'sos') mkSetMode('sos', true); suppressHashPush = true; showView('marketing'); suppressHashPush = false; }
+      else if (hash === '#campaigns') { if (mkMode !== 'camp') mkSetMode('camp', true); suppressHashPush = true; showView('marketing'); suppressHashPush = false; }
+      else if (hash === '#trends') { if (mkMode !== 'trends') mkSetMode('trends', true); suppressHashPush = true; showView('marketing'); suppressHashPush = false; }
       else if (hash === '#inbox') showView('inbox');
       else if (hash === '#keys') showView('keys');
       else if (hash === '#customers') showView('customers');
@@ -13451,7 +13480,7 @@
       var web = document.getElementById('mkWebsite').value, aud = document.getElementById('mkAudited').value;
       if (web) qs += '&website=' + web;
       if (aud) qs += '&audited=' + aud;
-      return Promise.all([api('/admin/leads/summary'), api('/admin/leads' + qs)]).then(function (res) {
+      return Promise.all([api('/admin/leads/summary'), api('/admin/leads' + qs), mcCampaigns()]).then(function (res) {
         var s = res[0], r = res[1];
         if (s.ok) { mkVocab = s.vocab; mkSummary(s.summary); mkRulesBadge(s.summary.rules_proposed); }
         var w = document.getElementById('mkList');
@@ -13494,6 +13523,12 @@
         var del = el('button', 'ct-btn sm danger', 'Delete'); del.type = 'button';
         del.addEventListener('click', function () { mkBulk('delete'); });
         bar.appendChild(del);
+        if (mcList.length) {
+          var camp = ctSelect([['', 'Add to campaign…']].concat(mcList.map(function (c) { return [c.id, c.name]; })), '');
+          camp.setAttribute('aria-label', 'Add the selected leads to a campaign');
+          camp.addEventListener('change', function () { if (camp.value) mkBulk('campaign', null, camp.value); });
+          bar.appendChild(camp);
+        }
         var clr = el('button', 'ct-btn sm', 'Clear'); clr.type = 'button';
         clr.addEventListener('click', function () { mkSel = {}; mkListRender(); });
         bar.appendChild(clr);
@@ -13544,18 +13579,19 @@
       w.appendChild(ul);
     }
 
-    function mkBulk(action, stage) {
+    function mkBulk(action, stage, campaignId) {
       var ids = Object.keys(mkSel).map(Number);
       if (!ids.length) return;
       var q = action === 'delete'
         ? 'Delete ' + ids.length + ' lead' + (ids.length === 1 ? '' : 's') + ' and their contact logs? Leads with quotes, and leads that became customers, are skipped. This cannot be undone.'
+        : action === 'campaign' ? 'Attribute ' + ids.length + ' lead' + (ids.length === 1 ? '' : 's') + ' to "' + ((mcList.filter(function (c) { return String(c.id) === String(campaignId); })[0] || {}).name || 'the campaign') + '"?'
         : 'Move ' + ids.length + ' lead' + (ids.length === 1 ? '' : 's') + ' to ' + mkStageLabel(stage) + '?';
       if (!window.confirm(q)) { mkListRender(); return; }
-      api('/admin/leads/bulk', { method: 'POST', body: { action: action, ids: ids, stage: stage } }).then(function (r) {
+      api('/admin/leads/bulk', { method: 'POST', body: { action: action, ids: ids, stage: stage, campaign_id: campaignId } }).then(function (r) {
         if (!r.ok) { toast(mkErr(r)); return; }
         mkSel = {};
         (r.refused || []).forEach(function (x) { mkSel[x.id] = true; });
-        var msg = (action === 'delete' ? 'Deleted ' : 'Moved ') + r.done;
+        var msg = (action === 'delete' ? 'Deleted ' : action === 'campaign' ? 'Attributed ' : 'Moved ') + r.done;
         if ((r.refused || []).length) {
           msg += '; ' + r.refused.length + ' skipped';
           window.alert('Not ' + (action === 'delete' ? 'deleted' : 'moved') + ' (still selected):\n' + r.refused.map(function (x) { return '• ' + (x.name || x.number || x.id) + ': ' + mkErr(x); }).join('\n'));
@@ -13768,6 +13804,7 @@
       inputs.vertical.setAttribute('list', 'mkVerticalList');
       inputs.verdict = ctField(g, 'Triage verdict', ctSelect([['', '—']].concat(((mkVocab && mkVocab.verdicts) || []).map(function (v) { return [v, v]; })), l.verdict || ''));
       inputs.engine_priority = ctField(g, 'Scanner priority', ctSelect([['', '—']].concat(((mkVocab && mkVocab.priorities) || []).map(function (v) { return [v, v]; })), l.engine_priority || ''));
+      inputs.campaign_id = ctField(g, 'Campaign', ctSelect([['', 'None']].concat(mcList.map(function (c) { return [c.id, c.name]; })), l.campaign_id || ''));
       text('next_action', 'Next action');
       var due = ctInput('date', l.next_due ? new Date(l.next_due * 1000).toISOString().slice(0, 10) : '');
       inputs.next_due = ctField(g, 'Next action due', due);
@@ -14355,22 +14392,327 @@
       'automotive', 'cleaning', 'beauty', 'fitness', 'food', 'realty', 'it'];
     var MKS_STATUS_LABEL = { 'new': 'New', shortlist: 'Shortlist', passed: 'Passed', promoted: 'Lead' };
 
+    // Four views share the tab: Leads, New businesses, Campaigns, Trends.
+    var MK_MODES = { leads: { btn: 'mkModeLeads', hash: '#marketing' }, sos: { btn: 'mkModeSos', hash: '#sos' },
+      camp: { btn: 'mkModeCamp', hash: '#campaigns' }, trends: { btn: 'mkModeTrends', hash: '#trends' } };
     function mkSetMode(mode, quiet) {
+      if (!MK_MODES[mode]) mode = 'leads';
       mkMode = mode;
-      var sos = mode === 'sos';
-      document.getElementById('mkModeLeads').classList.toggle('on', !sos);
-      document.getElementById('mkModeSos').classList.toggle('on', sos);
-      document.getElementById('mkModeLeads').setAttribute('aria-selected', sos ? 'false' : 'true');
-      document.getElementById('mkModeSos').setAttribute('aria-selected', sos ? 'true' : 'false');
-      document.getElementById('mkSos').hidden = !sos;
-      ['mkStages', 'mkList', 'mkImport'].forEach(function (id) { document.getElementById(id).hidden = sos; });
-      document.querySelector('#viewMarketing > .ct-bar').hidden = sos;
-      if (sos) { document.getElementById('mkNew').hidden = true; document.getElementById('mkRules').hidden = true; if (mkId) mkClose(); }
-      if (!quiet) history.replaceState(null, '', sos ? '#sos' : '#marketing');
-      if (sos) mksLoad(); else loadMarketing();
+      Object.keys(MK_MODES).forEach(function (k) {
+        var b = document.getElementById(MK_MODES[k].btn);
+        b.classList.toggle('on', k === mode); b.setAttribute('aria-selected', k === mode ? 'true' : 'false');
+      });
+      var leads = mode === 'leads';
+      document.getElementById('mkSos').hidden = mode !== 'sos';
+      document.getElementById('mkCamp').hidden = mode !== 'camp';
+      document.getElementById('mkTrends').hidden = mode !== 'trends';
+      ['mkStages', 'mkList', 'mkImport'].forEach(function (id) { document.getElementById(id).hidden = !leads; });
+      document.querySelector('#viewMarketing > .ct-bar').hidden = !leads;
+      if (!leads) { document.getElementById('mkNew').hidden = true; document.getElementById('mkRules').hidden = true; if (mkId) mkClose(); }
+      if (!quiet) history.replaceState(null, '', MK_MODES[mode].hash);
+      mkLoadMode();
     }
-    document.getElementById('mkModeLeads').addEventListener('click', function () { mkSetMode('leads'); });
-    document.getElementById('mkModeSos').addEventListener('click', function () { mkSetMode('sos'); });
+    function mkLoadMode() {
+      // Returning to the tab by its button lands on #marketing; keep the URL on the view shown.
+      if (location.hash === '#marketing' && mkMode !== 'leads') history.replaceState(null, '', MK_MODES[mkMode].hash);
+      if (mkMode === 'sos') return mksLoad();
+      if (mkMode === 'camp') return mcLoad();
+      if (mkMode === 'trends') return mtLoad();
+      return loadMarketing();
+    }
+    Object.keys(MK_MODES).forEach(function (k) {
+      document.getElementById(MK_MODES[k].btn).addEventListener('click', function () { mkSetMode(k); });
+    });
+
+    // ---- campaigns ---------------------------------------------------------------
+    var mcVocab = null, mcId = null, mcList = [];
+    function mcLabel(ch) { return (mcVocab && mcVocab.channel_label[ch]) || ch; }
+    function mcCampaigns() {
+      // The lead file and the bulk bar need the names; one request, cached per load.
+      return api('/admin/campaigns').then(function (r) { if (r.ok) { mcVocab = r.vocab; mcList = r.campaigns; } return r; });
+    }
+    function mcBar(used, label) {
+      var b = el('div', 'mc-bar');
+      var f = el('span'); f.style.width = Math.max(0, Math.min(100, used || 0)) + '%';
+      if (used > 100) b.classList.add('over');
+      b.appendChild(f);
+      b.setAttribute('role', 'img'); b.setAttribute('aria-label', label);
+      return b;
+    }
+    function mcLoad() {
+      var w = document.getElementById('mkCamp');
+      return mcCampaigns().then(function (r) {
+        w.textContent = '';
+        if (!r.ok) { w.appendChild(el('div', 'state', 'Could not load the campaigns.')); return; }
+        if (mcId) return mcOpen(mcId);
+        var head = el('div', 'mk-sos-head');
+        head.appendChild(el('div', 'row-sub', 'What an ad or outreach push cost, how long it ran, and what came of it. Attribute leads to a campaign from the lead list (select, then Add to campaign) or from a lead file.'));
+        var nb = el('button', 'ct-btn prim', '+ New campaign'); nb.type = 'button';
+        nb.addEventListener('click', function () { form.hidden = !form.hidden; });
+        head.appendChild(nb);
+        w.appendChild(head);
+        var form = mcForm(null); form.hidden = true;
+        w.appendChild(form);
+        var t = r.totals;
+        var tiles = el('div', 'tiles');
+        [['Spent', money(t.spend_cents)], ['Leads', String(t.leads)], ['Won', String(t.won)], ['Cost per lead', t.cost_per_lead_cents != null ? money(t.cost_per_lead_cents) : '-'], ['Revenue from wins', money(t.revenue_cents)]]
+          .forEach(function (x) { var d = el('div', 'tile'); d.appendChild(el('s', null, x[0])); d.appendChild(el('b', null, x[1])); tiles.appendChild(d); });
+        w.appendChild(tiles);
+        if (!r.campaigns.length) { w.appendChild(el('div', 'state', 'No campaigns yet.')); return; }
+        r.campaigns.forEach(function (c) {
+          var card = el('button', 'ct-card'); card.type = 'button';
+          card.appendChild(el('div', 'n', [mcLabel(c.channel), c.status, c.starts_on ? c.starts_on + (c.ends_on ? ' to ' + c.ends_on : '') : ''].filter(Boolean).join(' · ')));
+          card.appendChild(el('div', 't', c.name));
+          if (c.budget_cents) {
+            card.appendChild(mcBar(c.budget_used_pct, c.budget_used_pct + '% of the budget spent'));
+            card.appendChild(el('div', 'row-sub', money(c.spend_cents) + ' of ' + money(c.budget_cents) + ' (' + c.budget_used_pct + '%)'));
+          } else card.appendChild(el('div', 'row-sub', money(c.spend_cents) + ' spent'));
+          var chips = el('div', 'chips');
+          chips.appendChild(el('span', 'ct-chip', c.leads + ' leads'));
+          chips.appendChild(el('span', 'ct-chip', c.replied + ' replied' + (c.reply_rate != null ? ' (' + c.reply_rate + '%)' : '')));
+          chips.appendChild(el('span', 'ct-chip' + (c.won ? ' green' : ''), c.won + ' won'));
+          if (c.cost_per_lead_cents != null) chips.appendChild(el('span', 'ct-chip', money(c.cost_per_lead_cents) + ' a lead'));
+          if (c.revenue_cents) chips.appendChild(el('span', 'ct-chip gold', money(c.revenue_cents) + ' revenue'));
+          card.appendChild(chips);
+          card.addEventListener('click', function () { mcOpen(c.id); });
+          w.appendChild(card);
+        });
+      });
+    }
+
+    function mcForm(c) {
+      var f = el('form', 'newinv mk-editor'); f.autocomplete = 'off';
+      f.appendChild(el('h2', null, c ? 'Edit campaign' : 'New campaign'));
+      var g = el('div', 'fgrid');
+      var name = ctField(g, 'Name', ctInput('text', c ? c.name : ''));
+      var ch = ctField(g, 'Channel', ctSelect(((mcVocab && mcVocab.channels) || ['other']).map(function (x) { return [x, mcLabel(x)]; }), c ? c.channel : 'postcard'));
+      var st = ctField(g, 'Status', ctSelect(((mcVocab && mcVocab.statuses) || ['planned']).map(function (x) { return [x, x.charAt(0).toUpperCase() + x.slice(1)]; }), c ? c.status : 'planned'));
+      var bud = ctField(g, 'Budget ($)', ctInput('text', c && c.budget_cents != null ? (c.budget_cents / 100).toFixed(2) : ''));
+      bud.inputMode = 'decimal';
+      var s = ctField(g, 'Starts', ctInput('date', c ? c.starts_on || '' : ''));
+      var e = ctField(g, 'Ends', ctInput('date', c ? c.ends_on || '' : ''));
+      f.appendChild(g);
+      var notes = document.createElement('textarea'); notes.rows = 3; notes.value = c ? c.notes || '' : '';
+      ctField(f, 'Notes', notes, 'mk-notes');
+      var rr = el('div', 'reply-row');
+      var sv = el('button', 'prim', c ? 'Save' : 'Create campaign'); sv.type = 'submit';
+      rr.appendChild(sv); f.appendChild(rr);
+      f.addEventListener('submit', function (ev) {
+        ev.preventDefault();
+        var p = { name: name.value.trim(), channel: ch.value, status: st.value, budget: bud.value.trim(), starts_on: s.value, ends_on: e.value, notes: notes.value };
+        (c ? api('/admin/campaigns/' + c.id, { method: 'PATCH', body: p }) : api('/admin/campaigns', { method: 'POST', body: p })).then(function (r) {
+          if (!r.ok) return toast({ name_required: 'Give the campaign a name.', ends_before_start: 'It ends before it starts.', bad_amount: 'That budget is not an amount.', bad_date: 'That date does not look right.' }[r.error] || mkErr(r));
+          toast(c ? 'Saved' : 'Campaign created');
+          if (!c) mcId = r.id;
+          mcLoad();
+        });
+      });
+      return f;
+    }
+
+    function mcOpen(id) {
+      mcId = Number(id);
+      var w = document.getElementById('mkCamp');
+      return api('/admin/campaigns/' + mcId).then(function (r) {
+        w.textContent = '';
+        if (!r.ok) { mcId = null; return mcLoad(); }
+        var c = r.campaign;
+        var panel = el('div', 'ct-panel');
+        var back = el('button', 'ct-btn sm', '‹ All campaigns'); back.type = 'button';
+        back.addEventListener('click', function () { mcId = null; mcLoad(); });
+        panel.appendChild(back);
+        var head = el('div', 'ct-head');
+        var hl = el('div');
+        hl.appendChild(el('div', 'sub', [mcLabel(c.channel), c.status, c.starts_on ? c.starts_on + (c.ends_on ? ' to ' + c.ends_on : '') : 'no dates'].join(' · ')));
+        hl.appendChild(el('h2', null, c.name));
+        head.appendChild(hl);
+        panel.appendChild(head);
+        var tiles = el('div', 'tiles');
+        [['Spent', money(c.spend_cents) + (c.budget_cents ? ' of ' + money(c.budget_cents) : '')], ['Leads', String(c.leads)], ['Contacted', String(c.contacted)],
+          ['Replied', c.replied + (c.reply_rate != null ? ' (' + c.reply_rate + '%)' : '')], ['Won', String(c.won)],
+          ['Cost per lead', c.cost_per_lead_cents != null ? money(c.cost_per_lead_cents) : '-'], ['Cost per win', c.cost_per_win_cents != null ? money(c.cost_per_win_cents) : '-'],
+          ['Revenue from wins', money(c.revenue_cents) + (c.return_pct != null ? ' (' + (c.return_pct > 0 ? '+' : '') + c.return_pct + '%)' : '')]]
+          .forEach(function (x) { var d = el('div', 'tile'); d.appendChild(el('s', null, x[0])); d.appendChild(el('b', null, x[1])); tiles.appendChild(d); });
+        panel.appendChild(tiles);
+        if (c.days) {
+          panel.appendChild(mcBar(Math.round(c.elapsed_days / c.days * 100), 'Day ' + c.elapsed_days + ' of ' + c.days));
+          panel.appendChild(el('div', 'row-sub', 'Day ' + Math.min(c.elapsed_days, c.days) + ' of ' + c.days));
+        }
+
+        var tabs = paneTabs(panel, ['Costs', 'Leads', 'Details'], 'campaign');
+        tabs.count('Costs', r.costs.length); tabs.count('Leads', r.leads.length);
+        // Costs.
+        var cp = tabs.pane('Costs');
+        var cs = el('section', 'cust-sec');
+        cs.appendChild(el('h3', null, 'Add a cost'));
+        cs.appendChild(el('div', 'row-sub', 'Link a card or cash charge already in the ledger so it is not typed twice, or type one. A typed cost is recorded here only; it is not in Finance.'));
+        var lk = el('div', 'mc-link');
+        var lq = ctInput('search', ''); lq.placeholder = 'Search card charges (vendor or description)'; lq.setAttribute('aria-label', 'Search card charges');
+        lk.appendChild(lq);
+        var lres = el('div', 'mc-cands');
+        lk.appendChild(lres);
+        var lt = null;
+        var find = function () {
+          api('/admin/campaigns/ledger?q=' + encodeURIComponent(lq.value.trim())).then(function (x) {
+            lres.textContent = '';
+            if (!x.ok || !x.entries.length) { lres.appendChild(el('div', 'row-sub', 'No unlinked charges match.')); return; }
+            x.entries.slice(0, 12).forEach(function (en) {
+              var b = el('button', 'ct-btn sm', 'Link'); b.type = 'button';
+              b.addEventListener('click', function () {
+                api('/admin/campaigns/' + c.id + '/costs', { method: 'POST', body: { ledger_id: en.id } }).then(function (y) { if (!y.ok) return toast(mkErr(y)); toast('Linked'); mcOpen(c.id); });
+              });
+              lres.appendChild(row((en.vendor || en.description) + ' · ' + money(-en.amount_cents), fmtDate(en.posted_at) + ' · ' + en.account.replace(/_/g, ' ') + (en.classification ? ' · ' + en.classification : ''), b));
+            });
+          });
+        };
+        lq.addEventListener('input', function () { clearTimeout(lt); lt = setTimeout(find, 250); });
+        cs.appendChild(lk);
+        find();
+        var tf = el('form', 'mk-editor'); tf.autocomplete = 'off';
+        var tg = el('div', 'fgrid');
+        var tday = ctField(tg, 'Date', ctInput('date', new Date(Date.now() - new Date().getTimezoneOffset() * 60000).toISOString().slice(0, 10)));
+        var tamt = ctField(tg, 'Amount ($)', ctInput('text', '')); tamt.inputMode = 'decimal';
+        var tnote = ctField(tg, 'What for', ctInput('text', ''));
+        tf.appendChild(tg);
+        var trr = el('div', 'reply-row'); var tb = el('button', null, 'Add typed cost'); tb.type = 'submit'; trr.appendChild(tb); tf.appendChild(trr);
+        tf.addEventListener('submit', function (ev) {
+          ev.preventDefault();
+          api('/admin/campaigns/' + c.id + '/costs', { method: 'POST', body: { spent_on: tday.value, amount: tamt.value.trim(), note: tnote.value.trim() } }).then(function (y) {
+            if (!y.ok) return toast(y.error === 'bad_amount' ? 'Enter an amount above zero.' : mkErr(y));
+            toast('Cost added'); mcOpen(c.id);
+          });
+        });
+        cs.appendChild(tf);
+        cp.appendChild(cs);
+        var cl = el('section', 'cust-sec');
+        cl.appendChild(el('h3', null, 'Cost log'));
+        if (!r.costs.length) cl.appendChild(el('div', 'row-sub', 'Nothing spent yet.'));
+        r.costs.forEach(function (x) {
+          var del = el('button', 'ct-btn sm', 'Remove'); del.type = 'button';
+          del.addEventListener('click', function () {
+            if (!window.confirm('Remove this cost from the campaign?' + (x.ledger_id ? ' The card charge stays in the ledger.' : ''))) return;
+            api('/admin/campaigns/' + c.id + '/costs/' + x.id, { method: 'DELETE' }).then(function (y) { toast(y.ok ? 'Removed' : mkErr(y)); mcOpen(c.id); });
+          });
+          var right = el('div', 'mc-cost-r'); right.appendChild(el('b', 'num', money(x.amount_cents))); right.appendChild(del);
+          cl.appendChild(row(x.note || x.ledger_description || 'Cost', x.spent_on + (x.ledger_id ? ' · from the ledger (' + String(x.ledger_account || '').replace(/_/g, ' ') + ')' : ' · typed'), right));
+        });
+        cp.appendChild(cl);
+        // Leads.
+        var lp = tabs.pane('Leads');
+        var ls = el('section', 'cust-sec');
+        ls.appendChild(el('h3', null, 'Leads from this campaign'));
+        if (!r.leads.length) ls.appendChild(el('div', 'row-sub', 'None yet. Select leads in the list and use Add to campaign.'));
+        r.leads.forEach(function (l) {
+          ls.appendChild(row(l.company || l.domain || l.number, [mkStageLabel(l.stage), l.vertical, l.replied_at ? 'replied ' + fmtDate(l.replied_at) : ''].filter(Boolean).join(' · '), null, function () { mkSetMode('leads', true); routeHash('#l=' + l.id, true); }));
+        });
+        lp.appendChild(ls);
+        // Details.
+        var dp = tabs.pane('Details');
+        dp.appendChild(mcForm(c));
+        var del = licAction('Delete this campaign', 'ct-btn danger', function () {
+          if (!window.confirm('Delete "' + c.name + '"? Its cost log goes with it; its leads stay, unattributed. Card charges stay in the ledger.')) return;
+          api('/admin/campaigns/' + c.id, { method: 'DELETE' }).then(function (y) { if (!y.ok) return toast(mkErr(y)); toast('Deleted'); mcId = null; mcLoad(); });
+        });
+        dp.appendChild(del);
+        w.appendChild(panel);
+      });
+    }
+
+    // ---- trends ------------------------------------------------------------------
+    var mtGroup = 'vertical', mtSince = '';
+    function mtLoad() {
+      var w = document.getElementById('mkTrends');
+      var qs = mtSince ? '?since=' + mtSince : '';
+      return api('/admin/leads/trends' + qs).then(function (t) {
+        w.textContent = '';
+        if (!t.ok) { w.appendChild(el('div', 'state', 'Could not build the trends.')); return; }
+        var bar = el('div', 'ct-bar');
+        var pills = el('div', 'filters ct-filters');
+        [['vertical', 'By vertical'], ['archetype', 'By archetype'], ['source', 'By source']].forEach(function (g) {
+          var b = el('button', 'fpill' + (mtGroup === g[0] ? ' on' : ''), g[1]); b.type = 'button';
+          b.addEventListener('click', function () { mtGroup = g[0]; mtLoad(); });
+          pills.appendChild(b);
+        });
+        bar.appendChild(pills);
+        var tools = el('div', 'ct-tools');
+        var nowS = Math.floor(Date.now() / 1000);
+        var since = ctSelect([['', 'All time'], [String(nowS - 365 * 86400), 'Leads added in the last year'], [String(nowS - 90 * 86400), 'Last 90 days'], [String(nowS - 30 * 86400), 'Last 30 days']], '');
+        since.setAttribute('aria-label', 'Which leads');
+        if (mtSince) { var near = Array.prototype.find.call(since.options, function (o) { return o.value && Math.abs(Number(o.value) - Number(mtSince)) < 86400 * 2; }); if (near) since.value = near.value; }
+        since.addEventListener('change', function () { mtSince = since.value; mtLoad(); });
+        tools.appendChild(since);
+        var ex = el('a', 'ct-btn', 'Export CSV'); ex.href = API + '/admin/leads/trends.csv?group=' + mtGroup + (mtSince ? '&since=' + mtSince : ''); ex.download = 'lead-trends-' + mtGroup + '.csv';
+        tools.appendChild(ex);
+        bar.appendChild(tools);
+        w.appendChild(bar);
+
+        var o = t.overall;
+        var tiles = el('div', 'tiles');
+        [['Leads', String(o.leads)], ['Contacted', String(o.contacted)], ['Reply rate', o.reply_rate != null ? o.reply_rate + '%' : '-'], ['Won', String(o.won)],
+          ['Median days to reply', o.median_days_to_reply != null ? String(o.median_days_to_reply) : '-'], ['Average grade', o.avg_grade != null ? mtGrade(o.avg_grade) : '-']]
+          .forEach(function (x) { var d = el('div', 'tile'); d.appendChild(el('s', null, x[0])); d.appendChild(el('b', null, x[1])); tiles.appendChild(d); });
+        w.appendChild(tiles);
+        w.appendChild(el('div', 'row-sub mt-note', 'Rates only count what is logged: a lead is contacted once a send is recorded, and replied once a reply is. Leads imported without their history count as not contacted.'));
+
+        var sec = el('section', 'cust-sec');
+        sec.appendChild(el('h3', null, { vertical: 'By vertical', archetype: 'By archetype', source: 'By source' }[mtGroup]));
+        var wrap = el('div', 'mt-scroll');
+        var tbl = el('table', 'mt-table');
+        var thead = el('thead'), hr = el('tr');
+        [mtGroup === 'vertical' ? 'Vertical' : mtGroup === 'archetype' ? 'Archetype' : 'Source', 'Leads', 'Contacted', 'Replied', 'Reply rate', 'Won', 'Days to reply', 'Grade', mtGroup === 'vertical' ? 'Rules' : '']
+          .forEach(function (h) { if (h !== '') hr.appendChild(el('th', null, h)); });
+        thead.appendChild(hr); tbl.appendChild(thead);
+        var tb = el('tbody');
+        t.groups[mtGroup].forEach(function (g) {
+          var tr = el('tr');
+          tr.appendChild(el('td', 'k', g.key));
+          [g.leads, g.contacted, g.replied].forEach(function (v) { tr.appendChild(el('td', 'num', String(v))); });
+          var rate = el('td', 'rate');
+          if (g.reply_rate != null) { rate.appendChild(mcBar(g.reply_rate, g.reply_rate + '% replied')); rate.appendChild(el('span', null, g.reply_rate + '%')); } else rate.textContent = '-';
+          tr.appendChild(rate);
+          tr.appendChild(el('td', 'num', String(g.won)));
+          tr.appendChild(el('td', 'num', g.median_days_to_reply != null ? String(g.median_days_to_reply) : '-'));
+          tr.appendChild(el('td', 'num', g.avg_grade != null ? mtGrade(g.avg_grade) : '-'));
+          if (mtGroup === 'vertical') tr.appendChild(el('td', 'num', String((t.vertical_rules || {})[g.key] || (['plumbing', 'electrical', 'hvac', 'roofing', 'construction', 'landscaping'].indexOf(g.key) >= 0 ? (t.vertical_rules || {}).trades || 0 : 0))));
+          tb.appendChild(tr);
+        });
+        tbl.appendChild(tb); wrap.appendChild(tbl); sec.appendChild(wrap);
+        if (mtGroup === 'vertical') sec.appendChild(el('div', 'row-sub', 'Rules: confirmed style rules the drafts follow for that vertical (the trades share one set).'));
+        w.appendChild(sec);
+
+        var two = el('div', 'mt-two');
+        var chs = el('section', 'cust-sec');
+        chs.appendChild(el('h3', null, 'By first contact'));
+        if (!t.channels.length) chs.appendChild(el('div', 'row-sub', 'No contacts logged yet.'));
+        t.channels.forEach(function (c) {
+          var right = el('div', 'mt-right'); right.appendChild(mcBar(c.reply_rate || 0, (c.reply_rate || 0) + '% replied')); right.appendChild(el('span', null, (c.reply_rate != null ? c.reply_rate : 0) + '%'));
+          chs.appendChild(row((MK_CHANNEL_LABEL[c.key] || c.key), c.first_contacts + ' first contacts · ' + c.replied + ' replied · ' + c.won + ' won', right));
+        });
+        two.appendChild(chs);
+        var fs = el('section', 'cust-sec');
+        fs.appendChild(el('h3', null, 'What the report cards keep finding'));
+        fs.appendChild(el('div', 'row-sub', 'From each lead’s latest report card (' + t.scanned + ' scanned).'));
+        if (!t.top_findings.length) fs.appendChild(el('div', 'row-sub', 'No report cards yet.'));
+        t.top_findings.forEach(function (f) {
+          var right = el('div', 'mt-right'); right.appendChild(mcBar(f.share || 0, (f.share || 0) + '% of scanned leads')); right.appendChild(el('span', null, f.count + ' (' + f.share + '%)'));
+          fs.appendChild(row(f.title, f.category || '', right));
+        });
+        two.appendChild(fs);
+        w.appendChild(two);
+
+        var byV = t.findings_by_vertical || {};
+        if (Object.keys(byV).length) {
+          var vs = el('section', 'cust-sec');
+          vs.appendChild(el('h3', null, 'Top findings by vertical'));
+          Object.keys(byV).sort().forEach(function (v) {
+            vs.appendChild(row(v, byV[v].map(function (x) { return x.title + ' (' + x.count + ')'; }).join(' · ')));
+          });
+          w.appendChild(vs);
+        }
+      });
+    }
+    function mtGrade(points) { return ['F', 'D', 'C', 'B', 'A'][Math.max(0, Math.min(4, Math.round(points)))] + ' (' + points + ')'; }
+
 
     (function () {
       var v = document.getElementById('mksVertical');
@@ -14624,7 +14966,7 @@
       reports: { view: 'viewReports', nav: 'navReports', load: loadReports, always: true },
       contracting: { view: 'viewContracting', nav: 'navContracting', load: loadContracting, always: true },
       projects: { view: 'viewProjects', nav: 'navProjects', load: loadProjects, always: true },
-      marketing: { view: 'viewMarketing', nav: 'navMarketing', load: function () { if (mkMode === 'sos') mksLoad(); else loadMarketing(); }, always: true },
+      marketing: { view: 'viewMarketing', nav: 'navMarketing', load: function () { mkLoadMode(); }, always: true },
       keys: { view: 'viewKeys', nav: 'navKeys', load: loadKeys }
     };
     var loaded = {};
@@ -14634,7 +14976,7 @@
     var HASH_OF = {
       home: /^(#home|#|)$/, inbox: /^#(inbox|m=)/, tickets: /^#(tickets|t=)/, customers: /^#(customers|c=|o=)/,
       invoices: /^#(invoices|inv=|q=)/, calendar: /^#(cal|a=)/, inventory: /^#(inventory|i=)/, finance: /^#finance/,
-      reports: /^#reports/, keys: /^#keys/, contracting: /^#(contracting|b=)/, projects: /^#(projects|p=)/, marketing: /^#(marketing|l=|sos)/,
+      reports: /^#reports/, keys: /^#keys/, contracting: /^#(contracting|b=)/, projects: /^#(projects|p=)/, marketing: /^#(marketing|l=|sos|campaigns|trends)/,
     };
 
     function showView(which) {
