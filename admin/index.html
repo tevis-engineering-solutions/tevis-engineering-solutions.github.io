@@ -803,7 +803,9 @@
     .ct-site a small { font-weight:400; font-size:0.66rem; color:var(--muted); }
     .ct-site a small.stale { color:var(--gold); }
     .ct-site .fed { font-size:0.56rem; font-weight:800; text-transform:uppercase; letter-spacing:0.05em; color:#e08585; border:1px solid #7f2c2c; border-radius:999px; padding:0.1rem 0.4rem; white-space:nowrap; }
-    .ct-btn { font-family:"Montserrat",sans-serif; font-size:0.68rem; font-weight:700; text-transform:uppercase; letter-spacing:0.03em; padding:0.45rem 0.75rem; border-radius:999px; border:1px solid var(--line); background:var(--bg); color:var(--text); cursor:pointer; min-height:36px; white-space:nowrap; }
+    .ct-btn { font-family:"Montserrat",sans-serif; font-size:0.68rem; font-weight:700; text-transform:uppercase; letter-spacing:0.03em; padding:0.45rem 0.75rem; border-radius:999px; border:1px solid var(--line); background:var(--bg); color:var(--text); cursor:pointer; min-height:36px; white-space:nowrap;
+      /* Centered the same way whether it is a button or a link, so labels sit level. */
+      display:inline-flex; align-items:center; justify-content:center; gap:0.4rem; line-height:1.1; text-decoration:none; box-sizing:border-box; vertical-align:middle; }
     .ct-btn:hover { border-color:var(--green); }
     .ct-btn.prim { background:linear-gradient(135deg,var(--gold),#e0b840); color:#0d1710; border-color:transparent; }
     .ct-btn.danger { border-color:#7f2c2c; color:#e08585; }
@@ -901,6 +903,13 @@
     .mk-head .mk-open { cursor:default; min-height:34px; padding:0.4rem 0; }
     .mk-head span { font-family:"Montserrat",sans-serif; font-size:0.64rem; font-weight:800; text-transform:uppercase; letter-spacing:0.05em; color:var(--muted); font-weight:800; }
     .mk-head + .mk-row { border-top:0; }
+    .mk-head .mk-sort { background:none; border:0; padding:0.25rem 0.35rem; margin:-0.25rem 0; border-radius:6px; font:inherit; color:inherit; letter-spacing:inherit; text-transform:inherit; cursor:pointer; display:inline-flex; align-items:center; gap:0.4rem; min-height:28px; }
+    .mk-head .mk-sort i { font-size:0.7rem; opacity:0.45; }
+    .mk-head .mk-sort:hover { color:var(--text); background:rgba(74,172,101,0.09); }
+    .mk-head .mk-sort:focus-visible { outline:2px solid var(--gold); outline-offset:1px; }
+    .mk-head .mk-sort.on { color:var(--gold); }
+    .mk-head .mk-sort.on i { opacity:1; }
+    .mk-head .mk-tags { align-items:center; }
     /* Column boundaries you can drag. The handle straddles the gap between two columns. */
     .mk-head .mk-who, .mk-head .mk-snip, .mk-head .mk-tags { position:relative; overflow:visible; }
     .mk-head .mk-grip { position:absolute; top:-0.4rem; bottom:-0.4rem; right:-12px; width:12px; cursor:col-resize; z-index:1; touch-action:none; }
@@ -965,7 +974,14 @@
     .mk-sos-head .row-sub { max-width:62rem; margin-bottom:0.25rem; }
     .mk-inline { margin-top:0; white-space:nowrap; font-size:0.8rem; }
     .mk-sos-detail { padding:0.4rem 0.8rem 0.8rem 2.6rem; background:var(--card); border-top:1px solid var(--line); }
-    .mk-sos-detail .row { padding:0.3rem 0; }
+    .mk-sos-detail .row { padding:0.5rem 0.75rem; }
+    .mks-facts { display:grid; grid-template-columns:minmax(7rem, 9.5rem) 1fr; gap:0.45rem 1.1rem; margin:0.4rem 0 0.2rem; padding:0.8rem 1rem; border:1px solid var(--line); border-radius:10px; background:var(--bg); }
+    .mks-facts dt { font-family:"Montserrat",sans-serif; font-size:0.64rem; font-weight:800; text-transform:uppercase; letter-spacing:0.05em; color:var(--muted); padding-top:0.2rem; }
+    .mks-facts dd { margin:0; font-size:0.86rem; line-height:1.45; word-break:break-word; }
+    /* Marketing panel actions: one height, even side padding, labels centered. */
+    .mk-sos-detail .mk-rule-acts { align-items:center; gap:0.5rem; }
+    .mk-sos-detail .ct-btn { min-height:38px; padding:0 1rem; letter-spacing:0.05em; }
+    @media (max-width:560px) { .mks-facts { grid-template-columns:1fr; gap:0.1rem; } .mks-facts dd { margin-bottom:0.45rem; } .mk-sos-detail { padding-left:0.8rem; } }
     .mks-site { margin:0.6rem 0 0.4rem; padding-top:0.5rem; border-top:1px dashed rgba(138,164,141,0.3); }
     .mks-site-line { display:flex; align-items:center; gap:0.6rem; flex-wrap:wrap; margin:0.2rem 0 0.3rem; }
     .mks-site-line a { color:var(--green); font-weight:600; word-break:break-all; }
@@ -1994,7 +2010,7 @@
           <label for="mksSite" class="sr-only">Website</label>
           <select id="mksSite"><option value="">Any website</option><option value="found">Website found</option><option value="email">Has an email</option><option value="none">No website</option><option value="pending">Not looked up yet</option><option value="skipped">Skipped (holdings, finance, realty)</option></select>
           <label for="mksSort" class="sr-only">Sort</label>
-          <select id="mksSort"><option value="score">Best fit first</option><option value="newest">Newest first</option><option value="name">A to Z</option></select>
+          <select id="mksSort"><option value="score">Best fit first</option><option value="newest">Filed, newest first</option><option value="oldest">Filed, oldest first</option><option value="name">Name, A to Z</option><option value="name_desc">Name, Z to A</option><option value="place">City, A to Z</option><option value="place_desc">City, Z to A</option><option value="kind">Kind of business, A to Z</option><option value="kind_desc">Kind of business, Z to A</option></select>
           <label class="mk-check mk-inline"><input type="checkbox" id="mksHideHold" checked> Hide holdings, finance and realty</label>
           <label class="mk-check mk-inline"><input type="checkbox" id="mksHideUncl" checked> Hide unclassified</label>
           <label for="mksQ" class="sr-only">Search new businesses</label>
@@ -13531,6 +13547,31 @@
     // The list reads like an inbox: one line per lead, a checkbox to select several,
     // the name in bold, a snippet of what is known, and the date on the right.
     var mkSel = {}, mkRows = [];
+    // The lead list's column sort, remembered in this browser. No column means the
+    // server's order (what needs attention first). The whole list is loaded (up to 500),
+    // so sorting here covers every lead shown.
+    var mkSort = (function () { try { return JSON.parse(localStorage.getItem('tes_mksort_leads') || 'null') || { col: null, dir: 'asc' }; } catch (e) { return { col: null, dir: 'asc' }; } })();
+    var MK_STAGE_ORDER = ['new', 'researching', 'ready', 'contacted', 'replied', 'meeting', 'quoted', 'won', 'lost', 'parked'];
+    function mkLeadTags(l) {
+      return [l.verdict, l.grade, !l.domain ? 'No site' : !l.audits ? 'No report' : '', l.drafts ? 'Draft' : ''].filter(Boolean).join(' ');
+    }
+    function mkSorted(rows) {
+      if (!mkSort.col) return rows;
+      var key = {
+        who: function (l) { return mkName(l).toLowerCase(); },
+        snip: function (l) { var i = MK_STAGE_ORDER.indexOf(l.stage); return i < 0 ? 99 : i; },
+        tags: function (l) { return mkLeadTags(l).toLowerCase(); },
+        when: function (l) { return l.next_due || l.updated_at || 0; },
+      }[mkSort.col];
+      var sign = mkSort.dir === 'desc' ? -1 : 1;
+      return rows.slice().sort(function (a, b) {
+        var x = key(a), y = key(b);
+        // Empty tags sort last either way; ties fall back to the name.
+        if (mkSort.col === 'tags' && (!x || !y) && x !== y) return x ? -1 : 1;
+        var c = typeof x === 'number' ? x - y : x.localeCompare(y);
+        return c ? sign * c : mkName(a).localeCompare(mkName(b));
+      });
+    }
     function mkListRender() {
       var w = document.getElementById('mkList');
       w.textContent = '';
@@ -13571,10 +13612,13 @@
       if (!mkRows.length) { w.appendChild(el('div', 'state', mkSearch || mkStageFilter ? 'No leads match.' : mkView === 'open' ? 'No open leads. Add one, or import the local prospecting files below.' : 'Nothing here.')); return; }
       var now = Date.now() / 1000;
       var ul = el('div', 'mk-rows');
-      ul.appendChild(mkListHead(['Business', 'Stage and details', 'Tags', 'Date'], 'leads'));
+      ul.appendChild(mkListHead(['Business', 'Stage and details', 'Tags', 'Date'], 'leads', {
+        col: mkSort.col, dir: mkSort.dir,
+        on: function (c) { mkSort = mkSortNext(mkSort, c); try { localStorage.setItem('tes_mksort_leads', JSON.stringify(mkSort)); } catch (e) { /* this browser only */ } mkListRender(); },
+      }));
       mkColsApply(ul, 'leads');
       ul.setAttribute('role', 'list');
-      mkRows.forEach(function (l) {
+      mkSorted(mkRows).forEach(function (l) {
         var li = el('div', 'mk-row' + (mkSel[l.id] ? ' sel' : '') + (l.stage === 'replied' ? ' unread' : ''));
         li.setAttribute('role', 'listitem');
         var cb = document.createElement('input'); cb.type = 'checkbox'; cb.checked = !!mkSel[l.id];
@@ -13674,16 +13718,35 @@
       });
       return g;
     }
-    function mkListHead(cols, key) {
+    // sort: {col: 'who'|'snip'|'tags'|'when'|null, dir: 'asc'|'desc', on: fn(col)}. Clicking a
+    // header sorts by it; clicking it again reverses. Text starts A to Z, dates newest first.
+    function mkListHead(cols, key, sort) {
       var h = el('div', 'mk-row mk-head');
-      h.setAttribute('aria-hidden', 'true');
       h.appendChild(el('span', 'mk-cbspace'));
       var o = el('div', 'mk-open');
-      var who = el('span', 'mk-who', cols[0]), snip = el('span', 'mk-snip', cols[1]), tags = el('span', 'mk-tags', cols[2]);
-      if (key) { who.appendChild(mkColsGrip(h, key, 'who')); snip.appendChild(mkColsGrip(h, key, 'snip')); tags.appendChild(mkColsGrip(h, key, 'tags')); }
-      o.appendChild(who); o.appendChild(snip); o.appendChild(tags); o.appendChild(el('span', 'mk-when', cols[3]));
+      ['who', 'snip', 'tags', 'when'].forEach(function (c, i) {
+        var cell = el('span', 'mk-' + c);
+        if (sort && sort.on) {
+          var b = el('button', 'mk-sort' + (sort.col === c ? ' on' : ''));
+          b.type = 'button';
+          b.appendChild(document.createTextNode(cols[i]));
+          var arrow = el('i', 'fa-solid ' + (sort.col !== c ? 'fa-sort' : sort.dir === 'desc' ? 'fa-sort-down' : 'fa-sort-up'));
+          arrow.setAttribute('aria-hidden', 'true');
+          b.appendChild(arrow);
+          b.setAttribute('aria-label', 'Sort by ' + cols[i] + (sort.col === c ? (sort.dir === 'desc' ? ', sorted descending' : ', sorted ascending') : ''));
+          b.addEventListener('click', function () { sort.on(c); });
+          cell.appendChild(b);
+        } else cell.appendChild(document.createTextNode(cols[i]));
+        if (key && c !== 'when') cell.appendChild(mkColsGrip(h, key, c));
+        o.appendChild(cell);
+      });
       h.appendChild(o);
       return h;
+    }
+    // Which way a column sorts first when you pick it: dates newest first, text A to Z.
+    function mkSortNext(cur, col) {
+      if (cur.col === col) return { col: col, dir: cur.dir === 'asc' ? 'desc' : 'asc' };
+      return { col: col, dir: col === 'when' ? 'desc' : 'asc' };
     }
 
     function mkBulk(action, stage, campaignId) {
@@ -14925,7 +14988,14 @@
       w.appendChild(bar);
       if (!mksRows.length) { w.appendChild(el('div', 'state', mksSearch ? 'No business matches.' : 'Nothing here yet. The feed reads the Secretary of State files about half an hour after a new month is published.')); return; }
       var list = el('div', 'mk-rows');
-      list.appendChild(mkListHead(['Business', 'Type, place and people', 'Tags', 'Filed'], 'sos'));
+      // The index is paged from the server, so a header sort reloads it in that order.
+      var MKS_COLSORT = { who: ['name', 'name_desc'], snip: ['place', 'place_desc'], tags: ['kind', 'kind_desc'], when: ['oldest', 'newest'] };
+      var sv = document.getElementById('mksSort').value, cur = { col: null, dir: 'asc' };
+      Object.keys(MKS_COLSORT).forEach(function (c) { var i = MKS_COLSORT[c].indexOf(sv); if (i >= 0) cur = { col: c, dir: i ? 'desc' : 'asc' }; });
+      list.appendChild(mkListHead(['Business', 'Type, place and people', 'Tags', 'Filed'], 'sos', {
+        col: cur.col, dir: cur.dir,
+        on: function (c) { var n = mkSortNext(cur, c); document.getElementById('mksSort').value = MKS_COLSORT[c][n.dir === 'asc' ? 0 : 1]; mksLoad(); },
+      }));
       mkColsApply(list, 'sos');
       list.setAttribute('role', 'list');
       mksRows.forEach(function (f) {
@@ -14969,6 +15039,8 @@
 
     function mksDetail(f) {
       var d = el('div', 'mk-sos-detail');
+      // The filing's facts as one card of label / value pairs.
+      var facts = el('dl', 'mks-facts');
       var t = function (s) { return String(s || '').toLowerCase().replace(/\b\w/g, function (c) { return c.toUpperCase(); }); };
       [
         ['Filed', f.entity_type + ', effective ' + (f.effective_date || '?') + ', charter ' + f.charter],
@@ -14976,7 +15048,12 @@
         ['People', t(f.associates) || 'None named'],
         ['Statutory agent', [t(f.agent_name), t(f.agent_city)].filter(Boolean).join(', ')],
         ['Notes', (f.notes || []).join(', ')],
-      ].forEach(function (x) { if (x[1]) d.appendChild(row(x[0], x[1])); });
+      ].forEach(function (x) {
+        if (!x[1]) return;
+        facts.appendChild(el('dt', null, x[0]));
+        facts.appendChild(el('dd', null, x[1]));
+      });
+      d.appendChild(facts);
       d.appendChild(mksSiteBlock(f));
       var acts = el('div', 'mk-rule-acts');
       var b = function (label, cls, fn) { var x = el('button', 'ct-btn sm' + (cls ? ' ' + cls : ''), label); x.type = 'button'; x.addEventListener('click', fn); acts.appendChild(x); };
