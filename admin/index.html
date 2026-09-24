@@ -812,6 +812,15 @@
     .ct-btn.sm { min-height:32px; padding:0.3rem 0.6rem; font-size:0.62rem; }
     .ct-btn:disabled { opacity:0.5; cursor:default; }
     .ct-tiles .tile b.bad { color:#ef4444; }
+    /* New businesses: status buttons, then one row of filters under them, then sort and the two hides. */
+    .mks-filterbar { display:flex; flex-direction:column; gap:0.55rem; margin-bottom:0.7rem; }
+    .mks-filterbar .ct-filters { flex:none; }
+    .mks-tools { display:grid; grid-template-columns:minmax(12rem, 1.6fr) repeat(4, minmax(0, 1fr)); gap:0.5rem; align-items:center; }
+    .mks-tools select, .mks-tools input[type=search] { width:100%; min-width:0; box-sizing:border-box; }
+    .mks-tools2 { display:flex; flex-wrap:wrap; align-items:center; gap:0.5rem 1.1rem; }
+    .mks-tools2 select { min-width:12rem; }
+    @media (max-width:980px) { .mks-tools { grid-template-columns:repeat(2, minmax(0, 1fr)); } .mks-tools .mks-q { grid-column:1 / -1; } }
+    @media (max-width:480px) { .mks-tools { grid-template-columns:1fr; } .mks-tools2 select { min-width:0; width:100%; } }
     .ct-bar { display:flex; gap:0.5rem; align-items:center; flex-wrap:wrap; justify-content:space-between; margin-bottom:0.6rem; }
     .ct-filters { padding:0; margin:0; flex:1 1 auto; min-width:0; }
     .ct-qsrc { display:flex; align-items:center; gap:0.45rem; }
@@ -821,6 +830,7 @@
     .ct-qsort .fpill i { margin-right:0.25rem; }
     @media (max-width:560px) { .ct-qsrc { flex:1 1 100%; } .ct-qsrc select { flex:1; } .ct-qsort { justify-content:flex-start; } }
     .ct-tools { display:flex; gap:0.4rem; align-items:center; flex:1 1 320px; justify-content:flex-end; min-width:0; }
+    .mks-q input { width:100%; box-sizing:border-box; min-height:36px; padding:0.45rem 0.65rem; border-radius:8px; border:1px solid var(--line); background:var(--bg); color:var(--text); font-family:inherit; font-size:0.85rem; }
     .ct-tools input { flex:1 1 180px; min-width:0; min-height:36px; padding:0.45rem 0.65rem; border-radius:8px; border:1px solid var(--line); background:var(--bg); color:var(--text); font-family:inherit; font-size:0.85rem; }
     .ct-err { color:#e08585; font-size:0.8rem; margin-top:0.5rem; }
     .ct-sugg { margin-top:0.6rem; font-size:0.76rem; color:var(--muted); display:flex; flex-wrap:wrap; gap:0.35rem; align-items:center; }
@@ -2051,7 +2061,7 @@
           </div>
         </div>
       </div>
-      <div class="ct-bar">
+      <div class="mks-filterbar">
         <div class="filters ct-filters" id="mksFilters">
           <button type="button" class="fpill on" data-status="">Not passed</button>
           <button type="button" class="fpill" data-status="shortlist">Shortlist</button>
@@ -2059,7 +2069,9 @@
           <button type="button" class="fpill" data-status="passed">Passed</button>
           <button type="button" class="fpill" data-status="all">Everything</button>
         </div>
-        <div class="ct-tools">
+        <div class="mks-tools">
+          <div class="mks-q"><label for="mksQ" class="sr-only">Search new businesses</label>
+          <input type="search" id="mksQ" placeholder="Name, city, owner, charter" autocomplete="off"></div>
           <label for="mksCounty" class="sr-only">County</label>
           <select id="mksCounty"><option value="">All six counties</option></select>
           <label for="mksMonth" class="sr-only">Month</label>
@@ -2068,12 +2080,12 @@
           <select id="mksVertical"><option value="">Any kind of business</option><option value="none">Unclassified (name says nothing)</option></select>
           <label for="mksSite" class="sr-only">Website</label>
           <select id="mksSite"><option value="">Any website</option><option value="found">Website found</option><option value="email">Has an email</option><option value="none">No website</option><option value="searched">Searched</option><option value="unsearched">Not searched</option><option value="pending">Waiting for a search</option><option value="skipped">Skipped (holdings, finance, realty)</option></select>
+        </div>
+        <div class="mks-tools2">
           <label for="mksSort" class="sr-only">Sort</label>
           <select id="mksSort"><option value="score">Best fit first</option><option value="newest">Filed, newest first</option><option value="oldest">Filed, oldest first</option><option value="name">Name, A to Z</option><option value="name_desc">Name, Z to A</option><option value="place">City, A to Z</option><option value="place_desc">City, Z to A</option><option value="kind">Kind of business, A to Z</option><option value="kind_desc">Kind of business, Z to A</option></select>
           <label class="mk-check mk-inline"><input type="checkbox" id="mksHideHold" checked> Hide holdings, finance and realty</label>
           <label class="mk-check mk-inline"><input type="checkbox" id="mksHideUncl" checked> Hide unclassified</label>
-          <label for="mksQ" class="sr-only">Search new businesses</label>
-          <input type="search" id="mksQ" placeholder="Name, city, owner, charter" autocomplete="off">
         </div>
       </div>
       <div id="mksList"><div class="state">Loading&hellip;</div></div>
@@ -15246,6 +15258,8 @@
     // Whether a person should search again, or whether the business is offline for now.
     function mksAssess(f, ev) {
       var why = (ev.reasons || []).join(' ');
+      if (f.site_status === 'found' && /same owners re-forming/.test(why)) return 'Their website, most likely: it names the owner on the filing. But it is an established business re-forming, not a new one, so skip the congratulations.';
+      if (f.site_status === 'found' && /years before this filing/.test(why)) return 'The site belongs to a business with this name that dates from years before this filing. It may be an older business, or the same owners re-forming. Check before writing; if it is theirs, skip the congratulations.';
       if (f.site_status === 'found') return f.site_confidence >= 70
         ? 'Confident this is their website. Check it before writing.'
         : 'Probably their website, but not certain. Open it and confirm before writing.';
