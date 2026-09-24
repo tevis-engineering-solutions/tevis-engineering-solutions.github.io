@@ -551,15 +551,36 @@
     .custpick-sel[hidden] { display:none; }
     @media (max-width:480px) { #invtFilters { flex-wrap:wrap; } #invtFilters .fpill { padding:0.4rem 0.6rem; font-size:0.66rem; letter-spacing:0.02em; } }
     /* ---- finance ---- */
-    .fin-bar { display:flex; flex-direction:column; align-items:center; gap:0.65rem; margin:0.4rem 0 1.1rem; }
-    .fin-bar .filters { padding:0; margin:0; max-width:none; justify-content:center; flex-wrap:wrap; overflow:visible; }
-    .fin-nav { display:flex; align-items:center; justify-content:center; gap:0.5rem; }
-    .fin-arrow { font-size:1.3rem; line-height:1; width:36px; height:36px; border-radius:999px; border:1px solid var(--line); background:var(--card); color:var(--text); cursor:pointer; }
-    .fin-arrow:hover, .fin-today:hover { border-color:var(--green); }
-    .fin-label { font-family:"Montserrat",sans-serif; font-weight:800; font-size:1.15rem; min-width:11rem; text-align:center; }
-    .fin-today { font-family:"Montserrat",sans-serif; font-size:0.66rem; font-weight:700; text-transform:uppercase; letter-spacing:0.04em; padding:0.35rem 0.7rem; border-radius:999px; border:1px solid var(--line); background:var(--card); color:var(--muted); cursor:pointer; }
-    .fin-export { display:flex; justify-content:center; }
-    .fin-export select { min-width:14rem; text-align:center; text-align-last:center; font-family:"Montserrat",sans-serif; font-size:0.7rem; font-weight:700; text-transform:uppercase; letter-spacing:0.03em; padding:0.5rem 0.8rem; border-radius:999px; border:1px solid var(--line); background:linear-gradient(135deg,var(--gold),#e0b840); color:#0d1710; cursor:pointer; }
+    /* ---- finance and reports: one toolbar across the width. The period and its arrows
+       on the left, the Month / Quarter / Year switch and Export on the right. Squared
+       corners and a segmented control, to match the Inbox. */
+    .fin-bar { display:flex; align-items:center; flex-wrap:wrap; gap:0.75rem 1rem; margin:0.4rem 0 1.1rem; padding:0.6rem 0.75rem; border:1px solid var(--line); border-radius:10px; background:var(--card); }
+    .fin-bar .fin-nav { order:1; display:flex; align-items:center; gap:0.4rem; margin-right:auto; min-width:0; }
+    .fin-bar .fin-periods { order:2; }
+    .fin-bar .fin-export { order:3; }
+    .fin-arrow { display:inline-flex; align-items:center; justify-content:center; font-size:1.25rem; line-height:1; width:34px; height:34px; border-radius:7px; border:1px solid var(--line); background:var(--bg); color:var(--text); cursor:pointer; padding:0 0 2px; }
+    .fin-arrow:hover, .fin-today:hover { border-color:rgba(74,172,101,0.6); background:rgba(74,172,101,0.08); }
+    .fin-label { font-family:"Montserrat",sans-serif; font-weight:800; font-size:1.2rem; min-width:10.5rem; text-align:center; white-space:nowrap; }
+    .fin-today { font:inherit; font-size:0.78rem; font-weight:500; padding:0 0.75rem; min-height:34px; border-radius:7px; border:1px solid var(--line); background:var(--bg); color:var(--muted); cursor:pointer; margin-left:0.2rem; }
+    .fin-today:hover { color:var(--text); }
+    .fin-bar .filters.fin-periods { display:inline-flex; flex-wrap:nowrap; gap:2px; padding:3px; margin:0; max-width:none; overflow:visible; border:1px solid var(--line); border-radius:8px; background:var(--bg); }
+    .fin-bar .fpill { font-family:inherit; font-size:0.8rem; font-weight:500; text-transform:none; letter-spacing:0; padding:0 0.9rem; min-height:30px; border:0; border-radius:6px; background:none; color:var(--muted); }
+    .fin-bar .fpill:hover { color:var(--text); }
+    .fin-bar .fpill.on { background:rgba(200,152,48,0.16); color:var(--gold); box-shadow:inset 0 0 0 1px rgba(200,152,48,0.45); font-weight:600; }
+    .fin-export { display:flex; }
+    .fin-export select { -webkit-appearance:none; appearance:none; min-width:0; font:inherit; font-size:0.8rem; font-weight:500; color:var(--text); min-height:36px; padding:0 2rem 0 0.8rem; border-radius:8px; border:1px solid var(--line); cursor:pointer;
+      background:var(--bg) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' fill='none' stroke='%23c89830' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") no-repeat right 0.7rem center / 10px 6px; }
+    .fin-export select:hover { border-color:rgba(74,172,101,0.6); }
+    .fin-export select option { background:var(--card); color:var(--text); }
+    @media (max-width:900px) {
+      .fin-bar .fin-nav { width:100%; margin-right:0; justify-content:space-between; }
+      .fin-label { flex:1; min-width:0; font-size:1.05rem; }
+      .fin-bar .fin-periods { flex:1; }
+      .fin-bar .fpill { flex:1; padding:0 0.5rem; }
+    }
+    @media (max-width:520px) {
+      .fin-bar .fin-export, .fin-bar .fin-export select { width:100%; }
+    }
     .fin-tiles { grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); }
     .tile b.neg { color:#ef4444; }
     .tile b.warn { color:var(--gold); }
@@ -770,12 +791,107 @@
     .more-btn { width:100%; margin-top:0.4rem; font-family:"Montserrat",sans-serif; font-size:0.7rem; font-weight:700; text-transform:uppercase; letter-spacing:0.04em; padding:0.6rem; border-radius:10px; border:1px dashed var(--line); background:transparent; color:var(--muted); cursor:pointer; }
     .more-btn:hover { border-color:var(--green); color:var(--text); }
     /* ---- inbox, messages, attachments ---- */
-    .inbox-sec { margin-bottom: 1rem; }
-    .inbox-sec .row-main .unread { display:inline-block; width:8px; height:8px; border-radius:50%; background:var(--gold); margin-right:0.45rem; vertical-align:middle; }
     .tk .unread-dot { display:inline-block; width:8px; height:8px; border-radius:50%; background:var(--gold); margin-right:0.35rem; vertical-align:middle; }
-    .conv { border:1px solid var(--line); border-radius:14px; background:var(--card); padding:1rem; }
-    .conv h2 { font-family:"Montserrat",sans-serif; font-size:1.05rem; margin-bottom:0.15rem; }
-    .conv .who { font-size:0.8rem; color:var(--muted); margin-bottom:0.8rem; }
+
+    /* ---- Inbox: a two-pane mail layout (list | reader). Square-ish corners, flat rows,
+       no pill buttons. On a desktop the panel fills the screen and each pane scrolls on its
+       own; on a phone the panes stack and an open thread replaces the list. */
+    .mbx { display:grid; grid-template-columns:minmax(0,340px) minmax(0,1fr); border:1px solid var(--line); border-radius:10px; background:var(--card); overflow:hidden;
+      height:calc(100vh - var(--abar-h, 58px) - 56px - 2.6rem); min-height:520px; }
+    .mbx-list { display:flex; flex-direction:column; min-height:0; border-right:1px solid var(--line); background:rgba(9,18,12,0.35); }
+    .mbx-lhead { display:flex; align-items:center; justify-content:space-between; gap:0.6rem; padding:0.85rem 1rem; border-bottom:1px solid var(--line); }
+    .mbx-lhead h2 { font-family:"Montserrat",sans-serif; font-size:0.95rem; font-weight:700; letter-spacing:0.02em; }
+    .mbx-seg { display:inline-flex; border:1px solid var(--line); border-radius:7px; padding:2px; background:var(--bg); }
+    .mbx-seg button { font:inherit; font-size:0.74rem; font-weight:600; color:var(--muted); background:none; border:0; border-radius:5px; padding:0.35rem 0.7rem; cursor:pointer; min-height:30px; }
+    .mbx-seg button:hover { color:var(--text); }
+    .mbx-seg button.on { background:var(--card-2); color:var(--text); box-shadow:inset 0 0 0 1px rgba(74,172,101,0.35); }
+    .mbx-items { flex:1; overflow-y:auto; min-height:0; }
+    .mbx-group { display:flex; align-items:center; justify-content:space-between; padding:0.8rem 1rem 0.35rem; font-size:0.66rem; font-weight:700; letter-spacing:0.08em; text-transform:uppercase; color:var(--muted); }
+    .mbx-group .n { font-variant-numeric:tabular-nums; }
+    .mbx-item { display:flex; align-items:flex-start; gap:0.7rem; width:100%; text-align:left; font:inherit; color:inherit; background:none; border:0; border-top:1px solid rgba(44,66,50,0.55);
+      padding:0.75rem 1rem 0.75rem calc(1rem - 3px); border-left:3px solid transparent; cursor:pointer; }
+    .mbx-group + .mbx-item { border-top-color:transparent; }
+    .mbx-item:hover { background:rgba(74,172,101,0.06); }
+    .mbx-item.on { background:rgba(74,172,101,0.12); border-left-color:var(--green); }
+    .mbx-item.unread { border-left-color:var(--gold); }
+    .mbx-item.unread.on { border-left-color:var(--green); }
+    .mbx-item:focus-visible { outline:2px solid var(--green); outline-offset:-2px; }
+    .mbx-body { flex:1; min-width:0; display:flex; flex-direction:column; gap:0.15rem; }
+    .mbx-top { display:flex; align-items:baseline; gap:0.5rem; }
+    .mbx-name { flex:1; min-width:0; font-size:0.86rem; font-weight:500; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+    .mbx-item.unread .mbx-name { font-weight:700; color:#fff; }
+    .mbx-when { flex:0 0 auto; font-size:0.7rem; color:var(--muted); font-variant-numeric:tabular-nums; }
+    .mbx-item.unread .mbx-when { color:var(--gold); }
+    .mbx-line { font-size:0.78rem; color:var(--muted); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+    .mbx-tags { display:flex; flex-wrap:wrap; gap:0.3rem; margin-top:0.2rem; }
+    .mbx-tag { font-size:0.62rem; font-weight:600; letter-spacing:0.02em; padding:0.1rem 0.4rem; border-radius:4px; border:1px solid var(--line); color:var(--muted); background:var(--bg); }
+    .mbx-tag.warn { color:var(--gold); border-color:rgba(200,152,48,0.45); }
+    .mbx-tag.bad { color:#f87171; border-color:rgba(239,68,68,0.5); }
+    .mbx-av { flex:0 0 auto; width:34px; height:34px; border-radius:8px; display:inline-flex; align-items:center; justify-content:center; font-family:"Montserrat",sans-serif; font-size:0.72rem; font-weight:700; letter-spacing:0.02em;
+      color:#cfe8d5; background:rgba(74,172,101,0.16); border:1px solid rgba(74,172,101,0.28); }
+    .mbx-av.tk { color:var(--gold); background:rgba(200,152,48,0.1); border-color:rgba(200,152,48,0.3); font-size:0.8rem; }
+    .mbx-av.me { color:#0d1710; background:linear-gradient(135deg,var(--gold),#e0b840); border-color:transparent; font-size:0.6rem; }
+    .mbx-av.lg { width:42px; height:42px; border-radius:10px; font-size:0.85rem; }
+    .mbx-empty { display:flex; flex-direction:column; align-items:center; justify-content:center; gap:0.3rem; text-align:center; padding:2.4rem 1.2rem; color:var(--muted); font-size:0.82rem; }
+    .mbx-empty i { font-size:1.5rem; color:rgba(138,164,141,0.55); margin-bottom:0.3rem; }
+    .mbx-empty b { color:var(--text); font-family:"Montserrat",sans-serif; font-size:0.9rem; }
+    .mbx-empty.reader { flex:1; }
+
+    .mbx-read { display:flex; flex-direction:column; min-width:0; min-height:0; }
+    .mbx-rhead { display:flex; align-items:center; gap:0.8rem; padding:0.85rem 1.1rem; border-bottom:1px solid var(--line); }
+    .mbx-rwho { flex:1; min-width:0; }
+    .mbx-rwho h2 { font-family:"Montserrat",sans-serif; font-size:1rem; font-weight:700; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+    .mbx-rmeta { display:flex; flex-wrap:wrap; align-items:center; gap:0.2rem 0.6rem; font-size:0.76rem; color:var(--muted); margin-top:0.1rem; }
+    .mbx-rmeta span + span:not(.mbx-tag)::before { content:"·"; margin-right:0.6rem; }
+    .mbx-racts { display:flex; gap:0.4rem; flex:0 0 auto; }
+    .mbx-btn, .mbx-icon { display:inline-flex; align-items:center; justify-content:center; gap:0.45rem; font:inherit; font-size:0.78rem; font-weight:500; color:var(--text); background:var(--bg); border:1px solid var(--line); border-radius:7px; padding:0 0.75rem; min-height:36px; cursor:pointer; white-space:nowrap; }
+    .mbx-btn:hover, .mbx-icon:hover { border-color:rgba(74,172,101,0.6); background:rgba(74,172,101,0.08); }
+    .mbx-btn i { color:var(--muted); font-size:0.82rem; }
+    .mbx-icon { width:36px; padding:0; }
+    .mbx-back { display:none; }
+    .mbx-thread { flex:1; min-height:0; overflow-y:auto; padding:0.4rem 1.1rem; }
+    .mbx-msg { display:flex; gap:0.75rem; padding:0.9rem 0; border-bottom:1px solid rgba(44,66,50,0.55); }
+    .mbx-msg:last-child { border-bottom:0; }
+    .mbx-mbody { flex:1; min-width:0; }
+    .mbx-mhead { display:flex; align-items:baseline; gap:0.6rem; margin-bottom:0.25rem; }
+    .mbx-mhead b { font-size:0.85rem; }
+    .mbx-msg.staff .mbx-mhead b { color:var(--gold); }
+    .mbx-mhead time { font-size:0.72rem; color:var(--muted); }
+    .mbx-text { font-size:0.88rem; line-height:1.55; white-space:pre-wrap; word-wrap:break-word; }
+    .mbx-msg .m-files { margin-top:0.55rem; }
+    .mbx-msg .m-file { border-radius:6px; }
+    .mbx-compose { margin:0 1.1rem 1.1rem; border:1px solid var(--line); border-radius:9px; background:var(--bg); }
+    .mbx-compose:focus-within { border-color:rgba(74,172,101,0.6); box-shadow:0 0 0 3px rgba(74,172,101,0.12); }
+    .mbx-compose textarea { display:block; width:100%; box-sizing:border-box; border:0; background:transparent; color:var(--text); font:inherit; font-size:0.88rem; line-height:1.5; padding:0.75rem 0.85rem; resize:vertical; min-height:84px; outline:none; }
+    .mbx-cbar { display:flex; align-items:center; flex-wrap:wrap; gap:0.45rem; padding:0.5rem 0.55rem; border-top:1px solid var(--line); }
+    .mbx-cbar .reply-tools { margin:0; display:flex; align-items:center; gap:0.45rem; }
+    .mbx-cbar .reply-tools select { font-family:inherit; font-size:0.78rem; font-weight:500; text-transform:none; letter-spacing:0; border-radius:7px; min-height:36px; padding:0 0.6rem; background:var(--card); }
+    .mbx-cbar .mbx-file { position:absolute; width:1px; height:1px; opacity:0; pointer-events:none; }
+    .mbx-hint { margin-left:auto; font-size:0.7rem; color:var(--muted); }
+    .mbx-send { display:inline-flex; align-items:center; gap:0.45rem; font-family:"Montserrat",sans-serif; font-size:0.8rem; font-weight:700; color:#0d1710; background:linear-gradient(135deg,var(--gold),#e0b840); border:0; border-radius:7px; padding:0 1rem; min-height:36px; cursor:pointer; }
+    .mbx-send:hover { filter:brightness(1.06); }
+    .mbx-send:disabled { opacity:0.6; cursor:default; }
+    @media (max-width:899px) {
+      .mbx { grid-template-columns:minmax(0,1fr); height:auto; min-height:0; }
+      .mbx-list { border-right:0; }
+      .mbx-read { display:none; }
+      .mbx.reading .mbx-list { display:none; }
+      .mbx.reading .mbx-read { display:flex; }
+      .mbx-back { display:inline-flex; }
+      .mbx-thread { max-height:none; }
+      .mbx-hint { display:none; }
+      .mbx-send { margin-left:auto; }
+    }
+    @media (max-width:520px) {
+      .mbx-racts .mbx-btn span { display:none; }
+      .mbx-racts .mbx-btn { width:36px; padding:0; }
+      .mbx-rhead { padding:0.75rem; gap:0.6rem; }
+      .mbx-rmeta { flex-direction:column; align-items:flex-start; gap:0; }
+      .mbx-rmeta span + span:not(.mbx-tag)::before { content:none; }
+      .mbx-rmeta span { max-width:100%; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+      .mbx-thread { padding:0.2rem 0.75rem; }
+      .mbx-compose { margin:0 0.75rem 0.75rem; }
+    }
     .msg .m-files { display:flex; flex-wrap:wrap; gap:0.35rem; margin-top:0.45rem; }
     .m-file { display:inline-flex; align-items:center; gap:0.35rem; font-size:0.72rem; padding:0.2rem 0.55rem; border-radius:999px; border:1px solid rgba(200,152,48,0.45); color:var(--gold); text-decoration:none; background:var(--bg); }
     .m-file:hover { background:rgba(200,152,48,0.14); }
@@ -1526,13 +1642,18 @@
   </main>
 
   <main class="wrap" id="viewInbox" aria-label="Inbox" hidden>
-    <div class="grid">
-      <section aria-label="Waiting on you">
-        <div id="inboxList"><div class="state">Loading&hellip;</div></div>
+    <div class="mbx" id="mbx">
+      <section class="mbx-list" aria-label="Waiting on you">
+        <div class="mbx-lhead">
+          <h2>Inbox</h2>
+          <div class="mbx-seg" id="mbxSeg" role="tablist" aria-label="Which threads">
+            <button type="button" role="tab" data-v="waiting" class="on" aria-selected="true">Waiting</button>
+            <button type="button" role="tab" data-v="all" aria-selected="false">All threads</button>
+          </div>
+        </div>
+        <div id="inboxList" class="mbx-items"><div class="mbx-empty"><b>Loading&hellip;</b></div></div>
       </section>
-      <section id="inboxDetail" aria-live="polite">
-        <div class="state">Pick a conversation or a ticket.</div>
-      </section>
+      <section id="inboxDetail" class="mbx-read" aria-live="polite"></section>
     </div>
   </main>
 
@@ -11232,12 +11353,14 @@
       setNavBadge('inbox', a.counts.inbox || 0);
       setNavBadge('finance', a.counts.paypal_review);
       homeAttentionEl.appendChild(mgmtPanel());
-      // API usage sits under Activity on the right, in its own slot so a refresh
-      // replaces it rather than adding a second one.
+      // Services sits on the left under the collapsible lists (homeAttentionEl is
+      // cleared on every render, so it never doubles up).
+      homeAttentionEl.appendChild(usageTile());
+      // The Claude tile stays under Activity on the right, in its own slot so a
+      // refresh replaces it rather than adding a second one.
       var aiSlot = document.getElementById('homeAi');
       aiSlot.textContent = '';
       aiSlot.appendChild(aiTile());
-      aiSlot.appendChild(usageTile());
     }
 
     // ---- outside services: counted by the Worker, Cloudflare from its analytics ----
@@ -11741,112 +11864,240 @@
     }
 
     // ---- the Inbox tab ---------------------------------------------------------
+    // A two-pane mail layout: the list of what is waiting on the left, the open thread
+    // on the right. On a phone the two stack and the reader replaces the list.
     var inboxListEl = document.getElementById('inboxList');
     var inboxDetailEl = document.getElementById('inboxDetail');
+    var mbxEl = document.getElementById('mbx');
+    var mbxView = 'waiting';     // 'waiting' or 'all'
+    var mbxOpenId = null;        // the conversation showing in the reader
+
+    function mbxInitials(s) {
+      var w = String(s || '?').replace(/@.*/, '').split(/[\s._-]+/).filter(Boolean);
+      return ((w[0] || '?').charAt(0) + (w.length > 1 ? w[w.length - 1].charAt(0) : '')).toUpperCase();
+    }
+    function mbxWhen(ts) {
+      if (!ts) return '';
+      var s = Math.floor(Date.now() / 1000) - ts;
+      if (s < 90) return 'now';
+      if (s < 3600) return Math.round(s / 60) + 'm';
+      if (s < 86400) return Math.round(s / 3600) + 'h';
+      if (s < 7 * 86400) return Math.round(s / 86400) + 'd';
+      return new Date(ts * 1000).toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
+    }
+    function mbxAvatar(text, cls) { return el('span', 'mbx-av' + (cls ? ' ' + cls : ''), text); }
+    function mbxTag(text, tone) { return el('span', 'mbx-tag' + (tone ? ' ' + tone : ''), text); }
+
+    // One list row. opts: {avatar, avatarCls, name, when, line, tags[], unread, active, onClick}
+    function mbxItem(o) {
+      var b = el('button', 'mbx-item' + (o.unread ? ' unread' : '') + (o.active ? ' on' : ''));
+      b.type = 'button';
+      b.appendChild(o.avatar);
+      var body = el('span', 'mbx-body');
+      var top = el('span', 'mbx-top');
+      top.appendChild(el('span', 'mbx-name', o.name));
+      top.appendChild(el('span', 'mbx-when', o.when || ''));
+      body.appendChild(top);
+      if (o.line) body.appendChild(el('span', 'mbx-line', o.line));
+      if (o.tags && o.tags.length) { var t = el('span', 'mbx-tags'); o.tags.forEach(function (x) { t.appendChild(x); }); body.appendChild(t); }
+      b.appendChild(body);
+      b.addEventListener('click', o.onClick);
+      return b;
+    }
+    function mbxGroup(title, n) {
+      var g = el('div', 'mbx-group');
+      g.appendChild(el('span', null, title));
+      if (n != null) g.appendChild(el('span', 'n', String(n)));
+      return g;
+    }
+    function mbxEmptyList(icon, title, sub) {
+      var e = el('div', 'mbx-empty');
+      var i = el('i', icon); i.setAttribute('aria-hidden', 'true'); e.appendChild(i);
+      e.appendChild(el('b', null, title));
+      if (sub) e.appendChild(el('span', null, sub));
+      return e;
+    }
+    function mbxSetView(v) {
+      mbxView = v;
+      Array.prototype.forEach.call(document.querySelectorAll('#mbxSeg button'), function (b) {
+        var on = b.getAttribute('data-v') === v;
+        b.classList.toggle('on', on); b.setAttribute('aria-selected', on ? 'true' : 'false');
+      });
+    }
+    Array.prototype.forEach.call(document.querySelectorAll('#mbxSeg button'), function (b) {
+      b.addEventListener('click', function () {
+        mbxSetView(b.getAttribute('data-v'));
+        if (mbxView === 'all') listAllConversations(); else loadInbox();
+      });
+    });
+    function mbxReaderEmpty() {
+      inboxDetailEl.textContent = '';
+      var e = mbxEmptyList('fa-regular fa-envelope-open', 'Select a conversation', 'Messages and tickets waiting on you are listed on the left.');
+      e.classList.add('reader');
+      inboxDetailEl.appendChild(e);
+      mbxEl.classList.remove('reading');
+      mbxOpenId = null;
+    }
+    mbxReaderEmpty();
 
     function loadInbox() {
+      if (mbxView === 'all') return listAllConversations();
       return api('/admin/inbox').then(function (r) {
         inboxListEl.textContent = '';
-        if (!r.ok) { inboxListEl.appendChild(el('div', 'state', 'Could not load the inbox.')); return; }
+        if (!r.ok) { inboxListEl.appendChild(mbxEmptyList('fa-solid fa-triangle-exclamation', 'Could not load the inbox', 'Try again in a moment.')); return; }
+        var now = Math.floor(Date.now() / 1000);
         var any = false;
-        var sec1 = function (title, n) { var s = el('section', 'cust-sec inbox-sec'); var h = el('h3', null, title); h.appendChild(el('span', 'n', String(n))); s.appendChild(h); return s; };
         if ((r.conversations || []).length) {
           any = true;
-          var s0 = sec1('Messages', r.conversations.length);
+          inboxListEl.appendChild(mbxGroup('Messages', r.conversations.length));
           r.conversations.forEach(function (c) {
-            var main = el('div', 'row-main'); main.appendChild(el('span', 'unread')); main.appendChild(el('b', null, c.holder_name || c.holder_email || 'Customer'));
-            var rw = row('', c.last_body + ' · ' + ago(Math.floor(Date.now() / 1000) - c.last_message_at) + ' ago', null, function () { openConversation(c.id); });
-            rw.querySelector('.row-main').replaceWith(main);
-            s0.appendChild(rw);
+            var who = c.holder_name || c.holder_email || 'Customer';
+            inboxListEl.appendChild(mbxItem({
+              avatar: mbxAvatar(mbxInitials(who)), name: who, when: mbxWhen(c.last_message_at),
+              line: c.last_body || '', unread: true, active: mbxOpenId === c.id,
+              onClick: function () { openConversation(c.id); },
+            }));
           });
-          inboxListEl.appendChild(s0);
         }
-        var tkRow = function (t, sub) {
-          var right = el('div', 'cust-badges');
-          right.appendChild(badge(t.priority, PRIORITY[t.priority] || '#8aa48d'));
-          if (t.sla && (t.sla.state === 'breached' || t.sla.state === 'due_soon')) right.appendChild(badge(t.sla.state === 'breached' ? 'late' : 'due soon', t.sla.state === 'breached' ? '#ef4444' : '#c89830'));
-          return row(t.ticket_number + ' · ' + (t.subject || ''), t.who + ' · ' + sub, right, function () { openObject('ticket', t.id); });
+        var tkItem = function (t, since, label) {
+          var tags = [mbxTag(t.priority, (t.priority === 'Critical' || t.priority === 'High') ? 'warn' : '')];
+          if (t.sla && t.sla.state === 'breached') tags.push(mbxTag('Late', 'bad'));
+          else if (t.sla && t.sla.state === 'due_soon') tags.push(mbxTag('Due soon', 'warn'));
+          tags.push(mbxTag(label));
+          var av = mbxAvatar('', 'tk'); var ic = el('i', 'fa-solid fa-headset'); ic.setAttribute('aria-hidden', 'true'); av.appendChild(ic);
+          return mbxItem({
+            avatar: av, name: (t.who || 'Customer'), when: mbxWhen(now - since),
+            line: t.ticket_number + ' · ' + (t.subject || '(no subject)'), tags: tags,
+            unread: label === 'Replied',
+            onClick: function () { openObject('ticket', t.id); },
+          });
         };
         if ((r.customer_replied || []).length) {
           any = true;
-          var s1 = sec1('Customer replied', r.customer_replied.length);
-          r.customer_replied.forEach(function (t) { s1.appendChild(tkRow(t, 'wrote ' + ago(t.idle_sec) + ' ago')); });
-          inboxListEl.appendChild(s1);
+          inboxListEl.appendChild(mbxGroup('Customer replied', r.customer_replied.length));
+          r.customer_replied.forEach(function (t) { inboxListEl.appendChild(tkItem(t, t.idle_sec, 'Replied')); });
         }
         if ((r.unanswered || []).length) {
           any = true;
-          var s2 = sec1('Unanswered tickets', r.unanswered.length);
-          r.unanswered.forEach(function (t) { s2.appendChild(tkRow(t, 'waiting ' + ago(t.age_sec))); });
-          inboxListEl.appendChild(s2);
+          inboxListEl.appendChild(mbxGroup('Unanswered tickets', r.unanswered.length));
+          r.unanswered.forEach(function (t) { inboxListEl.appendChild(tkItem(t, t.age_sec, 'New ticket')); });
         }
-        var allBtn = licAction('All conversations', 'ct-btn sm', function () { listAllConversations(); });
-        inboxListEl.appendChild(allBtn);
-        if (!any) { var e = el('div', 'att-empty'); e.appendChild(el('b', null, 'Inbox zero.')); e.appendChild(document.createTextNode('Nobody is waiting on a reply.')); inboxListEl.insertBefore(e, allBtn); }
+        if (!any) inboxListEl.appendChild(mbxEmptyList('fa-regular fa-circle-check', 'Inbox zero', 'Nobody is waiting on a reply.'));
         setNavBadge('inbox', r.counts ? r.counts.inbox : 0);
       });
     }
 
     function listAllConversations() {
-      api('/admin/conversations').then(function (r) {
+      mbxSetView('all');
+      return api('/admin/conversations').then(function (r) {
         inboxListEl.textContent = '';
-        if (!r.ok) return;
-        var s = el('section', 'cust-sec inbox-sec');
-        s.appendChild(el('h3', null, 'All conversations (' + r.conversations.length + ')'));
-        if (!r.conversations.length) s.appendChild(el('div', 'row-sub', 'None yet. Start one from a customer file, or wait for a customer to write.'));
+        if (!r.ok) { inboxListEl.appendChild(mbxEmptyList('fa-solid fa-triangle-exclamation', 'Could not load conversations', 'Try again in a moment.')); return; }
+        if (!r.conversations.length) { inboxListEl.appendChild(mbxEmptyList('fa-regular fa-comments', 'No conversations yet', 'Start one from a customer file, or wait for a customer to write.')); return; }
+        inboxListEl.appendChild(mbxGroup('All threads', r.conversations.length));
         r.conversations.forEach(function (c) {
-          var right = el('div', 'cust-badges');
-          if (c.status === 'archived') right.appendChild(badge('archived', '#6a8ba8'));
-          var main = el('div', 'row-main'); if (c.unread) main.appendChild(el('span', 'unread')); main.appendChild(el('b', null, c.holder_name || c.holder_email || 'Customer'));
-          var rw = row('', (c.last_body || 'No messages yet') + (c.last_message_at ? ' · ' + ago(Math.floor(Date.now() / 1000) - c.last_message_at) + ' ago' : ''), right, function () { openConversation(c.id); });
-          rw.querySelector('.row-main').replaceWith(main);
-          s.appendChild(rw);
+          var who = c.holder_name || c.holder_email || 'Customer';
+          inboxListEl.appendChild(mbxItem({
+            avatar: mbxAvatar(mbxInitials(who)), name: who, when: mbxWhen(c.last_message_at),
+            line: c.last_body || 'No messages yet', unread: !!c.unread, active: mbxOpenId === c.id,
+            tags: c.status === 'archived' ? [mbxTag('Archived')] : [],
+            onClick: function () { openConversation(c.id); },
+          }));
         });
-        inboxListEl.appendChild(s);
-        inboxListEl.appendChild(licAction('Back to the inbox', null, loadInbox));
       });
+    }
+
+    function mbxMark() {
+      Array.prototype.forEach.call(inboxListEl.querySelectorAll('.mbx-item.on'), function (b) { b.classList.remove('on'); });
     }
 
     function openConversation(id) {
       showView('inbox');
       history.replaceState(null, '', '#m=' + id);
+      mbxOpenId = id;
+      mbxMark();
+      mbxEl.classList.add('reading');
       inboxDetailEl.textContent = '';
-      inboxDetailEl.appendChild(el('div', 'state', 'Loading…'));
+      inboxDetailEl.appendChild(mbxEmptyList('fa-solid fa-spinner fa-spin', 'Loading…'));
       api('/admin/conversations/' + id).then(function (r) {
         inboxDetailEl.textContent = '';
-        if (!r.ok) { inboxDetailEl.appendChild(el('div', 'state', 'Could not open that conversation.')); return; }
+        if (!r.ok) { inboxDetailEl.appendChild(mbxEmptyList('fa-solid fa-triangle-exclamation', 'Could not open that conversation')); return; }
         var c = r.conversation, h = r.holder;
-        var p = el('section', 'conv');
-        p.appendChild(el('h2', null, (h.name || h.email || 'Customer')));
-        var whoLine = [c.holder_type === 'org' ? 'Company thread' : 'Personal thread', h.email, c.status === 'archived' ? 'archived' : ''].filter(Boolean).join(' · ');
-        p.appendChild(el('div', 'who', whoLine));
-        var ctl = el('div', 'ctl');
-        ctl.appendChild(licAction('Open their file', null, function () { openObject(c.holder_type === 'org' ? 'org' : 'customer', c.holder_id); }));
-        ctl.appendChild(licAction(c.status === 'archived' ? 'Reopen' : 'Archive', null, function () {
+        var who = h.name || h.email || 'Customer';
+
+        // Header: back (phone only), who, and the two actions.
+        var head = el('div', 'mbx-rhead');
+        var back = el('button', 'mbx-icon mbx-back'); back.type = 'button'; back.setAttribute('aria-label', 'Back to the list');
+        var bi = el('i', 'fa-solid fa-arrow-left'); bi.setAttribute('aria-hidden', 'true'); back.appendChild(bi);
+        back.addEventListener('click', function () { mbxReaderEmpty(); history.replaceState(null, '', '#inbox'); loadInbox(); });
+        head.appendChild(back);
+        head.appendChild(mbxAvatar(mbxInitials(who), 'lg'));
+        var id2 = el('div', 'mbx-rwho');
+        id2.appendChild(el('h2', null, who));
+        var meta = el('div', 'mbx-rmeta');
+        meta.appendChild(el('span', null, c.holder_type === 'org' ? 'Company thread' : 'Personal thread'));
+        if (h.email) meta.appendChild(el('span', null, h.email));
+        if (c.status === 'archived') meta.appendChild(mbxTag('Archived'));
+        id2.appendChild(meta);
+        head.appendChild(id2);
+        var acts = el('div', 'mbx-racts');
+        var act = function (icon, label, fn) {
+          var b = el('button', 'mbx-btn'); b.type = 'button';
+          var i = el('i', icon); i.setAttribute('aria-hidden', 'true'); b.appendChild(i);
+          b.appendChild(el('span', null, label));
+          b.addEventListener('click', fn);
+          return b;
+        };
+        acts.appendChild(act('fa-regular fa-folder-open', 'Open file', function () { openObject(c.holder_type === 'org' ? 'org' : 'customer', c.holder_id); }));
+        acts.appendChild(act(c.status === 'archived' ? 'fa-solid fa-box-open' : 'fa-solid fa-box-archive', c.status === 'archived' ? 'Reopen' : 'Archive', function () {
           api('/admin/conversations/' + id, { method: 'PATCH', body: { status: c.status === 'archived' ? 'open' : 'archived' } }).then(function (x) {
             if (!x.ok) return toast(x.error === 'another_open' ? 'A newer thread is already open for them' : 'Could not update');
             toast(c.status === 'archived' ? 'Reopened' : 'Archived'); openConversation(id); loadInbox();
           });
         }));
-        p.appendChild(ctl);
-        var th = el('div', 'thread');
-        if (!r.messages.length) th.appendChild(el('div', 'tk-meta', 'No messages yet.'));
+        head.appendChild(acts);
+        inboxDetailEl.appendChild(head);
+
+        // The thread, oldest first, each message a row rather than a bubble.
+        var th = el('div', 'mbx-thread');
+        if (!r.messages.length) th.appendChild(mbxEmptyList('fa-regular fa-comment', 'No messages yet', 'Write the first one below. They get an email with a link to reply here.'));
         r.messages.forEach(function (m) {
-          var d = el('div', 'msg ' + m.author_type);
-          d.appendChild(el('div', 'm-meta', (m.author_type === 'staff' ? 'You' : (m.author || 'Customer')) + ' · ' + fmt(m.created_at)));
-          d.appendChild(document.createTextNode(m.body));
-          if (m.attachments && m.attachments.length) d.appendChild(fileChips(m.attachments, '/admin/attachments'));
+          var mine = m.author_type === 'staff';
+          var name = mine ? 'You' : (m.author || who);
+          var d = el('article', 'mbx-msg ' + (mine ? 'staff' : 'customer'));
+          d.appendChild(mbxAvatar(mine ? 'TES' : mbxInitials(name), mine ? 'me' : ''));
+          var b = el('div', 'mbx-mbody');
+          var mh = el('div', 'mbx-mhead');
+          mh.appendChild(el('b', null, name));
+          mh.appendChild(el('time', null, fmt(m.created_at)));
+          b.appendChild(mh);
+          b.appendChild(el('div', 'mbx-text', m.body));
+          if (m.attachments && m.attachments.length) b.appendChild(fileChips(m.attachments, '/admin/attachments'));
+          d.appendChild(b);
           th.appendChild(d);
         });
-        p.appendChild(th);
+        inboxDetailEl.appendChild(th);
+
+        // Composer: the box, then a toolbar with attach, canned reply and Send.
+        var comp = el('div', 'mbx-compose');
         var ta = document.createElement('textarea');
-        ta.rows = 3; ta.placeholder = 'Write a message… they get an email with a link to reply here.';
+        ta.rows = 3; ta.placeholder = 'Write a message. They get an email with a link to reply here.';
         ta.setAttribute('aria-label', 'Message');
-        p.appendChild(ta);
+        comp.appendChild(ta);
         var tools = replyTools(ta);
-        p.appendChild(tools.el);
-        var rowEl = el('div', 'reply-row');
-        var send = el('button', 'prim', 'Send message'); send.type = 'button';
-        send.addEventListener('click', function () {
+        var bar = el('div', 'mbx-cbar');
+        var fileIn = tools.el.querySelector('input[type=file]');
+        var attach = el('button', 'mbx-btn'); attach.type = 'button';
+        var ai = el('i', 'fa-solid fa-paperclip'); ai.setAttribute('aria-hidden', 'true'); attach.appendChild(ai);
+        attach.appendChild(el('span', null, 'Attach'));
+        attach.addEventListener('click', function () { fileIn.click(); });
+        fileIn.classList.add('mbx-file');
+        bar.appendChild(attach);
+        bar.appendChild(tools.el);
+        bar.appendChild(el('span', 'mbx-hint', 'Ctrl + Enter to send'));
+        var send = el('button', 'mbx-send'); send.type = 'button';
+        var si = el('i', 'fa-solid fa-paper-plane'); si.setAttribute('aria-hidden', 'true'); send.appendChild(si);
+        send.appendChild(el('span', null, 'Send'));
+        var doSend = function () {
           var msg = ta.value.trim();
           if (!msg) return toast('Nothing to send');
           send.disabled = true;
@@ -11859,10 +12110,13 @@
             toast((x.emailed && x.emailed.length ? 'Sent · emailed ' + x.emailed.join(', ') : 'Sent · no email (they switched message mail off)') + refusedNote(x.refused));
             openConversation(id);
           }, function (e) { send.disabled = false; toast(e.message || 'Could not read a file'); });
-        });
-        rowEl.appendChild(send);
-        p.appendChild(rowEl);
-        inboxDetailEl.appendChild(p);
+        };
+        send.addEventListener('click', doSend);
+        ta.addEventListener('keydown', function (e) { if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) { e.preventDefault(); doSend(); } });
+        bar.appendChild(send);
+        comp.appendChild(bar);
+        inboxDetailEl.appendChild(comp);
+        th.scrollTop = th.scrollHeight;
         setTimeout(loadInbox, 300);
       });
     }
