@@ -1114,6 +1114,15 @@
     .mk-stages { grid-template-columns:repeat(auto-fit,minmax(92px,1fr)); }
     .mk-stages .tile { font:inherit; color:inherit; text-align:left; }
     .mk-stages .tile.on { border-color:var(--gold); }
+    #quoteNewBtn[hidden] { display:none; }
+    /* On a phone the ten stages are one scrolling strip of chips, not five rows of tiles. */
+    @media (max-width:600px) {
+      .mk-stages { display:flex; gap:0.4rem; overflow-x:auto; scrollbar-width:none; overscroll-behavior-x:contain; padding-bottom:0.1rem; }
+      .mk-stages::-webkit-scrollbar { display:none; }
+      .mk-stages .tile { flex:0 0 auto; display:flex; align-items:baseline; gap:0.4rem; padding:0.45rem 0.7rem; border-radius:999px; min-height:36px; box-sizing:border-box; }
+      .mk-stages .tile s { font-size:0.62rem; }
+      .mk-stages .tile b { margin-top:0; font-size:0.9rem; }
+    }
     #viewMarketing .ct-tools { flex-wrap:wrap; }
     #viewMarketing .ct-tools select { max-width:11rem; }
     /* An open lead replaces the list, so the list's stage tiles and filters go with it;
@@ -5821,6 +5830,7 @@
 
     function quoteFormOpen(q, c) {
       quoteForm.hidden = false;
+      document.getElementById('quoteNewBtn').hidden = true;  // one quote at a time; Cancel or Save brings it back
       document.getElementById('quoteId').value = q ? q.id : '';
       document.getElementById('quoteFormTitle').textContent = q ? 'Edit ' + q.number : 'New quote';
       ['qtEmail', 'qtName', 'qtCompany', 'qtTitle', 'qtIntro', 'qtExclusions', 'qtNextStep', 'qtBrief'].forEach(function (id) { document.getElementById(id).value = ''; });
@@ -5849,7 +5859,7 @@
       quoteForm.scrollIntoView({ behavior: 'smooth', block: 'start' });
       document.getElementById(q ? 'qtTitle' : 'qtCustQ').focus();
     }
-    function quoteFormClose() { quoteForm.hidden = true; document.getElementById('quoteFormTitle').textContent = 'Quotes'; }
+    function quoteFormClose() { quoteForm.hidden = true; document.getElementById('quoteNewBtn').hidden = false; document.getElementById('quoteFormTitle').textContent = 'Quotes'; }
     document.getElementById('quoteNewBtn').addEventListener('click', function () { quoteFormOpen(null, null); });
     document.getElementById('qtCancel').addEventListener('click', quoteFormClose);
 
@@ -12532,7 +12542,7 @@
         if (go) d.addEventListener('click', go);
         w.appendChild(d);
       };
-      t('Working', String(p.open), money(p.open_value_cents) + ' being priced', null, function () { ctSetView('pre_submit'); });
+      t('Working', String(p.open), !p.open ? 'nothing open' : p.open_priced == null ? money(p.open_value_cents) + ' being priced' : !p.open_priced ? 'none priced yet' : money(p.open_value_cents) + ' across ' + p.open_priced + (p.open_priced === p.open ? '' : ' of ' + p.open) + ' priced', null, function () { ctSetView('pre_submit'); });
       t('Responded', String(p.submitted), money(p.submitted_value_cents) + ' awaiting a decision', null, function () { ctSetView('submitted'); });
       t('Cash exposure', money(p.exposure_cents), 'if everything out were awarded', p.exposure_cents > ((ctRef && ctRef.vocab.cash_ceiling_cents) || 500000) ? 'warn' : null);
       t('Win rate', p.win_rate == null ? '—' : p.win_rate + '%', p.wins + ' of ' + p.decided + ' decided', null, function () { ctSetView('won'); });
@@ -16050,7 +16060,7 @@
         if (!r.campaigns.length) { w.appendChild(el('div', 'state', 'No campaigns yet.')); return; }
         r.campaigns.forEach(function (c) {
           var card = el('button', 'ct-card'); card.type = 'button';
-          card.appendChild(el('div', 'n', [mcLabel(c.channel), c.status, c.starts_on ? c.starts_on + (c.ends_on ? ' to ' + c.ends_on : '') : ''].filter(Boolean).join(' · ')));
+          card.appendChild(el('div', 'n', [mcLabel(c.channel), mcStatus(c), c.starts_on ? c.starts_on + (c.ends_on ? ' to ' + c.ends_on : '') : ''].filter(Boolean).join(' · ')));
           card.appendChild(el('div', 't', c.name));
           if (c.budget_cents) {
             card.appendChild(mcBar(c.budget_used_pct, c.budget_used_pct + '% of the budget spent'));
@@ -16069,18 +16079,24 @@
       });
     }
 
+    function mcStatus(c) {
+      if (c.status_auto) return c.status + ' (by dates)';
+      return c.status;
+    }
+
     function mcForm(c) {
       var f = el('form', 'newinv mk-editor'); f.autocomplete = 'off';
       f.appendChild(el('h2', null, c ? 'Edit campaign' : 'New campaign'));
       var g = el('div', 'fgrid');
       var name = ctField(g, 'Name', ctInput('text', c ? c.name : ''));
       var ch = ctField(g, 'Channel', ctSelect(((mcVocab && mcVocab.channels) || ['other']).map(function (x) { return [x, mcLabel(x)]; }), c ? c.channel : 'postcard'));
-      var st = ctField(g, 'Status', ctSelect(((mcVocab && mcVocab.statuses) || ['planned']).map(function (x) { return [x, x.charAt(0).toUpperCase() + x.slice(1)]; }), c ? c.status : 'planned'));
+      var st = ctField(g, 'Status', ctSelect(((mcVocab && mcVocab.statuses) || ['planned']).map(function (x) { return [x, x.charAt(0).toUpperCase() + x.slice(1)]; }), c ? (c.stored_status || c.status) : 'planned'));
       var bud = ctField(g, 'Budget ($)', ctInput('text', c && c.budget_cents != null ? (c.budget_cents / 100).toFixed(2) : ''));
       bud.inputMode = 'decimal';
       var s = ctField(g, 'Starts', ctInput('date', c ? c.starts_on || '' : ''));
       var e = ctField(g, 'Ends', ctInput('date', c ? c.ends_on || '' : ''));
       f.appendChild(g);
+      f.appendChild(el('p', 'ct-note', 'With a start date, Planned and Running follow the dates on their own. Paused, and Ended (stopped early), stay as you set them.'));
       var notes = document.createElement('textarea'); notes.rows = 3; notes.value = c ? c.notes || '' : '';
       ctField(f, 'Notes', notes, 'mk-notes');
       var rr = el('div', 'reply-row');
@@ -16112,7 +16128,7 @@
         panel.appendChild(back);
         var head = el('div', 'ct-head');
         var hl = el('div');
-        hl.appendChild(el('div', 'sub', [mcLabel(c.channel), c.status, c.starts_on ? c.starts_on + (c.ends_on ? ' to ' + c.ends_on : '') : 'no dates'].join(' · ')));
+        hl.appendChild(el('div', 'sub', [mcLabel(c.channel), mcStatus(c), c.starts_on ? c.starts_on + (c.ends_on ? ' to ' + c.ends_on : '') : 'no dates'].join(' · ')));
         hl.appendChild(el('h2', null, c.name));
         head.appendChild(hl);
         panel.appendChild(head);

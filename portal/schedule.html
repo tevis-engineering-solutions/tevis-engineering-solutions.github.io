@@ -15,57 +15,10 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Montserrat:wght@500;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
   <script src="../assets/js/portal.js?v=54" defer></script>
+  <link rel="stylesheet" href="../assets/css/portal.css?v=55">
   <style>
-    :root { --bg:#0d1710; --card:#142019; --card-2:#1c2e22; --line:#2c4232; --text:#e4ede5; --muted:#8aa48d; --green:#4aac65; --gold:#c89830; }
-    * { box-sizing:border-box; margin:0; padding:0; }
     /* .sumgrid/.sec-title/.state set display, which beats the UA [hidden] rule. */
     [hidden] { display:none !important; }
-    html { scroll-behavior:smooth; }
-    body { font-family:"Inter","Segoe UI",system-ui,sans-serif; color:var(--text); background:radial-gradient(circle at top,#172b1c 0%,#0d1710 45%,#060e08 100%); line-height:1.6; min-height:100vh; }
-    a { color:var(--green); }
-    .pbar { position:sticky; top:0; z-index:50; background:rgba(9,18,12,0.92); backdrop-filter:blur(12px); border-bottom:1px solid rgba(74,172,101,0.22); }
-    .pbar-inner { display:flex; align-items:center; gap:1rem; padding:0.7rem 5%; max-width:1200px; margin:0 auto; }
-    .pbrand { display:flex; align-items:center; gap:0.7rem; text-decoration:none; }
-    .pbrand img { width:40px; height:40px; border-radius:9px; border:1px solid rgba(255,255,255,0.15); }
-    .pbrand .pl { font-family:"Montserrat",sans-serif; text-transform:uppercase; letter-spacing:0.06em; line-height:1.15; }
-    .pbrand .pl b { display:block; font-size:0.9rem; color:#fff; }
-    .pbrand .pl s { display:block; font-size:0.6rem; color:var(--gold); text-decoration:none; letter-spacing:0.12em; }
-    .pbar-spacer { flex:1; }
-    .pacct { display:flex; align-items:center; gap:0.75rem; }
-    .pacct .who { text-align:right; line-height:1.25; }
-    .pacct .who b { display:block; font-size:0.82rem; color:#e4ede5; }
-    .pacct .who span { font-size:0.72rem; color:var(--muted); }
-    .pavatar { width:38px; height:38px; border-radius:999px; background:linear-gradient(135deg,#4aac65,#c89830); color:#0d1710; display:grid; place-items:center; font-weight:800; font-family:"Montserrat",sans-serif; }
-    .psignout { font-family:"Montserrat",sans-serif; font-size:0.72rem; text-transform:uppercase; letter-spacing:0.05em; font-weight:700; color:var(--muted); text-decoration:none; border:1px solid var(--line); border-radius:999px; padding:0.4rem 0.8rem; transition:color .2s,border-color .2s; white-space:nowrap; }
-    .psignout:hover { color:#e4ede5; border-color:var(--green); }
-    @media (max-width:640px) { .pacct .who { display:none; } }
-    .ptabs { background:rgba(9,18,12,0.55); border-bottom:1px solid var(--line); position:sticky; top:55px; z-index:40; }
-    .ptabs-inner { display:flex; gap:0.2rem; max-width:1200px; margin:0 auto; padding:0 5%; overflow-x:auto; overscroll-behavior-x:contain; scrollbar-width:none; }
-    .ptabs-inner::-webkit-scrollbar { display:none; }
-    .ptab { padding:0.85rem 1rem; font-family:"Montserrat",sans-serif; font-size:0.8rem; text-transform:uppercase; letter-spacing:0.04em; font-weight:700; color:var(--muted); text-decoration:none; border-bottom:2px solid transparent; white-space:nowrap; display:inline-flex; align-items:center; gap:0.5rem; transition:color .2s; }
-    .ptab:hover { color:#e4ede5; }
-    .ptab.active { color:#fff; border-bottom-color:var(--gold); }
-    /* The strip scrolls. Its scrollbar is hidden, so a fade at whichever end still
-       has somewhere to go is what says so -- a MASK on the strip, not a colored
-       overlay, because the bar is translucent over the page's radial gradient and a
-       fade painted in a fixed color would band against it. Classes come from
-       assets/js/portal.js. */
-    .ptabs.fade-l .ptabs-inner { -webkit-mask-image:linear-gradient(90deg,transparent 0,#000 46px); mask-image:linear-gradient(90deg,transparent 0,#000 46px); }
-    .ptabs.fade-r .ptabs-inner { -webkit-mask-image:linear-gradient(270deg,transparent 0,#000 46px); mask-image:linear-gradient(270deg,transparent 0,#000 46px); }
-    .ptabs.fade-l.fade-r .ptabs-inner { -webkit-mask-image:linear-gradient(90deg,transparent 0,#000 46px,#000 calc(100% - 46px),transparent 100%); mask-image:linear-gradient(90deg,transparent 0,#000 46px,#000 calc(100% - 46px),transparent 100%); }
-    .pscroll { display:none; position:absolute; top:50%; transform:translateY(-50%); width:30px; height:30px; border-radius:999px; border:1px solid var(--line); background:rgba(9,18,12,0.92); color:var(--muted); font:400 1.05rem/1 "Inter",system-ui,sans-serif; cursor:pointer; padding:0 0 2px; align-items:center; justify-content:center; transition:color .2s,border-color .2s; }
-    .pscroll:hover { color:#e4ede5; border-color:var(--green); }
-    .pscroll.left { left:0.35rem; }
-    .pscroll.right { right:0.35rem; }
-    /* Only for a pointer that can hover. A touch screen already swipes, and two
-       buttons would sit on top of two tabs. */
-    @media (hover:hover) and (pointer:fine) {
-      .ptabs.fade-l .pscroll.left, .ptabs.fade-r .pscroll.right { display:flex; }
-    }
-    .pmain { max-width:1200px; margin:0 auto; padding:2rem 5% 4rem; }
-    .phead { margin-bottom:1.4rem; }
-    .phead h1 { font-family:"Montserrat",sans-serif; text-transform:uppercase; letter-spacing:0.02em; font-size:1.7rem; margin-bottom:0.3rem; }
-    .phead p { color:var(--muted); font-size:0.95rem; }
     .pgrid { display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); gap:1rem; }
     .pcard { background:var(--card); border:1px solid var(--line); border-radius:14px; padding:1.35rem; display:flex; flex-direction:column; }
     .pcard.feat { border-color:rgba(200,152,48,0.4); }
@@ -83,9 +36,6 @@
     .sec-title .count { font-size:0.72rem; font-weight:700; color:var(--muted); background:var(--card-2); border:1px solid var(--line); border-radius:999px; padding:0.1rem 0.6rem; letter-spacing:0.04em; }
     .empty-row { background:var(--card); border:1px dashed var(--line); border-radius:14px; padding:1.8rem 1.5rem; text-align:center; color:var(--muted); font-size:0.9rem; }
     .empty-row i { color:#33513c; font-size:1.6rem; display:block; margin-bottom:0.5rem; }
-    .pfoot { max-width:1200px; margin:0 auto; padding:1.5rem 5% 2.5rem; border-top:1px solid var(--line); color:var(--muted); font-size:0.8rem; display:flex; justify-content:space-between; flex-wrap:wrap; gap:0.5rem; }
-    .pfoot a { color:var(--muted); text-decoration:none; }
-    .pfoot a:hover { color:var(--green); }
 
     /* --- account summary tiles --- */
     .sumgrid { display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:1rem; }
@@ -146,17 +96,6 @@
     table.hist td.id a.hist-pdf { margin-left:0.4rem; font-family:"Montserrat",sans-serif; font-size:0.62rem; font-weight:700; text-transform:uppercase; letter-spacing:0.05em; color:var(--gold); text-decoration:none; border:1px solid rgba(200,152,48,0.45); border-radius:999px; padding:0.1rem 0.45rem; }
     table.hist td.id a.hist-pdf:hover { background:rgba(200,152,48,0.14); }
     .hist-foot { color:var(--muted); font-size:0.78rem; margin-top:0.6rem; }
-    .ptab { position:relative; }
-    .ptab[hidden] { display:none; }
-    .pdot { position:absolute; top:0.7rem; right:0.35rem; width:8px; height:8px; border-radius:50%; background:var(--gold); box-shadow:0 0 0 2px var(--bg); }
-    .pannounce { max-width:1200px; margin:0.9rem auto 0; padding:0 5%; }
-    .pann { display:flex; gap:0.8rem; align-items:flex-start; border:1px solid rgba(200,152,48,0.4); background:rgba(200,152,48,0.08); border-radius:12px; padding:0.7rem 0.9rem; margin-bottom:0.5rem; font-size:0.86rem; color:#e4ede5; }
-    .pann.maintenance { border-color:rgba(74,172,101,0.4); background:rgba(74,172,101,0.08); }
-    .pann.billing { border-color:rgba(214,120,90,0.4); background:rgba(214,120,90,0.08); }
-    .pann-t { flex:1 1 auto; min-width:0; line-height:1.5; }
-    .pann-t b { color:#fff; }
-    .pann-x { flex:0 0 auto; background:none; border:0; color:var(--muted); font-size:1.2rem; line-height:1; cursor:pointer; padding:0 0.2rem; }
-    .pann-x:hover { color:#fff; }
     /* --- booking --- */
     .booker { background:var(--card); border:1px solid var(--line); border-radius:14px; padding:1.3rem 1.4rem; margin:1.4rem 0; }
     .booker h2 { font-family:"Montserrat",sans-serif; font-size:1rem; color:#f1f7f1; margin-bottom:0.9rem; }
