@@ -898,7 +898,14 @@
     .ct-lines tr.tot td { font-weight:700; background:var(--bg); }
     .ct-econ { display:grid; grid-template-columns:repeat(auto-fit,minmax(130px,1fr)); gap:0.45rem; margin:0.6rem 0; }
     .ct-note { font-size:0.74rem; color:var(--muted); margin:0.4rem 0; line-height:1.45; }
-    .ct-steps { padding-left:1.2rem; } .ct-steps li { margin:0.25rem 0; }
+    .ct-steps { padding-left:1.2rem; margin:0.3rem 0; } .ct-steps li { margin:0.3rem 0; }
+    .ct-bm-row { display:flex; align-items:center; gap:0.5rem; margin-top:0.4rem; }
+    .ct-help-btn { width:40px; height:40px; border-radius:50%; border:1px solid var(--line); background:transparent; color:var(--muted); font-size:1.25rem; display:inline-flex; align-items:center; justify-content:center; cursor:pointer; }
+    .ct-help-btn:hover, .ct-help-btn.on { color:#c89830; border-color:#c89830; }
+    .ct-help-btn:focus-visible { outline:2px solid #c89830; outline-offset:2px; }
+    .ct-help { margin-top:0.6rem; padding:0.7rem 0.9rem; border:1px solid rgba(200,152,48,.45); border-radius:10px; background:var(--card-2, #1c2e22); font-size:0.8rem; line-height:1.5; }
+    .ct-help h4 { font-family:"Montserrat",sans-serif; font-size:0.82rem; margin:0 0 0.3rem; color:#c89830; }
+    .ct-help p { margin:0.4rem 0 0; color:var(--muted); }
     .ct-exclude { margin-top:1rem; padding-top:0.8rem; border-top:1px solid var(--line); }
     .ct-exclude h4 { font-family:"Montserrat",sans-serif; font-size:0.82rem; margin:0 0 0.2rem; }
     .ct-exclude .reply-row { margin-top:0.5rem; }
