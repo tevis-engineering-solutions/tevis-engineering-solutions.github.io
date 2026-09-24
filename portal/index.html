@@ -82,7 +82,7 @@
     .pcard { background:var(--card); border:1px solid var(--line); border-radius:14px; padding:1.3rem; display:flex; flex-direction:column; color:inherit; text-decoration:none; transition:border-color .15s, transform .15s, background .15s; }
     a.pcard:hover { border-color:rgba(200,152,48,0.45); background:#17251c; transform:translateY(-2px); }
     a.pcard:focus-visible { outline:2px solid var(--gold); outline-offset:3px; }
-    .pcard .ic { width:40px; height:40px; border-radius:11px; background:rgba(74,172,101,0.1); border:1px solid rgba(74,172,101,0.22); color:var(--green); display:grid; place-items:center; font-size:1.05rem; margin-bottom:0.9rem; }
+    .pcard .ic { width:40px; height:40px; border-radius:11px; background:rgba(200,152,48,0.1); border:1px solid rgba(200,152,48,0.28); color:var(--gold); display:grid; place-items:center; font-size:1.05rem; margin-bottom:0.9rem; }
     .pcard h2 { font-family:"Montserrat",sans-serif; font-size:1.05rem; color:#fff; margin-bottom:0.35rem; }
     .pcard p { color:var(--muted); font-size:0.9rem; margin-bottom:0.9rem; }
     .pcard .status { font-size:0.82rem; color:#cfe0d2; margin-bottom:0.9rem; }
@@ -201,6 +201,13 @@
         <div class="status" hidden><span class="pill" id="equipmentPill"></span></div>
         <span class="plink">Open Equipment <i class="fa-solid fa-arrow-right"></i></span>
       </a>
+      <a class="pcard" href="documents.html">
+        <div class="ic"><i class="fa-solid fa-folder-open"></i></div>
+        <h2>Documents</h2>
+        <p>Files we have shared with you, including agreements and files attached to your tickets.</p>
+        <div class="status" hidden><span class="pill" id="documentsPill"></span></div>
+        <span class="plink">Open Documents <i class="fa-solid fa-arrow-right"></i></span>
+      </a>
       <a class="pcard" href="account.html">
         <div class="ic"><i class="fa-solid fa-user-gear"></i></div>
         <h2>Account</h2>
@@ -292,6 +299,17 @@
           .catch(function () {});
       }
 
+      function loadDocuments() {
+        return fetch('/portal-api/documents', { credentials: 'same-origin' })
+          .then(function (r) { return r.ok ? r.json() : null; })
+          .then(function (d) {
+            if (!d || !d.ok) return;
+            var n = (d.files || []).length + (d.ticket_documents || []).length;
+            if (n) pill('documentsPill', 'ok', n + ' file' + (n === 1 ? '' : 's') + ' shared');
+          })
+          .catch(function () {});
+      }
+
       function loadProfile() {
         return fetch('/portal-api/profile', { credentials: 'same-origin' })
           .then(function (r) { return r.ok ? r.json() : null; })
@@ -321,6 +339,7 @@
         loadSoftware();
         loadProfile();
         loadEquipment();
+        loadDocuments();
         fetch('/portal-api/appointments', { credentials: 'same-origin' }).then(function (r) { return r.ok ? r.json() : null; }).then(function (d) {
           if (!d || !d.ok || !d.upcoming || !d.upcoming.length) return;
           pill('schedPill', 'gold', d.upcoming[0].when);

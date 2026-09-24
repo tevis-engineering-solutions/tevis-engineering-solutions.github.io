@@ -1645,6 +1645,7 @@
           <button type="button" class="fpill on" data-view="queue">Matches</button>
           <button type="button" class="fpill" data-view="watching">Watching</button>
           <button type="button" class="fpill" data-view="open">Everything open</button>
+          <button type="button" class="fpill" data-view="filtered">Filtered out</button>
           <button type="button" class="fpill" data-view="federal">Federal</button>
           <button type="button" class="fpill" data-view="passed">Passed</button>
           <button type="button" class="fpill" data-view="promoted">Built</button>
@@ -10849,6 +10850,7 @@
         var msg = ctqSearch ? 'No posts match that search.'
           : ctqView === 'queue' ? 'No open post matches your codes right now.' + (ctFeed && ctFeed.open_local ? ' ' + ctFeed.open_local + ' are open on the sites the queue reads; see Everything open.' : '') + ' New ones arrive on their own.'
           : ctqView === 'federal' ? (ctFeed && ctFeed.sources.some(function (s) { return s.source === 'samgov' && s.needs_key; }) ? 'SAM.gov is not being read yet: it needs an API key.' : 'No open federal notices on your NAICS codes in Ohio.')
+          : ctqView === 'filtered' ? 'Nothing open is filtered out. The words that filter a post out are under NAICS codes, below.'
           : 'Nothing here.';
         list.appendChild(el('div', 'ct-empty ct-q-empty', msg));
         return;
@@ -10878,6 +10880,7 @@
         chip.title = 'Tier ' + m.tier + ' · ' + (m.description || '');
         chips.appendChild(chip);
       });
+      if (p.excluded) { var xchip = el('span', 'ct-chip', 'Filtered out: ' + p.excluded); xchip.title = 'The title has "' + p.excluded + '" and names no specific tech'; chips.appendChild(xchip); }
       if (p.federal) chips.appendChild(el('span', 'ct-chip red', 'Federal · monitor only'));
       if (p.set_aside) chips.appendChild(el('span', 'ct-chip', p.set_aside));
       if (p.status === 'watching') chips.appendChild(el('span', 'ct-chip gold', 'Watching'));
