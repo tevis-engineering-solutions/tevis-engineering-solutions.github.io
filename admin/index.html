@@ -994,6 +994,11 @@
     .ai-lrow i { width:9px; height:9px; border-radius:2px; flex-shrink:0; }
     .ai-lrow span { flex:1; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; color:var(--muted); }
     .ai-lrow b { font-weight:600; }
+    .ai-keys { border-top:1px solid var(--line); padding-top:0.55rem; margin:0.2rem 0 0.4rem; }
+    .ai-krow { display:flex; align-items:baseline; gap:0.6rem; font-size:0.82rem; padding:0.2rem 0; }
+    .ai-krow span { flex:1; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+    .ai-krow em { font-style:normal; font-size:0.72rem; color:var(--muted); text-transform:uppercase; letter-spacing:0.04em; }
+    .ai-krow b { font-weight:600; }
     .ai-note { font-size:0.76rem; color:var(--muted); border-left:2px solid var(--line); padding-left:0.55rem; margin:0.4rem 0; }
     .ai-acts { display:flex; flex-wrap:wrap; gap:0.5rem; margin-top:0.5rem; }
     .ai-acts button { min-height:40px; padding:0 0.9rem; border-radius:8px; border:1px solid var(--line); background:var(--card-2); color:var(--text); font-family:"Montserrat",sans-serif; font-size:0.74rem; font-weight:700; text-transform:uppercase; letter-spacing:0.04em; cursor:pointer; }
@@ -10349,6 +10354,7 @@
       ['scanner', 'Website scanner', 'var(--green)'],
       ['quote', 'Quote drafts', 'var(--gold)'],
       ['bid', 'BidBuilder', 'var(--text)'],
+      ['crash', 'Crash tool', '#2d6a3f'],
       ['other', 'Other apps', 'var(--muted)'],
     ];
     var AI_DASHBOARD = 'https://platform.claude.com/dashboard';
@@ -10420,7 +10426,7 @@
       var t2 = el('div', 'tile');
       t2.appendChild(el('span', 'ai-lbl', 'Today'));
       t2.appendChild(el('b', null, money(todayC)));
-      t2.appendChild(el('span', 'row-sub', w.calls + (w.calls === 1 ? ' call' : ' calls') + ' this month' + (w.failures ? ', ' + w.failures + ' failed' : '')));
+      t2.appendChild(el('span', 'row-sub', w.calls + (w.calls === 1 ? ' call' : ' calls') + (w.crash_reports ? ' and ' + w.crash_reports + (w.crash_reports === 1 ? ' crash report' : ' crash reports') : '') + ' this month' + (w.failures ? ', ' + w.failures + ' failed' : '')));
       nums.appendChild(t2);
       body.appendChild(nums);
 
@@ -10478,6 +10484,25 @@
       if (!total) bar.classList.add('empty');
       body.appendChild(bar);
       body.appendChild(legend);
+
+      // Which API key spent it. Anthropic's usage report, priced from tokens.
+      var bk = r.by_key;
+      if (bk && bk.ok && bk.keys && bk.keys.length) {
+        var kbox = el('div', 'ai-keys');
+        kbox.appendChild(el('span', 'ai-lbl', 'By API key this month' + (bk.stale ? ' (' + ago(bk.age_sec) + ' old)' : '')));
+        bk.keys.forEach(function (k) {
+          var row = el('div', 'ai-krow');
+          var nm = el('span', null, k.name);
+          if (k.status && k.status !== 'active') nm.appendChild(el('em', null, ' ' + k.status));
+          row.appendChild(nm);
+          row.appendChild(el('b', null, money(k.cents)));
+          kbox.appendChild(row);
+        });
+        kbox.appendChild(el('div', 'row-sub', 'Estimated from tokens. A key shows here once it has spent this month.'));
+        body.appendChild(kbox);
+      } else if (bk && !bk.ok && bk.error !== 'admin_key_unset') {
+        body.appendChild(el('div', 'ai-note', 'The usage by API key did not load. ' + (bk.message || '')));
+      }
 
       // Footer notes.
       if (!b.ok) {
