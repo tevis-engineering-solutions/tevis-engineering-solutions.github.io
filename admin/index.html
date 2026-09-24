@@ -5816,7 +5816,7 @@
     var qtTimer = null;
     var quoteView = 'open';
     var QUOTE_COLOR = { draft: '#8aa48d', sent: '#4fa2ff', viewed: '#4aac65', accepted: '#22c55e', converted: '#22c55e', declined: '#6a8ba8', expired: '#c89830' };
-    var QUOTE_ERROR = { invalid_email: 'That email is not valid', title_required: 'Give the quote a title', items_required: 'Add at least one line with a description', bad_qty: 'A quantity is not a number', bad_price: 'A price is not a number', bad_interval: 'A line has an interval nobody recognises', bad_range: 'A line has a high price below its low price', not_editable: 'This quote has been decided and cannot be edited', not_sendable: 'This quote cannot be sent in its current state', send_failed: 'Resend refused the email', mail_unconfigured: 'Email is not configured on the Worker', not_accepted: 'The customer has not accepted; tick the verbal box to convert anyway', already_converted: 'Already converted', duplicate_number: 'An invoice with that number already exists', not_draft: 'Only a draft can be deleted', not_open: 'This quote is no longer open', nothing_to_convert: 'Everything on this quote is recurring, and the service agreement could not be started, so there is nothing to convert it into yet' };
+    var QUOTE_ERROR = { invalid_email: 'That email is not valid', title_required: 'Give the quote a title', items_required: 'Add at least one line with a description', bad_qty: 'A quantity is not a number', bad_price: 'A price is not a number', bad_interval: 'A line has an interval nobody recognizes', bad_range: 'A line has a high price below its low price', not_editable: 'This quote has been decided and cannot be edited', not_sendable: 'This quote cannot be sent in its current state', send_failed: 'Resend refused the email', mail_unconfigured: 'Email is not configured on the Worker', not_accepted: 'The customer has not accepted; tick the verbal box to convert anyway', already_converted: 'Already converted', duplicate_number: 'An invoice with that number already exists', not_draft: 'Only a draft can be deleted', not_open: 'This quote is no longer open', nothing_priced: 'Every line is $0.00. Price at least one line before sending.', nothing_to_convert: 'Everything on this quote is recurring, and the service agreement could not be started, so there is nothing to convert it into yet' };
     // Byte-identical to CONFIG.quoteTerms in the Worker (src/config.js). The two must
     // move together: this is what a new quote is seeded with, that is what the server
     // falls back to.
@@ -8267,8 +8267,9 @@
       z.appendChild(el('h3', null, 'Delete ' + c.account.email + '?'));
 
       // Projects, leads and appointments are kept and detached, not deleted (Worker:
-      // detachWork), so they are listed apart from what goes.
-      var KEPT = { projects: 1, leads: 1, appointments: 1 };
+      // detachWork), and equipment goes back to TES (unassignAll), so they are listed
+      // apart from what goes.
+      var KEPT = { projects: 1, leads: 1, appointments: 1, inventory: 1 };
       var counts = [], kept = [];
       Object.keys(pv.counts).forEach(function (k) {
         if (pv.counts[k]) (KEPT[k] ? kept : counts).push(pv.counts[k] + ' ' + k.replace(/_/g, ' '));
@@ -8276,7 +8277,7 @@
       z.appendChild(el('p', null, counts.length
         ? 'This will remove: ' + counts.join(', ') + '.'
         : 'Nothing is attached to this account.'));
-      if (kept.length) z.appendChild(el('p', 'row-sub', 'Kept, no longer linked to them: ' + kept.join(', ') + '. A project moves under TES with a note saying whose it was.'));
+      if (kept.length) z.appendChild(el('p', 'row-sub', 'Kept, no longer linked to them: ' + kept.join(', ') + '. A project moves under TES with a note saying whose it was, and equipment goes back to TES.'));
 
       var hard = pv.blockers.filter(function (b) { return b.hard; });
       // A detachable blocker is neither a dead end nor something to wave away with a

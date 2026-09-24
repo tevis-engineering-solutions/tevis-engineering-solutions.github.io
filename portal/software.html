@@ -29,7 +29,8 @@
     .sec-title { font-family:"Montserrat",sans-serif; text-transform:uppercase; letter-spacing:0.04em; font-size:1rem; color:#f1f7f1; margin:2rem 0 0.8rem; }
     .prod { border:1px solid var(--line); border-radius:14px; background:var(--card); padding:1.3rem; margin-bottom:1rem; }
     .prod-top { display:flex; justify-content:space-between; align-items:flex-start; gap:1rem; flex-wrap:wrap; margin-bottom:0.9rem; }
-    .prod-name { font-family:"Montserrat",sans-serif; font-size:1.15rem; color:#fff; }
+    .prod-name { font-family:"Montserrat",sans-serif; font-size:1.15rem; font-weight:700; color:#fff; }
+    .swmsg:empty { display:none; }
     .prod-plan { font-size:0.8rem; color:var(--muted); margin-top:0.2rem; }
     .pill { font-size:0.66rem; font-weight:800; text-transform:uppercase; letter-spacing:0.05em; padding:0.25rem 0.7rem; border-radius:999px; border:1px solid transparent; white-space:nowrap; }
     .prod-explain { font-size:0.9rem; color:var(--muted); margin-bottom:1rem; }
@@ -211,7 +212,8 @@
 
       var bar = el('div', 'meter-bar');
       var fill = el('div', 'meter-fill' + (u.percent >= 100 ? ' full' : u.percent >= 80 ? ' warn' : ''));
-      fill.style.width = Math.max(2, u.percent) + '%';
+      // A sliver so a little use is visible, but none at all when nothing has been used.
+      fill.style.width = (u.percent > 0 ? Math.max(2, u.percent) : 0) + '%';
       bar.appendChild(fill);
       m.appendChild(bar);
 
@@ -392,7 +394,7 @@
           var n = document.getElementById('acctName'), e = document.getElementById('acctEmail'), a = document.getElementById('acctAvatar');
           if (n) n.textContent = display;
           if (e) e.textContent = id.email;
-          if (a) a.textContent = display.replace(/[^A-Za-z]/g, '').slice(0, 2).toUpperCase() || 'TE';
+          if (a) a.textContent = (function (s) { var w = String(s).replace(/@.*/, '').split(/[^A-Za-z]+/).filter(Boolean); return ((w[0] || '').charAt(0) + (w.length > 1 ? w[w.length - 1].charAt(0) : (w[0] || '').charAt(1))).toUpperCase() || 'TE'; })(display);
         })
         .catch(function () {});
     })();

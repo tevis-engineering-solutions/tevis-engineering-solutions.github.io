@@ -270,7 +270,7 @@
         var avatarEl = document.getElementById('acctAvatar');
         if (nameEl) nameEl.textContent = display;
         if (emailEl) emailEl.textContent = email;
-        if (avatarEl) avatarEl.textContent = display.replace(/[^A-Za-z]/g, '').slice(0, 2).toUpperCase() || 'TE';
+        if (avatarEl) avatarEl.textContent = (function (s) { var w = String(s).replace(/@.*/, '').split(/[^A-Za-z]+/).filter(Boolean); return ((w[0] || '').charAt(0) + (w.length > 1 ? w[w.length - 1].charAt(0) : (w[0] || '').charAt(1))).toUpperCase() || 'TE'; })(display);
 
         loadSoftware();
         loadProfile();

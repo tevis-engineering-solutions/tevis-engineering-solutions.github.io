@@ -59,9 +59,13 @@
     .inv { background:var(--card); border:1px solid var(--line); border-radius:14px; padding:1.25rem 1.35rem; margin-bottom:0.9rem; }
     .inv.open { border-color:rgba(200,152,48,0.35); }
     .inv-top { display:flex; flex-wrap:wrap; gap:0.8rem 1.2rem; align-items:flex-start; }
+    .inv-top > div:first-child { flex:1 1 14rem; min-width:0; }
+    .inv-id { overflow-wrap:anywhere; }
     .inv-id { font-family:"Montserrat",sans-serif; font-weight:800; color:#fff; font-size:1.02rem; letter-spacing:0.02em; }
     .inv-meta { color:var(--muted); font-size:0.83rem; margin-top:0.15rem; }
     .inv-meta span + span::before { content:"\00b7"; margin:0 0.45rem; color:#3c5a45; }
+    .inv-meta span:not(:first-child) { white-space:nowrap; }
+    .inv-meta { display:flex; flex-wrap:wrap; align-items:baseline; }
     .inv-spacer { flex:1; }
     .inv-right { text-align:right; }
     .inv-amt { font-family:"Montserrat",sans-serif; font-weight:800; font-size:1.35rem; color:#fff; white-space:nowrap; }
@@ -201,7 +205,7 @@
       var display = id.name || id.email.split('@')[0];
       var n = document.getElementById('acctName'), e = document.getElementById('acctEmail'), a = document.getElementById('acctAvatar');
       if (n) n.textContent = display; if (e) e.textContent = id.email;
-      if (a) a.textContent = display.replace(/[^A-Za-z]/g, '').slice(0, 2).toUpperCase() || 'TE';
+      if (a) a.textContent = (function (s) { var w = String(s).replace(/@.*/, '').split(/[^A-Za-z]+/).filter(Boolean); return ((w[0] || '').charAt(0) + (w.length > 1 ? w[w.length - 1].charAt(0) : (w[0] || '').charAt(1))).toUpperCase() || 'TE'; })(display);
       return fetch(API + '/documents', { credentials: 'same-origin' }).then(function (r) { return r.ok ? r.json() : null; }).then(function (d) { if (!d || !d.ok) throw new Error('unavailable'); render(d); });
     }).catch(function () { showState('bad', 'fa-solid fa-triangle-exclamation', 'Could not load your documents.', ' Please refresh in a moment.'); });
   })();

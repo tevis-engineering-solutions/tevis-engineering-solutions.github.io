@@ -63,6 +63,8 @@
     .inv { background:var(--card); border:1px solid var(--line); border-radius:14px; padding:1.25rem 1.35rem; margin-bottom:0.9rem; }
     .inv.open { border-color:rgba(200,152,48,0.35); }
     .inv-top { display:flex; flex-wrap:wrap; gap:0.8rem 1.2rem; align-items:flex-start; }
+    .inv-top > div:first-child { flex:1 1 14rem; min-width:0; }
+    .inv-id { overflow-wrap:anywhere; }
     .inv.quote { border-color:rgba(74,172,101,0.35); }
     .inv.quote.done { border-color:var(--line); }
     .q-badge { display:inline-block; font-size:0.66rem; font-weight:700; text-transform:uppercase; letter-spacing:0.05em; padding:0.2rem 0.55rem; border-radius:999px; background:rgba(74,172,101,0.14); color:#9fd3ae; margin-left:0.5rem; vertical-align:middle; }
@@ -71,6 +73,8 @@
     .inv-id { font-family:"Montserrat",sans-serif; font-weight:800; color:#fff; font-size:1.02rem; letter-spacing:0.02em; }
     .inv-meta { color:var(--muted); font-size:0.83rem; margin-top:0.15rem; }
     .inv-meta span + span::before { content:"\00b7"; margin:0 0.45rem; color:#3c5a45; }
+    .inv-meta span:not(:first-child) { white-space:nowrap; }
+    .inv-meta { display:flex; flex-wrap:wrap; align-items:baseline; }
     .inv-spacer { flex:1; }
     .inv-right { text-align:right; }
     .inv-amt { font-family:"Montserrat",sans-serif; font-weight:800; font-size:1.35rem; color:#fff; white-space:nowrap; }
@@ -811,7 +815,7 @@
           a = document.getElementById('acctAvatar');
       if (n) n.textContent = display;
       if (e) e.textContent = email;
-      if (a) a.textContent = display.replace(/[^A-Za-z]/g, '').slice(0, 2).toUpperCase() || 'TE';
+      if (a) a.textContent = (function (s) { var w = String(s).replace(/@.*/, '').split(/[^A-Za-z]+/).filter(Boolean); return ((w[0] || '').charAt(0) + (w.length > 1 ? w[w.length - 1].charAt(0) : (w[0] || '').charAt(1))).toUpperCase() || 'TE'; })(display);
       return email;
     }
 

@@ -304,7 +304,7 @@
         var a = document.getElementById('acctAvatar');
         if (n) n.textContent = display;
         if (e) e.textContent = pf.email || '';
-        if (a) a.textContent = display.replace(/[^A-Za-z]/g, '').slice(0, 2).toUpperCase() || 'TE';
+        if (a) a.textContent = (function (s) { var w = String(s).replace(/@.*/, '').split(/[^A-Za-z]+/).filter(Boolean); return ((w[0] || '').charAt(0) + (w.length > 1 ? w[w.length - 1].charAt(0) : (w[0] || '').charAt(1))).toUpperCase() || 'TE'; })(display);
       }
 
       api('GET', '/profile').then(function (r) {
