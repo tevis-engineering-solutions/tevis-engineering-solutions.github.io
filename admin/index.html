@@ -10853,7 +10853,7 @@
         var msg = ctqSearch ? 'No posts match that search.'
           : ctqView === 'queue' ? 'No open post matches your codes right now.' + (ctFeed && ctFeed.open_local ? ' ' + ctFeed.open_local + ' are open on the sites the queue reads; see Everything open.' : '') + ' New ones arrive on their own.'
           : ctqView === 'federal' ? (ctFeed && ctFeed.sources.some(function (s) { return s.source === 'samgov' && s.needs_key; }) ? 'SAM.gov is not being read yet: it needs an API key.' : 'No open federal notices on your NAICS codes in Ohio.')
-          : ctqView === 'filtered' ? 'Nothing open is filtered out. The words that filter a post out are under NAICS codes, below.'
+          : ctqView === 'filtered' ? 'Nothing open is filtered out. The words that filter a post out are under Service codes, at the bottom of this page.'
           : 'Nothing here.';
         list.appendChild(el('div', 'ct-empty ct-q-empty', msg));
         return;
