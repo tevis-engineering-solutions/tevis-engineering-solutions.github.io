@@ -878,7 +878,32 @@
     .mk-stages { grid-template-columns:repeat(auto-fit,minmax(92px,1fr)); }
     .mk-stages .tile { font:inherit; color:inherit; text-align:left; }
     .mk-stages .tile.on { border-color:var(--gold); }
-    #viewMarketing .ct-tools select { max-width:10rem; }
+    #viewMarketing .ct-tools { flex-wrap:wrap; }
+    #viewMarketing .ct-tools select { max-width:11rem; }
+    .mk-bar { display:flex; align-items:center; gap:0.55rem; flex-wrap:wrap; padding:0.45rem 0.75rem; border:1px solid var(--line); border-bottom:0; border-radius:10px 10px 0 0; background:var(--card); min-height:44px; }
+    .mk-bar input[type=checkbox], .mk-row input[type=checkbox] { width:18px; height:18px; accent-color:var(--gold); flex:0 0 auto; margin:0; cursor:pointer; }
+    .mk-bar-n { font-size:0.8rem; color:var(--muted); margin-right:auto; }
+    .mk-bar select { min-height:32px; font-size:0.8rem; }
+    .mk-rows { border:1px solid var(--line); border-radius:0 0 10px 10px; overflow:hidden; margin-bottom:1rem; }
+    .mk-row { display:flex; align-items:center; gap:0.6rem; padding:0 0.75rem; border-top:1px solid var(--line); background:var(--card-2); }
+    .mk-row:first-child { border-top:0; }
+    .mk-row:hover { background:rgba(74,172,101,0.07); box-shadow:inset 3px 0 0 var(--green); }
+    .mk-row.sel { background:rgba(200,152,48,0.10); }
+    .mk-open { flex:1; min-width:0; display:flex; align-items:center; gap:0.75rem; background:none; border:0; color:inherit; font:inherit; text-align:left; padding:0.55rem 0; cursor:pointer; min-height:44px; }
+    .mk-who { flex:0 0 13.5rem; font-size:0.88rem; font-weight:500; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+    .mk-row.unread .mk-who { font-weight:800; }
+    .mk-snip { flex:1; min-width:0; font-size:0.83rem; color:var(--muted); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+    .mk-stage { color:var(--text); font-weight:600; }
+    .mk-tags { display:flex; gap:0.25rem; flex:0 0 auto; }
+    .mk-when { flex:0 0 4.6rem; text-align:right; font-size:0.78rem; color:var(--muted); white-space:nowrap; }
+    .mk-when.late { color:#ef4444; font-weight:700; }
+    @media (max-width:720px) {
+      .mk-open { flex-wrap:wrap; row-gap:0.15rem; }
+      .mk-who { flex:1 1 60%; }
+      .mk-when { flex:0 0 auto; }
+      .mk-snip { flex:1 1 100%; order:3; }
+      .mk-tags { order:4; flex-wrap:wrap; }
+    }
     .mk-chips { display:flex; flex-wrap:wrap; gap:0.3rem; margin:0.6rem 0 0.8rem; }
     .mk-stagebox select { min-height:40px; }
     .mk-notes { margin-top:0.9rem; }
@@ -891,6 +916,15 @@
     .row.mk-verify .row-main { color:var(--gold); }
     .row.mk-reply { border-left:3px solid var(--green); }
     .mk-import { margin-top:1.2rem; }
+    .mk-actions { display:flex; align-items:center; gap:0.8rem; flex-wrap:wrap; margin-bottom:0.8rem; }
+    .mk-actions .mk-check { margin-top:0; }
+    .mk-editor { margin-top:0.7rem; display:grid; gap:0.7rem; }
+    .mk-editor .mk-notes { margin-top:0; }
+    .mk-editor input, .mk-sentform input[type=text] { width:100%; box-sizing:border-box; }
+    .mk-sentform { margin-top:1rem; padding-top:0.8rem; border-top:1px dashed var(--line); }
+    .mk-audit.sent { border-color:rgba(74,172,101,0.45); }
+    .mk-diff { font-size:0.83rem; line-height:1.45; padding:0.25rem 0 0.25rem 0.6rem; border-left:2px solid var(--line); margin:0.2rem 0; word-break:break-word; }
+    .mk-dl { margin-top:0.5rem; font-weight:700; }
     .mk-import input[type=file] { display:block; margin:0.4rem 0; }
     .ct-head { display:flex; justify-content:space-between; gap:0.6rem; flex-wrap:wrap; align-items:flex-start; }
     .ct-head h2 { font-family:"Montserrat",sans-serif; font-size:1.05rem; margin:0.1rem 0; }
@@ -954,10 +988,10 @@
     /* Every select in Contracting and Projects: dark, with a gold chevron, never the
     browser default. In a row of pill buttons (a file's role, a milestone's status) it is
     a pill itself; in a form it keeps the form field's shape. */
-    #viewContracting select, #viewProjects select { -webkit-appearance:none; appearance:none; background:var(--bg) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' fill='none' stroke='%23c89830' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") no-repeat right 0.7rem center / 10px 6px; color:var(--text); border:1px solid var(--line); border-radius:8px; padding:0.45rem 2rem 0.45rem 0.65rem; font-family:inherit; font-size:0.84rem; min-height:36px; cursor:pointer; max-width:100%; }
-    #viewContracting select:hover, #viewProjects select:hover { border-color:rgba(74,172,101,0.55); }
-    #viewContracting select:focus, #viewProjects select:focus { outline:none; border-color:var(--green); }
-    #viewContracting select option, #viewProjects select option { background:var(--card); color:var(--text); }
+    #viewContracting select, #viewProjects select, #viewMarketing select { -webkit-appearance:none; appearance:none; background:var(--bg) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' fill='none' stroke='%23c89830' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") no-repeat right 0.7rem center / 10px 6px; color:var(--text); border:1px solid var(--line); border-radius:8px; padding:0.45rem 2rem 0.45rem 0.65rem; font-family:inherit; font-size:0.84rem; min-height:36px; cursor:pointer; max-width:100%; }
+    #viewContracting select:hover, #viewProjects select:hover, #viewMarketing select:hover { border-color:rgba(74,172,101,0.55); }
+    #viewContracting select:focus, #viewProjects select:focus, #viewMarketing select:focus { outline:none; border-color:var(--green); }
+    #viewContracting select option, #viewProjects select option, #viewMarketing select option { background:var(--card); color:var(--text); }
     #viewContracting .reply-row select, #viewProjects .reply-row select { border-radius:999px; font-family:"Montserrat",sans-serif; font-size:0.72rem; font-weight:700; text-transform:uppercase; letter-spacing:0.03em; min-height:40px; padding:0.45rem 2.1rem 0.45rem 0.95rem; }
     #viewContracting .ct-lines select { border-radius:6px; font-size:0.78rem; min-height:32px; padding:0.3rem 1.6rem 0.3rem 0.45rem; background-position:right 0.45rem center; }
     .ct-upload { position:relative; overflow:hidden; display:inline-flex; align-items:center; }
@@ -1871,6 +1905,10 @@
         <select id="mkVertical"><option value="">All verticals</option></select>
         <label for="mkSource" class="sr-only">Source</label>
         <select id="mkSource"><option value="">All sources</option></select>
+        <label for="mkWebsite" class="sr-only">Website</label>
+        <select id="mkWebsite"><option value="">Any website</option><option value="yes">Has a website</option><option value="no">No website</option></select>
+        <label for="mkAudited" class="sr-only">Report card</label>
+        <select id="mkAudited"><option value="">Any report card</option><option value="yes">Report card run</option><option value="no">No report card yet</option></select>
         <label for="mkQ" class="sr-only">Search leads</label>
         <input type="search" id="mkQ" placeholder="Company, domain, name" autocomplete="off">
         <button type="button" class="ct-btn prim" id="mkNewBtn">+ Add lead</button>
@@ -10437,6 +10475,7 @@
       ['scanner', 'Website scanner', 'var(--green)'],
       ['quote', 'Quote drafts', 'var(--gold)'],
       ['bid', 'BidBuilder', 'var(--text)'],
+      ['marketing', 'Lead emails', '#6dc882'],
       ['crash', 'Crash tool', '#2d6a3f'],
       ['other', 'Other apps', 'var(--muted)'],
     ];
@@ -13321,49 +13360,137 @@
       bad_channel: 'Pick how you reached them.', has_quotes: 'This lead has quotes. Mark it lost or parked instead.',
       converted: 'A converted lead is kept as the record of how the customer arrived.',
       convert_first: 'Use Convert to customer; that marks it won.', email_required: 'Converting needs their email address.',
-      already_converted: 'Already a customer.', nothing_to_save: 'Nothing changed.', nothing_to_import: 'That file has no leads or rules in it.',
+      already_converted: 'Already a customer.', nothing_to_save: 'Nothing changed.', not_found: 'That lead is gone.', nothing_selected: 'Select some leads first.',
+      no_website: 'This lead has no website to scan.', text_required: 'Paste the email you actually sent.', already_sent: 'That draft is already marked sent.', not_editable: 'A sent draft cannot be edited.',
+      bad_url: 'That website address does not work.', blocked_host: 'That address cannot be scanned.', nothing_to_import: 'That file has no leads or rules in it.',
     };
     function mkErr(r) { return MK_ERROR[r && r.error] || ctErr(r); }
     function mkStageLabel(s) { return (mkVocab && mkVocab.stage_label[s]) || s; }
     function mkName(l) { return l.company || l.domain || l.email || l.number; }
 
     function loadMarketing() {
-      if (!/^#l=/.test(location.hash)) mkId = null;
+      // Arriving on the list by URL (Back, a link, #marketing) closes an open lead;
+      // otherwise the lead stays drawn over a hidden list.
+      if (!/^#l=/.test(location.hash)) { mkId = null; if (!document.getElementById('mkOne').hidden) mkClose(); }
       var qs = '?view=' + mkView + (mkSearch ? '&q=' + encodeURIComponent(mkSearch) : '');
       var v = document.getElementById('mkVertical').value, src = document.getElementById('mkSource').value;
       if (v) qs += '&vertical=' + encodeURIComponent(v);
       if (src) qs += '&source=' + encodeURIComponent(src);
       if (mkStageFilter) qs += '&stage=' + encodeURIComponent(mkStageFilter);
+      var web = document.getElementById('mkWebsite').value, aud = document.getElementById('mkAudited').value;
+      if (web) qs += '&website=' + web;
+      if (aud) qs += '&audited=' + aud;
       return Promise.all([api('/admin/leads/summary'), api('/admin/leads' + qs)]).then(function (res) {
         var s = res[0], r = res[1];
         if (s.ok) { mkVocab = s.vocab; mkSummary(s.summary); }
         var w = document.getElementById('mkList');
         w.textContent = '';
         if (!r.ok) { w.appendChild(el('div', 'state', 'Could not load leads.')); return; }
-        if (!r.leads.length) w.appendChild(el('div', 'state', mkSearch || mkStageFilter ? 'No leads match.' : mkView === 'open' ? 'No open leads. Add one, or import the local prospecting files below.' : 'Nothing here.'));
-        var now = Date.now() / 1000;
-        r.leads.forEach(function (l) {
-          var c = el('button', 'ct-card');
-          c.type = 'button';
-          c.appendChild(el('div', 'n', [l.number, l.vertical, l.city].filter(Boolean).join(' · ')));
-          c.appendChild(el('div', 't', mkName(l)));
-          var sub = [l.company && l.domain ? l.domain : '', l.contact_name, l.email].filter(Boolean).join(' · ');
-          if (sub) c.appendChild(el('div', 'row-sub', sub));
-          var chips = el('div', 'chips');
-          chips.appendChild(badge(mkStageLabel(l.stage), MK_STAGE_COLOR[l.stage] || '#8aa48d'));
-          if (l.verdict) chips.appendChild(el('span', 'ct-chip' + (l.verdict === 'COLD' ? '' : ' gold'), l.verdict));
-          if (l.engine_priority) chips.appendChild(el('span', 'ct-chip', 'Scan ' + l.engine_priority));
-          if (l.grade) chips.appendChild(el('span', 'ct-chip' + (/[DF]/.test(l.grade) ? ' red' : ''), 'Grade ' + l.grade));
-          if (l.eyeballed) chips.appendChild(el('span', 'ct-chip green', 'Eyeballed'));
-          if (l.next_due) {
-            var late = l.next_due <= now;
-            chips.appendChild(el('span', 'ct-chip ' + (late ? 'red' : ''), (l.next_action || 'Follow up') + ' ' + (late ? 'due ' + fmtDate(l.next_due) : fmtDate(l.next_due))));
-          }
-          c.appendChild(chips);
-          c.addEventListener('click', function () { mkOpen(l.id); });
-          w.appendChild(c);
-        });
+        mkRows = r.leads;
+        // A selection only means something for rows still on screen.
+        var onScreen = {};
+        r.leads.forEach(function (l) { onScreen[l.id] = true; });
+        Object.keys(mkSel).forEach(function (k) { if (!onScreen[k]) delete mkSel[k]; });
+        mkListRender();
         if (mkId) mkOpen(mkId, true);
+      });
+    }
+
+    // The list reads like an inbox: one line per lead, a checkbox to select several,
+    // the name in bold, a snippet of what is known, and the date on the right.
+    var mkSel = {}, mkRows = [];
+    function mkListRender() {
+      var w = document.getElementById('mkList');
+      w.textContent = '';
+      var bar = el('div', 'mk-bar');
+      var all = document.createElement('input'); all.type = 'checkbox'; all.id = 'mkAll';
+      all.setAttribute('aria-label', 'Select every lead shown');
+      var nSel = Object.keys(mkSel).length;
+      all.checked = mkRows.length > 0 && nSel === mkRows.length;
+      all.indeterminate = nSel > 0 && nSel < mkRows.length;
+      all.addEventListener('change', function () {
+        mkSel = {};
+        if (all.checked) mkRows.forEach(function (l) { mkSel[l.id] = true; });
+        mkListRender();
+      });
+      bar.appendChild(all);
+      if (nSel) {
+        bar.appendChild(el('span', 'mk-bar-n', nSel + ' selected'));
+        var mv = ctSelect([['', 'Move to…']].concat(((mkVocab && mkVocab.stages) || []).filter(function (s) { return s !== 'won'; }).map(function (s) { return [s, mkStageLabel(s)]; })), '');
+        mv.setAttribute('aria-label', 'Move the selected leads to a stage');
+        mv.addEventListener('change', function () { if (mv.value) mkBulk('stage', mv.value); });
+        bar.appendChild(mv);
+        var del = el('button', 'ct-btn sm danger', 'Delete'); del.type = 'button';
+        del.addEventListener('click', function () { mkBulk('delete'); });
+        bar.appendChild(del);
+        var clr = el('button', 'ct-btn sm', 'Clear'); clr.type = 'button';
+        clr.addEventListener('click', function () { mkSel = {}; mkListRender(); });
+        bar.appendChild(clr);
+      } else {
+        bar.appendChild(el('span', 'mk-bar-n', mkRows.length + (mkRows.length === 1 ? ' lead' : ' leads') + (mkRows.length === 500 ? ' (first 500)' : '')));
+      }
+      w.appendChild(bar);
+      if (!mkRows.length) { w.appendChild(el('div', 'state', mkSearch || mkStageFilter ? 'No leads match.' : mkView === 'open' ? 'No open leads. Add one, or import the local prospecting files below.' : 'Nothing here.')); return; }
+      var now = Date.now() / 1000;
+      var ul = el('div', 'mk-rows');
+      ul.setAttribute('role', 'list');
+      mkRows.forEach(function (l) {
+        var li = el('div', 'mk-row' + (mkSel[l.id] ? ' sel' : '') + (l.stage === 'replied' ? ' unread' : ''));
+        li.setAttribute('role', 'listitem');
+        var cb = document.createElement('input'); cb.type = 'checkbox'; cb.checked = !!mkSel[l.id];
+        cb.setAttribute('aria-label', 'Select ' + mkName(l));
+        cb.addEventListener('change', function () { if (cb.checked) mkSel[l.id] = true; else delete mkSel[l.id]; mkListRender(); });
+        li.appendChild(cb);
+        var open = el('button', 'mk-open'); open.type = 'button';
+        open.appendChild(el('span', 'mk-who', mkName(l)));
+        var snip = el('span', 'mk-snip');
+        snip.appendChild(el('span', 'mk-stage', mkStageLabel(l.stage)));
+        var bits = [l.company && l.domain ? l.domain : '', l.vertical, l.city, l.email].filter(Boolean).join(' · ');
+        if (bits) snip.appendChild(document.createTextNode(' ' + bits));
+        open.appendChild(snip);
+        var tags = el('span', 'mk-tags');
+        if (l.verdict) tags.appendChild(el('span', 'ct-chip' + (l.verdict === 'COLD' ? '' : ' gold'), l.verdict));
+        if (l.grade) tags.appendChild(el('span', 'ct-chip' + (/[DF]/.test(l.grade) ? ' red' : ''), l.grade));
+        if (!l.domain) tags.appendChild(el('span', 'ct-chip', 'No site'));
+        else if (!l.audits) tags.appendChild(el('span', 'ct-chip', 'No report'));
+        if (l.drafts) tags.appendChild(el('span', 'ct-chip green', l.drafts === 1 ? 'Draft' : l.drafts + ' drafts'));
+        open.appendChild(tags);
+        var when = el('span', 'mk-when');
+        if (l.next_due) {
+          var late = l.next_due <= now;
+          when.textContent = (late ? 'Due ' : '') + new Date(l.next_due * 1000).toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
+          when.title = (l.next_action || 'Follow up') + ' ' + fmtDate(l.next_due);
+          if (late) when.classList.add('late');
+        } else {
+          when.textContent = new Date(l.updated_at * 1000).toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
+          when.title = 'Last updated ' + fmtDate(l.updated_at);
+        }
+        open.appendChild(when);
+        open.addEventListener('click', function () { mkOpen(l.id); });
+        li.appendChild(open);
+        ul.appendChild(li);
+      });
+      w.appendChild(ul);
+    }
+
+    function mkBulk(action, stage) {
+      var ids = Object.keys(mkSel).map(Number);
+      if (!ids.length) return;
+      var q = action === 'delete'
+        ? 'Delete ' + ids.length + ' lead' + (ids.length === 1 ? '' : 's') + ' and their contact logs? Leads with quotes, and leads that became customers, are skipped. This cannot be undone.'
+        : 'Move ' + ids.length + ' lead' + (ids.length === 1 ? '' : 's') + ' to ' + mkStageLabel(stage) + '?';
+      if (!window.confirm(q)) { mkListRender(); return; }
+      api('/admin/leads/bulk', { method: 'POST', body: { action: action, ids: ids, stage: stage } }).then(function (r) {
+        if (!r.ok) { toast(mkErr(r)); return; }
+        mkSel = {};
+        (r.refused || []).forEach(function (x) { mkSel[x.id] = true; });
+        var msg = (action === 'delete' ? 'Deleted ' : 'Moved ') + r.done;
+        if ((r.refused || []).length) {
+          msg += '; ' + r.refused.length + ' skipped';
+          window.alert('Not ' + (action === 'delete' ? 'deleted' : 'moved') + ' (still selected):\n' + r.refused.map(function (x) { return '• ' + (x.name || x.number || x.id) + ': ' + mkErr(x); }).join('\n'));
+        }
+        toast(msg);
+        loadMarketing();
       });
     }
 
@@ -13408,7 +13535,7 @@
     Array.prototype.forEach.call(document.querySelectorAll('#mkFilters .fpill'), function (b) {
       b.addEventListener('click', function () { mkSetView(b.getAttribute('data-view')); mkClose(); loadMarketing(); });
     });
-    ['mkVertical', 'mkSource'].forEach(function (id) {
+    ['mkVertical', 'mkSource', 'mkWebsite', 'mkAudited'].forEach(function (id) {
       document.getElementById(id).addEventListener('change', function () { mkClose(); loadMarketing(); });
     });
     document.getElementById('mkQ').addEventListener('input', function (e) {
@@ -13715,10 +13842,38 @@
       p.appendChild(hs);
     }
 
+    var MK_VERIFY = { A: 'Safe to state', B: 'Verify first', C: 'Needs a receipt' };
+    // Which leads have a scan or a draft running, so leaving the lead and coming back
+    // shows it still going, and the result lands on the right lead.
+    var mkRunning = {};
+
     function mkAudits(p, d) {
+      var l = d.lead;
       var sec = el('section', 'cust-sec');
       sec.appendChild(el('h3', null, 'Report cards'));
-      if (!d.audits.length) sec.appendChild(el('div', 'row-sub', d.lead.domain ? 'No report card yet.' : 'No website on file.'));
+      if (l.domain) {
+        var row1 = el('div', 'mk-actions');
+        var speed = document.createElement('input'); speed.type = 'checkbox'; speed.id = 'mkSpeed' + l.id;
+        var sl = el('label', 'mk-check'); sl.htmlFor = speed.id; sl.appendChild(speed); sl.appendChild(document.createTextNode(' Include Google speed (adds about a minute)'));
+        var run = el('button', 'prim', mkRunning['audit' + l.id] ? 'Scanning…' : (d.audits.length ? 'Run it again' : 'Run the report card'));
+        run.type = 'button'; run.disabled = !!mkRunning['audit' + l.id];
+        run.addEventListener('click', function () {
+          mkRunning['audit' + l.id] = true;
+          run.disabled = true; run.textContent = 'Scanning…';
+          api('/admin/leads/' + l.id + '/audit', { method: 'POST', body: { speed: speed.checked } }).then(function (r) {
+            delete mkRunning['audit' + l.id];
+            if (!r.ok) { toast(mkErr(r)); if (mkId === l.id) mkOpen(l.id, true); return; }
+            toast('Report card: grade ' + r.grade + ', ' + r.priority);
+            if (mkId === l.id) mkOpen(l.id, true);
+          });
+        });
+        row1.appendChild(run);
+        row1.appendChild(sl);
+        sec.appendChild(row1);
+      } else {
+        sec.appendChild(el('div', 'row-sub', 'No website on file. Add one under Overview to scan it.'));
+      }
+      if (!d.audits.length) sec.appendChild(el('div', 'row-sub', 'No report card yet.'));
       d.audits.forEach(function (a, i) {
         var box = el('details', 'mk-audit');
         if (i === 0) box.open = true;
@@ -13728,57 +13883,177 @@
         if (a.priority_reason) box.appendChild(el('div', 'row-sub', a.priority_reason));
         if (a.archetype || a.platform) box.appendChild(el('div', 'row-sub', [a.archetype && 'Archetype: ' + a.archetype, a.platform && 'Platform: ' + a.platform].filter(Boolean).join(' · ')));
         (a.findings || []).forEach(function (f) {
-          var r = row((f.title || f.id) + (f.verify_class ? '  [' + f.verify_class + ']' : ''), [f.severity, f.category, f.detail].filter(Boolean).join(' · '));
-          if (f.verify_class && f.verify_class !== 'A') r.classList.add('mk-verify');
+          var r = row(f.title || f.id, [f.severity, f.category, f.detail].filter(Boolean).join(' · '),
+            f.verify_class ? el('span', 'ct-chip' + (f.verify_class === 'A' ? ' green' : ' gold'), f.verify_class + ' · ' + (MK_VERIFY[f.verify_class] || '')) : null);
           box.appendChild(r);
         });
+        if (!(a.findings || []).length) box.appendChild(el('div', 'row-sub', 'No findings.'));
         if ((a.hooks || []).length) {
           box.appendChild(el('div', 'mk-sub-h', 'Rapport hooks'));
           a.hooks.forEach(function (h) { box.appendChild(el('div', 'row-sub', '• ' + h)); });
         }
         sec.appendChild(box);
       });
-      sec.appendChild(el('div', 'row-sub', 'Class A findings are safe to state. B needs a look in a browser first; C needs a receipt.'));
+      sec.appendChild(el('div', 'row-sub', 'A is safe to state in the email. B needs a look in a browser or on a phone first. C needs a receipt (a screenshot, a filename, a timing).'));
       p.appendChild(sec);
     }
 
-    function mkEmailText(dr) {
-      return [dr.greeting, '', dr.body, '', dr.signoff].filter(function (x, i, a) { return x != null; }).join('\n').replace(/\n{3,}/g, '\n\n').trim();
+    // The draft as it stands: Tyler's edits if he made any, the model's words otherwise.
+    function mkCurrent(dr) {
+      var e = dr.edited || {};
+      return { subject: e.subject != null ? e.subject : (dr.subject || ''), greeting: e.greeting != null ? e.greeting : (dr.greeting || ''),
+        body: e.body != null ? e.body : (dr.body || ''), signoff: e.signoff != null ? e.signoff : (dr.signoff || '') };
     }
+    function mkEmailText(dr) {
+      return [dr.greeting, dr.body, dr.signoff].filter(function (x) { return x && String(x).trim(); }).join('\n\n').trim();
+    }
+    function mkCopy(text, what) {
+      (navigator.clipboard ? navigator.clipboard.writeText(text) : Promise.reject()).then(function () { toast(what + ' copied'); }, function () { toast('Select the text and copy it.'); });
+    }
+
     function mkEmails(p, d) {
+      var l = d.lead;
       var sec = el('section', 'cust-sec');
-      sec.appendChild(el('h3', null, 'Email drafts'));
-      if (!d.drafts.length) sec.appendChild(el('div', 'row-sub', 'No drafts yet.'));
+      sec.appendChild(el('h3', null, 'Draft an intro email'));
+      var pb = el('div', 'row-sub', 'Checking the playbook…');
+      sec.appendChild(pb);
+      api('/admin/leads/playbook').then(function (r) {
+        pb.textContent = r.ok && r.loaded
+          ? 'Written from the latest report card, the website-marketing playbook (' + Math.round(r.chars / 1000) + 'k characters, ' + fmtDate(r.updated_at) + ') and your confirmed style rules. Nothing is sent; copy it into Proton.'
+          : 'The playbook is not loaded yet. Re-run the import script and import its file (Marketing, bottom of the list); it now carries the playbook.';
+      });
+      var notes = document.createElement('textarea'); notes.rows = 3; notes.maxLength = 4000;
+      notes.placeholder = 'What you noticed yourself: the phone went to voicemail, the contact form bounced, the owner is a lodge brother…';
+      ctField(sec, 'Field notes (optional, weighted heavily)', notes, 'mk-notes');
+      var rr = el('div', 'reply-row');
+      var go = el('button', 'prim', mkRunning['draft' + l.id] ? 'Drafting… (about a minute)' : 'Draft the email');
+      go.type = 'button'; go.disabled = !!mkRunning['draft' + l.id] || !d.audits.length;
+      if (!d.audits.length) sec.appendChild(el('div', 'row-sub', 'Run the report card first; the draft is written from it.'));
+      go.addEventListener('click', function () {
+        mkRunning['draft' + l.id] = true;
+        go.disabled = true; go.textContent = 'Drafting… (about a minute)';
+        api('/admin/leads/' + l.id + '/draft', { method: 'POST', body: { notes: notes.value.trim() } }).then(function (r) {
+          delete mkRunning['draft' + l.id];
+          if (!r.ok) { toast(r.message || mkErr(r)); if (mkId === l.id) mkOpen(l.id, true); return; }
+          toast(mkId === l.id ? 'Draft ready' : 'The draft for ' + mkName(l) + ' is ready');
+          if (mkId === l.id) mkOpen(l.id, true);
+        });
+      });
+      rr.appendChild(go);
+      sec.appendChild(rr);
+      p.appendChild(sec);
+
+      var ds = el('section', 'cust-sec');
+      ds.appendChild(el('h3', null, 'Drafts'));
+      if (!d.drafts.length) ds.appendChild(el('div', 'row-sub', 'No drafts yet.'));
       d.drafts.forEach(function (x, i) {
         var dr = x.draft || {};
-        var box = el('details', 'mk-audit');
+        var box = el('details', 'mk-audit' + (x.status === 'sent' ? ' sent' : ''));
         if (i === 0) box.open = true;
         var sm = el('summary');
-        sm.textContent = (dr.subject || '(no subject)') + ' · ' + (x.source === 'conversation' ? 'chat draft' : x.source === 'engine' ? 'desktop engine' : x.source) + ' · ' + fmtDate(x.created_at) + (x.status === 'sent' ? ' · sent' : '');
+        var src = x.source === 'conversation' ? 'chat draft' : x.source === 'engine' ? 'desktop engine' : x.source === 'worker' ? 'drafted here' : x.source;
+        sm.textContent = (dr.subject || '(no subject)') + ' · ' + src + ' · ' + fmtDate(x.created_at) + (x.status === 'sent' ? ' · sent ' + fmtDate(x.sent_at) : '');
         box.appendChild(sm);
-        var pre = el('pre', 'mk-email', mkEmailText(dr));
-        box.appendChild(pre);
-        var rr = el('div', 'reply-row');
-        var cp = el('button', null, 'Copy email'); cp.type = 'button';
-        cp.addEventListener('click', function () {
-          var txt = mkEmailText(dr);
-          (navigator.clipboard ? navigator.clipboard.writeText(txt) : Promise.reject()).then(function () { toast('Copied'); }, function () { toast('Select the text and copy it.'); });
-        });
-        rr.appendChild(cp);
-        var cs = el('button', null, 'Copy subject'); cs.type = 'button';
-        cs.addEventListener('click', function () {
-          (navigator.clipboard ? navigator.clipboard.writeText(dr.subject || '') : Promise.reject()).then(function () { toast('Copied'); }, function () {});
-        });
-        rr.appendChild(cs);
-        box.appendChild(rr);
-        if (dr.strategic_notes) box.appendChild(el('div', 'row-sub', 'Notes: ' + dr.strategic_notes));
+        if (x.status === 'sent') mkSentView(box, x);
+        else mkDraftEditor(box, l, x);
+        if (dr.mirror_hook) { box.appendChild(el('div', 'mk-sub-h', 'Mirror hook')); box.appendChild(el('div', 'row-sub', dr.mirror_hook)); }
+        if ((dr.semantic_findings || []).length) {
+          box.appendChild(el('div', 'mk-sub-h', 'What the model found reading the site'));
+          dr.semantic_findings.forEach(function (f) {
+            box.appendChild(row(f.title, [f.severity, f.detail, f.evidence ? 'Evidence: ' + f.evidence : ''].filter(Boolean).join(' · '),
+              el('span', 'ct-chip' + (f.verify_class === 'A' ? ' green' : ' gold'), f.verify_class + ' · ' + (MK_VERIFY[f.verify_class] || ''))));
+          });
+        }
         if ((dr.verification_checklist || []).length) {
           box.appendChild(el('div', 'mk-sub-h', 'Check before sending'));
           dr.verification_checklist.forEach(function (v) { box.appendChild(el('div', 'row-sub', '☐ ' + (typeof v === 'string' ? v : JSON.stringify(v)))); });
         }
-        sec.appendChild(box);
+        if (dr.delivery_channel) box.appendChild(el('div', 'row-sub', 'Best channel: ' + dr.delivery_channel));
+        if (dr.strategic_notes) box.appendChild(el('div', 'row-sub', 'Notes: ' + dr.strategic_notes));
+        ds.appendChild(box);
       });
-      p.appendChild(sec);
+      p.appendChild(ds);
+    }
+
+    function mkDraftEditor(box, l, x) {
+      var cur = mkCurrent(x.draft || {});
+      var f = el('form', 'mk-editor'); f.autocomplete = 'off';
+      var subj = ctField(f, 'Subject (you usually send "Website Comment")', ctInput('text', cur.subject));
+      var greet = ctField(f, 'Greeting', ctInput('text', cur.greeting));
+      var body = document.createElement('textarea'); body.rows = 12; body.value = cur.body;
+      ctField(f, 'Body', body, 'mk-notes');
+      var so = ctField(f, 'Sign-off', ctInput('text', cur.signoff));
+      var read = function () { return { subject: subj.value.trim(), greeting: greet.value.trim(), body: body.value.trim(), signoff: so.value.trim() }; };
+      var rr = el('div', 'reply-row');
+      var save = el('button', null, 'Save edits'); save.type = 'submit';
+      var cpE = el('button', null, 'Copy email'); cpE.type = 'button';
+      cpE.addEventListener('click', function () { mkCopy(mkEmailText(read()), 'Email'); });
+      var cpS = el('button', null, 'Copy subject'); cpS.type = 'button';
+      cpS.addEventListener('click', function () { mkCopy(subj.value.trim(), 'Subject'); });
+      var dis = el('button', 'ct-btn danger', 'Discard'); dis.type = 'button';
+      dis.addEventListener('click', function () {
+        if (!window.confirm('Discard this draft?')) return;
+        api('/admin/leads/' + l.id + '/drafts/' + x.id, { method: 'DELETE' }).then(function (r) { if (!r.ok) return toast(mkErr(r)); toast('Discarded'); mkOpen(l.id, true); });
+      });
+      [cpE, cpS, save, dis].forEach(function (b) { rr.appendChild(b); });
+      f.appendChild(rr);
+      f.addEventListener('submit', function (e) {
+        e.preventDefault();
+        api('/admin/leads/' + l.id + '/drafts/' + x.id, { method: 'PATCH', body: read() }).then(function (r) { toast(r.ok ? 'Edits saved' : mkErr(r)); });
+      });
+      box.appendChild(f);
+
+      // "I sent it": what actually went out, so the follow-up clock starts and the
+      // difference from the draft can teach the style rules.
+      var sf = el('form', 'mk-sentform'); sf.autocomplete = 'off';
+      sf.appendChild(el('div', 'mk-sub-h', 'I sent it'));
+      sf.appendChild(el('div', 'row-sub', 'Paste what went out if you changed it in Proton. Otherwise the text above is used.'));
+      var g = el('div', 'fgrid');
+      var ch = ctField(g, 'How', ctSelect(((mkVocab && mkVocab.channels) || ['email']).map(function (c) { return [c, MK_CHANNEL_LABEL[c] || c]; }), 'email'));
+      var day = ctField(g, 'When', ctInput('date', new Date(Date.now() - new Date().getTimezoneOffset() * 60000).toISOString().slice(0, 10)));
+      var sentSubj = ctField(g, 'Subject sent', ctInput('text', ''));
+      sentSubj.placeholder = 'Leave blank to use the subject above';
+      sf.appendChild(g);
+      var sent = document.createElement('textarea'); sent.rows = 6; sent.placeholder = 'Leave blank to use the email above';
+      ctField(sf, 'Email as sent (optional)', sent, 'mk-notes');
+      var srr = el('div', 'reply-row');
+      var sb = el('button', 'prim', 'Mark as sent'); sb.type = 'submit';
+      srr.appendChild(sb); sf.appendChild(srr);
+      sf.addEventListener('submit', function (e) {
+        e.preventDefault();
+        var cur2 = read();
+        var text = sent.value.trim() || mkEmailText(cur2);
+        if (!text) return toast('There is no email text to record.');
+        sb.disabled = true;
+        api('/admin/leads/' + l.id + '/drafts/' + x.id + '/sent', { method: 'POST', body: {
+          subject: sentSubj.value.trim() || cur2.subject, text: text, channel: ch.value, at: dayToTs(day.value) } }).then(function (r) {
+          sb.disabled = false;
+          if (!r.ok) return toast(mkErr(r));
+          toast('Logged as sent: ' + r.diff.summary);
+          mkOpen(l.id, true);
+        });
+      });
+      box.appendChild(sf);
+    }
+
+    function mkSentView(box, x) {
+      box.appendChild(el('div', 'mk-sub-h', 'As sent' + (x.sent_channel ? ' by ' + (MK_CHANNEL_LABEL[x.sent_channel] || x.sent_channel) : '')));
+      if (x.sent_subject) box.appendChild(el('div', 'row-sub', 'Subject: ' + x.sent_subject));
+      box.appendChild(el('pre', 'mk-email', x.sent_text || ''));
+      var df = x.diff;
+      if (!df) return;
+      box.appendChild(el('div', 'mk-sub-h', 'Compared with the draft: ' + df.summary));
+      var list = function (label, arr, fmt) {
+        if (!arr || !arr.length) return;
+        box.appendChild(el('div', 'row-sub mk-dl', label));
+        arr.forEach(function (a) { box.appendChild(el('div', 'mk-diff', fmt(a))); });
+      };
+      if (df.subject_changed) box.appendChild(el('div', 'mk-diff', 'Subject: "' + df.subject_draft + '" → "' + df.subject_sent + '"'));
+      if (df.greeting_changed) box.appendChild(el('div', 'mk-diff', 'Greeting: "' + df.greeting_draft + '" → "' + df.greeting_sent + '"'));
+      if (df.signoff_changed) box.appendChild(el('div', 'mk-diff', 'Sign-off: "' + df.signoff_draft + '" → "' + df.signoff_sent + '"'));
+      list('Your own words (in no draft)', df.added, function (a) { return '+ ' + a; });
+      list('Cut', df.cut, function (a) { return '− ' + a; });
+      list('Reworded', df.edited, function (a) { return '"' + a.draft + '" → "' + a.sent + '"'; });
     }
 
     function mkQuotes(p, d) {
