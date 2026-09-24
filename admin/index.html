@@ -812,6 +812,12 @@
     .ct-tiles .tile b.bad { color:#ef4444; }
     .ct-bar { display:flex; gap:0.5rem; align-items:center; flex-wrap:wrap; justify-content:space-between; margin-bottom:0.6rem; }
     .ct-filters { padding:0; margin:0; flex:1 1 auto; min-width:0; }
+    .ct-qsrc { display:flex; align-items:center; gap:0.45rem; }
+    .ct-qsrc label { font-family:"Montserrat",sans-serif; font-size:0.68rem; font-weight:700; text-transform:uppercase; letter-spacing:0.05em; color:var(--muted); }
+    .ct-qsrc select { min-height:36px; padding:0.4rem 0.65rem; border-radius:8px; border:1px solid var(--line); background:var(--bg); color:var(--text); font-family:inherit; font-size:0.85rem; cursor:pointer; }
+    .ct-qsort { flex:0 1 auto; justify-content:flex-end; }
+    .ct-qsort .fpill i { margin-right:0.25rem; }
+    @media (max-width:560px) { .ct-qsrc { flex:1 1 100%; } .ct-qsrc select { flex:1; } .ct-qsort { justify-content:flex-start; } }
     .ct-tools { display:flex; gap:0.4rem; align-items:center; flex:1 1 320px; justify-content:flex-end; min-width:0; }
     .ct-tools input { flex:1 1 180px; min-width:0; min-height:36px; padding:0.45rem 0.65rem; border-radius:8px; border:1px solid var(--line); background:var(--bg); color:var(--text); font-family:inherit; font-size:0.85rem; }
     .ct-err { color:#e08585; font-size:0.8rem; margin-top:0.5rem; }
@@ -1678,6 +1684,25 @@
         <div class="ct-tools">
           <label for="ctqQ" class="sr-only">Search posts</label>
           <input type="search" id="ctqQ" placeholder="Search posts" autocomplete="off">
+        </div>
+      </div>
+      <div class="ct-bar ct-qopts">
+        <div class="ct-qsrc">
+          <label for="ctqSource">Source</label>
+          <select id="ctqSource">
+            <option value="">All sources</option>
+            <option value="ohiobuys">OhioBuys</option>
+            <option value="bidnet">BidNet</option>
+            <option value="cleveland">City of Cleveland</option>
+            <option value="cuyahoga">Cuyahoga County</option>
+            <option value="samgov">SAM.gov</option>
+            <option value="manual">Added by hand</option>
+          </select>
+        </div>
+        <div class="filters ct-filters ct-qsort" id="ctqSort" role="group" aria-label="Sort">
+          <button type="button" class="fpill on" data-sort="best" aria-pressed="true">Best match</button>
+          <button type="button" class="fpill" data-sort="due_asc" aria-pressed="false"><i class="fa-solid fa-arrow-up-short-wide" aria-hidden="true"></i> Closing soonest</button>
+          <button type="button" class="fpill" data-sort="due_desc" aria-pressed="false"><i class="fa-solid fa-arrow-down-wide-short" aria-hidden="true"></i> Closing latest</button>
         </div>
       </div>
       <div id="ctqList"><div class="state">Loading&hellip;</div></div>
@@ -10827,13 +10852,17 @@
     var ctFeed = null;
     var ctqView = 'queue';
     var ctqSearch = '';
+    // Source and sort are remembered in this browser, so the queue opens the way it was left.
+    var ctqSource = '', ctqSort = 'best';
+    try { ctqSource = localStorage.getItem('tes_ctq_source') || ''; ctqSort = localStorage.getItem('tes_ctq_sort') || 'best'; } catch (e) {}
     var ctqTimer = null;
     var ctqShowAll = false;
     var CT_FEED_LABEL = { cleveland: 'City of Cleveland', cuyahoga: 'Cuyahoga County', samgov: 'SAM.gov', ohiobuys: 'OhioBuys', bidnet: 'BidNet', manual: 'Added by hand' };
 
     function loadQueue() {
       var list = document.getElementById('ctqList');
-      return api('/admin/feed?view=' + ctqView + (ctqSearch ? '&q=' + encodeURIComponent(ctqSearch) : '')).then(function (r) {
+      return api('/admin/feed?view=' + ctqView + (ctqSearch ? '&q=' + encodeURIComponent(ctqSearch) : '')
+        + (ctqSource ? '&source=' + encodeURIComponent(ctqSource) : '') + (ctqSort !== 'best' ? '&sort=' + ctqSort : '')).then(function (r) {
         if (!r.ok) { list.innerHTML = '<div class="state">Could not load the queue.</div>'; return; }
         ctFeed = r.summary;
         renderQueue(r.postings || []);
@@ -10873,6 +10902,7 @@
       list.textContent = '';
       if (!rows.length) {
         var msg = ctqSearch ? 'No posts match that search.'
+          : ctqSource ? 'Nothing from ' + (CT_FEED_LABEL[ctqSource] || ctqSource) + ' in this view. Choose All sources to see the rest.'
           : ctqView === 'queue' ? 'No open post matches your codes right now.' + (ctFeed && ctFeed.open_local ? ' ' + ctFeed.open_local + ' are open on the sites the queue reads; see Everything open.' : '') + ' New ones arrive on their own.'
           : ctqView === 'federal' ? (ctFeed && ctFeed.sources.some(function (s) { return s.source === 'samgov' && s.needs_key; }) ? 'SAM.gov is not being read yet: it needs an API key.' : 'No open federal notices on your NAICS codes in Ohio.')
           : ctqView === 'filtered' ? 'Nothing open is filtered out. The words that filter a post out are under Service codes, at the bottom of this page.'
@@ -10972,6 +11002,27 @@
       c.appendChild(rr);
       return c;
     }
+
+    var ctqSrcSel = document.getElementById('ctqSource');
+    if ([].some.call(ctqSrcSel.options, function (o) { return o.value === ctqSource; })) ctqSrcSel.value = ctqSource; else ctqSource = '';
+    ctqSrcSel.addEventListener('change', function () {
+      ctqSource = ctqSrcSel.value; ctqShowAll = false;
+      try { localStorage.setItem('tes_ctq_source', ctqSource); } catch (e) {}
+      loadQueue();
+    });
+    var ctqSortPills = document.querySelectorAll('#ctqSort .fpill');
+    var markSort = function () {
+      Array.prototype.forEach.call(ctqSortPills, function (x) { var on = x.getAttribute('data-sort') === ctqSort; x.classList.toggle('on', on); x.setAttribute('aria-pressed', on ? 'true' : 'false'); });
+    };
+    if (!document.querySelector('#ctqSort [data-sort="' + ctqSort + '"]')) ctqSort = 'best';
+    markSort();
+    Array.prototype.forEach.call(ctqSortPills, function (b) {
+      b.addEventListener('click', function () {
+        ctqSort = b.getAttribute('data-sort'); ctqShowAll = false; markSort();
+        try { localStorage.setItem('tes_ctq_sort', ctqSort); } catch (e) {}
+        loadQueue();
+      });
+    });
 
     Array.prototype.forEach.call(document.querySelectorAll('#ctqFilters .fpill'), function (b) {
       b.addEventListener('click', function () {
