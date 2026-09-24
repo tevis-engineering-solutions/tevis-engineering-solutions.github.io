@@ -898,6 +898,9 @@
     .ct-lines tr.tot td { font-weight:700; background:var(--bg); }
     .ct-econ { display:grid; grid-template-columns:repeat(auto-fit,minmax(130px,1fr)); gap:0.45rem; margin:0.6rem 0; }
     .ct-note { font-size:0.74rem; color:var(--muted); margin:0.4rem 0; line-height:1.45; }
+    .ct-exclude { margin-top:1rem; padding-top:0.8rem; border-top:1px solid var(--line); }
+    .ct-exclude h4 { font-family:"Montserrat",sans-serif; font-size:0.82rem; margin:0 0 0.2rem; }
+    .ct-exclude .reply-row { margin-top:0.5rem; }
     .ct-step { border:1px solid var(--line); border-radius:10px; background:var(--bg); padding:0.55rem 0.65rem; margin-bottom:0.4rem; }
     .ct-step.done { border-color:rgba(74,172,101,0.45); }
     .ct-step label.chk { display:flex; gap:0.5rem; align-items:center; font-weight:700; font-size:0.84rem; min-height:32px; cursor:pointer; }
@@ -12280,6 +12283,29 @@
         });
       });
       kb.appendChild(addK);
+
+      // The words that filter construction and other trades out of the queue.
+      var exBox = el('div', 'ct-exclude');
+      exBox.appendChild(el('h4', null, 'Words that filter a post out'));
+      exBox.appendChild(el('p', 'ct-note', 'A post whose title has one of these is left out of Matches and Everything open and listed under Filtered out, unless the title also names specific tech (a security camera installation at a recreation center still comes through). Separate with commas. Saving rescores the queue.'));
+      var exTa = el('textarea'); exTa.rows = 6; exTa.setAttribute('aria-label', 'Words that filter a post out'); exTa.placeholder = 'Loading…';
+      exBox.appendChild(exTa);
+      var exRow = el('div', 'reply-row');
+      var exSave = el('button', 'prim', 'Save words'); exSave.type = 'button';
+      exRow.appendChild(exSave);
+      exBox.appendChild(exRow);
+      kb.appendChild(exBox);
+      api('/admin/feed/exclude').then(function (res) {
+        exTa.placeholder = '';
+        if (res.ok) exTa.value = res.terms.join(', '); else exTa.placeholder = 'Could not load the list.';
+      });
+      exSave.addEventListener('click', function () {
+        exSave.disabled = true;
+        api('/admin/feed/exclude', { method: 'POST', body: { terms: exTa.value } }).then(function (res) {
+          exSave.disabled = false;
+          if (res.ok) { exTa.value = res.terms.join(', '); toast('Saved ' + res.terms.length + ' words · the queue was rescored'); loadQueue(); } else toast(ctErr(res));
+        });
+      });
 
       var sb = document.getElementById('ctSourcingBody');
       sb.textContent = '';
