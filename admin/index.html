@@ -894,7 +894,7 @@
     .mk-row.unread .mk-who { font-weight:800; }
     .mk-snip { flex:1; min-width:0; font-size:0.83rem; color:var(--muted); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
     .mk-stage { color:var(--text); font-weight:600; }
-    .mk-tags { display:flex; gap:0.25rem; flex:0 0 12.5rem; justify-content:flex-start; overflow:hidden; }
+    .mk-tags { display:flex; flex-wrap:wrap; gap:0.25rem; row-gap:0.2rem; flex:0 0 16rem; justify-content:flex-start; }
     .mk-head { background:var(--card); border-top:0; border-bottom:1px solid rgba(138,164,141,0.35); min-height:34px; }
     .mk-head:hover { background:var(--card); box-shadow:none; }
     .mk-head .mk-cbspace { flex:0 0 18px; }
@@ -958,6 +958,12 @@
     .mk-inline { margin-top:0; white-space:nowrap; font-size:0.8rem; }
     .mk-sos-detail { padding:0.4rem 0.8rem 0.8rem 2.6rem; background:var(--card); border-top:1px solid var(--line); }
     .mk-sos-detail .row { padding:0.3rem 0; }
+    .mks-site { margin:0.6rem 0 0.4rem; padding-top:0.5rem; border-top:1px dashed rgba(138,164,141,0.3); }
+    .mks-site-line { display:flex; align-items:center; gap:0.6rem; flex-wrap:wrap; margin:0.2rem 0 0.3rem; }
+    .mks-site-line a { color:var(--green); font-weight:600; word-break:break-all; }
+    .brave-badge { display:inline-flex; align-items:center; gap:0.4rem; margin-top:0.35rem; font-family:"Montserrat",sans-serif; font-size:0.66rem; font-weight:800; letter-spacing:0.06em; color:var(--muted); text-decoration:none; border:1px solid var(--line); border-radius:999px; padding:0.2rem 0.6rem; }
+    .brave-badge i { color:#fb542b; font-size:0.9rem; }
+    .brave-badge:hover { color:var(--text); border-color:rgba(138,164,141,0.5); }
     .mk-rules { margin-bottom:1rem; }
     #mkRulesBtn[aria-expanded=true] { border-color:var(--gold); color:var(--gold); }
     .mk-scope { margin:0.4rem 0 0.8rem; }
@@ -1955,6 +1961,8 @@
         <div>
           <div class="row-sub">Every new LLC, corporation and nonprofit filed with the Ohio Secretary of State in Cuyahoga, Lake, Lorain, Summit, Geauga and Medina counties. Kept apart from your leads: pick the ones worth reaching and make them leads. Each filing stays 60 days from when it first appears here; after that only the ones you made into leads are kept.</div>
           <div class="row-sub" id="mksFeed">Checking the feed&hellip;</div>
+          <div class="row-sub" id="mksLookupLine"></div>
+          <a class="brave-badge" href="https://brave.com/search/api/" target="_blank" rel="noopener noreferrer"><i class="fa-brands fa-brave" aria-hidden="true"></i> POWERED BY BRAVE</a>
         </div>
         <button type="button" class="ct-btn" id="mksCheck">Check for a new month</button>
       </div>
@@ -1973,6 +1981,8 @@
           <select id="mksMonth"><option value="">Every month</option></select>
           <label for="mksVertical" class="sr-only">What the name says</label>
           <select id="mksVertical"><option value="">Any kind of business</option></select>
+          <label for="mksSite" class="sr-only">Website</label>
+          <select id="mksSite"><option value="">Any website</option><option value="found">Website found</option><option value="email">Has an email</option><option value="none">No website</option><option value="pending">Not looked up yet</option></select>
           <label for="mksSort" class="sr-only">Sort</label>
           <select id="mksSort"><option value="score">Best fit first</option><option value="newest">Newest first</option><option value="name">A to Z</option></select>
           <label class="mk-check mk-inline"><input type="checkbox" id="mksHideHold" checked> Hide holding companies</label>
@@ -14751,6 +14761,8 @@
       if (c) qs += '&county=' + c;
       if (m) qs += '&month=' + m;
       if (v) qs += '&vertical=' + v;
+      var st = document.getElementById('mksSite').value;
+      if (st) qs += '&site=' + st;
       if (document.getElementById('mksHideHold').checked) qs += '&hide_holdings=1';
       if (mksSearch) qs += '&q=' + encodeURIComponent(mksSearch);
       return qs;
@@ -14783,6 +14795,10 @@
         line.textContent = (month ? 'Latest reports: published ' + month + '. ' : 'Nothing read yet. ') +
           (reading.length ? 'Reading now: ' + reading.map(function (x) { return x.type + ' ' + x.progress + '%'; }).join(', ') + ' (a piece every two minutes). ' : '') +
           (f.last_check ? 'Last checked ' + fmt(f.last_check) + '.' : '') + (f.last_error ? ' Last problem: ' + f.last_error + '.' : '');
+        var lk = r.lookup || {}, ll = document.getElementById('mksLookupLine');
+        ll.textContent = !lk.configured ? 'Website lookup is off until a Brave Search key is set on the Worker.'
+          : 'Websites found for ' + lk.found + ' (' + lk.with_email + ' with an email), none for ' + lk.none + ', ' + lk.waiting + ' still to look up. ' +
+            lk.used_this_month + ' of ' + lk.cap + ' searches used this month.';
         var cs = document.getElementById('mksCounty');
         if (cs.options.length < 2) r.summary.counties.forEach(function (c) { cs.appendChild(new Option(c.charAt(0) + c.slice(1).toLowerCase(), c)); });
         var ms = document.getElementById('mksMonth'), keep = ms.value;
@@ -14810,6 +14826,7 @@
         b('Shortlist', null, function () { mksDecide(Object.keys(mksSel), 'shortlist'); });
         b('Pass', null, function () { mksDecide(Object.keys(mksSel), 'passed'); });
         b('Export CSV', null, function () { mksExport(Object.keys(mksSel)); });
+        b('Find websites', null, function () { mksLookup(Object.keys(mksSel)); });
         b('Clear', null, function () { mksSel = {}; mksRender(); });
       } else {
         bar.appendChild(el('span', 'mk-bar-n', mksTotal.toLocaleString('en-US') + (mksTotal === 1 ? ' business' : ' businesses') + (mksRows.length < mksTotal ? ', showing ' + mksRows.length : '')));
@@ -14834,6 +14851,12 @@
         var tags = el('span', 'mk-tags');
         if (f.vertical) tags.appendChild(el('span', 'ct-chip gold', f.vertical === 'it' ? 'IT' : f.vertical));
         if (f.notes.indexOf('holding') >= 0) tags.appendChild(el('span', 'ct-chip', 'holding'));
+        if (f.site_status === 'found') {
+          var sc = el('span', 'ct-chip ' + (f.site_confidence >= 70 ? 'green' : f.site_confidence >= 45 ? 'gold' : ''), 'Site ' + f.site_confidence + '%');
+          sc.title = 'Website found, ' + (f.site_evidence && f.site_evidence.label || '') + ' match';
+          tags.appendChild(sc);
+          if ((f.emails || []).length) tags.appendChild(el('span', 'ct-chip green', (f.emails.length === 1 ? '1 email' : f.emails.length + ' emails')));
+        } else if (f.site_status === 'none' || f.site_status === 'rejected') tags.appendChild(el('span', 'ct-chip', 'No site'));
         if (f.status !== 'new') tags.appendChild(el('span', 'ct-chip' + (f.status === 'promoted' ? ' green' : f.status === 'passed' ? ' red' : ''), MKS_STATUS_LABEL[f.status]));
         open.appendChild(tags);
         var when = el('span', 'mk-when', f.effective_date ? new Date(f.effective_date + 'T12:00:00').toLocaleDateString(undefined, { month: 'short', day: 'numeric' }) : '');
@@ -14862,6 +14885,7 @@
         ['Statutory agent', [t(f.agent_name), t(f.agent_city)].filter(Boolean).join(', ')],
         ['Notes', (f.notes || []).join(', ')],
       ].forEach(function (x) { if (x[1]) d.appendChild(row(x[0], x[1])); });
+      d.appendChild(mksSiteBlock(f));
       var acts = el('div', 'mk-rule-acts');
       var b = function (label, cls, fn) { var x = el('button', 'ct-btn sm' + (cls ? ' ' + cls : ''), label); x.type = 'button'; x.addEventListener('click', fn); acts.appendChild(x); };
       if (f.status === 'promoted' && f.lead_id) b('Open the lead', 'prim', function () { mkSetMode('leads', true); routeHash('#l=' + f.lead_id, true); });
@@ -14876,6 +14900,67 @@
       acts.appendChild(g);
       d.appendChild(acts);
       return d;
+    }
+
+    // The website the lookup found, how sure it is, why, and the emails on it. A person
+    // checks the site before writing to anybody; "Not their site" and "Set website" fix it.
+    function mksSiteBlock(f) {
+      var s = el('div', 'mks-site');
+      s.appendChild(el('div', 'mk-sub-h', 'Website'));
+      var ev = f.site_evidence || {};
+      if (f.site_status === 'found' && f.site_url) {
+        var line = el('div', 'mks-site-line');
+        var a = el('a', null, f.site_url.replace(/^https?:\/\//, '').replace(/\/$/, ''));
+        a.href = f.site_url; a.target = '_blank'; a.rel = 'noopener noreferrer';
+        line.appendChild(a);
+        var lab = ev.label || (f.site_confidence >= 70 ? 'high' : f.site_confidence >= 45 ? 'likely' : 'possible');
+        line.appendChild(el('span', 'ct-chip ' + (lab === 'high' ? 'green' : lab === 'likely' ? 'gold' : ''), f.site_confidence + '% ' + lab));
+        s.appendChild(line);
+        if ((ev.reasons || []).length) s.appendChild(el('div', 'row-sub', 'Why: ' + ev.reasons.join('; ') + '.'));
+        if ((f.emails || []).length) {
+          s.appendChild(el('div', 'mk-sub-h', 'Emails on the site'));
+          f.emails.forEach(function (e) {
+            var cp = el('button', 'ct-btn sm', 'Copy'); cp.type = 'button';
+            cp.addEventListener('click', function () { mkCopy(e.email, 'Email'); });
+            var d2 = row(e.email, e.on_domain ? 'on the business’s own domain' : 'a different domain (check it is theirs)', cp);
+            s.appendChild(d2);
+          });
+        } else s.appendChild(el('div', 'row-sub', 'No email published on the pages we read (home, contact, about).'));
+      } else if (f.site_status === 'none' || f.site_status === 'rejected') {
+        s.appendChild(el('div', 'row-sub', f.site_status === 'rejected' ? 'Marked not their site.' : 'No website found' + ((ev.reasons || []).length ? ': ' + ev.reasons.join('; ') : '') + '.'));
+      } else if (f.site_status === 'error') {
+        s.appendChild(el('div', 'row-sub', 'The lookup had a problem (' + ((ev.reasons || [])[0] || 'unknown') + '). It tries again tomorrow.'));
+      } else s.appendChild(el('div', 'row-sub', 'Not looked up yet.'));
+      if (ev.social) {
+        var so = el('a', null, 'Social page'); so.href = ev.social; so.target = '_blank'; so.rel = 'noopener noreferrer';
+        var sl = el('div', 'row-sub'); sl.appendChild(document.createTextNode('Also found: ')); sl.appendChild(so); s.appendChild(sl);
+      }
+      var acts = el('div', 'mk-rule-acts');
+      var b = function (label, cls, fn) { var x = el('button', 'ct-btn sm' + (cls ? ' ' + cls : ''), label); x.type = 'button'; x.addEventListener('click', fn); acts.appendChild(x); };
+      b(f.site_status ? 'Look up again' : 'Find website', null, function () { mksLookup([f.charter]); });
+      if (f.site_status === 'found') b('Not their site', null, function () {
+        api('/admin/sos/' + encodeURIComponent(f.charter) + '/site', { method: 'POST', body: { reject: true } }).then(function (r) { toast(r.ok ? 'Cleared' : mkErr(r)); mksLoad(); });
+      });
+      b('Set website', null, function () {
+        var u = window.prompt('The business’s website address:', f.site_url || '');
+        if (!u) return;
+        api('/admin/sos/' + encodeURIComponent(f.charter) + '/site', { method: 'POST', body: { url: u.trim() } }).then(function (r) { toast(r.ok ? 'Website set; emails read from it' : mkErr(r)); mksLoad(); });
+      });
+      s.appendChild(acts);
+      return s;
+    }
+
+    function mksLookup(charters) {
+      var list = charters.slice(0, 10);
+      if (charters.length > 10) toast('Looking up the first 10; the rest are picked up on their own.');
+      else toast('Looking up ' + list.length + '…');
+      api('/admin/sos/lookup', { method: 'POST', body: { charters: list } }).then(function (r) {
+        if (!r.ok) return toast(r.error === 'not_configured' ? 'Website lookup needs a Brave Search key on the Worker.' : mkErr(r));
+        var found = (r.done || []).filter(function (x) { return x.status === 'found'; }).length;
+        var stop = (r.done || []).filter(function (x) { return x.error; })[0];
+        toast('Found ' + found + ' of ' + (r.done || []).length + (stop ? ' (' + stop.error.replace(/_/g, ' ') + ')' : ''));
+        mksLoad();
+      });
     }
 
     function mksDecide(charters, status) {
@@ -14958,7 +15043,7 @@
         mksLoad();
       });
     });
-    ['mksCounty', 'mksMonth', 'mksVertical', 'mksSort', 'mksHideHold'].forEach(function (id) {
+    ['mksCounty', 'mksMonth', 'mksVertical', 'mksSite', 'mksSort', 'mksHideHold'].forEach(function (id) {
       document.getElementById(id).addEventListener('change', function () { mksLoad(); });
     });
     document.getElementById('mksQ').addEventListener('input', function (e) {
