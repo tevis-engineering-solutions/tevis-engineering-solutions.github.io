@@ -609,6 +609,49 @@
     .tg-txt b { display:block; font-size:0.82rem; }
     .tg-txt .row-sub { display:block; line-height:1.45; }
     .tg-row button { flex:0 0 auto; }
+    .tg-sw { position:relative; flex:0 0 auto; width:42px; height:24px; cursor:pointer; }
+    .tg-sw input { position:absolute; inset:0; width:100%; height:100%; margin:0; opacity:0; cursor:pointer; }
+    .tg-sw .tg-knob { position:absolute; inset:0; border-radius:999px; background:rgba(138,164,141,0.25); border:1px solid var(--line); transition:background 0.15s; pointer-events:none; }
+    .tg-sw .tg-knob::after { content:""; position:absolute; top:2px; left:2px; width:18px; height:18px; border-radius:50%; background:#cfd9d0; transition:transform 0.15s; }
+    .tg-sw input:checked + .tg-knob { background:rgba(200,152,48,0.55); border-color:var(--gold); }
+    .tg-sw input:checked + .tg-knob::after { transform:translateX(18px); background:#fff; }
+    .tg-sw input:focus-visible + .tg-knob { outline:2px solid var(--gold); outline-offset:2px; }
+    .tg-sw.locked { opacity:0.6; cursor:not-allowed; }
+    .tg-sw.locked input { cursor:not-allowed; }
+    .feed-tabs { display:flex; gap:0.2rem; }
+    .feed-tab { font-family:"Montserrat",sans-serif; font-size:0.72rem; font-weight:700; text-transform:uppercase; letter-spacing:0.05em; background:none; border:0; border-bottom:2px solid transparent; color:var(--muted); padding:0.35rem 0.6rem; cursor:pointer; }
+    .feed-tab.on { color:var(--text); border-bottom-color:var(--gold); }
+    .feed-tab:focus-visible { outline:2px solid var(--gold); outline-offset:2px; }
+    .act i.tg { background:#4fa2ff; } .act i.tg.muted, .act i.tg.unconfigured { background:var(--muted); } .act i.tg.failed { background:#ef4444; }
+    .act.nolink { cursor:default; }
+    .act-m .badge { margin-top:0.2rem; display:inline-block; }
+    .recap-h { display:flex; align-items:center; justify-content:space-between; gap:0.6rem; margin-bottom:0.5rem; }
+    .recap-h h3 { margin:0; }
+    .recap-facts { display:grid; grid-template-columns:repeat(auto-fill, minmax(210px, 1fr)); gap:0.5rem; margin-bottom:0.6rem; }
+    .recap-f { display:flex; flex-direction:column; gap:0.15rem; text-align:left; background:rgba(255,255,255,0.03); border:1px solid var(--line); border-radius:10px; padding:0.55rem 0.7rem; color:var(--text); font:inherit; cursor:pointer; min-width:0; }
+    .recap-f:hover { border-color:var(--gold); }
+    .recap-f b { font-size:0.84rem; font-weight:600; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+    .recap-l { font-family:"Montserrat",sans-serif; font-size:0.62rem; text-transform:uppercase; letter-spacing:0.05em; color:var(--gold); }
+    .recap-acts .act-day:first-child { margin-top:0.2rem; }
+    .use-t { display:flex; flex-direction:column; }
+    .use-r { display:grid; grid-template-columns:minmax(0,1.5fr) 3.2rem 3.8rem minmax(0,1.3fr); gap:0.5rem; align-items:center; padding:0.32rem 0; border-top:1px solid rgba(138,164,141,0.16); font-size:0.78rem; }
+    .use-r.use-h { border-top:0; font-family:"Montserrat",sans-serif; font-size:0.6rem; text-transform:uppercase; letter-spacing:0.05em; color:var(--muted); }
+    .use-r.use-h span:nth-child(2), .use-r.use-h span:nth-child(3) { text-align:right; }
+    .use-r .num { text-align:right; font-variant-numeric:tabular-nums; }
+    .use-r.idle { color:var(--muted); }
+    .use-n { overflow:hidden; text-overflow:ellipsis; white-space:nowrap; color:inherit; }
+    a.use-n:hover { color:var(--gold); }
+    .use-l { display:flex; align-items:center; gap:0.4rem; min-width:0; }
+    .use-l small { color:var(--muted); font-size:0.66rem; white-space:nowrap; }
+    .use-bar { flex:1 1 auto; min-width:24px; height:6px; border-radius:3px; background:rgba(138,164,141,0.18); overflow:hidden; }
+    .use-bar i { display:block; height:100%; background:var(--green); }
+    .use-bar i.near { background:var(--gold); } .use-bar i.over { background:#ef4444; }
+    .use-r.near .use-n { color:#e0c98a; } .use-r.over .use-n { color:#ef8a8a; }
+    .use-cfr { grid-template-columns:minmax(0,1.5fr) 4.6rem minmax(0,1.8fr); }
+    .use-cf { margin-top:0.8rem; }
+    .use-cf h4 { font-family:"Montserrat",sans-serif; font-size:0.66rem; text-transform:uppercase; letter-spacing:0.05em; color:var(--gold); margin:0 0 0.2rem; }
+    .use-note { margin-top:0.6rem; font-size:0.7rem; }
+    @media (max-width:420px) { .use-r { grid-template-columns:minmax(0,1.3fr) 2.6rem 3.2rem minmax(0,1fr); gap:0.35rem; } .use-cfr { grid-template-columns:minmax(0,1.3fr) 4rem minmax(0,1.2fr); } }
     .kbd-keys { display:inline-flex; gap:0.2rem; flex:0 0 auto; min-width:4.2rem; }
     kbd { font-family:"Inter",monospace; font-size:0.68rem; padding:0.12rem 0.36rem; border-radius:5px;
       border:1px solid var(--line); background:var(--bg); color:var(--text); }
@@ -1428,8 +1471,15 @@
       <div class="home-col" id="homeAttention"><div class="state">Loading&hellip;</div></div>
       <div class="home-col">
         <div class="chart-panel">
-          <div class="fin-sec-h"><h3>Activity</h3><button type="button" class="act-new" id="actNew">New activity</button></div>
+          <div class="fin-sec-h">
+            <div class="feed-tabs" role="tablist" aria-label="Home feed">
+              <button type="button" class="feed-tab on" data-feed="activity" role="tab" aria-selected="true">Activity</button>
+              <button type="button" class="feed-tab" data-feed="telegram" role="tab" aria-selected="false">Telegram</button>
+            </div>
+            <button type="button" class="act-new" id="actNew">New activity</button>
+          </div>
           <div id="homeActivity" class="act-scroll"><div class="state">Loading&hellip;</div></div>
+          <div id="homeTelegram" class="act-scroll" hidden><div class="state">Loading&hellip;</div></div>
         </div>
         <div id="homeAi"></div>
       </div>
@@ -6982,6 +7032,7 @@
         pane: function (n) { return panes[n]; },
         // A count on the tab label, so "Invoices (12)" is visible without opening it.
         count: function (n, k) { panes[n].btn.textContent = n + (k ? ' (' + k + ')' : ''); },
+        select: function (n) { if (panes[n]) panes[n].btn.click(); },
       };
     }
 
@@ -7038,6 +7089,61 @@
         parent.appendChild(row(i.number + (i.service ? ' · ' + i.service : ''), sub, right,
           function () { showInvoice(i.number); }));
       });
+    }
+
+    // A quick refresher at the top of a customer's or company's Overview: the last of
+    // each kind of interaction, then the five newest activity rows. Everything is
+    // already in the file's payload; nothing extra is fetched.
+    function recapCard(tabsHandle, d) {
+      var s = el('section', 'cust-sec recap');
+      var head = el('div', 'recap-h');
+      head.appendChild(el('h3', null, 'Recent'));
+      head.appendChild(licAction('See all activity', 'ct-btn sm recap-all', function () { tabsHandle.select('Activity'); }));
+      s.appendChild(head);
+      var nowS = Date.now() / 1000;
+      var ago = function (ts) {
+        if (!ts) return '';
+        var days = Math.floor((nowS - ts) / 86400);
+        return days <= 0 ? 'today' : days === 1 ? 'yesterday' : days < 60 ? days + ' days ago' : fmtDate(ts);
+      };
+      var newest = function (list, key) {
+        return (list || []).slice().sort(function (a, b) { return (key(b) || 0) - (key(a) || 0); })[0];
+      };
+      var facts = el('div', 'recap-facts');
+      var fact = function (label, main, sub, fn) {
+        var b = el('button', 'recap-f');
+        b.type = 'button';
+        b.addEventListener('click', fn);
+        b.appendChild(el('span', 'recap-l', label));
+        b.appendChild(el('b', null, main));
+        if (sub) b.appendChild(el('span', 'row-sub', sub));
+        facts.appendChild(b);
+      };
+      var t = newest(d.tickets, function (x) { return x.updated_at || x.created_at; });
+      if (t) fact('Last ticket', t.ticket_number + ' · ' + (t.subject || 'No subject'), t.status + ' · ' + ago(t.updated_at || t.created_at), function () { showView('tickets'); open(t.id); });
+      var msg = (d.activity || []).filter(function (a) { return a.object_type === 'message'; })[0];
+      if (msg) fact('Last message', msg.summary, ago(msg.at), function () { openObject('message', msg.object_id, msg.summary); });
+      var appts = d.appointments || [];
+      var next = appts.filter(function (a) { return a.status === 'booked' && a.starts_at > nowS; })
+        .sort(function (a, b) { return a.starts_at - b.starts_at; })[0];
+      var lastAp = next || newest(appts.filter(function (a) { return a.starts_at <= nowS; }), function (x) { return x.starts_at; });
+      if (lastAp) fact(next ? 'Next appointment' : 'Last appointment', lastAp.title || 'Appointment', lastAp.when + ' · ' + (lastAp.status === 'canceled' && lastAp.rescheduled_to ? 'moved' : lastAp.status.replace('_', ' ')), function () { openObject('appointment', lastAp.id); });
+      var inv = newest(d.invoices, function (x) { return x.issued_at || x.created_at; });
+      if (inv) fact('Last invoice', inv.number + ' · ' + money(inv.amount_cents), inv.status + (inv.issued_at ? ' · issued ' + fmtDate(inv.issued_at) : ''), function () { showInvoice(inv.number); });
+      var q = newest(d.quotes, function (x) { return x.sent_at || x.created_at; });
+      if (q) fact('Last quote', (q.number || 'Quote') + ' · ' + (q.title || ''), q.status + ' · ' + ago(q.sent_at || q.created_at), function () { showQuote(q.id); });
+      var acts = (d.activity || []).slice(0, 5);
+      if (!facts.childNodes.length && !acts.length) {
+        s.appendChild(el('div', 'row-sub', 'No interactions yet.'));
+        return s;
+      }
+      if (facts.childNodes.length) s.appendChild(facts);
+      if (acts.length) {
+        var al = el('div', 'recap-acts');
+        activityRows(al, acts);
+        s.appendChild(al);
+      }
+      return s;
     }
 
     function ticketRows(parent, list) {
@@ -7268,6 +7374,7 @@
       })();
       tabs.count('Quotes', (c.quotes || []).length);
       var pOverview = tabs.pane('Overview');
+      pOverview.appendChild(recapCard(tabs, { tickets: c.tickets || [], invoices: allInv, quotes: c.quotes || [], appointments: c.appointments || [], activity: c.activity || [] }));
       var pInv = tabs.pane('Invoices');
       var pTk = tabs.pane('Tickets');
       tabs.count('Invoices', allInv.length);
@@ -8256,6 +8363,7 @@
       })();
       otabs.count('Quotes', (extra.quotes || []).length);
       var oOverview = otabs.pane('Overview');
+      oOverview.appendChild(recapCard(otabs, { tickets: oTk, invoices: oInv, quotes: extra.quotes || [], appointments: extra.appointments || [], activity: extra.activity || [] }));
       otabs.count('Invoices', oInv.length);
       otabs.count('Tickets', oTk.length);
       otabs.count('Files', oDocs.length);
@@ -11038,10 +11146,19 @@
       }
       if (a.money.unbilled.length) {
         any = true;
-        var s8 = attSection('Unbilled work', a.money.unbilled.length, false);
+        // Ready first: chargeable work over the $500 line (or any at month end) and
+        // older than six days, the same rule the "Time to invoice" nudge follows.
+        var readyN = a.money.unbilled.filter(function (u) { return u.ready; }).length;
+        var s8 = attSection(readyN ? 'Ready to invoice' : 'Unbilled work', a.money.unbilled.length, !!readyN);
         a.money.unbilled.forEach(function (u) {
-          var right = el('b', 'num', money(u.cents));
-          s8.appendChild(row(u.name, fmtDur(u.minutes) + ' across ' + u.entries + (u.entries === 1 ? ' entry' : ' entries') + ' · oldest ' + fmtDate(u.oldest), right, function () {
+          var right = el('span');
+          if (u.ready) { right.appendChild(badge('invoice now', '#c89830')); right.appendChild(document.createTextNode(' ')); }
+          var chg = u.chargeable_cents != null ? u.chargeable_cents : u.cents;
+          right.appendChild(el('b', 'num', money(chg)));
+          var sub = fmtDur(u.minutes) + ' across ' + u.entries + (u.entries === 1 ? ' entry' : ' entries') + ' · oldest ' + fmtDate(u.oldest) +
+            (u.age_days != null ? ' (' + u.age_days + ' days)' : '') +
+            (u.chargeable_cents === 0 ? ' · covered by their plan: apply coverage' : '');
+          s8.appendChild(row(u.name, sub, right, function () {
             if (u.org_id) openObject('org', u.org_id); else openObject('customer', u.account_id);
           }));
         });
@@ -11072,6 +11189,101 @@
       var aiSlot = document.getElementById('homeAi');
       aiSlot.textContent = '';
       aiSlot.appendChild(aiTile());
+      aiSlot.appendChild(usageTile());
+    }
+
+    // ---- outside services: counted by the Worker, Cloudflare from its analytics ----
+    function fmtBytes(n) {
+      if (n >= 1024 ** 3) return (n / 1024 ** 3).toFixed(2) + ' GB';
+      if (n >= 1024 ** 2) return (n / 1024 ** 2).toFixed(1) + ' MB';
+      return Math.round(n / 1024) + ' KB';
+    }
+    function usageBar(used, n) {
+      var w = el('span', 'use-bar');
+      var f = el('i');
+      var pct = n ? Math.min(100, used / n * 100) : 0;
+      f.style.width = pct.toFixed(1) + '%';
+      if (pct >= 100) f.className = 'over'; else if (pct >= 80) f.className = 'near';
+      w.appendChild(f);
+      w.title = Math.round(pct) + '% of ' + n.toLocaleString('en-US');
+      return w;
+    }
+    function usageTile() {
+      var box = el('section', 'chart-panel ai-tile use-tile');
+      box.setAttribute('aria-label', 'Service usage');
+      var head = el('div', 'fin-sec-h');
+      head.appendChild(el('h3', null, 'Services'));
+      var body = el('div');
+      var refresh = licAction('Refresh', 'ai-top', function () { refresh.disabled = true; load(true); });
+      head.appendChild(refresh);
+      box.appendChild(head);
+      body.appendChild(el('div', 'state', 'Loading…'));
+      box.appendChild(body);
+      var num = function (n) { return Number(n || 0).toLocaleString('en-US'); };
+      var load = function (fresh) {
+        return api('/admin/usage' + (fresh ? '?fresh=1' : '')).then(function (r) {
+          refresh.disabled = false;
+          body.textContent = '';
+          if (!r.ok) { body.appendChild(el('div', 'state', r.error === 'session_expired' ? 'Signed out.' : 'Could not load service usage.')); return; }
+          var t = el('div', 'use-t');
+          var hr = el('div', 'use-r use-h');
+          ['Service', 'Today', 'Month', 'Limit'].forEach(function (h) { hr.appendChild(el('span', null, h)); });
+          t.appendChild(hr);
+          r.services.forEach(function (sv) {
+            var rw = el('div', 'use-r' + (sv.month ? '' : ' idle') + (sv.status !== 'ok' ? ' ' + sv.status : ''));
+            var nm = el(sv.link ? 'a' : 'span', 'use-n', sv.label);
+            if (sv.link) { nm.href = sv.link; nm.target = '_blank'; nm.rel = 'noopener noreferrer'; }
+            rw.appendChild(nm);
+            rw.appendChild(el('span', 'num', num(sv.today)));
+            rw.appendChild(el('span', 'num', num(sv.month)));
+            var lim = el('span', 'use-l');
+            // The tightest limit is the one worth a bar.
+            var tight = sv.limits.slice().sort(function (a, b) { return b.used / b.n - a.used / a.n; })[0];
+            if (tight) { lim.appendChild(usageBar(tight.used, tight.n)); lim.appendChild(el('small', null, num(tight.n) + '/' + (tight.per === 'day' ? 'day' : 'mo'))); }
+            else lim.appendChild(el('small', null, 'no cap'));
+            rw.appendChild(lim);
+            var extra = [];
+            if (sv.metrics.failed && sv.metrics.failed.month) extra.push(num(sv.metrics.failed.month) + ' failed');
+            if (sv.metrics.muted && sv.metrics.muted.month) extra.push(num(sv.metrics.muted.month) + ' dashboard only');
+            if (sv.last_month) extra.push(num(sv.last_month) + ' last month');
+            if (extra.length) rw.title = extra.join(' · ');
+            t.appendChild(rw);
+          });
+          body.appendChild(t);
+          var cf = r.cloudflare || {};
+          var cfBox = el('div', 'use-cf');
+          cfBox.appendChild(el('h4', null, 'Cloudflare (today, UTC)'));
+          if (!cf.ok) {
+            cfBox.appendChild(el('div', 'row-sub', cf.error === 'unconfigured'
+              ? 'Add CF_API_TOKEN (Account Analytics: Read) and CF_ACCOUNT_ID to the Worker to show Cloudflare usage.'
+              : 'Could not read Cloudflare analytics: ' + (cf.error || 'unknown error')));
+          } else {
+            var lines = [
+              ['Worker requests', cf.limits.worker_requests, num],
+              ['D1 rows read', cf.limits.d1_rows_read, num],
+              ['D1 rows written', cf.limits.d1_rows_written, num],
+              ['R2 storage', cf.limits.r2_storage, fmtBytes],
+            ];
+            lines.forEach(function (ln) {
+              var rw = el('div', 'use-r use-cfr' + (ln[1].status !== 'ok' ? ' ' + ln[1].status : ''));
+              rw.appendChild(el('span', 'use-n', ln[0]));
+              rw.appendChild(el('span', 'num', ln[2](ln[1].used)));
+              var lim = el('span', 'use-l');
+              lim.appendChild(usageBar(ln[1].used, ln[1].n));
+              lim.appendChild(el('small', null, ln[2](ln[1].n)));
+              rw.appendChild(lim);
+              cfBox.appendChild(rw);
+            });
+            var sub = num(cf.worker_requests_month) + ' requests this month' + (cf.worker_errors_today ? ' · ' + num(cf.worker_errors_today) + ' errors today' : '');
+            if (cf.stale) sub += ' · last good read ' + fmt(cf.as_of) + ' (' + cf.error + ')';
+            cfBox.appendChild(el('div', 'row-sub', sub));
+          }
+          body.appendChild(cfBox);
+          body.appendChild(el('p', 'row-sub use-note', 'Counted by the Worker as each call is made; today is Cleveland time. Resend, Brave and the rest publish no usage feed a free account can read, so this count is the only figure there is.'));
+        });
+      };
+      load(false);
+      return box;
     }
 
     function actRow(a) {
@@ -11106,15 +11318,16 @@
     // The feed shows six entries and scrolls for the rest. Entries run one or two lines,
     // so the height is measured from the sixth one rather than fixed in CSS.
     var ACT_VISIBLE = 6;
-    function sizeActivity() {
+    function sizeFeed(box) {
       // Hidden (another tab is open), nothing has a size yet; it is measured again on the next visit.
-      if (homeActivityEl.offsetParent === null) return;
-      var rows = homeActivityEl.querySelectorAll('.act');
-      if (rows.length <= ACT_VISIBLE) { homeActivityEl.style.maxHeight = ''; return; }
-      homeActivityEl.style.maxHeight = '';
+      if (!box || box.offsetParent === null) return;
+      var rows = box.querySelectorAll('.act');
+      if (rows.length <= ACT_VISIBLE) { box.style.maxHeight = ''; return; }
+      box.style.maxHeight = '';
       var last = rows[ACT_VISIBLE - 1];
-      homeActivityEl.style.maxHeight = Math.ceil(last.offsetTop + last.offsetHeight + 2) + 'px';
+      box.style.maxHeight = Math.ceil(last.offsetTop + last.offsetHeight + 2) + 'px';
     }
+    function sizeActivity() { sizeFeed(homeActivityEl); sizeFeed(document.getElementById('homeTelegram')); }
     // Re-measured when the web font swaps in (rows get shorter) and when the column changes width.
     if (document.fonts && document.fonts.ready) document.fonts.ready.then(sizeActivity);
     if (window.ResizeObserver) {
@@ -11144,9 +11357,86 @@
           renderHome(r.attention);
         }),
         loadHomeActivity(false),
+        homeFeed === 'telegram' ? (homeTelegramEl.removeAttribute('data-last-day'), tgOldest = null, loadHomeTelegram(false)) : null,
       ]);
     }
     document.getElementById('actNew').addEventListener('click', function () { loadHomeActivity(false); });
+
+    // ---- the Telegram feed: every message the Worker produced, sent or muted ----
+    // Muted kinds ("dashboard only") are read here rather than on the phone. A row opens
+    // the item its link names, through the same routeHash the deep links use.
+    var homeTelegramEl = document.getElementById('homeTelegram');
+    var tgOldest = null, tgLoaded = false;
+    var homeFeed = 'activity';
+    try { homeFeed = localStorage.getItem('tes_home_feed') === 'telegram' ? 'telegram' : 'activity'; } catch (e) { /* private window */ }
+    function tgSummary(text) {
+      var lines = String(text || '').split('\n').map(function (x) { return x.trim(); })
+        .filter(function (x) { return x && !/^https?:\/\//.test(x); });
+      var out = lines.slice(0, 2).join(' · ');
+      return out.length > 180 ? out.slice(0, 177) + '…' : out;
+    }
+    function tgRow(t) {
+      var d = el('div', 'act tg-act');
+      d.appendChild(el('i', 'tg ' + t.status));
+      d.appendChild(el('div', 'act-s', tgSummary(t.text)));
+      var m = el('div', 'act-m');
+      m.appendChild(el('span', null, fmt(t.at)));
+      m.appendChild(el('span', null, t.label));
+      if (t.status === 'muted') m.appendChild(badge('dashboard only', '#8aa48d'));
+      else if (t.status === 'failed') m.appendChild(badge('failed', '#ef4444'));
+      else if (t.status === 'unconfigured') m.appendChild(badge('not sent', '#8aa48d'));
+      d.appendChild(m);
+      d.title = t.text + (t.error ? '\n\n' + t.error : '');
+      var hash = t.link && t.link.indexOf('#') >= 0 ? '#' + t.link.split('#')[1] : null;
+      if (hash) d.addEventListener('click', function () { routeHash(hash, true); });
+      else d.classList.add('nolink');
+      return d;
+    }
+    function loadHomeTelegram(more) {
+      tgLoaded = true;
+      return api('/admin/telegram/log' + (more && tgOldest ? '?before=' + tgOldest : '')).then(function (r) {
+        if (!r.ok) { if (!more) { homeTelegramEl.textContent = ''; homeTelegramEl.appendChild(el('div', 'state', 'Could not load the Telegram feed.')); } return; }
+        var list = r.items || [];
+        if (!more) homeTelegramEl.textContent = '';
+        else { var old = homeTelegramEl.querySelector('.more-btn'); if (old) old.remove(); }
+        if (!list.length && !more) homeTelegramEl.appendChild(el('div', 'row-sub', 'No Telegram messages yet. Everything the site pages you about lands here, including the ones you switch to dashboard only.'));
+        var lastDay = homeTelegramEl.getAttribute('data-last-day');
+        list.forEach(function (t) {
+          var day = new Date(t.at * 1000).toDateString();
+          if (day !== lastDay) {
+            var today = new Date().toDateString(), yest = new Date(Date.now() - 86400000).toDateString();
+            homeTelegramEl.appendChild(el('div', 'act-day', day === today ? 'Today' : day === yest ? 'Yesterday' : fmtDate(t.at)));
+            lastDay = day;
+          }
+          homeTelegramEl.appendChild(tgRow(t));
+        });
+        homeTelegramEl.setAttribute('data-last-day', lastDay || '');
+        if (list.length) tgOldest = list[list.length - 1].id;
+        if (r.more) homeTelegramEl.appendChild(licAction('Load more', 'more-btn', function () { loadHomeTelegram(true); }));
+        if (!more) { sizeActivity(); requestAnimationFrame(sizeActivity); }
+      });
+    }
+    function setHomeFeed(f) {
+      homeFeed = f;
+      try { localStorage.setItem('tes_home_feed', f); } catch (e) { /* private window */ }
+      document.querySelectorAll('.feed-tab').forEach(function (b) {
+        var on = b.getAttribute('data-feed') === f;
+        b.classList.toggle('on', on);
+        b.setAttribute('aria-selected', on ? 'true' : 'false');
+      });
+      homeActivityEl.hidden = f !== 'activity';
+      homeTelegramEl.hidden = f !== 'telegram';
+      if (f === 'telegram') { homeTelegramEl.removeAttribute('data-last-day'); tgOldest = null; loadHomeTelegram(false); }
+      requestAnimationFrame(sizeActivity);
+    }
+    document.querySelectorAll('.feed-tab').forEach(function (b) {
+      b.addEventListener('click', function () { setHomeFeed(b.getAttribute('data-feed')); });
+    });
+    if (window.ResizeObserver) {
+      var tgW = 0;
+      new ResizeObserver(function () { var w = homeTelegramEl.clientWidth; if (w && w !== tgW) { tgW = w; sizeActivity(); } }).observe(homeTelegramEl);
+    }
+    if (homeFeed === 'telegram') setHomeFeed('telegram');
 
     // ---- badges on the tab strip ----
     function setNavBadge(view, n) {
@@ -11987,10 +12277,12 @@
       d3.appendChild(kl);
       wrap.appendChild(d3);
 
-      // Telegram: every message the Worker sends on its own, and the scheduled ones
-      // with when they last went and a Send now. The list lives in src/weekly.js.
+      // Telegram settings: one switch per kind of message. Off means dashboard only:
+      // the message still lands in the Telegram feed on Home, it just does not reach the
+      // phone. Locked kinds (the contact form, failures) always send. The scheduled ones
+      // keep their Send now. The kinds live in src/telegram_kinds.js.
       var d4 = el('details');
-      d4.appendChild(el('summary', null, 'Telegram alerts'));
+      d4.appendChild(el('summary', null, 'Telegram settings'));
       var tl = el('div', 'tg-list');
       tl.appendChild(el('div', 'row-sub', 'Loading…'));
       d4.appendChild(tl);
@@ -11998,31 +12290,44 @@
         if (!d4.open) return;
         api('/admin/alerts').then(function (r) {
           tl.textContent = '';
-          if (!r.ok) { tl.appendChild(el('div', 'row-sub', 'Could not load the list.')); return; }
-          tl.appendChild(el('p', 'row-sub', 'Everything below reaches your phone on its own. The scheduled ones go once each, in business hours.'));
-          var sch = el('div', 'tg-group');
-          sch.appendChild(el('h4', null, 'Scheduled'));
-          (r.schedule || []).forEach(function (j) {
-            var line = el('div', 'tg-row');
-            var txt = el('div', 'tg-txt');
-            txt.appendChild(el('b', null, j.title));
-            txt.appendChild(el('span', 'row-sub', j.when + ' · ' + j.what + (j.last_period ? ' Last went for ' + j.last_period + '.' : ' Not sent yet.')));
-            line.appendChild(txt);
-            line.appendChild(licAction('Send now', null, function () {
-              api('/admin/alerts/' + j.key + '/send', { method: 'POST' }).then(function (x) { toast(x.ok ? 'Sent to Telegram' : 'Could not send'); });
-            }));
-            sch.appendChild(line);
-          });
-          tl.appendChild(sch);
-          (r.catalog || []).filter(function (g) { return g.group !== 'Scheduled'; }).forEach(function (g) {
+          if (!r.ok) { tl.appendChild(el('div', 'row-sub', 'Could not load the settings.')); return; }
+          tl.appendChild(el('p', 'row-sub', 'Switched off means dashboard only: the message still shows in the Telegram feed on Home, it just does not reach your phone. The locked ones always send.'));
+          var sched = {};
+          (r.schedule || []).forEach(function (j) { sched[j.key] = j; });
+          (r.groups || []).forEach(function (g) {
             var grp = el('div', 'tg-group');
             grp.appendChild(el('h4', null, g.group));
-            g.items.forEach(function (it) {
+            g.kinds.forEach(function (k) {
               var line = el('div', 'tg-row');
               var txt = el('div', 'tg-txt');
-              txt.appendChild(el('b', null, it[0]));
-              txt.appendChild(el('span', 'row-sub', it[1]));
+              txt.appendChild(el('b', null, k.label));
+              var j = sched[k.key];
+              txt.appendChild(el('span', 'row-sub', k.what + (j ? (j.last_period ? ' Last went for ' + j.last_period + '.' : ' Not sent yet.') : '')));
               line.appendChild(txt);
+              if (j) line.appendChild(licAction('Send now', 'ct-btn sm', function () {
+                api('/admin/alerts/' + j.key + '/send', { method: 'POST' }).then(function (x) { toast(x.ok ? 'Sent to Telegram' : 'Could not send'); });
+              }));
+              var sw = el('label', 'tg-sw' + (k.locked ? ' locked' : ''));
+              var cb = el('input');
+              cb.type = 'checkbox';
+              cb.checked = k.on;
+              cb.disabled = !!k.locked;
+              cb.setAttribute('role', 'switch');
+              cb.setAttribute('aria-label', k.label + (k.locked ? ' (always on)' : ''));
+              sw.appendChild(cb);
+              sw.appendChild(el('span', 'tg-knob'));
+              sw.title = k.locked ? 'Always sent' : 'On: sent to your phone. Off: dashboard only.';
+              cb.addEventListener('change', function () {
+                var want = cb.checked, body = {};
+                body[k.key] = want;
+                cb.disabled = true;
+                api('/admin/telegram/prefs', { method: 'PUT', body: body }).then(function (x) {
+                  cb.disabled = false;
+                  if (!x.ok) { cb.checked = !want; toast('Could not save: ' + (x.message || x.error || 'try again')); return; }
+                  toast(k.label + (want ? ': sent to your phone' : ': dashboard only'));
+                });
+              });
+              line.appendChild(sw);
               grp.appendChild(line);
             });
             tl.appendChild(grp);
