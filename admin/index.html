@@ -268,6 +268,64 @@
     .custfind label { display:block; font-size:0.68rem; text-transform:uppercase; letter-spacing:0.05em; color:var(--muted); font-weight:700; margin-bottom:0.2rem; }
     .custfind input { width:100%; padding:0.6rem 0.75rem; border-radius:8px; border:1px solid var(--line); background:var(--bg); color:var(--text); font-family:inherit; font-size:0.92rem; }
     .custfind .fnote { margin-top:0.45rem; }
+    .custfind .orgbar { margin-top:0; }
+    .custfind .orgbar input { width:auto; }
+    /* Customers: People/Organizations left, the search in the middle, Add on the right. */
+    .cu-top { display:flex; align-items:center; gap:0.6rem; flex-wrap:wrap; margin:0.3rem 0 0.9rem; }
+    .cu-top .filters { margin:0; flex:0 0 auto; }
+    .cu-q { flex:1 1 16rem; min-width:0; }
+    .cu-q input { width:100%; box-sizing:border-box; min-height:40px; padding:0.5rem 0.75rem; border-radius:999px; border:1px solid var(--line); background:var(--bg); color:var(--text); font-family:inherit; font-size:0.88rem; }
+    .cu-q input:focus { outline:2px solid var(--gold); outline-offset:1px; }
+    .cu-add { flex:0 0 auto; margin-left:auto; font-family:"Montserrat",sans-serif; font-size:0.72rem; font-weight:700; text-transform:uppercase; letter-spacing:0.04em; padding:0.5rem 1rem; min-height:40px; border-radius:999px; border:0; background:linear-gradient(135deg,var(--gold),#e0b840); color:#0d1710; cursor:pointer; }
+    .cu-add:focus-visible { outline:2px solid var(--text); outline-offset:2px; }
+    #custAddBox { margin-bottom:0.9rem; }
+    /* The list: the Marketing row look, laid out on a grid so every column lines up. */
+    .mk-open.cu-cells { display:grid; grid-template-columns:var(--cu-cols); gap:12px; align-items:center; }
+    .cu-rows .mk-open { cursor:pointer; }
+    .cu-rows .mk-head .mk-open { cursor:default; }
+    .cu-rows .mk-row .mk-open:focus-visible { outline:2px solid var(--gold); outline-offset:-2px; border-radius:6px; }
+    .cu-c { min-width:0; text-align:center; font-size:0.84rem; color:var(--muted); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+    .cu-c.cu-first { text-align:left; color:var(--text); font-weight:600; }
+    .cu-c .cu-t { overflow:hidden; text-overflow:ellipsis; }
+    .cu-c .cu-blank { opacity:0.45; }
+    .cu-c.cu-num { font-variant-numeric:tabular-nums; }
+    .cu-name { display:flex; align-items:center; gap:0.35rem; min-width:0; }
+    .cu-name .cu-t { flex:0 1 auto; min-width:0; white-space:nowrap; }
+    .cu-name .ct-chip { flex:0 0 auto; }
+    .cu-link { color:var(--green); text-decoration:none; }
+    .cu-link:hover { text-decoration:underline; }
+    .cu-link.guess { color:var(--muted); font-style:italic; }
+    .cu-webline { display:flex; flex-wrap:wrap; align-items:center; gap:0.2rem 0.45rem; }
+    .cu-webline i { color:var(--gold); font-size:0.8rem; }
+    .cu-webline .cu-link { color:var(--green); word-break:break-all; }
+    .cu-webline .cu-link.guess { color:var(--muted); }
+    .cu-webnote { font-size:0.72rem; color:var(--muted); font-style:italic; }
+    .cu-rows .mk-head .cu-c { position:relative; overflow:visible; }
+    .cu-rows .mk-head .cu-c .mk-sort { max-width:100%; }
+    .cu-rows .mk-head .cu-c .mk-grip { right:-12px; }
+    .cu-empty { border:1px solid var(--line); border-top:0; border-radius:0 0 10px 10px; }
+    @media (max-width:720px) {
+      .cu-rows .mk-head { display:none; }
+      .mk-open.cu-cells { display:flex; flex-wrap:wrap; gap:0.1rem 0.7rem; padding:0.6rem 0; }
+      .cu-c { text-align:left; font-size:0.8rem; flex:0 1 auto; }
+      .cu-c.cu-first { flex:1 1 100%; font-size:0.9rem; }
+      .cu-c .cu-blank { display:none; }
+      .cu-c:has(.cu-blank) { display:none; }
+      .cu-add { margin-left:0; }
+      .cu-q { order:3; flex-basis:100%; }
+    }
+    /* The file opens over the list. */
+    .cu-modal { position:fixed; inset:0; z-index:60; background:rgba(4,9,6,0.72); display:flex; align-items:flex-start; justify-content:center; padding:4vh 1rem; overflow-y:auto; }
+    .cu-modal[hidden] { display:none; }
+    .cu-modal-box { width:100%; max-width:860px; background:var(--bg); border:1px solid var(--line); border-radius:16px; box-shadow:0 24px 60px rgba(0,0,0,0.55); margin-bottom:4vh; }
+    .cu-modal-bar { position:sticky; top:0; z-index:2; display:flex; align-items:center; justify-content:space-between; gap:0.6rem; padding:0.55rem 0.6rem 0.55rem 1rem; background:var(--card); border-bottom:1px solid var(--line); border-radius:16px 16px 0 0; }
+    #custModalTitle { font-family:"Montserrat",sans-serif; font-size:0.7rem; font-weight:800; text-transform:uppercase; letter-spacing:0.06em; color:var(--muted); }
+    .cu-modal-x { width:40px; height:40px; border-radius:999px; border:1px solid var(--line); background:var(--bg); color:var(--text); cursor:pointer; font-size:1rem; display:inline-flex; align-items:center; justify-content:center; }
+    .cu-modal-x:hover { border-color:var(--gold); color:var(--gold); }
+    #custDetail { padding:0.9rem; }
+    #custDetail > .panel { border:0; background:transparent; padding:0; }
+    body.cu-locked { overflow:hidden; }
+    @media (max-width:600px) { .cu-modal { padding:0; } .cu-modal-box { border-radius:0; min-height:100%; margin:0; } .cu-modal-bar { border-radius:0; } }
 
     .cust { width:100%; text-align:left; border:1px solid var(--line); border-radius:12px; background:var(--card); padding:0.8rem 0.9rem; cursor:pointer; color:inherit; font:inherit; display:block; margin-bottom:0.5rem; }
     .cust:hover { border-color:var(--green); }
@@ -1319,34 +1377,43 @@
   </div>
 
   <main class="wrap" id="viewCustomers" aria-label="Customers" hidden>
-    <div class="filters" id="custMode">
-      <button type="button" class="fpill on" data-mode="people">People</button>
-      <button type="button" class="fpill" data-mode="orgs">Organizations</button>
+    <div class="cu-top">
+      <div class="filters" id="custMode">
+        <button type="button" class="fpill on" data-mode="people">People</button>
+        <button type="button" class="fpill" data-mode="orgs">Organizations</button>
+      </div>
+      <div class="cu-q" id="custFind">
+        <label for="custQ" class="sr-only">Find a customer by email, name, company, phone, ticket or invoice number</label>
+        <input id="custQ" type="search" autocomplete="off"
+               placeholder="Search email, name, company, ticket or invoice number"
+               title="Searches accounts, tickets and invoices together, so somebody who has written in but never signed in still turns up.">
+      </div>
+      <button type="button" id="custAddToggle" class="cu-add">+ Add customer</button>
     </div>
 
-    <section class="custfind" id="custAddBox">
-      <div class="orgbar">
-        <button type="button" id="custAddToggle" class="prim">+ Add customer</button>
-        <span class="fnote">Set someone up before they have ever signed in.</span>
-      </div>
+    <section class="custfind" id="custAddBox" hidden>
       <div id="custAddForm" hidden></div>
+      <div class="orgbar" id="orgAddBar" hidden>
+        <label for="orgAddName" class="sr-only">New organization name</label>
+        <input type="text" id="orgAddName" placeholder="New organization name">
+        <button type="button" id="orgAddGo" class="prim">Add</button>
+        <button type="button" id="orgAddCancel">Cancel</button>
+      </div>
     </section>
 
-    <section class="custfind">
-      <label for="custQ">Find a customer</label>
-      <input id="custQ" type="search" autocomplete="off"
-             placeholder="Email, name, company, ticket or invoice number">
-      <p class="fnote">Searches accounts, tickets and invoices together, so somebody who has
-        written in but never signed in still turns up.</p>
+    <section aria-label="Customers">
+      <div id="custList"><div class="state">Loading customers&hellip;</div></div>
     </section>
 
-    <div class="grid">
-      <section aria-label="Search results">
-        <div id="custList"><div class="state">Loading customers&hellip;</div></div>
-      </section>
-      <section id="custDetail" aria-live="polite">
-        <div class="state">Pick somebody to open their file.</div>
-      </section>
+    <!-- The file opens over the list rather than beside it, so the list keeps the full width. -->
+    <div class="cu-modal" id="custModal" hidden>
+      <div class="cu-modal-box" role="dialog" aria-modal="true" aria-labelledby="custModalTitle">
+        <div class="cu-modal-bar">
+          <span id="custModalTitle">Customer file</span>
+          <button type="button" class="cu-modal-x" id="custModalX" aria-label="Close the file"><i class="fa-solid fa-xmark" aria-hidden="true"></i></button>
+        </div>
+        <section id="custDetail" aria-live="polite"></section>
+      </div>
     </div>
   </main>
 
@@ -6004,61 +6071,250 @@
         });
     }
 
-    function renderCustList() {
-      custListEl.textContent = '';
-      if (!custRows.length) {
-        custListEl.appendChild(el('div', 'state', 'Nobody matches that.'));
-        return;
-      }
-      custRows.forEach(function (c) {
-        var b = el('button', 'cust' + (custSel === c.key ? ' sel' : ''));
-        b.type = 'button';
+    // ---- the customer and organization lists ------------------------------
+    // Laid out like the Marketing lists: a header you can sort by and drag to resize,
+    // one row per person, the name reading down the left edge and the rest centered.
+    // Column widths and the sort are remembered in this browser, per list.
 
-        var top = el('div', 'cust-top');
-        top.appendChild(el('span', 'cust-name', c.name || c.company || c.email || '(no name)'));
-        // Only badges that mean something on a list: an unlinked person (why their
-        // records are invisible elsewhere) and a suspended account. The software plan is
-        // on the file itself, not here.
-        if (!c.account_id) top.appendChild(badge('No account', '#c89830'));
-        else if (c.status && c.status !== 'active') top.appendChild(badge(acctState(c.status), '#ef4444'));
-        b.appendChild(top);
+    // When no website is saved, a business email's domain is nearly always their site,
+    // so the list shows that as a muted guess; free mail shows nothing.
+    var CU_FREE = /^(gmail|googlemail|yahoo|ymail|rocketmail|hotmail|outlook|live|msn|aol|icloud|me|mac|proton|protonmail|pm|gmx|mail|zoho|comcast|att|sbcglobal|bellsouth|verizon|charter|spectrum|roadrunner|rr|cox|windstream|frontier|earthlink|juno|netzero|yandex|hey|fastmail|tutanota|duck)\.[a-z.]+$/;
+    function cuSite(email) {
+      var d = (String(email || '').split('@')[1] || '').toLowerCase().trim();
+      return d && !CU_FREE.test(d) ? d : '';
+    }
+    // A saved website is stored by the Worker as http(s)://host/path. It wins over the
+    // guess; the guess is shown muted and says where it came from.
+    function cuSiteHref(url) { return /^https?:\/\//i.test(url || '') ? url : 'https://' + url; }
+    function cuSiteText(url) { return String(url || '').replace(/^https?:\/\//i, ''); }
+    function cuSiteLink(saved, guess) {
+      var url = saved || guess;
+      if (!url) return null;
+      var a = el('a', 'cu-link' + (saved ? '' : ' guess'), cuSiteText(url));
+      a.href = cuSiteHref(url); a.target = '_blank'; a.rel = 'noopener noreferrer';
+      a.title = 'Open ' + cuSiteText(url) + ' in a new tab' + (saved ? '' : ' (a guess from their email address; no website saved)');
+      a.addEventListener('click', function (e) { e.stopPropagation(); });
+      return a;
+    }
+    // The website line at the top of a person's or company's file.
+    function cuWebsiteLine(saved, guess) {
+      var d = el('div', 'who cu-webline');
+      var ic = el('i', 'fa-solid fa-globe');
+      ic.setAttribute('aria-hidden', 'true');
+      d.appendChild(ic);
+      var a = cuSiteLink(saved, guess);
+      if (a) {
+        d.appendChild(a);
+        if (!saved) d.appendChild(el('span', 'cu-webnote', 'guessed from their email; not saved'));
+      } else d.appendChild(el('span', 'cu-webnote', 'No website on file'));
+      return d;
+    }
 
-        b.appendChild(el('div', 'cust-sub',
-          c.company && c.name ? c.company + ' · ' + c.email : (c.email || '')));
+    var cuSort = (function () { try { return JSON.parse(localStorage.getItem('tes_cusort') || 'null') || {}; } catch (e) { return {}; } })();
+    function cuColsLoad(key, cols) {
+      var w = {};
+      try { w = JSON.parse(localStorage.getItem('tes_cucols_' + key) || '{}') || {}; } catch (e) { w = {}; }
+      return cols.map(function (c) { return w[c.k] || c.w; });
+    }
+    function cuColsSave(key, cols, ws) {
+      var o = {};
+      cols.forEach(function (c, i) { o[c.k] = Math.round(ws[i]); });
+      try { localStorage.setItem('tes_cucols_' + key, JSON.stringify(o)); } catch (e) { /* this browser only */ }
+    }
+    // The last column takes whatever room is left, so dragging never pushes the list sideways.
+    function cuColsApply(list, ws) {
+      list.style.setProperty('--cu-cols', ws.map(function (w, i) {
+        return i === ws.length - 1 ? 'minmax(' + Math.round(w) + 'px, 1fr)' : Math.round(w) + 'px';
+      }).join(' '));
+    }
 
-        var counts = el('div', 'cust-counts');
-        var bit = function (label, value, strong) {
-          var s = el('span');
-          s.appendChild(el('b', null, String(value)));
-          s.appendChild(document.createTextNode(' ' + label));
-          if (strong) s.style.color = 'var(--gold)';
-          counts.appendChild(s);
-        };
-        if (c.open_tickets) bit('open', c.open_tickets, true);
-        bit(c.tickets === 1 ? 'ticket' : 'tickets', c.tickets);
-        if (c.balance_cents) {
-          var owed = el('span');
-          owed.appendChild(el('b', null, money(c.balance_cents)));
-          owed.appendChild(document.createTextNode(' due'));
-          owed.style.color = 'var(--gold)';
-          counts.appendChild(owed);
+    // cols: [{k, label, w, text(row), cell(row) optional, num: true for counts}]
+    function cuTable(key, cols, rows, opts) {
+      var wrap = el('div');
+      var bar = el('div', 'mk-bar');
+      bar.appendChild(el('span', 'mk-bar-n', opts.count));
+      wrap.appendChild(bar);
+      if (!rows.length) { wrap.appendChild(el('div', 'state cu-empty', opts.empty)); return wrap; }
+
+      var srt = cuSort[key] || { col: null, dir: 'asc' };
+      if (srt.col) {
+        var col = cols.filter(function (c) { return c.k === srt.col; })[0];
+        if (col) {
+          var sign = srt.dir === 'desc' ? -1 : 1;
+          var val = function (r) { var v = col.sortv ? col.sortv(r) : col.text(r); return typeof v === 'number' ? v : String(v || '').toLowerCase(); };
+          rows = rows.slice().sort(function (a, b) {
+            var x = val(a), y = val(b);
+            // Blanks go last whichever way the column is sorted.
+            if (typeof x === 'string' && (!x || !y) && x !== y) return x ? -1 : 1;
+            var c = typeof x === 'number' ? x - y : x.localeCompare(y);
+            return c ? sign * c : String(cols[0].text(a)).localeCompare(String(cols[0].text(b)));
+          });
         }
-        if (c.licenses) bit(c.licenses === 1 ? 'key' : 'keys', c.licenses);
-        b.appendChild(counts);
+      }
 
+      var list = el('div', 'mk-rows cu-rows');
+      var ws = cuColsLoad(key, cols);
+      cuColsApply(list, ws);
+
+      var h = el('div', 'mk-row mk-head');
+      var hc = el('div', 'mk-open cu-cells');
+      cols.forEach(function (c, i) {
+        var cell = el('span', 'cu-c' + (i === 0 ? ' cu-first' : '') + (c.num ? ' cu-num' : ''));
+        var b = el('button', 'mk-sort' + (srt.col === c.k ? ' on' : ''));
+        b.type = 'button';
+        b.appendChild(document.createTextNode(c.label));
+        var arrow = el('i', 'fa-solid ' + (srt.col !== c.k ? 'fa-sort' : srt.dir === 'desc' ? 'fa-sort-down' : 'fa-sort-up'));
+        arrow.setAttribute('aria-hidden', 'true');
+        b.appendChild(arrow);
+        b.setAttribute('aria-label', 'Sort by ' + c.label + (srt.col === c.k ? (srt.dir === 'desc' ? ', sorted descending' : ', sorted ascending') : ''));
         b.addEventListener('click', function () {
+          cuSort[key] = srt.col === c.k ? { col: c.k, dir: srt.dir === 'asc' ? 'desc' : 'asc' } : { col: c.k, dir: c.num ? 'desc' : 'asc' };
+          try { localStorage.setItem('tes_cusort', JSON.stringify(cuSort)); } catch (e) { /* this browser only */ }
+          opts.rerender();
+        });
+        cell.appendChild(b);
+        if (i < cols.length - 1) cell.appendChild(cuGrip(list, hc, key, cols, i));
+        hc.appendChild(cell);
+      });
+      h.appendChild(hc);
+      list.appendChild(h);
+
+      rows.forEach(function (r) {
+        var li = el('div', 'mk-row' + (opts.isSel(r) ? ' sel' : ''));
+        var btn = el('div', 'mk-open cu-cells');
+        btn.setAttribute('role', 'button');
+        btn.tabIndex = 0;
+        btn.setAttribute('aria-label', 'Open ' + (cols[0].text(r) || 'this file'));
+        cols.forEach(function (c, i) {
+          var cell = el('span', 'cu-c' + (i === 0 ? ' cu-first' : '') + (c.num ? ' cu-num' : ''));
+          cell.setAttribute('data-label', c.label);
+          var node = c.cell ? c.cell(r) : null;
+          if (node) cell.appendChild(node);
+          else {
+            var t = c.text(r);
+            cell.appendChild(el('span', 'cu-t' + (t === '' || t == null ? ' cu-blank' : ''), t === '' || t == null ? '-' : String(t)));
+          }
+          btn.appendChild(cell);
+        });
+        var go = function () { opts.open(r); };
+        btn.addEventListener('click', go);
+        btn.addEventListener('keydown', function (e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); go(); } });
+        li.appendChild(btn);
+        list.appendChild(li);
+      });
+      wrap.appendChild(list);
+      return wrap;
+    }
+
+    // Drag a column boundary like a spreadsheet; double-click it to reset.
+    function cuGrip(list, head, key, cols, i) {
+      var g = el('span', 'mk-grip');
+      g.title = 'Drag to resize. Double-click to reset.';
+      g.addEventListener('click', function (e) { e.stopPropagation(); });
+      g.addEventListener('dblclick', function (e) {
+        e.stopPropagation();
+        var ws = cuColsLoad(key, cols); ws[i] = cols[i].w;
+        cuColsSave(key, cols, ws); cuColsApply(list, ws);
+      });
+      g.addEventListener('pointerdown', function (e) {
+        if (e.button !== 0) return;
+        e.preventDefault(); e.stopPropagation();
+        var start = cuColsLoad(key, cols), ws = start.slice(), x0 = e.clientX;
+        var room = head.clientWidth, gaps = (cols.length - 1) * 12;
+        g.setPointerCapture(e.pointerId);
+        document.body.classList.add('mk-resizing');
+        function move(ev) {
+          var others = 0;
+          ws.forEach(function (w, j) { if (j !== i) others += w; });
+          ws[i] = Math.max(70, Math.min(start[i] + ev.clientX - x0, room - gaps - others));
+          cuColsApply(list, ws);
+        }
+        function up() {
+          g.removeEventListener('pointermove', move); g.removeEventListener('pointerup', up); g.removeEventListener('pointercancel', up);
+          document.body.classList.remove('mk-resizing');
+          cuColsSave(key, cols, ws);
+        }
+        g.addEventListener('pointermove', move); g.addEventListener('pointerup', up); g.addEventListener('pointercancel', up);
+      });
+      return g;
+    }
+
+    var CU_PEOPLE_COLS = [
+      { k: 'name', label: 'Name', w: 230, text: function (c) { return c.name || c.company || c.email || '(no name)'; },
+        cell: function (c) {
+          var s = el('span', 'cu-name');
+          s.appendChild(el('span', 'cu-t', c.name || c.company || c.email || '(no name)'));
+          // Only what matters on a list: an unlinked person (why their records are
+          // invisible elsewhere), a suspended account, money owed, open tickets.
+          if (!c.account_id) s.appendChild(el('span', 'ct-chip gold', 'No account'));
+          else if (c.status && c.status !== 'active') s.appendChild(el('span', 'ct-chip red', acctState(c.status)));
+          if (c.balance_cents) s.appendChild(el('span', 'ct-chip gold', money(c.balance_cents) + ' due'));
+          if (c.open_tickets) s.appendChild(el('span', 'ct-chip green', c.open_tickets + ' open'));
+          return s;
+        } },
+      { k: 'company', label: 'Company', w: 190, text: function (c) { return c.name ? c.company : ''; } },
+      { k: 'email', label: 'Email', w: 250, text: function (c) { return c.email; } },
+      { k: 'phone', label: 'Phone', w: 140, text: function (c) { return c.phone; } },
+      { k: 'site', label: 'Website', w: 150, text: function (c) { return cuSiteText(c.website) || cuSite(c.email); },
+        cell: function (c) { return cuSiteLink(c.website, cuSite(c.email)); } },
+    ];
+
+    function renderCustList() {
+      if (custMode === 'orgs') { renderOrgList(); return; }
+      custListEl.textContent = '';
+      var q = custQEl.value.trim();
+      custListEl.appendChild(cuTable('people', CU_PEOPLE_COLS, custRows, {
+        count: custRows.length + (custRows.length === 1 ? ' customer' : ' customers') + (q ? ' matching "' + q + '"' : ''),
+        empty: q ? 'Nobody matches that.' : 'No customers yet.',
+        isSel: function (c) { return custSel === c.key; },
+        rerender: renderCustList,
+        open: function (c) {
           custSel = c.key;
           renderCustList();
           if (c.account_id) openCustomer(c.account_id);
           else showNoAccount(c);
-        });
-        custListEl.appendChild(b);
-      });
+        },
+      }));
     }
+
+    // ---- the file, over the list --------------------------------------------
+    var custModal = document.getElementById('custModal');
+    var custModalFocus = null;
+    function custModalOpen(title) {
+      document.getElementById('custModalTitle').textContent = title || 'Customer file';
+      if (custModal.hidden) {
+        custModalFocus = document.activeElement;
+        custModal.hidden = false;
+        document.body.classList.add('cu-locked');
+        document.getElementById('custModalX').focus();
+      }
+      custModal.querySelector('.cu-modal-box').scrollTop = 0;
+    }
+    function custModalClose() {
+      if (custModal.hidden) return;
+      custModal.hidden = true;
+      document.body.classList.remove('cu-locked');
+      custDetailEl.textContent = '';
+      custSel = null; orgSel = null;
+      // Reloaded rather than redrawn: anything saved in the file (a name, a website)
+      // must show in the list the file was opened from.
+      if (custMode === 'orgs') loadOrgs(); else loadCustomers(custQEl.value.trim());
+      if (/^#(c|o)=/.test(location.hash)) history.replaceState(null, '', '#customers');
+      if (custModalFocus && custModalFocus.focus && document.contains(custModalFocus)) custModalFocus.focus();
+      custModalFocus = null;
+    }
+    document.getElementById('custModalX').addEventListener('click', custModalClose);
+    custModal.addEventListener('click', function (e) { if (e.target === custModal) custModalClose(); });
+    document.addEventListener('keydown', function (e) {
+      if (e.key !== 'Escape' || custModal.hidden) return;
+      if (!cmdk.hidden) return;                       // search is on top; it closes first
+      custModalClose();
+    });
 
     // Somebody with records but no account. There is nothing to fetch, so say what
     // is known and why the rest of the console cannot see them.
     function showNoAccount(c) {
+      custModalOpen('Customer file');
       custDetailEl.textContent = '';
       var p = el('div', 'panel');
       p.appendChild(el('h2', null, c.name || c.company || c.email));
@@ -6083,6 +6339,7 @@
     }
 
     function openCustomer(accountId) {
+      custModalOpen('Customer file');
       custDetailEl.textContent = '';
       custDetailEl.appendChild(el('div', 'state', 'Loading…'));
       api('/admin/customers/' + encodeURIComponent(accountId)).then(function (r) {
@@ -6330,6 +6587,7 @@
       // Service address, when they have given one. Its own line: it is what you read
       // out loud when dispatching an on-site visit.
       if (c.profile.address) head.appendChild(el('div', 'who', c.profile.address));
+      head.appendChild(cuWebsiteLine(c.profile.website, cuSite(c.account.email)));
 
       // `plan` and `status` on an account are the software control plane's fields: a
       // trial quota and whether a license may activate. Every account carries them
@@ -6447,6 +6705,7 @@
         ['alt_phone', 'Other phone'], ['address_line1', 'Address'],
         ['address_line2', 'Address line 2'], ['city', 'City'],
         ['region', 'State'], ['postal_code', 'ZIP'], ['country', 'Country'],
+        ['website', 'Website', 'wide'],
       ];
 
       function contactEditor(c, onDone) {
@@ -6491,6 +6750,7 @@
               save.disabled = false;
               if (!r.ok) {
                 return toast(r.error === 'nothing_to_save' ? 'Nothing to save'
+                  : r.error === 'invalid_website' ? 'That website is not a web address (try theirsite.com)'
                   : r.error === 'not_found' ? 'That account no longer exists' : 'Could not save');
               }
               toast('Details saved');
@@ -6865,7 +7125,9 @@
 
     custQEl.addEventListener('input', function () {
       clearTimeout(custTimer);
-      custTimer = setTimeout(function () { loadCustomers(custQEl.value.trim()); }, 250);
+      custTimer = setTimeout(function () {
+        if (custMode === 'orgs') renderOrgList(); else loadCustomers(custQEl.value.trim());
+      }, 250);
     });
 
     // ---- shared billing UI ------------------------------------------------
@@ -7066,7 +7328,7 @@
                'Not emailed. Copy this now, it is not shown again.'));
           }
           toast(r.created ? 'Customer created' : 'Existing account updated');
-          document.getElementById('custAddForm').hidden = true;
+          cuAddShow(null);
           // Opened from the Inventory holder picker: go back there with them picked.
           if (afterAddCustomer) {
             var back = afterAddCustomer; afterAddCustomer = null;
@@ -7079,21 +7341,47 @@
       });
       actions.appendChild(save);
       actions.appendChild(licAction('Cancel', null, function () {
-        document.getElementById('custAddForm').hidden = true;
+        cuAddShow(null);
       }));
       box.appendChild(actions);
     }
 
+    function cuAddShow(which) {
+      document.getElementById('custAddBox').hidden = !which;
+      document.getElementById('custAddForm').hidden = which !== 'person';
+      document.getElementById('orgAddBar').hidden = which !== 'org';
+    }
     document.getElementById('custAddToggle').addEventListener('click', function () {
+      if (custMode === 'orgs') {
+        if (!document.getElementById('orgAddBar').hidden) { cuAddShow(null); return; }
+        cuAddShow('org');
+        document.getElementById('orgAddName').focus();
+        return;
+      }
       var box = document.getElementById('custAddForm');
-      if (!box.hidden) { box.hidden = true; return; }
+      if (!box.hidden) { cuAddShow(null); return; }
       // Orgs are needed for the dropdown, and may not have been fetched yet.
       if (!orgRows.length) api('/admin/orgs').then(function (r) {
         orgRows = (r && r.orgs) || [];
-        buildAddForm(); box.hidden = false;
+        buildAddForm(); cuAddShow('person');
       });
-      else { buildAddForm(); box.hidden = false; }
+      else { buildAddForm(); cuAddShow('person'); }
     });
+    function orgAdd() {
+      var nameIn = document.getElementById('orgAddName');
+      var n = nameIn.value.trim();
+      if (!n) { toast('Give it a name'); nameIn.focus(); return; }
+      api('/admin/orgs', { method: 'POST', body: { name: n } }).then(function (r) {
+        if (!r || !r.ok) return toast('Could not add that');
+        nameIn.value = '';
+        cuAddShow(null);
+        toast('Added ' + r.name);
+        loadOrgs().then(function () { orgSel = r.id; openOrg(r.id); });
+      });
+    }
+    document.getElementById('orgAddGo').addEventListener('click', orgAdd);
+    document.getElementById('orgAddName').addEventListener('keydown', function (e) { if (e.key === 'Enter') { e.preventDefault(); orgAdd(); } });
+    document.getElementById('orgAddCancel').addEventListener('click', function () { cuAddShow(null); });
 
     // ---- deleting a customer ----------------------------------------------
     // A hard delete, so the confirmation is the email typed back rather than a yes/no.
@@ -7243,8 +7531,7 @@
           go.disabled = false;
           if (!r || !r.ok) return toast((r && r.message) || (r && r.error) || 'Could not delete');
           toast('Deleted ' + r.email);
-          custDetailEl.textContent = '';
-          custDetailEl.appendChild(el('div', 'state', 'Deleted. Pick somebody else.'));
+          custModalClose();
           loadCustomers(custQEl.value.trim());
         });
       });
@@ -7264,16 +7551,20 @@
       [].forEach.call(document.querySelectorAll('#custMode .fpill'), function (b) {
         b.classList.toggle('on', b.getAttribute('data-mode') === custMode);
       });
-      document.querySelector('.custfind').hidden = custMode !== 'people';
+      document.getElementById('custAddToggle').textContent = custMode === 'orgs' ? '+ Add organization' : '+ Add customer';
+      custQEl.placeholder = custMode === 'orgs' ? 'Search organizations by name or billing email' : 'Search email, name, company, ticket or invoice number';
       if (custMode === 'orgs') loadOrgs(); else renderCustList();
     }
 
     [].forEach.call(document.querySelectorAll('#custMode .fpill'), function (b) {
       b.addEventListener('click', function () {
-        custMode = b.getAttribute('data-mode');
-        custDetailEl.textContent = '';
-        custDetailEl.appendChild(el('div', 'state', custMode === 'orgs'
-          ? 'Pick an organization, or add one.' : 'Pick somebody to open their file.'));
+        var m = b.getAttribute('data-mode');
+        if (m === custMode) return;
+        custMode = m;
+        cuAddShow(null);
+        custQEl.value = '';
+        custModalClose();
+        if (custMode === 'people') loadCustomers('');
         syncMode();
       });
     });
@@ -7287,56 +7578,32 @@
       });
     }
 
+    var CU_ORG_COLS = [
+      { k: 'name', label: 'Organization', w: 250, text: function (o) { return o.name; } },
+      { k: 'billing', label: 'Billing email', w: 250, text: function (o) { return o.billing_email || ''; } },
+      { k: 'site', label: 'Website', w: 170, text: function (o) { return cuSiteText(o.website) || cuSite(o.billing_email); },
+        cell: function (o) { return cuSiteLink(o.website, cuSite(o.billing_email)); } },
+      { k: 'members', label: 'Members', w: 100, num: true, text: function (o) { return o.members || 0; } },
+      { k: 'tickets', label: 'Tickets', w: 100, num: true, text: function (o) { return o.tickets || 0; } },
+    ];
+
     function renderOrgList() {
       custListEl.textContent = '';
-
-      var add = el('div', 'custfind');
-      var nameIn = document.createElement('input');
-      nameIn.type = 'text'; nameIn.placeholder = 'New organization name';
-      nameIn.setAttribute('aria-label', 'New organization name');
-      var bar = el('div', 'orgbar');
-      bar.appendChild(nameIn);
-      bar.appendChild(licAction('Add', 'prim', function () {
-        var n = nameIn.value.trim();
-        if (!n) return toast('Give it a name');
-        api('/admin/orgs', { method: 'POST', body: { name: n } }).then(function (r) {
-          if (!r || !r.ok) return toast('Could not add that');
-          nameIn.value = '';
-          toast('Added ' + r.name);
-          loadOrgs().then(function () { openOrg(r.id); });
-        });
-      }));
-      add.appendChild(bar);
-      custListEl.appendChild(add);
-
-      if (!orgRows.length) {
-        custListEl.appendChild(el('div', 'state', 'No organizations yet.'));
-        return;
-      }
-      orgRows.forEach(function (o) {
-        var b = el('button', 'cust' + (orgSel === o.id ? ' sel' : ''));
-        b.type = 'button';
-        var top = el('div', 'cust-top');
-        top.appendChild(el('span', 'cust-name', o.name));
-        b.appendChild(top);
-        b.appendChild(el('div', 'cust-sub', o.billing_email || 'No billing contact'));
-        var counts = el('div', 'cust-counts');
-        [[o.domains, 'domain'], [o.members, 'member'], [o.tickets, 'ticket']]
-          .forEach(function (pair) {
-            var sp = el('span');
-            sp.appendChild(el('b', null, String(pair[0] || 0)));
-            sp.appendChild(document.createTextNode(' ' + pair[1] + (pair[0] === 1 ? '' : 's')));
-            counts.appendChild(sp);
-          });
-        b.appendChild(counts);
-        b.addEventListener('click', function () {
-          orgSel = o.id; renderOrgList(); openOrg(o.id);
-        });
-        custListEl.appendChild(b);
+      var q = custQEl.value.trim().toLowerCase();
+      var rows = !q ? orgRows : orgRows.filter(function (o) {
+        return (o.name || '').toLowerCase().indexOf(q) >= 0 || (o.billing_email || '').toLowerCase().indexOf(q) >= 0;
       });
+      custListEl.appendChild(cuTable('orgs', CU_ORG_COLS, rows, {
+        count: rows.length + (rows.length === 1 ? ' organization' : ' organizations') + (q ? ' matching "' + custQEl.value.trim() + '"' : ''),
+        empty: q ? 'No organization matches that.' : 'No organizations yet. Add one with the button above.',
+        isSel: function (o) { return orgSel === o.id; },
+        rerender: renderOrgList,
+        open: function (o) { orgSel = o.id; renderOrgList(); openOrg(o.id); },
+      }));
     }
 
     function openOrg(id) {
+      custModalOpen('Organization');
       custDetailEl.textContent = '';
       custDetailEl.appendChild(el('div', 'state', 'Loading…'));
       api('/admin/orgs/' + encodeURIComponent(id)).then(function (r) {
@@ -7355,19 +7622,33 @@
       head.appendChild(el('h2', null, o.name));
       head.appendChild(el('div', 'who', o.billing_email
         ? 'Invoices go to ' + o.billing_email : 'No billing contact set'));
+      head.appendChild(cuWebsiteLine(o.website, cuSite(o.billing_email)));
       wrap.appendChild(head);
 
-      // Billing contact
+      // Billing contact and website: saved together, each only when it changed.
       var bill = el('div', 'orgbar');
       var beIn = document.createElement('input');
       beIn.type = 'email'; beIn.value = o.billing_email || '';
       beIn.placeholder = 'billing@theirfirm.com';
       beIn.setAttribute('aria-label', 'Billing contact');
       bill.appendChild(beIn);
-      bill.appendChild(licAction('Save contact', null, function () {
-        api('/admin/orgs/' + o.id, { method: 'PATCH', body: { billing_email: beIn.value.trim() } })
+      var wsIn = document.createElement('input');
+      wsIn.type = 'text'; wsIn.value = o.website || '';
+      wsIn.placeholder = 'theirfirm.com';
+      wsIn.setAttribute('aria-label', 'Website');
+      bill.appendChild(wsIn);
+      bill.appendChild(licAction('Save', null, function () {
+        var body = {};
+        if (beIn.value.trim() !== (o.billing_email || '')) body.billing_email = beIn.value.trim();
+        if (wsIn.value.trim() !== (o.website || '')) body.website = wsIn.value.trim();
+        if (!Object.keys(body).length) return toast('Nothing to save');
+        api('/admin/orgs/' + o.id, { method: 'PATCH', body: body })
           .then(function (r) {
-            toast(r && r.ok ? 'Saved' : (r && r.error) || 'Could not save');
+            if (!r || !r.ok) {
+              return toast(r && r.error === 'invalid_website' ? 'That website is not a web address (try theirfirm.com)'
+                : r && r.error === 'invalid_email' ? 'That billing email is not valid' : (r && r.error) || 'Could not save');
+            }
+            toast('Saved');
             openOrg(o.id);
           });
       }));
@@ -7514,8 +7795,7 @@
         }).then(function (r) {
           if (!r || !r.ok) return toast((r && r.message) || 'Could not delete it');
           toast('Deleted ' + r.name + ' (' + (r.removed.tickets_detached || 0) + ' tickets kept)');
-          custDetailEl.textContent = '';
-          custDetailEl.appendChild(el('div', 'state', 'Deleted. Pick another organization.'));
+          custModalClose();
           loadOrgs();
         });
       }));
@@ -15517,7 +15797,7 @@
       home: { view: 'viewHome', nav: 'navHome', load: loadHome, always: true },
       inbox: { view: 'viewInbox', nav: 'navInbox', load: loadInbox, always: true },
       tickets: { view: 'viewTickets', nav: 'navTickets' },
-      customers: { view: 'viewCustomers', nav: 'navCustomers', load: function () { loadCustomers(''); } },
+      customers: { view: 'viewCustomers', nav: 'navCustomers', load: function () { if (custMode === 'orgs') loadOrgs(); else loadCustomers(custQEl.value.trim()); } },
       invoices: { view: 'viewInvoices', nav: 'navInvoices', load: function () { loadQuotes(); return loadInvoices(); } },
       // Inventory and Finance re-read on every visit: both are one request, and a
       // confirmation or a payment that landed while you were on another tab should
