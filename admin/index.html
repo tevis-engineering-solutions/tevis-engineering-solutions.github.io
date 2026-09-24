@@ -898,6 +898,7 @@
     .ct-lines tr.tot td { font-weight:700; background:var(--bg); }
     .ct-econ { display:grid; grid-template-columns:repeat(auto-fit,minmax(130px,1fr)); gap:0.45rem; margin:0.6rem 0; }
     .ct-note { font-size:0.74rem; color:var(--muted); margin:0.4rem 0; line-height:1.45; }
+    .ct-steps { padding-left:1.2rem; } .ct-steps li { margin:0.25rem 0; }
     .ct-exclude { margin-top:1rem; padding-top:0.8rem; border-top:1px solid var(--line); }
     .ct-exclude h4 { font-family:"Montserrat",sans-serif; font-size:0.82rem; margin:0 0 0.2rem; }
     .ct-exclude .reply-row { margin-top:0.5rem; }
@@ -1638,7 +1639,14 @@
           </form>
         </details>
         <details class="ct-q-add" id="ctqOhb"><summary>Capture bookmark (OhioBuys, BidNet)</summary>
-          <p class="ct-note">For the sites the queue cannot read on its own. Drag this button to your bookmarks bar once, then click it on: an <b>OhioBuys</b> post (reads the post and its documents) or its solicitation list (filter Solicitation Status to Open for Bidding first); or the <b>BidNet</b> open solicitations list, where it reads every page one at a time with a pause between them (about a minute and a half for 55 pages). It opens this console to add what it read to the queue or build a bid. BidNet&rsquo;s terms bar reproducing its listings electronically; this keeps a private copy for your own evaluation, read at a person&rsquo;s pace.</p>
+          <p class="ct-note">For the sites the queue cannot read on its own: OhioBuys, which checks for a browser, and BidNet. The bookmark runs in your own signed-in tab, reads what that site is showing you, and hands it to this console.</p>
+          <ol class="ct-note ct-steps">
+            <li><b>Once:</b> show your bookmarks bar (Ctrl+Shift+B) and drag the gold <b>TES capture</b> button below onto it. Drag it again after an update here, since the bookmark holds its own copy of the code.</li>
+            <li>Open the <b>OhioBuys</b> solicitation list (<i>View Public Solicitations</i>) or the <b>BidNet</b> Ohio open solicitations list, and click <b>TES capture</b> on the bar.</li>
+            <li>A new tab opens on this console and waits. The site&rsquo;s tab shows a progress box: OhioBuys takes about 10 seconds and stops at the first page with nothing open; BidNet about a minute and a half.</li>
+            <li>In the new tab, click <b>Add N to the queue</b>. Closed posts are left out, and a post that is on both sites is kept once, with its OhioBuys link.</li>
+          </ol>
+          <p class="ct-note">On a single OhioBuys post, the same click also reads its documents and offers <b>Build a bid with the documents</b>. BidNet&rsquo;s terms bar reproducing its listings electronically; this keeps a private copy for your own evaluation, read at a person&rsquo;s pace.</p>
           <a class="ct-btn prim" id="ctqBookmark" href="#ohb">TES capture</a>
         </details>
       </div>
