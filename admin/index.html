@@ -75,7 +75,8 @@
     .fpill { flex:0 0 auto; font-family:"Montserrat",sans-serif; font-size:0.72rem; font-weight:700; text-transform:uppercase; letter-spacing:0.04em; padding:0.45rem 0.8rem; border-radius:999px; border:1px solid var(--line); background:transparent; color:var(--muted); cursor:pointer; }
     .fpill.on { color:#0d1710; background:linear-gradient(135deg,var(--gold),#e0b840); border-color:transparent; }
 
-    .wrap { max-width:1100px; margin:0 auto; padding:0.4rem 1rem 4rem; }
+    .wrap { max-width:1100px; margin:0 auto; padding:0.9rem 1rem 4rem; }
+    input[type=checkbox], input[type=radio] { accent-color:var(--gold); }
     .grid { display:grid; grid-template-columns:minmax(0,1fr); gap:0.6rem; }
     @media (min-width:900px) { .grid { grid-template-columns:minmax(0,380px) minmax(0,1fr); align-items:start; } }
 
@@ -374,7 +375,7 @@
     .co-link p { font-size:0.82rem; color:var(--text); margin:0 0 0.15rem; }
     .co-link .why { font-size:0.72rem; color:var(--muted); margin:0; line-height:1.45; }
     .co-link .reply-row { margin-top:0.5rem; }
-    .co-link select { max-width:100%; }
+    .co-link select { max-width:100%; min-height:40px; padding:0.45rem 0.7rem; border-radius:8px; border:1px solid var(--line); background:var(--bg); color:var(--text); font-family:inherit; font-size:0.84rem; }
     /* Editing a customer's contact record in place, from the head of their file. */
     .ced { margin:0.6rem 0 0.9rem; padding:0.75rem; border:1px solid var(--line); border-radius:12px; background:var(--bg); }
     .ced-grid { display:grid; grid-template-columns:1fr 1fr; gap:0.55rem; }
@@ -420,6 +421,11 @@
     button.row { cursor:pointer; }
     button.row:hover { border-color:var(--green); }
     .row-main { font-size:0.82rem; word-break:break-word; }
+    /* The text takes the room that is left and wraps inside itself, so a long name no longer
+       pushes the amount or badge on the right onto a line of its own. Under about 12rem of
+       text the row still wraps, which is what a phone needs. */
+    .row > div:first-child { flex:1 1 12rem; min-width:0; }
+    .row > :last-child:not(:first-child) { flex:0 0 auto; margin-left:auto; }
     .row-sub { font-size:0.72rem; color:var(--muted); }
 
     .orphan { border:1px solid var(--gold); border-radius:12px; background:rgba(200,152,48,0.07); padding:0.8rem 0.9rem; margin-bottom:0.9rem; }
@@ -576,7 +582,9 @@
     .stack-track i { display:block; height:100%; }
     .stack-track i.pick { cursor:pointer; }
     .fin-clients { display:grid; grid-template-columns:minmax(0,240px) minmax(0,1fr); gap:1rem; align-items:start; }
-    @media (max-width:720px) { .fin-clients { grid-template-columns:1fr; } }
+    /* minmax(0,1fr), not 1fr: a 1fr track takes its content's min-content width, and a long
+       client name in the donut legend pushed the phone layout 125px wide. */
+    @media (max-width:720px) { .fin-clients { grid-template-columns:minmax(0,1fr); } .fin-clients > * { min-width:0; } }
     .fin-donut .chart-donut { flex-direction:column; align-items:flex-start; }
     /* The donut column is capped at 240px, but stacking the legend under the chart
        makes width the CROSS axis, and align-items:flex-start sizes it to its widest
@@ -942,7 +950,10 @@
       .calmonth .calday h4 span { font-size:0.78rem; }
       .calmonth .calappt { padding:0.1rem 0.2rem; }
       .calmonth .calappt .w, .calmonth .calblock { display:none; }
-      .calmonth .calappt .t { font-size:0.56rem; }
+      .calmonth .calappt .t { font-size:0.54rem; letter-spacing:-0.01em; }
+      /* The time chip was wider than a 44px day cell and got cut at its edge. */
+      .calmonth .calday { min-width:0; overflow:hidden; }
+      .calmonth .calappt { padding:0.08rem 0.12rem; border-radius:5px; white-space:nowrap; overflow:hidden; text-overflow:clip; text-align:center; }
     }
     .calday { background:var(--card); border:1px solid var(--line); border-radius:12px; padding:0.5rem; min-height:7rem; }
     .calday.today { border-color:var(--gold); }
@@ -1105,6 +1116,23 @@
     .mk-stages .tile.on { border-color:var(--gold); }
     #viewMarketing .ct-tools { flex-wrap:wrap; }
     #viewMarketing .ct-tools select { max-width:11rem; }
+    /* An open lead replaces the list, so the list's stage tiles and filters go with it;
+       on a phone they stood a full screen between the tab and the lead. */
+    #viewMarketing:has(#mkOne:not([hidden])) #mkStages,
+    #viewMarketing:has(#mkOne:not([hidden])) #mkStages + .ct-bar { display:none; }
+    /* Same for an open bid: the sites panel, the pipeline tiles and the board filters stood
+       between the tab and the bid (a full screen on a phone). ‹ All bids brings them back. */
+    #viewContracting:has(#ctBid:not([hidden])) .ct-sites,
+    #viewContracting:has(#ctBid:not([hidden])) #ctTiles,
+    #viewContracting:has(#ctBid:not([hidden])) #ctBidsH,
+    #viewContracting:has(#ctBid:not([hidden])) #ctBidsH + .ct-bar { display:none; }
+    /* On a phone the lead filters are an even grid, not four selects ragged against the right edge. */
+    @media (max-width:560px) {
+      #viewMarketing .ct-tools { display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr); }
+      #viewMarketing .ct-tools select { max-width:none; width:100%; }
+      #viewMarketing .ct-tools input[type=search] { grid-column:1 / -1; order:-1; }
+      #viewMarketing .ct-tools .ct-btn { width:100%; justify-content:center; }
+    }
     .mk-bar { display:flex; align-items:center; gap:0.55rem; flex-wrap:wrap; padding:0.45rem 0.75rem; border:1px solid var(--line); border-bottom:0; border-radius:10px 10px 0 0; background:var(--card); min-height:44px; }
     .mk-bar input[type=checkbox], .mk-row input[type=checkbox] { width:18px; height:18px; accent-color:var(--gold); flex:0 0 auto; margin:0; cursor:pointer; }
     .mk-bar-n { font-size:0.8rem; color:var(--muted); margin-right:auto; }
@@ -1337,6 +1365,8 @@
     .ct-form label { display:block; font-size:0.62rem; text-transform:uppercase; letter-spacing:0.05em; color:var(--muted); font-weight:700; margin-bottom:0.2rem; }
     .ct-form input, .ct-form select { width:100%; padding:0.45rem 0.6rem; border-radius:8px; border:1px solid var(--line); background:var(--bg); color:var(--text); font-family:inherit; font-size:0.84rem; min-height:36px; }
     .ct-form .wide { grid-column:1 / -1; }
+    /* A label that wraps to two lines must not push its field below its neighbors. */
+    .ct-form > div:not(.chk):not(.wide) { display:flex; flex-direction:column; justify-content:flex-end; }
     .ct-form .chk { display:flex; align-items:center; gap:0.45rem; font-size:0.8rem; color:var(--muted); min-height:36px; }
     .ct-form .chk input { width:18px; height:18px; min-height:0; }
     /* Every select in Contracting and Projects: dark, with a gold chevron, never the
@@ -6746,9 +6776,12 @@
       try { localStorage.setItem('tes_cucols_' + key, JSON.stringify(o)); } catch (e) { /* this browser only */ }
     }
     // The last column takes whatever room is left, so dragging never pushes the list sideways.
+    // The others are their width when there is room and give some up (ellipsis) when there
+    // is not: fixed widths used to add up past the box on the Tickets list and clip the last
+    // column. With room to spare nothing changes, so a dragged boundary still follows the pointer.
     function cuColsApply(list, ws) {
       list.style.setProperty('--cu-cols', ws.map(function (w, i) {
-        return i === ws.length - 1 ? 'minmax(' + Math.round(w) + 'px, 1fr)' : Math.round(w) + 'px';
+        return i === ws.length - 1 ? 'minmax(' + Math.round(Math.min(w, 120)) + 'px, 1fr)' : 'minmax(0, ' + Math.round(w) + 'px)';
       }).join(' '));
     }
 
@@ -6864,7 +6897,7 @@
     }
 
     var CU_PEOPLE_COLS = [
-      { k: 'name', label: 'Name', w: 230, text: function (c) { return c.name || c.company || c.email || '(no name)'; },
+      { k: 'name', label: 'Name', w: 300, text: function (c) { return c.name || c.company || c.email || '(no name)'; },
         cell: function (c) {
           var s = el('span', 'cu-name');
           s.appendChild(el('span', 'cu-t', c.name || c.company || c.email || '(no name)'));
@@ -6877,8 +6910,8 @@
           return s;
         } },
       { k: 'company', label: 'Company', w: 190, text: function (c) { return c.name ? c.company : ''; } },
-      { k: 'email', label: 'Email', w: 250, text: function (c) { return c.email; } },
-      { k: 'phone', label: 'Phone', w: 140, text: function (c) { return c.phone; } },
+      { k: 'email', label: 'Email', w: 220, text: function (c) { return c.email; } },
+      { k: 'phone', label: 'Phone', w: 128, text: function (c) { return c.phone; } },
       { k: 'site', label: 'Website', w: 150, text: function (c) { return cuSiteText(c.website) || cuSite(c.email); },
         cell: function (c) { return cuSiteLink(c.website, cuSite(c.email)); } },
     ];
@@ -8102,13 +8135,17 @@
     function renderDeleteConfirm(z, c, pv) {
       z.appendChild(el('h3', null, 'Delete ' + c.account.email + '?'));
 
-      var counts = [];
+      // Projects, leads and appointments are kept and detached, not deleted (Worker:
+      // detachWork), so they are listed apart from what goes.
+      var KEPT = { projects: 1, leads: 1, appointments: 1 };
+      var counts = [], kept = [];
       Object.keys(pv.counts).forEach(function (k) {
-        if (pv.counts[k]) counts.push(pv.counts[k] + ' ' + k.replace(/_/g, ' '));
+        if (pv.counts[k]) (KEPT[k] ? kept : counts).push(pv.counts[k] + ' ' + k.replace(/_/g, ' '));
       });
       z.appendChild(el('p', null, counts.length
         ? 'This will remove: ' + counts.join(', ') + '.'
         : 'Nothing is attached to this account.'));
+      if (kept.length) z.appendChild(el('p', 'row-sub', 'Kept, no longer linked to them: ' + kept.join(', ') + '. A project moves under TES with a note saying whose it was.'));
 
       var hard = pv.blockers.filter(function (b) { return b.hard; });
       // A detachable blocker is neither a dead end nor something to wave away with a
@@ -11153,12 +11190,13 @@
         a.money.unbilled.forEach(function (u) {
           var right = el('span');
           if (u.ready) { right.appendChild(badge('invoice now', '#c89830')); right.appendChild(document.createTextNode(' ')); }
-          var chg = u.chargeable_cents != null ? u.chargeable_cents : u.cents;
+          var chg = u.orphan || u.chargeable_cents == null ? u.cents : u.chargeable_cents;
           right.appendChild(el('b', 'num', money(chg)));
           var sub = fmtDur(u.minutes) + ' across ' + u.entries + (u.entries === 1 ? ' entry' : ' entries') + ' · oldest ' + fmtDate(u.oldest) +
             (u.age_days != null ? ' (' + u.age_days + ' days)' : '') +
-            (u.chargeable_cents === 0 ? ' · covered by their plan: apply coverage' : '');
+            (u.orphan ? ' · link each ticket to a customer to bill it' : u.chargeable_cents === 0 ? ' · covered by their plan: apply coverage' : '');
           s8.appendChild(row(u.name, sub, right, function () {
+            if (u.orphan) { showView('tickets'); return; }
             if (u.org_id) openObject('org', u.org_id); else openObject('customer', u.account_id);
           }));
         });
@@ -11731,7 +11769,7 @@
           r.unanswered.forEach(function (t) { s2.appendChild(tkRow(t, 'waiting ' + ago(t.age_sec))); });
           inboxListEl.appendChild(s2);
         }
-        var allBtn = licAction('All conversations', null, function () { listAllConversations(); });
+        var allBtn = licAction('All conversations', 'ct-btn sm', function () { listAllConversations(); });
         inboxListEl.appendChild(allBtn);
         if (!any) { var e = el('div', 'att-empty'); e.appendChild(el('b', null, 'Inbox zero.')); e.appendChild(document.createTextNode('Nobody is waiting on a reply.')); inboxListEl.insertBefore(e, allBtn); }
         setNavBadge('inbox', r.counts ? r.counts.inbox : 0);
@@ -12108,7 +12146,7 @@
           list1.appendChild(g);
           var ta = document.createElement('textarea'); ta.rows = 3; ta.placeholder = 'The reply text'; ta.setAttribute('aria-label', 'Canned reply text');
           list1.appendChild(ta);
-          list1.appendChild(licAction('Add reply', 'prim', function () {
+          list1.appendChild(licAction('Add reply', 'ct-btn prim', function () {
             if (!t.value.trim() || !ta.value.trim()) return toast('Title and text, please');
             api('/admin/canned', { method: 'POST', body: { title: t.value, body: ta.value } }).then(function (r) { if (r.ok) { toast('Added'); renderCanned(); } });
           }));
@@ -12178,7 +12216,7 @@
           list2.appendChild(g);
           var ta = document.createElement('textarea'); ta.rows = 3; ta.placeholder = 'What customers should know'; ta.setAttribute('aria-label', 'Announcement text');
           list2.appendChild(ta);
-          list2.appendChild(licAction('Publish', 'prim', function () {
+          list2.appendChild(licAction('Publish', 'ct-btn prim', function () {
             if (!title.value.trim() || !ta.value.trim()) return toast('Title and text, please');
             var body = { title: title.value, body: ta.value, kind: kind.value, audience: aud.value };
             if (from.value) body.starts_at = Math.floor(new Date(from.value).getTime() / 1000);
@@ -12251,7 +12289,7 @@
           var nm = formField(g, 'dlName', 'New list', 'text', 'Crash tool customers');
           var ds = formField(g, 'dlDesc', 'What it is for', 'text', 'Everyone running the Ohio Crash tool');
           list3.appendChild(g);
-          list3.appendChild(licAction('Create list', 'prim', function () {
+          list3.appendChild(licAction('Create list', 'ct-btn prim', function () {
             if (!nm.value.trim()) return toast('Give it a name');
             api('/admin/lists', { method: 'POST', body: { name: nm.value, description: ds.value } })
               .then(function (x) { if (x.ok) { toast('Created'); openList(x.id); } else toast('Could not create'); });
@@ -13079,7 +13117,7 @@
       } else {
         p.appendChild(el('h4', 'addsec', d.site === 'bidnet' ? 'From BidNet' : 'From the OhioBuys list'));
         if (d.site === 'bidnet') p.appendChild(el('p', 'row-sub', 'Titles and dates only: BidNet shows the agency, number and description to registered members. The queue scores on the title.' + (d.stopped ? ' Reading stopped at page ' + d.stopped + ' of ' + d.pages + '.' : '')));
-        p.appendChild(el('p', null, open.length + ' open post' + (open.length === 1 ? '' : 's') + ' read' + (postings.length > open.length ? ' (' + (postings.length - open.length) + ' closed, cancelled or under evaluation left out)' : '') + '.'));
+        p.appendChild(el('p', null, open.length + ' open post' + (open.length === 1 ? '' : 's') + ' read' + (postings.length > open.length ? ' (' + (postings.length - open.length) + ' closed, canceled or under evaluation left out)' : '') + '.'));
         if (d.site === 'ohiobuys' && d.pages) p.appendChild(el('p', 'row-sub', d.pages + ' page' + (d.pages === 1 ? '' : 's') + ' read, newest first, stopping at the first page with nothing open. A post whose end date has passed is left out when saved, whatever its status says, and a post already in the queue from BidNet is merged into this one.'));
         if (d.more && d.site !== 'bidnet') p.appendChild(el('p', 'short', 'The capture stopped at 10 pages. Go to page 11 and click the bookmark again for the rest.'));
       }
