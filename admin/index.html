@@ -14793,7 +14793,7 @@
         var reading = f.files.filter(function (x) { return x.month && !x.done; });
         var month = (f.files[0] && f.files[0].month) || null;
         line.textContent = (month ? 'Latest reports: published ' + month + '. ' : 'Nothing read yet. ') +
-          (reading.length ? 'Reading now: ' + reading.map(function (x) { return x.type + ' ' + x.progress + '%'; }).join(', ') + ' (a piece every two minutes). ' : '') +
+          (reading.length ? 'Reading now: ' + reading.map(function (x) { return x.type + ' ' + x.progress + '%' + (x.retry_at ? ' (the state’s server refused a piece; trying again ' + fmt(x.retry_at) + ')' : x.errors >= 9 ? ' (paused after repeated refusals; resumes at the next check)' : ''); }).join(', ') + ' (a piece every two minutes). ' : '') +
           (f.last_check ? 'Last checked ' + fmt(f.last_check) + '.' : '') + (f.last_error ? ' Last problem: ' + f.last_error + '.' : '');
         var lk = r.lookup || {}, ll = document.getElementById('mksLookupLine');
         ll.textContent = !lk.configured ? 'Website lookup is off until a Brave Search key is set on the Worker.'
