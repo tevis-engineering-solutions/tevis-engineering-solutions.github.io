@@ -975,6 +975,50 @@
     .mk-mode.on { color:var(--text); border-bottom-color:var(--gold); }
     .mk-sos-head { display:flex; justify-content:space-between; align-items:flex-start; gap:0.8rem; flex-wrap:wrap; margin-bottom:0.7rem; }
     .mk-sos-head .row-sub { max-width:62rem; margin-bottom:0.25rem; }
+    .mk-srch { flex:0 0 5.5rem; display:flex; justify-content:center; }
+    .mk-head .mk-srch { font-family:"Montserrat",sans-serif; font-size:0.64rem; font-weight:800; text-transform:uppercase; letter-spacing:0.05em; color:var(--muted); align-items:center; }
+    .mks-yn { font-family:"Montserrat",sans-serif; font-size:0.68rem; font-weight:800; letter-spacing:0.06em; min-width:3.4rem; min-height:30px; border-radius:999px; border:1px solid var(--line); background:var(--bg); color:var(--muted); cursor:pointer; display:inline-flex; align-items:center; justify-content:center; }
+    .mks-yn.yes { color:var(--green); border-color:rgba(74,172,101,0.5); }
+    .mks-yn[aria-expanded="true"] { background:rgba(74,172,101,0.12); }
+    button.mks-yn:hover { border-color:var(--gold); }
+    span.mks-yn { cursor:default; border-color:transparent; background:none; }
+    .mks-note { padding:0.6rem 1rem 0.75rem 2.6rem; background:var(--card); border-top:1px dashed rgba(138,164,141,0.3); font-size:0.84rem; }
+    .mks-note-line { display:grid; grid-template-columns:8.5rem 1fr; gap:0.6rem; padding:0.18rem 0; }
+    .mks-note-line b { font-family:"Montserrat",sans-serif; font-size:0.64rem; font-weight:800; text-transform:uppercase; letter-spacing:0.05em; color:var(--muted); padding-top:0.15rem; }
+    .mks-note-line span, .mks-note-line a { word-break:break-word; }
+    @media (max-width:560px) { .mks-note { padding-left:0.8rem; } .mks-note-line { grid-template-columns:1fr; gap:0; } }
+    .mks-status { border:1px solid var(--line); border-radius:12px; background:var(--card); padding:0.75rem 0.9rem; margin-bottom:0.8rem; }
+    .mks-status-top { display:flex; align-items:center; justify-content:space-between; gap:0.6rem 1rem; flex-wrap:wrap; }
+    .mks-mini { font-size:0.84rem; color:var(--muted); display:flex; flex-wrap:wrap; gap:0.35rem 0.9rem; align-items:center; min-width:0; }
+    .mks-mini b { color:var(--text); font-weight:600; }
+    .mks-status-acts { display:flex; align-items:center; gap:0.5rem; flex-wrap:wrap; }
+    .mks-status-acts .brave-badge { margin-top:0; }
+    .mks-status-body { margin-top:0.75rem; }
+    .mks-intro { margin:0 0 0.75rem; font-size:0.84rem; color:var(--muted); max-width:62rem; line-height:1.5; }
+    .mks-cards { display:grid; grid-template-columns:1fr 1fr; gap:0.75rem; }
+    @media (max-width:860px) { .mks-cards { grid-template-columns:1fr; } }
+    .mks-card { border:1px solid var(--line); border-radius:10px; background:var(--bg); padding:0.7rem 0.85rem; min-width:0; }
+    .mks-card-h { display:flex; align-items:center; justify-content:space-between; gap:0.5rem; margin-bottom:0.55rem; flex-wrap:wrap; }
+    .mks-card-h .mk-sub-h { margin:0; }
+    .mks-meta { font-size:0.75rem; color:var(--muted); }
+    .mks-file { display:grid; grid-template-columns:minmax(7.5rem, 11rem) 1fr auto; align-items:center; gap:0.6rem; padding:0.3rem 0; font-size:0.82rem; }
+    .mks-file + .mks-file { border-top:1px solid rgba(138,164,141,0.15); }
+    .mks-bar { height:6px; border-radius:3px; background:rgba(138,164,141,0.18); overflow:hidden; }
+    .mks-bar > span { display:block; height:100%; background:var(--green); }
+    .mks-bar.warn > span { background:var(--gold); }
+    .mks-state { font-size:0.74rem; color:var(--muted); white-space:nowrap; text-align:right; }
+    .mks-state.warn { color:var(--gold); }
+    .mks-state.done { color:var(--green); }
+    .mks-problem { margin-top:0.45rem; font-size:0.76rem; color:var(--muted); }
+    .mks-tiles { display:grid; grid-template-columns:repeat(auto-fill, minmax(7.2rem, 1fr)); gap:0.45rem; margin-bottom:0.65rem; }
+    .mks-tile { border:1px solid rgba(138,164,141,0.22); border-radius:8px; padding:0.4rem 0.55rem; }
+    .mks-tile b { display:block; font-family:"Montserrat",sans-serif; font-size:1.05rem; color:var(--text); }
+    .mks-tile span, .mks-tile small { display:block; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+    .mks-tile span { font-size:0.74rem; color:var(--text); }
+    .mks-tile small { font-size:0.66rem; color:var(--muted); }
+    .mks-meter { display:grid; grid-template-columns:minmax(7.5rem, 9rem) 1fr auto; align-items:center; gap:0.6rem; font-size:0.8rem; padding:0.2rem 0; }
+    .mks-meter .mks-state { text-align:right; }
+    @media (max-width:560px) { .mks-file, .mks-meter { grid-template-columns:1fr auto; } .mks-file .mks-bar, .mks-meter .mks-bar { grid-column:1 / -1; order:3; } }
     .mk-inline { margin-top:0; white-space:nowrap; font-size:0.8rem; }
     .mk-sos-detail { padding:0.4rem 0.8rem 0.8rem 2.6rem; background:var(--card); border-top:1px solid var(--line); }
     .mk-sos-detail .row { padding:0.5rem 0.75rem; }
@@ -1145,8 +1189,6 @@
     .ai-form { margin-top:0.6rem; }
     .ai-form .row-sub { margin-top:0.4rem; }
     @media (max-width:420px) { .ai-legend { grid-template-columns:1fr; } .ai-hero b { font-size:1.45rem; } }
-  .mks-auto { display:flex; align-items:flex-start; justify-content:space-between; gap:12px; flex-wrap:wrap; }
-  .mks-auto .row-sub { flex:1 1 20rem; min-width:0; }
 </style>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
 </head>
@@ -1986,14 +2028,28 @@
       <button type="button" class="mk-mode" id="mkModeTrends" role="tab" aria-selected="false">Trends</button>
     </div>
     <section id="mkSos" hidden aria-label="New Ohio businesses">
-      <div class="mk-sos-head">
-        <div>
-          <div class="row-sub">Every new LLC, corporation and nonprofit filed with the Ohio Secretary of State in Cuyahoga, Lake, Lorain, Summit, Geauga and Medina counties. Kept apart from your leads: pick the ones worth reaching and make them leads. Each filing stays 60 days from when it first appears here; after that only the ones you made into leads are kept.</div>
-          <div class="row-sub" id="mksFeed">Checking the feed&hellip;</div>
-          <div class="mks-auto"><div class="row-sub" id="mksLookupLine"></div><button type="button" class="ct-btn sm" id="mksAutoBtn" hidden>Pause automatic search</button></div>
-          <a class="brave-badge" href="https://brave.com/search/api/" target="_blank" rel="noopener noreferrer"><i class="fa-brands fa-brave" aria-hidden="true"></i> POWERED BY BRAVE</a>
+      <div class="mks-status">
+        <div class="mks-status-top">
+          <div class="mks-mini" id="mksMini">Checking the feed&hellip;</div>
+          <div class="mks-status-acts">
+            <a class="brave-badge" href="https://brave.com/search/api/" target="_blank" rel="noopener noreferrer"><i class="fa-brands fa-brave" aria-hidden="true"></i> POWERED BY BRAVE</a>
+            <button type="button" class="ct-btn sm" id="mksCheck">Check for a new month</button>
+            <button type="button" class="ct-btn sm" id="mksStatusToggle" aria-expanded="true" aria-controls="mksStatusBody">Hide details</button>
+          </div>
         </div>
-        <button type="button" class="ct-btn" id="mksCheck">Check for a new month</button>
+        <div class="mks-status-body" id="mksStatusBody">
+          <p class="mks-intro">Every new LLC, corporation and nonprofit filed with the Ohio Secretary of State in Cuyahoga, Lake, Lorain, Summit, Geauga and Medina counties, kept apart from your leads. Make the ones worth reaching into leads. A filing stays 60 days from when it first appears; after that only the ones you made into leads are kept.</p>
+          <div class="mks-cards">
+            <section class="mks-card" aria-label="State reports">
+              <div class="mks-card-h"><h3 class="mk-sub-h">State reports</h3><span class="mks-meta" id="mksFeedMeta"></span></div>
+              <div id="mksFeed"></div>
+            </section>
+            <section class="mks-card" aria-label="Website lookup">
+              <div class="mks-card-h"><h3 class="mk-sub-h">Website lookup</h3><button type="button" class="ct-btn sm" id="mksAutoBtn" hidden>Pause automatic search</button></div>
+              <div id="mksLookupLine"></div>
+            </section>
+          </div>
+        </div>
       </div>
       <div class="ct-bar">
         <div class="filters ct-filters" id="mksFilters">
@@ -2011,7 +2067,7 @@
           <label for="mksVertical" class="sr-only">What the name says</label>
           <select id="mksVertical"><option value="">Any kind of business</option><option value="none">Unclassified (name says nothing)</option></select>
           <label for="mksSite" class="sr-only">Website</label>
-          <select id="mksSite"><option value="">Any website</option><option value="found">Website found</option><option value="email">Has an email</option><option value="none">No website</option><option value="pending">Not looked up yet</option><option value="skipped">Skipped (holdings, finance, realty)</option></select>
+          <select id="mksSite"><option value="">Any website</option><option value="found">Website found</option><option value="email">Has an email</option><option value="none">No website</option><option value="searched">Searched</option><option value="unsearched">Not searched</option><option value="pending">Waiting for a search</option><option value="skipped">Skipped (holdings, finance, realty)</option></select>
           <label for="mksSort" class="sr-only">Sort</label>
           <select id="mksSort"><option value="score">Best fit first</option><option value="newest">Filed, newest first</option><option value="oldest">Filed, oldest first</option><option value="name">Name, A to Z</option><option value="name_desc">Name, Z to A</option><option value="place">City, A to Z</option><option value="place_desc">City, Z to A</option><option value="kind">Kind of business, A to Z</option><option value="kind_desc">Kind of business, Z to A</option></select>
           <label class="mk-check mk-inline"><input type="checkbox" id="mksHideHold" checked> Hide holdings, finance and realty</label>
@@ -13768,7 +13824,7 @@
       setTimeout(function () { URL.revokeObjectURL(a.href); }, 5000);
     }
 
-    function mkListHead(cols, key, sort) {
+    function mkListHead(cols, key, sort, extra) {
       var h = el('div', 'mk-row mk-head');
       h.appendChild(el('span', 'mk-cbspace'));
       var o = el('div', 'mk-open');
@@ -13789,6 +13845,7 @@
         o.appendChild(cell);
       });
       h.appendChild(o);
+      if (extra) h.appendChild(el('span', 'mk-srch', extra));
       return h;
     }
     // Which way a column sorts first when you pick it: dates newest first, text A to Z.
@@ -14989,20 +15046,89 @@
       });
     });
 
+    // The status panel: state reports (a row per file) and the website lookup (counts and
+    // two meters). "Hide details" folds it to one line and is remembered in this browser.
+    function mksBar(pct, warn) {
+      var b = el('div', 'mks-bar' + (warn ? ' warn' : ''));
+      var fill = el('span'); fill.style.width = Math.max(0, Math.min(100, pct)) + '%';
+      b.appendChild(fill);
+      return b;
+    }
+    function mksRenderStatus(f, lk) {
+      var feed = document.getElementById('mksFeed'), meta = document.getElementById('mksFeedMeta');
+      feed.textContent = '';
+      var month = (f.files[0] && f.files[0].month) || null;
+      meta.textContent = (month ? 'Published ' + month : 'Nothing read yet') + (f.last_check ? ' · checked ' + fmt(f.last_check) : '');
+      var refusing = 0, done = 0;
+      f.files.forEach(function (x) {
+        var row = el('div', 'mks-file');
+        row.appendChild(el('span', null, x.type));
+        var waiting = !!x.retry_at, parked = !x.done && x.errors >= 9;
+        if (waiting || parked) refusing++;
+        if (x.done) done++;
+        row.appendChild(mksBar(x.done ? 100 : x.progress, waiting || parked));
+        var st = x.done ? (x.kept + ' kept') : parked ? 'paused, resumes at the next check' : waiting ? 'refused; retry ' + fmt(x.retry_at) : !x.month ? 'waiting' : x.progress + '%';
+        row.appendChild(el('span', 'mks-state' + (x.done ? ' done' : waiting || parked ? ' warn' : ''), st));
+        feed.appendChild(row);
+      });
+      if (f.last_error) feed.appendChild(el('div', 'mks-problem', 'Last problem: ' + f.last_error + '. A refused piece waits and tries again, from 30 minutes up to 12 hours.'));
+
+      var ll = document.getElementById('mksLookupLine');
+      ll.textContent = '';
+      if (!lk.configured) { ll.appendChild(el('div', 'mks-problem', 'Off until a Brave Search key is set on the Worker.')); }
+      else {
+        var tiles = el('div', 'mks-tiles');
+        [[lk.found, 'sites found', (lk.with_email || 0) + ' with an email'], [lk.none, 'no site'], [lk.waiting, 'to look up'], [lk.skipped || 0, 'skipped', 'holdings, finance, realty'], [lk.unclassified || 0, 'unclassified', 'not searched']]
+          .forEach(function (t) {
+            var d = el('div', 'mks-tile');
+            d.appendChild(el('b', null, String(t[0] || 0)));
+            d.appendChild(el('span', null, t[1]));
+            if (t[2]) { var n = el('small', null, t[2]); n.title = t[2]; d.appendChild(n); }
+            tiles.appendChild(d);
+          });
+        ll.appendChild(tiles);
+        var meter = function (label, used, cap, note, warn) {
+          var m = el('div', 'mks-meter');
+          m.appendChild(el('span', null, label));
+          m.appendChild(mksBar(cap ? used / cap * 100 : 0, warn));
+          m.appendChild(el('span', 'mks-state' + (warn ? ' warn' : ''), used + ' of ' + cap + (note ? ' · ' + note : '')));
+          ll.appendChild(m);
+        };
+        meter('This month', lk.used_this_month || 0, lk.cap || 0, null, (lk.used_this_month || 0) >= (lk.cap || 1) * 0.9);
+        if (lk.window) meter('This ' + lk.window.hours + '-hour batch', lk.window.used, lk.window.limit,
+          lk.paused ? 'paused' : lk.window.next_at ? 'next ' + fmt(lk.window.next_at) : 'running', lk.paused);
+      }
+
+      // The one-line summary shown above, and on its own when the details are hidden.
+      var mini = document.getElementById('mksMini');
+      mini.textContent = '';
+      var bit = function (label, value) { var s = el('span'); s.appendChild(document.createTextNode(label + ' ')); s.appendChild(el('b', null, value)); mini.appendChild(s); };
+      bit('Reports', month ? month + (done === f.files.length ? ', read' : refusing ? ', ' + refusing + ' waiting to retry' : ', reading') : 'none yet');
+      if (lk.configured) {
+        bit('Lookup', lk.paused ? 'paused' : 'running');
+        bit('Found', (lk.found || 0) + ' sites, ' + (lk.with_email || 0) + ' with email');
+        bit('Searches', (lk.used_this_month || 0) + ' of ' + (lk.cap || 0) + ' this month');
+      }
+    }
+    function mksStatusShow(show) {
+      var body = document.getElementById('mksStatusBody'), t = document.getElementById('mksStatusToggle');
+      body.hidden = !show;
+      t.textContent = show ? 'Hide details' : 'Show details';
+      t.setAttribute('aria-expanded', show ? 'true' : 'false');
+      try { localStorage.setItem('tes_mks_status_hidden', show ? '0' : '1'); } catch (e) { /* this browser only */ }
+    }
+    (function () {
+      var hidden = false;
+      try { hidden = localStorage.getItem('tes_mks_status_hidden') === '1'; } catch (e) { hidden = false; }
+      mksStatusShow(!hidden);
+      document.getElementById('mksStatusToggle').addEventListener('click', function () { mksStatusShow(document.getElementById('mksStatusBody').hidden); });
+    })();
+
     function mksSummary() {
       api('/admin/sos/summary').then(function (r) {
         if (!r.ok) return;
-        var f = r.feed, line = document.getElementById('mksFeed');
-        var reading = f.files.filter(function (x) { return x.month && !x.done; });
-        var month = (f.files[0] && f.files[0].month) || null;
-        line.textContent = (month ? 'Latest reports: published ' + month + '. ' : 'Nothing read yet. ') +
-          (reading.length ? 'Reading now: ' + reading.map(function (x) { return x.type + ' ' + x.progress + '%' + (x.retry_at ? ' (the state’s server refused a piece; trying again ' + fmt(x.retry_at) + ')' : x.errors >= 9 ? ' (paused after repeated refusals; resumes at the next check)' : ''); }).join(', ') + ' (a piece every two minutes). ' : '') +
-          (f.last_check ? 'Last checked ' + fmt(f.last_check) + '.' : '') + (f.last_error ? ' Last problem: ' + f.last_error + '.' : '');
-        var lk = r.lookup || {}, ll = document.getElementById('mksLookupLine');
-        ll.textContent = !lk.configured ? 'Website lookup is off until a Brave Search key is set on the Worker.'
-          : 'Websites found for ' + lk.found + ' (' + lk.with_email + ' with an email), none for ' + lk.none + ', ' + lk.waiting + ' still to look up, ' + (lk.skipped || 0) + ' skipped (holdings, finance, realty), ' + (lk.unclassified || 0) + ' unclassified and not searched. ' +
-            lk.used_this_month + ' of ' + lk.cap + ' searches used this month. ' +
-            (lk.paused ? 'Automatic search is paused.' : (lk.window ? 'Automatic search: ' + lk.window.used + ' of ' + lk.window.limit + ' in this ' + lk.window.hours + '-hour window' + (lk.window.next_at ? ', next batch ' + fmt(lk.window.next_at) : '') + '.' : ''));
+        mksRenderStatus(r.feed, r.lookup || {});
+        var lk = r.lookup || {};
         var ab = document.getElementById('mksAutoBtn');
         ab.hidden = !lk.configured;
         ab.textContent = lk.paused ? 'Restart automatic search' : 'Pause automatic search';
@@ -15050,7 +15176,7 @@
       list.appendChild(mkListHead(['Business', 'Type, place and people', 'Tags', 'Filed'], 'sos', {
         col: cur.col, dir: cur.dir,
         on: function (c) { var n = mkSortNext(cur, c); document.getElementById('mksSort').value = MKS_COLSORT[c][n.dir === 'asc' ? 0 : 1]; mksLoad(); },
-      }));
+      }, 'Searched'));
       mkColsApply(list, 'sos');
       list.setAttribute('role', 'list');
       mksRows.forEach(function (f) {
@@ -15073,7 +15199,13 @@
           sc.title = 'Website found, ' + (f.site_evidence && f.site_evidence.label || '') + ' match';
           tags.appendChild(sc);
           if ((f.emails || []).length) tags.appendChild(el('span', 'ct-chip green', (f.emails.length === 1 ? '1 email' : f.emails.length + ' emails')));
-        } else if (f.site_status === 'none' || f.site_status === 'rejected') tags.appendChild(el('span', 'ct-chip', 'No site'));
+        } else if (f.site_status === 'none' || f.site_status === 'rejected') tags.appendChild(el('span', 'ct-chip', f.site_status === 'rejected' ? 'Not their site' : 'No site'));
+        else if (f.site_status === 'error') tags.appendChild(el('span', 'ct-chip gold', 'Search failed'));
+        else if (f.site_status === 'skipped') tags.appendChild(el('span', 'ct-chip', 'Skipped'));
+        // Every chip from a search says when it ran, so it is clear the work is done.
+        if (f.looked_up_at) [].forEach.call(tags.querySelectorAll('.ct-chip'), function (c) {
+          if (/^(Site |No site|Not their|Search failed|\d+ emails?)/.test(c.textContent)) c.title = (c.title ? c.title + '. ' : '') + 'Searched ' + fmtDate(f.looked_up_at);
+        });
         if (f.status !== 'new') tags.appendChild(el('span', 'ct-chip' + (f.status === 'promoted' ? ' green' : f.status === 'passed' ? ' red' : ''), MKS_STATUS_LABEL[f.status]));
         open.appendChild(tags);
         var when = el('span', 'mk-when', f.effective_date ? new Date(f.effective_date + 'T12:00:00').toLocaleDateString(undefined, { month: 'short', day: 'numeric' }) : '');
@@ -15081,7 +15213,24 @@
         open.appendChild(when);
         open.addEventListener('click', function () { mksOpenRow = mksOpenRow === f.charter ? null : f.charter; mksRender(); });
         li.appendChild(open);
+        // Searched through the API: a plain YES / NO, and the results when clicked.
+        var srch = el('span', 'mk-srch');
+        // Only a search has notes to show; a NO is plain text that says why on hover.
+        if (f.looked_up_at) {
+          var yn = el('button', 'mks-yn yes', 'YES');
+          yn.type = 'button';
+          yn.setAttribute('aria-expanded', mksNoteRow === f.charter ? 'true' : 'false');
+          yn.setAttribute('aria-label', 'Searched: show the search notes for ' + f.display_name);
+          yn.addEventListener('click', function () { mksNoteRow = mksNoteRow === f.charter ? null : f.charter; mksRender(); });
+          srch.appendChild(yn);
+        } else {
+          var no = el('span', 'mks-yn no', 'NO');
+          no.title = 'Not searched: ' + mksNotSearchedWhy(f);
+          srch.appendChild(no);
+        }
+        li.appendChild(srch);
         list.appendChild(li);
+        if (f.looked_up_at && mksNoteRow === f.charter) list.appendChild(mksSearchNote(f));
         if (mksOpenRow === f.charter) list.appendChild(mksDetail(f));
       });
       w.appendChild(list);
@@ -15090,6 +15239,68 @@
         more.addEventListener('click', mksMore);
         var mr = el('div', 'reply-row'); mr.appendChild(more); w.appendChild(mr);
       }
+    }
+
+    // What the API search found for one filing, or why it has not been searched.
+    var mksNoteRow = null;
+    // Whether a person should search again, or whether the business is offline for now.
+    function mksAssess(f, ev) {
+      var why = (ev.reasons || []).join(' ');
+      if (f.site_status === 'found') return f.site_confidence >= 70
+        ? 'Confident this is their website. Check it before writing.'
+        : 'Probably their website, but not certain. Open it and confirm before writing.';
+      if (f.site_status === 'rejected') return 'You marked the site found as not theirs. A manual search may turn up the right one.';
+      if (f.site_status === 'error') return 'The search failed, not the business. It is tried again automatically after a day.';
+      if (ev.gbp && ev.gbp.place_id && !ev.gbp.website) return 'Confident they have no website: their Google Business Profile lists none. Treat them as physical address only, and a good lead for a website.';
+      if (/did not check out|did not load|inside a longer domain|part of the name/.test(why)) return 'Worth a manual search: a possible site turned up but could not be confirmed (' + (/did not load/.test(why) ? 'it did not load' : 'it did not clearly match the business') + ').';
+      if (ev.social) return 'No website, but they have a social page. Likely no site yet: a good lead for one.';
+      return ev.gbp_checked
+        ? 'Nothing online under this name, and no Google Business Profile. Confident they have no website yet (physical address only); a manual search is unlikely to find more.'
+        : 'Nothing online under this name in the web search. Probably no website yet (physical address only); a quick manual check could confirm.';
+    }
+    function mksNotSearchedWhy(f) {
+      var ev = f.site_evidence || {};
+      return f.site_status === 'skipped' ? ((ev.reasons || [])[0] || 'skipped')
+        : !f.vertical ? 'the name does not say what the business does, so the automatic search leaves it for you'
+        : 'waiting its turn (best-scored first, 100 every 36 hours)';
+    }
+    function mksSearchNote(f) {
+      var n = el('div', 'mks-note');
+      var ev = f.site_evidence || {};
+      var line = function (label, value, href) {
+        if (!value) return;
+        var p = el('div', 'mks-note-line');
+        p.appendChild(el('b', null, label));
+        if (href) { var a = el('a', null, value); a.href = href; a.target = '_blank'; a.rel = 'noopener noreferrer'; p.appendChild(a); }
+        else p.appendChild(el('span', null, value));
+        n.appendChild(p);
+      };
+      if (f.looked_up_at) {
+        line('Searched', fmtDate(f.looked_up_at) + ((f.lookup_attempts || 0) > 1 ? ' (' + f.lookup_attempts + ' tries)' : ''));
+        var result = f.site_status === 'found' ? 'Website found, ' + f.site_confidence + '% ' + (ev.label || '') : f.site_status === 'rejected' ? 'You marked the site found as not theirs'
+          : f.site_status === 'error' ? 'The search failed; the automatic search tries again after a day' : 'No website found';
+        line('Result', result);
+        // What turned up and what did not, in one line.
+        var got = [], miss = [];
+        (f.site_status === 'found' ? got : miss).push('website');
+        ((f.emails || []).length ? got : miss).push('email');
+        ((ev.phones || []).length ? got : miss).push('phone');
+        if (ev.gbp && ev.gbp.place_id) got.push('Google profile'); else if (ev.gbp_checked) miss.push('Google profile');
+        if (ev.social) got.push('social page');
+        line('Found', (got.length ? got.join(', ') : 'nothing') + (miss.length ? '. Not found: ' + miss.join(', ') : ''));
+        line('Assessment', mksAssess(f, ev));
+        if (f.site_status === 'found' && f.site_url) line('Website', f.site_url.replace(/^https?:\/\//, '').replace(/\/$/, ''), f.site_url);
+        line('Why', (ev.reasons || []).join('; '));
+        line('Emails', (f.emails || []).map(function (e) { return e.email; }).join(', '));
+        line('Phones', (ev.phones || []).join(', '));
+        if (ev.gbp && ev.gbp.place_id) line('Google profile', ev.gbp.website ? 'lists a website' : 'no website listed', 'https://www.google.com/maps/place/?q=place_id:' + ev.gbp.place_id);
+      }
+      var acts = el('div', 'mk-rule-acts');
+      var b = el('button', 'ct-btn sm', 'Search again'); b.type = 'button';
+      b.addEventListener('click', function () { mksLookup([f.charter]); });
+      acts.appendChild(b);
+      n.appendChild(acts);
+      return n;
     }
 
     function mksDetail(f) {
