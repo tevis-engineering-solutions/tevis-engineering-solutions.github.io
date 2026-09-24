@@ -286,7 +286,8 @@
     .custfind .orgbar input { width:auto; }
     /* Customers: People/Organizations left, the search in the middle, Add on the right. */
     .cu-top { display:flex; align-items:center; gap:0.6rem; flex-wrap:wrap; margin:0.3rem 0 0.9rem; }
-    .cu-top .filters { margin:0; flex:0 0 auto; }
+    /* flex-shrink so a long row of status buttons scrolls inside itself on a phone instead of widening the page. */
+    .cu-top .filters { margin:0; flex:0 1 auto; min-width:0; max-width:100%; }
     .cu-q { flex:1 1 16rem; min-width:0; }
     .cu-q input { width:100%; box-sizing:border-box; min-height:40px; padding:0.5rem 0.75rem; border-radius:999px; border:1px solid var(--line); background:var(--bg); color:var(--text); font-family:inherit; font-size:0.88rem; }
     .cu-q input:focus { outline:2px solid var(--gold); outline-offset:1px; }
@@ -333,11 +334,12 @@
     .cu-modal[hidden] { display:none; }
     .cu-modal-box { width:100%; max-width:860px; background:var(--bg); border:1px solid var(--line); border-radius:16px; box-shadow:0 24px 60px rgba(0,0,0,0.55); margin-bottom:4vh; }
     .cu-modal-bar { position:sticky; top:0; z-index:2; display:flex; align-items:center; justify-content:space-between; gap:0.6rem; padding:0.55rem 0.6rem 0.55rem 1rem; background:var(--card); border-bottom:1px solid var(--line); border-radius:16px 16px 0 0; }
-    #custModalTitle { font-family:"Montserrat",sans-serif; font-size:0.7rem; font-weight:800; text-transform:uppercase; letter-spacing:0.06em; color:var(--muted); }
+    #custModalTitle, #tkModalTitle { font-family:"Montserrat",sans-serif; font-size:0.7rem; font-weight:800; text-transform:uppercase; letter-spacing:0.06em; color:var(--muted); }
     .cu-modal-x { width:40px; height:40px; border-radius:999px; border:1px solid var(--line); background:var(--bg); color:var(--text); cursor:pointer; font-size:1rem; display:inline-flex; align-items:center; justify-content:center; }
     .cu-modal-x:hover { border-color:var(--gold); color:var(--gold); }
-    #custDetail { padding:0.9rem; }
-    #custDetail > .panel { border:0; background:transparent; padding:0; }
+    #custDetail, #tkModal #detail { padding:0.9rem; }
+    #custDetail > .panel, #tkModal #detail > .panel { border:0; background:transparent; padding:0; }
+    .tk-newnote { margin:-0.4rem 0 0.8rem; }
     body.cu-locked { overflow:hidden; }
     @media (max-width:600px) { .cu-modal { padding:0; } .cu-modal-box { border-radius:0; min-height:100%; margin:0; } .cu-modal-bar { border-radius:0; } }
 
@@ -594,6 +596,14 @@
     .fin-table tr.pick:hover td, .fin-table tr.hi td { background:rgba(74,172,101,0.09); }
     .kbd-list { display:grid; gap:0.35rem; margin-top:0.5rem; }
     .kbd-row { display:flex; align-items:baseline; gap:0.6rem; }
+    .tg-list { margin-top:0.5rem; }
+    .tg-group { margin-top:0.8rem; }
+    .tg-group h4 { font-family:"Montserrat",sans-serif; font-size:0.68rem; text-transform:uppercase; letter-spacing:0.05em; color:var(--gold); margin-bottom:0.3rem; }
+    .tg-row { display:flex; align-items:center; gap:0.7rem; padding:0.45rem 0; border-top:1px solid rgba(138,164,141,0.18); }
+    .tg-txt { flex:1; min-width:0; }
+    .tg-txt b { display:block; font-size:0.82rem; }
+    .tg-txt .row-sub { display:block; line-height:1.45; }
+    .tg-row button { flex:0 0 auto; }
     .kbd-keys { display:inline-flex; gap:0.2rem; flex:0 0 auto; min-width:4.2rem; }
     kbd { font-family:"Inter",monospace; font-size:0.68rem; padding:0.12rem 0.36rem; border-radius:5px;
       border:1px solid var(--line); background:var(--bg); color:var(--text); }
@@ -682,6 +692,10 @@
     .act-m span { display:block; }
     .act-new { display:none; margin:0 0 0.5rem; font-family:"Montserrat",sans-serif; font-size:0.66rem; font-weight:700; text-transform:uppercase; letter-spacing:0.04em; padding:0.35rem 0.8rem; border-radius:999px; border:1px solid var(--gold); background:rgba(200,152,48,0.1); color:var(--gold); cursor:pointer; }
     .act-new.show { display:inline-block; }
+    /* position:relative so each entry's offsetTop is measured from the top of the feed. */
+    .act-scroll { position:relative; overflow-y:auto; overscroll-behavior:contain; scrollbar-width:thin; scrollbar-color:var(--line) transparent; padding-right:0.3rem; }
+    .act-scroll::-webkit-scrollbar { width:8px; }
+    .act-scroll::-webkit-scrollbar-thumb { background:var(--line); border-radius:4px; }
     .cmdk { position:fixed; inset:0; z-index:80; background:rgba(5,10,7,0.72); backdrop-filter:blur(4px); display:flex; align-items:flex-start; justify-content:center; padding:8vh 1rem 1rem; }
     .cmdk[hidden] { display:none; }
     .cmdk-box { width:100%; max-width:640px; background:#112018; border:1px solid var(--line); border-radius:14px; box-shadow:0 20px 60px rgba(0,0,0,0.55); overflow:hidden; }
@@ -834,6 +848,25 @@
     .calbar button:hover { border-color:var(--green); }
     .calsp { flex:1; }
     .calweek { display:grid; grid-template-columns:repeat(7,1fr); gap:0.4rem; }
+    .calmonth { display:grid; grid-template-columns:repeat(7,minmax(0,1fr)); gap:0.35rem; }
+    .caldow { font-family:"Montserrat",sans-serif; font-size:0.64rem; font-weight:800; text-transform:uppercase; letter-spacing:0.05em; color:var(--muted); text-align:center; padding:0.2rem 0; }
+    .calmonth .calday { min-height:6.2rem; min-width:0; padding:0.4rem; overflow:hidden; }
+    .calmonth .calday h4 { margin-bottom:0.25rem; }
+    .calmonth .calday h4 span { font-size:0.9rem; }
+    .calmonth .calday.out { opacity:0.45; }
+    .calmonth .calappt { padding:0.2rem 0.35rem; margin-bottom:0.2rem; }
+    .calmonth .calappt .t { font-size:0.62rem; }
+    .calmonth .calappt .w { font-size:0.66rem; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+    .calmonth .calblock { font-size:0.62rem; padding:0.15rem 0.35rem; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+    @media (max-width:640px) {
+      .calmonth { gap:0.2rem; }
+      .caldow { font-size:0.56rem; letter-spacing:0; }
+      .calmonth .calday { min-height:3.6rem; padding:0.25rem; border-radius:8px; }
+      .calmonth .calday h4 span { font-size:0.78rem; }
+      .calmonth .calappt { padding:0.1rem 0.2rem; }
+      .calmonth .calappt .w, .calmonth .calblock { display:none; }
+      .calmonth .calappt .t { font-size:0.56rem; }
+    }
     .calday { background:var(--card); border:1px solid var(--line); border-radius:12px; padding:0.5rem; min-height:7rem; }
     .calday.today { border-color:var(--gold); }
     .calday.off { background:var(--bg); }
@@ -852,14 +885,37 @@
     .calappt.canceled { opacity:0.45; text-decoration:line-through; }
     .calblock { font-size:0.68rem; color:var(--muted); background:var(--bg); border:1px dashed var(--line); border-radius:8px; padding:0.3rem 0.45rem; margin-bottom:0.3rem; }
     .calempty { font-size:0.68rem; color:#33513c; }
-    @media (max-width:900px) { .calweek { grid-template-columns:1fr; } .calday { min-height:0; } .calday.empty { display:none; } }
+    .calbusy { font-size:0.62rem; color:var(--muted); background:repeating-linear-gradient(135deg, rgba(138,164,141,0.10) 0 6px, rgba(138,164,141,0.04) 6px 12px); border:1px solid rgba(138,164,141,0.25); border-radius:6px; padding:0.15rem 0.35rem; margin-bottom:0.2rem; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+    @media (max-width:640px) { .calmonth .calbusy { font-size:0; padding:0; height:4px; border:0; background:rgba(138,164,141,0.45); } }
+    .calfeeds { border:1px solid var(--line); border-radius:10px; padding:0.6rem 0.75rem; margin-bottom:0.9rem; background:var(--bg); }
+    .calfeeds-h { display:flex; align-items:center; justify-content:space-between; gap:0.6rem; margin-bottom:0.35rem; }
+    .calfeeds-h b { font-family:"Montserrat",sans-serif; font-size:0.72rem; text-transform:uppercase; letter-spacing:0.05em; color:var(--gold); }
+    .calfeeds-h button { background:none; border:1px solid var(--line); color:var(--text); border-radius:999px; padding:0.3rem 0.8rem; min-height:34px; cursor:pointer; font-size:0.66rem; font-family:"Montserrat",sans-serif; text-transform:uppercase; letter-spacing:0.04em; }
+    .calfeeds-h button:hover { border-color:var(--green); }
+    .calfeed { font-size:0.8rem; line-height:1.5; }
+    .calfeed b { color:var(--text); }
+    .calfeed.bad { color:#e0c98a; }
+    .calfeeds .row-sub { margin-top:0.3rem; line-height:1.5; }
+    @media (max-width:900px) { .calweek { grid-template-columns:1fr; } .calweek .calday { min-height:0; } .calweek .calday.empty { display:none; } }
     .hoursnote { font-size:0.76rem; color:var(--muted); line-height:1.55; margin-bottom:0.8rem; }
     .blockhead { font-family:"Montserrat",sans-serif; font-size:0.78rem; text-transform:uppercase; letter-spacing:0.05em; color:var(--gold); margin:1rem 0 0.5rem; }
     .rulerow { display:flex; align-items:center; gap:0.6rem; flex-wrap:wrap; padding:0.45rem 0; border-bottom:1px solid var(--line); font-size:0.8rem; }
     .rulerow b { font-family:"Montserrat",sans-serif; min-width:5.5rem; }
     .rulerow .k { color:var(--muted); font-size:0.72rem; }
-    .rulerow button { margin-left:auto; background:none; border:1px solid var(--line); color:var(--muted); border-radius:999px; padding:0.3rem 0.7rem; min-height:36px; cursor:pointer; font-size:0.68rem; font-family:"Montserrat",sans-serif; text-transform:uppercase; letter-spacing:0.04em; }
-    .rulerow button:hover { border-color:#7f2c2c; color:#e08585; }
+    .rulerow button { background:none; border:1px solid var(--line); color:var(--muted); border-radius:999px; padding:0.3rem 0.7rem; min-height:36px; cursor:pointer; font-size:0.68rem; font-family:"Montserrat",sans-serif; text-transform:uppercase; letter-spacing:0.04em; }
+    .rulerow button:hover { border-color:var(--green); color:var(--text); }
+    .rulerow button:last-child:hover { border-color:#7f2c2c; color:#e08585; }
+    .rulerow .rulesp { flex:1 1 0; min-width:0; }
+    .rulerow b { min-width:6.5rem; }
+    .rulerow.editing { background:rgba(74,172,101,0.06); border-radius:8px; padding:0.45rem 0.5rem; }
+    .rulerow.editing input, .rulerow.editing select { min-height:36px; padding:0.3rem 0.5rem; border-radius:8px; border:1px solid var(--line); background:var(--bg); color:var(--text); font-family:inherit; font-size:0.8rem; color-scheme:dark; }
+    .rulerow.editing button.prim { background:linear-gradient(135deg,var(--gold),#e0b840); color:#0d1710; border-color:transparent; }
+    .rulerow.editing button:last-child:hover { border-color:var(--green); color:var(--text); }
+    .ruleday { border-bottom:1px solid var(--line); padding-bottom:0.35rem; margin-bottom:0.2rem; }
+    .ruleday .rulerow { border-bottom:0; }
+    .ruleadd { background:none; border:0; color:var(--green); font-family:inherit; font-size:0.74rem; padding:0.3rem 0 0.3rem 7.1rem; cursor:pointer; min-height:32px; }
+    .ruleadd:hover { text-decoration:underline; }
+    @media (max-width:560px) { .ruleadd { padding-left:0; } .rulerow b { min-width:100%; } }
     .apptcard { border:1px solid var(--line); border-radius:12px; background:var(--card); padding:0.9rem 1rem; margin-bottom:0.6rem; }
     .apptcard h3 { font-family:"Montserrat",sans-serif; font-size:0.9rem; margin-bottom:0.3rem; }
     .apptcard .who { font-size:0.78rem; color:var(--muted); margin-bottom:0.5rem; }
@@ -1331,8 +1387,9 @@
       <div class="home-col">
         <div class="chart-panel">
           <div class="fin-sec-h"><h3>Activity</h3><button type="button" class="act-new" id="actNew">New activity</button></div>
-          <div id="homeActivity"><div class="state">Loading&hellip;</div></div>
+          <div id="homeActivity" class="act-scroll"><div class="state">Loading&hellip;</div></div>
         </div>
+        <div id="homeAi"></div>
       </div>
     </div>
   </main>
@@ -1349,21 +1406,25 @@
   </main>
 
   <div id="viewTickets">
-  <div class="filters" id="filters">
-    <button type="button" class="fpill on" data-status="">All</button>
-    <button type="button" class="fpill" data-status="Open">Open</button>
-    <button type="button" class="fpill" data-status="In Progress">In Progress</button>
-    <button type="button" class="fpill" data-status="Pending Client">Pending Client</button>
-    <button type="button" class="fpill" data-status="Resolved">Resolved</button>
-    <button type="button" class="fpill" data-status="Archived">Archived</button>
-  </div>
-
-  <div class="tkfind">
-    <div class="orgbar">
-      <button type="button" id="newTkToggle" class="prim">+ New ticket for a customer</button>
-      <span class="fnote">A call, a visit, something you noticed. The customer is told by email.</span>
+  <main class="wrap" aria-label="Ticket triage">
+  <div class="cu-top tk-top-bar">
+    <div class="filters" id="filters">
+      <button type="button" class="fpill on" data-status="">All</button>
+      <button type="button" class="fpill" data-status="Open">Open</button>
+      <button type="button" class="fpill" data-status="In Progress">In Progress</button>
+      <button type="button" class="fpill" data-status="Pending Client">Pending Client</button>
+      <button type="button" class="fpill" data-status="Resolved">Resolved</button>
+      <button type="button" class="fpill" data-status="Archived">Archived</button>
     </div>
+    <div class="cu-q">
+      <label for="tkQ" class="sr-only">Search tickets by number, subject, text, name or email</label>
+      <input type="search" id="tkQ" placeholder="Search number, subject, text, name or email" autocomplete="off">
+    </div>
+    <button type="button" id="newTkToggle" class="cu-add">+ New ticket</button>
+  </div>
     <section class="newinv newtk" id="newTkForm" hidden>
+      <h2>New ticket for a customer</h2>
+      <p class="fnote tk-newnote">A call, a visit, something you noticed. The customer is told by email.</p>
       <div class="fgrid">
         <div><label for="ntkEmail">Customer email</label><input type="email" id="ntkEmail" placeholder="them@theirfirm.com"></div>
         <div><label for="ntkPriority">Priority</label><select id="ntkPriority"><option>Low</option><option selected>Medium</option><option>High</option><option>Critical</option></select></div>
@@ -1373,19 +1434,19 @@
       <label class="fcheck"><input type="checkbox" id="ntkNotify" checked> Email the customer that it was opened</label>
       <div class="inv-actions"><button type="button" class="prim" id="ntkSave">Open ticket</button><button type="button" id="ntkCancel">Cancel</button></div>
     </section>
-  </div>
-  <div class="tkfind">
-    <label for="tkQ" class="sr-only">Search tickets</label>
-    <input type="search" id="tkQ" placeholder="Search tickets by number, subject, text, name or email" autocomplete="off">
-  </div>
-  <main class="wrap" aria-label="Ticket triage">
-    <div class="grid">
-      <section aria-label="Tickets">
-        <div id="list"><div class="state">Loading tickets&hellip;</div></div>
-      </section>
-      <section id="detail" aria-live="polite">
-        <div class="state">Select a ticket to open it.</div>
-      </section>
+    <section aria-label="Tickets">
+      <div id="list"><div class="state">Loading tickets&hellip;</div></div>
+    </section>
+
+    <!-- A ticket opens over the list, like a customer file, so the list keeps the full width. -->
+    <div class="cu-modal" id="tkModal" hidden>
+      <div class="cu-modal-box" role="dialog" aria-modal="true" aria-labelledby="tkModalTitle">
+        <div class="cu-modal-bar">
+          <span id="tkModalTitle">Ticket</span>
+          <button type="button" class="cu-modal-x" id="tkModalX" aria-label="Close the ticket"><i class="fa-solid fa-xmark" aria-hidden="true"></i></button>
+        </div>
+        <section id="detail" aria-live="polite"></section>
+      </div>
     </div>
   </main>
   </div>
@@ -1616,9 +1677,9 @@
 
   <main class="wrap" id="viewCalendar" aria-label="Calendar" hidden>
     <div class="calbar">
-      <button type="button" id="calPrev" aria-label="Previous week">&lsaquo;</button>
-      <h2 id="calRange">This week</h2>
-      <button type="button" id="calNext" aria-label="Next week">&rsaquo;</button>
+      <button type="button" id="calPrev" aria-label="Previous month">&lsaquo;</button>
+      <h2 id="calRange">This month</h2>
+      <button type="button" id="calNext" aria-label="Next month">&rsaquo;</button>
       <button type="button" id="calToday">Today</button>
       <span class="calsp"></span>
       <button type="button" class="prim" id="calBook">+ Book for a customer</button>
@@ -1688,6 +1749,7 @@
     <section class="newinv" id="calHoursForm" hidden>
       <h2>When customers can book</h2>
       <p class="hoursnote">These are the windows the booking page offers. Blocks below take time out of them for a holiday or a day off. Slots are offered on the half hour, at least 24 hours ahead, with 30 minutes either side of anything already booked.</p>
+      <div id="calFeeds" class="calfeeds"></div>
       <div id="calRules"></div>
       <div class="fgrid">
         <div>
@@ -2391,40 +2453,90 @@
       return badge(text, SLA_COLOR[sla.state] || '#8aa48d');
     }
 
+    // The ticket list, laid out like Customers and Marketing: sortable, resizable columns,
+    // and the ticket itself opens over the list (tkModal) rather than beside it.
+    var TK_STATUS_ORDER = { 'Open': 0, 'In Progress': 1, 'Pending Client': 2, 'Resolved': 3, 'Archived': 4 };
+    var TK_PRI_ORDER = { 'Critical': 0, 'High': 1, 'Medium': 2, 'Low': 3 };
+    var TK_SLA_ORDER = { breached: 0, due_soon: 1, ok: 2, missed: 3, met: 4 };
+    var tkMore = false;
+    function ord(map, k) { return k in map ? map[k] : 9; }
+    var TK_COLS = [
+      { k: 'num', label: 'Ticket', w: 170, text: function (t) { return t.ticket_number || ('#' + t.id); },
+        cell: function (t) {
+          var s = el('span', 'cu-name');
+          if (t.staff_unread) { var dot = el('span', 'unread-dot'); dot.title = 'The customer wrote since you last opened it'; s.appendChild(dot); }
+          s.appendChild(el('span', 'cu-t', t.ticket_number || ('#' + t.id)));
+          return s;
+        } },
+      { k: 'subject', label: 'Subject', w: 230, text: function (t) { return t.subject || '(no subject)'; } },
+      { k: 'who', label: 'Customer', w: 170, text: function (t) { return t.company || t.contact_name || t.email || ''; } },
+      { k: 'status', label: 'Status', w: 112, text: function (t) { return t.status; },
+        sortv: function (t) { return ord(TK_STATUS_ORDER, t.status); },
+        cell: function (t) { return badge(t.status, STATUS[t.status] || '#8aa48d'); } },
+      { k: 'priority', label: 'Priority', w: 92, text: function (t) { return t.priority; },
+        sortv: function (t) { return ord(TK_PRI_ORDER, t.priority); },
+        cell: function (t) { return badge(t.priority, PRIORITY[t.priority] || '#8aa48d'); } },
+      { k: 'sla', label: 'Response', w: 110, text: function (t) { return t.sla ? (SLA_LABEL[t.sla.state] || 'SLA') : ''; },
+        // Late first, then running out soonest; tickets with no promise last.
+        sortv: function (t) { return t.sla ? ord(TK_SLA_ORDER, t.sla.state) * 1e7 + (t.sla.minutes_left || 0) : 1e9; },
+        cell: function (t) { return slaBadge(t.sla); } },
+      { k: 'updated', label: 'Updated', w: 110, num: true, text: function (t) { return fmt(t.updated_at); },
+        sortv: function (t) { return t.updated_at || 0; } },
+    ];
+
     function renderList() {
       listEl.textContent = '';
-      if (!tickets.length) {
-        listEl.appendChild(el('div', 'state', 'No tickets here.'));
-        return;
-      }
-      tickets.forEach(function (t) {
-        var b = el('button', 'tk' + (String(t.id) === String(currentId) ? ' sel' : ''));
-        b.type = 'button';
-        b.setAttribute('data-id', t.id);
-
-        var top = el('div', 'tk-top');
-        var idSpan = el('span', 'tk-id');
-        if (t.staff_unread) idSpan.appendChild(el('span', 'unread-dot'));
-        idSpan.appendChild(document.createTextNode(t.ticket_number || ('#' + t.id)));
-        top.appendChild(idSpan);
-        var badges = el('span');
-        badges.appendChild(badge(t.status, STATUS[t.status] || '#8aa48d'));
-        badges.appendChild(document.createTextNode(' '));
-        badges.appendChild(badge(t.priority, PRIORITY[t.priority] || '#8aa48d'));
-        var sb = slaBadge(t.sla);
-        if (sb) {
-          badges.appendChild(document.createTextNode(' '));
-          badges.appendChild(sb);
-        }
-        top.appendChild(badges);
-        b.appendChild(top);
-
-        b.appendChild(el('div', 'tk-sub', t.subject || '(no subject)'));
-        var meta = [t.company || t.contact_name || t.email, fmt(t.updated_at)].filter(Boolean).join(' · ');
-        b.appendChild(el('div', 'tk-meta', meta));
-        listEl.appendChild(b);
-      });
+      listEl.appendChild(cuTable('tickets', TK_COLS, tickets, {
+        count: tickets.length + (tickets.length === 1 ? ' ticket' : ' tickets') + (tkMore ? ' (newest first; older below)' : ''),
+        empty: tkSearch ? 'No tickets match that.' : 'No tickets here.',
+        isSel: function (t) { return String(t.id) === String(currentId); },
+        rerender: renderList,
+        open: function (t) { open(t.id); },
+      }));
+      if (tkMore) listEl.appendChild(licAction('Load older tickets', 'more-btn', function () {
+        var last = tickets[tickets.length - 1];
+        api('/admin/tickets?status=' + encodeURIComponent(filter || '') + (tkSearch ? '&q=' + encodeURIComponent(tkSearch) : '') + '&before=' + last.updated_at).then(function (r2) {
+          if (!r2.ok) return;
+          tickets = tickets.concat(r2.tickets || []);
+          tkMore = !!r2.more;
+          renderList();
+        });
+      }));
     }
+
+    // ---- the ticket, over the list ----
+    var tkModalEl = document.getElementById('tkModal');
+    var tkModalFocus = null;
+    function tkModalOpen() {
+      if (typeof custModal !== 'undefined' && custModal && !custModal.hidden) custModalClose();
+      if (tkModalEl.hidden) {
+        tkModalFocus = document.activeElement;
+        tkModalEl.hidden = false;
+        document.body.classList.add('cu-locked');
+        document.getElementById('tkModalX').focus();
+      }
+      tkModalEl.querySelector('.cu-modal-box').scrollTop = 0;
+    }
+    function tkModalClose(quiet) {
+      if (tkModalEl.hidden) return;
+      tkModalEl.hidden = true;
+      document.body.classList.remove('cu-locked');
+      detailEl.textContent = '';
+      currentId = null;
+      if (/^#t=/.test(location.hash)) history.replaceState(null, '', '#tickets');
+      if (quiet) return;
+      // Reloaded, not redrawn: a status or priority changed in the ticket shows here.
+      load();
+      if (tkModalFocus && tkModalFocus.focus && document.contains(tkModalFocus)) tkModalFocus.focus();
+      tkModalFocus = null;
+    }
+    document.getElementById('tkModalX').addEventListener('click', function () { tkModalClose(); });
+    tkModalEl.addEventListener('click', function (e) { if (e.target === tkModalEl) tkModalClose(); });
+    document.addEventListener('keydown', function (e) {
+      if (e.key !== 'Escape' || tkModalEl.hidden) return;
+      if (typeof cmdk !== 'undefined' && cmdk && !cmdk.hidden) return;   // search is on top; it closes first
+      tkModalClose();
+    });
 
     function renderDetail(data) {
       var t = data.ticket;
@@ -2515,11 +2627,8 @@
             arch.disabled = false;
             if (!r.ok) return toast('Could not update');
             toast(next === 'Archived' ? 'Archived' : 'Restored to Resolved');
-            // Archiving removes it from the current list, so clear the panel too.
-            detailEl.textContent = '';
-            detailEl.appendChild(el('div', 'state', 'Select a ticket to open it.'));
-            currentId = null;
-            load();
+            // Archiving removes it from the current list, so the ticket closes too.
+            tkModalClose();
           });
       });
 
@@ -2780,6 +2889,7 @@
       currentId = id;
       if (location.hash !== '#t=' + id) history.replaceState(null, '', '#t=' + id);
       renderList();
+      tkModalOpen();
       detailEl.textContent = '';
       detailEl.appendChild(el('div', 'state', 'Loading…'));
       return api('/admin/tickets/' + id).then(function (r) {
@@ -2801,22 +2911,11 @@
             return;
           }
           tickets = r.tickets || [];
+          tkMore = !!r.more;
           renderList();
-          if (r.more) listEl.appendChild(licAction('Load older tickets', 'more-btn', function () {
-            var last = tickets[tickets.length - 1];
-            api('/admin/tickets?status=' + encodeURIComponent(filter || '') + (tkSearch ? '&q=' + encodeURIComponent(tkSearch) : '') + '&before=' + last.updated_at).then(function (r2) {
-              if (!r2.ok) return;
-              tickets = tickets.concat(r2.tickets || []);
-              renderList();
-            });
-          }));
         });
     }
 
-    listEl.addEventListener('click', function (e) {
-      var btn = e.target.closest('.tk');
-      if (btn) open(btn.getAttribute('data-id'));
-    });
 
     document.getElementById('filters').addEventListener('click', function (e) {
       var b = e.target.closest('.fpill');
@@ -4763,7 +4862,7 @@
 
     // ---- calendar (Phase 5) ----------------------------------------------
     var calGrid = document.getElementById('calGrid');
-    var calAnchor = null;              // the Monday of the week on screen
+    var calAnchor = null;              // local midnight on the 1st of the month on screen
     var calSelected = null;            // the customer picked in the booking form
     var calTimer = null;
     var APPT_KIND = { remote: 'Remote', onsite: 'On-site', call: 'Call' };
@@ -4797,46 +4896,76 @@
       return new Date(ts * 1000).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' }).replace(' ', '').toLowerCase();
     }
 
+    // Local midnight on the 1st of whatever month `ts` falls in.
+    function monthStart(ts) {
+      var d = new Date(ts * 1000);
+      d.setHours(0, 0, 0, 0);
+      d.setDate(1);
+      return Math.floor(d.getTime() / 1000);
+    }
+    function shiftMonth(ts, n) {
+      var d = new Date(ts * 1000);
+      d.setMonth(d.getMonth() + n, 1);
+      d.setHours(0, 0, 0, 0);
+      return Math.floor(d.getTime() / 1000);
+    }
+
+    // The month as a grid of whole weeks, Monday first, with the days of the months
+    // either side filling the first and last rows (muted, but live: an appointment on
+    // the 1st of next month shows on the last row).
     function loadCalendar() {
-      if (!calAnchor) calAnchor = weekStart(Math.floor(Date.now() / 1000));
-      var from = calAnchor, to = dayStartOf(calAnchor, 7);
-      return api('/admin/calendar?from=' + from + '&to=' + to).then(function (r) {
+      if (!calAnchor) calAnchor = monthStart(Math.floor(Date.now() / 1000));
+      var first = calAnchor;
+      var gridStart = weekStart(first);
+      var nextMonth = shiftMonth(first, 1);
+      var weeks = Math.ceil((Math.round((nextMonth - gridStart) / 86400)) / 7);
+      var gridEnd = dayStartOf(gridStart, weeks * 7);
+      return api('/admin/calendar?from=' + gridStart + '&to=' + gridEnd).then(function (r) {
         calGrid.textContent = '';
         if (!r.ok) { calGrid.appendChild(el('div', 'state', 'Could not load the diary.')); return; }
         document.getElementById('calRange').textContent =
-          new Date(from * 1000).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) + ' – ' +
-          new Date(dayStartOf(calAnchor, 6) * 1000).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
-        var week = el('div', 'calweek');
+          new Date(first * 1000).toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+        var month = el('div', 'calmonth');
+        ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'].forEach(function (n) { month.appendChild(el('div', 'caldow', n)); });
         var today = dayStartOf(Math.floor(Date.now() / 1000), 0);
-        for (var i = 0; i < 7; i++) {
-          var ds = dayStartOf(calAnchor, i), de = dayStartOf(calAnchor, i + 1);
+        var thisMonth = new Date(first * 1000).getMonth();
+        for (var i = 0; i < weeks * 7; i++) {
+          var ds = dayStartOf(gridStart, i), de = dayStartOf(gridStart, i + 1);
+          var date = new Date(ds * 1000);
           var mine = (r.appointments || []).filter(function (a) { return a.starts_at < de && a.ends_at > ds; });
           var blocks = (r.blocks || []).filter(function (b) { return b.starts_at < de && b.ends_at > ds; });
-          var hasRule = (r.rules || []).some(function (x) { return x.active && x.dow === new Date(ds * 1000).getDay(); });
-          var d = el('div', 'calday' + (ds === today ? ' today' : '') + (hasRule ? '' : ' off') + (mine.length || blocks.length ? '' : ' empty'));
-          var h = el('h4', null, new Date(ds * 1000).toLocaleDateString('en-US', { weekday: 'short' }));
-          h.appendChild(el('span', null, String(new Date(ds * 1000).getDate())));
+          var hasRule = (r.rules || []).some(function (x) { return x.active && x.dow === date.getDay(); });
+          var d = el('div', 'calday' + (ds === today ? ' today' : '') + (hasRule ? '' : ' off') +
+            (date.getMonth() !== thisMonth ? ' out' : '') + (mine.length || blocks.length ? '' : ' empty'));
+          var h = el('h4', null, null);
+          h.appendChild(el('span', null, String(date.getDate())));
+          h.setAttribute('aria-label', date.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' }));
           d.appendChild(h);
           blocks.forEach(function (b) { d.appendChild(el('div', 'calblock', b.reason || 'Unavailable')); });
+          (r.busy || []).filter(function (b) { return b.starts_at < de && b.ends_at > ds; }).forEach(function (b) {
+            var whole = b.all_day || (b.starts_at <= ds && b.ends_at >= de);
+            var c = el('div', 'calbusy', whole ? 'Busy all day' : hhmmOf(Math.max(b.starts_at, ds)) + '–' + hhmmOf(Math.min(b.ends_at, de)));
+            c.title = 'Busy on your ' + (b.source === 'google' ? 'Google' : b.source) + ' calendar. Not offered for booking.';
+            d.appendChild(c);
+          });
           mine.forEach(function (a) {
             var b = el('button', 'calappt ' + a.kind + (a.status !== 'booked' ? ' ' + a.status : ''));
             b.type = 'button';
+            b.title = hhmmOf(a.starts_at) + ' · ' + a.who + ' · ' + (APPT_KIND[a.kind] || a.kind) + ' · ' + a.title;
             b.appendChild(el('span', 't', hhmmOf(a.starts_at)));
             b.appendChild(el('span', 'w', a.who));
-            b.appendChild(el('span', 'k', (APPT_KIND[a.kind] || a.kind) + ' · ' + a.title));
             b.addEventListener('click', function () { openAppointment(a.id); });
             d.appendChild(b);
           });
-          if (!mine.length && !blocks.length) d.appendChild(el('div', 'calempty', hasRule ? 'Free' : 'Not bookable'));
-          week.appendChild(d);
+          month.appendChild(d);
         }
-        calGrid.appendChild(week);
+        calGrid.appendChild(month);
       });
     }
 
-    document.getElementById('calPrev').addEventListener('click', function () { calAnchor = dayStartOf(calAnchor, -7); loadCalendar(); });
-    document.getElementById('calNext').addEventListener('click', function () { calAnchor = dayStartOf(calAnchor, 7); loadCalendar(); });
-    document.getElementById('calToday').addEventListener('click', function () { calAnchor = weekStart(Math.floor(Date.now() / 1000)); loadCalendar(); });
+    document.getElementById('calPrev').addEventListener('click', function () { calAnchor = shiftMonth(calAnchor, -1); loadCalendar(); });
+    document.getElementById('calNext').addEventListener('click', function () { calAnchor = shiftMonth(calAnchor, 1); loadCalendar(); });
+    document.getElementById('calToday').addEventListener('click', function () { calAnchor = monthStart(Math.floor(Date.now() / 1000)); loadCalendar(); });
 
     function openAppointment(id) {
       api('/admin/appointments/' + id).then(function (r) {
@@ -4878,7 +5007,7 @@
         }
         var ics = el('a', 'pill', 'Invite'); ics.href = '/portal-api/admin/appointments/' + id + '/ics'; ics.target = '_blank'; ics.rel = 'noopener';
         acts.appendChild(ics);
-        aact('Back to the week', null, function () { loadCalendar(); });
+        aact('Back to the month', null, function () { loadCalendar(); });
         c.appendChild(acts);
         if ((r.events || []).length) {
           var ev = el('div', 'qevents');
@@ -4956,7 +5085,7 @@
         toast('Booked · invite sent to ' + email);
         document.getElementById('calBookForm').hidden = true;
         ['calTitle', 'calAddress', 'calNotes', 'calPhone'].forEach(function (i) { document.getElementById(i).value = ''; });
-        calAnchor = weekStart(ts);
+        calAnchor = monthStart(ts);
         loadCalendar();
       });
     });
@@ -4971,7 +5100,118 @@
     document.getElementById('calHoursClose').addEventListener('click', function () { document.getElementById('calHoursForm').hidden = true; });
 
     var DOW = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+    var KIND_LABEL = { any: 'anything', remote: 'remote only', onsite: 'on-site only' };
+    function ruleError(r) {
+      if (r.error === 'overlaps' && r.with) {
+        return 'That overlaps ' + r.with.start_hm + ' – ' + r.with.end_hm + ' on the same day. Blocks can touch but not overlap.';
+      }
+      return APPT_ERROR[r.error] || 'Could not save it';
+    }
+    // One block of working hours. Edit turns the row into its own small form; the day
+    // stays fixed (move a block to another day by removing it and adding it there).
+    function ruleRow(x, showDay) {
+      var row = el('div', 'rulerow');
+      function view() {
+        row.textContent = '';
+        row.appendChild(el('b', null, showDay ? DOW[x.dow] : ''));
+        row.appendChild(el('span', null, x.start_hm + ' – ' + x.end_hm));
+        row.appendChild(el('span', 'k', KIND_LABEL[x.kind] || x.kind));
+        var sp = el('span', 'rulesp'); row.appendChild(sp);
+        var ed = el('button', null, 'Edit'); ed.type = 'button';
+        ed.addEventListener('click', edit);
+        row.appendChild(ed);
+        var del = el('button', null, 'Remove'); del.type = 'button';
+        del.addEventListener('click', function () {
+          if (!confirm('Remove ' + DOW[x.dow] + ' ' + x.start_hm + '-' + x.end_hm + '?')) return;
+          api('/admin/availability/rules/' + x.id, { method: 'DELETE' }).then(function () { loadHours(); loadCalendar(); });
+        });
+        row.appendChild(del);
+      }
+      function edit() {
+        row.textContent = '';
+        row.classList.add('editing');
+        row.appendChild(el('b', null, DOW[x.dow]));
+        var mk = function (val, label) {
+          var i = document.createElement('input'); i.type = 'time'; i.step = 900; i.value = val;
+          i.setAttribute('aria-label', label + ', ' + DOW[x.dow]); return i;
+        };
+        var st = mk(x.start_hm, 'From'), en = mk(x.end_hm, 'To');
+        var kd = document.createElement('select');
+        kd.setAttribute('aria-label', 'For');
+        [['any', 'Anything'], ['remote', 'Remote only'], ['onsite', 'On-site only']].forEach(function (o) {
+          var op = document.createElement('option'); op.value = o[0]; op.textContent = o[1];
+          if (o[0] === x.kind) op.selected = true; kd.appendChild(op);
+        });
+        row.appendChild(st); row.appendChild(el('span', 'k', 'to')); row.appendChild(en); row.appendChild(kd);
+        var sp = el('span', 'rulesp'); row.appendChild(sp);
+        var save = el('button', 'prim', 'Save'); save.type = 'button';
+        var cancel = el('button', null, 'Cancel'); cancel.type = 'button';
+        save.addEventListener('click', function () {
+          if (!st.value || !en.value) return toast('Set both times');
+          if (en.value <= st.value) return toast(APPT_ERROR.end_before_start);
+          save.disabled = true;
+          api('/admin/availability/rules/' + x.id, { method: 'PATCH', body: { dow: x.dow, start_hm: st.value, end_hm: en.value, kind: kd.value } })
+            .then(function (r) {
+              save.disabled = false;
+              if (!r.ok) return toast(ruleError(r));
+              toast('Saved');
+              loadHours(); loadCalendar();
+            });
+        });
+        cancel.addEventListener('click', function () { row.classList.remove('editing'); view(); });
+        row.appendChild(save); row.appendChild(cancel);
+        st.focus();
+      }
+      view();
+      return row;
+    }
+    // Busy-time feeds (Google Calendar via a BUSY_ICS_<SOURCE> Worker secret). The address
+    // itself is never sent to the browser; this shows only what happened on the last read.
+    var FEED_ERROR = { not_a_calendar: 'the address answered with a web page, not a calendar (it may have been reset in Google)',
+      timeout: 'it did not answer in 20 seconds', fetch_failed: 'it could not be reached', too_large: 'the calendar was over 5 MB' };
+    function feedLine(f) {
+      var d = el('div', 'calfeed' + (f.ok ? '' : ' bad'));
+      var name = f.source === 'google' ? 'Google Calendar' : f.source;
+      var bits = [];
+      if (f.last_read) bits.push('read ' + fmt(f.last_read));
+      if (f.ok && !f.last_read) bits.push('not read yet; the first read happens within 15 minutes, or press Read now');
+      else if (f.ok) bits.push(f.upcoming + ' busy block' + (f.upcoming === 1 ? '' : 's') + ' ahead, from ' + f.events + ' event' + (f.events === 1 ? '' : 's'));
+      else bits.push('last read FAILED: ' + (FEED_ERROR[f.error] || String(f.error || '').replace('http_', 'error ')) + (f.last_read ? '. Still using the copy from ' + fmt(f.last_read) : ''));
+      var t = el('span', null, null);
+      t.appendChild(el('b', null, name + ' '));
+      t.appendChild(document.createTextNode(bits.join(' · ')));
+      d.appendChild(t);
+      return d;
+    }
+    function loadFeeds() {
+      var box = document.getElementById('calFeeds');
+      api('/admin/busy').then(function (r) {
+        box.textContent = '';
+        var h = el('div', 'calfeeds-h');
+        h.appendChild(el('b', null, 'Busy time from other calendars'));
+        box.appendChild(h);
+        if (!r.ok) { box.appendChild(el('div', 'row-sub', 'Could not check the feeds.')); return; }
+        if (!(r.feeds || []).length) {
+          box.appendChild(el('div', 'row-sub', 'None connected. To block out your Google Calendar: in Google, open the calendar\'s settings and copy "Secret address in iCal format", then run npx wrangler secret put BUSY_ICS_GOOGLE in C:\\dev\\tes-portal and paste it.'));
+          return;
+        }
+        r.feeds.forEach(function (f) { box.appendChild(feedLine(f)); });
+        box.appendChild(el('div', 'row-sub', 'Read every 15 minutes. Only start and end times are kept, never titles. Those times, plus 15 minutes either side, are not offered on the booking page.'));
+        var rb = el('button', null, 'Read now'); rb.type = 'button';
+        rb.addEventListener('click', function () {
+          rb.disabled = true; rb.textContent = 'Reading…';
+          api('/admin/busy/refresh', { method: 'POST' }).then(function (x) {
+            rb.disabled = false; rb.textContent = 'Read now';
+            var bad = x.ok && (x.results || []).filter(function (y) { return !y.ok; });
+            toast(!x.ok ? 'Could not read the feeds' : bad.length ? 'A feed failed: ' + (FEED_ERROR[bad[0].error] || bad[0].error) : 'Read. The calendar is up to date.');
+            loadFeeds(); loadCalendar();
+          });
+        });
+        h.appendChild(rb);
+      });
+    }
     function loadHours() {
+      loadFeeds();
       api('/admin/availability/rules').then(function (r) {
         var box = document.getElementById('calRules');
         box.textContent = '';
@@ -4979,18 +5219,27 @@
           box.appendChild(el('div', 'row-sub', 'No windows set, so nothing is bookable yet. Add one below.'));
           return;
         }
-        r.rules.forEach(function (x) {
-          var row = el('div', 'rulerow');
-          row.appendChild(el('b', null, DOW[x.dow]));
-          row.appendChild(el('span', null, x.start_hm + ' – ' + x.end_hm));
-          row.appendChild(el('span', 'k', x.kind === 'any' ? 'anything' : x.kind + ' only'));
-          var del = el('button', null, 'Remove'); del.type = 'button';
-          del.addEventListener('click', function () {
-            if (!confirm('Remove ' + DOW[x.dow] + ' ' + x.start_hm + '-' + x.end_hm + '?')) return;
-            api('/admin/availability/rules/' + x.id, { method: 'DELETE' }).then(function () { loadHours(); loadCalendar(); });
+        // Grouped by day, Monday first, each day's blocks in time order. A day can hold
+        // several blocks (a morning and an afternoon); the server refuses any two that
+        // share a minute, so what is listed here never double-offers an hour.
+        var byDay = {};
+        r.rules.forEach(function (x) { (byDay[x.dow] = byDay[x.dow] || []).push(x); });
+        [1, 2, 3, 4, 5, 6, 0].forEach(function (dow) {
+          var list = (byDay[dow] || []).sort(function (a, b) { return a.start_hm < b.start_hm ? -1 : 1; });
+          if (!list.length) return;
+          var grp = el('div', 'ruleday');
+          list.forEach(function (x, idx) { grp.appendChild(ruleRow(x, idx === 0)); });
+          var more = el('button', 'ruleadd', '+ Add another block on ' + DOW[dow]); more.type = 'button';
+          more.addEventListener('click', function () {
+            var last = list[list.length - 1];
+            document.getElementById('ruleDow').value = String(dow);
+            document.getElementById('ruleStart').value = last.end_hm;
+            if (last.end_hm < '17:00') document.getElementById('ruleEnd').value = '17:00';
+            document.getElementById('ruleStart').focus();
+            document.getElementById('ruleStart').scrollIntoView({ behavior: 'smooth', block: 'center' });
           });
-          row.appendChild(del);
-          box.appendChild(row);
+          grp.appendChild(more);
+          box.appendChild(grp);
         });
       });
       api('/admin/availability/blocks').then(function (r) {
@@ -5018,7 +5267,7 @@
         end_hm: document.getElementById('ruleEnd').value,
         kind: document.getElementById('ruleKind').value,
       } }).then(function (r) {
-        toast(r.ok ? 'Added' : (APPT_ERROR[r.error] || 'Could not add it'));
+        toast(r.ok ? 'Added' : ruleError(r));
         if (r.ok) { loadHours(); loadCalendar(); }
       });
     });
@@ -6295,6 +6544,7 @@
     var custModal = document.getElementById('custModal');
     var custModalFocus = null;
     function custModalOpen(title) {
+      if (!tkModalEl.hidden) tkModalClose(true);
       document.getElementById('custModalTitle').textContent = title || 'Customer file';
       if (custModal.hidden) {
         custModalFocus = document.activeElement;
@@ -10486,7 +10736,11 @@
       setNavBadge('inbox', a.counts.inbox || 0);
       setNavBadge('finance', a.counts.paypal_review);
       homeAttentionEl.appendChild(mgmtPanel());
-      homeAttentionEl.appendChild(aiTile());
+      // API usage sits under Activity on the right, in its own slot so a refresh
+      // replaces it rather than adding a second one.
+      var aiSlot = document.getElementById('homeAi');
+      aiSlot.textContent = '';
+      aiSlot.appendChild(aiTile());
     }
 
     function actRow(a) {
@@ -10518,6 +10772,25 @@
       });
     }
 
+    // The feed shows six entries and scrolls for the rest. Entries run one or two lines,
+    // so the height is measured from the sixth one rather than fixed in CSS.
+    var ACT_VISIBLE = 6;
+    function sizeActivity() {
+      // Hidden (another tab is open), nothing has a size yet; it is measured again on the next visit.
+      if (homeActivityEl.offsetParent === null) return;
+      var rows = homeActivityEl.querySelectorAll('.act');
+      if (rows.length <= ACT_VISIBLE) { homeActivityEl.style.maxHeight = ''; return; }
+      homeActivityEl.style.maxHeight = '';
+      var last = rows[ACT_VISIBLE - 1];
+      homeActivityEl.style.maxHeight = Math.ceil(last.offsetTop + last.offsetHeight + 2) + 'px';
+    }
+    // Re-measured when the web font swaps in (rows get shorter) and when the column changes width.
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(sizeActivity);
+    if (window.ResizeObserver) {
+      var actW = 0;
+      new ResizeObserver(function () { var w = homeActivityEl.clientWidth; if (w && w !== actW) { actW = w; sizeActivity(); } }).observe(homeActivityEl);
+    }
+
     function loadHomeActivity(more) {
       var url = '/admin/activity?limit=40' + (more && homeActOldest ? '&before=' + homeActOldest : '');
       return api(url).then(function (r) {
@@ -10529,6 +10802,7 @@
         if (list.length) homeActOldest = list[list.length - 1].id;
         if (list.length === 40) homeActivityEl.appendChild(licAction('Load more', 'more-btn', function () { loadHomeActivity(true); }));
         document.getElementById('actNew').classList.remove('show');
+        if (!more) { sizeActivity(); requestAnimationFrame(sizeActivity); }
       });
     }
 
@@ -11381,6 +11655,50 @@
       });
       d3.appendChild(kl);
       wrap.appendChild(d3);
+
+      // Telegram: every message the Worker sends on its own, and the scheduled ones
+      // with when they last went and a Send now. The list lives in src/weekly.js.
+      var d4 = el('details');
+      d4.appendChild(el('summary', null, 'Telegram alerts'));
+      var tl = el('div', 'tg-list');
+      tl.appendChild(el('div', 'row-sub', 'Loading…'));
+      d4.appendChild(tl);
+      d4.addEventListener('toggle', function () {
+        if (!d4.open) return;
+        api('/admin/alerts').then(function (r) {
+          tl.textContent = '';
+          if (!r.ok) { tl.appendChild(el('div', 'row-sub', 'Could not load the list.')); return; }
+          tl.appendChild(el('p', 'row-sub', 'Everything below reaches your phone on its own. The scheduled ones go once each, in business hours.'));
+          var sch = el('div', 'tg-group');
+          sch.appendChild(el('h4', null, 'Scheduled'));
+          (r.schedule || []).forEach(function (j) {
+            var line = el('div', 'tg-row');
+            var txt = el('div', 'tg-txt');
+            txt.appendChild(el('b', null, j.title));
+            txt.appendChild(el('span', 'row-sub', j.when + ' · ' + j.what + (j.last_period ? ' Last went for ' + j.last_period + '.' : ' Not sent yet.')));
+            line.appendChild(txt);
+            line.appendChild(licAction('Send now', null, function () {
+              api('/admin/alerts/' + j.key + '/send', { method: 'POST' }).then(function (x) { toast(x.ok ? 'Sent to Telegram' : 'Could not send'); });
+            }));
+            sch.appendChild(line);
+          });
+          tl.appendChild(sch);
+          (r.catalog || []).filter(function (g) { return g.group !== 'Scheduled'; }).forEach(function (g) {
+            var grp = el('div', 'tg-group');
+            grp.appendChild(el('h4', null, g.group));
+            g.items.forEach(function (it) {
+              var line = el('div', 'tg-row');
+              var txt = el('div', 'tg-txt');
+              txt.appendChild(el('b', null, it[0]));
+              txt.appendChild(el('span', 'row-sub', it[1]));
+              line.appendChild(txt);
+              grp.appendChild(line);
+            });
+            tl.appendChild(grp);
+          });
+        });
+      });
+      wrap.appendChild(d4);
       return wrap;
     }
 
@@ -15810,7 +16128,8 @@
     var VIEWS = {
       home: { view: 'viewHome', nav: 'navHome', load: loadHome, always: true },
       inbox: { view: 'viewInbox', nav: 'navInbox', load: loadInbox, always: true },
-      tickets: { view: 'viewTickets', nav: 'navTickets' },
+      // Loaded on every visit: arriving from another tab used to leave it on 'Loading tickets'.
+      tickets: { view: 'viewTickets', nav: 'navTickets', always: true, load: function () { load(); } },
       customers: { view: 'viewCustomers', nav: 'navCustomers', load: function () { if (custMode === 'orgs') loadOrgs(); else loadCustomers(custQEl.value.trim()); } },
       invoices: { view: 'viewInvoices', nav: 'navInvoices', load: function () { loadQuotes(); return loadInvoices(); } },
       // Inventory and Finance re-read on every visit: both are one request, and a
@@ -15837,6 +16156,8 @@
 
     function showView(which) {
       if (!VIEWS[which]) return;
+      if (which !== 'tickets' && !tkModalEl.hidden) tkModalClose(true);
+      if (which !== 'customers' && !custModal.hidden) custModalClose();
       // Leaving Contracting with a bid half edited asks first; staying puts the hash back.
       if (which !== 'contracting' && !document.getElementById('viewContracting').hidden && !ctLeaveOk()) {
         if (ctBidId) history.replaceState(null, '', '#b=' + ctBidId);
