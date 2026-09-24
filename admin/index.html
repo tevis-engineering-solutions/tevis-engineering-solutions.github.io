@@ -11031,18 +11031,58 @@
       } else {
       var grid = document.getElementById('body_x_grid_grd');
       if (grid && grid.tHead && grid.tBodies[0]) {
-        var hd = [].map.call(grid.tHead.rows[0].cells, function (c) { return clean(c.innerText); });
-        var col = function (r, name) { var i = hd.indexOf(name); return i < 0 || !r.cells[i] ? '' : clean(r.cells[i].innerText); };
-        var ticked = function (r, name) { var i = hd.indexOf(name); return i >= 0 && !!(r.cells[i] && r.cells[i].querySelector('input:checked, .checked, [aria-checked="true"]')); };
-        [].forEach.call(grid.tBodies[0].rows, function (r) {
-          var a = r.querySelector('a[href*="process_manage_extranet"]');
-          data.postings.push({ event_no: col(r, 'Solicitation ID'), title: col(r, 'Solicitation Name'), kind: col(r, 'Solicitation Type'), status: col(r, 'Solicitation Status'),
-            end_et: col(r, 'End Date (ET.)'), end_utc: col(r, 'End Date (UTC+0)'), inquiry_end_et: col(r, 'Inquiry End Date(ET.)'), commodity: col(r, 'Commodity'),
-            agency: col(r, 'Agency'), mbe: ticked(r, 'MBE Set Aside'), url: a ? abs(a.getAttribute('href')) : null });
-        });
-        data.kind = 'list';
-        var next = document.getElementById('body_x_grid_gridPagerBtnNextPage');
-        data.more = !!(next && !/disabled/.test(next.className));
+        // The list pages in place, newest first. Go to page 1, then read page after page
+        // until one has nothing open and current (the rest are older), or 10 pages.
+        var gridEl = function () { return document.getElementById('body_x_grid_grd'); };
+        var firstId = function () { var g = gridEl(); return g && g.tBodies[0] && g.tBodies[0].rows[0] ? clean(g.tBodies[0].rows[0].innerText).slice(0, 80) : ''; };
+        var btn = function (id) { var b = document.getElementById(id); return b && !b.disabled && !/disabled/.test(b.className) ? b : null; };
+        var utcTs = function (s) {
+          var m = /(\d{1,2})\/(\d{1,2})\/(\d{4})\s+(\d{1,2}):(\d{2})(?::\d{2})?\s*([AP]M)/i.exec(s || '');
+          return m ? Date.UTC(+m[3], +m[1] - 1, +m[2], (+m[4] % 12) + (/p/i.test(m[6]) ? 12 : 0), +m[5]) : 0;
+        };
+        var obox = document.createElement('div');
+        obox.style.cssText = 'position:fixed;top:12px;right:12px;z-index:2147483647;background:#0d1710;color:#e4ede5;border:1px solid #c89830;border-radius:10px;padding:10px 14px;font:14px system-ui,sans-serif;max-width:320px';
+        document.body.appendChild(obox);
+        var readGrid = function () {
+          var g = gridEl();
+          var hd = [].map.call(g.tHead.rows[0].cells, function (c) { return clean(c.innerText); });
+          var col = function (r, name) { var i = hd.indexOf(name); return i < 0 || !r.cells[i] ? '' : clean(r.cells[i].innerText); };
+          var ticked = function (r, name) { var i = hd.indexOf(name); return i >= 0 && !!(r.cells[i] && r.cells[i].querySelector('input:checked, .checked, [aria-checked="true"]')); };
+          var current = 0;
+          [].forEach.call(g.tBodies[0].rows, function (r) {
+            var a = r.querySelector('a[href*="process_manage_extranet"]');
+            var p = { event_no: col(r, 'Solicitation ID'), title: col(r, 'Solicitation Name'), kind: col(r, 'Solicitation Type'), status: col(r, 'Solicitation Status'),
+              end_et: col(r, 'End Date (ET.)'), end_utc: col(r, 'End Date (UTC+0)'), inquiry_end_et: col(r, 'Inquiry End Date(ET.)'), commodity: col(r, 'Commodity'),
+              agency: col(r, 'Agency'), mbe: ticked(r, 'MBE Set Aside'), url: a ? abs(a.getAttribute('href')) : null };
+            if (!p.event_no) return;
+            if (/open for bidding/i.test(p.status) && utcTs(p.end_utc) > Date.now()) current++;
+            data.postings.push(p);
+          });
+          return current;
+        };
+        var turn = function (id) {
+          var b = btn(id); if (!b) return Promise.resolve(false);
+          var before = firstId();
+          b.click();
+          return new Promise(function (res) {
+            var t = 0, iv = setInterval(function () {
+              if (firstId() && firstId() !== before) { clearInterval(iv); setTimeout(function () { res(true); }, 400); }
+              else if (++t > 60) { clearInterval(iv); res(false); }
+            }, 300);
+          });
+        };
+        data.kind = 'list'; data.site = 'ohiobuys'; data.pages = 0;
+        var owalk = function (n) {
+          obox.textContent = 'TES capture: reading OhioBuys page ' + n + '…';
+          var cur = readGrid(); data.pages = n;
+          if (!cur) { obox.textContent = 'TES capture: page ' + n + ' has nothing open, so the rest is older. Finish in the TES tab.'; return; }
+          if (n >= 10) { data.more = true; obox.textContent = 'TES capture: stopped at 10 pages. Finish in the TES tab.'; return; }
+          return turn('body_x_grid_gridPagerBtnNextPage').then(function (moved) {
+            if (!moved) { obox.textContent = 'TES capture: ' + n + ' page' + (n === 1 ? '' : 's') + ' read. Finish in the TES tab.'; return; }
+            return owalk(n + 1);
+          });
+        };
+        ready = turn('body_x_grid_gridPagerBtnFirstPage').then(function () { return owalk(1); });
       } else {
         var f = {};
         [].forEach.call(document.querySelectorAll('[data-iv-role="field"]'), function (el) {
@@ -11128,26 +11168,29 @@
         p.appendChild(el('h4', 'addsec', d.site === 'bidnet' ? 'From BidNet' : 'From the OhioBuys list'));
         if (d.site === 'bidnet') p.appendChild(el('p', 'row-sub', 'Titles and dates only: BidNet shows the agency, number and description to registered members. The queue scores on the title.' + (d.stopped ? ' Reading stopped at page ' + d.stopped + ' of ' + d.pages + '.' : '')));
         p.appendChild(el('p', null, open.length + ' open post' + (open.length === 1 ? '' : 's') + ' read' + (postings.length > open.length ? ' (' + (postings.length - open.length) + ' closed, cancelled or under evaluation left out)' : '') + '.'));
-        if (d.more && d.site !== 'bidnet') p.appendChild(el('p', 'short', 'The list has another page. Filter Solicitation Status to Open for Bidding, or go to the next page and click the bookmark again.'));
+        if (d.site === 'ohiobuys' && d.pages) p.appendChild(el('p', 'row-sub', d.pages + ' page' + (d.pages === 1 ? '' : 's') + ' read, newest first, stopping at the first page with nothing open. A post whose end date has passed is left out when saved, whatever its status says, and a post already in the queue from BidNet is merged into this one.'));
+        if (d.more && d.site !== 'bidnet') p.appendChild(el('p', 'short', 'The capture stopped at 10 pages. Go to page 11 and click the bookmark again for the rest.'));
       }
       var rr = el('div', 'reply-row');
       var send = function (thenBuild) {
+        // Only what is open goes to the server. A list read is mostly closed posts.
+        var toSend = d.kind === 'post' ? postings : open;
         var batches = [];
-        for (var i = 0; i < postings.length; i += 200) batches.push(postings.slice(i, i + 200));
-        var sum = { ok: true, added: 0, updated: 0, skipped: 0, ids: [] };
+        for (var i = 0; i < toSend.length; i += 200) batches.push(toSend.slice(i, i + 200));
+        var sum = { ok: true, added: 0, updated: 0, skipped: 0, past: 0, merged: 0, ids: [] };
         return batches.reduce(function (chain, b, n) {
           return chain.then(function (acc) {
             if (!acc || !acc.ok) return acc;
             if (batches.length > 1) toast('Saving ' + (n + 1) + ' of ' + batches.length + '…');
             return api('/admin/feed/import', { method: 'POST', body: { via: 'capture', postings: b } }).then(function (r) {
               if (!r.ok) return r;
-              acc.added += r.added; acc.updated += r.updated; acc.skipped += r.skipped; acc.ids = acc.ids.concat(r.ids || []);
+              acc.added += r.added; acc.updated += r.updated; acc.skipped += r.skipped; acc.past += r.past || 0; acc.merged += r.merged || 0; acc.ids = acc.ids.concat(r.ids || []);
               return acc;
             });
           });
         }, Promise.resolve(sum)).then(function (r) {
           if (!r.ok) { toast(ctErr(r)); return null; }
-          if (!thenBuild) { toast(r.added + ' new, ' + r.updated + ' updated' + (r.skipped ? ', ' + r.skipped + ' left out' : '')); box.hidden = true; box.textContent = ''; loadQueue(); return null; }
+          if (!thenBuild) { toast(r.added + ' new, ' + r.updated + ' updated' + (r.merged ? ', ' + r.merged + ' merged with a BidNet copy' : '') + (r.past ? ', ' + r.past + ' already closed and left out' : '') + (r.skipped - r.past > 0 ? ', ' + (r.skipped - r.past) + ' left out' : '')); box.hidden = true; box.textContent = ''; loadQueue(); return null; }
           return r;
         });
       };
