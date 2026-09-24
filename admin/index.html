@@ -10408,8 +10408,10 @@
 
       // Month and today.
       var nums = el('div', 'ai-nums');
-      var monthC = b.ok ? b.month_cents : w.month_cents;
-      var todayC = b.ok ? b.today_cents : w.today_cents;
+      // The bill runs a few minutes behind and its days are UTC, so it can read lower than
+      // what the Worker has already logged; never show less than that.
+      var monthC = b.ok ? Math.max(b.month_cents, w.month_cents) : w.month_cents;
+      var todayC = b.ok ? Math.max(b.today_cents, w.today_cents) : w.today_cents;
       var t1 = el('div', 'tile');
       t1.appendChild(el('span', 'ai-lbl', 'This month'));
       t1.appendChild(el('b', null, money(monthC)));
@@ -10418,7 +10420,7 @@
       var t2 = el('div', 'tile');
       t2.appendChild(el('span', 'ai-lbl', 'Today'));
       t2.appendChild(el('b', null, money(todayC)));
-      t2.appendChild(el('span', 'row-sub', w.calls + ' calls this month' + (w.failures ? ', ' + w.failures + ' failed' : '')));
+      t2.appendChild(el('span', 'row-sub', w.calls + (w.calls === 1 ? ' call' : ' calls') + ' this month' + (w.failures ? ', ' + w.failures + ' failed' : '')));
       nums.appendChild(t2);
       body.appendChild(nums);
 
