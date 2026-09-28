@@ -1620,6 +1620,41 @@
     .ct-lines tr.be td.m { color:#ef4444; font-weight:700; }
     .ct-lines tr.tot td { font-weight:700; background:var(--bg); }
     .ct-econ { display:grid; grid-template-columns:repeat(auto-fit,minmax(130px,1fr)); gap:0.45rem; margin:0.6rem 0; }
+    /* Bid Overview: titled sections on a fixed four-column grid. */
+    .ov-sec { border:1px solid var(--line); border-radius:10px; background:var(--bg); padding:0.75rem 0.85rem 0.85rem; margin-top:0.7rem; color-scheme:dark; }
+    .ov-h { display:flex; align-items:baseline; gap:0.6rem; margin-bottom:0.55rem; }
+    .ov-h h4 { margin:0; font-family:"Montserrat",sans-serif; font-size:0.72rem; font-weight:700; text-transform:uppercase; letter-spacing:0.07em; color:#c89830; }
+    .ov-h span { font-size:0.72rem; color:var(--muted); }
+    .ct-form.ov-grid { grid-template-columns:repeat(4,minmax(0,1fr)); gap:0.6rem 0.6rem; margin:0; }
+    .ov-grid > div { min-width:0; }
+    .ov-grid > .s2 { grid-column:span 2; }
+    .ov-grid > .s3 { grid-column:span 3; }
+    .ov-grid > .s4 { grid-column:1 / -1; }
+    .ov-grid input, .ov-grid select, .ov-grid textarea { background:var(--card); }
+    .ov-grid textarea { width:100%; padding:0.45rem 0.6rem; border-radius:8px; border:1px solid var(--line); color:var(--text); font-family:inherit; font-size:0.84rem; resize:vertical; }
+    .ov-grid label:not(.ov-tog) { white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+    .ov-hint { font-size:0.7rem; color:var(--muted); margin-top:0.25rem; line-height:1.35; }
+    /* Labels here are one line, so fields align from the top and a hint can sit under one. */
+    .ct-form.ov-grid > div:not(.chk):not(.wide) { justify-content:flex-start; }
+    .ct-form.ov-grid > div.ov-flags.s4 { flex-direction:row; flex-wrap:wrap; align-items:center; }
+    .ov-flags { display:flex; flex-wrap:wrap; gap:0.5rem; }
+    .ct-form.ov-grid .ov-tog { display:inline-flex; align-items:center; gap:0.45rem; width:auto; min-height:36px; margin:0; padding:0 0.75rem; border:1px solid var(--line); border-radius:8px; color:var(--text); cursor:pointer; font-size:0.82rem; font-weight:500; text-transform:none; letter-spacing:0; }
+    .ct-form.ov-grid .ov-tog:has(input:checked) { border-color:rgba(200,152,48,0.6); background:rgba(200,152,48,0.08); }
+    .ct-form .ov-tog input { accent-color:#c89830; }
+    .ov-note { margin:0.6rem 0 0; }
+    .ov-actions { margin-top:0.8rem; }
+    .ov-noterow { display:flex; gap:0.6rem; align-items:flex-end; }
+    .ov-noterow textarea { flex:1; min-width:0; padding:0.45rem 0.6rem; border-radius:8px; border:1px solid var(--line); background:var(--card); color:var(--text); font-family:inherit; font-size:0.84rem; resize:vertical; }
+    .ov-noterow .ct-btn { flex:0 0 auto; }
+    @media (max-width:900px) {
+      .ct-form.ov-grid { grid-template-columns:repeat(2,minmax(0,1fr)); }
+      .ov-grid > .s3 { grid-column:1 / -1; }
+    }
+    @media (max-width:560px) {
+      .ct-form.ov-grid { grid-template-columns:minmax(0,1fr); }
+      .ov-grid > .s2, .ov-grid > .s3 { grid-column:1 / -1; }
+      .ov-noterow { flex-direction:column; align-items:stretch; }
+    }
     .ct-note { font-size:0.74rem; color:var(--muted); margin:0.4rem 0; line-height:1.45; }
     .ct-steps { padding-left:1.2rem; margin:0.3rem 0; } .ct-steps li { margin:0.3rem 0; }
     .ct-bm-row { display:flex; align-items:center; gap:0.5rem; margin-top:0.4rem; }
@@ -14406,49 +14441,67 @@
     function ctOverview(pane) {
       var b = ctDetail.bid;
       ctTrack(pane, 'Overview');
-      var f = el('div', 'ct-form');
+      // Grouped into sections, each a fixed four-column grid so fields line up.
       var inp = {};
-      inp.agency = ctField(f, 'Agency', ctInput('text', b.agency, { maxlength: 200 }));
-      inp.title = ctField(f, 'Title', ctInput('text', b.title, { maxlength: 300 }));
-      inp.event_no = ctField(f, 'Event / solicitation #', ctInput('text', b.event_no || '', { maxlength: 80 }));
-      inp.source = ctField(f, 'Found on', ctSelect([['', 'Direct / other']].concat(((ctRef && ctRef.sources) || []).map(function (s) { return [s.key, s.label]; })), b.source || ''));
+      var sec = function (title, sub) {
+        var box = el('section', 'ov-sec');
+        var h = el('div', 'ov-h'); h.appendChild(el('h4', null, title));
+        if (sub) h.appendChild(el('span', null, sub));
+        box.appendChild(h);
+        var g = el('div', 'ct-form ov-grid'); box.appendChild(g);
+        pane.appendChild(box);
+        return g;
+      };
+      var hint = function (node, text) { node.parentNode.appendChild(el('span', 'ov-hint', text)); };
+
+      var g1 = sec('Solicitation');
+      inp.title = ctField(g1, 'Title', ctInput('text', b.title, { maxlength: 300 }), 's3');
+      inp.event_no = ctField(g1, 'Event / solicitation #', ctInput('text', b.event_no || '', { maxlength: 80 }));
+      inp.agency = ctField(g1, 'Agency', ctInput('text', b.agency, { maxlength: 200 }), 's2');
+      inp.source = ctField(g1, 'Found on', ctSelect([['', 'Direct / other']].concat(((ctRef && ctRef.sources) || []).map(function (s) { return [s.key, s.label]; })), b.source || ''));
+      inp.submit_method = ctField(g1, 'Submit by', ctSelect([['', '\u2014'], ['portal', 'Portal'], ['email', 'Email'], ['paper', 'Paper']], b.submit_method || ''));
       var codeOpts = [['', 'Not set']].concat(((ctRef && ctRef.codes) || []).map(function (c) { return [c.code, 'T' + c.tier + ' ' + c.code + ' ' + c.description]; }));
       if (b.naics && !codeOpts.some(function (o) { return o[0] === b.naics; })) codeOpts.push([b.naics, b.naics + ' (off-statement)']);
-      inp.naics = ctField(f, 'NAICS', ctSelect(codeOpts, b.naics || ''));
-      inp.commodity_codes = ctField(f, 'Commodity codes', ctInput('text', b.commodity_codes || '', { maxlength: 300 }));
-      inp.structure = ctField(f, 'Structure', ctSelect([['one_time', 'One-time fixed quantity'], ['nte_rate_card', 'NTE rate card']], b.structure));
-      inp.submit_method = ctField(f, 'Submit by', ctSelect([['', '—'], ['portal', 'Portal'], ['email', 'Email'], ['paper', 'Paper']], b.submit_method || ''));
-      inp.date_open = ctField(f, 'Posted', ctInput('date', ctDayVal(b.date_open)));
-      inp.date_close = ctField(f, 'Submission deadline', ctInput('datetime-local', ctDtVal(b.date_close)));
-      inp.qa_close = ctField(f, 'Questions due', ctInput('datetime-local', ctDtVal(b.qa_close)));
-      inp.end_date = ctField(f, 'End date (award window closes; default deadline + 10 days)', ctInput('date', ctDayVal(b.end_date)));
-      inp.expected_po_date = ctField(f, 'Expected PO', ctInput('date', ctDayVal(b.expected_po_date)));
-      inp.need_by_date = ctField(f, 'Need-by date', ctInput('date', ctDayVal(b.need_by_date)));
-      inp.lead_time_days = ctField(f, 'Lead time we promise (business days)', ctInput('number', b.lead_time_days == null ? '' : b.lead_time_days, { min: 0, step: 1, inputmode: 'numeric' }));
-      inp.nte = ctField(f, 'NTE cap ($)', ctInput('text', ctDollars(b.nte_cents), { inputmode: 'decimal' }));
-      inp.freight_threshold = ctField(f, 'Freight pre-approval over ($)', ctInput('text', ctDollars(b.freight_threshold_cents), { inputmode: 'decimal' }));
-      inp.posting_url = ctField(f, 'Posting link', ctInput('url', b.posting_url || '', { maxlength: 600 }), 'wide');
-      var flags = el('div', 'wide');
+      inp.naics = ctField(g1, 'NAICS', ctSelect(codeOpts, b.naics || ''), 's2');
+      inp.commodity_codes = ctField(g1, 'Commodity codes', ctInput('text', b.commodity_codes || '', { maxlength: 300 }), 's2');
+      inp.posting_url = ctField(g1, 'Posting link', ctInput('url', b.posting_url || '', { maxlength: 600, placeholder: 'https://' }), 's4');
+
+      var g2 = sec('Terms');
+      inp.structure = ctField(g2, 'Structure', ctSelect([['one_time', 'One-time fixed quantity'], ['nte_rate_card', 'NTE rate card']], b.structure));
+      inp.nte = ctField(g2, 'NTE cap ($)', ctInput('text', ctDollars(b.nte_cents), { inputmode: 'decimal' }));
+      inp.freight_threshold = ctField(g2, 'Freight pre-approval over ($)', ctInput('text', ctDollars(b.freight_threshold_cents), { inputmode: 'decimal' }));
+      inp.lead_time_days = ctField(g2, 'Lead time we promise', ctInput('number', b.lead_time_days == null ? '' : b.lead_time_days, { min: 0, step: 1, inputmode: 'numeric', placeholder: 'business days' }));
+      var flags = el('div', 's4 ov-flags');
       var pOk = ctCheck('Partial bids allowed', b.partial_ok);
       var fed = ctCheck('Federal prime (blocked under FAR 3.601)', b.federal);
-      pOk.className = fed.className = 'chk';
+      pOk.className = fed.className = 'chk ov-tog';
       flags.appendChild(pOk); flags.appendChild(fed);
-      f.appendChild(flags);
-      inp.go_no_go = ctField(f, 'Go / no-go', ctSelect([['', 'Not decided'], ['go', 'Go'], ['no_go', 'No-go']], b.go_no_go || ''));
-      inp.go_no_go_reason = ctField(f, 'Why', ctInput('text', b.go_no_go_reason || '', { maxlength: 2000 }));
-      pane.appendChild(f);
-      pane.appendChild(el('p', 'ct-note', 'The end date defaults to 10 days after the submission deadline and moves with it until you type a different one. After it, a responded bid moves to Pending decision by itself; two weeks later, with no award or loss recorded, it closes out as expired and leaves the active board. Clear it and nothing moves on its own.'));
-      var tf = el('div', 'ct-form');
+      g2.appendChild(flags);
+
+      var g3 = sec('Dates', 'Cleveland time');
+      inp.date_open = ctField(g3, 'Posted', ctInput('date', ctDayVal(b.date_open)));
+      inp.qa_close = ctField(g3, 'Questions due', ctInput('datetime-local', ctDtVal(b.qa_close)));
+      inp.date_close = ctField(g3, 'Submission deadline', ctInput('datetime-local', ctDtVal(b.date_close)));
+      inp.end_date = ctField(g3, 'End date', ctInput('date', ctDayVal(b.end_date)));
+      hint(inp.end_date, 'Award window closes. Defaults to deadline + 10 days.');
+      inp.expected_po_date = ctField(g3, 'Expected PO', ctInput('date', ctDayVal(b.expected_po_date)));
+      inp.need_by_date = ctField(g3, 'Need-by date', ctInput('date', ctDayVal(b.need_by_date)));
+      g3.parentNode.appendChild(el('p', 'ct-note ov-note', 'The end date follows the deadline until you type a different one. After it, a responded bid moves to Pending decision by itself; two weeks later, with no award or loss recorded, it closes out as expired and leaves the active board. Clear it and nothing moves on its own.'));
+
+      var g4 = sec('Decision');
+      inp.go_no_go = ctField(g4, 'Go / no-go', ctSelect([['', 'Not decided'], ['go', 'Go'], ['no_go', 'No-go']], b.go_no_go || ''));
+      inp.go_no_go_reason = ctField(g4, 'Why', ctInput('text', b.go_no_go_reason || '', { maxlength: 2000 }), 's3');
+
+      var g5 = sec('Notes', 'Internal, never on the response');
       var ta = function (label, key, ph) {
         var t = el('textarea');
         t.rows = 2; t.value = b[key] || ''; t.placeholder = ph || '';
-        inp[key] = ctField(tf, label, t, 'wide');
+        inp[key] = ctField(g5, label, t, 's4');
       };
       ta('Strategic override (why a negative-margin line is still bid)', 'strategic_override', 'First past performance with this agency; the recurring orders carry it.');
       ta('Insurance / liability acknowledgment', 'liability_ack', 'Products-liability coverage in place before signing the indemnity.');
       ta('Internal notes', 'internal_notes');
-      pane.appendChild(tf);
-      var rr = el('div', 'reply-row');
+      var rr = el('div', 'reply-row ov-actions');
       var save = el('button', 'prim', 'Save');
       save.type = 'button';
       save.setAttribute('data-save', 'Overview');
@@ -14488,19 +14541,24 @@
         rr.appendChild(del);
       }
       pane.appendChild(rr);
-      var nb = el('div', 'ct-form');
+      var nb = el('section', 'ov-sec ov-histnote');
       nb.setAttribute('data-nodirty', '');
+      var nh = el('div', 'ov-h'); nh.appendChild(el('h4', null, 'Add a note to the history')); nb.appendChild(nh);
+      var nrow = el('div', 'ov-noterow');
       var note = el('textarea');
       note.rows = 2;
-      ctField(nb, 'Add a note to the history', note, 'wide');
-      pane.appendChild(nb);
+      note.setAttribute('aria-label', 'Add a note to the history');
+      note.placeholder = 'A call with the buyer, a decision, anything worth keeping on the record.';
+      nrow.appendChild(note);
       var nbtn = el('button', 'ct-btn', 'Add note');
       nbtn.type = 'button';
       nbtn.addEventListener('click', function () {
         if (!note.value.trim()) return;
         ctBidApi('/note', 'POST', { note: note.value }, 'Noted').then(function (r) { if (r.ok) note.value = ''; });
       });
-      pane.appendChild(nbtn);
+      nrow.appendChild(nbtn);
+      nb.appendChild(nrow);
+      pane.appendChild(nb);
     }
 
     function ctTriage(pane) {
