@@ -16688,7 +16688,7 @@
       var leadsN = {}; msgs.forEach(function (m) { leadsN[m.lead_id] = 1; });
       var plural = function (n, one, many) { return n + ' ' + (n === 1 ? one : many); };
       if (!window.confirm('Import ' + plural(msgs.length, 'email', 'emails') + ' (' + sent + ' sent, ' + plural(msgs.length - sent, 'reply', 'replies') + ') for ' + plural(Object.keys(leadsN).length, 'lead', 'leads') + '? Emails already here are skipped.')) { out.textContent = ''; input.value = ''; return; }
-      var tot = { added: 0, sent: 0, replies: 0, enriched: 0, already: 0, filled_in: 0, skipped: 0 };
+      var tot = { added: 0, sent: 0, replies: 0, enriched: 0, already: 0, filled_in: 0, merged: 0, skipped: 0 };
       var BATCH = 100, i = 0;
       (function next() {
         if (i >= msgs.length) {
@@ -16696,6 +16696,7 @@
           out.textContent = 'Added ' + plural(tot.sent, 'sent email', 'sent emails') + ' and ' + plural(tot.replies, 'reply', 'replies') +
             (tot.enriched ? ', added the text to ' + tot.enriched + ' earlier entries' : '') +
             (tot.filled_in ? ', filled in contact details on ' + plural(tot.filled_in, 'lead', 'leads') : '') +
+            (tot.merged ? ', removed ' + plural(tot.merged, 'duplicate entry', 'duplicate entries') : '') +
             '. ' + tot.already + ' were already here' + (tot.skipped ? ', ' + tot.skipped + ' skipped (lead no longer exists)' : '') + '.';
           loadMarketing();
           if (mkId) mkOpen(mkId, true);
@@ -16704,7 +16705,7 @@
         out.textContent = 'Importing emails ' + (i + 1) + '–' + Math.min(i + BATCH, msgs.length) + ' of ' + msgs.length + '…';
         api('/admin/leads/mail-sync', { method: 'POST', body: { kind: 'tes-mail-sync', messages: msgs.slice(i, i + BATCH) } }).then(function (r) {
           if (!r.ok) { input.value = ''; out.textContent = 'Stopped at email ' + (i + 1) + ': ' + mkErr(r) + '. Upload the file again to finish; nothing is added twice.'; return; }
-          ['added', 'sent', 'replies', 'enriched', 'already', 'filled_in'].forEach(function (k) { tot[k] += r[k] || 0; });
+          ['added', 'sent', 'replies', 'enriched', 'already', 'filled_in', 'merged'].forEach(function (k) { tot[k] += r[k] || 0; });
           tot.skipped += (r.skipped || []).length;
           i += BATCH;
           next();
