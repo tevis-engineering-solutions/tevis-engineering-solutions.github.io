@@ -3019,7 +3019,7 @@
       var p = el('section', 'panel');
 
       p.appendChild(el('h2', null, (t.ticket_number || '#' + t.id) + ' — ' + (t.subject || '(no subject)')));
-      var whoBits = [t.contact_name, t.company, t.email, t.phone].filter(Boolean).join(' · ');
+      var whoBits = [t.contact_name, t.company, t.email, fmtPhone(t.phone)].filter(Boolean).join(' · ');
       p.appendChild(el('div', 'who', whoBits));
 
       if (t.sla) {
@@ -3274,6 +3274,20 @@
       return h && rem ? h + 'h ' + rem + 'm' : h ? h + 'h' : rem + 'm';
     }
 
+    // A US number in the house format, (216) 302-8486, however it was stored. Mirrors
+    // formatPhone() in the Worker's profile.js, which formats on save; this covers rows
+    // saved before that and numbers from tickets, leads and bookings. Anything that is not
+    // a 10-digit US number is shown as stored.
+    function fmtPhone(v) {
+      var raw = String(v == null ? '' : v).replace(/\s+/g, ' ').trim();
+      if (!raw) return '';
+      var m = raw.match(/^(.*?)(?:\s*(?:x|ext\.?|extension|#)\s*(\d{1,6}))?$/i);
+      var main = m ? m[1] : raw, ext = m && m[2];
+      var d = main.replace(/\D/g, '');
+      if (d.length === 11 && d[0] === '1') d = d.slice(1);
+      if (d.length !== 10 || /[a-wyz]/i.test(main.replace(/ext\.?|extension/ig, ''))) return raw;
+      return '(' + d.slice(0, 3) + ') ' + d.slice(3, 6) + '-' + d.slice(6) + (ext ? ' x' + ext : '');
+    }
     function fmtSize(b) {
       if (b < 1024) return b + ' B';
       if (b < 1048576) return Math.round(b / 1024) + ' KB';
@@ -6025,7 +6039,7 @@
         calGrid.textContent = '';
         var c = el('div', 'apptcard');
         c.appendChild(el('h3', null, a.title));
-        c.appendChild(el('div', 'who', [a.when, APPT_KIND[a.kind] || a.kind, a.who, a.email, a.phone].filter(Boolean).join(' · ')));
+        c.appendChild(el('div', 'who', [a.when, APPT_KIND[a.kind] || a.kind, a.who, a.email, fmtPhone(a.phone)].filter(Boolean).join(' · ')));
         if (a.address) c.appendChild(el('div', 'row-sub', a.address));
         if (a.notes) c.appendChild(el('div', 'row-sub', a.notes));
         c.appendChild(el('div', 'row-sub', 'Status: ' + a.status.replace('_', ' ') +
@@ -7750,7 +7764,7 @@
         } },
       { k: 'company', label: 'Company', w: 190, text: function (c) { return c.name ? c.company : ''; } },
       { k: 'email', label: 'Email', w: 220, text: function (c) { return c.email; } },
-      { k: 'phone', label: 'Phone', w: 128, text: function (c) { return c.phone; } },
+      { k: 'phone', label: 'Phone', w: 128, text: function (c) { return fmtPhone(c.phone); } },
       { k: 'site', label: 'Website', w: 150, text: function (c) { return cuSiteText(c.website) || cuSite(c.email); },
         cell: function (c) { return cuSiteLink(c.website, cuSite(c.email)); } },
     ];
@@ -8134,7 +8148,7 @@
       // ---- who they are ----
       var head = el('div', 'cust-head');
       head.appendChild(el('h2', null, c.profile.name || c.profile.company || c.account.email));
-      var sub = [c.profile.company, c.account.email, c.profile.phone, c.profile.alt_phone]
+      var sub = [c.profile.company, c.account.email, fmtPhone(c.profile.phone), fmtPhone(c.profile.alt_phone)]
         .filter(Boolean).join(' · ');
       head.appendChild(el('div', 'who', sub));
       // Service address, when they have given one. Its own line: it is what you read
@@ -13795,7 +13809,7 @@
       var det = el('details', 'ct-q-det');
       det.appendChild(el('summary', null, 'Details'));
       if (p.description) det.appendChild(el('p', null, p.description));
-      var who = [p.contact_name, p.contact_email, p.contact_phone].filter(Boolean).join(' · ');
+      var who = [p.contact_name, p.contact_email, fmtPhone(p.contact_phone)].filter(Boolean).join(' · ');
       if (who) det.appendChild(el('p', 'row-sub', 'Contact: ' + who));
       if (p.place) det.appendChild(el('p', 'row-sub', 'Place of performance: ' + p.place));
       c.appendChild(det);
@@ -16364,7 +16378,7 @@
         var site = el('a', null, l.domain); site.href = 'https://' + l.domain; site.target = '_blank'; site.rel = 'noopener noreferrer'; site.style.color = 'inherit';
         who.appendChild(site);
       }
-      var bits = [l.contact_name, l.email, l.phone].filter(Boolean).join(' · ');
+      var bits = [l.contact_name, l.email, fmtPhone(l.phone)].filter(Boolean).join(' · ');
       if (bits) who.appendChild(document.createTextNode((l.domain ? ' · ' : '') + bits));
       if (l.account_id) {
         who.appendChild(document.createTextNode(' · '));
@@ -17687,7 +17701,7 @@
         if (f.site_status === 'found' && f.site_url) line('Website', f.site_url.replace(/^https?:\/\//, '').replace(/\/$/, ''), f.site_url);
         line('Why', (ev.reasons || []).join('; '));
         line('Emails', (f.emails || []).map(function (e) { return e.email; }).join(', '));
-        line('Phones', (ev.phones || []).join(', '));
+        line('Phones', (ev.phones || []).map(fmtPhone).join(', '));
         if (ev.gbp && ev.gbp.place_id) line('Google profile', ev.gbp.website ? 'lists a website' : 'no website listed', 'https://www.google.com/maps/place/?q=place_id:' + ev.gbp.place_id);
       }
       var acts = el('div', 'mk-rule-acts');
