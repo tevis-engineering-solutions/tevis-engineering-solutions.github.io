@@ -319,6 +319,18 @@
     .cu-add { flex:0 0 auto; margin-left:auto; font-family:"Montserrat",sans-serif; font-size:0.72rem; font-weight:700; text-transform:uppercase; letter-spacing:0.04em; padding:0.5rem 1rem; min-height:40px; border-radius:999px; border:0; background:linear-gradient(135deg,var(--gold),#e0b840); color:#0d1710; cursor:pointer; }
     .cu-add:focus-visible { outline:2px solid var(--text); outline-offset:2px; }
     #custAddBox { margin-bottom:0.9rem; }
+    /* Inventory's toolbar: the Customers bar plus two selects. */
+    /* Second row of the toolbar: search takes the room, the two menus sit at the end. */
+    .invt-filt { flex:1 0 100%; display:flex; gap:0.6rem; align-items:center; flex-wrap:wrap; }
+    .invt-sel { flex:0 1 auto; min-width:0; min-height:40px; padding:0.45rem 2rem 0.45rem 0.8rem; border-radius:999px; border:1px solid var(--line);
+      background:var(--bg); color:var(--text); font-family:inherit; font-size:0.82rem; max-width:14rem; }
+    .invt-sel:focus { outline:2px solid var(--gold); outline-offset:1px; }
+    #invtFormBox { margin-bottom:0.9rem; }
+    #invtDetail { padding:0.9rem; }
+    #invtDetail > .inv { border:0; background:transparent; padding:0; margin:0; }
+    .invt-tag { font-family:"Montserrat",sans-serif; font-size:0.72rem; font-weight:800; letter-spacing:0.03em; white-space:nowrap; }
+    .invt-list-sum { color:var(--muted); font-size:0.8rem; }
+    @media (max-width:720px) { .invt-filt .cu-q { flex:1 0 100%; } .invt-top .invt-sel { flex:1 1 40%; max-width:none; } }
     /* The list: the Marketing row look, laid out on a grid so every column lines up. */
     .mk-open.cu-cells { display:grid; grid-template-columns:var(--cu-cols); gap:12px; align-items:center; }
     .cu-rows .mk-open { cursor:pointer; }
@@ -438,10 +450,14 @@
     .li-row .rm:hover { color:#e08a68; border-color:rgba(224,138,104,0.5); background:rgba(224,138,104,0.08); }
     .li-extra { grid-column:2 / -1; display:flex; gap:0.45rem; flex-wrap:wrap; align-items:center; }
     .li-extra input[type=text] { flex:0 1 170px; width:auto; height:30px; min-height:30px; font-size:0.74rem; background:transparent; border-color:rgba(44,66,50,0.9); }
-    .li-atc { margin-left:auto; display:inline-flex; align-items:center; gap:0.4rem; height:30px; padding:0 0.7rem; border-radius:7px;
-      border:1px solid rgba(44,66,50,0.9); font-size:0.72rem; color:var(--muted); cursor:pointer; user-select:none; white-space:nowrap; }
-    .li-atc input { width:15px; height:15px; min-height:0; margin:0; accent-color:var(--gold); flex:0 0 auto; }
-    .li-atc:has(input:checked) { color:var(--gold); border-color:rgba(200,152,48,0.55); background:rgba(200,152,48,0.08); }
+    /* Scoped under .li-wrap: on an existing invoice the editor sits inside .ced, whose
+       `label { display:block }` and `input { width:100%; padding }` otherwise win, and
+       the checkbox landed on top of its own label. */
+    .li-wrap .li-atc { margin-left:auto; display:inline-flex; align-items:center; gap:0.45rem; height:30px; padding:0 0.7rem; border-radius:7px;
+      border:1px solid rgba(44,66,50,0.9); font-family:"Montserrat",sans-serif; font-size:0.62rem; font-weight:700; text-transform:uppercase;
+      letter-spacing:0.05em; color:var(--muted); cursor:pointer; user-select:none; white-space:nowrap; margin-bottom:0; box-sizing:border-box; }
+    .li-wrap .li-atc input { width:15px; height:15px; min-height:0; padding:0; margin:0; border:0; accent-color:var(--gold); flex:0 0 auto; }
+    .li-wrap .li-atc:has(input:checked) { color:var(--gold); border-color:rgba(200,152,48,0.55); background:rgba(200,152,48,0.08); }
     .li-sum { display:flex; flex-wrap:wrap; gap:0.5rem 1.6rem; margin-top:0.8rem; padding-top:0.7rem; border-top:1px solid var(--line); }
     .li-fig { display:flex; flex-direction:column; gap:0.1rem; }
     .li-fig small { font-family:"Montserrat",sans-serif; font-size:0.58rem; font-weight:700; text-transform:uppercase; letter-spacing:0.06em; color:var(--muted); }
@@ -461,7 +477,7 @@
       .li-row select, .li-row input[type=text] { padding:0 0.4rem; }
       .li-extra { grid-column:1 / -1; }
       .li-extra input[type=text] { flex:1 1 110px; }
-      .li-atc { margin-left:0; }
+      .li-wrap .li-atc { margin-left:0; }
     }
     /* A dialog that waits for an answer: duplicates, replacing a PDF, editing details. */
     dialog.adlg { width:min(640px, calc(100vw - 32px)); max-height:calc(100vh - 48px); overflow:auto; box-sizing:border-box;
@@ -721,7 +737,18 @@
        table beside it. Give it the column's width and .legend-l ellipsizes as it was
        always meant to. */
     .fin-donut .chart-donut, .fin-donut .chart-legend { width:100%; }
-    .fin-donut .chart-legend { align-self:stretch; }
+    /* flex:1 1 10rem is right when the legend sits beside the donut; stacked under it,
+       the 10rem became a 160px minimum HEIGHT and left an empty band under the legend. */
+    .fin-donut .chart-legend { align-self:stretch; flex:0 0 auto; }
+    /* Clients: the table is as tall as the donut and its legend, and scrolls inside
+       when there are more clients than that. height:0 keeps the table out of the row's
+       sizing; min-height:100% then fills the row the donut column set. */
+    @media (min-width:721px) {
+      .fin-clients.fit { align-items:stretch; }
+      .fin-clients.fit > .fin-table-wrap { height:0; min-height:100%; overflow:auto; }
+    }
+    @media (max-width:720px) { .fin-clients.fit > .fin-table-wrap { max-height:22rem; overflow:auto; } }
+    .fin-clients.fit thead th { position:sticky; top:0; z-index:1; background:var(--card); }
     /* A full-width panel has room the table does not need, and 240px clips most
        client names. The narrow panels keep 240, where the list beside it does.
        Inside a min-width query because this out-specifies the 720px rule above and
@@ -2332,7 +2359,32 @@
     <div class="tiles" id="invtTiles"></div>
     <div class="charts" id="invtCharts"></div>
 
-    <section class="newinv" id="invtFormBox">
+    <div class="cu-top invt-top">
+      <div class="filters" id="invtFilters">
+        <button type="button" class="fpill on" data-view="active">Active</button>
+        <button type="button" class="fpill" data-view="renewals">Renewals</button>
+        <button type="button" class="fpill" data-view="unconfirmed">Unconfirmed</button>
+        <button type="button" class="fpill" data-view="retired">Retired</button>
+        <button type="button" class="fpill" data-view="all">All</button>
+      </div>
+      <button type="button" id="invtAddToggle" class="cu-add">+ Add item</button>
+      <div class="invt-filt">
+        <div class="cu-q">
+          <label for="invtQ" class="sr-only">Search inventory</label>
+          <input type="search" id="invtQ" placeholder="Search name, tag, serial, vendor or holder" autocomplete="off">
+        </div>
+        <label for="invtFKind" class="sr-only">Kind</label>
+        <select id="invtFKind" class="invt-sel">
+          <option value="">All types</option>
+          <option value="equipment">Equipment</option>
+          <option value="subscription">Subscriptions</option>
+        </select>
+        <label for="invtFHolder" class="sr-only">Held by</label>
+        <select id="invtFHolder" class="invt-sel"><option value="">Every holder</option></select>
+      </div>
+    </div>
+
+    <section class="newinv" id="invtFormBox" hidden>
       <h2 id="invtFormTitle">Add equipment or a subscription</h2>
       <form id="invtForm">
         <div class="fgrid">
@@ -2451,19 +2503,18 @@
       </form>
     </section>
 
-    <div class="filters" id="invtFilters">
-      <button type="button" class="fpill on" data-view="active">Active</button>
-      <button type="button" class="fpill" data-view="renewals">Renewals</button>
-      <button type="button" class="fpill" data-view="unconfirmed">Unconfirmed</button>
-      <button type="button" class="fpill" data-view="retired">Retired</button>
-      <button type="button" class="fpill" data-view="all">All</button>
-    </div>
-    <div class="invfind">
-      <label for="invtQ" class="sr-only">Search inventory</label>
-      <input type="search" id="invtQ" placeholder="Search by name, tag, serial, vendor or holder" autocomplete="off">
-    </div>
-
     <div id="invtList"><div class="state">Loading inventory&hellip;</div></div>
+
+    <!-- An item opens over the list, like a ticket or a customer file. -->
+    <div class="cu-modal" id="invtModal" hidden>
+      <div class="cu-modal-box" role="dialog" aria-modal="true" aria-labelledby="invtModalTitle">
+        <div class="cu-modal-bar">
+          <span id="invtModalTitle">Item</span>
+          <button type="button" class="cu-modal-x" id="invtModalX" aria-label="Close the item"><i class="fa-solid fa-xmark" aria-hidden="true"></i></button>
+        </div>
+        <section id="invtDetail" aria-live="polite"></section>
+      </div>
+    </div>
   </main>
 
   <main class="wrap" id="viewFinance" aria-label="Finance" hidden>
@@ -9769,7 +9820,7 @@
           afterAddCustomer = function (r) {
             showView('inventory');
             setHolder({ holder_type: 'account', holder_id: r.account_id, label: r.name || r.email, email: r.email });
-            document.getElementById('invtFormBox').scrollIntoView({ behavior: 'smooth', block: 'start' });
+            invtFormOpen();
           };
           showView('customers');
           custMode = 'people'; syncMode();
@@ -9855,6 +9906,19 @@
     ['dragleave', 'drop'].forEach(function (ev) { invtDrop.addEventListener(ev, function (e) { e.preventDefault(); invtDrop.classList.remove('over'); }); });
     invtDrop.addEventListener('drop', function (e) { takeReceipt(e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files[0]); });
 
+    // The add/edit form sits under the toolbar, hidden until something opens it.
+    function invtFormOpen() {
+      if (typeof invtModalClose === 'function') invtModalClose(true);
+      var box = document.getElementById('invtFormBox');
+      box.hidden = false;
+      document.getElementById('invtAddToggle').textContent = 'Close form';
+      box.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+    function invtFormClose() {
+      document.getElementById('invtFormBox').hidden = true;
+      document.getElementById('invtAddToggle').textContent = '+ Add item';
+    }
+
     function resetInvtForm() {
       invtForm.reset();
       invtEditing = null;
@@ -9895,7 +9959,7 @@
       invtF.notify.checked = false;
       setHolder({ holder_type: i.holder_type, holder_id: i.holder_id, label: i.holder_name || 'TES', email: i.holder_email || '' });
       syncKind();
-      document.getElementById('invtFormBox').scrollIntoView({ behavior: 'smooth', block: 'start' });
+      invtFormOpen();
       invtF.name.focus();
     }
 
@@ -9904,7 +9968,7 @@
       showView('inventory');
       resetInvtForm();
       setHolder(h);
-      document.getElementById('invtFormBox').scrollIntoView({ behavior: 'smooth', block: 'start' });
+      invtFormOpen();
       invtF.name.focus();
     }
 
@@ -9984,10 +10048,16 @@
         if (r.email_error || r.receipt_error) alert(msg);
         var id = r.item.id;
         resetInvtForm();
+        invtFormClose();
         loadInventory().then(function () { flashInvt(id); });
       }, function () { invtSave.disabled = false; toast('Network error'); });
     });
-    invtCancel.addEventListener('click', resetInvtForm);
+    invtCancel.addEventListener('click', function () { resetInvtForm(); invtFormClose(); });
+    document.getElementById('invtAddToggle').addEventListener('click', function () {
+      if (!document.getElementById('invtFormBox').hidden) { resetInvtForm(); invtFormClose(); return; }
+      resetInvtForm();
+      invtFormOpen();
+    });
 
     // ---- tiles and charts ----
     function invtTiles(s) {
@@ -10170,81 +10240,140 @@
       return c;
     }
 
-    function renderInventory() {
-      invtListEl.textContent = '';
-      var list = invtAll.filter(invtMatches);
-      if (!list.length) {
-        invtListEl.appendChild(el('div', 'state',
-          invtSearch ? 'Nothing matches "' + invtSearch + '" in ' + invtView + '.'
-          : invtView === 'active' ? 'Nothing in inventory yet. Add the first item above.'
-          : invtView === 'unconfirmed' ? 'Everything assigned to a customer has been confirmed.'
-          : invtView === 'renewals' ? 'No renewals in the next 90 days.'
-          : 'Nothing in ' + invtView + '.'));
-        return;
-      }
-      // Grouped by holder: TES first, then companies, then people. Same shape as the
-      // invoice list, and each customer header opens their file.
-      var groups = {}, order = [];
-      list.forEach(function (i) {
-        var k = i.holder_type === 'tes' ? 'tes' : i.holder_type + ':' + i.holder_id;
-        if (!groups[k]) { groups[k] = { type: i.holder_type, id: i.holder_id, name: i.holder_type === 'tes' ? 'Held by TES' : i.holder_name || i.holder_email || i.holder_id, email: i.holder_email, rows: [], cost: 0, monthly: 0, unconfirmed: 0 }; order.push(k); }
-        var g = groups[k];
-        g.rows.push(i);
-        if (i.paid_by === 'tes') { g.cost += i.price_cents || 0; g.monthly += i.monthly_cents || 0; }
-        if (i.holder_type !== 'tes' && !i.confirmed_at && i.status === 'active') g.unconfirmed++;
-      });
-      order.sort(function (a, b) {
-        var ra = groups[a].type === 'tes' ? 0 : groups[a].type === 'org' ? 1 : 2;
-        var rb = groups[b].type === 'tes' ? 0 : groups[b].type === 'org' ? 1 : 2;
-        return ra - rb || groups[a].name.localeCompare(groups[b].name, undefined, { sensitivity: 'base' });
-      });
-      var sum = el('div', 'inv-sum');
-      sum.appendChild(el('b', null, list.length + (list.length === 1 ? ' item' : ' items')));
-      sum.appendChild(document.createTextNode(' across ' + order.length + (order.length === 1 ? ' holder' : ' holders')));
-      invtListEl.appendChild(sum);
-      order.forEach(function (k) {
-        var g = groups[k];
-        var wrap = el('div', 'inv-group');
-        var h = el('div', 'inv-group-h');
-        if (g.type === 'tes') {
-          var hh = el('div');
-          hh.appendChild(el('h3', null, g.name));
-          h.appendChild(hh);
-        } else {
-          var open = el('button', 'g-open');
-          open.type = 'button';
-          open.setAttribute('aria-label', 'Open the customer file for ' + g.name);
-          open.appendChild(el('h3', null, g.name));
-          open.appendChild(el('div', 'g-sub', (g.type === 'org' ? 'Company' : 'Person') + (g.email ? ' · ' + g.email : '')));
-          open.addEventListener('click', function () {
-            showView('customers');
-            if (g.type === 'org') { custMode = 'orgs'; syncMode(); openOrg(g.id); }
-            else { custMode = 'people'; syncMode(); openCustomer(g.id); }
-          });
-          h.appendChild(open);
-        }
-        var tot = el('div', 'g-tot');
-        tot.appendChild(document.createTextNode(g.rows.length + (g.rows.length === 1 ? ' item' : ' items')));
-        if (g.cost) { tot.appendChild(document.createTextNode(' · ')); tot.appendChild(el('b', null, money(g.cost))); }
-        if (g.monthly) { tot.appendChild(document.createTextNode(' · ')); tot.appendChild(el('b', null, money(g.monthly) + '/mo')); }
-        if (g.unconfirmed) { tot.appendChild(document.createTextNode(' · ')); tot.appendChild(el('b', 'late', g.unconfirmed + ' unconfirmed')); }
-        h.appendChild(tot);
-        wrap.appendChild(h);
-        g.rows.forEach(function (i) { wrap.appendChild(invtCard(i)); });
-        invtListEl.appendChild(wrap);
-      });
+    var invtKind = '';
+    var invtHolder = '';
+    var invtOpenId = null;
+
+    function invtHolderKey(i) { return i.holder_type === 'tes' ? 'tes' : i.holder_type + ':' + i.holder_id; }
+    function invtHolderName(i) { return i.holder_type === 'tes' ? 'TES' : i.holder_name || i.holder_email || i.holder_id; }
+    function invtCost(i) {
+      return i.recurring ? money(i.recurring_cents) + '/' + { monthly: 'mo', quarterly: 'qtr', annual: 'yr' }[i.recurring_interval]
+        : i.price_cents ? money(i.price_cents) : '';
     }
 
-    function flashInvt(id) {
-      var card = invtListEl.querySelector('[data-invt="' + id + '"]');
-      if (!card) {
-        // It may be filtered out (retired, or a search); show everything and try again.
-        if (invtView !== 'all' || invtSearch) { setInvtView('all'); invtSearchEl.value = ''; invtSearch = ''; renderInventory(); card = invtListEl.querySelector('[data-invt="' + id + '"]'); }
-        if (!card) return;
+    // Default widths add up to less than the list (about 1,068px with the gaps), or a
+    // drag has no room to give and snaps the column to its 70px minimum. Serial is left
+    // to search and the item card.
+    var INVT_COLS = [
+      { k: 'tag', label: 'Tag', w: 92, text: function (i) { return i.tag; },
+        cell: function (i) { return el('span', 'invt-tag', i.tag); } },
+      { k: 'name', label: 'Item', w: 260, text: function (i) { return i.name; },
+        cell: function (i) {
+          var sp = el('span', 'cu-name');
+          sp.appendChild(el('span', 'cu-t', i.name));
+          // Only what needs a look: not in service, waiting on the customer, not emailed.
+          if (i.status !== 'active') sp.appendChild(el('span', 'ct-chip', cap(i.status)));
+          if (i.holder_type !== 'tes' && i.status === 'active') {
+            if (i.confirmed_at) sp.appendChild(el('span', 'ct-chip green', 'Confirmed'));
+            else sp.appendChild(el('span', 'ct-chip ' + (i.assignment_notified_at ? 'gold' : 'red'), i.assignment_notified_at ? 'Awaiting' : 'Not emailed'));
+          }
+          if (i.recurring && i.status === 'active' && i.paid_by === 'tes' && daysUntil(i.next_charge_on) <= 7) sp.appendChild(el('span', 'ct-chip gold', 'Renews soon'));
+          return sp;
+        } },
+      { k: 'kind', label: 'Type', w: 120, text: function (i) { return i.kind === 'subscription' ? 'Subscription' : cap(i.category || 'equipment'); } },
+      { k: 'holder', label: 'Held by', w: 150, text: function (i) { return invtHolderName(i); } },
+      { k: 'vendor', label: 'Vendor', w: 120, text: function (i) { return i.vendor || ''; } },
+      { k: 'bought', label: 'Bought', w: 100, text: function (i) { return i.purchase_date ? fmtDayStr(i.purchase_date) : ''; },
+        sortv: function (i) { return i.purchase_date ? Number(i.purchase_date.replace(/-/g, '')) : 0; } },
+      { k: 'cost', label: 'Cost', w: 100, num: true, text: function (i) { return invtCost(i); },
+        sortv: function (i) { return i.recurring ? i.recurring_cents || 0 : i.price_cents || 0; } },
+    ];
+
+    // The holder select lists whoever holds something, TES first.
+    function invtHolderOptions() {
+      var sel = document.getElementById('invtFHolder');
+      var seen = {}, opts = [];
+      invtAll.forEach(function (i) {
+        var k = invtHolderKey(i);
+        if (seen[k]) return;
+        seen[k] = true;
+        opts.push({ k: k, name: invtHolderName(i), tes: i.holder_type === 'tes' });
+      });
+      opts.sort(function (a, b) { return (b.tes - a.tes) || a.name.localeCompare(b.name, undefined, { sensitivity: 'base' }); });
+      if (invtHolder && !seen[invtHolder]) invtHolder = '';
+      sel.textContent = '';
+      var all = el('option', null, 'Every holder'); all.value = ''; sel.appendChild(all);
+      var cust = el('option', null, 'Assigned to customers'); cust.value = 'customers'; sel.appendChild(cust);
+      opts.forEach(function (o) { var op = el('option', null, o.tes ? 'Held by TES' : o.name); op.value = o.k; sel.appendChild(op); });
+      sel.value = invtHolder;
+    }
+
+    function renderInventory() {
+      invtListEl.textContent = '';
+      var list = invtAll.filter(function (i) {
+        if (!invtMatches(i)) return false;
+        if (invtKind && i.kind !== invtKind) return false;
+        if (invtHolder === 'customers') return i.holder_type !== 'tes';
+        if (invtHolder && invtHolderKey(i) !== invtHolder) return false;
+        return true;
+      });
+      var cost = 0, monthly = 0;
+      list.forEach(function (i) { if (i.paid_by === 'tes') { cost += i.price_cents || 0; monthly += i.monthly_cents || 0; } });
+      var count = list.length + (list.length === 1 ? ' item' : ' items') +
+        (cost ? ' · ' + money(cost) + ' bought' : '') + (monthly ? ' · ' + money(monthly) + '/mo' : '') +
+        (invtSearch ? ' matching "' + invtSearch + '"' : '');
+      var empty = invtSearch ? 'Nothing matches "' + invtSearch + '".'
+        : invtView === 'active' && !invtKind && !invtHolder ? 'Nothing in inventory yet. Use + Add item.'
+        : invtView === 'unconfirmed' ? 'Everything assigned to a customer has been confirmed.'
+        : invtView === 'renewals' ? 'No renewals in the next 90 days.'
+        : 'Nothing here with these filters.';
+      invtListEl.appendChild(cuTable('invt', INVT_COLS, list, {
+        count: count, empty: empty,
+        isSel: function (i) { return i.id === invtOpenId; },
+        rerender: renderInventory,
+        open: function (i) { invtModalOpen(i); },
+      }));
+    }
+
+    // ---- an item, over the list ----
+    var invtModalEl = document.getElementById('invtModal');
+    var invtDetailEl = document.getElementById('invtDetail');
+    var invtModalFocus = null;
+    function invtModalOpen(i) {
+      invtOpenId = i.id;
+      invtDetailEl.textContent = '';
+      invtDetailEl.appendChild(invtCard(i));
+      document.getElementById('invtModalTitle').textContent = i.tag;
+      if (invtModalEl.hidden) {
+        invtModalFocus = document.activeElement;
+        invtModalEl.hidden = false;
+        document.body.classList.add('cu-locked');
+        document.getElementById('invtModalX').focus();
       }
-      card.classList.add('sel');
-      card.scrollIntoView({ behavior: 'smooth', block: 'center' });
-      setTimeout(function () { card.classList.remove('sel'); }, 2500);
+      invtModalEl.querySelector('.cu-modal-box').scrollTop = 0;
+      if (location.hash !== '#i=' + i.id) history.replaceState(null, '', '#i=' + i.id);
+      renderInventory();
+    }
+    function invtModalClose(quiet) {
+      if (invtModalEl.hidden) return;
+      invtModalEl.hidden = true;
+      document.body.classList.remove('cu-locked');
+      invtDetailEl.textContent = '';
+      invtOpenId = null;
+      if (/^#i=/.test(location.hash)) history.replaceState(null, '', '#inventory');
+      if (quiet) return;
+      renderInventory();
+      if (invtModalFocus && invtModalFocus.focus && document.contains(invtModalFocus)) invtModalFocus.focus();
+      invtModalFocus = null;
+    }
+    document.getElementById('invtModalX').addEventListener('click', function () { invtModalClose(); });
+    invtModalEl.addEventListener('click', function (e) { if (e.target === invtModalEl) invtModalClose(); });
+    document.addEventListener('keydown', function (e) {
+      if (e.key !== 'Escape' || invtModalEl.hidden) return;
+      if (typeof cmdk !== 'undefined' && cmdk && !cmdk.hidden) return;
+      invtModalClose();
+    });
+
+    // Opens an item by id, clearing any filter that hides it.
+    function flashInvt(id) {
+      var i = invtAll.filter(function (x) { return x.id === Number(id); })[0];
+      if (!i) return;
+      if (!invtMatches(i) || (invtKind && i.kind !== invtKind) || (invtHolder && invtHolder !== invtHolderKey(i) && !(invtHolder === 'customers' && i.holder_type !== 'tes'))) {
+        setInvtView('all'); invtSearchEl.value = ''; invtSearch = '';
+        invtKind = ''; invtHolder = '';
+        document.getElementById('invtFKind').value = ''; document.getElementById('invtFHolder').value = '';
+      }
+      invtModalOpen(i);
     }
 
     function loadInventory() {
@@ -10258,6 +10387,11 @@
         invtSummary = r.summary || null;
         invtTiles(invtSummary);
         invtCharts(invtAll);
+        invtHolderOptions();
+        if (invtOpenId != null) {
+          var still = invtAll.filter(function (x) { return x.id === invtOpenId; })[0];
+          if (still) invtModalOpen(still); else invtModalClose(true);
+        }
         renderInventory();
       });
     }
@@ -10268,6 +10402,8 @@
       clearTimeout(invtQTimer);
       invtQTimer = setTimeout(function () { invtSearch = invtSearchEl.value.trim().toLowerCase(); renderInventory(); }, 200);
     });
+    document.getElementById('invtFKind').addEventListener('change', function (e) { invtKind = e.target.value; renderInventory(); });
+    document.getElementById('invtFHolder').addEventListener('change', function (e) { invtHolder = e.target.value; renderInventory(); });
     function setInvtView(v) {
       invtView = v;
       document.querySelectorAll('#invtFilters .fpill').forEach(function (b) { b.classList.toggle('on', b.getAttribute('data-view') === v); });
@@ -10559,7 +10695,7 @@
       // ---- clients ----
       var cl = finPanel('Clients', 'who the revenue came from');
       cl.classList.add('wide');
-      var clWrap = el('div', 'fin-clients');
+      var clWrap = el('div', 'fin-clients fit');
       var donutBox = el('div', 'fin-donut');
       var top8 = st.clients.slice(0, 8).map(function (c) { return { label: c.name, value: c.invoiced_cents, key: c.key }; });
       var rest = st.clients.slice(8).reduce(function (s, c) { return s + c.invoiced_cents; }, 0);
@@ -11131,7 +11267,7 @@
       invtF.price.value = (Math.abs(e.amount_cents) / 100).toFixed(2);
       invtF.purchase.value = e.day;
       invtF.notes.value = (e.note ? e.note + '\n' : '') + e.account_label + (e.external_ref ? ' · ' + e.external_ref : '');
-      document.getElementById('invtFormBox').scrollIntoView({ behavior: 'smooth', block: 'start' });
+      invtFormOpen();
     }
 
     function lgDetails(e) {
@@ -11650,7 +11786,7 @@
             invtF.price.value = (Math.abs(tx.gross_cents) / 100).toFixed(2);
             invtF.purchase.value = new Date(tx.initiated_at * 1000).toISOString().slice(0, 10);
             invtF.notes.value = 'PayPal ' + tx.transaction_id;
-            document.getElementById('invtFormBox').scrollIntoView({ behavior: 'smooth', block: 'start' });
+            invtFormOpen();
           }));
         }
         right.appendChild(licAction('Always\u2026', null, function () { ppAlways(tx); }));
@@ -18195,6 +18331,7 @@
     function showView(which) {
       if (!VIEWS[which]) return;
       if (which !== 'tickets' && !tkModalEl.hidden) tkModalClose(true);
+      if (which !== 'inventory' && typeof invtModalEl !== 'undefined' && !invtModalEl.hidden) invtModalClose(true);
       if (which !== 'customers' && !custModal.hidden) custModalClose();
       // Leaving Contracting with a bid half edited asks first; staying puts the hash back.
       if (which !== 'contracting' && !document.getElementById('viewContracting').hidden && !ctLeaveOk()) {
