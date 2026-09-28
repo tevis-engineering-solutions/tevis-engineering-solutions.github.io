@@ -1032,6 +1032,26 @@
     .aiw-dots span.done { background:rgba(74,172,101,0.7); }
     .aiw-dots span.on { background:#c89830; animation:aiwPulse 1.2s ease-in-out infinite; }
     .aiw-foot { font-size:0.74rem; color:var(--muted); margin-top:0.55rem; }
+    .aiw.aiw-done { border-color:rgba(74,172,101,0.55); background:rgba(74,172,101,0.07); }
+    .aiw.aiw-warn { border-color:rgba(224,184,64,0.6); background:rgba(200,152,48,0.08); }
+    .aiw-done .aiw-orb, .aiw-done .aiw-head { color:#4aac65; }
+    .aiw-done .aiw-orb::before, .aiw-warn .aiw-orb::before { animation:none; border-color:transparent; }
+    .aiw-done .aiw-orb i, .aiw-warn .aiw-orb i { font-size:1.35rem; }
+    .aiw-done .aiw-track, .aiw-warn .aiw-track { display:none; }
+    .aiw-done .aiw-dots span.done { background:rgba(74,172,101,0.7); }
+    .aiw-warn .aiw-dots span.done { background:rgba(200,152,48,0.6); }
+    .aiw-x { flex:0 0 auto; width:32px; height:32px; border-radius:8px; border:1px solid var(--line); background:transparent; color:var(--muted); font-size:1.05rem; line-height:1; cursor:pointer; }
+    .aiw-x:hover { color:var(--text); }
+    /* Google speed on a report card: four scores, then the lab timings. */
+    .mk-speed { margin:0.6rem 0 0.4rem; padding:0.6rem 0.7rem; border:1px solid var(--line); border-radius:10px; background:var(--bg); }
+    .mk-speed-h { font-family:"Montserrat",sans-serif; font-size:0.62rem; font-weight:700; text-transform:uppercase; letter-spacing:0.06em; color:var(--muted); margin-bottom:0.45rem; }
+    .mk-speed-s { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:0.45rem; }
+    .mk-speed-s div { display:flex; align-items:center; gap:0.5rem; min-width:0; }
+    .mk-speed-s b { flex:0 0 auto; width:2.4rem; height:2.4rem; border-radius:50%; display:grid; place-items:center; font-family:"Montserrat",sans-serif; font-size:0.86rem; border:3px solid currentColor; }
+    .mk-speed-s b.good { color:#4aac65; } .mk-speed-s b.ok { color:#e0b840; } .mk-speed-s b.bad { color:#ef4444; }
+    .mk-speed-s span { font-size:0.78rem; color:var(--text); overflow:hidden; text-overflow:ellipsis; }
+    .mk-speed-m { font-size:0.76rem; color:var(--muted); margin-top:0.5rem; line-height:1.5; }
+    @media (max-width:560px) { .mk-speed-s { grid-template-columns:repeat(2,minmax(0,1fr)); } }
     .ptab.ai-busy::before { content:""; display:inline-block; width:0.55em; height:0.55em; margin-right:0.4em; border-radius:50%; background:#c89830; vertical-align:0.08em; animation:aiwPulse 1.2s ease-in-out infinite; }
     @keyframes aiwSpin { to { transform:rotate(360deg); } }
     @keyframes aiwScan { 0% { left:-35%; } 100% { left:100%; } }
@@ -6708,6 +6728,27 @@
       };
       var timer = setInterval(tick, 1000);
       tick();
+      // The finished state: the panel stays where it was with the outcome in it, rather
+      // than vanishing and leaving you to work out whether it worked.
+      box.finish = function (o) {
+        clearInterval(timer);
+        o = o || {};
+        box.classList.add(o.ok === false ? 'aiw-warn' : 'aiw-done');
+        orb.firstChild.className = 'fa-solid ' + (o.ok === false ? 'fa-triangle-exclamation' : 'fa-circle-check');
+        txt.firstChild.textContent = o.head || 'Done';
+        step.textContent = o.text || '';
+        if (o.ms != null) { var sec = Math.round(o.ms / 1000); time.textContent = Math.floor(sec / 60) + ':' + ('0' + (sec % 60)).slice(-2); }
+        Array.prototype.forEach.call(dots.children, function (d) { d.className = 'done'; });
+        var foot = box.querySelector('.aiw-foot');
+        if (foot) foot.textContent = o.foot || '';
+        if (foot && !o.foot) foot.remove();
+        if (o.onDismiss) {
+          var x = el('button', 'aiw-x', '\u00d7'); x.type = 'button'; x.setAttribute('aria-label', 'Dismiss'); x.title = 'Dismiss';
+          x.addEventListener('click', function () { o.onDismiss(); box.remove(); });
+          top.appendChild(x);
+        }
+        return box;
+      };
       return box;
     }
     var AIW_QUOTE_STEPS = [
@@ -16620,14 +16661,26 @@
       if (l.domain) {
         var row1 = el('div', 'mk-actions');
         var speed = document.createElement('input'); speed.type = 'checkbox'; speed.id = 'mkSpeed' + l.id;
+        // Google speed is on unless you turned it off; the choice is remembered.
+        try { speed.checked = localStorage.getItem('tes_mk_speed') !== '0'; } catch (e) { speed.checked = true; }
+        speed.addEventListener('change', function () { try { localStorage.setItem('tes_mk_speed', speed.checked ? '1' : '0'); } catch (e) {} });
         var sl = el('label', 'mk-check'); sl.htmlFor = speed.id; sl.appendChild(speed); sl.appendChild(document.createTextNode(' Include Google speed (adds about a minute)'));
-        var run = el('button', 'prim', mkRunning['audit' + l.id] ? 'Scanning…' : (d.audits.length ? 'Run it again' : 'Run the report card'));
+        var run = el('button', 'ct-btn prim', mkRunning['audit' + l.id] ? 'Scanning…' : (d.audits.length ? 'Run it again' : 'Run the report card'));
         run.type = 'button'; run.disabled = !!mkRunning['audit' + l.id];
         var scanWait = el('div');
         // Not a Claude call, but the same wait: a fetch of their site, then the checks,
         // and with Google speed, up to another minute.
         var showScan = function () {
           var st = mkRunning['audit' + l.id];
+          scanWait.textContent = '';
+          if (!st) {
+            // Finished: keep the panel with the outcome until it is dismissed or the next run.
+            var fin = mkScanDone[l.id];
+            if (!fin) return;
+            scanWait.appendChild(aiWorking({ title: '', icon: 'fa-magnifying-glass-chart', steps: fin.steps, every: 1, startedAt: 0 })
+              .finish({ ok: fin.ok, head: fin.head, text: fin.text, ms: fin.ms, onDismiss: function () { delete mkScanDone[l.id]; } }));
+            return;
+          }
           var steps = ['Loading their home page', 'Following the contact and about pages', 'Running the checks']
             .concat(st.speed ? ['Asking Google for speed scores'] : [], ['Grading the site', 'Finishing up']);
           scanWait.textContent = '';
@@ -16636,12 +16689,29 @@
         };
         run.addEventListener('click', function () {
           mkRunning['audit' + l.id] = { at: Date.now(), speed: speed.checked };
+          delete mkScanDone[l.id];
           run.disabled = true; run.textContent = 'Scanning…';
           showScan();
           api('/admin/leads/' + l.id + '/audit', { method: 'POST', body: { speed: speed.checked } }).then(function (r) {
+            var st = mkRunning['audit' + l.id] || { at: Date.now(), speed: false };
             delete mkRunning['audit' + l.id];
-            if (!r.ok) { toast(mkErr(r)); if (mkId === l.id) mkOpen(l.id, true); return; }
-            toast('Report card: grade ' + r.grade + ', ' + r.priority);
+            var steps = ['Loading their home page', 'Following the contact and about pages', 'Running the checks']
+              .concat(st.speed ? ['Asking Google for speed scores'] : [], ['Grading the site', 'Finishing up']);
+            var fin = { steps: steps, ms: Date.now() - st.at, ok: true };
+            if (!r.ok) {
+              fin.ok = false; fin.head = 'The report card did not run'; fin.text = mkErr(r);
+            } else {
+              var parts = ['Grade ' + r.grade + (r.score != null ? ' (' + r.score + ')' : ''), r.priority];
+              if (typeof r.findings === 'number') parts.push(r.findings + ' finding' + (r.findings === 1 ? '' : 's'));
+              var sp = r.speed;
+              if (sp && sp.ok && sp.scores) parts.push('Google speed: performance ' + sp.scores.performance + ', accessibility ' + sp.scores.accessibility + ', SEO ' + sp.scores.seo);
+              fin.head = 'Report card saved';
+              // An older Worker sends no speed field at all; say nothing rather than guess.
+              if (st.speed && sp !== undefined && (!sp || !sp.ok)) { fin.ok = false; fin.head = 'Report card saved, without Google speed'; parts.push(mkSpeedWhy(sp && sp.error)); }
+              fin.text = parts.join(' · ');
+            }
+            mkScanDone[l.id] = fin;
+            toast(fin.head);
             if (mkId === l.id) mkOpen(l.id, true);
           });
         });
@@ -16649,7 +16719,7 @@
         row1.appendChild(sl);
         sec.appendChild(row1);
         sec.appendChild(scanWait);
-        if (mkRunning['audit' + l.id]) showScan();
+        showScan();
       } else {
         sec.appendChild(el('div', 'row-sub', 'No website on file. Add one under Overview to scan it.'));
       }
@@ -16668,6 +16738,7 @@
           box.appendChild(r);
         });
         if (!(a.findings || []).length) box.appendChild(el('div', 'row-sub', 'No findings.'));
+        if (a.speed !== undefined) box.appendChild(mkSpeedBlock(a.speed));
         if ((a.hooks || []).length) {
           box.appendChild(el('div', 'mk-sub-h', 'Rapport hooks'));
           a.hooks.forEach(function (h) { box.appendChild(el('div', 'row-sub', '• ' + h)); });
@@ -16676,6 +16747,34 @@
       });
       sec.appendChild(el('div', 'row-sub', 'A is safe to state in the email. B needs a look in a browser or on a phone first. C needs a receipt (a screenshot, a filename, a timing).'));
       p.appendChild(sec);
+    }
+
+    var mkScanDone = {};
+    function mkSpeedWhy(err) {
+      return err === 'unavailable' ? 'the PageSpeed key is not set on the Worker'
+        : err === 'unmeasurable' ? 'Google could not load the site to measure it'
+        : err === 'no_scores' ? 'Google returned no scores' : 'Google speed did not answer' + (err ? ' (' + err + ')' : '');
+    }
+    // Lighthouse's own bands: 90+ good, 50-89 needs work, under 50 poor.
+    function mkSpeedBlock(sp) {
+      var w = el('div', 'mk-speed');
+      w.appendChild(el('div', 'mk-speed-h', 'Google speed (Lighthouse, ' + ((sp && sp.strategy) || 'mobile') + ')'));
+      if (!sp) { w.appendChild(el('div', 'row-sub', 'Not measured on this run. Tick "Include Google speed" and run it again.')); return w; }
+      if (!sp.ok || !sp.scores) { w.appendChild(el('div', 'row-sub', 'Not measured: ' + mkSpeedWhy(sp.error) + '.')); return w; }
+      var g = el('div', 'mk-speed-s');
+      [['performance', 'Performance'], ['accessibility', 'Accessibility'], ['best-practices', 'Best practices'], ['seo', 'SEO']].forEach(function (k) {
+        var v = sp.scores[k[0]];
+        var c = el('div');
+        c.appendChild(el('b', v == null ? '' : v >= 90 ? 'good' : v >= 50 ? 'ok' : 'bad', v == null ? '-' : String(v)));
+        c.appendChild(el('span', null, k[1]));
+        g.appendChild(c);
+      });
+      w.appendChild(g);
+      var m = sp.metrics || {};
+      var keys = Object.keys(m);
+      if (keys.length) w.appendChild(el('div', 'mk-speed-m', keys.map(function (k) { return k + ' ' + m[k]; }).join(' · ')));
+      if (sp.field_verdict) w.appendChild(el('div', 'mk-speed-m', 'Real Chrome users: ' + sp.field_verdict));
+      return w;
     }
 
     // The draft as it stands: Tyler's edits if he made any, the model's words otherwise.
