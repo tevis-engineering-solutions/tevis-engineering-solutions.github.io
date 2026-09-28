@@ -9166,6 +9166,7 @@
       { k: 'billing', label: 'Billing email', w: 250, text: function (o) { return o.billing_email || ''; } },
       { k: 'site', label: 'Website', w: 170, text: function (o) { return cuSiteText(o.website) || cuSite(o.billing_email); },
         cell: function (o) { return cuSiteLink(o.website, cuSite(o.billing_email)); } },
+      { k: 'phone', label: 'Phone', w: 140, text: function (o) { return fmtPhone(o.phone); } },
       { k: 'members', label: 'Members', w: 100, num: true, text: function (o) { return o.members || 0; } },
       { k: 'tickets', label: 'Tickets', w: 100, num: true, text: function (o) { return o.tickets || 0; } },
     ];
@@ -9174,7 +9175,8 @@
       custListEl.textContent = '';
       var q = custQEl.value.trim().toLowerCase();
       var rows = !q ? orgRows : orgRows.filter(function (o) {
-        return (o.name || '').toLowerCase().indexOf(q) >= 0 || (o.billing_email || '').toLowerCase().indexOf(q) >= 0;
+        return (o.name || '').toLowerCase().indexOf(q) >= 0 || (o.billing_email || '').toLowerCase().indexOf(q) >= 0 ||
+          (q.replace(/\D/g, '').length >= 3 && (o.phone || '').replace(/\D/g, '').indexOf(q.replace(/\D/g, '')) >= 0);
       });
       custListEl.appendChild(cuTable('orgs', CU_ORG_COLS, rows, {
         count: rows.length + (rows.length === 1 ? ' organization' : ' organizations') + (q ? ' matching "' + custQEl.value.trim() + '"' : ''),
@@ -9205,10 +9207,16 @@
       head.appendChild(el('h2', null, o.name));
       head.appendChild(el('div', 'who', o.billing_email
         ? 'Invoices go to ' + o.billing_email : 'No billing contact set'));
+      if (o.phone) {
+        var ph = el('div', 'who');
+        var tel = el('a', null, fmtPhone(o.phone)); var td = String(o.phone).replace(/[^\d+]/g, ''); tel.href = 'tel:' + (/^\d{10}$/.test(td) ? '+1' + td : td);
+        ph.appendChild(document.createTextNode('Office ')); ph.appendChild(tel);
+        head.appendChild(ph);
+      }
       head.appendChild(cuWebsiteLine(o.website, cuSite(o.billing_email)));
       wrap.appendChild(head);
 
-      // Billing contact and website: saved together, each only when it changed.
+      // Billing contact, office phone and website: saved together, each only when it changed.
       var bill = el('div', 'orgbar');
       var beIn = document.createElement('input');
       beIn.type = 'email'; beIn.value = o.billing_email || '';
@@ -9220,10 +9228,16 @@
       wsIn.placeholder = 'theirfirm.com';
       wsIn.setAttribute('aria-label', 'Website');
       bill.appendChild(wsIn);
+      var phIn = document.createElement('input');
+      phIn.type = 'tel'; phIn.value = fmtPhone(o.phone); phIn.maxLength = 40;
+      phIn.placeholder = 'Office phone';
+      phIn.setAttribute('aria-label', 'Office phone');
+      bill.insertBefore(phIn, wsIn);
       bill.appendChild(licAction('Save', null, function () {
         var body = {};
         if (beIn.value.trim() !== (o.billing_email || '')) body.billing_email = beIn.value.trim();
         if (wsIn.value.trim() !== (o.website || '')) body.website = wsIn.value.trim();
+        if (phIn.value.trim() !== fmtPhone(o.phone)) body.phone = phIn.value.trim();
         if (!Object.keys(body).length) return toast('Nothing to save');
         api('/admin/orgs/' + o.id, { method: 'PATCH', body: body })
           .then(function (r) {
