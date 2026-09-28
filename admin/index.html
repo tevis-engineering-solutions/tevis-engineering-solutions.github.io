@@ -1492,6 +1492,13 @@
     .mk-notes { margin-top:0.9rem; }
     .mk-notes textarea { width:100%; box-sizing:border-box; }
     .mk-check { display:flex; align-items:center; gap:0.45rem; margin-top:0.7rem; font-size:0.85rem; }
+    .mk-body { margin:-0.2rem 0 0.5rem 0.7rem; }
+    .mk-body > summary { cursor:pointer; font-size:0.78rem; color:var(--muted); padding:0.2rem 0; }
+    .mk-body > summary:hover { color:var(--text); }
+    .mk-body .mk-email { margin-top:0.35rem; }
+    .mk-learn { display:flex; align-items:center; justify-content:space-between; gap:0.6rem; flex-wrap:wrap; margin:0.6rem 0;
+      padding:0.5rem 0.7rem; border:1px solid var(--line); border-radius:8px; font-size:0.8rem; color:var(--muted); }
+    .mk-learn.off { border-color:rgba(200,152,48,0.45); color:var(--gold); background:rgba(200,152,48,0.06); }
     .mk-audit { border:1px solid var(--line); border-radius:10px; padding:0.55rem 0.7rem; margin-bottom:0.6rem; }
     .mk-audit summary { cursor:pointer; font-weight:600; font-size:0.88rem; }
     .mk-sub-h { font-size:0.72rem; font-weight:800; text-transform:uppercase; letter-spacing:0.04em; color:var(--muted); margin:0.7rem 0 0.2rem; }
@@ -2865,8 +2872,9 @@
     <div id="mkList"><div class="state">Loading&hellip;</div></div>
     <div id="mkOne" hidden></div>
     <details class="ct-q-add mk-import" id="mkImport">
-      <summary>Import from the local prospecting files</summary>
-      <p class="ct-note">Run <code>node scripts/build-marketing-import.mjs</code> in <code>C:\dev\tes-portal</code>. It reads the contact index, the registry, the hot list, the report cards, the chat drafts and the style rules, and writes <code>marketing-import.json</code>. Pick that file here. Running it again adds nothing new and never overwrites what you have typed.</p>
+      <summary>Import: email from Proton, or the local prospecting files</summary>
+      <p class="ct-note"><b>Email from Proton.</b> With Proton Mail Bridge running, double-click <code>refresh.bat</code> in <code>C:\dev\tes-mail-sync</code> (or run <code>node sync.mjs</code> there). It reads Sent and Inbox, keeps the mail to or from a lead, and writes <code>out\mail-sync-&lt;date&gt;.json</code>. Pick that file here. Each email lands on the lead's contact log with its text, replies move the lead to Replied, and what you sent becomes examples of your writing for new drafts. Anything already here is skipped.</p>
+      <p class="ct-note"><b>Local prospecting files.</b> Run <code>node scripts/build-marketing-import.mjs</code> in <code>C:\dev\tes-portal</code>. It reads the contact index, the registry, the hot list, the report cards, the chat drafts and the style rules, and writes <code>marketing-import.json</code>. Pick that file here. Running it again adds nothing new and never overwrites what you have typed.</p>
       <label for="mkImportFile">Import file</label>
       <input type="file" id="mkImportFile" accept="application/json,.json">
       <div class="row-sub" id="mkImportOut"></div>
@@ -16656,6 +16664,7 @@
       f.text().then(function (txt) {
         var data;
         try { data = JSON.parse(txt); } catch (x) { out.textContent = 'That is not a JSON file.'; return; }
+        if (data && data.kind === 'tes-mail-sync') { mkMailSync(data, out, e.target); return; }
         var n = (data.leads || []).length, rn = (data.rules || []).length;
         if (!window.confirm('Import ' + n + ' leads and ' + rn + ' style rules? Existing leads are matched by website and only their blank fields are filled.')) { out.textContent = ''; e.target.value = ''; return; }
         out.textContent = 'Importing ' + n + ' leads…';
@@ -16668,6 +16677,40 @@
         });
       });
     });
+
+    // The file from C:\dev\tes-mail-sync. Sent in batches so one request never carries
+    // hundreds of emails; the Worker skips what it already has, so a batch that fails
+    // can simply be uploaded again.
+    function mkMailSync(data, out, input) {
+      var msgs = Array.isArray(data.messages) ? data.messages : [];
+      if (!msgs.length) { out.textContent = 'That sync file has no emails for any lead.'; input.value = ''; return; }
+      var sent = msgs.filter(function (m) { return m.direction === 'out'; }).length;
+      var leadsN = {}; msgs.forEach(function (m) { leadsN[m.lead_id] = 1; });
+      var plural = function (n, one, many) { return n + ' ' + (n === 1 ? one : many); };
+      if (!window.confirm('Import ' + plural(msgs.length, 'email', 'emails') + ' (' + sent + ' sent, ' + plural(msgs.length - sent, 'reply', 'replies') + ') for ' + plural(Object.keys(leadsN).length, 'lead', 'leads') + '? Emails already here are skipped.')) { out.textContent = ''; input.value = ''; return; }
+      var tot = { added: 0, sent: 0, replies: 0, enriched: 0, already: 0, filled_in: 0, skipped: 0 };
+      var BATCH = 100, i = 0;
+      (function next() {
+        if (i >= msgs.length) {
+          input.value = '';
+          out.textContent = 'Added ' + plural(tot.sent, 'sent email', 'sent emails') + ' and ' + plural(tot.replies, 'reply', 'replies') +
+            (tot.enriched ? ', added the text to ' + tot.enriched + ' earlier entries' : '') +
+            (tot.filled_in ? ', filled in contact details on ' + plural(tot.filled_in, 'lead', 'leads') : '') +
+            '. ' + tot.already + ' were already here' + (tot.skipped ? ', ' + tot.skipped + ' skipped (lead no longer exists)' : '') + '.';
+          loadMarketing();
+          if (mkId) mkOpen(mkId, true);
+          return;
+        }
+        out.textContent = 'Importing emails ' + (i + 1) + '–' + Math.min(i + BATCH, msgs.length) + ' of ' + msgs.length + '…';
+        api('/admin/leads/mail-sync', { method: 'POST', body: { kind: 'tes-mail-sync', messages: msgs.slice(i, i + BATCH) } }).then(function (r) {
+          if (!r.ok) { input.value = ''; out.textContent = 'Stopped at email ' + (i + 1) + ': ' + mkErr(r) + '. Upload the file again to finish; nothing is added twice.'; return; }
+          ['added', 'sent', 'replies', 'enriched', 'already', 'filled_in'].forEach(function (k) { tot[k] += r[k] || 0; });
+          tot.skipped += (r.skipped || []).length;
+          i += BATCH;
+          next();
+        });
+      })();
+    }
 
     // ---- one lead ----
     function mkOpen(id, replace) {
@@ -16923,6 +16966,13 @@
         var r = row(main, sub, right);
         if (e.kind === 'reply') r.classList.add('mk-reply');
         hs.appendChild(r);
+        // The text of an email (from the Proton sync, or recorded with Mark as sent).
+        if (e.body) {
+          var det = el('details', 'mk-body');
+          det.appendChild(el('summary', null, e.kind === 'reply' ? 'Their email' : 'Email as sent'));
+          det.appendChild(el('pre', 'mk-email', e.body));
+          hs.appendChild(det);
+        }
       });
       p.appendChild(hs);
     }
@@ -17126,7 +17176,7 @@
         var src = x.source === 'conversation' ? 'chat draft' : x.source === 'engine' ? 'desktop engine' : x.source === 'worker' ? 'drafted here' : x.source;
         sm.textContent = (dr.subject || '(no subject)') + ' · ' + src + ' · ' + fmtDate(x.created_at) + (x.status === 'sent' ? ' · sent ' + fmtDate(x.sent_at) : '');
         box.appendChild(sm);
-        if (x.status === 'sent') mkSentView(box, x);
+        if (x.status === 'sent') mkSentView(box, x, l);
         else mkDraftEditor(box, l, x);
         if (dr.mirror_hook) { box.appendChild(el('div', 'mk-sub-h', 'Mirror hook')); box.appendChild(el('div', 'row-sub', dr.mirror_hook)); }
         if ((dr.semantic_findings || []).length) {
@@ -17188,6 +17238,13 @@
       sf.appendChild(g);
       var sent = document.createElement('textarea'); sent.rows = 6; sent.placeholder = 'Leave blank to use the email above';
       ctField(sf, 'Email as sent (optional)', sent, 'mk-notes');
+      // A follow-up months later is not this draft rewritten; comparing the two would
+      // read every difference as a correction to the model.
+      var fu = el('label', 'mk-check');
+      var fuBox = document.createElement('input'); fuBox.type = 'checkbox';
+      fu.appendChild(fuBox);
+      fu.appendChild(document.createTextNode(' This is a follow-up, not this draft as edited. Don\u2019t use it for style learning.'));
+      sf.appendChild(fu);
       var srr = el('div', 'reply-row');
       var sb = el('button', 'prim', 'Mark as sent'); sb.type = 'submit';
       srr.appendChild(sb); sf.appendChild(srr);
@@ -17198,22 +17255,40 @@
         if (!text) return toast('There is no email text to record.');
         sb.disabled = true;
         api('/admin/leads/' + l.id + '/drafts/' + x.id + '/sent', { method: 'POST', body: {
-          subject: sentSubj.value.trim() || cur2.subject, text: text, channel: ch.value, at: dayToTs(day.value) } }).then(function (r) {
+          subject: sentSubj.value.trim() || cur2.subject, text: text, channel: ch.value, at: dayToTs(day.value),
+          learn: !fuBox.checked } }).then(function (r) {
           sb.disabled = false;
           if (!r.ok) return toast(mkErr(r));
-          toast('Logged as sent: ' + r.diff.summary);
+          toast(r.learn === false ? 'Logged as a follow-up (not used for style learning)' : 'Logged as sent: ' + r.diff.summary);
           mkOpen(l.id, true);
         });
       });
       box.appendChild(sf);
     }
 
-    function mkSentView(box, x) {
+    function mkSentView(box, x, l) {
+      var noLearn = !!(x.draft && x.draft.no_learn);
       box.appendChild(el('div', 'mk-sub-h', 'As sent' + (x.sent_channel ? ' by ' + (MK_CHANNEL_LABEL[x.sent_channel] || x.sent_channel) : '')));
       if (x.sent_subject) box.appendChild(el('div', 'row-sub', 'Subject: ' + x.sent_subject));
       box.appendChild(el('pre', 'mk-email', x.sent_text || ''));
+      var lr = el('div', 'mk-learn' + (noLearn ? ' off' : ''));
+      lr.appendChild(el('span', null, noLearn ? 'Not used for style learning. It is on the contact log only.'
+        : 'Used for style learning: the next review compares it with the draft.'));
+      var lb = el('button', 'ct-btn', noLearn ? 'Use it for learning' : 'Don\u2019t learn from this');
+      lb.type = 'button';
+      lb.addEventListener('click', function () {
+        lb.disabled = true;
+        api('/admin/leads/' + l.id + '/drafts/' + x.id, { method: 'PATCH', body: { learn: noLearn } }).then(function (r) {
+          lb.disabled = false;
+          if (!r.ok) return toast(mkErr(r));
+          toast(r.learn ? 'Back in style learning' : 'Taken out of style learning');
+          mkOpen(l.id, true);
+        });
+      });
+      lr.appendChild(lb);
+      box.appendChild(lr);
       var df = x.diff;
-      if (!df) return;
+      if (!df || noLearn) return;
       box.appendChild(el('div', 'mk-sub-h', 'Compared with the draft: ' + df.summary));
       var list = function (label, arr, fmt) {
         if (!arr || !arr.length) return;
