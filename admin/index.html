@@ -1016,6 +1016,31 @@
     .qai textarea:focus { outline:none; border-color:var(--green); }
     .qai input[type="file"] { width:100%; margin:0.5rem 0; font-size:0.8rem; color:var(--text); }
     .qai-wait { font-size:0.8rem; color:var(--muted); padding:0.6rem 0; }
+    /* The "Claude is working" panel, shared by BidBuilder and quote drafting. */
+    .aiw { position:relative; overflow:hidden; margin:0.7rem 0; padding:0.9rem 1rem 1rem; border:1px solid rgba(200,152,48,0.35); border-radius:10px; background:linear-gradient(135deg, rgba(200,152,48,0.07), rgba(74,172,101,0.05)); }
+    .aiw-top { display:flex; align-items:center; gap:0.75rem; }
+    .aiw-orb { position:relative; flex:0 0 34px; width:34px; height:34px; display:grid; place-items:center; color:#c89830; font-size:0.95rem; }
+    .aiw-orb::before { content:""; position:absolute; inset:0; border-radius:50%; border:2px solid rgba(200,152,48,0.18); border-top-color:#c89830; border-right-color:#4aac65; animation:aiwSpin 1.1s linear infinite; }
+    .aiw-txt { flex:1; min-width:0; }
+    .aiw-head { font-family:"Montserrat",sans-serif; font-size:0.72rem; font-weight:700; text-transform:uppercase; letter-spacing:0.07em; color:#c89830; }
+    .aiw-step { font-size:0.86rem; color:var(--text); margin-top:0.15rem; animation:aiwFade 0.5s ease; }
+    .aiw-time { flex:0 0 auto; font-variant-numeric:tabular-nums; font-size:0.78rem; color:var(--muted); }
+    .aiw-track { position:relative; height:3px; margin-top:0.8rem; border-radius:2px; background:rgba(138,164,141,0.18); overflow:hidden; }
+    .aiw-track::after { content:""; position:absolute; top:0; bottom:0; width:35%; left:-35%; background:linear-gradient(90deg, transparent, #c89830, #e0b840, transparent); animation:aiwScan 1.6s ease-in-out infinite; }
+    .aiw-dots { display:flex; gap:0.3rem; margin-top:0.6rem; }
+    .aiw-dots span { flex:1; height:4px; border-radius:2px; background:rgba(138,164,141,0.18); transition:background 0.4s; }
+    .aiw-dots span.done { background:rgba(74,172,101,0.7); }
+    .aiw-dots span.on { background:#c89830; animation:aiwPulse 1.2s ease-in-out infinite; }
+    .aiw-foot { font-size:0.74rem; color:var(--muted); margin-top:0.55rem; }
+    .ptab.ai-busy::before { content:""; display:inline-block; width:0.55em; height:0.55em; margin-right:0.4em; border-radius:50%; background:#c89830; vertical-align:0.08em; animation:aiwPulse 1.2s ease-in-out infinite; }
+    @keyframes aiwSpin { to { transform:rotate(360deg); } }
+    @keyframes aiwScan { 0% { left:-35%; } 100% { left:100%; } }
+    @keyframes aiwPulse { 0%,100% { opacity:1; } 50% { opacity:0.35; } }
+    @keyframes aiwFade { from { opacity:0; transform:translateY(3px); } to { opacity:1; transform:none; } }
+    @media (prefers-reduced-motion: reduce) {
+      .aiw-orb::before, .aiw-track::after, .aiw-dots span.on, .aiw-step, .ptab.ai-busy::before { animation:none; }
+      .aiw-track::after { left:0; width:100%; opacity:0.5; }
+    }
     .qai-err { font-size:0.8rem; color:#e08585; padding:0.5rem 0; }
     .qai-out { margin-top:0.7rem; padding:0.75rem 0.8rem; border:1px solid var(--line); border-radius:10px; background:var(--bg); }
     .qai-out h4 { font-family:"Montserrat",sans-serif; font-size:0.92rem; margin:0 0 0.4rem; }
@@ -1589,6 +1614,22 @@
     #viewContracting .ct-lines select { border-radius:6px; font-size:0.78rem; min-height:32px; padding:0.3rem 1.6rem 0.3rem 0.45rem; background-position:right 0.45rem center; }
     .ct-upload { position:relative; overflow:hidden; display:inline-flex; align-items:center; }
     .ct-upload input[type="file"] { position:absolute; inset:0; opacity:0; cursor:pointer; font-size:0; }
+    /* Attach a file on a bid: a drop zone, then role, label and Upload on one line. */
+    .ct-attach { position:relative; margin-top:0.9rem; padding:0.85rem 0.9rem 0.9rem; border:1px solid var(--line); border-radius:12px; background:var(--bg); }
+    .ct-attach-h { font-family:"Montserrat",sans-serif; font-size:0.66rem; font-weight:700; text-transform:uppercase; letter-spacing:0.06em; color:var(--muted); margin-bottom:0.55rem; }
+    .ct-attach > input[type="file"] { position:absolute; width:1px; height:1px; opacity:0; pointer-events:none; }
+    .ct-drop { display:flex; align-items:center; gap:0.8rem; min-height:64px; padding:0.7rem 0.9rem; border:1.5px dashed rgba(138,164,141,0.4); border-radius:10px; cursor:pointer; transition:border-color 0.15s, background 0.15s; }
+    .ct-drop:hover, .ct-drop.over { border-color:#c89830; background:rgba(200,152,48,0.06); }
+    .ct-drop.has { border-style:solid; border-color:rgba(74,172,101,0.55); background:rgba(74,172,101,0.06); }
+    .ct-attach > input[type="file"]:focus-visible + .ct-drop, .ct-drop:focus-visible { outline:2px solid #4aac65; outline-offset:2px; }
+    .ct-drop i { font-size:1.3rem; color:#c89830; flex:0 0 auto; }
+    .ct-drop.has i::before { content:"\f15b"; color:#4aac65; }
+    .ct-drop-t { display:flex; flex-direction:column; min-width:0; }
+    .ct-drop-main { font-size:0.88rem; color:var(--text); font-weight:600; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+    .ct-drop-sub { font-size:0.74rem; color:var(--muted); margin-top:0.1rem; }
+    .ct-attach-row { grid-template-columns:minmax(0,1fr) minmax(0,1.4fr) auto; gap:0.6rem; margin:0.75rem 0 0; align-items:end; }
+    .ct-attach-go .ct-btn { min-height:36px; padding-left:1.4rem; padding-right:1.4rem; }
+    @media (max-width:600px) { .ct-attach-row { grid-template-columns:1fr; } .ct-attach-go .ct-btn { width:100%; } }
     .ct-ref { margin-top:1rem; }
     .ct-ref details { border:1px solid var(--line); border-radius:12px; background:var(--card); margin-bottom:0.5rem; }
     .ct-ref summary { font-family:"Montserrat",sans-serif; font-size:0.74rem; font-weight:700; text-transform:uppercase; letter-spacing:0.05em; color:var(--muted); cursor:pointer; padding:0.7rem 0.85rem; min-height:44px; display:flex; align-items:center; }
@@ -6528,6 +6569,76 @@
       });
     }
 
+    // A "Claude is working" panel. Steps follow the time since startedAt rather than a
+    // counter, so a pane rebuilt mid-draft picks up at the same step. The steps are a
+    // guide to what the model is doing, not progress it reports. The timer stops itself
+    // once the panel leaves the page.
+    function aiWorking(opts) {
+      var started = opts.startedAt || Date.now();
+      var steps = opts.steps, every = opts.every || 12;
+      var box = el('div', 'aiw');
+      box.setAttribute('role', 'status');
+      var top = el('div', 'aiw-top');
+      var orb = el('div', 'aiw-orb');
+      orb.appendChild(el('i', 'fa-solid fa-wand-magic-sparkles'));
+      orb.firstChild.setAttribute('aria-hidden', 'true');
+      var txt = el('div', 'aiw-txt');
+      txt.appendChild(el('div', 'aiw-head', opts.title || 'Claude is working'));
+      var step = el('div', 'aiw-step', '');
+      txt.appendChild(step);
+      var time = el('div', 'aiw-time', '0:00');
+      top.appendChild(orb); top.appendChild(txt); top.appendChild(time);
+      box.appendChild(top);
+      box.appendChild(el('div', 'aiw-track'));
+      var dots = el('div', 'aiw-dots');
+      steps.forEach(function () { dots.appendChild(el('span')); });
+      box.appendChild(dots);
+      if (opts.foot) box.appendChild(el('div', 'aiw-foot', opts.foot));
+      var shown = -1, attached = false;
+      var tick = function () {
+        if (box.isConnected) attached = true;
+        else if (attached) { clearInterval(timer); return; }
+        var s = Math.max(0, Math.floor((Date.now() - started) / 1000));
+        time.textContent = Math.floor(s / 60) + ':' + ('0' + (s % 60)).slice(-2);
+        var i = Math.min(steps.length - 1, Math.floor(s / every));
+        if (i !== shown) {
+          shown = i;
+          step.textContent = steps[i];
+          step.style.animation = 'none'; void step.offsetWidth; step.style.animation = '';
+          Array.prototype.forEach.call(dots.children, function (d, n) { d.className = n < i ? 'done' : n === i ? 'on' : ''; });
+        }
+      };
+      var timer = setInterval(tick, 1000);
+      tick();
+      return box;
+    }
+    var AIW_QUOTE_STEPS = [
+      'Reading the estimation handbook',
+      'Working out the scope from your description',
+      'Pricing each line against the handbook',
+      'Writing the exclusions and next step',
+      'Checking the draft against the presentation rules',
+      'Finishing up',
+    ];
+    var AIW_LEAD_STEPS = [
+      'Reading what we know about them and your notes',
+      'Applying your confirmed style rules',
+      'Picking the finding to lead with',
+      'Writing the email',
+      'Checking it against the playbook',
+      'Finishing up',
+    ];
+    var AIW_BID_STEPS = [
+      'Reading the solicitation packet',
+      'Checking fit against the capability statement',
+      'Walking the triage steps',
+      'Flagging risks and quoting the clauses',
+      'Writing questions for the agency',
+      'Laying out the lines to price',
+      'Weighing go or no-go',
+      'Finishing up',
+    ];
+
     function qtDraftRun() {
       var btn = document.getElementById('qtDraft');
       var outBox = document.getElementById('qtDraftOut');
@@ -6536,7 +6647,11 @@
       btn.disabled = true;
       btn.textContent = 'Drafting…';
       outBox.textContent = '';
-      outBox.appendChild(el('div', 'qai-wait', 'Reading the handbook and pricing the job. This takes a minute.'));
+      outBox.appendChild(aiWorking({
+        title: qtDocType === 'estimate' ? 'Drafting the estimate' : 'Drafting the quote',
+        steps: AIW_QUOTE_STEPS, every: 10,
+        foot: 'Usually about a minute. Nothing on the form changes until you apply the draft.',
+      }));
       api('/admin/quotes/draft', { method: 'POST', body: {
         doc_type: qtDocType, brief: brief,
         title: document.getElementById('qtTitle').value.trim(),
@@ -14561,30 +14676,49 @@
         a.appendChild(right);
         pane.appendChild(a);
       });
-      var form = el('div', 'ct-form');
-      var role = ctField(form, 'What it is', ctSelect(Object.keys(CT_ROLE_LABEL).map(function (k) { return [k, CT_ROLE_LABEL[k]]; }), need[0] || 'addendum'));
+      // One card: a drop zone for the file, then what it is, a label and Upload on a line.
+      var card = el('div', 'ct-attach');
+      card.appendChild(el('div', 'ct-attach-h', 'Attach a file'));
       var file = ctInput('file', null, { accept: '.pdf,.png,.jpg,.jpeg,.gif,.webp,.docx,.xlsx,.csv,.txt', 'aria-label': 'Choose a file to attach' });
-      var pickWrap = el('div');
-      pickWrap.appendChild(el('label', null, 'File (PDF, image, Word, Excel, CSV; 10 MB)'));
-      var pick = el('span', 'ct-btn ct-upload', 'Choose file\u2026');
-      pick.appendChild(file);
-      var picked = el('span', 'row-sub', ' No file chosen');
-      file.addEventListener('change', function () { picked.textContent = ' ' + (file.files && file.files[0] ? file.files[0].name : 'No file chosen'); });
-      pickWrap.appendChild(pick); pickWrap.appendChild(picked);
-      form.appendChild(pickWrap);
-      var label = ctField(form, 'Label (optional)', ctInput('text', '', { maxlength: 160 }));
-      pane.appendChild(form);
+      var zone = el('label', 'ct-drop');
+      zone.htmlFor = file.id || (file.id = 'ctfile' + Math.random().toString(36).slice(2, 9));
+      var ico = el('i', 'fa-solid fa-cloud-arrow-up'); ico.setAttribute('aria-hidden', 'true');
+      var zt = el('span', 'ct-drop-t');
+      var zMain = el('span', 'ct-drop-main', 'Choose a file or drop it here');
+      var zSub = el('span', 'ct-drop-sub', 'PDF, image, Word, Excel, CSV or text \u00b7 up to 10 MB');
+      zt.appendChild(zMain); zt.appendChild(zSub);
+      zone.appendChild(ico); zone.appendChild(zt);
+      card.appendChild(file); card.appendChild(zone);
+      var showPicked = function () {
+        var fl = file.files && file.files[0];
+        zone.classList.toggle('has', !!fl);
+        zMain.textContent = fl ? fl.name : 'Choose a file or drop it here';
+        zSub.textContent = fl ? fmtSize(fl.size) + ' \u00b7 click to choose a different file' : 'PDF, image, Word, Excel, CSV or text \u00b7 up to 10 MB';
+      };
+      file.addEventListener('change', showPicked);
+      ['dragenter', 'dragover'].forEach(function (t) { zone.addEventListener(t, function (e) { e.preventDefault(); zone.classList.add('over'); }); });
+      ['dragleave', 'drop'].forEach(function (t) { zone.addEventListener(t, function () { zone.classList.remove('over'); }); });
+      zone.addEventListener('drop', function (e) {
+        e.preventDefault();
+        if (e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files.length) { file.files = e.dataTransfer.files; showPicked(); }
+      });
+      var form = el('div', 'ct-form ct-attach-row');
+      var role = ctField(form, 'What it is', ctSelect(Object.keys(CT_ROLE_LABEL).map(function (k) { return [k, CT_ROLE_LABEL[k]]; }), need[0] || 'addendum'));
+      var label = ctField(form, 'Label (optional)', ctInput('text', '', { maxlength: 160, placeholder: 'e.g. Addendum 2, revised spec' }));
       var up = el('button', 'ct-btn prim', 'Upload'); up.type = 'button';
+      var upWrap = el('div', 'ct-attach-go'); upWrap.appendChild(up);
+      form.appendChild(upWrap);
+      card.appendChild(form);
+      pane.appendChild(card);
       up.addEventListener('click', function () {
         var fl = file.files && file.files[0];
-        if (!fl) { file.focus(); return; }
+        if (!fl) { toast('Choose a file first.'); zone.focus(); return; }
         if (fl.size > 10 * 1024 * 1024) { toast('That file is over the 10 MB limit.'); return; }
         up.disabled = true; up.textContent = 'Uploading…';
         fileToBase64(fl).then(function (b64) {
           return ctBidApi('/files', 'POST', { filename: fl.name, role: role.value, label: label.value, content_type: fl.type, data: b64 }, 'Attached ' + fl.name);
         }).then(function () { up.disabled = false; up.textContent = 'Upload'; }, function () { up.disabled = false; up.textContent = 'Upload'; toast('Could not read that file.'); });
       });
-      pane.appendChild(up);
     }
 
     // The response document's own copy: who it is addressed to, delivery and warranty
@@ -14775,6 +14909,12 @@
 
       var out = el('div');
       pane.appendChild(out);
+      if (pane.btn) pane.btn.classList.toggle('ai-busy', !!ctDrafting[id]);
+      if (ctDrafting[id]) out.appendChild(aiWorking({
+        title: 'BidBuilder is drafting',
+        startedAt: ctDrafting[id], steps: AIW_BID_STEPS, every: 18,
+        foot: 'Usually two to three minutes. You can leave this bid; the draft is saved on it when it comes back.',
+      }));
       if (st.lastError) out.appendChild(el('div', 'ct-why', st.lastError));
       if (ctDetail.saved_draft) ctDraftPreview(out, ctDetail.saved_draft.draft, ctDetail.saved_draft);
       else if (st.unsaved) ctDraftPreview(out, st.unsaved, null);
@@ -14845,8 +14985,9 @@
         ctSaveInput(id, true);
         st.lastError = null; st.unsaved = null;
         ctDrafting[id] = Date.now();
-        running();
-        api('/admin/bids/' + id + '/draft', { method: 'POST', body: { packet: packet.value, notes: notes.value } }).then(function (r) {
+        var req = api('/admin/bids/' + id + '/draft', { method: 'POST', body: { packet: packet.value, notes: notes.value } });
+        ctRefreshDraftPane();
+        req.then(function (r) {
           delete ctDrafting[id];
           var here = ctBidId === id && ctDetail && ctDetail.bid.id === id;
           if (!r.ok) {
@@ -16393,9 +16534,17 @@
       else if (newBiz) sec.appendChild(el('div', 'row-sub', l.domain
         ? 'New business with a website and an email: the draft congratulates them and offers to help them get the most from the site early' + (d.audits.length ? ', using the report card where it helps.' : '.')
         : 'New business with an email and no website: the draft congratulates them and offers to build the website and set up their online presence.'));
+      var wait = el('div');
+      var showWait = function () {
+        wait.textContent = '';
+        wait.appendChild(aiWorking({ title: 'Drafting the email', startedAt: mkRunning['draft' + l.id], steps: AIW_LEAD_STEPS, every: 10,
+          foot: 'Usually about a minute. You can leave this lead; the draft appears under Drafts when it is ready.' }));
+      };
+      if (mkRunning['draft' + l.id]) showWait();
       go.addEventListener('click', function () {
-        mkRunning['draft' + l.id] = true;
+        mkRunning['draft' + l.id] = Date.now();
         go.disabled = true; go.textContent = 'Drafting… (about a minute)';
+        showWait();
         api('/admin/leads/' + l.id + '/draft', { method: 'POST', body: { notes: notes.value.trim() } }).then(function (r) {
           delete mkRunning['draft' + l.id];
           if (!r.ok) { toast(r.message || mkErr(r)); if (mkId === l.id) mkOpen(l.id, true); return; }
@@ -16405,6 +16554,7 @@
       });
       rr.appendChild(go);
       sec.appendChild(rr);
+      sec.appendChild(wait);
       p.appendChild(sec);
 
       var ds = el('section', 'cust-sec');
