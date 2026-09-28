@@ -72,6 +72,30 @@
     .lg-tools select { flex:0 0 auto; min-height:38px; }
     .lg-tools input { flex:1 1 auto; min-width:0; min-height:38px; }
     .lg-list .lg-row { align-items:flex-start; }
+    /* The editor is a row's last child, which .row pushes right and shrinks to fit; it
+       takes the full width instead. */
+    .lg-list .row.lg-row > .rule-host { flex:1 0 100%; min-width:0; max-width:100%; margin-left:0; }
+    .lg-note { white-space:pre-wrap; border-left:2px solid var(--gold); padding-left:0.5rem; margin-top:0.3rem; }
+    .lg-item { display:inline-flex; align-items:center; gap:0.35rem; margin-top:0.3rem; padding:0; border:0; background:none;
+      color:var(--blue); font:inherit; font-size:0.8rem; cursor:pointer; text-align:left; }
+    .lg-item:hover { text-decoration:underline; }
+    /* .lg-list .row button makes every row button a pill; this one is a text link. */
+    .lg-list .row button.lg-item { display:inline-flex; min-height:0; padding:0.1rem 0; border:0; border-radius:0; background:none;
+      color:var(--blue); font-family:inherit; font-size:0.8rem; font-weight:600; text-transform:none; letter-spacing:0; }
+    .lg-det .lg-det-pick select { min-width:0; max-width:100%; }
+    /* Already in Inventory: green, with a check, so it reads as done rather than as a to-do. */
+    .lg-list .row button.lg-inv-on { border-color:var(--green); color:var(--green); background:rgba(74,172,101,0.08); }
+    .lg-list .row button.lg-inv-on::before { content:"\2713"; margin-right:0.35rem; }
+    .lg-det .lg-det-f > p { margin:0.35rem 0 0; }
+    .lg-det label { display:block; font-size:0.72rem; font-weight:700; text-transform:uppercase; letter-spacing:0.04em;
+      color:var(--muted); margin:0 0 0.3rem; font-family:"Montserrat",sans-serif; }
+    .lg-det textarea, .lg-det select { width:100%; box-sizing:border-box; padding:0.5rem 0.65rem; border-radius:8px;
+      border:1px solid var(--line); background:var(--bg); color:var(--text); font-family:inherit; font-size:0.85rem; }
+    .lg-det textarea { min-height:70px; resize:vertical; }
+    .lg-det select { min-height:40px; }
+    .lg-det .lg-det-f { margin-bottom:0.7rem; }
+    .lg-det .lg-det-pick { display:flex; gap:0.45rem; flex-wrap:wrap; align-items:center; }
+    .lg-det .lg-det-pick select { flex:1 1 220px; width:auto; }
     .fpill { flex:0 0 auto; font-family:"Montserrat",sans-serif; font-size:0.72rem; font-weight:700; text-transform:uppercase; letter-spacing:0.04em; padding:0.45rem 0.8rem; border-radius:999px; border:1px solid var(--line); background:transparent; color:var(--muted); cursor:pointer; }
     .fpill.on { color:#0d1710; background:linear-gradient(135deg,var(--gold),#e0b840); border-color:transparent; }
 
@@ -9644,6 +9668,7 @@
     var invtSummary = null;
     var invtView = 'active';
     var invtSearch = '';
+    var invtFromLedger = null; // the card or cash charge a new item was made from, linked on save
     var invtEditing = null;    // the item being edited, or null for a new one
     var invtReceipt = null;    // {filename, data, content_type, size} waiting to upload
     var invtHolder = { holder_type: 'tes', holder_id: null, label: 'TES', email: '' };
@@ -9833,6 +9858,7 @@
     function resetInvtForm() {
       invtForm.reset();
       invtEditing = null;
+      invtFromLedger = null;
       invtFormTitle.textContent = 'Add equipment or a subscription';
       invtSave.textContent = 'Add to inventory';
       invtCancel.textContent = 'Clear';
@@ -9942,6 +9968,7 @@
       } else {
         if (invtReceipt) p.receipt = invtReceipt;
         if (!invtNotifyWrap.hidden && invtF.notify.checked) p.notify = true;
+        if (invtFromLedger) p.ledger_id = invtFromLedger;
         req = api('/admin/inventory', { method: 'POST', body: p });
       }
       req.then(function (r) {
@@ -9951,6 +9978,8 @@
         if (r.emailed) msg += ' · emailed ' + r.to;
         else if (r.email_error) msg += ' · EMAIL FAILED (' + r.email_error + ')';
         if (r.receipt_error) msg += ' · receipt not attached (' + (INVT_ERROR[r.receipt_error] || r.receipt_error) + ')';
+        if (r.ledger_linked) msg += ' · linked to the charge';
+        else if (r.ledger_error) msg += ' · not linked to the charge (' + r.ledger_error + ')';
         toast(msg);
         if (r.email_error || r.receipt_error) alert(msg);
         var id = r.item.id;
@@ -11020,12 +11049,33 @@
       if (e.invoice_number) sub.push('billed back on ' + e.invoice_number + (e.invoice_status === 'paid' ? ', paid' : e.invoice_status === 'void' ? ', voided' : ', still open'));
       if (e.source === 'manual') sub.push('typed in');
       left.appendChild(el('div', 'row-sub', sub.join(' · ')));
-      if (e.note) left.appendChild(el('div', 'row-sub', e.note));
+      if (e.inventory_id) {
+        var itemLink = el('button', 'lg-item');
+        itemLink.type = 'button';
+        itemLink.appendChild(el('i', 'fa-solid fa-box'));
+        itemLink.appendChild(document.createTextNode(' Bought ' + e.inventory_tag + ' · ' + e.inventory_name));
+        itemLink.addEventListener('click', function () { routeHash('#i=' + e.inventory_id, true); });
+        left.appendChild(itemLink);
+      }
+      if (e.note) left.appendChild(el('div', 'row-sub lg-note', e.note));
       d.appendChild(left);
 
       var right = el('div', 'cust-badges');
       right.appendChild(el('b', 'pp-amt ' + (e.amount_cents < 0 ? 'out' : 'in'), money(e.amount_cents)));
       if (e.classification) right.appendChild(badge(LG_CLASS_LABEL[e.classification] || e.classification, LG_CLASS_COLOR[e.classification] || '#8aa48d'));
+      // A business expense says whether it is already in Inventory: "See in inventory"
+      // once linked (so it is visibly accounted for), "Add to inventory" until then.
+      // Linking to an item that already exists is in the note panel.
+      var canItem = e.classification === 'expense' && e.amount_cents < 0;
+      if (canItem) {
+        if (e.inventory_id) {
+          right.appendChild(licAction('See in inventory', 'lg-inv-on', function () { routeHash('#i=' + e.inventory_id, true); }));
+        } else {
+          right.appendChild(licAction('Add to inventory', null, function () { lgNewItem(e); }));
+        }
+      }
+      right.appendChild(licAction(canItem ? (e.inventory_id ? (e.note ? 'Edit note…' : 'Add note…') : 'Note or link…')
+        : (e.note ? 'Edit note…' : 'Add note…'), null, function () { lgDetails(e); }));
 
       if (!e.classification) {
         if (e.amount_cents < 0) {
@@ -11044,18 +11094,6 @@
       } else {
         if (e.classification === 'job_parts') {
           right.appendChild(licAction(e.invoice_id ? 'Change invoice…' : 'Link to an invoice…', null, function () { lgLinkParts(e); }));
-        }
-        if (e.classification === 'expense' && e.amount_cents < 0) {
-          right.appendChild(licAction('Add to inventory', null, function () {
-            showView('inventory');
-            resetInvtForm();
-            invtF.name.value = e.description;
-            invtF.vendor.value = e.vendor || '';
-            invtF.price.value = (Math.abs(e.amount_cents) / 100).toFixed(2);
-            invtF.purchase.value = e.day;
-            invtF.notes.value = e.account_label + (e.external_ref ? ' · ' + e.external_ref : '');
-            document.getElementById('invtFormBox').scrollIntoView({ behavior: 'smooth', block: 'start' });
-          }));
         }
         // A deposit from your own bank files itself as a transfer, which is right for
         // the P&L either way but says nothing about whose money it was.
@@ -11080,6 +11118,110 @@
       d.appendChild(ruleBox);
       d._ruleHost = ruleBox;
       return d;
+    }
+
+    // Opens the inventory form filled from a charge. The new item links back to the
+    // charge when it is saved, so Finance counts the money once.
+    function lgNewItem(e) {
+      showView('inventory');
+      resetInvtForm();
+      invtFromLedger = e.id;
+      invtF.name.value = e.description;
+      invtF.vendor.value = e.vendor || '';
+      invtF.price.value = (Math.abs(e.amount_cents) / 100).toFixed(2);
+      invtF.purchase.value = e.day;
+      invtF.notes.value = (e.note ? e.note + '\n' : '') + e.account_label + (e.external_ref ? ' · ' + e.external_ref : '');
+      document.getElementById('invtFormBox').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+
+    function lgDetails(e) {
+      var row = finBody.querySelector('.lg-row[data-lg="' + e.id + '"]');
+      if (!row || !row._ruleHost) return;
+      var host = row._ruleHost;
+      host.textContent = '';
+      var box = el('div', 'rule-ed lg-det');
+      var canItem = e.classification === 'expense' && e.amount_cents < 0;
+
+      var nf = el('div', 'lg-det-f');
+      var nl = el('label', null, 'Note');
+      nl.setAttribute('for', 'lgNote' + e.id);
+      var note = document.createElement('textarea');
+      note.id = 'lgNote' + e.id;
+      note.maxLength = 500;
+      note.placeholder = 'What it was for, who approved it, a receipt number…';
+      note.value = e.note || '';
+      nf.appendChild(nl);
+      nf.appendChild(note);
+      box.appendChild(nf);
+
+      var pick = null;
+      if (canItem) {
+        var itf = el('div', 'lg-det-f');
+        var il = el('label', null, 'TES equipment or subscription it paid for');
+        il.setAttribute('for', 'lgItem' + e.id);
+        itf.appendChild(il);
+        var line = el('div', 'lg-det-pick');
+        pick = document.createElement('select');
+        pick.id = 'lgItem' + e.id;
+        var none = el('option', null, 'Not linked to an item');
+        none.value = '';
+        pick.appendChild(none);
+        if (e.inventory_id) {
+          var cur = el('option', null, e.inventory_tag + ' · ' + e.inventory_name);
+          cur.value = String(e.inventory_id);
+          pick.appendChild(cur);
+          pick.value = String(e.inventory_id);
+        }
+        line.appendChild(pick);
+        var add = el('button', null, 'New item from this charge');
+        add.type = 'button';
+        add.addEventListener('click', function () { lgNewItem(e); });
+        line.appendChild(add);
+        itf.appendChild(line);
+        itf.appendChild(el('p', 'row-sub', 'Once linked, Finance counts this charge and not the item\u2019s own price, so the money is not counted twice. Only items TES paid for are listed.'));
+        box.appendChild(itf);
+        // TES-paid items only: a customer's own gear is never a TES expense.
+        api('/admin/inventory?view=all').then(function (r) {
+          if (!r || !r.ok || !pick.isConnected) return;
+          (r.items || []).filter(function (i) { return i.paid_by === 'tes'; })
+            .sort(function (a, b) { return String(b.purchase_date || '').localeCompare(String(a.purchase_date || '')); })
+            .forEach(function (i) {
+              if (i.id === e.inventory_id) return;
+              var o = el('option', null, i.tag + ' · ' + i.name + (i.kind === 'subscription' ? ' (subscription)' : '') + (i.status !== 'active' ? ' · ' + i.status : ''));
+              o.value = String(i.id);
+              pick.appendChild(o);
+            });
+        });
+      }
+
+      var bar = el('div', 'inv-actions');
+      var save = el('button', 'prim', 'Save');
+      save.type = 'button';
+      var cancel = el('button', null, 'Cancel');
+      cancel.type = 'button';
+      bar.appendChild(save);
+      bar.appendChild(cancel);
+      box.appendChild(bar);
+      host.appendChild(box);
+      note.focus();
+
+      cancel.addEventListener('click', function () { host.textContent = ''; });
+      save.addEventListener('click', function () {
+        var body = {};
+        if (note.value.trim() !== (e.note || '')) body.note = note.value;
+        if (pick) {
+          var want = pick.value ? Number(pick.value) : null;
+          if (want !== (e.inventory_id || null)) body.inventory_id = want;
+        }
+        if (!Object.keys(body).length) { host.textContent = ''; return; }
+        save.disabled = true;
+        api('/admin/ledger/' + e.id + '/details', { method: 'PATCH', body: body }).then(function (r) {
+          save.disabled = false;
+          if (!r || !r.ok) return alert((r && r.message) || 'Could not save (' + ((r && r.error) || 'unknown') + ').');
+          toast('Saved');
+          lgRefresh();
+        });
+      });
     }
 
     function lgAlways(e) {
