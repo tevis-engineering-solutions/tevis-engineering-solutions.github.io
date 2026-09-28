@@ -6664,7 +6664,7 @@
       box.setAttribute('role', 'status');
       var top = el('div', 'aiw-top');
       var orb = el('div', 'aiw-orb');
-      orb.appendChild(el('i', 'fa-solid fa-wand-magic-sparkles'));
+      orb.appendChild(el('i', 'fa-solid ' + (opts.icon || 'fa-wand-magic-sparkles')));
       orb.firstChild.setAttribute('aria-hidden', 'true');
       var txt = el('div', 'aiw-txt');
       txt.appendChild(el('div', 'aiw-head', opts.title || 'Claude is working'));
@@ -16595,9 +16595,21 @@
         var sl = el('label', 'mk-check'); sl.htmlFor = speed.id; sl.appendChild(speed); sl.appendChild(document.createTextNode(' Include Google speed (adds about a minute)'));
         var run = el('button', 'prim', mkRunning['audit' + l.id] ? 'Scanning…' : (d.audits.length ? 'Run it again' : 'Run the report card'));
         run.type = 'button'; run.disabled = !!mkRunning['audit' + l.id];
+        var scanWait = el('div');
+        // Not a Claude call, but the same wait: a fetch of their site, then the checks,
+        // and with Google speed, up to another minute.
+        var showScan = function () {
+          var st = mkRunning['audit' + l.id];
+          var steps = ['Loading their home page', 'Following the contact and about pages', 'Running the checks']
+            .concat(st.speed ? ['Asking Google for speed scores'] : [], ['Grading the site', 'Finishing up']);
+          scanWait.textContent = '';
+          scanWait.appendChild(aiWorking({ title: 'Running the report card', icon: 'fa-magnifying-glass-chart', startedAt: st.at, steps: steps, every: st.speed ? 12 : 3,
+            foot: st.speed ? 'About a minute with Google speed. You can leave this lead; the card appears here when it is done.' : 'Usually a few seconds.' }));
+        };
         run.addEventListener('click', function () {
-          mkRunning['audit' + l.id] = true;
+          mkRunning['audit' + l.id] = { at: Date.now(), speed: speed.checked };
           run.disabled = true; run.textContent = 'Scanning…';
+          showScan();
           api('/admin/leads/' + l.id + '/audit', { method: 'POST', body: { speed: speed.checked } }).then(function (r) {
             delete mkRunning['audit' + l.id];
             if (!r.ok) { toast(mkErr(r)); if (mkId === l.id) mkOpen(l.id, true); return; }
@@ -16608,6 +16620,8 @@
         row1.appendChild(run);
         row1.appendChild(sl);
         sec.appendChild(row1);
+        sec.appendChild(scanWait);
+        if (mkRunning['audit' + l.id]) showScan();
       } else {
         sec.appendChild(el('div', 'row-sub', 'No website on file. Add one under Overview to scan it.'));
       }
