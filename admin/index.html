@@ -1559,6 +1559,55 @@
     .ct-prompt { border:1px solid rgba(200,152,48,0.45); background:rgba(200,152,48,0.05); border-radius:10px; padding:0.65rem 0.75rem; margin:0.4rem 0 0.7rem; }
     .ct-prompt p { font-size:0.8rem; margin:0 0 0.4rem; }
     .ct-prompt select { margin-bottom:0.4rem; min-height:36px; padding:0.35rem 0.5rem; border-radius:8px; border:1px solid var(--line); background:var(--bg); color:var(--text); }
+    /* Bid lines: a card per line, totals above. */
+    .ln-sum { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:0.5rem; margin:0.6rem 0 0.75rem; }
+    .ln-st { padding:0.55rem 0.7rem; border:1px solid var(--line); border-radius:10px; background:var(--bg); display:flex; flex-direction:column; min-width:0; }
+    .ln-st .ln-v { font-family:"Montserrat",sans-serif; font-weight:700; font-size:1rem; font-variant-numeric:tabular-nums; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+    .ln-st.bad .ln-v { color:#ef4444; }
+    .ln-list { display:flex; flex-direction:column; gap:0.6rem; color-scheme:dark; margin-bottom:0.3rem; }
+    .ln-card { border:1px solid var(--line); border-left:3px solid #4aac65; border-radius:10px; background:var(--bg); padding:0.7rem 0.8rem; display:flex; flex-direction:column; gap:0.6rem; }
+    .ln-card.off { border-left-color:rgba(138,164,141,0.35); }
+    .ln-card.off .ln-price, .ln-card.off .ln-src, .ln-card.off .ln-head .ln-f { opacity:0.45; }
+    .ln-card.be { border-left-color:#ef4444; }
+    .ln-card.be .ln-res .m .ln-v { color:#ef4444; }
+    .ln-l { display:block; font-family:"Montserrat",sans-serif; font-size:0.58rem; font-weight:700; text-transform:uppercase; letter-spacing:0.05em; color:var(--muted); margin-bottom:0.2rem; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+    .ln-f { display:flex; flex-direction:column; min-width:0; }
+    .ln-card input:not([type="checkbox"]), .ln-card select { width:100%; min-width:0; padding:0.4rem 0.5rem; border-radius:7px; border:1px solid var(--line); background:var(--card); color:var(--text); font-family:inherit; font-size:0.82rem; min-height:36px; }
+    .ln-card input:disabled { color:var(--muted); background:transparent; border-style:dashed; }
+    .ln-card input.num { text-align:right; font-variant-numeric:tabular-nums; }
+    #viewContracting .ln-card select { border-radius:7px; font-size:0.82rem; min-height:36px; }
+    .ln-head { display:grid; grid-template-columns:auto 3.6rem minmax(0,1fr) 9rem 5rem 4.5rem 36px; gap:0.5rem; align-items:end; }
+    .ln-rm { width:36px; height:36px; border-radius:8px; border:1px solid var(--line); background:transparent; color:var(--muted); font-size:1.1rem; line-height:1; cursor:pointer; }
+    .ln-rm:hover { color:#ef4444; border-color:#ef4444; }
+    .ln-tog { display:inline-flex; align-items:center; gap:0.4rem; min-height:36px; padding:0 0.6rem; border:1px solid var(--line); border-radius:8px; font-size:0.78rem; color:var(--text); cursor:pointer; white-space:nowrap; user-select:none; }
+    .ln-tog input { width:16px; height:16px; margin:0; accent-color:#c89830; }
+    .ln-tog:has(input:checked) { border-color:rgba(200,152,48,0.6); background:rgba(200,152,48,0.08); }
+    .ln-price { display:grid; grid-template-columns:minmax(0,1fr) 13rem; gap:0.7rem; align-items:end; padding-top:0.6rem; border-top:1px dashed rgba(138,164,141,0.22); }
+    .ln-grid { display:grid; grid-template-columns:1fr 0.8fr 1.4fr 1fr 1fr 1fr; gap:0.5rem; }
+    .ln-grid > * { min-width:0; }
+    .ln-unit { display:flex; gap:0.3rem; }
+    .ln-unit .ln-tog { padding:0 0.45rem; }
+    .ln-res { display:flex; flex-direction:column; gap:0.25rem; padding:0.4rem 0.65rem; border-radius:8px; background:rgba(74,172,101,0.07); min-height:36px; }
+    .ln-res > div { display:flex; justify-content:space-between; align-items:baseline; gap:0.5rem; }
+    .ln-res .ln-l { margin:0; }
+    .ln-res .ln-v { font-variant-numeric:tabular-nums; font-weight:700; font-size:0.86rem; white-space:nowrap; }
+    .ln-src { display:grid; grid-template-columns:9rem minmax(0,1fr) 8rem auto; gap:0.5rem; align-items:end; }
+    .ln-togs { display:flex; gap:0.4rem; }
+    @media (max-width:1100px) {
+      .ln-grid { grid-template-columns:repeat(3,minmax(0,1fr)); }
+    }
+    @media (max-width:760px) {
+      .ln-sum { grid-template-columns:repeat(2,minmax(0,1fr)); }
+      .ln-head { grid-template-columns:auto 3.4rem minmax(0,1fr) minmax(0,1fr) 36px; }
+      .ln-st .ln-v { white-space:normal; font-size:0.94rem; }
+      .ln-head .ln-desc, .ln-head .ln-sku { grid-column:1 / -1; }
+      .ln-head .ln-desc { order:-2; }
+      .ln-head .ln-sku { order:-1; }
+      .ln-price { grid-template-columns:1fr; }
+      .ln-grid { grid-template-columns:repeat(2,minmax(0,1fr)); }
+      .ln-src { grid-template-columns:repeat(2,minmax(0,1fr)); }
+      .ln-src .ln-vendor, .ln-togs { grid-column:1 / -1; }
+    }
     .ct-grid { overflow-x:auto; border:1px solid var(--line); border-radius:10px; }
     .ct-lines { border-collapse:collapse; font-size:0.78rem; min-width:1180px; width:100%; }
     .ct-lines th { font-family:"Montserrat",sans-serif; font-size:0.58rem; text-transform:uppercase; letter-spacing:0.05em; color:var(--muted); text-align:left; padding:0.4rem 0.35rem; border-bottom:1px solid var(--line); white-space:nowrap; background:var(--bg); }
@@ -14478,55 +14527,80 @@
       var partial = ctDetail.bid.partial_ok;
       ctTrack(pane, 'Lines');
       pane.appendChild(el('p', 'ct-note', 'Landed cost is per unit, before freight. Leave the unit price to follow the markup, or tick Fix to type it. The freight line is what the bid form charges; freight cost is what shipping costs you. A line turns red when its margin does not cover its freight and handling.' + (partial ? ' Partial bids are allowed: untick Bid on a line to pass on it.' : '')));
-      var wrap = el('div', 'ct-grid');
-      var t = el('table', 'ct-lines');
-      var thead = el('thead');
-      var hr = el('tr');
-      ['Bid', '#', 'Description', 'SKU', 'Qty', 'UOM', 'Landed $', 'Markup %', 'Fix', 'Unit $', 'Ref $', 'Freight line $', 'Freight cost $', 'Lane', 'Vendor', 'Stock', 'Elec.', 'Listing', 'Extended', 'Margin', ''].forEach(function (h) { hr.appendChild(el('th', null, h)); });
-      thead.appendChild(hr);
-      t.appendChild(thead);
-      var tbody = el('tbody');
-      t.appendChild(tbody);
-      var totRow = el('tr', 'tot');
+      // One card per line: what it is, then the pricing with its result, then sourcing.
+      // Totals sit above the cards so the number that matters is never off-screen.
+      var sum = el('div', 'ln-sum');
+      var list = el('div', 'ln-list');
       var rows = [];
+      var fld = function (host, label, node, cls) {
+        var d = el('label', 'ln-f' + (cls ? ' ' + cls : ''));
+        d.appendChild(el('span', 'ln-l', label));
+        d.appendChild(node);
+        host.appendChild(d);
+        return node;
+      };
+      var tog = function (host, label, checked, aria) {
+        var t = el('label', 'ln-tog');
+        var c = ctInput('checkbox'); c.checked = !!checked; if (aria) c.setAttribute('aria-label', aria);
+        t.appendChild(c); t.appendChild(el('span', null, label));
+        host.appendChild(t);
+        return c;
+      };
       function addRow(l) {
         l = l || {};
-        var tr = el('tr');
-        var cell = function (node, cls) { var td = el('td', cls || null); td.appendChild(node); tr.appendChild(td); return node; };
         var r = {};
-        r.bid = cell(ctInput('checkbox')); r.bid.checked = l.bid !== false; r.bid.setAttribute('aria-label', 'Bid this line');
-        r.line_no = cell(ctInput('number', l.line_no || rows.length + 1, { min: 1, style: 'width:48px' }));
-        r.description = cell(ctInput('text', l.description || '', { maxlength: 400, style: 'min-width:220px' }));
-        r.sku = cell(ctInput('text', l.sku || '', { maxlength: 120, style: 'width:90px' }));
-        r.qty = cell(ctInput('text', l.qty == null ? 1 : l.qty, { inputmode: 'decimal', style: 'width:64px' }));
-        r.qty.className = 'num';
-        r.uom = cell(ctInput('text', l.uom || '', { maxlength: 20, style: 'width:52px' }));
-        r.landed = cell(ctInput('text', ctDollars(l.landed_cost_cents), { inputmode: 'decimal', style: 'width:80px' })); r.landed.className = 'num';
-        r.markup = cell(ctInput('text', l.markup_bp == null ? '' : l.markup_bp / 100, { inputmode: 'decimal', style: 'width:64px' })); r.markup.className = 'num';
-        r.fix = cell(ctInput('checkbox')); r.fix.checked = !!l.price_override; r.fix.setAttribute('aria-label', 'Type the unit price');
-        r.unit = cell(ctInput('text', ctDollars(l.unit_price_cents), { inputmode: 'decimal', style: 'width:80px' })); r.unit.className = 'num';
-        r.ref = cell(ctInput('text', ctDollars(l.reference_cents), { inputmode: 'decimal', style: 'width:72px' })); r.ref.className = 'num';
-        r.freight = cell(ctInput('text', ctDollars(l.freight_cents), { inputmode: 'decimal', style: 'width:72px' })); r.freight.className = 'num';
-        r.fcost = cell(ctInput('text', ctDollars(l.freight_cost_cents), { inputmode: 'decimal', style: 'width:72px' })); r.fcost.className = 'num';
-        r.lane = cell(ctSelect([['', '—'], ['retail', 'Retail'], ['distributor', 'Distributor'], ['direct', 'Direct']], l.source_lane || ''));
-        r.vendor = cell(ctInput('text', l.vendor || '', { maxlength: 120, style: 'width:100px' }));
-        r.stock = cell(ctInput('checkbox')); r.stock.checked = !!l.stock_confirmed; r.stock.setAttribute('aria-label', 'Stock confirmed at quantity');
-        r.elec = cell(ctInput('checkbox')); r.elec.checked = !!l.electrical; r.elec.setAttribute('aria-label', 'Electrical');
-        r.listing = cell(ctSelect([['', '—'], ['ul', 'UL'], ['etl', 'ETL'], ['none', 'None'], ['unknown', 'Unknown']], l.listing || ''));
-        r.ext = el('td', 'num'); tr.appendChild(r.ext);
-        r.mar = el('td', 'num m'); tr.appendChild(r.mar);
-        var rm = el('button', 'ct-btn sm', '×'); rm.type = 'button'; rm.setAttribute('aria-label', 'Remove line');
-        rm.addEventListener('click', function () { rows.splice(rows.indexOf(r), 1); tr.remove(); recalc(); ctMarkDirty('Lines'); });
-        var tdr = el('td'); tdr.appendChild(rm); tr.appendChild(tdr);
-        r.tr = tr;
-        tr.addEventListener('input', recalc);
-        tr.addEventListener('change', recalc);
+        var card = el('div', 'ln-card');
+        var head = el('div', 'ln-head');
+        r.bid = tog(head, 'Bid', l.bid !== false, 'Bid this line');
+        r.line_no = fld(head, '#', ctInput('number', l.line_no || rows.length + 1, { min: 1 }), 'ln-no');
+        r.description = fld(head, 'Description', ctInput('text', l.description || '', { maxlength: 400, placeholder: 'What the agency is buying' }), 'ln-desc');
+        r.sku = fld(head, 'SKU / part', ctInput('text', l.sku || '', { maxlength: 120 }), 'ln-sku');
+        r.qty = fld(head, 'Qty', ctInput('text', l.qty == null ? 1 : l.qty, { inputmode: 'decimal' }), 'ln-qty'); r.qty.className = 'num';
+        r.uom = fld(head, 'UOM', ctInput('text', l.uom || '', { maxlength: 20, placeholder: 'ea' }), 'ln-uom');
+        var rm = el('button', 'ln-rm', '\u00d7'); rm.type = 'button'; rm.setAttribute('aria-label', 'Remove line'); rm.title = 'Remove line';
+        rm.addEventListener('click', function () { rows.splice(rows.indexOf(r), 1); card.remove(); recalc(); ctMarkDirty('Lines'); });
+        head.appendChild(rm);
+        card.appendChild(head);
+
+        var price = el('div', 'ln-price');
+        var pf = el('div', 'ln-grid');
+        r.landed = fld(pf, 'Landed $ / unit', ctInput('text', ctDollars(l.landed_cost_cents), { inputmode: 'decimal' })); r.landed.className = 'num';
+        r.markup = fld(pf, 'Markup %', ctInput('text', l.markup_bp == null ? '' : l.markup_bp / 100, { inputmode: 'decimal' })); r.markup.className = 'num';
+        var uw = el('div', 'ln-unit');
+        r.unit = ctInput('text', ctDollars(l.unit_price_cents), { inputmode: 'decimal', 'aria-label': 'Unit price' }); r.unit.className = 'num';
+        uw.appendChild(r.unit);
+        r.fix = tog(uw, 'Fix', l.price_override, 'Type the unit price');
+        var uf = el('div', 'ln-f'); uf.appendChild(el('span', 'ln-l', 'Unit price $')); uf.appendChild(uw); pf.appendChild(uf);
+        r.ref = fld(pf, 'Reference $', ctInput('text', ctDollars(l.reference_cents), { inputmode: 'decimal' })); r.ref.className = 'num';
+        r.freight = fld(pf, 'Freight line $', ctInput('text', ctDollars(l.freight_cents), { inputmode: 'decimal' })); r.freight.className = 'num';
+        r.fcost = fld(pf, 'Freight cost $', ctInput('text', ctDollars(l.freight_cost_cents), { inputmode: 'decimal' })); r.fcost.className = 'num';
+        price.appendChild(pf);
+        var res = el('div', 'ln-res');
+        var e1 = el('div'); e1.appendChild(el('span', 'ln-l', 'Extended')); r.ext = el('span', 'ln-v'); e1.appendChild(r.ext);
+        var e2 = el('div', 'm'); e2.appendChild(el('span', 'ln-l', 'Margin')); r.mar = el('span', 'ln-v'); e2.appendChild(r.mar);
+        res.appendChild(e1); res.appendChild(e2);
+        price.appendChild(res);
+        card.appendChild(price);
+
+        var src = el('div', 'ln-src');
+        r.lane = fld(src, 'Lane', ctSelect([['', '\u2014'], ['retail', 'Retail'], ['distributor', 'Distributor'], ['direct', 'Direct']], l.source_lane || ''));
+        r.vendor = fld(src, 'Vendor', ctInput('text', l.vendor || '', { maxlength: 120 }), 'ln-vendor');
+        r.listing = fld(src, 'Listing', ctSelect([['', '\u2014'], ['ul', 'UL'], ['etl', 'ETL'], ['none', 'None'], ['unknown', 'Unknown']], l.listing || ''));
+        var tg = el('div', 'ln-togs');
+        r.stock = tog(tg, 'Stock confirmed', l.stock_confirmed, 'Stock confirmed at quantity');
+        r.elec = tog(tg, 'Electrical', l.electrical, 'Electrical');
+        src.appendChild(tg);
+        card.appendChild(src);
+
+        r.tr = card;
+        card.addEventListener('input', recalc);
+        card.addEventListener('change', recalc);
         rows.push(r);
-        tbody.appendChild(tr);
+        list.appendChild(card);
         return r;
       }
       function recalc() {
-        var tot = { bid: 0, landed: 0, net: 0 };
+        var tot = { bid: 0, landed: 0, net: 0, n: 0 };
         rows.forEach(function (r) {
           var qty = Number(r.qty.value) || 0, landed = ctCents(r.landed.value) || 0;
           var mk = r.markup.value === '' ? null : Number(r.markup.value);
@@ -14540,22 +14614,22 @@
           var on = r.bid.checked;
           r.tr.classList.toggle('off', !on);
           r.tr.classList.toggle('be', on && (net <= 0 || (unrec > 0 && gross <= unrec)));
-          if (on) { tot.bid += ext + fl; tot.landed += Math.round(landed * qty) + fc; tot.net += net; }
+          if (on) { tot.bid += ext + fl; tot.landed += Math.round(landed * qty) + fc; tot.net += net; tot.n++; }
         });
-        totRow.textContent = '';
-        var c = el('td', null, 'Totals'); c.colSpan = 18; totRow.appendChild(c);
-        totRow.appendChild(el('td', 'num', money(tot.bid)));
-        totRow.appendChild(el('td', 'num', money(tot.net) + (tot.bid ? ' (' + Math.round((tot.bid - tot.landed) / tot.bid * 1000) / 10 + '%)' : '')));
-        totRow.appendChild(el('td'));
+        sum.textContent = '';
+        var tile = function (label, val, cls) { var d = el('div', 'ln-st' + (cls ? ' ' + cls : '')); d.appendChild(el('span', 'ln-l', label)); d.appendChild(el('span', 'ln-v', val)); sum.appendChild(d); };
+        tile('Lines bid', tot.n + ' of ' + rows.length);
+        tile('Bid total', money(tot.bid));
+        tile('Landed + freight', money(tot.landed));
+        tile('Margin', money(tot.net) + (tot.bid ? ' (' + Math.round((tot.bid - tot.landed) / tot.bid * 1000) / 10 + '%)' : ''), tot.net <= 0 && tot.n ? 'bad' : '');
       }
       ctDetail.lines.forEach(addRow);
       if (!ctDetail.lines.length) addRow();
-      var tfoot = el('tfoot'); tfoot.appendChild(totRow); t.appendChild(tfoot);
-      wrap.appendChild(t);
-      pane.appendChild(wrap);
+      pane.appendChild(sum);
+      pane.appendChild(list);
       recalc();
       var rr = el('div', 'reply-row');
-      var add = el('button', null, '+ Line'); add.type = 'button';
+      var add = el('button', null, '+ Add a line'); add.type = 'button';
       add.addEventListener('click', function () { var r = addRow(); recalc(); r.description.focus(); ctMarkDirty('Lines'); });
       var save = el('button', 'prim', 'Save lines'); save.type = 'button';
       save.setAttribute('data-save', 'Lines');
