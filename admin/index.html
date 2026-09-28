@@ -6704,6 +6704,13 @@
       'Checking the draft against the presentation rules',
       'Finishing up',
     ];
+    var AIW_RULES_STEPS = [
+      'Comparing each draft with what you sent',
+      'Checking the rules already on file',
+      'Looking for changes you keep making',
+      'Writing proposed rules',
+      'Finishing up',
+    ];
     var AIW_LEAD_STEPS = [
       'Reading what we know about them and your notes',
       'Applying your confirmed style rules',
@@ -16865,10 +16872,18 @@
         rv.appendChild(el('div', 'row-sub', r.pending_reviews
           ? r.pending_reviews + ' sent email' + (r.pending_reviews === 1 ? '' : 's') + ' not reviewed yet. Emails sent exactly as drafted are counted without asking Claude.'
           : 'Every sent email has been reviewed.'));
+        var rvWait = el('div');
+        var showReview = function () {
+          rvWait.textContent = '';
+          rvWait.appendChild(aiWorking({ title: 'Reviewing your sent emails', startedAt: mkReviewing, steps: AIW_RULES_STEPS, every: 10,
+            foot: 'Usually about a minute. Nothing is confirmed until you accept it.' }));
+        };
+        if (mkReviewing) showReview();
         var go = el('button', 'prim', mkReviewing ? 'Reviewing… (about a minute)' : 'Review new sends');
         go.type = 'button'; go.disabled = mkReviewing || !r.pending_reviews;
         go.addEventListener('click', function () {
-          mkReviewing = true; go.disabled = true; go.textContent = 'Reviewing… (about a minute)';
+          mkReviewing = Date.now(); go.disabled = true; go.textContent = 'Reviewing… (about a minute)';
+          showReview();
           api('/admin/leads/rules/review', { method: 'POST' }).then(function (x) {
             mkReviewing = false;
             if (!x.ok) { toast(x.message || mkErr(x)); mkRulesLoad(); return; }
@@ -16877,6 +16892,7 @@
           });
         });
         var rrow = el('div', 'reply-row'); rrow.appendChild(go); rv.appendChild(rrow);
+        rv.appendChild(rvWait);
         var lr = r.last_review;
         if (lr && lr.at) {
           var lb = el('details', 'mk-audit');
