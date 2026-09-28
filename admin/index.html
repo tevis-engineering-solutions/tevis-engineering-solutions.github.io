@@ -389,26 +389,110 @@
     .ced .fixed { color:var(--muted); font-size:0.75rem; margin:0.1rem 0 0; }
     .ced .reply-row { margin-top:0.7rem; }
     /* The line items on an invoice: what was sold, and what share of it is ours. */
-    .li-wrap { margin-top:0.8rem; }
-    .li-head { display:flex; align-items:baseline; justify-content:space-between; gap:0.6rem; flex-wrap:wrap; }
-    .li-row { display:grid; grid-template-columns:96px minmax(0,1fr) 58px 48px 84px 84px; gap:0.4rem;
-      align-items:center; padding:0.35rem 0; border-bottom:1px solid rgba(44,66,50,0.5); }
-    @media (max-width:860px) { .li-row { grid-template-columns:96px minmax(0,1fr) 84px; } .li-row .narrow { display:none; } }
-    .li-row select, .li-row input { width:100%; padding:0.35rem 0.4rem; border-radius:7px; border:1px solid var(--line);
-      background:var(--bg); color:var(--text); font:inherit; font-size:0.78rem; min-height:34px; }
+    .li-wrap { margin-top:1.1rem; border:1px solid var(--line); border-radius:12px; background:rgba(13,23,16,0.45); padding:0.85rem 0.9rem 0.8rem; }
+    .li-head { display:flex; align-items:center; justify-content:space-between; gap:0.6rem; flex-wrap:wrap; margin-bottom:0.55rem; }
+    .li-head h3 { font-family:"Montserrat",sans-serif; font-size:0.8rem; text-transform:uppercase; letter-spacing:0.06em; color:var(--muted); margin:0; }
+    .li-add { display:inline-flex; align-items:center; justify-content:center; min-height:34px; padding:0 0.85rem; border-radius:8px;
+      border:1px dashed rgba(200,152,48,0.55); background:transparent; color:var(--gold); cursor:pointer;
+      font-family:"Montserrat",sans-serif; font-size:0.68rem; font-weight:700; text-transform:uppercase; letter-spacing:0.05em; line-height:1.1; }
+    .li-add:hover { background:rgba(200,152,48,0.08); border-style:solid; }
+    .li-cols, .li-row { display:grid; grid-template-columns:118px minmax(0,1fr) 64px 60px 100px 108px 34px; gap:0.45rem; }
+    .li-cols { padding:0 0.6rem 0.35rem; font-family:"Montserrat",sans-serif; font-size:0.6rem; font-weight:700;
+      text-transform:uppercase; letter-spacing:0.06em; color:var(--muted); }
+    .li-cols .n { text-align:right; }
+    .li-cols[hidden] { display:none; }
+    .li-body { display:flex; flex-direction:column; gap:0.45rem; }
+    .li-row { align-items:center; padding:0.55rem 0.6rem; border:1px solid rgba(44,66,50,0.8); border-radius:10px; background:var(--card); }
+    .li-row:focus-within { border-color:rgba(74,172,101,0.55); }
+    .li-row select, .li-row input[type=text] { width:100%; min-width:0; padding:0 0.55rem; height:36px; min-height:36px; border-radius:7px;
+      border:1px solid var(--line); background:var(--bg); color:var(--text); font:inherit; font-size:0.8rem; box-sizing:border-box; }
+    .li-row select { font-family:"Montserrat",sans-serif; font-size:0.7rem; font-weight:600; letter-spacing:0.03em; text-transform:uppercase; }
+    .li-row select:focus, .li-row input[type=text]:focus { outline:none; border-color:var(--green); }
     .li-row input.num { text-align:right; font-variant-numeric:tabular-nums; }
-    .li-row .rm { min-height:34px; padding:0 0.5rem; border-radius:7px; border:1px solid var(--line);
-      background:var(--bg); color:var(--muted); cursor:pointer; font-size:0.9rem; }
-    .li-row .rm:hover { color:#e08a68; border-color:#e08a68; }
-    .li-extra { grid-column:1 / -1; display:flex; gap:0.4rem; flex-wrap:wrap; padding-bottom:0.3rem; }
-    .li-extra input { max-width:180px; font-size:0.72rem; }
-    .li-extra label { font-size:0.68rem; color:var(--muted); display:inline-flex; align-items:center; gap:0.3rem; }
-    .li-sum { display:flex; flex-wrap:wrap; gap:0.5rem 1.1rem; margin-top:0.6rem; font-size:0.78rem; }
-    .li-sum b { font-family:"Montserrat",sans-serif; }
+    .li-row .rm { width:34px; height:34px; min-height:34px; padding:0; border-radius:7px; border:1px solid transparent;
+      background:transparent; color:var(--muted); cursor:pointer; font-size:1.05rem; line-height:1; display:inline-flex; align-items:center; justify-content:center; }
+    .li-row .rm:hover { color:#e08a68; border-color:rgba(224,138,104,0.5); background:rgba(224,138,104,0.08); }
+    .li-extra { grid-column:2 / -1; display:flex; gap:0.45rem; flex-wrap:wrap; align-items:center; }
+    .li-extra input[type=text] { flex:0 1 170px; width:auto; height:30px; min-height:30px; font-size:0.74rem; background:transparent; border-color:rgba(44,66,50,0.9); }
+    .li-atc { margin-left:auto; display:inline-flex; align-items:center; gap:0.4rem; height:30px; padding:0 0.7rem; border-radius:7px;
+      border:1px solid rgba(44,66,50,0.9); font-size:0.72rem; color:var(--muted); cursor:pointer; user-select:none; white-space:nowrap; }
+    .li-atc input { width:15px; height:15px; min-height:0; margin:0; accent-color:var(--gold); flex:0 0 auto; }
+    .li-atc:has(input:checked) { color:var(--gold); border-color:rgba(200,152,48,0.55); background:rgba(200,152,48,0.08); }
+    .li-sum { display:flex; flex-wrap:wrap; gap:0.5rem 1.6rem; margin-top:0.8rem; padding-top:0.7rem; border-top:1px solid var(--line); }
+    .li-fig { display:flex; flex-direction:column; gap:0.1rem; }
+    .li-fig small { font-family:"Montserrat",sans-serif; font-size:0.58rem; font-weight:700; text-transform:uppercase; letter-spacing:0.06em; color:var(--muted); }
+    .li-fig b { font-family:"Montserrat",sans-serif; font-size:0.92rem; font-variant-numeric:tabular-nums; }
     .li-sum .ok { color:#6dc882; }
     .li-sum .bad { color:#e08a68; }
-    .li-note { font-size:0.76rem; color:var(--muted); margin-top:0.4rem; line-height:1.5; }
+    .li-note { font-size:0.76rem; color:var(--muted); margin-top:0.5rem; line-height:1.5; }
     .li-note.warn { color:#e0c98a; }
+    @media (max-width:860px) {
+      .li-cols { display:none; }
+      .li-wrap { padding:0.75rem 0.6rem 0.7rem; }
+      .li-row { grid-template-columns:48px 46px minmax(0,1fr) minmax(0,1fr) 34px; gap:0.4rem; padding:0.5rem; }
+      .li-row .li-kind { grid-row:1; grid-column:1 / 3; }
+      .li-row .li-desc { grid-row:1; grid-column:3 / 5; }
+      .li-row .rm { grid-row:1; grid-column:5; }
+      .li-row input.num[aria-label="Line total"] { grid-column:4 / -1; }
+      .li-row select, .li-row input[type=text] { padding:0 0.4rem; }
+      .li-extra { grid-column:1 / -1; }
+      .li-extra input[type=text] { flex:1 1 110px; }
+      .li-atc { margin-left:0; }
+    }
+    /* A dialog that waits for an answer: duplicates, replacing a PDF, editing details. */
+    dialog.adlg { width:min(640px, calc(100vw - 32px)); max-height:calc(100vh - 48px); overflow:auto; box-sizing:border-box;
+      padding:1.3rem 1.4rem 1.1rem; border:1px solid rgba(74,172,101,0.35); border-radius:14px; background:#112018;
+      color:var(--text); box-shadow:0 24px 60px rgba(0,0,0,0.55); }
+    dialog.adlg::backdrop { background:rgba(4,10,6,0.72); backdrop-filter:blur(2px); }
+    .adlg h2 { font-family:"Montserrat",sans-serif; font-size:1.05rem; line-height:1.3; margin:0 0 0.6rem; color:#fff; }
+    .adlg p { margin:0 0 0.65rem; font-size:0.86rem; line-height:1.55; }
+    .adlg .adlg-meta { color:var(--muted); font-size:0.8rem; padding:0.55rem 0.75rem; border:1px solid var(--line); border-radius:8px; background:var(--bg); }
+    .adlg .adlg-meta b { color:var(--text); }
+    .adlg .adlg-warn { color:#e0c98a; }
+    .adlg .adlg-err { color:#e08a68; margin:0.6rem 0 0; }
+    .adlg-foot { display:flex; gap:0.5rem; justify-content:flex-end; flex-wrap:wrap; margin-top:1.1rem; padding-top:0.9rem; border-top:1px solid var(--line); }
+    .adlg-foot button { display:inline-flex; align-items:center; justify-content:center; min-height:40px; padding:0 1rem; border-radius:8px;
+      border:1px solid var(--line); background:var(--bg); color:var(--text); cursor:pointer; line-height:1.1;
+      font-family:"Montserrat",sans-serif; font-size:0.7rem; font-weight:700; text-transform:uppercase; letter-spacing:0.04em; }
+    .adlg-foot button:hover { border-color:var(--green); }
+    .adlg-foot button.prim { background:linear-gradient(135deg,var(--gold),#e0b840); color:#0d1710; border-color:transparent; }
+    .adlg-foot button:disabled { opacity:0.55; cursor:wait; }
+    .adlg-diff { width:100%; border-collapse:collapse; font-size:0.8rem; margin:0.2rem 0 0.4rem; }
+    .adlg-diff th { text-align:left; font-family:"Montserrat",sans-serif; font-size:0.6rem; font-weight:700; text-transform:uppercase;
+      letter-spacing:0.06em; color:var(--muted); padding:0 0.5rem 0.4rem; border-bottom:1px solid var(--line); }
+    .adlg-diff td { padding:0.55rem 0.5rem; border-bottom:1px solid rgba(44,66,50,0.6); vertical-align:top; overflow-wrap:break-word; }
+    .adlg-diff td.fld { white-space:nowrap; font-weight:600; }
+    .adlg-diff td.fld label { cursor:pointer; }
+    .adlg-diff td.old { width:30%; }
+    .adlg-diff td.ck { width:28px; padding-right:0; }
+    .adlg-diff td.ck input { width:16px; height:16px; margin:0.1rem 0 0; accent-color:var(--gold); cursor:pointer; }
+    .adlg-diff td.old { color:var(--muted); }
+    .adlg-diff td.new { color:var(--text); font-weight:600; }
+    .adlg-diff td .lock { display:block; font-weight:400; font-size:0.72rem; color:#e0c98a; margin-top:0.15rem; }
+    .adlg-diff tr.off td.new { color:var(--muted); font-weight:400; text-decoration:line-through; }
+    .adlg-form { display:grid; grid-template-columns:1fr 1fr; gap:0.8rem 0.9rem; }
+    .adlg-form .wide { grid-column:1 / -1; }
+    .adlg-form label { display:block; font-family:"Montserrat",sans-serif; font-size:0.62rem; font-weight:700; text-transform:uppercase;
+      letter-spacing:0.05em; color:var(--muted); margin-bottom:0.3rem; }
+    .adlg-form input { width:100%; box-sizing:border-box; height:40px; padding:0 0.65rem; border-radius:8px; border:1px solid var(--line);
+      background:var(--bg); color:var(--text); font:inherit; font-size:0.85rem; color-scheme:dark; }
+    .adlg-form input:focus { outline:none; border-color:var(--green); }
+    .adlg-form input:disabled { opacity:0.6; }
+    .adlg-form .hint { font-size:0.72rem; color:#e0c98a; margin-top:0.25rem; }
+    @media (max-width:520px) {
+      dialog.adlg { padding:1.1rem 1rem 0.9rem; }
+      .adlg-form { grid-template-columns:1fr; }
+      .adlg-foot button { flex:1 1 auto; }
+      .adlg-diff thead { display:none; }
+      .adlg-diff, .adlg-diff tbody, .adlg-diff tr, .adlg-diff td { display:block; width:auto; }
+      .adlg-diff tr { position:relative; padding:0.65rem 0 0.65rem 1.9rem; border-bottom:1px solid rgba(44,66,50,0.6); }
+      .adlg-diff td { padding:0.1rem 0; border:0; }
+      .adlg-diff td.ck { position:absolute; left:0; top:0.7rem; width:auto; }
+      .adlg-diff td.fld { margin-bottom:0.2rem; }
+      .adlg-diff td.old { width:auto; }
+      .adlg-diff td.old::before, .adlg-diff td.new::before { content:attr(data-l) ": "; font-size:0.6rem; font-weight:700;
+        text-transform:uppercase; letter-spacing:0.05em; color:var(--muted); font-family:"Montserrat",sans-serif; }
+    }
     /* On a card, read-only. */
     .li-view { margin-top:0.6rem; border-top:1px solid var(--line); padding-top:0.5rem; }
     .li-view table { width:100%; border-collapse:collapse; font-size:0.76rem; }
@@ -1805,8 +1889,8 @@
           <label for="invDesc">Description</label>
           <input type="text" id="invDesc" name="description" placeholder="Optional line-item summary">
         </div>
+        <div id="invItems"></div>
         <div class="inv-actions">
-          <div id="invItems"></div>
           <button type="submit" class="prim" id="invCreate">Create &amp; get pay link</button>
           <button type="button" id="invClear">Clear</button>
         </div>
@@ -3817,12 +3901,20 @@
 
       var head = el('div', 'li-head');
       head.appendChild(el('h3', null, 'Line items'));
-      var addBtn = el('button', null, '+ Add line');
+      var addBtn = el('button', 'li-add', '+ Add line');
       addBtn.type = 'button';
       head.appendChild(addBtn);
       wrap.appendChild(head);
 
-      var body = el('div');
+      // Column labels, shown only while there are lines to label.
+      var cols = el('div', 'li-cols');
+      ['Type', 'Description', 'Qty', 'Unit', 'Unit price', 'Total', ''].forEach(function (t, i) {
+        cols.appendChild(el('span', i >= 2 && i !== 3 && i < 6 ? 'n' : null, t));
+      });
+      cols.setAttribute('aria-hidden', 'true');
+      wrap.appendChild(cols);
+
+      var body = el('div', 'li-body');
       wrap.appendChild(body);
       var sum = el('div', 'li-sum');
       wrap.appendChild(sum);
@@ -3850,9 +3942,11 @@
 
       function redraw() {
         var t = totals();
+        cols.hidden = !rows.length;
         sum.textContent = '';
         var add = function (label, val, cls) {
-          var s = el('span', null, label + ' ');
+          var s = el('span', 'li-fig');
+          s.appendChild(el('small', null, label));
           s.appendChild(el('b', cls || null, val));
           sum.appendChild(s);
         };
@@ -3866,7 +3960,7 @@
         var target = opts.totalCents ? opts.totalCents() : null;
         note.className = 'li-note';
         if (!rows.length) {
-          note.textContent = 'No lines. The whole invoice will count as revenue, which is right for pure labour and wrong for anything with parts on it.';
+          note.textContent = 'No lines. The whole invoice will count as revenue, which is right for pure labor and wrong for anything with parts on it.';
         } else if (target == null || !target) {
           note.textContent = 'Tax and anything marked at cost are excluded from revenue.';
         } else if (Math.abs(t.total - target) <= 1) {
@@ -3901,6 +3995,7 @@
         var qty = document.createElement('input');
         qty.type = 'text';
         qty.className = 'num narrow';
+        qty.placeholder = 'qty';
         qty.setAttribute('aria-label', 'Quantity');
         qty.value = v.qty == null ? '1' : String(v.qty);
 
@@ -3925,7 +4020,14 @@
         line.setAttribute('aria-label', 'Line total');
         line.value = v.line_cents ? (v.line_cents / 100).toFixed(2) : '';
 
-        [kind, desc, qty, unit, rate, line].forEach(function (n) { row.appendChild(n); });
+        var rm = el('button', 'rm', '×');
+        rm.type = 'button';
+        rm.setAttribute('aria-label', 'Remove this line');
+        rm.title = 'Remove this line';
+
+        kind.className = 'li-kind';
+        desc.className = 'li-desc';
+        [kind, desc, qty, unit, rate, line, rm].forEach(function (n) { row.appendChild(n); });
 
         // SKU, serial and the at-cost flag live on a second line so the money row
         // stays readable. at_cost is the one that decides whether this is revenue.
@@ -3939,13 +4041,11 @@
         var atc = document.createElement('input');
         atc.type = 'checkbox';
         atc.checked = !!v.at_cost;
-        var atcLab = el('label');
+        var atcLab = el('label', 'li-atc');
+        atcLab.title = 'Parts billed back at what they cost are not counted as revenue';
         atcLab.appendChild(atc);
-        atcLab.appendChild(document.createTextNode('billed at cost (not revenue)'));
-        var rm = el('button', 'rm', '×');
-        rm.type = 'button';
-        rm.setAttribute('aria-label', 'Remove this line');
-        extra.appendChild(sku); extra.appendChild(serial); extra.appendChild(atcLab); extra.appendChild(rm);
+        atcLab.appendChild(document.createTextNode('Billed at cost'));
+        extra.appendChild(sku); extra.appendChild(serial); extra.appendChild(atcLab);
         row.appendChild(extra);
 
         var rec = {
@@ -4127,17 +4227,24 @@
       if (!/\.pdf$/i.test(file.name) && file.type !== 'application/pdf') return toast('That is not a PDF');
       if (file.size > 10 * 1024 * 1024) return toast('PDFs are capped at 10 MB');
       invDrop.classList.add('busy');
-      var textErr = null;
-      Promise.all([
-        fileToBase64(file),
-        readPdfRuns(file).catch(function (e) { textErr = (e && e.message) || 'unreadable'; return null; }),
-      ]).then(function (res) {
-        invPending = { filename: file.name, data: res[0], size: file.size };
-        var parsed = res[1] ? parseInvoicePdf(res[1], file.name) : null;
-        if (parsed) applyParsed(parsed);
-        renderFileInfo(file, parsed, textErr);
-        invCreated.hidden = true;
-        invPayLink.hidden = true;
+      readPdfBundle(file).then(function (b) {
+        // Already on file? Asked before the form is touched, by the number the file
+        // carries and by the PDF's fingerprint, so a renamed copy is caught too. A
+        // match is refused as a new invoice; the dialog offers to replace that
+        // invoice's PDF instead. The Worker refuses the same on Create regardless.
+        var num = (b.parsed && b.parsed.number) || file.name.replace(/\.pdf$/i, '');
+        return api('/admin/invoices/check?number=' + encodeURIComponent(num) + (b.sha ? '&sha256=' + b.sha : ''))
+          .then(function (c) {
+            if (c && c.ok && c.match) {
+              clearPdf();
+              return alreadyOnFile(c.match, b, c.identical);
+            }
+            invPending = { filename: b.name, data: b.data, size: b.size, bundle: b };
+            if (b.parsed) applyParsed(b.parsed);
+            renderFileInfo(file, b.parsed, b.textErr);
+            invCreated.hidden = true;
+            invPayLink.hidden = true;
+          });
       }).catch(function (e) {
         toast('Could not read that file');
         console.error(e);
@@ -4383,7 +4490,303 @@
       cancelBtn.addEventListener('click', function () { host.textContent = ''; if (after) after(true); });
     }
 
-    // Attach or replace a PDF on an existing invoice, from its card.
+    // ---- a dialog that waits for an answer ----
+    // A native <dialog>: focus stays inside, Escape closes it, and the page behind
+    // cannot be clicked. Resolves with the value of the button pressed, or null on
+    // Escape. A button with `act` runs it first and stays open when it returns
+    // {error}, so a refusal is read in place rather than losing what was chosen.
+    function askDialog(o) {
+      return new Promise(function (resolve) {
+        var dlg = document.createElement('dialog');
+        dlg.className = 'adlg';
+        var h = el('h2', null, o.title);
+        h.id = 'adlgT' + Date.now();
+        dlg.setAttribute('aria-labelledby', h.id);
+        dlg.appendChild(h);
+        if (o.lead) dlg.appendChild(el('p', null, o.lead));
+        if (o.body) dlg.appendChild(o.body);
+        var err = el('p', 'adlg-err');
+        err.hidden = true;
+        err.setAttribute('role', 'alert');
+        dlg.appendChild(err);
+        var foot = el('div', 'adlg-foot');
+        var btns = [];
+        var done = false;
+        function finish(v) {
+          if (done) return;
+          done = true;
+          dlg.close();
+          dlg.remove();
+          resolve(v);
+        }
+        (o.buttons || [{ label: 'Close', value: null, cls: 'prim' }]).forEach(function (b) {
+          var btn = el('button', b.cls || null, b.label);
+          btn.type = 'button';
+          btns.push(btn);
+          btn.addEventListener('click', function () {
+            if (!b.act) return finish(b.value);
+            btns.forEach(function (x) { x.disabled = true; });
+            err.hidden = true;
+            Promise.resolve(b.act()).then(function (res) {
+              if (res && res.error) {
+                err.textContent = res.error;
+                err.hidden = false;
+                btns.forEach(function (x) { x.disabled = false; });
+                return;
+              }
+              finish(b.value);
+            });
+          });
+          foot.appendChild(btn);
+          if (b.ref) b.ref(btn);
+        });
+        dlg.appendChild(foot);
+        dlg.addEventListener('cancel', function (e) {
+          e.preventDefault();
+          if (!btns.some(function (x) { return x.disabled; })) finish(null);
+        });
+        document.body.appendChild(dlg);
+        dlg.showModal();
+        var first = dlg.querySelector('input:not([disabled]), button.prim');
+        if (first) first.focus();
+      });
+    }
+
+    // The SHA-256 of a file, as hex, to match it against the PDFs already on file.
+    // Empty when the browser will not hash (a non-secure origin); the Worker still
+    // checks on the way in.
+    function sha256Of(file) {
+      return file.arrayBuffer()
+        .then(function (buf) { return crypto.subtle.digest('SHA-256', buf); })
+        .then(function (d) {
+          return Array.prototype.map.call(new Uint8Array(d), function (x) { return ('0' + x.toString(16)).slice(-2); }).join('');
+        })
+        .catch(function () { return ''; });
+    }
+
+    // Everything the console knows about a dropped PDF: its bytes, its fingerprint,
+    // and what the parser read off it (null when the text could not be read).
+    function readPdfBundle(file) {
+      var textErr = null;
+      return Promise.all([
+        fileToBase64(file),
+        readPdfRuns(file).catch(function (e) { textErr = (e && e.message) || 'unreadable'; return null; }),
+        sha256Of(file),
+      ]).then(function (res) {
+        return {
+          name: file.name, size: file.size, data: res[0], sha: res[2], textErr: textErr,
+          parsed: res[1] ? parseInvoicePdf(res[1], file.name) : null,
+        };
+      });
+    }
+
+    function invSummaryLine(inv) {
+      var bits = [inv.status + (inv.archived ? ', archived' : ''), money(inv.amount_cents),
+                  inv.company || inv.contact_name || inv.email];
+      if (inv.issued_at) bits.push('dated ' + fmtDate(inv.issued_at));
+      bits.push(inv.has_pdf ? 'PDF on file' + (inv.pdf_uploaded_at ? ' since ' + fmtDate(inv.pdf_uploaded_at) : '') : 'no PDF on file');
+      return bits.join(' \u00b7 ');
+    }
+
+    function metaLine(inv) {
+      var p = el('p', 'adlg-meta');
+      p.appendChild(el('b', null, inv.number));
+      p.appendChild(document.createTextNode(' \u00b7 ' + invSummaryLine(inv)));
+      return p;
+    }
+
+    // A PDF, or a number, that is already on file. Refused as a new invoice; the
+    // choice offered is to replace that invoice's PDF, which reads the new file and
+    // shows every difference before anything is saved.
+    function alreadyOnFile(inv, bundle, identical) {
+      if (identical) {
+        return askDialog({
+          title: 'Already on file',
+          lead: 'This exact PDF is already on invoice ' + inv.number + '. Nothing was uploaded.',
+          body: metaLine(inv),
+          buttons: [{ label: 'Open the invoice', value: 'open' }, { label: 'Close', value: null, cls: 'prim' }],
+        }).then(function (v) { if (v === 'open') showInvoice(inv.number); });
+      }
+      var body = el('div');
+      body.appendChild(metaLine(inv));
+      body.appendChild(el('p', null, bundle
+        ? 'A second invoice with the same number is not allowed. You can replace the PDF on the invoice above instead. The new file is read first, and any differences are shown for you to confirm before anything is saved.'
+        : 'A second invoice with the same number is not allowed. Change the number, or open the invoice on file.'));
+      var buttons = [{ label: 'Cancel', value: null }, { label: 'Open the invoice', value: 'open' }];
+      if (bundle) buttons.push({ label: 'Replace its PDF\u2026', value: 'replace', cls: 'prim' });
+      return askDialog({ title: 'Invoice ' + inv.number + ' already exists', body: body, buttons: buttons })
+        .then(function (v) {
+          if (v === 'open') showInvoice(inv.number);
+          if (v === 'replace') {
+            return replaceInvoicePdf(inv, bundle, function () { resetInvoiceForm(); showInvoice(inv.number); });
+          }
+        });
+    }
+
+    // What the parser read, against what the invoice on file says. Only fields the
+    // parser actually found are compared: a value it could not read is not a
+    // request to blank the one on file.
+    var CMP_FIELDS = [
+      { key: 'email', label: 'Email', from: 'email' },
+      { key: 'contact_name', label: 'Billed to', from: 'name' },
+      { key: 'company', label: 'Company', from: 'company' },
+      { key: 'service', label: 'Service', from: 'service' },
+      { key: 'description', label: 'Description', from: 'description' },
+      { key: 'amount_cents', label: 'Amount', from: 'amount' },
+      { key: 'issued_at', label: 'Invoice date', from: 'issued' },
+      { key: 'due_at', label: 'Due date', from: 'due' },
+    ];
+
+    function tsDay(ts) { return ts ? ymd(new Date(ts * 1000)) : ''; }
+
+    function diffsFor(inv, parsed) {
+      var out = [];
+      if (!parsed) return out;
+      var closed = inv.status === 'paid' || inv.status === 'void';
+      CMP_FIELDS.forEach(function (f) {
+        var nv = parsed[f.from];
+        if (nv == null || nv === '') return;
+        if (f.key === 'amount_cents') {
+          var cents = Math.round(nv * 100);
+          if (cents === inv.amount_cents) return;
+          out.push({ key: f.key, label: f.label, from: money(inv.amount_cents), to: money(cents), value: cents,
+                     locked: closed ? 'This invoice is ' + inv.status + ', so its amount stays as it is.' : null });
+        } else if (f.key === 'issued_at' || f.key === 'due_at') {
+          if (tsDay(inv[f.key]) === nv) return;
+          var ts = dayToTs(nv);
+          out.push({ key: f.key, label: f.label, from: inv[f.key] ? fmtDate(inv[f.key]) : '(blank)', to: fmtDate(ts), value: ts });
+        } else {
+          var cur = String(inv[f.key] || '').trim();
+          var next = String(nv).trim();
+          if (cur.toLowerCase() === next.toLowerCase()) return;
+          out.push({ key: f.key, label: f.label, from: cur || '(blank)', to: next, value: next });
+        }
+      });
+      return out;
+    }
+
+    function itemsSig(list) {
+      return (list || []).map(function (i) {
+        return String(i.description || '').trim().toLowerCase() + '|' + (i.line_cents || 0);
+      }).join('\n');
+    }
+    function itemsSum(list) {
+      return (list || []).reduce(function (t, i) { return t + (i.line_cents || 0); }, 0);
+    }
+    function linesLabel(list) {
+      return list.length ? list.length + ' line' + (list.length === 1 ? '' : 's') + ' (' + money(itemsSum(list)) + ')' : 'none';
+    }
+
+    // Replace (or attach) the PDF on an invoice that exists. The new file has already
+    // been read; this shows what it says that the invoice does not, one tickable row
+    // per difference, and saves the file and the ticked corrections in one request,
+    // which the Worker records as one entry in the activity feed.
+    function replaceInvoicePdf(inv, bundle, after) {
+      var p = bundle.parsed;
+      return api('/admin/invoices/' + inv.id + '/items').then(function (ri) {
+        var rows = diffsFor(inv, p);
+        var cur = (ri && ri.ok && ri.items) || [];
+        var fresh = p && p.items && p.items.length ? p.items : null;
+        if (fresh && itemsSig(cur) !== itemsSig(fresh)) {
+          rows.push({ key: 'items', label: 'Line items', from: linesLabel(cur), to: linesLabel(fresh), value: fresh });
+        }
+
+        var body = el('div');
+        body.appendChild(metaLine(inv));
+        body.appendChild(el('p', null, 'New file: ' + bundle.name + ' (' + Math.max(1, Math.round(bundle.size / 1024)) + ' KB).'));
+        if (p && p.number && p.number.toLowerCase() !== String(inv.number).toLowerCase()) {
+          body.appendChild(el('p', 'adlg-warn', 'This file reads as invoice ' + p.number + ', not ' + inv.number + '. Make sure it is the right file.'));
+        }
+        var boxes = [];
+        if (!p) {
+          body.appendChild(el('p', 'adlg-warn', 'The text in this PDF could not be read (' + (bundle.textErr || 'unreadable') +
+            '), so nothing could be compared. Only the file will change.'));
+        } else if (!rows.length) {
+          body.appendChild(el('p', null, 'The new PDF reads the same as the invoice on file. Only the file will change.'));
+        } else {
+          body.appendChild(el('p', null, 'Read from the new file. Ticked rows are updated on the invoice; anything unticked stays as it is.'));
+          var tbl = el('table', 'adlg-diff');
+          var hr = el('tr');
+          ['', 'Field', 'On file', 'In the new PDF'].forEach(function (t) { hr.appendChild(el('th', null, t)); });
+          var th = el('thead');
+          th.appendChild(hr);
+          tbl.appendChild(th);
+          var tb = el('tbody');
+          rows.forEach(function (r, i) {
+            var tr = el('tr');
+            var ck = el('td', 'ck');
+            var cb = document.createElement('input');
+            cb.type = 'checkbox';
+            cb.id = 'adlgCk' + i;
+            cb.checked = !r.locked;
+            cb.disabled = !!r.locked;
+            cb.setAttribute('aria-label', 'Update ' + r.label);
+            ck.appendChild(cb);
+            tr.appendChild(ck);
+            var fl = el('td', 'fld');
+            var lab = el('label', null, r.label);
+            lab.htmlFor = cb.id;
+            fl.appendChild(lab);
+            tr.appendChild(fl);
+            var o = el('td', 'old', r.from);
+            o.setAttribute('data-l', 'On file');
+            tr.appendChild(o);
+            var n = el('td', 'new', r.to);
+            n.setAttribute('data-l', 'New PDF');
+            if (r.locked) n.appendChild(el('span', 'lock', r.locked));
+            tr.appendChild(n);
+            tr.classList.toggle('off', !cb.checked);
+            cb.addEventListener('change', function () { tr.classList.toggle('off', !cb.checked); syncLabel(); });
+            tb.appendChild(tr);
+            boxes.push({ row: r, cb: cb });
+          });
+          tbl.appendChild(tb);
+          body.appendChild(tbl);
+        }
+
+        var goBtn = null;
+        var verb = inv.has_pdf ? 'Replace PDF' : 'Attach PDF';
+        function picked() { return boxes.filter(function (b) { return b.cb.checked; }).map(function (b) { return b.row; }); }
+        function syncLabel() {
+          if (!goBtn) return;
+          var n = picked().length;
+          goBtn.textContent = n ? verb + ' and update ' + n : verb + ' only';
+        }
+
+        return askDialog({
+          title: inv.has_pdf ? 'Replace the PDF on ' + inv.number + '?' : 'Attach this PDF to ' + inv.number + '?',
+          body: body,
+          buttons: [
+            { label: 'Cancel', value: null },
+            {
+              label: verb, value: 'done', cls: 'prim',
+              ref: function (b) { goBtn = b; syncLabel(); },
+              act: function () {
+                var payload = { filename: bundle.name, data: bundle.data };
+                var details = {};
+                picked().forEach(function (r) {
+                  if (r.key === 'items') payload.items = r.value;
+                  else details[r.key] = r.value;
+                });
+                if (Object.keys(details).length) payload.details = details;
+                return api('/admin/invoices/' + inv.id + '/pdf', { method: 'POST', body: payload }).then(function (r) {
+                  if (!r.ok) return { error: r.message || 'Could not save (' + (r.error || 'unknown') + ')' };
+                  var n = (r.changed || []).length + (payload.items && !r.items_error ? 1 : 0);
+                  toast((inv.has_pdf ? 'PDF replaced on ' : 'PDF attached to ') + inv.number +
+                        (n ? ' \u00b7 ' + n + ' update' + (n === 1 ? '' : 's') + ' saved' : '') +
+                        (r.items_error ? ' \u00b7 the lines were not saved (' + r.items_error + ')' : ''));
+                  if (after) after(r);
+                  return null;
+                });
+              },
+            },
+          ],
+        });
+      });
+    }
+
+    // Attach or replace a PDF on an existing invoice, from its card. The file is
+    // read and compared before anything is saved.
     function attachPdfTo(v, after) {
       var input = document.createElement('input');
       input.type = 'file';
@@ -4392,15 +4795,105 @@
         var f = input.files[0];
         if (!f) return;
         if (f.size > 10 * 1024 * 1024) return toast('PDFs are capped at 10 MB');
-        fileToBase64(f).then(function (b64) {
-          return api('/admin/invoices/' + v.id + '/pdf', { method: 'POST', body: { filename: f.name, data: b64 } });
-        }).then(function (r) {
-          if (!r.ok) return toast(r.message || 'Could not attach (' + (r.error || 'unknown') + ')');
-          toast((v.has_pdf ? 'PDF replaced on ' : 'PDF attached to ') + v.number);
-          if (after) after(r);
+        toast('Reading ' + f.name + '\u2026');
+        readPdfBundle(f).then(function (b) {
+          var check = b.sha ? api('/admin/invoices/check?sha256=' + b.sha) : Promise.resolve({});
+          return check.then(function (c) {
+            var m = c && c.ok && c.match;
+            if (m && m.id !== v.id) {
+              return askDialog({
+                title: 'That PDF belongs to another invoice',
+                lead: 'This exact file is already on invoice ' + m.number + '. One invoice\u2019s PDF cannot be attached to another.',
+                body: metaLine(m),
+                buttons: [{ label: 'Open ' + m.number, value: 'open' }, { label: 'Close', value: null, cls: 'prim' }],
+              }).then(function (x) { if (x === 'open') showInvoice(m.number); });
+            }
+            if (m) {
+              return askDialog({ title: 'Already on file', lead: 'That is the PDF already on ' + v.number + '. There is nothing to replace.' });
+            }
+            return replaceInvoicePdf(v, b, after);
+          });
+        }).catch(function (e) {
+          toast('Could not read that file');
+          console.error(e);
         });
       });
       input.click();
+    }
+
+    // Correcting an invoice by hand. Only what changed is sent, and the Worker logs
+    // it with before and after to the activity feed.
+    function editInvoiceDetails(v, after) {
+      var closed = v.status === 'paid' || v.status === 'void';
+      var form = el('div', 'adlg-form');
+      var inputs = {};
+      function addField(key, label, type, value, wide) {
+        var wrap = el('div', wide ? 'wide' : null);
+        var id = 'adlgF_' + key;
+        var lab = el('label', null, label);
+        lab.htmlFor = id;
+        var inp = document.createElement('input');
+        inp.id = id;
+        inp.type = type;
+        inp.value = value == null ? '' : value;
+        wrap.appendChild(lab);
+        wrap.appendChild(inp);
+        form.appendChild(wrap);
+        inputs[key] = inp;
+        return wrap;
+      }
+      addField('email', 'Email', 'email', v.email, false);
+      addField('contact_name', 'Billed to', 'text', v.contact_name, false);
+      addField('company', 'Company', 'text', v.company, false);
+      addField('service', 'Service', 'text', v.service, false);
+      addField('description', 'Description', 'text', v.description, true);
+      var amt = addField('amount_cents', 'Amount (USD)', 'text', (v.amount_cents / 100).toFixed(2), false);
+      inputs.amount_cents.inputMode = 'decimal';
+      if (closed) {
+        inputs.amount_cents.disabled = true;
+        amt.appendChild(el('div', 'hint', 'This invoice is ' + v.status + ', so its amount cannot change.'));
+      }
+      addField('issued_at', 'Invoice date', 'date', tsDay(v.issued_at), false);
+      addField('due_at', 'Due date', 'date', tsDay(v.due_at), false);
+
+      function changes() {
+        var out = {};
+        ['email', 'contact_name', 'company', 'service', 'description'].forEach(function (k) {
+          var nv = inputs[k].value.trim();
+          if (nv !== String(v[k] || '').trim()) out[k] = nv;
+        });
+        if (!closed) {
+          var c = Math.round(parseFloat(String(inputs.amount_cents.value).replace(/[^0-9.]/g, '')) * 100);
+          if (c !== v.amount_cents) out.amount_cents = c;
+        }
+        ['issued_at', 'due_at'].forEach(function (k) {
+          if (inputs[k].value !== tsDay(v[k])) out[k] = inputs[k].value ? dayToTs(inputs[k].value) : null;
+        });
+        return out;
+      }
+
+      return askDialog({
+        title: 'Edit ' + v.number,
+        lead: 'The number stays as it is. Changes are recorded in the activity feed.',
+        body: form,
+        buttons: [
+          { label: 'Cancel', value: null },
+          {
+            label: 'Save changes', value: 'saved', cls: 'prim',
+            act: function () {
+              var ch = changes();
+              if (!Object.keys(ch).length) return { error: 'Nothing has changed.' };
+              if (ch.amount_cents !== undefined && !(ch.amount_cents > 0)) return { error: 'The amount is not valid.' };
+              return api('/admin/invoices/' + v.id + '/details', { method: 'PATCH', body: ch }).then(function (r) {
+                if (!r.ok) return { error: r.message || 'Could not save (' + (r.error || 'unknown') + ')' };
+                toast(v.number + ' updated' + (r.changed && r.changed.length ? ' \u00b7 ' + r.changed.length + ' change' + (r.changed.length === 1 ? '' : 's') : ''));
+                if (after) after(r);
+                return null;
+              });
+            },
+          },
+        ],
+      });
     }
 
     // ---- after Create ----
@@ -4469,6 +4962,12 @@
       api('/admin/invoices', { method: 'POST', body: payload }).then(function (r) {
         btn.disabled = false;
         if (!r.ok) {
+          // Already on file: the same dialog a drop gets, offering to replace that
+          // invoice's PDF with the one waiting here, if there is one.
+          if ((r.error === 'duplicate_number' || r.error === 'duplicate_pdf') && r.existing) {
+            alreadyOnFile(r.existing, invPending && invPending.bundle || null, r.error === 'duplicate_pdf');
+            return;
+          }
           toast(r.error === 'duplicate_number' ? 'That invoice number already exists'
               : r.error === 'invalid_amount' ? 'The amount is not valid'
               : 'Could not create (' + (r.error || 'unknown') + ')');
@@ -4678,6 +5177,9 @@
       if (!v.archived) {
         act(v.has_pdf ? 'Replace PDF' : 'Attach PDF', null, function () {
           attachPdfTo(v, function () { loadInvoices(); });
+        });
+        act('Edit details', null, function () {
+          editInvoiceDetails(v, function () { loadInvoices(); });
         });
       }
       if (v.status === 'open' || v.status === 'pending') {
@@ -9900,7 +10402,7 @@
     // An invoice total answers nothing on a hardware job: most of it can be a part
     // bought last week on the card. This lines the two up. Profit is revenue minus
     // anything spent on the job the invoice did NOT bill back, so billing back exactly
-    // what you spent leaves the labour, and billing back less shows the shortfall
+    // what you spent leaves the labor, and billing back less shows the shortfall
     // instead of quietly flattering the figure.
     function jobsPanel(st) {
       var j = st.jobs || { rows: [], totals: { count: 0 } };
