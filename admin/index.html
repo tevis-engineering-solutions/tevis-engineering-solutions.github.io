@@ -862,6 +862,16 @@
       border:1px solid var(--line); background:var(--bg); color:var(--muted); cursor:pointer; }
     .tile.bank .tile-refresh:hover { color:var(--text); border-color:rgba(74,172,101,.45); }
     .tile.bank s { padding-right:2rem; }
+    /* A bank tab's balance: gold edge and figure, set apart from the period tiles. */
+    .tile.acct-bal { position:relative; border-color:rgba(200,152,48,.45); background:linear-gradient(135deg, rgba(200,152,48,.12), rgba(200,152,48,.02) 60%), var(--bg); box-shadow:inset 3px 0 0 var(--gold); }
+    .tile.acct-bal s { color:var(--gold); padding-right:2rem; display:flex; align-items:center; gap:0.5rem; }
+    .tile.acct-bal b { color:#f0d58a; font-size:1.25rem; }
+    .acct-live { display:inline-flex; align-items:center; gap:0.3rem; font-size:0.58rem; letter-spacing:0.06em; color:var(--green); }
+    .acct-live i { width:6px; height:6px; border-radius:50%; background:var(--green); box-shadow:0 0 0 0 rgba(74,172,101,.6); animation:acctPulse 2s ease-out infinite; }
+    @keyframes acctPulse { 0% { box-shadow:0 0 0 0 rgba(74,172,101,.6); } 70% { box-shadow:0 0 0 6px rgba(74,172,101,0); } 100% { box-shadow:0 0 0 0 rgba(74,172,101,0); } }
+    @media (prefers-reduced-motion: reduce) { .acct-live i { animation:none; } }
+    .tile.acct-bal .tile-refresh { position:absolute; top:0.5rem; right:0.5rem; width:30px; height:30px; padding:0; border:1px solid var(--line); background:var(--bg); color:var(--muted); cursor:pointer; }
+    .tile.acct-bal .tile-refresh:hover { color:var(--text); border-color:rgba(200,152,48,.6); }
     .bk-open { display:inline-flex; align-items:center; font-size:0.78rem; color:var(--green); text-decoration:none; min-height:36px; }
     .bk-open:hover { text-decoration:underline; }
     /* A split deposit lists its parts under it. */
@@ -11574,6 +11584,29 @@
 
     var bankTabKey = (function () { try { return localStorage.getItem('tes_bank_tab') || 'paypal'; } catch (x) { return 'paypal'; } })();
 
+    // The balance tile at the head of a bank tab. "live" adds a pulsing dot (PayPal is
+    // asked directly); an imported balance says as of when instead.
+    function acctBalTile(parent, value, sub, live, onRefresh) {
+      var t = el('div', 'tile acct-bal');
+      var lab = el('s');
+      lab.appendChild(document.createTextNode('Balance'));
+      if (live) { var dot = el('span', 'acct-live'); dot.appendChild(el('i')); dot.appendChild(document.createTextNode('live')); lab.appendChild(dot); }
+      t.appendChild(lab);
+      t.appendChild(el('b', null, value));
+      if (sub) t.appendChild(el('div', 'sub', sub));
+      if (onRefresh) {
+        var r = el('button', 'tile-refresh');
+        r.type = 'button';
+        r.setAttribute('aria-label', 'Refresh the balance');
+        r.title = 'Refresh';
+        r.appendChild(el('i', 'fa-solid fa-rotate'));
+        r.addEventListener('click', function () { onRefresh(r); });
+        t.appendChild(r);
+      }
+      parent.appendChild(t);
+      return t;
+    }
+
     function bankingPanel(st) {
       var p = finPanel('Banking', 'money in and out of each account');
       p.classList.add('wide');
@@ -11629,9 +11662,10 @@
 
     function bankTab(st, a, body, tabBadge) {
       var t = el('div', 'tiles');
-      var tBal = finTile(t, 'Balance', a.count ? money(a.cents) : '—',
+      var tBal = acctBalTile(t, a.count ? money(a.cents) : '—',
         !a.count ? 'no statement imported yet'
-          : a.source === 'statement' ? 'as the bank printed it on ' + fmtDayStr(a.statement_day) : 'sum of imported rows');
+          : a.source === 'statement' ? 'as the bank printed it on ' + fmtDayStr(a.statement_day) : 'sum of imported rows',
+        false, null);
       var tIn = finTile(t, 'Money in', '…', st.label);
       var tOut = finTile(t, 'Money out', '…', st.label);
       body.appendChild(t);
@@ -12224,6 +12258,17 @@
         p.appendChild(el('p', 'fin-note warn', 'The last sync failed: ' + pp.last_error));
       }
       var t = el('div', 'tiles');
+      // The account's balance leads the row, set apart from the period figures beside it:
+      // it is where the money stands now, not what moved in "this period".
+      var bal = ppBalance;
+      var live = bal && bal.ok && !bal.stale;
+      acctBalTile(t, bal && bal.ok && bal.total_cents != null ? money(bal.total_cents) : bal && !bal.ok ? '—' : '…',
+        !bal ? 'asking PayPal…'
+          : !bal.ok ? (bal.error === 'paypal_reporting_disabled' ? 'Transaction Search is off' : 'PayPal did not answer')
+          : bal.stale ? 'last known, ' + ago(bal.age_sec || 0) + ' ago'
+          : bal.withheld_cents ? money(bal.available_cents) + ' available · ' + money(bal.withheld_cents) + ' on hold'
+          : 'available now',
+        live, function (b) { b.disabled = true; loadPpBalance(true).then(function () { renderFinance(st); }); });
       finTile(t, 'Gross received', money(pp.gross_cents), pp.off_invoice_cents ? money(pp.off_invoice_cents) + ' without an invoice' : 'all against invoices');
       finTile(t, 'Fees', money(pp.fee_cents), pp.gross_cents ? (pp.fee_cents / pp.gross_cents * 100).toFixed(1) + '% of gross' : '');
       finTile(t, 'Net', money(pp.net_cents), 'after fees and refunds');
