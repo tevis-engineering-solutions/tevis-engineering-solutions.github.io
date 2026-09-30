@@ -10724,18 +10724,29 @@
           loadPpBalance(true).then(function () { renderFinance(st); });
         });
       var banks = (st.accounts || []).filter(function (a) { return a.url; });
+      // One tile per bank, not per account: EFCU Checking and Savings share a login, so
+      // they are added together here and broken out on their Banking tabs.
+      var byBank = [];
       banks.forEach(function (a) {
-        bankTile(tiles, bankShort(a) + ' balance', a.count ? money(a.cents) : '—',
-          !a.count ? 'no statement imported yet'
-            : a.source === 'statement' ? 'bank statement, ' + fmtDayStr(a.statement_day) + ' · not live'
-            : 'sum of imported rows · not live',
-          a.url, null);
+        var g = byBank.filter(function (x) { return x.url === a.url; })[0];
+        if (!g) { g = { url: a.url, accts: [] }; byBank.push(g); }
+        g.accts.push(a);
+      });
+      byBank.forEach(function (g) {
+        var had = g.accts.filter(function (a) { return a.count; });
+        var name = bankShort(g.accts[0]).replace(/ (Checking|Savings)$/, '');
+        var days = had.map(function (a) { return a.statement_day; }).filter(Boolean).sort();
+        var parts = g.accts.length > 1 ? g.accts.map(function (a) { return bankShort(a).replace(name + ' ', '') + ' ' + (a.count ? money(a.cents) : '—'); }).join(' · ') + ' · ' : '';
+        bankTile(tiles, name + ' balance', had.length ? money(had.reduce(function (n, a) { return n + a.cents; }, 0)) : '—',
+          !had.length ? 'no statement imported yet'
+            : parts + (days.length ? 'as of ' + fmtDayStr(days[days.length - 1]) : 'sum of imported rows') + ' · not live',
+          g.url, null);
       });
       // What the business holds in the bank. Not income, and not in Net: Net is what
       // was earned in the period, this is where the money sits today.
       if (bal && bal.ok && bal.total_cents != null && banks.some(function (a) { return a.count; })) {
         var held = bal.total_cents + banks.reduce(function (n, a) { return n + (a.count ? a.cents : 0); }, 0);
-        finTile(tiles, 'Cash in the bank', money(held), 'PayPal + ' + banks.map(bankShort).join(' + ') + ' · not income');
+        finTile(tiles, 'Cash in the bank', money(held), 'PayPal + ' + byBank.map(function (g) { return bankShort(g.accts[0]).replace(/ (Checking|Savings)$/, ''); }).join(' + ') + ' · not income');
       }
       finTile(tiles, 'Invoiced', money(st.revenue.issued_cents), st.revenue.count + (st.revenue.count === 1 ? ' invoice' : ' invoices'), st.deltas.issued_cents);
       finTile(tiles, 'Collected', money(st.revenue.collected_cents), st.revenue.pass_through_cents ? st.revenue.paid_count + ' paid · ' + money(st.revenue.pass_through_cents) + ' of it passed through' : st.revenue.paid_count + ' paid', st.deltas.collected_cents);
