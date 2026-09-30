@@ -10731,24 +10731,31 @@
       finTile(tiles, 'Collected', money(st.revenue.collected_cents), st.revenue.pass_through_cents ? st.revenue.paid_count + ' paid · ' + money(st.revenue.pass_through_cents) + ' of it passed through' : st.revenue.paid_count + ' paid', st.deltas.collected_cents);
       finTile(tiles, 'Outstanding', money(st.revenue.outstanding_cents), 'issued this period, still owed', st.deltas.outstanding_cents, true);
       finTile(tiles, 'Expenses', money(st.expenses.total_cents), st.expenses.count + (st.expenses.count === 1 ? ' item' : ' items'), st.deltas.expenses_cents, true);
-      finTile(tiles, 'Parts for customers', money(st.parts_float.spent_cents), st.parts_float.outstanding_cents ? money(st.parts_float.outstanding_cents) + ' not back yet' : 'all recovered', null, true);
-      var netT = finTile(tiles, 'Net (cash basis)', money(st.net_cents), 'collected − expenses − parts − fees');
+      var netT = finTile(tiles, 'Net cash', money(st.net_cents), 'collected − expenses − parts − fees');
       if (st.net_cents < 0) netT.querySelector('b').classList.add('neg');
-      finTile(tiles, 'Billable hours', hoursOf(st.hours.billable_minutes), st.hours.effective_rate_cents != null ? money(st.hours.effective_rate_cents) + ' per billed hour' : st.hours.invoiced_labor_minutes ? 'from invoice line items, not the work log' : 'nothing billed yet', st.deltas.billable_minutes);
-      finTile(tiles, 'PayPal fees', money(st.paypal.fee_cents), st.paypal.count + (st.paypal.count === 1 ? ' payment' : ' payments'), st.deltas.fee_cents, true);
       // Equity, not income, so it sits beside the P&L figures rather than inside one.
       // Across every account — PayPal, the card, cash — because a figure covering one
-      // of them would read as the whole picture.
+      // of them would read as the whole picture. Always shown so the grid keeps its shape.
       var own = st.owner_funding || { count: 0, by_account: [] };
-      if (own.count) {
-        finTile(tiles, 'Owner funding', money(own.in_cents),
-          own.out_cents
+      finTile(tiles, 'Owner funding', money(own.in_cents || 0),
+        !own.count ? 'none this period'
+          : own.out_cents
             ? money(own.out_cents) + ' drawn back out · net ' + money(own.net_cents)
             : own.by_account.length > 1
               ? own.by_account.map(function (a) { return a.label + ' ' + money(a.cents); }).join(' · ')
               : 'your own money in · not revenue');
-      }
-      finTile(tiles, 'Days to pay', st.days_to_pay.average != null ? String(st.days_to_pay.average) : '—', st.days_to_pay.count ? 'average · median ' + st.days_to_pay.median + ' · ' + st.days_to_pay.count + ' paid' : 'nothing paid this period');
+      finTile(tiles, 'Billable hours', hoursOf(st.hours.billable_minutes), st.hours.effective_rate_cents != null ? money(st.hours.effective_rate_cents) + ' per billed hour' : st.hours.invoiced_labor_minutes ? 'from invoice line items, not the work log' : 'nothing billed yet', st.deltas.billable_minutes);
+      // What is owed on the business card, from the last statement imported. PayPal
+      // fees are still on the Banking pane's PayPal tab.
+      var cards = (st.accounts || []).filter(function (a) { return a.kind === 'card'; });
+      var owed = cards.reduce(function (n, a) { return n + (a.owed_cents || 0); }, 0);
+      var card = cards[0];
+      var credSub = !cards.length ? 'no card statement imported yet'
+        : (cards.length > 1 ? cards.map(function (a) { return a.label + ' ' + money(a.owed_cents); }).join(' · ')
+          : card.label) + ' · owed, as of ' + (card.last_at ? fmtDate(card.last_at) : 'the last import') + ' · not live';
+      if (card && CARD_SITES[card.account]) bankTile(tiles, 'Credit balance', money(owed), credSub, CARD_SITES[card.account], null);
+      else finTile(tiles, 'Credit balance', money(owed), credSub);
+      finTile(tiles, 'Parts for customers', money(st.parts_float.spent_cents), st.parts_float.outstanding_cents ? money(st.parts_float.outstanding_cents) + ' not back yet' : 'all recovered', null, true);
       finBody.appendChild(tiles);
 
       var grid = el('div', 'charts fin-grid');
