@@ -11551,7 +11551,8 @@
     var PAYPAL_LOGIN = 'https://www.paypal.com/signin?locale.x=en_US';
 
     function bankShort(a) {
-      return a.account === 'efcu_checking' ? 'EFCU' : String(a.label || a.account).replace(/ business.*$/i, '');
+      var names = { efcu_checking: 'EFCU Checking', efcu_savings: 'EFCU Savings' };
+      return names[a.account] || String(a.label || a.account).replace(/ business.*$/i, '');
     }
 
     // A tile whose label is a link to the bank, stretched over the whole tile. The
@@ -11706,7 +11707,8 @@
       body.appendChild(catBox);
       body.appendChild(el('p', 'fin-note', 'Download the account history from ' + bankShort(a) + ' as CSV and import it here. ' +
         'A deposit that was more than one thing (two checks, say) can be split: each part is filed on its own, ' +
-        'and a part that paid an invoice marks that invoice paid when the amount matches.'));
+        'and a part that paid an invoice marks that invoice paid when the amount matches.' +
+        (/^efcu_/.test(a.account) ? ' Money moved between EFCU Checking and Savings appears on both statements: file it as a Transfer on each side, so it counts on neither.' : '')));
 
       var view = bankView[a.account] || 'review';
       var pills = el('div', 'filters');
