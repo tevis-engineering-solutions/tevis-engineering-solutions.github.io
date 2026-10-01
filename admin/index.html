@@ -484,14 +484,6 @@
     .cust-head { border-bottom:1px solid var(--line); padding-bottom:0.8rem; margin-bottom:0.9rem; }
     .sys-probe { display:grid; gap:0.2rem; }
     .sys-probe .sys-gate { color:var(--text); }
-    .hl-chip { display:inline-flex; align-items:center; gap:0.35rem; margin:0.3rem 0 0.2rem; padding:0.2rem 0.65rem; border-radius:999px; font:inherit; font-size:0.74rem; font-weight:700; cursor:pointer; border:1px solid; background:transparent; }
-    .hl-chip b { font-size:0.82rem; }
-    .hl-chip.healthy { color:#8fd6a3; border-color:rgba(74,172,101,0.45); }
-    .hl-chip.watch { color:#e0c98a; border-color:rgba(200,152,48,0.5); }
-    .hl-chip.risk { color:#e08a68; border-color:rgba(224,138,104,0.5); }
-    .hl-why { font-size:0.8rem; color:var(--muted); margin:0.2rem 0 0.3rem; display:grid; gap:0.15rem; }
-    .hl-num { font-weight:700; }
-    .hl-num.healthy { color:#8fd6a3; } .hl-num.watch { color:#e0c98a; } .hl-num.risk { color:#e08a68; }
     .cust-head h2 { font-family:"Montserrat",sans-serif; font-size:1.1rem; margin-bottom:0.15rem; word-break:break-word; }
     .cust-badges { display:flex; flex-wrap:wrap; align-items:center; gap:0.35rem; margin-top:0.5rem; }
     .cust-src { font-size:0.7rem; color:var(--muted); margin-top:0.5rem; }
@@ -9067,7 +9059,6 @@
       // ---- who they are ----
       var head = el('div', 'cust-head');
       head.appendChild(el('h2', null, c.profile.name || c.profile.company || c.account.email));
-      var chc = healthChip(c.health); if (chc) head.appendChild(chc);
       var sub = [c.profile.company, c.account.email, fmtPhone(c.profile.phone), fmtPhone(c.profile.alt_phone)]
         .filter(Boolean).join(' · ');
       head.appendChild(el('div', 'who', sub));
@@ -10120,32 +10111,10 @@
       });
     }
 
-    // Client health: a chip with the score and, on hover or tap, every reason it lost points.
-    var HEALTH_COLOR = { healthy: '#4aac65', watch: '#c89830', risk: '#e08a68' };
-    function healthChip(h) {
-      if (!h) return null;
-      var c = el('button', 'hl-chip ' + h.band); c.type = 'button';
-      c.appendChild(el('b', null, String(h.score)));
-      c.appendChild(document.createTextNode(' ' + h.label));
-      c.title = h.reasons.length ? h.reasons.map(function (r) { return r.text; }).join('\n') : 'Nothing is pulling the score down.';
-      c.setAttribute('aria-label', 'Health ' + h.score + ', ' + h.label + (h.reasons.length ? ': ' + h.reasons.map(function (r) { return r.text; }).join('; ') : ''));
-      c.addEventListener('click', function (ev) {
-        ev.stopPropagation();
-        var box = c.parentNode.querySelector('.hl-why');
-        if (box) { box.remove(); return; }
-        box = el('div', 'hl-why');
-        if (!h.reasons.length) box.appendChild(el('div', null, 'Nothing is pulling the score down.'));
-        h.reasons.forEach(function (r) { box.appendChild(el('div', null, r.text)); });
-        c.parentNode.insertBefore(box, c.nextSibling);
-      });
-      return c;
-    }
-
     function orgPanel(o, un, extra) {
       var wrap = el('div', 'panel');
       var head = el('div', 'cust-head');
       head.appendChild(el('h2', null, o.name));
-      var ohc = healthChip(extra && extra.health); if (ohc) head.appendChild(ohc);
       head.appendChild(el('div', 'who', o.billing_email
         ? 'Invoices go to ' + o.billing_email : 'No billing contact set'));
       if (o.phone) {
@@ -13995,9 +13964,8 @@
         var cols = [
           ['Client', 'name', false], ['Tickets', 'tickets', true], ['Hours', 'logged_minutes', true],
           ['Billable', 'billable_minutes', true], ['Invoiced', 'invoiced_cents', true],
-          ['Paid', 'paid_cents', true], ['Promises met', 'sla_met_percent', true], ['Rating', 'rating_avg', true], ['Health', 'health_score', true],
+          ['Paid', 'paid_cents', true], ['Promises met', 'sla_met_percent', true], ['Rating', 'rating_avg', true],
         ];
-        rp.clients.forEach(function (c) { c.health_score = c.health ? c.health.score : null; });
         var wrap = el('div', 'fin-table-wrap');
         var tbl = el('table', 'fin-table');
         var thead = el('thead'), hr = el('tr');
@@ -14028,10 +13996,6 @@
           tr.appendChild(el('td', 'num' + (c.sla_met_percent != null && c.sla_met_percent < 90 ? ' warn' : ''),
             c.sla_met_percent == null ? '—' : c.sla_met_percent + '%'));
           tr.appendChild(el('td', 'num', c.rating_avg == null ? '—' : c.rating_avg + ' ★'));
-          var htd = el('td', 'num');
-          if (c.health) { var hs = el('span', 'hl-num ' + c.health.band, String(c.health.score)); hs.title = c.health.reasons.map(function (r) { return r.text; }).join('\n') || 'Healthy'; htd.appendChild(hs); }
-          else htd.textContent = '—';
-          tr.appendChild(htd);
           if (c.org_id || c.account_id) {
             tr.className = 'pick';
             tr.addEventListener('click', function () { openObject(c.org_id ? "org" : "customer", c.org_id || c.account_id); });
