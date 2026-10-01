@@ -75,6 +75,12 @@
     .lg-tools select { flex:0 0 auto; min-height:38px; }
     .lg-tools input { flex:1 1 auto; min-width:0; min-height:38px; }
     .lg-list .lg-row { align-items:flex-start; }
+    .lg-rcpt-on { border-color:rgba(74,172,101,0.5) !important; color:#8fd6a3 !important; text-decoration:none; }
+    .mi-form { display:grid; grid-template-columns:9.5rem 6.5rem minmax(0,1fr) minmax(0,1fr) minmax(0,1fr) auto; gap:0.5rem; align-items:end; margin:0.3rem 0 0.8rem; }
+    .mi-form label { display:block; font-size:0.62rem; font-weight:700; text-transform:uppercase; letter-spacing:0.05em; color:var(--muted); margin-bottom:0.25rem; }
+    .mi-form input { width:100%; box-sizing:border-box; height:38px; padding:0 0.55rem; border-radius:8px; border:1px solid var(--line); background:var(--bg); color:var(--text); font:inherit; color-scheme:dark; }
+    .mi-add .ct-btn { height:38px; }
+    @media (max-width:900px) { .mi-form { grid-template-columns:1fr 1fr; } .mi-form .wide2, .mi-form .mi-add { grid-column:1 / -1; } }
     /* The editor is a row's last child, which .row pushes right and shrinks to fit; it
        takes the full width instead. */
     .lg-list .row.lg-row > .rule-host { flex:1 0 100%; min-width:0; max-width:100%; margin-left:0; }
@@ -146,6 +152,8 @@
        the translucent bar), arrows for a pointer that can hover, and a vertical wheel
        over the bar turning it sideways. See the "tab strip" block in the script. */
     .viewnav { position:sticky; top:var(--abar-h, 58px); z-index:45; background:rgba(9,18,12,0.9); backdrop-filter:blur(10px); border-bottom:1px solid var(--line); }
+    /* Anything scrolled to by script lands below the header and the tab bar. */
+    #subPanel, #watchPanel, .inv.flash { scroll-margin-top:calc(var(--abar-h, 58px) + 64px); }
     .viewnav-track { display:flex; align-items:stretch; gap:0.1rem; max-width:1100px; margin:0 auto; padding:0 1rem; overflow-x:auto; overflow-y:hidden; overscroll-behavior-x:contain; scrollbar-width:none; }
     .viewnav-track::-webkit-scrollbar { display:none; }
     .vbtn { flex:0 0 auto; display:inline-flex; align-items:center; gap:0.45rem; font-family:"Montserrat",sans-serif; font-size:0.74rem; font-weight:700; text-transform:uppercase; letter-spacing:0.04em; padding:0.8rem 0.8rem; min-height:46px; border:0; border-bottom:2px solid transparent; border-radius:0; background:none; color:var(--muted); cursor:pointer; white-space:nowrap; transition:color .2s, border-color .2s; }
@@ -167,6 +175,10 @@
     }
     @media (max-width:480px) { .vbtn { font-size:0.68rem; letter-spacing:0.03em; padding:0.8rem 0.65rem; } .viewnav-track { padding:0 0.5rem; } }
     .inv { border:1px solid var(--line); border-radius:12px; background:var(--card); padding:0.85rem 1rem; margin-bottom:0.5rem; }
+    /* A card opened from the activity feed pulses once so the eye lands on it. */
+    .inv.flash { animation:invFlash 2.2s ease; }
+    @keyframes invFlash { 0%, 35% { border-color:var(--gold); box-shadow:0 0 0 4px rgba(200,152,48,0.22); } 100% { border-color:var(--line); box-shadow:none; } }
+    @media (prefers-reduced-motion: reduce) { .inv.flash { animation:none; border-color:var(--gold); } }
     .inv-top { display:flex; justify-content:space-between; gap:0.6rem; align-items:center; flex-wrap:wrap; }
     .inv-num { font-family:"Montserrat",sans-serif; font-weight:800; font-size:0.82rem; }
     .inv-amt { font-family:"Montserrat",sans-serif; font-weight:800; font-size:1rem; color:var(--gold); }
@@ -470,6 +482,16 @@
     .cust-counts b { color:var(--text); font-weight:700; }
 
     .cust-head { border-bottom:1px solid var(--line); padding-bottom:0.8rem; margin-bottom:0.9rem; }
+    .sys-probe { display:grid; gap:0.2rem; }
+    .sys-probe .sys-gate { color:var(--text); }
+    .hl-chip { display:inline-flex; align-items:center; gap:0.35rem; margin:0.3rem 0 0.2rem; padding:0.2rem 0.65rem; border-radius:999px; font:inherit; font-size:0.74rem; font-weight:700; cursor:pointer; border:1px solid; background:transparent; }
+    .hl-chip b { font-size:0.82rem; }
+    .hl-chip.healthy { color:#8fd6a3; border-color:rgba(74,172,101,0.45); }
+    .hl-chip.watch { color:#e0c98a; border-color:rgba(200,152,48,0.5); }
+    .hl-chip.risk { color:#e08a68; border-color:rgba(224,138,104,0.5); }
+    .hl-why { font-size:0.8rem; color:var(--muted); margin:0.2rem 0 0.3rem; display:grid; gap:0.15rem; }
+    .hl-num { font-weight:700; }
+    .hl-num.healthy { color:#8fd6a3; } .hl-num.watch { color:#e0c98a; } .hl-num.risk { color:#e08a68; }
     .cust-head h2 { font-family:"Montserrat",sans-serif; font-size:1.1rem; margin-bottom:0.15rem; word-break:break-word; }
     .cust-badges { display:flex; flex-wrap:wrap; align-items:center; gap:0.35rem; margin-top:0.5rem; }
     .cust-src { font-size:0.7rem; color:var(--muted); margin-top:0.5rem; }
@@ -591,6 +613,62 @@
     .adlg-diff td .lock { display:block; font-weight:400; font-size:0.72rem; color:#e0c98a; margin-top:0.15rem; }
     .adlg-diff tr.off td.new { color:var(--muted); font-weight:400; text-decoration:line-through; }
     .adlg-form { display:grid; grid-template-columns:1fr 1fr; gap:0.8rem 0.9rem; }
+    .st-top .cu-add.ghost { background:transparent; border:1px solid var(--line); color:var(--text); }
+    .st-note { margin:0 0 0.8rem; padding:0.6rem 0.8rem; border:1px solid rgba(200,152,48,0.4); border-radius:10px; background:rgba(200,152,48,0.07); font-size:0.84rem; }
+    .st-help { margin:0 0 0.8rem; }
+    .st-row { display:grid; grid-template-columns:minmax(0,1fr) 6.5rem 6.5rem 7.5rem 6rem; gap:0.6rem; align-items:center; width:100%; text-align:left; padding:0.6rem 0.75rem; margin-bottom:0.35rem;
+      border:1px solid var(--line); border-radius:10px; background:var(--bg); color:inherit; font:inherit; cursor:pointer; }
+    .st-row:hover { border-color:var(--green); }
+    .st-row .t { min-width:0; display:flex; flex-direction:column; gap:0.15rem; }
+    .st-row .t b { overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+    .st-row .t small { color:var(--muted); font-size:0.74rem; }
+    .st-row .n { text-align:right; font-variant-numeric:tabular-nums; font-size:0.86rem; }
+    .st-row .n small { display:block; color:var(--muted); font-size:0.68rem; text-transform:uppercase; letter-spacing:0.04em; }
+    .st-row .n.neg { color:#e08a68; }
+    .st-head { display:grid; grid-template-columns:minmax(0,1fr) 6.5rem 6.5rem 7.5rem 6rem; gap:0.6rem; padding:0 0.75rem 0.3rem; font-size:0.62rem; font-weight:700; text-transform:uppercase; letter-spacing:0.05em; color:var(--muted); }
+    .st-head span:not(:first-child) { text-align:right; }
+    .st-chip { display:inline-block; font-size:0.62rem; font-weight:700; text-transform:uppercase; letter-spacing:0.04em; padding:0.1rem 0.4rem; border-radius:4px; margin-left:0.35rem; vertical-align:1px; }
+    .st-chip.gold { background:rgba(200,152,48,0.15); color:#e0c98a; }
+    .st-chip.grey { background:rgba(138,164,141,0.15); color:var(--muted); }
+    .st-chip.red { background:rgba(224,138,104,0.15); color:#e08a68; }
+    .st-preview { grid-column:1 / -1; font-size:0.84rem; color:var(--muted); padding:0.5rem 0.7rem; border:1px dashed var(--line); border-radius:8px; }
+    .st-preview b { color:var(--text); }
+    .st-rule { display:grid; grid-template-columns:minmax(0,1fr) 7rem 7rem 2.5rem; gap:0.5rem; align-items:end; margin-bottom:0.5rem; }
+    .so-ev { margin-top:0.8rem; display:grid; gap:0.2rem; }
+    .so-lines { display:grid; gap:0.4rem; margin:0.6rem 0; }
+    .so-line { display:grid; grid-template-columns:minmax(0,1fr) 5rem 5rem minmax(8rem,14rem); gap:0.5rem; align-items:center; padding:0.5rem 0.65rem; border:1px solid var(--line); border-radius:8px; background:var(--bg); }
+    .so-line input { width:100%; box-sizing:border-box; height:36px; padding:0 0.5rem; border-radius:6px; border:1px solid var(--line); background:var(--card); color:var(--text); font:inherit; }
+    .so-line .n { text-align:right; font-variant-numeric:tabular-nums; font-size:0.84rem; }
+    @media (max-width:720px) {
+      .st-row, .st-head { grid-template-columns:minmax(0,1fr) 5.5rem; }
+      .st-row .n.hide-s, .st-head .hide-s { display:none; }
+      .so-line { grid-template-columns:minmax(0,1fr) 4rem; }
+      .so-line .wide-s { grid-column:1 / -1; }
+      .st-rule { grid-template-columns:1fr 1fr; }
+    }
+    .cat-pick input[type=search] { width:100%; box-sizing:border-box; height:40px; padding:0 0.7rem; border-radius:8px; border:1px solid var(--line); background:var(--bg); color:var(--text); font:inherit; margin-bottom:0.6rem; }
+    .cat-pick-list { max-height:min(52vh, 420px); overflow:auto; display:grid; gap:0.35rem; }
+    .cat-pick-row { display:grid; grid-template-columns:1fr auto 4.5rem; gap:0.7rem; align-items:center; padding:0.5rem 0.65rem; border:1px solid var(--line); border-radius:8px; background:var(--bg); cursor:pointer; }
+    .cat-pick-row[hidden] { display:none; }
+    .cat-pick-t { min-width:0; display:flex; flex-direction:column; gap:0.1rem; }
+    .cat-pick-t b { font-size:0.84rem; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+    .cat-pick-t small { font-size:0.72rem; color:var(--muted); }
+    .cat-pick-p { font-weight:700; font-variant-numeric:tabular-nums; }
+    .cat-pick-row input { width:100%; height:36px; box-sizing:border-box; padding:0 0.4rem; border-radius:6px; border:1px solid var(--line); background:var(--card); color:var(--text); font:inherit; text-align:center; }
+    .qline.from-cat .qline-desc { border-left:3px solid var(--gold); }
+    .qtotals .optl.neg { color:#e08a68; }
+    #qtAddCatalog { margin-left:0.4rem; }
+    .cvt-opts { display:grid; grid-template-columns:1fr 1fr; gap:0.6rem; margin:0.2rem 0 1rem; }
+    .cvt-opt { display:flex; flex-direction:column; align-items:flex-start; gap:0.25rem; text-align:left; padding:0.75rem 0.85rem; min-height:64px;
+      border-radius:10px; border:1px solid var(--line); background:var(--bg); color:var(--text); cursor:pointer; font:inherit; }
+    .cvt-opt b { font-family:"Montserrat",sans-serif; font-size:0.82rem; }
+    .cvt-opt span { font-size:0.76rem; color:var(--muted); line-height:1.4; }
+    .cvt-opt:hover { border-color:var(--green); }
+    .cvt-opt.on { border-color:var(--gold); background:rgba(200,152,48,0.08); box-shadow:inset 0 0 0 1px var(--gold); }
+    .cvt-opt:focus-visible { outline:2px solid var(--green); outline-offset:2px; }
+    .adlg-form > [hidden] { display:none; }
+    .adlg-form + .adlg-meta { margin-top:0.9rem; }
+    @media (max-width:520px) { .cvt-opts, .adlg-form { grid-template-columns:1fr; } }
     .adlg-form .wide { grid-column:1 / -1; }
     .adlg-form label { display:block; font-family:"Montserrat",sans-serif; font-size:0.62rem; font-weight:700; text-transform:uppercase;
       letter-spacing:0.05em; color:var(--muted); margin-bottom:0.3rem; }
@@ -1206,6 +1284,24 @@
     .mgmt details { border:1px solid var(--line); border-radius:12px; background:var(--card); padding:0.6rem 0.9rem; margin-bottom:0.6rem; }
     .mgmt summary { font-family:"Montserrat",sans-serif; font-size:0.74rem; text-transform:uppercase; letter-spacing:0.05em; color:var(--muted); cursor:pointer; }
     .mgmt .fgrid { margin-top:0.6rem; }
+    /* --- System drawer --- */
+    .mgmt summary .sys-dot { display:inline-block; width:8px; height:8px; border-radius:50%; margin-left:0.5rem; vertical-align:middle; background:var(--muted); }
+    .mgmt summary .sys-dot.ok { background:#4aac65; }
+    .mgmt summary .sys-dot.bad { background:#ef4444; box-shadow:0 0 0 3px rgba(239,68,68,0.18); }
+    .sys { display:grid; gap:0.85rem; margin-top:0.75rem; }
+    .sys-h { font-size:0.66rem; font-weight:700; letter-spacing:0.08em; text-transform:uppercase; color:var(--muted); margin-bottom:0.4rem; }
+    .sys-line { display:flex; align-items:center; gap:0.55rem; font-size:0.86rem; color:var(--text); }
+    .sys-line i { width:16px; text-align:center; }
+    .sys-line.ok i { color:#4aac65; } .sys-line.bad i { color:#ef4444; } .sys-line.warn i { color:var(--gold); }
+    .sys-chips { display:flex; flex-wrap:wrap; gap:0.35rem; }
+    .sys-chip { display:inline-flex; align-items:center; gap:0.35rem; font-size:0.74rem; padding:0.2rem 0.6rem; border-radius:999px; border:1px solid var(--line); color:var(--muted); background:var(--bg); white-space:nowrap; }
+    .sys-chip::before { content:""; width:6px; height:6px; border-radius:50%; background:currentColor; opacity:0.8; }
+    .sys-chip.ok { color:#8fd6a3; border-color:rgba(74,172,101,0.3); }
+    .sys-chip.bad { color:#f0a58f; border-color:rgba(214,120,90,0.45); background:rgba(214,120,90,0.08); }
+    .sys-err { font-size:0.8rem; color:#f0a58f; margin:0.35rem 0 0 1.6rem; }
+    .sys-bk { display:flex; align-items:center; justify-content:space-between; gap:0.75rem; flex-wrap:wrap; }
+    .sys-bk button { min-height:36px; padding:0 0.9rem; border-radius:10px; border:1px solid rgba(74,172,101,0.4); background:rgba(74,172,101,0.1); color:#cfe9d6; font-weight:600; font-size:0.82rem; cursor:pointer; }
+    .sys-bk button:disabled { opacity:0.55; cursor:default; }
     .mgmt textarea { width:100%; padding:0.5rem 0.65rem; border-radius:8px; border:1px solid var(--line); background:var(--bg); color:var(--text); font-family:inherit; font-size:0.85rem; }
     .ann-kind { font-size:0.62rem; }
     [hidden] { display:none !important; }
@@ -2291,6 +2387,7 @@
           <span class="qdoc-l">Document</span>
           <button type="button" class="fpill on" id="qtTypeQuote">Quote</button>
           <button type="button" class="fpill" id="qtTypeEstimate">Estimate</button>
+          <button type="button" class="fpill" id="qtTypeSow">Statement of Work</button>
           <span class="qdoc-h" id="qtTypeHint">Firm prices. Non-binding until a Statement of Work is signed.</span>
         </div>
         <div class="fwide custpick">
@@ -2343,6 +2440,7 @@
           <div class="qlines-h"><span>Line items</span><span class="qlines-hint">Tick Optional for add-ons the customer can choose. Tax applies to the required lines.</span></div>
           <div id="qtLines"></div>
           <button type="button" id="qtAddLine">+ Add a line</button>
+          <button type="button" id="qtAddCatalog">+ Add from the store catalog</button>
           <div class="qtotals" id="qtTotals"></div>
         </div>
 
@@ -2524,6 +2622,12 @@
   </main>
 
   <main class="wrap" id="viewInventory" aria-label="Inventory" hidden>
+    <div class="mk-modes" role="tablist" aria-label="Inventory">
+      <button type="button" class="mk-mode on" data-smode="equipment" role="tab" aria-selected="true">Equipment</button>
+      <button type="button" class="mk-mode" data-smode="catalog" role="tab" aria-selected="false">Store catalog</button>
+      <button type="button" class="mk-mode" data-smode="orders" role="tab" aria-selected="false">Store orders</button>
+    </div>
+    <div id="invtEquip">
     <div class="tiles" id="invtTiles"></div>
     <div class="charts" id="invtCharts"></div>
 
@@ -2683,6 +2787,41 @@
         <section id="invtDetail" aria-live="polite"></section>
       </div>
     </div>
+    </div>
+
+    <section id="invtCatalog" hidden>
+      <div class="st-note" id="stStale" hidden></div>
+      <div class="cu-top st-top">
+        <div class="filters" id="stFilters">
+          <button type="button" class="fpill on" data-view="active">Active</button>
+          <button type="button" class="fpill" data-view="inactive">Retired</button>
+          <button type="button" class="fpill" data-view="all">All</button>
+        </div>
+        <button type="button" class="cu-add" id="stAdd">+ Add item</button>
+        <button type="button" class="cu-add ghost" id="stRulesBtn">Pricing rules</button>
+        <div class="invt-filt">
+          <div class="cu-q"><label for="stQ" class="sr-only">Search the catalog</label><input type="search" id="stQ" placeholder="Search name, code or vendor" autocomplete="off"></div>
+          <label for="stCat" class="sr-only">Category</label>
+          <select id="stCat" class="invt-sel"><option value="">Every category</option></select>
+        </div>
+      </div>
+      <section class="newinv" id="stRules" hidden></section>
+      <section class="newinv" id="stForm" hidden></section>
+      <div id="stList"></div>
+    </section>
+
+    <section id="invtOrders" hidden>
+      <div class="cu-top">
+        <div class="filters" id="soFilters">
+          <button type="button" class="fpill on" data-view="open">Open</button>
+          <button type="button" class="fpill" data-view="done">Received or canceled</button>
+          <button type="button" class="fpill" data-view="all">All</button>
+        </div>
+      </div>
+      <p class="row-sub st-help">An order opens when a quote with catalog hardware converts. It cannot be placed with the vendor until its invoice is paid, unless you give a reason. Received items go into Equipment as the customer's.</p>
+      <div id="soDetail"></div>
+      <div id="soList"></div>
+    </section>
   </main>
 
   <main class="wrap" id="viewFinance" aria-label="Finance" hidden>
@@ -2702,6 +2841,7 @@
         <label for="finExport" class="sr-only">Export</label>
         <select id="finExport">
           <option value="">Export&hellip;</option>
+          <option value="cpa">Year-end pack for your accountant (.zip)</option>
           <option value="xlsx">Excel workbook (.xlsx)</option>
           <option value="print">Print / Save as PDF</option>
           <option value="summary">CSV: summary</option>
@@ -6766,6 +6906,8 @@
     // Byte-identical to CONFIG.quoteTerms in the Worker (src/config.js). The two must
     // move together: this is what a new quote is seeded with, that is what the server
     // falls back to.
+    // A byte-identical copy of CONFIG.sowTerms in the Worker; the two move together.
+    var DEFAULT_SOW_TERMS = 'Signing this Statement of Work approves the scope, the price and the payment schedule above, and authorizes TES to schedule the work once the first payment is received. Anything outside the scope is quoted separately before it starts. The TES Terms of Service at tevisengineering.com/privacy_policy.html apply.';
     var DEFAULT_TERMS = 'This is a preliminary, non-binding estimate based on the information available at this time. It is not a Statement of Work and does not authorize TES to begin billable work. Prices cover the scope described; anything outside it is quoted separately before it starts. Accepting this document records your intent to proceed, after which TES issues a Statement of Work for signature. Work begins once that is signed and the deposit is received.';
     var qtDocType = 'quote';
     var INTERVAL_OPTS = [['once', 'One-time'], ['month', 'Per month'], ['quarter', 'Per quarter'], ['year', 'Per year']];
@@ -6801,8 +6943,11 @@
         // Only sent on an estimate. A high side on a quote would be refused by
         // priceItems as a range whose ends are equal, or worse, quietly kept.
         if (qtDocType === 'estimate' && high.value !== '') o.high_unit_price = Number(high.value);
+        // A store catalog line keeps its cost and item, staff-side only.
+        if (item.catalog_item_id) { o.catalog_item_id = item.catalog_item_id; o.cost_cents = item.cost_cents; }
         return o;
       };
+      if (item.catalog_item_id) { row.classList.add('from-cat'); desc.title = 'From the store catalog. Cost ' + money(item.cost_cents || 0) + ' each.'; }
       row.amtEl = amt;
       row.highEl = high;
       row.priceEl = price;
@@ -6846,12 +6991,60 @@
         if (!optBy[k] || !optBy[k].low) return;
         t.appendChild(el('span', 'optl', '+ ' + say(optBy[k]) + INTERVAL_SUFFIX[k] + ' in optional items if taken'));
       });
+      // What the catalog lines make, for staff only. Never on the customer's copy.
+      var sold = 0, cost = 0;
+      Array.prototype.forEach.call(qtLinesEl.children, function (row) {
+        var it = row.read();
+        if (!it.description || it.cost_cents == null || it.optional || it.interval !== 'once') return;
+        sold += Math.round(qty(it.qty) * Math.round(it.unit_price * 100));
+        cost += Math.round(qty(it.qty) * it.cost_cents);
+      });
+      if (sold || cost) t.appendChild(el('span', 'optl' + (sold - cost < 0 ? ' neg' : ''), 'Catalog lines: cost ' + money(cost) + ', margin ' + money(sold - cost) + (sold ? ' (' + Math.round((sold - cost) / sold * 100) + '%)' : '')));
     }
     document.getElementById('qtTypeQuote').addEventListener('click', function () { qtSetDocType('quote'); });
     document.getElementById('qtTypeEstimate').addEventListener('click', function () { qtSetDocType('estimate'); });
+    document.getElementById('qtTypeSow').addEventListener('click', function () { qtSetDocType('sow'); });
     document.getElementById('qtDraft').addEventListener('click', qtDraftRun);
     document.getElementById('qtRefEdit').addEventListener('click', qtRefPanel);
     document.getElementById('qtAddLine').addEventListener('click', function () { var r = qtLine(); qtLinesEl.appendChild(r); r.querySelector('input').focus(); });
+    // Pick items from the store catalog: each becomes a line at today's price, carrying
+    // its cost so the quote, the invoice and the order know the margin.
+    document.getElementById('qtAddCatalog').addEventListener('click', function () {
+      api('/admin/store/catalog').then(function (r) {
+        if (!r.ok) return toast('Could not load the catalog');
+        if (!r.items.length) return toast('The catalog is empty. Add items on the Inventory tab, Catalog view.');
+        var box = el('div', 'cat-pick');
+        var q = document.createElement('input'); q.type = 'search'; q.placeholder = 'Search the catalog'; q.setAttribute('aria-label', 'Search the catalog');
+        box.appendChild(q);
+        var list = el('div', 'cat-pick-list');
+        var qtys = {};
+        r.items.forEach(function (it) {
+          var rw = el('label', 'cat-pick-row'); rw.dataset.text = (it.name + ' ' + (it.sku || '') + ' ' + it.category).toLowerCase();
+          var n = document.createElement('input'); n.type = 'number'; n.min = '0'; n.step = '1'; n.value = '0'; n.setAttribute('aria-label', 'How many ' + it.name);
+          qtys[it.id] = n;
+          var t = el('span', 'cat-pick-t');
+          t.appendChild(el('b', null, it.name));
+          t.appendChild(el('small', null, (it.sku ? it.sku + ' \u00b7 ' : '') + it.category + ' \u00b7 cost ' + money(it.cost_cents) + (it.stale ? ' \u00b7 cost not checked in ' + it.checked_days_ago + ' days' : '')));
+          rw.appendChild(t); rw.appendChild(el('span', 'cat-pick-p', money(it.price_cents))); rw.appendChild(n);
+          list.appendChild(rw);
+        });
+        box.appendChild(list);
+        q.addEventListener('input', function () { var v = q.value.trim().toLowerCase(); Array.prototype.forEach.call(list.children, function (rw) { rw.hidden = v && rw.dataset.text.indexOf(v) < 0; }); });
+        askDialog({ title: 'Add from the store catalog', lead: 'Prices follow the store pricing rules. The customer sees the price, never the cost.', body: box,
+          buttons: [{ label: 'Cancel', value: null }, { label: 'Add to the quote', value: true, cls: 'prim', act: function () {
+            var picks = Object.keys(qtys).map(function (id) { return { id: Number(id), qty: Number(qtys[id].value) || 0 }; }).filter(function (p) { return p.qty > 0; });
+            if (!picks.length) return { error: 'Enter how many of at least one item.' };
+            return api('/admin/store/lines', { method: 'POST', body: { picks: picks } }).then(function (x) {
+              if (!x.ok) return { error: 'Could not price those items.' };
+              // Replace a single empty starter line rather than leaving it above the picks.
+              if (qtLinesEl.children.length === 1 && !qtLinesEl.children[0].read().description) qtLinesEl.textContent = '';
+              x.lines.forEach(function (l) { qtLinesEl.appendChild(qtLine(l)); });
+              qtRecalc();
+            });
+          } }] });
+        q.focus();
+      });
+    });
 
     function qtSelect(c) {
       qtSelected = c;
@@ -6940,12 +7133,21 @@
     var qtRefLoaded = false;
 
     function qtSetDocType(t) {
-      qtDocType = t === 'estimate' ? 'estimate' : 'quote';
+      qtDocType = t === 'estimate' || t === 'sow' ? t : 'quote';
       document.getElementById('qtTypeQuote').classList.toggle('on', qtDocType === 'quote');
       document.getElementById('qtTypeEstimate').classList.toggle('on', qtDocType === 'estimate');
+      document.getElementById('qtTypeSow').classList.toggle('on', qtDocType === 'sow');
       document.getElementById('qtTypeHint').textContent = qtDocType === 'estimate'
         ? 'A price range, for a job not yet fully scoped. Confirmed later in the quote.'
-        : 'Firm prices. Non-binding until a Statement of Work is signed.';
+        : qtDocType === 'sow'
+          ? 'Signed online, and authorizes the work. Leave the next step blank for a payment schedule in stages.'
+          : 'Firm prices. Non-binding until a Statement of Work is signed.';
+      // A new document carries its own type's default terms. Terms somebody has typed
+      // are left alone; only a default is swapped for the other default.
+      var termsEl = document.getElementById('qtTerms');
+      if (!document.getElementById('quoteId').value && (termsEl.value === DEFAULT_TERMS || termsEl.value === DEFAULT_SOW_TERMS || !termsEl.value)) {
+        termsEl.value = qtDocType === 'sow' ? DEFAULT_SOW_TERMS : DEFAULT_TERMS;
+      }
       // The high-price input exists on every row and is shown or hidden, so switching
       // type keeps whatever is already typed on both sides.
       Array.prototype.forEach.call(qtLinesEl.children, function (row) {
@@ -7423,21 +7625,105 @@
       function runConvert(extra, lead, tail) {
         var body = { due_days: 14 };
         for (var k in extra) body[k] = extra[k];
+        var done = function (r) {
+          var d = r.deposit;
+          toast(d
+            ? 'Deposit invoice ' + r.invoice_number + ' created (' + d.stages[0].pct + '%, ' + money(d.stages[0].cents) + ')'
+              + (d.project_number ? ' \u00b7 project ' + d.project_number + ' bills the rest' : ' \u00b7 the project could not be made; start it from the quote')
+              + sayAgreement(r)
+            : r.invoice_number
+              ? lead + r.invoice_number + (tail || '') + (r.pay_url ? ' with a pay link' : '') + sayAgreement(r)
+              : 'Converted' + sayAgreement(r));
+          reload();
+        };
         if (agreementOnlyQuote(q)) {
           if (!confirm('Everything on this quote is recurring, so no invoice is raised now.\n\n'
             + 'Convert it into a service agreement? The first invoice goes out on its bill day.')) return;
-        } else {
-          var num = prompt('Invoice number:', q.number.replace(/^TES-(QT|EST|Q)-/, 'TES-INV-'));
-          if (num === null) return;
-          body.invoice_number = num.trim();
+          api('/admin/quotes/' + q.id + '/convert', { method: 'POST', body: body }).then(function (r) {
+            if (!r.ok) return toast(QUOTE_ERROR[r.error] || 'Could not convert');
+            done(r);
+          });
+          return;
         }
-        api('/admin/quotes/' + q.id + '/convert', { method: 'POST', body: body }).then(function (r) {
-          if (!r.ok) return toast(QUOTE_ERROR[r.error] || 'Could not convert');
-          toast(r.invoice_number
-            ? lead + r.invoice_number + (tail || '') + (r.pay_url ? ' with a pay link' : '') + sayAgreement(r)
-            : 'Converted' + sayAgreement(r));
-          reload();
-        });
+        convertDialog(q, body).then(function (r) { if (r) done(r); });
+      }
+
+      // How a quote becomes money. Billing in stages is the default, because it is what
+      // the quote's Next Step told the customer: a deposit now and the rest as the work
+      // lands. The split mirrors depositStages() in the Worker.
+      function stagesFor(total, pct) {
+        var n = Number(pct);
+        if (pct !== '' && pct != null && Math.round(n) === n && n >= 10 && n <= 90) return [{ label: 'Deposit', pct: n }, { label: 'Balance on delivery', pct: 100 - n }];
+        return total > 500000
+          ? [{ label: 'Kickoff deposit', pct: 40 }, { label: 'Midpoint milestone', pct: 30 }, { label: 'Delivery', pct: 30 }]
+          : [{ label: 'Deposit', pct: 50 }, { label: 'Delivery', pct: 50 }];
+      }
+      function convertDialog(q, body) {
+        var total = q.status === 'accepted' ? q.accepted_cents : q.total_cents;
+        var wrap = el('div');
+        var opts = el('div', 'cvt-opts');
+        opts.setAttribute('role', 'radiogroup');
+        opts.setAttribute('aria-label', 'How to bill it');
+        var pick = 'stages';
+        var mk = function (val, title) {
+          var b = el('button', 'cvt-opt'); b.type = 'button'; b.setAttribute('role', 'radio');
+          b.appendChild(el('b', null, title));
+          var sub = el('span'); b.appendChild(sub);
+          b.addEventListener('click', function () { pick = val; sync(); });
+          opts.appendChild(b);
+          return { btn: b, sub: sub, val: val };
+        };
+        var oStages = mk('stages', 'Bill in stages');
+        var oWhole = mk('whole', 'Bill the whole job now');
+        wrap.appendChild(opts);
+
+        var form = el('div', 'adlg-form');
+        var field = function (label, input, cls) { var d = el('div', cls || null); var l = el('label', null, label); l.htmlFor = input.id; d.appendChild(l); d.appendChild(input); form.appendChild(d); return d; };
+        var num = el('input'); num.id = 'cvtNum'; num.value = q.number.replace(/^TES-(QT|EST|Q)-/, 'TES-INV-');
+        field('Invoice number', num, 'wide');
+        var due = el('input'); due.id = 'cvtDue'; due.type = 'number'; due.min = '0'; due.max = '120'; due.value = '14';
+        field('Due in (days)', due);
+        var pct = el('input'); pct.id = 'cvtPct'; pct.type = 'number'; pct.min = '10'; pct.max = '90'; pct.step = '1'; pct.placeholder = 'Standard split';
+        var pctBox = field('Deposit % (optional)', pct);
+        wrap.appendChild(form);
+        var note = el('p', 'adlg-meta');
+        wrap.appendChild(note);
+
+        function sync() {
+          var st = stagesFor(total, pct.value.trim());
+          var amts = st.map(function (x) { return Math.floor(total * x.pct / 100); });
+          amts[amts.length - 1] = total - amts.slice(0, -1).reduce(function (a, b) { return a + b; }, 0);
+          oStages.sub.textContent = st.map(function (x, i) { return x.pct + '% ' + (i === 0 ? 'now' : /midpoint/i.test(x.label) ? 'at the midpoint' : 'on delivery') + ' (' + money(amts[i]) + ')'; }).join(', ');
+          oWhole.sub.textContent = 'One invoice for ' + money(total);
+          [oStages, oWhole].forEach(function (o) { var on = o.val === pick; o.btn.classList.toggle('on', on); o.btn.setAttribute('aria-checked', on ? 'true' : 'false'); });
+          pctBox.hidden = pick !== 'stages';
+          note.textContent = pick === 'stages'
+            ? 'The first stage is invoiced now. A project is made for the job with the other stages as milestones, invoiced from the project as the work is done.'
+            : 'The accepted lines go on one invoice, as they always have.';
+        }
+        pct.addEventListener('input', sync);
+        sync();
+
+        var result = null;
+        return askDialog({
+          title: 'Convert ' + q.number,
+          lead: q.title + ' \u00b7 ' + money(total) + ' one-time',
+          body: wrap,
+          buttons: [
+            { label: 'Cancel', value: null },
+            { label: 'Convert', value: true, cls: 'prim', act: function () {
+              if (!num.value.trim()) return { error: 'Give the invoice a number.' };
+              var b = {}; for (var k in body) b[k] = body[k];
+              b.invoice_number = num.value.trim();
+              b.due_days = Math.max(0, Math.min(120, Math.round(Number(due.value) || 0)));
+              if (pick === 'stages') { b.deposit = true; if (pct.value.trim()) b.deposit_pct = Number(pct.value); }
+              return api('/admin/quotes/' + q.id + '/convert', { method: 'POST', body: b }).then(function (r) {
+                if (!r.ok) return { error: r.message || QUOTE_ERROR[r.error] || 'Could not convert' };
+                result = r;
+              });
+            } },
+          ],
+        }).then(function (v) { return v ? result : null; });
       }
       if (q.status === 'accepted') {
         qact(agreementOnlyQuote(q) ? 'Start the agreement' : 'Convert to invoice', 'prim', function () {
@@ -7485,6 +7771,9 @@
         // across beats retyping them. The range does not come with it -- on a quote the
         // low side is the price.
         if (q.doc_type === 'estimate') qact('Turn into a quote', null, dup('quote', 'convert it'));
+        // The quote is accepted; the Statement of Work is what gets signed and starts the
+        // job. It carries the lines they took, the scope and the exclusions across.
+        if (q.status === 'accepted' && (q.doc_type || 'quote') !== 'sow') qact('Draft the Statement of Work', 'prim', dup('sow', 'draft it'));
       }
       if (q.status === 'draft') {
         qact('Delete', 'danger', function () {
@@ -7619,6 +7908,7 @@
 
     function licCard(v) {
       var d = el('div', 'inv' + (v.archived ? ' archived' : ''));
+      if (v.key_hash) d.setAttribute('data-kh', v.key_hash);
 
       var top = el('div', 'inv-top');
       top.appendChild(el('span', 'inv-num', v.email || v.account_id));
@@ -8105,6 +8395,22 @@
       var m = Math.round((Date.now() / 1000 - ts) / 60);
       return m < 1 ? 'just now' : m < 60 ? m + ' min ago' : m < 1440 ? Math.round(m / 60) + ' hr ago' : fmtDate(ts);
     };
+
+    function flashKey(kh) {
+      var find = function () { return keyListEl.querySelector('[data-kh="' + String(kh).replace(/[^a-f0-9]/gi, '') + '"]'); };
+      var show = function (c) { c.scrollIntoView({ behavior: 'smooth', block: 'center' }); c.classList.add('flash'); setTimeout(function () { c.classList.remove('flash'); }, 2200); };
+      var tries = 0;
+      (function wait() {
+        var c = find();
+        if (c) { show(c); return; }
+        if (++tries === 8 && keyFilter !== 'all') {
+          keyFilter = 'all';
+          [].forEach.call(document.querySelectorAll('#keyFilters .fpill'), function (b) { b.classList.toggle('on', b.getAttribute('data-archived') === 'all'); });
+          loadKeys();
+        }
+        if (tries < 30) setTimeout(wait, 150);
+      })();
+    }
 
     function loadKeys() {
       return api('/admin/licenses?archived=' + keyFilter).then(function (r) {
@@ -8761,6 +9067,7 @@
       // ---- who they are ----
       var head = el('div', 'cust-head');
       head.appendChild(el('h2', null, c.profile.name || c.profile.company || c.account.email));
+      var chc = healthChip(c.health); if (chc) head.appendChild(chc);
       var sub = [c.profile.company, c.account.email, fmtPhone(c.profile.phone), fmtPhone(c.profile.alt_phone)]
         .filter(Boolean).join(' · ');
       head.appendChild(el('div', 'who', sub));
@@ -8775,7 +9082,6 @@
       // read as a product relationship that does not exist. Shown only when one does.
       var hasSoftware = !!(
         (c.licenses && c.licenses.length) ||
-        (c.subscriptions && c.subscriptions.length) ||
         (c.trial_claims && c.trial_claims.length) ||
         (c.subscribe_intents && c.subscribe_intents.length) ||
         c.account.subscribed
@@ -9814,10 +10120,32 @@
       });
     }
 
+    // Client health: a chip with the score and, on hover or tap, every reason it lost points.
+    var HEALTH_COLOR = { healthy: '#4aac65', watch: '#c89830', risk: '#e08a68' };
+    function healthChip(h) {
+      if (!h) return null;
+      var c = el('button', 'hl-chip ' + h.band); c.type = 'button';
+      c.appendChild(el('b', null, String(h.score)));
+      c.appendChild(document.createTextNode(' ' + h.label));
+      c.title = h.reasons.length ? h.reasons.map(function (r) { return r.text; }).join('\n') : 'Nothing is pulling the score down.';
+      c.setAttribute('aria-label', 'Health ' + h.score + ', ' + h.label + (h.reasons.length ? ': ' + h.reasons.map(function (r) { return r.text; }).join('; ') : ''));
+      c.addEventListener('click', function (ev) {
+        ev.stopPropagation();
+        var box = c.parentNode.querySelector('.hl-why');
+        if (box) { box.remove(); return; }
+        box = el('div', 'hl-why');
+        if (!h.reasons.length) box.appendChild(el('div', null, 'Nothing is pulling the score down.'));
+        h.reasons.forEach(function (r) { box.appendChild(el('div', null, r.text)); });
+        c.parentNode.insertBefore(box, c.nextSibling);
+      });
+      return c;
+    }
+
     function orgPanel(o, un, extra) {
       var wrap = el('div', 'panel');
       var head = el('div', 'cust-head');
       head.appendChild(el('h2', null, o.name));
+      var ohc = healthChip(extra && extra.health); if (ohc) head.appendChild(ohc);
       head.appendChild(el('div', 'who', o.billing_email
         ? 'Invoices go to ' + o.billing_email : 'No billing contact set'));
       if (o.phone) {
@@ -10863,6 +11191,7 @@
 
     // Opens an item by id, clearing any filter that hides it.
     function flashInvt(id) {
+      if (storeMode !== 'equipment') storeSetMode('equipment');
       var i = invtAll.filter(function (x) { return x.id === Number(id); })[0];
       if (!i) return;
       if (!invtMatches(i) || (invtKind && i.kind !== invtKind) || (invtHolder && invtHolder !== invtHolderKey(i) && !(invtHolder === 'customers' && i.holder_type !== 'tes'))) {
@@ -10873,7 +11202,298 @@
       invtModalOpen(i);
     }
 
+    // ---- Store (Session 56, Phase 6): catalog, pricing rules, and orders ----------
+    var storeMode = (function () { try { return localStorage.getItem('tes_invt_mode') || 'equipment'; } catch (e) { return 'equipment'; } })();
+    var stView = 'active', soView = 'open', stItems = [], stRulesCache = null, stCats = [];
+    function storeSetMode(m) {
+      storeMode = m;
+      try { localStorage.setItem('tes_invt_mode', m); } catch (e) { /* private window */ }
+      document.querySelectorAll('[data-smode]').forEach(function (b) { var on = b.dataset.smode === m; b.classList.toggle('on', on); b.setAttribute('aria-selected', on ? 'true' : 'false'); });
+      document.getElementById('invtEquip').hidden = m !== 'equipment';
+      document.getElementById('invtCatalog').hidden = m !== 'catalog';
+      document.getElementById('invtOrders').hidden = m !== 'orders';
+      if (m === 'catalog') loadCatalog();
+      if (m === 'orders') loadStoreOrders();
+    }
+    document.querySelectorAll('[data-smode]').forEach(function (b) { b.addEventListener('click', function () { storeSetMode(b.dataset.smode); }); });
+
+    // The same arithmetic as priceFor() in src/store.js, for the live preview in the form.
+    function stPrice(it, rules) {
+      var cost = it.cost_cents || 0, msrp = it.msrp_cents || null, price;
+      if (it.price_override_cents != null) price = it.price_override_cents;
+      else {
+        var r = (rules.categories && rules.categories[it.category]) || rules.default;
+        price = Math.max(Math.ceil(cost * (1 + r.markup_pct / 100)), cost + r.min_margin_cents);
+        if (rules.round !== 'none') price = Math.ceil((price + 1) / 100) * 100 - 1;
+      }
+      var capped = !!(msrp && price > msrp); if (capped) price = msrp;
+      return { price: price, margin: price - cost, capped: capped };
+    }
+    function dollarsIn(v) { if (v === '' || v == null) return null; var n = Math.round(Number(v) * 100); return Number.isFinite(n) ? n : NaN; }
+
+    function loadCatalog() {
+      var q = document.getElementById('stQ').value.trim(), cat = document.getElementById('stCat').value;
+      return api('/admin/store/catalog?active=' + stView + '&q=' + encodeURIComponent(q) + '&category=' + encodeURIComponent(cat)).then(function (r) {
+        var list = document.getElementById('stList'); list.textContent = '';
+        if (!r.ok) { list.appendChild(el('div', 'row-sub', 'Could not load the catalog.')); return; }
+        stItems = r.items;
+        if (!stCats.length) {
+          stCats = r.categories;
+          var sel = document.getElementById('stCat');
+          stCats.forEach(function (c) { var o = el('option', null, c); o.value = c; sel.appendChild(o); });
+        }
+        var note = document.getElementById('stStale');
+        note.hidden = !r.stale;
+        note.textContent = r.stale ? r.stale + (r.stale === 1 ? ' cost has' : ' costs have') + ' not been checked in 14 days. Prices follow the cost, so check them before quoting.' : '';
+        if (!r.items.length) { list.appendChild(el('div', 'row-sub', stView === 'active' && !q && !cat ? 'The catalog is empty. Add the equipment you resell, with what you pay for it.' : 'Nothing matches.')); return; }
+        var head = el('div', 'st-head');
+        ['Item', 'Cost', 'Price', 'Margin', 'Checked'].forEach(function (h, i) { head.appendChild(el('span', i === 1 || i === 4 ? 'hide-s' : null, h)); });
+        list.appendChild(head);
+        r.items.forEach(function (it) {
+          var b = el('button', 'st-row'); b.type = 'button';
+          var t = el('span', 't');
+          var nm = el('b', null, it.name);
+          if (!it.active) nm.appendChild(el('span', 'st-chip grey', 'retired'));
+          if (!it.public) nm.appendChild(el('span', 'st-chip grey', 'staff only'));
+          if (it.stale) nm.appendChild(el('span', 'st-chip gold', 'check cost'));
+          if (it.capped) nm.appendChild(el('span', 'st-chip gold', 'at MSRP'));
+          if (it.below_cost) nm.appendChild(el('span', 'st-chip red', 'below cost'));
+          t.appendChild(nm);
+          t.appendChild(el('small', null, [it.sku, it.category, it.vendor].filter(Boolean).join(' \u00b7 ')));
+          b.appendChild(t);
+          b.appendChild(el('span', 'n hide-s', money(it.cost_cents)));
+          b.appendChild(el('span', 'n', money(it.price_cents)));
+          var mg = el('span', 'n hide-s' + (it.margin_cents < 0 ? ' neg' : ''), money(it.margin_cents)); mg.appendChild(el('small', null, it.margin_pct + '%'));
+          b.appendChild(mg);
+          b.appendChild(el('span', 'n hide-s', it.checked_days_ago === 0 ? 'today' : it.checked_days_ago + 'd ago'));
+          b.addEventListener('click', function () { stEdit(it); });
+          list.appendChild(b);
+        });
+      });
+    }
+    function getStoreRules() { return stRulesCache ? Promise.resolve(stRulesCache) : api('/admin/store/rules').then(function (r) { stRulesCache = r.ok ? r.rules : null; return stRulesCache; }); }
+
+    function stEdit(it) {
+      var box = document.getElementById('stForm');
+      box.textContent = ''; box.hidden = false;
+      document.getElementById('stRules').hidden = true;
+      box.appendChild(el('h2', null, it ? 'Edit ' + it.name : 'Add a catalog item'));
+      var g = el('div', 'fgrid');
+      var name = formField(g, 'stfName', 'Name', 'text', 'Dell 27" monitor P2723D');
+      var sku = formField(g, 'stfSku', 'Your code (optional)', 'text', 'MON-001');
+      var catWrap = el('div'); var catL = el('label', null, 'Category'); catL.htmlFor = 'stfCat';
+      var cat = document.createElement('select'); cat.id = 'stfCat'; (stCats.length ? stCats : ['monitor']).forEach(function (c) { var o = el('option', null, c); o.value = c; cat.appendChild(o); });
+      catWrap.appendChild(catL); catWrap.appendChild(cat); g.appendChild(catWrap);
+      var cost = formField(g, 'stfCost', 'What you pay ($)', 'number', '150.00');
+      var msrp = formField(g, 'stfMsrp', 'MSRP ($, optional)', 'number', '299.99');
+      var fixed = formField(g, 'stfFixed', 'Fixed price ($, optional)', 'number', 'Leave blank to use the rules');
+      var vendor = formField(g, 'stfVendor', 'Vendor (staff only)', 'text', 'CDW');
+      var vsku = formField(g, 'stfVsku', 'Vendor part number', 'text', '');
+      var vurl = formField(g, 'stfVurl', 'Vendor link (staff only)', 'url', 'https://');
+      var ports = formField(g, 'stfPorts', 'Ports (for the planner, optional)', 'text', 'usb-c, hdmi');
+      var desc = document.createElement('textarea'); desc.id = 'stfDesc'; desc.rows = 2; desc.placeholder = 'One or two lines a customer sees';
+      var dW = el('div', 'fwide'); var dL = el('label', null, 'Description'); dL.htmlFor = desc.id; dW.appendChild(dL); dW.appendChild(desc); g.appendChild(dW);
+      var flags = el('div', 'fwide');
+      var pubL = el('label', 'chk'); var pub = document.createElement('input'); pub.type = 'checkbox'; pub.checked = true; pubL.appendChild(pub); pubL.appendChild(document.createTextNode(' Offer it on the planner and in the portal'));
+      var actL = el('label', 'chk'); var act = document.createElement('input'); act.type = 'checkbox'; act.checked = true; actL.appendChild(act); actL.appendChild(document.createTextNode(' Active'));
+      flags.appendChild(pubL); flags.appendChild(actL); g.appendChild(flags);
+      var prev = el('div', 'st-preview'); g.appendChild(prev);
+      [cost, msrp, fixed].forEach(function (i) { i.step = '0.01'; i.min = '0'; });
+      if (it) {
+        name.value = it.name; sku.value = it.sku || ''; cat.value = it.category; cost.value = (it.cost_cents / 100).toFixed(2);
+        msrp.value = it.msrp_cents != null ? (it.msrp_cents / 100).toFixed(2) : ''; fixed.value = it.price_override_cents != null ? (it.price_override_cents / 100).toFixed(2) : '';
+        vendor.value = it.vendor || ''; vsku.value = it.vendor_sku || ''; vurl.value = it.vendor_url || ''; desc.value = it.description || '';
+        ports.value = it.specs && it.specs.ports ? it.specs.ports.join(', ') : ''; pub.checked = !!it.public; act.checked = !!it.active;
+      }
+      var preview = function () {
+        getStoreRules().then(function (rules) {
+          if (!rules) return;
+          var c = dollarsIn(cost.value);
+          if (c == null || Number.isNaN(c)) { prev.textContent = 'Enter what you pay to see the price.'; return; }
+          var x = stPrice({ cost_cents: c, msrp_cents: dollarsIn(msrp.value), price_override_cents: dollarsIn(fixed.value), category: cat.value }, rules);
+          prev.textContent = '';
+          prev.appendChild(document.createTextNode('The customer pays '));
+          prev.appendChild(el('b', null, money(x.price)));
+          prev.appendChild(document.createTextNode(', a margin of ' + money(x.margin) + (x.price ? ' (' + Math.round(x.margin / x.price * 100) + '%)' : '') + (x.capped ? '. Capped at MSRP.' : '.')));
+        });
+      };
+      [cost, msrp, fixed].forEach(function (i) { i.addEventListener('input', preview); });
+      cat.addEventListener('change', preview);
+      preview();
+      box.appendChild(g);
+      var acts = el('div', 'orgbar addactions');
+      var save = el('button', 'ct-btn prim', it ? 'Save' : 'Add item'); save.type = 'button';
+      save.addEventListener('click', function () {
+        var body = { name: name.value.trim(), sku: sku.value.trim(), category: cat.value, cost_cents: dollarsIn(cost.value), msrp_cents: dollarsIn(msrp.value),
+          price_override_cents: dollarsIn(fixed.value), vendor: vendor.value.trim(), vendor_sku: vsku.value.trim(), vendor_url: vurl.value.trim(),
+          description: desc.value.trim(), public: pub.checked, active: act.checked,
+          specs: ports.value.trim() ? { ports: ports.value.split(',').map(function (x) { return x.trim().toLowerCase(); }).filter(Boolean) } : null };
+        if (!body.name) return toast('Give it a name');
+        if (body.cost_cents == null || Number.isNaN(body.cost_cents)) return toast('Enter what you pay for it');
+        save.disabled = true;
+        api(it ? '/admin/store/catalog/' + it.id : '/admin/store/catalog', { method: it ? 'PATCH' : 'POST', body: body }).then(function (r) {
+          save.disabled = false;
+          if (!r.ok) return toast(r.message || ({ duplicate_sku: 'Another item uses that code', bad_url: 'The vendor link must start with https://' })[r.error] || 'Could not save it');
+          toast(it ? 'Saved' : 'Added'); box.hidden = true; loadCatalog();
+        });
+      });
+      acts.appendChild(save);
+      if (it) {
+        var chk = el('button', 'ct-btn', 'Cost checked today'); chk.type = 'button';
+        chk.addEventListener('click', function () { api('/admin/store/catalog/' + it.id, { method: 'PATCH', body: { checked: true } }).then(function (r) { toast(r.ok ? 'Marked checked' : 'Could not save it'); if (r.ok) { box.hidden = true; loadCatalog(); } }); });
+        acts.appendChild(chk);
+        if (it.vendor_url) { var go = el('a', 'ct-btn', 'Open the vendor page'); go.href = it.vendor_url; go.target = '_blank'; go.rel = 'noopener noreferrer'; acts.appendChild(go); }
+      }
+      var cancel = el('button', 'ct-btn', 'Cancel'); cancel.type = 'button'; cancel.addEventListener('click', function () { box.hidden = true; });
+      acts.appendChild(cancel);
+      box.appendChild(acts);
+      box.scrollIntoView({ block: 'start', behavior: 'smooth' });
+      name.focus();
+    }
+
+    function stRulesPanel() {
+      var box = document.getElementById('stRules');
+      if (!box.hidden) { box.hidden = true; return; }
+      document.getElementById('stForm').hidden = true;
+      stRulesCache = null;
+      api('/admin/store/rules').then(function (r) {
+        if (!r.ok) return toast('Could not load the rules');
+        stRulesCache = r.rules; stCats = r.categories;
+        box.textContent = ''; box.hidden = false;
+        box.appendChild(el('h2', null, 'Pricing rules'));
+        box.appendChild(el('p', 'row-sub', 'Price = what you pay plus the markup, at least the minimum margin, rounded up to a price ending in .99, and never above MSRP. A fixed price on an item replaces these.'));
+        var rows = el('div');
+        var mk = function (catKey, rule) {
+          var w = el('div', 'st-rule');
+          var a = el('div'); var la = el('label', null, catKey ? 'Category' : 'Everything else'); a.appendChild(la);
+          var sel = null;
+          if (catKey !== null) { sel = document.createElement('select'); r.categories.forEach(function (c) { var o = el('option', null, c); o.value = c; sel.appendChild(o); }); sel.value = catKey; la.htmlFor = sel.id = 'str' + Math.random().toString(36).slice(2); a.appendChild(sel); }
+          else a.appendChild(el('div', 'row-sub', 'The default'));
+          var b = el('div'); var lb = el('label', null, 'Markup %'); var mp = document.createElement('input'); mp.type = 'number'; mp.min = '0'; mp.max = '300'; mp.step = '0.5'; mp.value = rule.markup_pct; lb.htmlFor = mp.id = 'strm' + Math.random().toString(36).slice(2); b.appendChild(lb); b.appendChild(mp);
+          var c = el('div'); var lc = el('label', null, 'Min margin $'); var mm = document.createElement('input'); mm.type = 'number'; mm.min = '0'; mm.step = '1'; mm.value = (rule.min_margin_cents / 100).toFixed(0); lc.htmlFor = mm.id = 'strn' + Math.random().toString(36).slice(2); c.appendChild(lc); c.appendChild(mm);
+          var x = el('div');
+          if (catKey !== null) { var del = el('button', 'qline-x', '\u00d7'); del.type = 'button'; del.setAttribute('aria-label', 'Remove this rule'); del.addEventListener('click', function () { w.remove(); }); x.appendChild(del); }
+          [a, b, c, x].forEach(function (n) { w.appendChild(n); });
+          w.read = function () { return { cat: sel ? sel.value : null, markup_pct: Number(mp.value), min_margin_cents: Math.round(Number(mm.value) * 100) }; };
+          rows.appendChild(w);
+        };
+        mk(null, r.rules.default);
+        Object.keys(r.rules.categories || {}).forEach(function (k) { mk(k, r.rules.categories[k]); });
+        box.appendChild(rows);
+        var acts = el('div', 'orgbar addactions');
+        var add = el('button', 'ct-btn', '+ A rule for a category'); add.type = 'button'; add.addEventListener('click', function () { mk(r.categories[0], { markup_pct: r.rules.default.markup_pct, min_margin_cents: r.rules.default.min_margin_cents }); });
+        var save = el('button', 'ct-btn prim', 'Save rules'); save.type = 'button';
+        save.addEventListener('click', function () {
+          var body = { default: null, categories: {}, round: 'nine' };
+          Array.prototype.forEach.call(rows.children, function (w) { var v = w.read(); if (v.cat === null) body.default = { markup_pct: v.markup_pct, min_margin_cents: v.min_margin_cents }; else body.categories[v.cat] = { markup_pct: v.markup_pct, min_margin_cents: v.min_margin_cents }; });
+          api('/admin/store/rules', { method: 'PUT', body: body }).then(function (x) {
+            if (!x.ok) return toast(x.message || 'Check the numbers: markup 0-300%, margin 0 or more');
+            stRulesCache = x.rules; toast('Rules saved; prices follow them now'); box.hidden = true; loadCatalog();
+          });
+        });
+        var cancel = el('button', 'ct-btn', 'Cancel'); cancel.type = 'button'; cancel.addEventListener('click', function () { box.hidden = true; });
+        [save, add, cancel].forEach(function (n) { acts.appendChild(n); });
+        box.appendChild(acts);
+      });
+    }
+    document.getElementById('stAdd').addEventListener('click', function () { getStoreRules().then(function () { stEdit(null); }); });
+    document.getElementById('stRulesBtn').addEventListener('click', stRulesPanel);
+    document.querySelectorAll('#stFilters .fpill').forEach(function (b) { b.addEventListener('click', function () { stView = b.dataset.view; document.querySelectorAll('#stFilters .fpill').forEach(function (x) { x.classList.toggle('on', x === b); }); loadCatalog(); }); });
+    var stQT = null;
+    document.getElementById('stQ').addEventListener('input', function () { clearTimeout(stQT); stQT = setTimeout(loadCatalog, 250); });
+    document.getElementById('stCat').addEventListener('change', loadCatalog);
+
+    var SO_STATUS = { open: ['waiting to order', '#c89830'], ordered: ['ordered', '#4aac65'], shipped: ['shipped', '#4aac65'], received: ['received', '#8aa48d'], canceled: ['canceled', '#8aa48d'] };
+    function loadStoreOrders() {
+      return api('/admin/store/orders?view=' + soView).then(function (r) {
+        var list = document.getElementById('soList'); list.textContent = '';
+        if (!r.ok) { list.appendChild(el('div', 'row-sub', 'Could not load orders.')); return; }
+        if (!r.orders.length) { list.appendChild(el('div', 'row-sub', soView === 'open' ? 'No open orders.' : 'None.')); return; }
+        r.orders.forEach(function (o) {
+          var st = SO_STATUS[o.status] || [o.status, '#8aa48d'];
+          var right = el('span', 'cust-badges');
+          right.appendChild(badge(st[0], st[1]));
+          if (o.status === 'open') right.appendChild(badge(o.invoice_status === 'paid' ? 'paid' : 'unpaid', o.invoice_status === 'paid' ? '#4aac65' : '#e08a68'));
+          list.appendChild(row(o.number + ' \u00b7 ' + (o.org_name || o.who || 'customer'),
+            o.received_units + ' of ' + o.units + ' received' + (o.invoice_number ? ' \u00b7 ' + o.invoice_number : '') + (o.vendor ? ' \u00b7 ' + o.vendor : '') + (o.po_ref ? ' ' + o.po_ref : '') + (o.tracking ? ' \u00b7 tracking ' + o.tracking : ''),
+            right, function () { openStoreOrder(o.id); }));
+        });
+      });
+    }
+    function showStoreOrder(id) {
+      showView('inventory'); storeSetMode('orders'); openStoreOrder(id);
+    }
+    function openStoreOrder(id) {
+      api('/admin/store/orders/' + id).then(function (r) {
+        var box = document.getElementById('soDetail'); box.textContent = '';
+        if (!r.ok) return toast('Could not open the order');
+        var o = r.order;
+        var sec = el('section', 'newinv');
+        sec.appendChild(el('h2', null, o.number));
+        sec.appendChild(el('p', 'row-sub', (SO_STATUS[o.status] || [o.status])[0] + (o.invoice ? ' \u00b7 invoice ' + o.invoice.number + ' ' + o.invoice.status : '') + ' \u00b7 cost ' + money(o.cost_cents) + ', sold for ' + money(o.price_cents) + ', margin ' + money(o.price_cents - o.cost_cents)));
+        var lines = el('div', 'so-lines');
+        var inputs = [];
+        o.lines.forEach(function (l) {
+          var w = el('div', 'so-line');
+          var t = el('span', null, l.description); w.appendChild(t);
+          w.appendChild(el('span', 'n', l.received_qty + ' / ' + l.qty));
+          var left = l.qty - l.received_qty;
+          if (left > 0 && (o.status === 'ordered' || o.status === 'shipped')) {
+            var q = document.createElement('input'); q.type = 'number'; q.min = '0'; q.max = String(left); q.value = '0'; q.setAttribute('aria-label', 'How many arrived: ' + l.description);
+            var sn = document.createElement('input'); sn.type = 'text'; sn.placeholder = 'Serials, comma separated'; sn.className = 'wide-s'; sn.setAttribute('aria-label', 'Serial numbers: ' + l.description);
+            w.appendChild(q); w.appendChild(sn);
+            inputs.push({ id: l.id, q: q, sn: sn });
+          } else { w.appendChild(el('span')); w.appendChild(el('span', 'row-sub', left > 0 ? '' : 'all here')); }
+          lines.appendChild(w);
+        });
+        sec.appendChild(lines);
+        var acts = el('div', 'orgbar addactions');
+        var act = function (label, cls, fn) { var b = el('button', cls, label); b.type = 'button'; b.addEventListener('click', fn); acts.appendChild(b); };
+        var done = function (x, msg) { if (!x.ok) return toast(x.message || 'Could not do that'); toast(msg); openStoreOrder(o.id); loadStoreOrders(); };
+        if (o.status === 'open') act('Mark ordered', 'ct-btn prim', function () {
+          var vendor = prompt('Ordered from', o.vendor || ''); if (vendor === null) return;
+          var po = prompt("The vendor's order number", ''); if (po === null) return;
+          var body = { vendor: vendor.trim(), po_ref: po.trim() };
+          if (!(o.invoice && o.invoice.status === 'paid')) {
+            var why = prompt((o.invoice ? 'Invoice ' + o.invoice.number + ' is not paid yet' : 'There is no invoice') + ', so TES would front the money. Why order now?', '');
+            if (!why || !why.trim()) return;
+            body.override_reason = why.trim();
+          }
+          api('/admin/store/orders/' + o.id + '/ordered', { method: 'POST', body: body }).then(function (x) { done(x, 'Marked ordered'); });
+        });
+        if (o.status === 'ordered' || o.status === 'shipped') {
+          act(o.status === 'shipped' ? 'Update tracking' : 'Mark shipped', 'ct-btn', function () {
+            var tr = prompt('Tracking number', o.tracking || ''); if (tr === null) return;
+            api('/admin/store/orders/' + o.id + '/shipped', { method: 'POST', body: { tracking: tr.trim() } }).then(function (x) { done(x, 'Shipped'); });
+          });
+          if (inputs.length) act('Receive what arrived', 'ct-btn prim', function () {
+            var body = { lines: inputs.map(function (i) { return { id: i.id, qty: Number(i.q.value) || 0, serials: i.sn.value.split(',').map(function (x) { return x.trim(); }).filter(Boolean) }; }).filter(function (x) { return x.qty > 0; }) };
+            if (!body.lines.length) return toast('Enter how many arrived');
+            api('/admin/store/orders/' + o.id + '/receive', { method: 'POST', body: body }).then(function (x) { done(x, x.ok ? 'Added ' + x.made.length + ' to Equipment' : ''); });
+          });
+        }
+        if (o.status !== 'received' && o.status !== 'canceled') act('Cancel the order', 'ct-btn', function () {
+          var why = prompt('Why cancel it?', ''); if (why === null) return;
+          api('/admin/store/orders/' + o.id + '/cancel', { method: 'POST', body: { reason: why.trim() } }).then(function (x) { done(x, 'Canceled'); });
+        });
+        if (o.quote_id) act('Open the quote', 'ct-btn', function () { showQuote(o.quote_id); });
+        act('Close', 'ct-btn', function () { box.textContent = ''; });
+        sec.appendChild(acts);
+        if (o.events && o.events.length) {
+          var ev = el('div', 'row-sub so-ev');
+          o.events.slice(0, 8).forEach(function (e) { ev.appendChild(el('div', null, fmtDate(e.at) + ' \u00b7 ' + e.note)); });
+          sec.appendChild(ev);
+        }
+        box.appendChild(sec);
+        box.scrollIntoView({ block: 'start', behavior: 'smooth' });
+      });
+    }
+    document.querySelectorAll('#soFilters .fpill').forEach(function (b) { b.addEventListener('click', function () { soView = b.dataset.view; document.querySelectorAll('#soFilters .fpill').forEach(function (x) { x.classList.toggle('on', x === b); }); loadStoreOrders(); }); });
+
     function loadInventory() {
+      // The store views keep their place across visits; the equipment list always loads,
+      // because other tabs (a customer file, Finance) open items in it.
+      if (storeMode !== 'equipment') storeSetMode(storeMode);
       return api('/admin/inventory?view=all').then(function (r) {
         if (!r.ok) {
           invtListEl.textContent = '';
@@ -11229,6 +11849,19 @@
       finTile(tiles, 'Expenses', money(st.expenses.total_cents), st.expenses.count + (st.expenses.count === 1 ? ' item' : ' items'), st.deltas.expenses_cents, true);
       var netT = finTile(tiles, 'Net cash', money(st.net_cents), 'collected − expenses − parts − fees');
       if (st.net_cents < 0) netT.querySelector('b').classList.add('neg');
+      // Tax-time figures (Phase 7). The set-aside is a reminder at the rate you chose,
+      // not a tax calculation.
+      if (st.sales_tax) {
+        var stx = st.sales_tax;
+        finTile(tiles, 'Sales tax collected', money(stx.collected_cents),
+          stx.unitemized_paid ? stx.unitemized_paid + ' paid invoice' + (stx.unitemized_paid === 1 ? '' : 's') + ' with no line items (tax unknown)' : 'on invoices paid this period');
+      }
+      if (st.set_aside) {
+        var sa = finTile(tiles, 'Set aside for tax', money(st.set_aside.cents),
+          st.set_aside.pct + '% of net' + (st.set_aside.next_due ? ' · next estimate usually due ' + st.set_aside.next_due.key : '') + ' · tap to change');
+        sa.classList.add('pick');
+        sa.addEventListener('click', finTaxSettings);
+      }
       // Equity, not income, so it sits beside the P&L figures rather than inside one.
       // Across every account — PayPal, the card, cash — because a figure covering one
       // of them would read as the whole picture. Always shown so the grid keeps its shape.
@@ -11439,6 +12072,9 @@
 
       // ---- what each job actually made ----
       grid.appendChild(jobsPanel(st));
+
+      // ---- business miles (Phase 7) ----
+      grid.appendChild(mileagePanel(st));
       finBody.appendChild(grid);
     }
 
@@ -11449,6 +12085,59 @@
     // anything spent on the job the invoice did NOT bill back, so billing back exactly
     // what you spent leaves the labor, and billing back less shows the shortfall
     // instead of quietly flattering the figure.
+    function finTaxSettings() {
+      api('/admin/finance/settings').then(function (r) {
+        if (!r.ok) return toast('Could not load the settings');
+        var box = el('div', 'adlg-form');
+        var mk = function (label, id, val, step) { var d = el('div'); var l = el('label', null, label); l.htmlFor = id; var i = document.createElement('input'); i.id = id; i.type = 'number'; i.step = step; i.min = '0'; i.value = val; d.appendChild(l); d.appendChild(i); box.appendChild(d); return i; };
+        var pct = mk('Set aside, % of net', 'ftsPct', r.settings.set_aside_pct, '0.5');
+        var rate = mk('Mileage rate, cents a mile', 'ftsRate', r.settings.mileage_cents, '1');
+        var note = el('p', 'adlg-meta wide', 'The set-aside is a reminder to keep money aside, not a tax figure; your accountant decides the real amount. A week before each estimated-tax date (' + r.due_dates.map(function (d) { return d.key; }).join(', ') + ') Telegram sends the year so far. Check the per-mile rate each year; a change does not reprice trips already logged.');
+        box.appendChild(note);
+        askDialog({ title: 'Tax and mileage settings', body: box, buttons: [{ label: 'Cancel', value: null }, { label: 'Save', value: true, cls: 'prim', act: function () {
+          return api('/admin/finance/settings', { method: 'PUT', body: { set_aside_pct: Number(pct.value), mileage_cents: Number(rate.value) } }).then(function (x) { if (!x.ok) return { error: x.message || 'Check the numbers' }; });
+        } }] }).then(function (v) { if (v) { toast('Saved'); loadFinance(); } });
+      });
+    }
+
+    function mileagePanel(st) {
+      var m = st.mileage || { miles: 0, trips: 0, rows: [], value_cents: 0, rate_cents: 0 };
+      var p = finPanel('Business miles', m.trips ? m.miles + ' miles on ' + m.trips + (m.trips === 1 ? ' trip' : ' trips') + ', worth ' + money(m.value_cents) : 'none logged in ' + st.label);
+      p.classList.add('wide');
+      var form = el('div', 'mi-form');
+      var mk = function (label, id, type, ph, cls) { var d = el('div', cls || null); var l = el('label', null, label); l.htmlFor = id; var i = document.createElement('input'); i.id = id; i.type = type; i.placeholder = ph || ''; d.appendChild(l); d.appendChild(i); form.appendChild(d); return i; };
+      var day = mk('Date', 'miDay', 'date'); day.value = (function () { var d = new Date(); return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0'); })();
+      var miles = mk('Miles', 'miMiles', 'number', '12.5'); miles.step = '0.1'; miles.min = '0';
+      var purpose = mk('What it was for', 'miPurpose', 'text', 'Install at Harbor Dental', 'wide2');
+      var from = mk('From', 'miFrom', 'text', 'Home office');
+      var to = mk('To', 'miTo', 'text', 'Mayfield Heights');
+      var add = el('button', 'ct-btn prim', 'Log the trip'); add.type = 'button';
+      add.addEventListener('click', function () {
+        if (!miles.value || !purpose.value.trim()) return toast('Miles and what it was for, please');
+        add.disabled = true;
+        api('/admin/mileage', { method: 'POST', body: { day: day.value, miles: Number(miles.value), purpose: purpose.value.trim(), from_place: from.value.trim(), to_place: to.value.trim() } }).then(function (r) {
+          add.disabled = false;
+          if (!r.ok) return toast(r.message || 'Could not log it');
+          toast('Logged'); loadFinance();
+        });
+      });
+      var ad = el('div', 'mi-add'); ad.appendChild(add); form.appendChild(ad);
+      p.appendChild(form);
+      var list = el('div', 'mi-list');
+      m.rows.slice(0, 50).forEach(function (t) {
+        var right = el('span', 'cust-badges');
+        right.appendChild(el('b', 'num', money(t.value_cents)));
+        right.appendChild(licAction('Delete', null, function () {
+          if (!confirm('Delete this trip?')) return;
+          api('/admin/mileage/' + t.id, { method: 'DELETE' }).then(function (r) { toast(r.ok ? 'Deleted' : 'Could not delete it'); if (r.ok) loadFinance(); });
+        }));
+        list.appendChild(row(t.day + ' \u00b7 ' + t.miles + ' mi \u00b7 ' + t.purpose,
+          [t.from_place && t.to_place ? t.from_place + ' to ' + t.to_place : '', t.org_name || t.who || '', t.ticket_number || '', (t.rate_cents / 100).toFixed(2) + ' a mile'].filter(Boolean).join(' \u00b7 '), right, null));
+      });
+      p.appendChild(list);
+      return p;
+    }
+
     function jobsPanel(st) {
       var j = st.jobs || { rows: [], totals: { count: 0 } };
       var p = finPanel('Jobs with parts on them', j.totals.count
@@ -11846,6 +12535,28 @@
       }
       right.appendChild(licAction(canItem ? (e.inventory_id ? (e.note ? 'Edit note…' : 'Add note…') : 'Note or link…')
         : (e.note ? 'Edit note…' : 'Add note…'), null, function () { lgDetails(e); }));
+      // A receipt on the row: a photo or PDF, kept in R2 and in the year-end pack.
+      if (e.receipt_name) {
+        var rv = el('a', 'ct-btn lg-rcpt-on', 'Receipt'); rv.href = API + '/admin/ledger/' + e.id + '/receipt'; rv.target = '_blank'; rv.rel = 'noopener'; rv.title = e.receipt_name;
+        right.appendChild(rv);
+      } else if (e.amount_cents < 0) {
+        right.appendChild(licAction('Add receipt', null, function () {
+          var inp = document.createElement('input'); inp.type = 'file'; inp.accept = 'application/pdf,image/*';
+          inp.addEventListener('change', function () {
+            var f = inp.files && inp.files[0]; if (!f) return;
+            if (f.size > 10 * 1024 * 1024) return toast('Receipts up to 10 MB');
+            var rd = new FileReader();
+            rd.onload = function () {
+              api('/admin/ledger/' + e.id + '/receipt', { method: 'POST', body: { filename: f.name, data: String(rd.result) } }).then(function (r) {
+                if (!r.ok) return toast(r.message || 'Could not attach it');
+                toast('Receipt attached'); loadFinance();
+              });
+            };
+            rd.readAsDataURL(f);
+          });
+          inp.click();
+        }));
+      }
 
       if (e.classification === 'split') {
         right.appendChild(licAction('Put back together', null, function () { lgUnsplit(e); }));
@@ -13061,7 +13772,7 @@
       return xlsxLoading;
     }
 
-    var FIN_SHEETS = ['summary', 'clients', 'invoices', 'hours', 'expenses', 'paypal'];
+    var FIN_SHEETS = ['summary', 'clients', 'invoices', 'hours', 'expenses', 'paypal', 'ledger', 'mileage'];
     function finExportUrl(sheet) {
       return API + '/admin/finance/export?period=' + encodeURIComponent(finPeriod) + '&anchor=' + encodeURIComponent(finAnchor) + '&sheet=' + sheet;
     }
@@ -13083,10 +13794,60 @@
           btn.disabled = false;
         }, function () { btn.disabled = false; toast('Could not build the workbook'); });
     }
+    // The year-end pack: the year's eight CSV sheets, every ledger receipt, and the PDF of
+    // every invoice paid in the year, in one zip with a short README. Built here in the
+    // browser from routes that already exist, so the pack and the screens cannot differ.
+    function exportCpaPack() {
+      var year = (finAnchor || String(new Date().getFullYear())).slice(0, 4);
+      if (!confirm('Build the year-end pack for ' + year + '? It downloads every receipt and paid invoice PDF for the year, so it can take a minute.')) return;
+      var btn = document.getElementById('finExport');
+      btn.disabled = true;
+      toast('Building the ' + year + ' pack…');
+      var base = API + '/admin/finance/export?period=year&anchor=' + year + '-06&sheet=';
+      var get = function (url, kind) { return fetch(url, { credentials: 'same-origin' }).then(function (r) { if (!r.ok) throw new Error(url); return kind === 'blob' ? r.blob() : r.text(); }); };
+      Promise.all([loadZip(), api('/admin/finance/statement?period=year&anchor=' + year + '-06'), api('/admin/invoices?view=all')]).then(function (res) {
+        var Z = res[0], st = res[1] && res[1].statement, invs = (res[2] && res[2].invoices) || [];
+        var zip = new Z();
+        var jobs = FIN_SHEETS.map(function (sh) { return get(base + sh).then(function (t) { zip.file('TES-' + year + '-' + sh + '.csv', t); }); });
+        var receipts = ((st && st.ledger) || []).filter(function (l) { return l.receipt_name; });
+        receipts.forEach(function (l) {
+          jobs.push(get(API + '/admin/ledger/' + l.id + '/receipt', 'blob').then(function (b) {
+            zip.file('receipts/' + String(l.id).padStart(5, '0') + '-' + l.receipt_name.replace(/[^\w.\-]+/g, '_'), b);
+          }, function () { /* a missing receipt is listed in the README, not a failure */ }));
+        });
+        var y0 = new Date(Number(year), 0, 1).getTime() / 1000, y1 = new Date(Number(year) + 1, 0, 1).getTime() / 1000;
+        var paid = invs.filter(function (i) { return i.status === 'paid' && i.has_pdf && i.paid_at >= y0 && i.paid_at < y1; });
+        paid.forEach(function (i) {
+          jobs.push(get(API + '/admin/invoices/' + i.id + '/pdf', 'blob').then(function (b) { zip.file('invoices/' + i.number.replace(/[^\w.\-]+/g, '_') + '.pdf', b); }, function () {}));
+        });
+        return Promise.all(jobs).then(function () {
+          zip.file('README.txt', ['Tevis Engineering Solutions, ' + year, '',
+            'Built from the admin console on ' + new Date().toLocaleDateString('en-US') + '.', '',
+            'TES-' + year + '-summary.csv   the year in figures (cash basis), sales tax, mileage, set-aside',
+            'TES-' + year + '-invoices.csv  every invoice issued',
+            'TES-' + year + '-ledger.csv    card and bank rows, how each was filed, and its receipt',
+            'TES-' + year + '-paypal.csv    PayPal rows classified as business',
+            'TES-' + year + '-expenses.csv  equipment and subscriptions',
+            'TES-' + year + '-mileage.csv   business trips and their value',
+            'TES-' + year + '-hours.csv / -clients.csv  time and customers', '',
+            'receipts/  ' + receipts.length + ' receipt(s) attached to ledger rows',
+            'invoices/  PDFs of ' + paid.length + ' invoice(s) paid in ' + year, '',
+            'This is a management export, not a tax return.'].join('\r\n'));
+          return zip.generateAsync({ type: 'blob' });
+        });
+      }).then(function (blob) {
+        var a = document.createElement('a');
+        a.href = URL.createObjectURL(blob); a.download = 'TES-' + year + '-accountant-pack.zip';
+        document.body.appendChild(a); a.click(); a.remove();
+        setTimeout(function () { URL.revokeObjectURL(a.href); }, 5000);
+        btn.disabled = false;
+      }, function () { btn.disabled = false; toast('Could not build the pack'); });
+    }
     document.getElementById('finExport').addEventListener('change', function () {
       var v = this.value; this.value = '';
       if (!v || !finStatement) return;
       if (v === 'xlsx') return exportXlsx();
+      if (v === 'cpa') return exportCpaPack();
       if (v === 'print') return window.print();
       var a = document.createElement('a');
       a.href = finExportUrl(v); a.download = '';
@@ -13234,8 +13995,9 @@
         var cols = [
           ['Client', 'name', false], ['Tickets', 'tickets', true], ['Hours', 'logged_minutes', true],
           ['Billable', 'billable_minutes', true], ['Invoiced', 'invoiced_cents', true],
-          ['Paid', 'paid_cents', true], ['Promises met', 'sla_met_percent', true], ['Rating', 'rating_avg', true],
+          ['Paid', 'paid_cents', true], ['Promises met', 'sla_met_percent', true], ['Rating', 'rating_avg', true], ['Health', 'health_score', true],
         ];
+        rp.clients.forEach(function (c) { c.health_score = c.health ? c.health.score : null; });
         var wrap = el('div', 'fin-table-wrap');
         var tbl = el('table', 'fin-table');
         var thead = el('thead'), hr = el('tr');
@@ -13266,6 +14028,10 @@
           tr.appendChild(el('td', 'num' + (c.sla_met_percent != null && c.sla_met_percent < 90 ? ' warn' : ''),
             c.sla_met_percent == null ? '—' : c.sla_met_percent + '%'));
           tr.appendChild(el('td', 'num', c.rating_avg == null ? '—' : c.rating_avg + ' ★'));
+          var htd = el('td', 'num');
+          if (c.health) { var hs = el('span', 'hl-num ' + c.health.band, String(c.health.score)); hs.title = c.health.reasons.map(function (r) { return r.text; }).join('\n') || 'Healthy'; htd.appendChild(hs); }
+          else htd.textContent = '—';
+          tr.appendChild(htd);
           if (c.org_id || c.account_id) {
             tr.className = 'pick';
             tr.addEventListener('click', function () { openObject(c.org_id ? "org" : "customer", c.org_id || c.account_id); });
@@ -13358,13 +14124,26 @@
       if (type === 'ticket') { showView('tickets'); open(String(id)); }
       else if (type === 'customer') { showView('customers'); custMode = 'people'; syncMode(); openCustomer(String(id)); }
       else if (type === 'org') { showView('customers'); custMode = 'orgs'; syncMode(); openOrg(String(id)); }
-      else if (type === 'agreement') { showView('customers'); }
+      else if (type === 'agreement') {
+        // The agreement lives on its holder's file, so open that.
+        showView('customers');
+        api('/admin/agreements/' + encodeURIComponent(id)).then(function (r) {
+          var a = r && r.ok && r.agreement;
+          if (!a) return;
+          if (a.holder_type === 'org') { custMode = 'orgs'; syncMode(); openOrg(String(a.holder_id)); }
+          else { custMode = 'people'; syncMode(); openCustomer(String(a.holder_id)); }
+        });
+      }
       else if (type === 'invoice') { var mnum = /^(\S+)/.exec(summary || ''); if (mnum) showInvoice(mnum[1]); else showView('invoices'); }
       else if (type === 'quote') { showQuote(Number(id)); }
       else if (type === 'appointment') { showView('calendar'); openAppointment(Number(id)); }
       else if (type === 'inventory') { showView('inventory'); var go = function () { flashInvt(Number(id)); }; if (invtAll.length) go(); else loadInventory().then(go); }
-      else if (type === 'license') { showView('keys'); }
+      else if (type === 'license') { showView('keys'); flashKey(String(id)); }
+      else if (type === 'membership') { showView('keys'); setTimeout(function () { document.getElementById('subPanel').scrollIntoView({ behavior: 'smooth', block: 'start' }); }, 250); }
+      else if (type === 'site_watch') { showView('keys'); setTimeout(function () { document.getElementById('watchPanel').scrollIntoView({ behavior: 'smooth', block: 'start' }); }, 250); }
       else if (type === 'paypal') { showView('finance'); }
+      else if (type === 'store_order') { showStoreOrder(Number(id)); }
+      else if (type === 'catalog') { showView('inventory'); storeSetMode('catalog'); }
       else if (type === 'project') { routeHash('#p=' + id, true); }
       else if (type === 'lead') { routeHash('#l=' + id, true); }
       else if (type === 'bid') { if (/^\d+$/.test(String(id))) routeHash('#b=' + id, true); else showView('contracting'); }
@@ -13587,6 +14366,39 @@
           s9.appendChild(row(i.name + (i.vendor ? ' · ' + i.vendor : ''), fmtDayStr(i.next_charge_on) + ' · ' + i.recurring_interval, right, function () { openObject('inventory', i.id); }));
         });
         wrap.appendChild(s9);
+      }
+      var so = (a.store && a.store.orders) || [];
+      if (so.length || (a.store && a.store.stale)) {
+        any = true;
+        var sSt = attSection('Store', so.length + (a.store.stale ? 1 : 0), so.some(function (o) { return o.urgent; }));
+        so.forEach(function (o) { sSt.appendChild(row(o.number, o.reason, null, function () { showStoreOrder(o.id); })); });
+        if (a.store.stale) sSt.appendChild(row('Catalog costs to check', a.store.stale + (a.store.stale === 1 ? ' item has' : ' items have') + ' not had its cost checked in 14 days', null, function () { showView('inventory'); storeSetMode('catalog'); }));
+        wrap.appendChild(sSt);
+      }
+      if ((a.reviews || []).length) {
+        any = true;
+        var sRv = attSection('Ask for a review', a.reviews.length, false);
+        a.reviews.forEach(function (c) {
+          var right = el('div', 'cust-badges');
+          right.appendChild(licAction('Email the ask', 'ct-btn prim', function (ev) {
+            var btn = ev && ev.currentTarget; if (btn) btn.disabled = true;
+            api('/admin/reviews/request', { method: 'POST', body: { account_id: c.account_id, ticket_id: c.ticket_id } }).then(function (r) {
+              if (!r.ok) { if (btn) btn.disabled = false; return toast(r.message || 'Could not send it'); }
+              toast('Asked ' + c.email + ' for a Google review'); loadHome();
+            });
+          }));
+          right.appendChild(licAction('Not this one', null, function () {
+            api('/admin/reviews/request', { method: 'POST', body: { account_id: c.account_id, ticket_id: c.ticket_id, skip: true } }).then(function (r) {
+              if (!r.ok) return toast(r.message || 'Could not skip it');
+              toast('Skipped; not offered again for 90 days'); loadHome();
+            });
+          }));
+          right.appendChild(licAction('Open', null, function () { openObject('customer', c.account_id); }));
+          sRv.appendChild(row(c.who + ' \u00b7 ' + '\u2605'.repeat(c.rating),
+            c.ticket_number + (c.subject ? ' \u00b7 ' + c.subject : '') + (c.note ? ' \u00b7 "' + c.note.slice(0, 90) + '"' : '') + ' \u00b7 rated ' + (function (x) { return x === 'just now' ? x : x + ' ago'; })(ago(a.now - c.rated_at)),
+            right, null));
+        });
+        wrap.appendChild(sRv);
       }
       if (!any) {
         var e = el('div', 'att-empty');
@@ -14884,6 +15696,149 @@
         });
       });
       wrap.appendChild(d4);
+
+      // System: is the Worker healthy? Loaded with the panel so the dot on the summary
+      // shows trouble without opening it.
+      var d5 = el('details');
+      var sum5 = el('summary', null, 'System');
+      var dot5 = el('span', 'sys-dot'); dot5.title = 'Checking';
+      sum5.appendChild(dot5);
+      d5.appendChild(sum5);
+      var sysBox = el('div', 'sys');
+      d5.appendChild(sysBox);
+      var line = function (cls, ico, text) { var l = el('div', 'sys-line ' + cls); l.appendChild(icon(ico)); l.appendChild(el('span', null, text)); return l; };
+      // The cron names its jobs in code; these are the words for them.
+      var JOB_NAMES = { provisioning: 'License provisioning', sla: 'Response times', reminder: 'Invoice reminders', renewal: 'Equipment renewals', quote: 'Quote follow-ups', agreement: 'Agreement billing', appointment: 'Appointment reminders', contracting: 'Bid windows', feed: 'Bid queue', sos: 'State filings', 'sos lookup': 'Website lookups', 'website watch': 'Website Watch', 'membership reconcile': 'Subscription check', 'claude credit': 'Claude credit', 'busy feeds': 'Calendar busy times', 'scheduled nudges': 'Weekly messages', 'billing nudges': 'Time to invoice', 'usage limit': 'Usage limits', 'paypal sync': 'PayPal sync', backup: 'Backup', 'tax nudge': 'Estimated tax', 'property probe': 'Property data check' };
+      var agoMin = function (ts) { if (!ts) return 'never'; var m = Math.round((Date.now() / 1000 - ts) / 60); return m < 1 ? 'just now' : m < 120 ? m + ' min ago' : Math.round(m / 60) + ' hr ago'; };
+      var renderSystem = function () {
+        api('/admin/system').then(function (r) {
+          sysBox.textContent = '';
+          if (!r.ok) { sysBox.appendChild(el('div', 'row-sub', 'Could not load the system status.')); dot5.className = 'sys-dot'; return; }
+          var failing = r.jobs.filter(function (j) { return !j.ok; });
+          var trouble = failing.length || r.cron_late || r.migrations.missing.length;
+          dot5.className = 'sys-dot ' + (trouble ? 'bad' : 'ok');
+          dot5.title = trouble ? 'Something needs attention' : 'All healthy';
+
+          var top = el('div');
+          top.appendChild(line(r.cron_late ? 'bad' : 'ok', r.cron_late ? 'fa-circle-exclamation' : 'fa-circle-check',
+            r.last_tick ? 'Scheduled jobs last ran ' + agoMin(r.last_tick) + (r.cron_late ? '. They run every 2 minutes.' : '') : 'Scheduled jobs have not reported yet'));
+          top.appendChild(line(r.migrations.missing.length ? 'bad' : 'ok', r.migrations.missing.length ? 'fa-database' : 'fa-circle-check',
+            r.migrations.missing.length ? 'Migrations not applied: ' + r.migrations.missing.join(', ') + '. Run them before relying on those features.' : 'Database migrations applied through ' + r.migrations.through));
+          sysBox.appendChild(top);
+
+          var jb = el('div');
+          jb.appendChild(el('div', 'sys-h', 'Jobs' + (failing.length ? ' · ' + failing.length + ' failing' : '')));
+          var chips = el('div', 'sys-chips');
+          r.jobs.slice().sort(function (x, y) { return (JOB_NAMES[x.name] || x.name).localeCompare(JOB_NAMES[y.name] || y.name); }).forEach(function (j) {
+            var c = el('span', 'sys-chip ' + (j.ok ? 'ok' : 'bad'), JOB_NAMES[j.name] || j.name);
+            c.title = j.ok ? 'Last ran fine ' + agoMin(j.last_ok) : 'Failing since ' + agoMin(j.failing_since) + ': ' + j.last_error;
+            chips.appendChild(c);
+          });
+          if (!r.jobs.length) chips.appendChild(el('span', 'row-sub', 'No reports yet.'));
+          jb.appendChild(chips);
+          failing.forEach(function (j) { jb.appendChild(el('div', 'sys-err', (JOB_NAMES[j.name] || j.name) + ': ' + j.last_error + ' (since ' + agoMin(j.failing_since) + ')')); });
+          sysBox.appendChild(jb);
+
+          var bk = el('div');
+          bk.appendChild(el('div', 'sys-h', 'Backups'));
+          var bkRow = el('div', 'sys-bk');
+          var b = r.backup || {};
+          var text = b.running ? 'Backing up now: ' + (b.running.ti || 0) + ' of ' + (b.running.tables || []).length + ' tables, ' + (b.running.rows || 0).toLocaleString() + ' rows so far'
+            : b.last ? 'Last backup ' + fmtDate(b.last.finished_at) + ': ' + b.last.rows.toLocaleString() + ' rows across ' + b.last.tables + ' tables, ' + (b.last.bytes / 1048576).toFixed(1) + ' MB. Every Sunday; kept 12 weeks.'
+            : 'No backup yet. The first runs on Sunday, or now if you ask.';
+          bkRow.appendChild(line(b.running ? 'warn' : b.last ? 'ok' : 'warn', b.running ? 'fa-spinner' : b.last ? 'fa-box-archive' : 'fa-triangle-exclamation', text));
+          var go = el('button', null, b.requested ? 'Starting within 2 minutes' : 'Back up now'); go.type = 'button';
+          go.disabled = !!(b.running || b.requested);
+          go.addEventListener('click', function () {
+            go.disabled = true;
+            api('/admin/system/backup', { method: 'POST' }).then(function (x) { toast(x.ok ? 'Backup starts on the next run, within 2 minutes.' : 'Could not start it'); renderSystem(); });
+          });
+          bkRow.appendChild(go);
+          bk.appendChild(bkRow);
+          sysBox.appendChild(bk);
+
+          var sc = el('div');
+          sc.appendChild(el('div', 'sys-h', 'Services (green is switched on)'));
+          var sChips = el('div', 'sys-chips');
+          // Two secrets can switch on one service (PayPal's id and secret): one chip, on
+          // only when every part is set.
+          var svc = [];
+          r.secrets.forEach(function (x) {
+            var g = svc.filter(function (v) { return v.what === x.what; })[0];
+            if (!g) { g = { what: x.what, keys: [], set: true }; svc.push(g); }
+            g.keys.push(x.key + (x.set ? ' is set' : ' is not set')); g.set = g.set && x.set;
+          });
+          svc.forEach(function (g) { var c = el('span', 'sys-chip' + (g.set ? ' ok' : ''), g.what); c.title = g.keys.join('; '); sChips.appendChild(c); });
+          sc.appendChild(sChips);
+          sysBox.appendChild(sc);
+
+          // Property Watch: is the county and city data current enough to sell alerts on?
+          var pb = el('div');
+          pb.appendChild(el('div', 'sys-h', 'Property data check'));
+          var pbBox = el('div', 'sys-probe'); pb.appendChild(pbBox);
+          sysBox.appendChild(pb);
+          api('/admin/probe/property').then(function (x) {
+            if (!x.ok) { pbBox.appendChild(el('div', 'row-sub', 'Could not load it.')); return; }
+            var V = { not_started: 'Starts on the next scheduled run.', collecting: 'Collecting: day ' + x.days + ' of ' + x.needed + '.',
+              ready: 'Ready: Cleveland permits and violations stayed within ' + x.threshold + ' days.', not_ready: 'Not ready: the Cleveland feeds lagged more than ' + x.threshold + ' days too often.' };
+            pbBox.appendChild(line(x.verdict === 'ready' ? 'ok' : x.verdict === 'not_ready' ? 'bad' : 'warn', x.verdict === 'ready' ? 'fa-circle-check' : 'fa-hourglass-half', V[x.verdict] || x.verdict));
+            x.sources.forEach(function (sx) {
+              var t = sx.today;
+              var txt = sx.label + ': ' + (!t ? 'not checked yet' : t.error ? 'did not answer (' + t.error + ')' : 'newest ' + t.newest + ', ' + t.lag + ' days behind' + (t.recent != null ? ', ' + t.recent + ' in 30 days' : ''))
+                + (sx.median_lag != null && sx.observed > 1 ? ' · median ' + sx.median_lag + ', worst ' + sx.worst_lag : '');
+              pbBox.appendChild(el('div', 'row-sub' + (sx.gate ? ' sys-gate' : ''), txt));
+            });
+          });
+        });
+      };
+      d5.addEventListener('toggle', function () { if (d5.open) renderSystem(); });
+      renderSystem();
+      wrap.appendChild(d5);
+
+      // Testimonials: customers' own words, shared with their consent from the portal.
+      // Nothing reaches the website until it is approved here. The words cannot be
+      // edited; how the person is named can.
+      var d6 = el('details');
+      var sum6 = el('summary', null, 'Testimonials');
+      d6.appendChild(sum6);
+      var tmBox = el('div');
+      d6.appendChild(tmBox);
+      var TM_STATUS = { pending: ['waiting for you', '#c89830'], approved: ['on the website', '#4aac65'], hidden: ['hidden', '#8aa48d'] };
+      var renderTestimonials = function () {
+        api('/admin/reviews').then(function (r) {
+          tmBox.textContent = '';
+          if (!r.ok) { tmBox.appendChild(el('div', 'row-sub', 'Could not load testimonials.')); return; }
+          var pend = r.testimonials.filter(function (x) { return x.status === 'pending'; }).length;
+          sum6.textContent = 'Testimonials' + (pend ? ' \u00b7 ' + pend + ' to approve' : '');
+          if (!r.testimonials.length) {
+            tmBox.appendChild(el('div', 'row-sub', 'None yet. After a 4 or 5 star rating the portal asks the customer if we may quote them; what they share lands here.'));
+            return;
+          }
+          r.testimonials.forEach(function (t) {
+            var right = el('div', 'cust-badges');
+            var st = TM_STATUS[t.status] || [t.status, '#8aa48d'];
+            right.appendChild(badge(st[0], st[1]));
+            if (t.status !== 'approved') right.appendChild(licAction('Approve', 'ct-btn prim', function () { decide(t, { status: 'approved' }, 'On the website'); }));
+            if (t.status !== 'hidden') right.appendChild(licAction('Hide', null, function () { decide(t, { status: 'hidden' }, 'Hidden'); }));
+            right.appendChild(licAction('Name shown', null, function () {
+              var n = prompt('Name as shown on the site (their words stay as written)', t.name_shown || '');
+              if (n === null) return;
+              var c = prompt('Company as shown (optional)', t.company_shown || '');
+              if (c === null) return;
+              decide(t, { name_shown: n.trim(), company_shown: c.trim() }, 'Saved');
+            }));
+            var who = (t.name_shown || t.email || 'Customer') + (t.company_shown ? ', ' + t.company_shown : '');
+            tmBox.appendChild(row(who + (t.ticket_number ? ' \u00b7 ' + t.ticket_number : ''), '"' + t.quote + '" \u00b7 agreed ' + fmtDate(t.consent_at), right, null));
+          });
+          tmBox.appendChild(el('div', 'row-sub', 'Approved testimonials appear on the homepage under the Google reviews.'));
+        });
+      };
+      var decide = function (t, body, msg) {
+        api('/admin/testimonials/' + t.id, { method: 'PATCH', body: body }).then(function (r) { toast(r.ok ? msg : (r.message || 'Could not save it')); renderTestimonials(); });
+      };
+      d6.addEventListener('toggle', function () { if (d6.open) renderTestimonials(); });
+      renderTestimonials();
+      wrap.appendChild(d6);
       return wrap;
     }
 

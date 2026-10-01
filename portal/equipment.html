@@ -32,6 +32,27 @@
     .btn-primary { background:linear-gradient(135deg,#c89830,#e0b840); color:#0d1710; }
     .btn-ghost { border-color:var(--line); color:#cfe0d2; background:var(--card); }
     .btn-ghost:hover { border-color:var(--green); }
+    /* Order more: the store catalog at today's prices. Requesting makes a quote for review. */
+    .shop { margin-top:2rem; background:var(--card); border:1px solid var(--line); border-radius:14px; padding:1.25rem; }
+    .shop h2 { font-family:"Montserrat",sans-serif; font-size:1.05rem; color:#fff; margin:0 0 0.3rem; }
+    .shop > p { color:var(--muted); font-size:0.88rem; margin:0 0 1rem; }
+    .shop-cat { font-family:"Montserrat",sans-serif; font-size:0.66rem; font-weight:700; text-transform:uppercase; letter-spacing:0.07em; color:var(--gold); margin:1rem 0 0.45rem; }
+    .shop-item { display:grid; grid-template-columns:minmax(0,1fr) auto 7.5rem; gap:0.75rem; align-items:center; padding:0.65rem 0.8rem; border:1px solid var(--line); border-radius:10px; background:var(--bg); margin-bottom:0.4rem; }
+    .shop-item b { display:block; font-size:0.92rem; }
+    .shop-item small { display:block; color:var(--muted); font-size:0.8rem; margin-top:0.15rem; }
+    .shop-item .pr { font-weight:700; font-variant-numeric:tabular-nums; }
+    .qty { display:inline-flex; align-items:center; border:1px solid var(--line); border-radius:999px; overflow:hidden; justify-self:end; }
+    .qty button { width:36px; height:40px; border:0; background:transparent; color:var(--text); font-size:1.05rem; cursor:pointer; }
+    .qty button:hover { background:rgba(74,172,101,0.12); }
+    .qty span { min-width:1.8rem; text-align:center; font-variant-numeric:tabular-nums; }
+    .shop-foot { display:flex; flex-wrap:wrap; gap:0.8rem; align-items:center; justify-content:space-between; margin-top:1rem; padding-top:1rem; border-top:1px solid var(--line); }
+    .shop-foot textarea { flex:1 1 18rem; min-height:44px; box-sizing:border-box; padding:0.6rem 0.75rem; border-radius:10px; border:1px solid var(--line); background:var(--bg); color:var(--text); font:inherit; font-size:0.9rem; resize:vertical; }
+    .shop-sum { font-size:0.9rem; color:var(--muted); }
+    .shop-sum b { color:#fff; font-size:1.05rem; }
+    .shop-msg { margin-top:0.7rem; font-size:0.88rem; }
+    .sr-only { position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0; }
+    .shop-msg.ok { color:#9fd3ae; } .shop-msg.err { color:#e08a68; }
+    @media (max-width:560px) { .shop-item { grid-template-columns:minmax(0,1fr) auto; } .shop-item .qty { grid-column:1 / -1; justify-self:start; } }
     .sec-title { font-family:"Montserrat",sans-serif; text-transform:uppercase; letter-spacing:0.04em; font-size:1rem; color:#f1f7f1; margin:2.2rem 0 0.8rem; display:flex; align-items:center; gap:0.6rem; flex-wrap:wrap; }
     .sec-title .count { font-size:0.72rem; font-weight:700; color:var(--muted); background:var(--card-2); border:1px solid var(--line); border-radius:999px; padding:0.1rem 0.6rem; letter-spacing:0.04em; }
     .empty-row { background:var(--card); border:1px dashed var(--line); border-radius:14px; padding:1.8rem 1.5rem; text-align:center; color:var(--muted); font-size:0.9rem; }
@@ -149,6 +170,19 @@
     <h2 class="sec-title" id="allHead" hidden>Everything on your account <span class="count" id="allCount">0</span></h2>
     <div id="allList"></div>
 
+    <section class="shop" id="shop" hidden aria-labelledby="shopH">
+      <h2 id="shopH">Order more equipment</h2>
+      <p>Pick what you need. We send you a quote to approve before anything is ordered, and set it all up when it arrives.</p>
+      <div id="shopList"></div>
+      <div class="shop-foot">
+        <label for="shopNote" class="sr-only">A note for us (optional)</label>
+        <textarea id="shopNote" maxlength="1000" placeholder="Anything we should know? Who it is for, when you need it..."></textarea>
+        <span class="shop-sum" id="shopSum">Nothing picked yet</span>
+        <button type="button" class="btn btn-primary" id="shopGo" disabled>Request a quote</button>
+      </div>
+      <p class="shop-msg" id="shopMsg" role="status" hidden></p>
+    </section>
+
     <p class="hist-foot" id="eqFoot" hidden>Something missing or wrong? <a href="tickets.html">Open a ticket</a> or reply to the email you received and we will sort it out.</p>
   </main>
 
@@ -158,6 +192,68 @@
   </footer>
 
   <script src="../assets/js/invoices.js?v=2"></script>
+  <script>
+  // Order more: the store catalog, today's prices. A request becomes a quote we review and
+  // send; nothing is charged or ordered from this page.
+  (function () {
+    var LABEL = { laptop: 'Laptops', desktop: 'Desktops', 'mini-pc': 'Mini PCs', monitor: 'Monitors', dock: 'Docks', 'keyboard-mouse': 'Keyboards and mice', headset: 'Headsets', webcam: 'Webcams',
+      networking: 'Networking', printer: 'Printers', storage: 'Storage', accessory: 'Accessories', warranty: 'Warranties', software: 'Software', setup: 'Setup and installation', policy: 'Policies and procedures' };
+    var usd = function (c) { return (c / 100).toLocaleString('en-US', { style: 'currency', currency: 'USD' }); };
+    var mk = function (tag, cls, text) { var n = document.createElement(tag); if (cls) n.className = cls; if (text != null) n.textContent = text; return n; };
+    var picks = {}, items = [];
+    function sum() {
+      var n = 0, c = 0;
+      items.forEach(function (it) { var q = picks[it.id] || 0; n += q; c += q * it.price_cents; });
+      var s = document.getElementById('shopSum'); s.textContent = '';
+      if (!n) s.textContent = 'Nothing picked yet';
+      else { s.appendChild(document.createTextNode(n + (n === 1 ? ' item, about ' : ' items, about '))); s.appendChild(mk('b', null, usd(c))); }
+      document.getElementById('shopGo').disabled = !n;
+    }
+    fetch('/portal-api/store/catalog', { credentials: 'same-origin' }).then(function (r) { return r.json(); }).then(function (d) {
+      items = (d && d.ok && d.items) || [];
+      if (!items.length) return;
+      var list = document.getElementById('shopList');
+      var cats = {};
+      items.forEach(function (it) { (cats[it.category] = cats[it.category] || []).push(it); });
+      Object.keys(cats).forEach(function (c) {
+        list.appendChild(mk('div', 'shop-cat', LABEL[c] || c));
+        cats[c].forEach(function (it) {
+          var row = mk('div', 'shop-item');
+          var t = mk('div'); t.appendChild(mk('b', null, it.name)); if (it.description) t.appendChild(mk('small', null, it.description));
+          row.appendChild(t);
+          row.appendChild(mk('span', 'pr', usd(it.price_cents)));
+          var q = mk('div', 'qty'); q.setAttribute('role', 'group'); q.setAttribute('aria-label', 'How many ' + it.name);
+          var minus = mk('button', null, '\u2212'); minus.type = 'button'; minus.setAttribute('aria-label', 'One fewer');
+          var n = mk('span', null, '0'); n.setAttribute('aria-live', 'polite');
+          var plus = mk('button', null, '+'); plus.type = 'button'; plus.setAttribute('aria-label', 'One more');
+          var set = function (v) { picks[it.id] = Math.max(0, Math.min(99, v)); n.textContent = String(picks[it.id]); sum(); };
+          minus.addEventListener('click', function () { set((picks[it.id] || 0) - 1); });
+          plus.addEventListener('click', function () { set((picks[it.id] || 0) + 1); });
+          q.appendChild(minus); q.appendChild(n); q.appendChild(plus);
+          row.appendChild(q);
+          list.appendChild(row);
+        });
+      });
+      document.getElementById('shop').hidden = false;
+    }).catch(function () { /* no catalog: the section stays hidden */ });
+    document.getElementById('shopGo').addEventListener('click', function () {
+      var btn = this, msg = document.getElementById('shopMsg');
+      var lines = Object.keys(picks).filter(function (k) { return picks[k] > 0; }).map(function (k) { return { id: Number(k), qty: picks[k] }; });
+      if (!lines.length) return;
+      btn.disabled = true; msg.hidden = true;
+      fetch('/portal-api/store/request', { method: 'POST', credentials: 'same-origin', headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({ lines: lines, note: document.getElementById('shopNote').value.trim() }) })
+        .then(function (r) { return r.json().catch(function () { return { ok: false }; }); })
+        .then(function (r) {
+          msg.hidden = false;
+          if (r && r.ok) {
+            msg.className = 'shop-msg ok'; msg.textContent = 'Thank you. We will review it and send quote ' + r.number + ' to approve. You will find it under Billing.';
+            picks = {}; document.querySelectorAll('#shopList .qty span').forEach(function (x) { x.textContent = '0'; }); document.getElementById('shopNote').value = ''; sum();
+          } else { msg.className = 'shop-msg err'; msg.textContent = (r && r.message) || 'That did not go through. Please try again.'; btn.disabled = false; }
+        }, function () { msg.hidden = false; msg.className = 'shop-msg err'; msg.textContent = 'Could not reach the server. Please try again.'; btn.disabled = false; });
+    });
+  })();
+  </script>
   <script>
   (function () {
     'use strict';

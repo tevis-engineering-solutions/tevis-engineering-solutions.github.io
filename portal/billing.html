@@ -877,21 +877,23 @@
       list.forEach(function (q) {
         var open = (q.status === 'sent' || q.status === 'viewed') && !q.expired;
         var done = q.status === 'accepted' || q.status === 'converted';
+        // A Statement of Work is signed, not accepted.
+        var sow = q.doc_type === 'sow';
         var c = el('div', 'inv quote' + (open ? '' : ' done'));
         var top = el('div', 'inv-top');
         var left = el('div');
         var idEl = el('div', 'inv-id', q.number);
-        var b = el('span', 'q-badge' + (open ? '' : done ? '' : q.status === 'declined' ? ' grey' : ' gold'), open ? 'Awaiting your decision' : done ? 'Accepted' : q.status === 'declined' ? 'Declined' : 'Expired');
+        var b = el('span', 'q-badge' + (open ? '' : done ? '' : q.status === 'declined' ? ' grey' : ' gold'), open ? (sow ? 'Awaiting your signature' : 'Awaiting your decision') : done ? (sow ? 'Signed' : 'Accepted') : q.status === 'declined' ? 'Declined' : 'Expired');
         idEl.appendChild(b);
         left.appendChild(idEl);
         var meta = el('div', 'inv-meta');
-        [q.title, q.sent_at ? 'Sent ' + TESInvoices.formatDate(new Date(q.sent_at * 1000)) : '', open && q.valid_until ? 'Valid until ' + TESInvoices.formatDate(new Date(q.valid_until * 1000)) : '', done && q.decided_at ? 'Accepted ' + TESInvoices.formatDate(new Date(q.decided_at * 1000)) : '', q.invoice_number ? 'Invoice ' + q.invoice_number : ''].filter(Boolean).forEach(function (t) { meta.appendChild(el('span', null, t)); });
+        [q.title, q.sent_at ? 'Sent ' + TESInvoices.formatDate(new Date(q.sent_at * 1000)) : '', open && q.valid_until ? 'Valid until ' + TESInvoices.formatDate(new Date(q.valid_until * 1000)) : '', done && q.decided_at ? (sow ? 'Signed ' : 'Accepted ') + TESInvoices.formatDate(new Date(q.decided_at * 1000)) : '', q.invoice_number ? 'Invoice ' + q.invoice_number : ''].filter(Boolean).forEach(function (t) { meta.appendChild(el('span', null, t)); });
         left.appendChild(meta);
         top.appendChild(left);
         top.appendChild(el('div', 'inv-spacer'));
         var right = el('div', 'inv-right');
         right.appendChild(el('div', 'inv-amt', TESInvoices.formatUSD((done ? q.accepted_cents : q.total_cents) / 100)));
-        if (q.url) { var a = el('a', 'btn btn-primary'); a.href = q.url; a.target = '_blank'; a.rel = 'noopener'; a.appendChild(el('i', 'fa-solid fa-file-signature')); a.appendChild(document.createTextNode(' Review & accept')); right.appendChild(a); }
+        if (q.url) { var a = el('a', 'btn btn-primary'); a.href = q.url; a.target = '_blank'; a.rel = 'noopener'; a.appendChild(el('i', 'fa-solid fa-file-signature')); a.appendChild(document.createTextNode(sow ? ' Review & sign' : ' Review & accept')); right.appendChild(a); }
         top.appendChild(right);
         c.appendChild(top);
         box.appendChild(c);

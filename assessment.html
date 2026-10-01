@@ -403,6 +403,24 @@
       color: var(--text);
       line-height: 1.65;
     }
+    /* Email the result: the only place the assessment asks for an address, and only
+       after the result is already on screen. */
+    .mail-block { background: var(--card); border: 1px solid var(--line); border-radius: 16px; padding: 1.5rem; margin-bottom: 1.5rem; }
+    .mail-block h3 { font-family: "Montserrat", sans-serif; font-size: 1.05rem; font-weight: 700; color: #edf4ff; margin-bottom: 0.4rem; }
+    .mail-block > p { color: var(--muted); font-size: 0.92rem; margin-bottom: 1rem; }
+    .mail-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; margin-bottom: 0.9rem; }
+    .mail-grid .wide { grid-column: 1 / -1; }
+    .mail-grid label { display: block; font-size: 0.75rem; font-weight: 600; color: var(--muted); margin-bottom: 0.3rem; }
+    .mail-grid input { width: 100%; box-sizing: border-box; height: 44px; padding: 0 0.8rem; border-radius: 10px; border: 1px solid var(--line); background: var(--bg); color: var(--text); font: inherit; font-size: 0.95rem; }
+    .mail-grid input:focus { outline: none; border-color: var(--blue); }
+    .mail-trap { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
+    .mail-block .cf-turnstile { width: 100%; max-width: 100%; overflow: hidden; margin-bottom: 0.9rem; }
+    .mail-block .cf-turnstile iframe { max-width: 100% !important; }
+    .mail-msg { font-size: 0.9rem; margin-top: 0.8rem; }
+    .mail-msg.err { color: #e08a68; }
+    .mail-msg.ok { color: #6dc882; }
+    .mail-fine { color: var(--muted); font-size: 0.78rem; margin-top: 0.7rem; }
+    @media (max-width: 560px) { .mail-grid { grid-template-columns: 1fr; } }
     .cta-block {
       background: var(--card);
       border: 1px solid var(--line);
@@ -563,6 +581,7 @@
   <script type="application/ld+json">
   {"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://tevisengineering.com/"},{"@type":"ListItem","position":2,"name":"IT Assessment","item":"https://tevisengineering.com/assessment.html"}]}
   </script>
+  <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
 </head>
 <body>
 
@@ -855,6 +874,20 @@
         <h3>Personalized Recommendation</h3>
         <p id="recommendationText"></p>
       </div>
+
+      <form class="mail-block" id="mailForm" novalidate>
+        <h3>Email me this result</h3>
+        <p>Get your score, your answers and what they mean in your inbox. Tyler may follow up once; nothing is sold or shared.</p>
+        <div class="mail-grid">
+          <div class="wide"><label for="mailEmail">Email</label><input type="email" id="mailEmail" autocomplete="email" required maxlength="200" placeholder="you@company.com"></div>
+          <div><label for="mailName">Name (optional)</label><input type="text" id="mailName" autocomplete="name" maxlength="120"></div>
+          <div><label for="mailCompany">Company (optional)</label><input type="text" id="mailCompany" autocomplete="organization" maxlength="160"></div>
+        </div>
+        <div class="mail-trap" aria-hidden="true"><label for="mailHp">Leave this empty</label><input type="text" id="mailHp" tabindex="-1" autocomplete="off"></div>
+        <div class="cf-turnstile" data-sitekey="0x4AAAAAAEfjPSABvMOUzIl3" data-theme="dark" data-size="flexible"></div>
+        <button type="submit" class="btn btn-primary" id="mailBtn"><i class="fa-regular fa-envelope" aria-hidden="true"></i> Email my result</button>
+        <p class="mail-msg" id="mailMsg" role="status" hidden></p>
+      </form>
 
       <div class="cta-block">
         <h3>Next Step</h3>
@@ -1205,9 +1238,40 @@
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
+    // Email the result. The Worker re-scores from the picks, so what it records and
+    // what it emails cannot differ from what the page showed.
+    (function () {
+      const form = document.getElementById('mailForm'), btn = document.getElementById('mailBtn'), msg = document.getElementById('mailMsg');
+      const say = (text, cls) => { msg.textContent = text; msg.className = 'mail-msg ' + cls; msg.hidden = false; };
+      form.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const email = document.getElementById('mailEmail').value.trim();
+        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { say('Please enter a valid email address.', 'err'); return; }
+        if (answers.some((a) => !a)) { say('Please finish the assessment first.', 'err'); return; }
+        const tokenEl = form.querySelector('[name="cf-turnstile-response"]');
+        btn.disabled = true; msg.hidden = true;
+        fetch('/portal-api/public/assessment', {
+          method: 'POST', credentials: 'same-origin', headers: { 'content-type': 'application/json' },
+          body: JSON.stringify({
+            email, name: document.getElementById('mailName').value.trim(), company: document.getElementById('mailCompany').value.trim(),
+            hp: document.getElementById('mailHp').value, turnstileToken: tokenEl ? tokenEl.value : '',
+            answers: answers.map((a) => ({ v: a.value, k: a.key || '' })),
+          }),
+        }).then((r) => r.json().catch(() => ({ ok: false }))).then((r) => {
+          btn.disabled = false;
+          if (r && r.ok) { say('Sent. Check your inbox in a minute or two.', 'ok'); btn.style.display = 'none'; return; }
+          try { if (window.turnstile) window.turnstile.reset(); } catch (err) { /* widget not loaded */ }
+          say(r && r.error === 'rate_limited' ? 'Too many tries. Please wait a few minutes.'
+            : r && r.error === 'challenge_failed' ? 'The bot check did not pass. Please try again.'
+            : 'That did not go through. Please try again, or call (216) 302-8486.', 'err');
+        }, () => { btn.disabled = false; say('Could not reach the server. Please try again.', 'err'); });
+      });
+    })();
+
     // Retake
     document.getElementById('retakeBtn').addEventListener('click', () => {
       answers.fill(null);
+      document.getElementById('mailBtn').style.display = ''; document.getElementById('mailMsg').hidden = true;
       resultsPanel.classList.remove('active');
       progressWrap.style.display = '';
       // Reset all card selections

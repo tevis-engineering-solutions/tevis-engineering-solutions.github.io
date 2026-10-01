@@ -190,7 +190,7 @@
       </section>
 
       <section class="q-sec" id="qIntroSec" hidden>
-        <h2>About this work</h2>
+        <h2 id="qIntroH">About this work</h2>
         <div class="q-intro" id="qIntro"></div>
       </section>
 
@@ -209,7 +209,7 @@
       </section>
 
       <section class="q-sec" id="qNextSec" hidden>
-        <h2>Next step</h2>
+        <h2 id="qNextH">Next step</h2>
         <div class="q-intro" id="qNext"></div>
       </section>
 
@@ -223,7 +223,7 @@
         <p id="qAcceptLede">This is a preliminary, non-binding estimate. It is not a Statement of Work and it does not authorize work to begin. Accepting records that you want to proceed; we then send a Statement of Work for signature, and work starts once that is signed and the deposit is received.</p>
         <label for="qSig">Your full name</label>
         <input type="text" id="qSig" autocomplete="name" maxlength="120" placeholder="Jane Roe">
-        <label class="q-agree"><input type="checkbox" id="qAgree"> <span>I have read this <span id="qAgreeWord">quote</span> and I want to proceed with the work and the terms as described<span id="qAgreeTotal"></span>.</span></label>
+        <label class="q-agree"><input type="checkbox" id="qAgree"> <span><span id="qAgreeLead">I have read this </span><span id="qAgreeWord">quote</span><span id="qAgreeTail"> and I want to proceed with the work and the terms as described</span><span id="qAgreeTotal"></span>.</span></label>
         <div class="q-acts">
           <button type="button" class="tbtn alt" id="qAcceptBtn">Accept quote</button>
           <button type="button" class="q-decline" id="qDeclineToggle">I would like to decline</button>
@@ -237,7 +237,7 @@
           </div>
         </div>
         <div class="q-err" id="qErr" hidden></div>
-        <p class="q-fine">Accepting online records your name, the time, and the network address it came from. Questions first? Reply to the email or call (216)&nbsp;302&#8209;8486.</p>
+        <p class="q-fine" id="qFine">Accepting online records your name, the time, and the network address it came from. Questions first? Reply to the email or call (216)&nbsp;302&#8209;8486.</p>
       </section>
 
       <section class="q-done" id="qDone" hidden></section>
@@ -369,12 +369,29 @@
       // An estimate is the earlier document: a range, for a job not yet fully scoped.
       // It says so everywhere the word "quote" would otherwise appear.
       var isEst = quote.doc_type === 'estimate';
-      var word = isEst ? 'Estimate' : 'Quote';
+      // A Statement of Work is the document that authorizes the work: it is signed, not
+      // accepted, and none of the "non-binding, a Statement of Work follows" copy fits it.
+      var isSow = quote.doc_type === 'sow';
+      var word = isEst ? 'Estimate' : isSow ? 'Statement of Work' : 'Quote';
       document.title = word + ' ' + quote.number + ' | Tevis Engineering Solutions';
       $('qTitle').textContent = quote.title;
       $('qNumber').textContent = word + ' ' + quote.number + (quote.sent_at ? ' · ' + longDate(quote.sent_at) : '');
-      $('qAcceptH').textContent = 'Accept this ' + word.toLowerCase();
-      $('qAgreeWord').textContent = word.toLowerCase();
+      $('qAcceptH').textContent = isSow ? 'Sign this Statement of Work' : 'Accept this ' + word.toLowerCase();
+      $('qAgreeWord').textContent = isSow ? 'Statement of Work' : word.toLowerCase();
+      if (isSow) {
+        $('qAcceptLede').textContent = 'Signing approves the scope, the price and the payment schedule above. '
+          + 'The first invoice follows, and the work is scheduled once it is paid.';
+        $('qAgreeLead').textContent = 'I have read this ';
+        $('qAgreeTail').textContent = ' and I approve the scope, the schedule and the payment terms as described';
+        $('qAcceptBtn').textContent = 'Sign';
+        $('qDeclineToggle').textContent = 'I would like changes first';
+        $('qDeclineBtn').textContent = 'Decline this Statement of Work';
+        $('qToolMsg').textContent = 'Review the details below. Signing takes a typed name and one click.';
+        $('qIntroH').textContent = 'Scope';
+        $('qNextH').textContent = 'Payment schedule';
+        $('qExclH').textContent = 'Not in scope';
+        $('qFine').textContent = 'Signing online records your name, the time, and the network address it came from. Questions first? Reply to the email or call (216) 302-8486.';
+      }
       if (isEst) {
         $('qAcceptLede').textContent = 'This is a preliminary, non-binding estimate. Prices are a range and will be '
           + 'confirmed in a Statement of Work once the scope is fully defined. It does not authorize work to begin. '
@@ -401,7 +418,16 @@
       var open = (quote.status === 'sent' || quote.status === 'viewed') && !quote.expired;
       var pill = $('qPill'), valid = $('qValid'), done = $('qDone');
       pill.className = 'q-pill';
-      if (quote.status === 'accepted' || quote.status === 'converted') {
+      if ((quote.status === 'accepted' || quote.status === 'converted') && isSow) {
+        pill.textContent = 'Signed';
+        valid.textContent = 'Signed ' + longDate(quote.decided_at) + (quote.signature_name ? ' by ' + quote.signature_name : '');
+        done.hidden = false; done.className = 'q-done';
+        done.appendChild(el('h2', null, 'Thank you. This Statement of Work is signed.'));
+        done.appendChild(el('p', null, 'You signed it on ' + longDate(quote.decided_at) + (quote.signature_name ? ' as ' + quote.signature_name : '') + '. '
+          + (quote.invoice_number ? 'Invoice ' + quote.invoice_number + ' has been raised; the work is scheduled once it is paid.' : 'We will send the first invoice, and the work is scheduled once it is paid.')));
+        done.appendChild(el('p', null, 'Keep this page or print it for your records.'));
+        $('qToolMsg').textContent = 'This Statement of Work has been signed.';
+      } else if (quote.status === 'accepted' || quote.status === 'converted') {
         pill.textContent = 'Accepted';
         valid.textContent = 'Accepted ' + longDate(quote.decided_at) + (quote.signature_name ? ' by ' + quote.signature_name : '');
         done.hidden = false; done.className = 'q-done';
@@ -413,14 +439,14 @@
         pill.textContent = 'Declined'; pill.classList.add('grey');
         valid.textContent = 'Declined ' + longDate(quote.decided_at);
         done.hidden = false; done.className = 'q-done declined';
-        done.appendChild(el('h2', null, 'This quote was declined.'));
+        done.appendChild(el('h2', null, 'This ' + (isSow ? 'Statement of Work' : word.toLowerCase()) + ' was declined.'));
         done.appendChild(el('p', null, 'No problem. If circumstances change, reply to the email or call and we will pick it back up.'));
         $('qToolMsg').textContent = 'This quote was declined.';
       } else if (quote.expired) {
         pill.textContent = 'Expired'; pill.classList.add('gold');
         valid.textContent = 'Was valid until ' + longDate(quote.valid_until);
         done.hidden = false; done.className = 'q-done expired';
-        done.appendChild(el('h2', null, 'This quote has expired.'));
+        done.appendChild(el('h2', null, 'This ' + (isSow ? 'Statement of Work' : word.toLowerCase()) + ' has expired.'));
         done.appendChild(el('p', null, 'Prices were held until ' + longDate(quote.valid_until) + '. Reply to the email or call (216) 302-8486 and we will refresh it for you.'));
         $('qToolMsg').textContent = 'This quote has expired. Ask us for a fresh one.';
       } else {

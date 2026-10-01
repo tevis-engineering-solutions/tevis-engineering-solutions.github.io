@@ -365,6 +365,12 @@
 
     document.getElementById('tesDomain').textContent = report.domain;
     document.getElementById('tesUrl').textContent = report.final_url;
+
+    // The Website Watch card under the report: name the site, and carry it to signup.
+    var watchDomain = document.getElementById('tesWatchDomain');
+    var watchGo = document.getElementById('tesWatchGo');
+    if (watchDomain && report.domain) watchDomain.textContent = report.domain;
+    if (watchGo && report.domain) watchGo.href = 'website-watch.html?site=' + encodeURIComponent(report.domain) + '#start';
     document.getElementById('tesVerdict').textContent = GRADE_LINE[grade] || '';
 
     var meta = document.getElementById('tesMeta');

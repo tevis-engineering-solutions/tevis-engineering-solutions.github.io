@@ -72,6 +72,22 @@
     .stars button.on { color:var(--gold); }
     .tk-closed { font-size:0.8rem; color:#9fd3ae; margin-top:0.5rem; }
     .tk-closed b { color:var(--gold); letter-spacing:0.1em; }
+    /* After a good rating: a Google review, and (with their say-so) a quote for the site. */
+    .tk-thanks { margin-top:0.8rem; padding:0.9rem 1rem; border:1px solid rgba(200,152,48,0.35); border-radius:12px; background:rgba(200,152,48,0.06); }
+    .tk-thanks h4 { margin:0 0 0.3rem; font-family:"Montserrat",sans-serif; font-size:0.86rem; color:#fff; }
+    .tk-thanks p { margin:0 0 0.7rem; font-size:0.82rem; color:var(--muted); line-height:1.5; }
+    .tk-thanks .row-acts { display:flex; flex-wrap:wrap; gap:0.5rem; }
+    .tk-thanks .btn { margin-top:0; min-height:44px; font-size:0.74rem; }
+    .tk-share { margin-top:0.8rem; display:grid; gap:0.6rem; }
+    .tk-share label { font-size:0.72rem; font-weight:600; color:var(--muted); display:block; margin-bottom:0.25rem; }
+    .tk-share textarea, .tk-share input[type=text] { width:100%; box-sizing:border-box; padding:0.55rem 0.7rem; border-radius:8px; border:1px solid var(--border); background:var(--bg); color:var(--text); font:inherit; font-size:0.86rem; }
+    .tk-share textarea { min-height:84px; resize:vertical; }
+    .tk-share .two { display:grid; grid-template-columns:1fr 1fr; gap:0.6rem; }
+    .tk-share .consent { display:flex; gap:0.5rem; align-items:flex-start; font-size:0.8rem; color:var(--text); font-weight:400; }
+    .tk-share .consent input { margin-top:0.2rem; accent-color:var(--gold); width:16px; height:16px; flex:0 0 auto; }
+    .tk-share .err { color:#e08a68; font-size:0.8rem; margin:0; }
+    .tk-share-done { margin-top:0.6rem; font-size:0.82rem; color:#9fd3ae; }
+    @media (max-width:520px) { .tk-share .two { grid-template-columns:1fr; } }
   </style>
 </head>
 <body>
@@ -223,6 +239,9 @@
 
     // ---- ticket list ----------------------------------------------------
     var listEl = document.getElementById('ticketList');
+    // From the ticket list: Google's review page, and which tickets already carry a
+    // testimonial, so the prompt below is not offered twice.
+    var REVIEW_URL = '', SHARED = {};
 
     function readAll(files) {
       return Promise.all(Array.prototype.slice.call(files || []).slice(0, 5).map(function (f) {
@@ -253,6 +272,62 @@
       });
     }
 
+    // A 4 or 5 star rating gets a thank-you with two optional asks: a Google review, and
+    // whether we may quote them on the website. Their words, their name as they want it
+    // shown, and nothing published until they tick the box and we approve it.
+    function thanksBox(t) {
+      var w = el('div', 'tk-thanks');
+      w.appendChild(el('h4', null, 'Thank you for the kind rating'));
+      w.appendChild(el('p', null, 'If you have a minute, a short Google review helps other local businesses find us.'));
+      var row = el('div', 'row-acts');
+      if (REVIEW_URL) {
+        var g = el('a', 'btn btn-primary'); g.href = REVIEW_URL; g.target = '_blank'; g.rel = 'noopener noreferrer';
+        g.appendChild(el('i', 'fa-brands fa-google')); g.appendChild(document.createTextNode(' Leave a Google review'));
+        row.appendChild(g);
+      }
+      if (SHARED[t.id]) {
+        w.appendChild(row);
+        w.appendChild(el('div', 'tk-share-done', 'You shared a few words about this one. Thank you.'));
+        return w;
+      }
+      var q = el('button', 'btn btn-ghost', 'Can we quote you on our website?'); q.type = 'button';
+      row.appendChild(q);
+      w.appendChild(row);
+      q.addEventListener('click', function () {
+        q.remove();  // .btn sets display, which would beat the hidden attribute
+        var f = el('div', 'tk-share');
+        var lt = el('label', null, 'What would you like to say?'); var ta = document.createElement('textarea'); ta.id = 'tkq' + t.id; lt.htmlFor = ta.id;
+        ta.maxLength = 600; ta.value = t.rating_note || '';
+        var d1 = el('div'); d1.appendChild(lt); d1.appendChild(ta); f.appendChild(d1);
+        var two = el('div', 'two');
+        var mk = function (label, id, val, ph) { var d = el('div'); var l = el('label', null, label); var i = document.createElement('input'); i.type = 'text'; i.id = id; i.value = val || ''; i.placeholder = ph; i.maxLength = 80; l.htmlFor = id; d.appendChild(l); d.appendChild(i); two.appendChild(d); return i; };
+        var nm = mk('Your name as shown', 'tkn' + t.id, '', 'e.g. Dana R.');
+        var co = mk('Company (optional)', 'tkc' + t.id, '', 'e.g. Harbor Dental');
+        f.appendChild(two);
+        var cons = el('label', 'consent'); var cb = document.createElement('input'); cb.type = 'checkbox';
+        cons.appendChild(cb); cons.appendChild(el('span', null, 'Tevis Engineering Solutions may show these words, with the name above, on its website.'));
+        f.appendChild(cons);
+        var err = el('p', 'err'); err.hidden = true; f.appendChild(err);
+        var go = el('button', 'btn btn-primary', 'Share it'); go.type = 'button';
+        var acts = el('div', 'row-acts'); acts.appendChild(go); f.appendChild(acts);
+        go.addEventListener('click', function () {
+          err.hidden = true;
+          if (ta.value.trim().length < 10) { err.textContent = 'A sentence or two, please.'; err.hidden = false; return; }
+          if (!cb.checked) { err.textContent = 'Please tick the box to let us show it.'; err.hidden = false; return; }
+          go.disabled = true;
+          api('/tickets/' + t.id + '/testimonial', { method: 'POST', body: { quote: ta.value.trim(), name_shown: nm.value.trim(), company_shown: co.value.trim(), consent: true } }).then(function (r) {
+            go.disabled = false;
+            if (!r || !r.ok) { err.textContent = (r && r.message) || 'That did not go through. Please try again.'; err.hidden = false; return; }
+            SHARED[t.id] = true;
+            f.replaceWith(el('div', 'tk-share-done', 'Thank you. We will review it before it goes on the site.'));
+          });
+        });
+        w.appendChild(f);
+        ta.focus();
+      });
+      return w;
+    }
+
     function renderThread(box, t) {
       box.textContent = '';
       (t.comments || []).forEach(function (c) {
@@ -268,6 +343,7 @@
         cl.appendChild(document.createTextNode((t.closed_by === 'customer' ? 'You closed this' : 'Resolved') + (t.resolved_at ? ' on ' + fmt(t.resolved_at) : '') + (t.resolution ? '. ' + t.resolution : '.')));
         if (t.rating) { cl.appendChild(document.createTextNode(' Your rating: ')); cl.appendChild(el('b', null, '\u2605'.repeat(t.rating) + '\u2606'.repeat(5 - t.rating))); }
         box.appendChild(cl);
+        if (t.rating >= 4) box.appendChild(thanksBox(t));
         var acts = el('div', 'tk-actions');
         if (!t.rating) {
           var stars = el('div', 'stars'); stars.setAttribute('role', 'group'); stars.setAttribute('aria-label', 'Rate this ticket');
@@ -382,6 +458,8 @@
           return;
         }
         var ts = r.tickets || [];
+        REVIEW_URL = r.review_url || REVIEW_URL;
+        ts.forEach(function (x) { SHARED[x.id] = !!x.shared; });
         if (!ts.length) {
           var e = el('div', 'tk-empty');
           e.appendChild(el('i', 'fa-solid fa-inbox'));
