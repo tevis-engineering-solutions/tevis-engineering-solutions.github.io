@@ -2429,10 +2429,11 @@
           <div id="qtDraftOut"></div>
         </div>
         <div class="qlines">
-          <div class="qlines-h"><span>Line items</span><span class="qlines-hint">Tick Optional for add-ons the customer can choose. Tax applies to the required lines.</span></div>
+          <div class="qlines-h"><span>Line items</span><span class="qlines-hint">Tick Optional for add-ons the customer can choose. Sales tax is its own line: use Add sales tax.</span></div>
           <div id="qtLines"></div>
           <button type="button" id="qtAddLine">+ Add a line</button>
           <button type="button" id="qtAddCatalog">+ Add from the store catalog</button>
+          <button type="button" id="qtAddTax">+ Add sales tax</button>
           <div class="qtotals" id="qtTotals"></div>
         </div>
 
@@ -6910,7 +6911,7 @@
       var row = el('div', 'qline');
       var desc = document.createElement('input'); desc.type = 'text'; desc.className = 'qline-desc'; desc.placeholder = 'Description'; desc.value = item.description || ''; desc.setAttribute('aria-label', 'Line description'); desc.maxLength = 300;
       var kind = document.createElement('select'); kind.setAttribute('aria-label', 'Kind');
-      [['service', 'Service'], ['hours', 'Hours'], ['product', 'Product'], ['expense', 'Expense']].forEach(function (k) { var o = el('option', null, k[1]); o.value = k[0]; kind.appendChild(o); });
+      [['service', 'Service'], ['hours', 'Hours'], ['product', 'Product'], ['expense', 'Expense'], ['tax', 'Sales tax']].forEach(function (k) { var o = el('option', null, k[1]); o.value = k[0]; kind.appendChild(o); });
       kind.value = item.kind || 'service';
       var qty = document.createElement('input'); qty.type = 'number'; qty.step = '0.001'; qty.min = '0'; qty.placeholder = 'Qty'; qty.value = item.qty != null ? item.qty : 1; qty.setAttribute('aria-label', 'Quantity');
       var unit = document.createElement('input'); unit.type = 'text'; unit.placeholder = 'Unit'; unit.value = item.unit || ''; unit.maxLength = 12; unit.setAttribute('aria-label', 'Unit');
@@ -6943,6 +6944,12 @@
       row.amtEl = amt;
       row.highEl = high;
       row.priceEl = price;
+      row.set = function (v) {
+        kind.value = v.kind; desc.value = v.description; qty.value = 1; unit.value = '';
+        price.value = (v.unit_cents / 100).toFixed(2);
+        high.value = v.high_unit_cents != null && v.high_unit_cents !== v.unit_cents ? (v.high_unit_cents / 100).toFixed(2) : '';
+        iv.value = 'once'; opt.checked = false;
+      };
       return row;
     }
 
@@ -6999,6 +7006,38 @@
     document.getElementById('qtDraft').addEventListener('click', qtDraftRun);
     document.getElementById('qtRefEdit').addEventListener('click', qtRefPanel);
     document.getElementById('qtAddLine').addEventListener('click', function () { var r = qtLine(); qtLinesEl.appendChild(r); r.querySelector('input').focus(); });
+    // Sales tax as a line: the rate from Finance's tax settings applied to the required,
+    // one-time Product lines. Run it again after changing lines and it replaces the old
+    // tax line rather than adding a second. Optional add-ons are left out, because the
+    // customer may not take them; labor is left out until the accountant says otherwise.
+    document.getElementById('qtAddTax').addEventListener('click', function () {
+      api('/admin/finance/settings').then(function (r) {
+        if (!r.ok) return toast('Could not load the sales tax rate');
+        var rate = Number(r.settings.sales_tax_pct);
+        if (!(rate > 0)) return toast('Set a sales tax rate first: Finance, Set aside for tax');
+        var low = 0, high = 0, taxRow = null;
+        var q3 = function (v) { return Math.round(Number(v) * 1000) / 1000; };
+        Array.prototype.forEach.call(qtLinesEl.children, function (row) {
+          var it = row.read();
+          if (it.kind === 'tax') { if (!taxRow) taxRow = row; return; }
+          if (!it.description || it.kind !== 'product' || it.optional || it.interval !== 'once') return;
+          var l = Math.round(q3(it.qty) * Math.round(it.unit_price * 100));
+          low += l;
+          high += it.high_unit_price != null && it.high_unit_price > it.unit_price ? Math.round(q3(it.qty) * Math.round(it.high_unit_price * 100)) : l;
+        });
+        if (!low && !high) return toast('No required Product lines to tax');
+        var v = { kind: 'tax', description: 'Ohio sales tax (' + rate + '%) on equipment',
+          unit_cents: Math.round(low * rate / 100), high_unit_cents: qtDocType === 'estimate' ? Math.round(high * rate / 100) : null };
+        if (!taxRow) {
+          if (qtLinesEl.children.length === 1 && !qtLinesEl.children[0].read().description) qtLinesEl.textContent = '';
+          taxRow = qtLine({ kind: 'tax' }); qtLinesEl.appendChild(taxRow);
+        }
+        taxRow.set(v);
+        qtRecalc();
+        toast('Sales tax ' + money(v.unit_cents) + ' at ' + rate + '%');
+      });
+    });
+
     // Pick items from the store catalog: each becomes a line at today's price, carrying
     // its cost so the quote, the invoice and the order know the margin.
     document.getElementById('qtAddCatalog').addEventListener('click', function () {
@@ -12061,10 +12100,11 @@
         var mk = function (label, id, val, step) { var d = el('div'); var l = el('label', null, label); l.htmlFor = id; var i = document.createElement('input'); i.id = id; i.type = 'number'; i.step = step; i.min = '0'; i.value = val; d.appendChild(l); d.appendChild(i); box.appendChild(d); return i; };
         var pct = mk('Set aside, % of net', 'ftsPct', r.settings.set_aside_pct, '0.5');
         var rate = mk('Mileage rate, cents a mile', 'ftsRate', r.settings.mileage_cents, '1');
-        var note = el('p', 'adlg-meta wide', 'The set-aside is a reminder to keep money aside, not a tax figure; your accountant decides the real amount. A week before each estimated-tax date (' + r.due_dates.map(function (d) { return d.key; }).join(', ') + ') Telegram sends the year so far. Check the per-mile rate each year; a change does not reprice trips already logged.');
+        var stax = mk('Sales tax rate for quotes, %', 'ftsSales', r.settings.sales_tax_pct, '0.25');
+        var note = el('p', 'adlg-meta wide', 'The set-aside is a reminder to keep money aside, not a tax figure; your accountant decides the real amount. A week before each estimated-tax date (' + r.due_dates.map(function (d) { return d.key; }).join(', ') + ') Telegram sends the year so far. Check the per-mile rate each year; a change does not reprice trips already logged. The sales tax rate is what Add sales tax uses on a quote; it is the rate where you are, so check it each quarter on the Ohio Department of Taxation rate table.');
         box.appendChild(note);
         askDialog({ title: 'Tax and mileage settings', body: box, buttons: [{ label: 'Cancel', value: null }, { label: 'Save', value: true, cls: 'prim', act: function () {
-          return api('/admin/finance/settings', { method: 'PUT', body: { set_aside_pct: Number(pct.value), mileage_cents: Number(rate.value) } }).then(function (x) { if (!x.ok) return { error: x.message || 'Check the numbers' }; });
+          return api('/admin/finance/settings', { method: 'PUT', body: { set_aside_pct: Number(pct.value), mileage_cents: Number(rate.value), sales_tax_pct: Number(stax.value) } }).then(function (x) { if (!x.ok) return { error: x.message || 'Check the numbers' }; });
         } }] }).then(function (v) { if (v) { toast('Saved'); loadFinance(); } });
       });
     }
