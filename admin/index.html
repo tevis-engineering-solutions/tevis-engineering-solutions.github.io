@@ -721,7 +721,28 @@
     .fin-note { font-size:0.8rem; color:var(--muted); margin-top:0.6rem; line-height:1.5; }
     .fin-note.warn { color:#e0c98a; }
     .chart-bars svg { display:block; overflow:visible; }
-    .ax-grid { stroke:var(--line); stroke-width:1; }
+    .ax-grid { stroke:var(--line); stroke-width:1; stroke-dasharray:2 4; opacity:0.8; }
+    .ax-base { stroke:var(--line); stroke-width:1; }
+    .ax-cur { fill:rgba(255,255,255,0.03); }
+    .ax-lbl.cur { fill:var(--text); font-weight:600; }
+    .chart-bars .line { filter:drop-shadow(0 1px 2px rgba(0,0,0,.35)); }
+    .chart-bars .pick { cursor:pointer; }
+    .chart-bars rect.pick:hover { fill:rgba(255,255,255,0.025); }
+    .legend-i.is-line i { height:3px; border-radius:2px; align-self:center; }
+    /* Trend: a one-line summary until opened. */
+    .fin-trend-h { all:unset; box-sizing:border-box; width:100%; display:flex; align-items:center; flex-wrap:wrap; gap:0.4rem 0.9rem; cursor:pointer; min-height:36px; }
+    .fin-trend-h:focus-visible { outline:2px solid var(--gold); outline-offset:4px; }
+    .fin-trend-h h3 { margin:0; }
+    .fin-trend-chev { color:var(--muted); font-size:0.75rem; transition:transform .2s; }
+    .fin-trend.open .fin-trend-chev { transform:rotate(90deg); }
+    .fin-trend-sum { display:inline-flex; flex-wrap:wrap; gap:0.3rem 0.9rem; font-size:0.8rem; color:var(--muted); }
+    .fin-trend-k { display:inline-flex; align-items:center; gap:0.35rem; }
+    .fin-trend-k i { width:8px; height:8px; border-radius:2px; display:inline-block; }
+    .fin-trend-k b { color:var(--text); font-variant-numeric:tabular-nums; }
+    .fin-trend-sub { margin-left:auto; }
+    .fin-trend-body { display:none; margin-top:0.8rem; }
+    .fin-trend.open .fin-trend-body { display:block; }
+    @media print { .fin-trend-body { display:block !important; } .fin-trend-chev { display:none; } }
     .ax-lbl { fill:var(--muted); font-size:11px; font-family:"Inter",sans-serif; }
     .bar.pick { cursor:pointer; }
     .bar.pick:hover { opacity:0.8; }
@@ -10509,54 +10530,103 @@
 
     // ---- charts, continued: grouped bars with a line, and a stacked bar ---------
     // data: { labels:[], series:[{name, values:[], color}], line:{name, values:[], color} }
+    // A step that reads as a round number on an axis: 1, 2, 2.5 or 5 times a power of ten.
+    function niceStep(raw) {
+      var mag = Math.pow(10, Math.floor(Math.log10(raw)));
+      var r = raw / mag;
+      return (r <= 1 ? 1 : r <= 2 ? 2 : r <= 2.5 ? 2.5 : r <= 5 ? 5 : 10) * mag;
+    }
+    var svgBarsSeq = 0;
+
     function svgBars(container, data, opts) {
       opts = opts || {};
       var fmt = opts.fmt || String;
-      var W = 640, H = 220, padL = 52, padR = 10, padT = 14, padB = 34;
+      var W = opts.w || 640, H = opts.h || 220, padL = 46, padR = 8, padT = 14, padB = 30;
       var wrap = el('div', 'chart-bars');
       var all = [];
       data.series.forEach(function (s) { all = all.concat(s.values); });
       if (data.line) all = all.concat(data.line.values);
       var max = all.reduce(function (m, v) { return Math.max(m, v || 0); }, 0);
       if (!max) { wrap.appendChild(el('div', 'row-sub', opts.empty || 'Nothing to chart yet.')); container.appendChild(wrap); return wrap; }
-      // A round ceiling for the axis.
-      var mag = Math.pow(10, Math.floor(Math.log10(max)));
-      var top = Math.ceil(max / mag * 2) / 2 * mag;
+      // Four gridlines at round values ($0, $200, $400...), not quarters of an odd top.
+      var step = niceStep(max / 4);
+      var lines = Math.max(1, Math.ceil(max / step));
+      var top = step * lines;
       var svg = svgEl('svg', { viewBox: '0 0 ' + W + ' ' + H, width: '100%', role: 'img' });
       svg.setAttribute('aria-label', opts.label || 'Chart');
       var plotW = W - padL - padR, plotH = H - padT - padB;
+      var base = padT + plotH;
       var yFor = function (v) { return padT + plotH - (v / top) * plotH; };
-      for (var g = 0; g <= 4; g++) {
-        var yv = top * g / 4, y = yFor(yv);
-        svg.appendChild(svgEl('line', { x1: padL, x2: W - padR, y1: y, y2: y, class: 'ax-grid' }));
-        var t = svgEl('text', { x: padL - 6, y: y + 4, class: 'ax-lbl', 'text-anchor': 'end' });
+      for (var g = 0; g <= lines; g++) {
+        var yv = step * g, y = yFor(yv);
+        svg.appendChild(svgEl('line', { x1: padL, x2: W - padR, y1: y, y2: y, class: g ? 'ax-grid' : 'ax-base' }));
+        var t = svgEl('text', { x: padL - 8, y: y + 4, class: 'ax-lbl', 'text-anchor': 'end' });
         t.textContent = fmt(yv);
         svg.appendChild(t);
       }
-      var n = data.labels.length, groupW = plotW / n, gap = Math.min(10, groupW * 0.18);
-      var barW = (groupW - gap * 2) / Math.max(1, data.series.length);
+      var n = data.labels.length, groupW = plotW / n;
+      var ns = Math.max(1, data.series.length);
+      // Bars stay slim however few periods there are, so three months do not turn
+      // into three slabs.
+      var barW = Math.min(16, (groupW * 0.6) / ns);
+      var pair = barW * ns + 3 * (ns - 1);
+      var cx = function (i) { return padL + i * groupW + groupW / 2; };
+      if (n > 1) {
+        // The period being looked at, shaded behind its bars.
+        svg.appendChild(svgEl('rect', { x: padL + (n - 1) * groupW + 2, y: padT, width: groupW - 4, height: plotH, rx: 6, class: 'ax-cur' }));
+      }
       data.labels.forEach(function (lab, i) {
-        var gx = padL + i * groupW;
+        if (opts.onPick) {
+          // The whole column is the target, not just the bars, so an empty period
+          // can still be opened.
+          var hit = svgEl('rect', { x: padL + i * groupW, y: padT, width: groupW, height: plotH + padB, fill: 'transparent', class: 'pick' });
+          var ht = svgEl('title');
+          ht.textContent = lab;
+          hit.appendChild(ht);
+          hit.addEventListener('click', function () { opts.onPick(i); });
+          svg.appendChild(hit);
+        }
         data.series.forEach(function (s, si) {
           var v = s.values[i] || 0;
-          var x = gx + gap + si * barW, y = yFor(v);
-          var rect = svgEl('rect', { x: x, y: y, width: Math.max(1, barW - 1), height: Math.max(0, padT + plotH - y), fill: s.color, rx: 2, class: 'bar' + (opts.onPick ? ' pick' : '') + (i === n - 1 ? ' cur' : '') });
+          var x = cx(i) - pair / 2 + si * (barW + 3), y = yFor(v);
+          var h = Math.max(0, base - y);
+          // Rounded at the top only: a path, since rect rounds all four corners.
+          var r = Math.min(4, barW / 2, h);
+          var d = h ? 'M' + x + ',' + base + 'V' + (y + r) + 'Q' + x + ',' + y + ' ' + (x + r) + ',' + y + 'H' + (x + barW - r) +
+            'Q' + (x + barW) + ',' + y + ' ' + (x + barW) + ',' + (y + r) + 'V' + base + 'Z' : 'M0,0';
+          var bar = svgEl('path', { d: d, fill: s.color, class: 'bar' + (opts.onPick ? ' pick' : '') + (i === n - 1 ? ' cur' : '') });
           var tt = svgEl('title');
           tt.textContent = lab + ' · ' + s.name + ': ' + fmt(v);
-          rect.appendChild(tt);
-          if (opts.onPick) rect.addEventListener('click', function () { opts.onPick(i); });
-          svg.appendChild(rect);
+          bar.appendChild(tt);
+          if (opts.onPick) bar.addEventListener('click', function () { opts.onPick(i); });
+          svg.appendChild(bar);
         });
-        var xl = svgEl('text', { x: gx + groupW / 2, y: H - padB + 16, class: 'ax-lbl', 'text-anchor': 'middle' });
+        var xl = svgEl('text', { x: cx(i), y: H - padB + 18, class: 'ax-lbl' + (i === n - 1 ? ' cur' : ''), 'text-anchor': 'middle' });
         // Every other label when there are many, always including the last one.
         if (n <= 8 || (n - 1 - i) % 2 === 0) xl.textContent = lab;
         svg.appendChild(xl);
       });
       if (data.line) {
-        var pts = data.labels.map(function (_, i) { return (padL + i * groupW + groupW / 2) + ',' + yFor(data.line.values[i] || 0); }).join(' ');
-        svg.appendChild(svgEl('polyline', { points: pts, fill: 'none', stroke: data.line.color, 'stroke-width': 2.5, 'stroke-linejoin': 'round', class: 'line' }));
+        var P = data.labels.map(function (_, i) { return [cx(i), yFor(data.line.values[i] || 0)]; });
+        // A smooth line through the points (Catmull-Rom as Bezier), flattened so it
+        // never swings below the axis or above the next point.
+        var path = 'M' + P[0][0] + ',' + P[0][1];
+        for (var k = 0; k < P.length - 1; k++) {
+          var p0 = P[k - 1] || P[k], p1 = P[k], p2 = P[k + 1], p3 = P[k + 2] || p2;
+          var c1y = Math.min(base, p1[1] + (p2[1] - p0[1]) / 6), c2y = Math.min(base, p2[1] - (p3[1] - p1[1]) / 6);
+          path += 'C' + (p1[0] + (p2[0] - p0[0]) / 6) + ',' + c1y + ' ' + (p2[0] - (p3[0] - p1[0]) / 6) + ',' + c2y + ' ' + p2[0] + ',' + p2[1];
+        }
+        var gid = 'cbg' + (++svgBarsSeq);
+        var defs = svgEl('defs');
+        var lg = svgEl('linearGradient', { id: gid, x1: 0, x2: 0, y1: 0, y2: 1 });
+        lg.appendChild(svgEl('stop', { offset: '0', 'stop-color': data.line.color, 'stop-opacity': 0.22 }));
+        lg.appendChild(svgEl('stop', { offset: '1', 'stop-color': data.line.color, 'stop-opacity': 0 }));
+        defs.appendChild(lg);
+        svg.insertBefore(defs, svg.firstChild);
+        if (P.length > 1) svg.appendChild(svgEl('path', { d: path + 'L' + P[P.length - 1][0] + ',' + base + 'L' + P[0][0] + ',' + base + 'Z', fill: 'url(#' + gid + ')', class: 'line-area' }));
+        svg.appendChild(svgEl('path', { d: path, fill: 'none', stroke: data.line.color, 'stroke-width': 2, 'stroke-linecap': 'round', class: 'line' }));
         data.labels.forEach(function (lab, i) {
-          var c = svgEl('circle', { cx: padL + i * groupW + groupW / 2, cy: yFor(data.line.values[i] || 0), r: 3.5, fill: data.line.color, stroke: 'var(--card)', 'stroke-width': 1.5 });
+          var c = svgEl('circle', { cx: P[i][0], cy: P[i][1], r: i === n - 1 ? 4 : 3, fill: 'var(--card)', stroke: data.line.color, 'stroke-width': 2 });
           var tt = svgEl('title');
           tt.textContent = lab + ' · ' + data.line.name + ': ' + fmt(data.line.values[i] || 0);
           c.appendChild(tt);
@@ -10566,7 +10636,7 @@
       wrap.appendChild(svg);
       var leg = el('div', 'chart-legend legend-row');
       data.series.concat(data.line ? [data.line] : []).forEach(function (s) {
-        var li = el('div', 'legend-i');
+        var li = el('div', 'legend-i' + (s === data.line ? ' is-line' : ''));
         var dot = el('i'); dot.style.background = s.color;
         li.appendChild(dot); li.appendChild(el('span', 'legend-l', s.name));
         leg.appendChild(li);
@@ -10782,19 +10852,56 @@
       var grid = el('div', 'charts fin-grid');
 
       // ---- trend ----
-      var trend = finPanel('Trend', 'trailing ' + st.series.length + ' ' + (st.period === 'year' ? 'years' : st.period + 's') + ' · tap a bar to open it');
-      trend.classList.add('wide');
-      svgBars(trend, {
-        labels: st.series.map(function (b) { return st.period === 'month' ? b.label.replace(/^(\w{3})\w* (\d{4})$/, '$1 $2').replace(/ 20/, ' ’') : b.label; }),
+      // Only periods since the business opened: months before 13 June 2026 are empty by
+      // definition and would be most of the chart for a year. Collapsed by default to a
+      // one-line summary, remembered per browser.
+      // Period keys sort as text within one period size (2026-06, 2026-Q2, 2026), so the
+      // periods from the one the business opened in onward are a string comparison.
+      var openedKey = st.period === 'year' ? '2026' : st.period === 'quarter' ? '2026-Q2' : '2026-06';
+      var since = st.series.filter(function (b) { return String(b.key) >= openedKey; });
+      if (since.length < 2) since = st.series.slice(-2);
+      var offset = st.series.length - since.length;
+      var trendOpen = false;
+      try { trendOpen = localStorage.getItem('tes_fin_trend') === 'open'; } catch (x) { /* private window */ }
+      var trend = el('div', 'chart-panel fin-sec wide fin-trend' + (trendOpen ? ' open' : ''));
+      var th = el('button', 'fin-trend-h');
+      th.type = 'button';
+      th.setAttribute('aria-expanded', trendOpen ? 'true' : 'false');
+      th.appendChild(el('i', 'fa-solid fa-chevron-right fin-trend-chev'));
+      th.appendChild(el('h3', null, 'Trend'));
+      var unit = st.period === 'year' ? 'years' : st.period + 's';
+      var cur = st.series[st.series.length - 1];
+      var tSum = el('span', 'fin-trend-sum');
+      [['#c89830', 'Invoiced', cur.issued_cents], ['#4aac65', 'Collected', cur.collected_cents], ['#e08a68', 'Out', cur.out_cents]].forEach(function (x) {
+        var it = el('span', 'fin-trend-k');
+        var dot = el('i'); dot.style.background = x[0];
+        it.appendChild(dot);
+        it.appendChild(document.createTextNode(x[1] + ' '));
+        it.appendChild(el('b', null, moneyShort(x[2] || 0)));
+        tSum.appendChild(it);
+      });
+      th.appendChild(tSum);
+      th.appendChild(el('span', 'row-sub fin-trend-sub', since.length + ' ' + unit + ' since ' + (st.period === 'year' ? 'the business opened' : 'June 2026')));
+      trend.appendChild(th);
+      var tb = el('div', 'fin-trend-body');
+      trend.appendChild(tb);
+      th.addEventListener('click', function () {
+        var open = !trend.classList.contains('open');
+        trend.classList.toggle('open', open);
+        th.setAttribute('aria-expanded', open ? 'true' : 'false');
+        try { localStorage.setItem('tes_fin_trend', open ? 'open' : 'closed'); } catch (x) { /* private window */ }
+      });
+      svgBars(tb, {
+        labels: since.map(function (b) { return st.period === 'month' ? b.label.replace(/^(\w{3})\w* (\d{4})$/, '$1 $2').replace(/ 20/, ' ’') : b.label; }),
         series: [
-          { name: 'Invoiced', values: st.series.map(function (b) { return b.issued_cents; }), color: '#c89830' },
-          { name: 'Collected', values: st.series.map(function (b) { return b.collected_cents; }), color: '#4aac65' },
+          { name: 'Invoiced', values: since.map(function (b) { return b.issued_cents; }), color: '#c89830' },
+          { name: 'Collected', values: since.map(function (b) { return b.collected_cents; }), color: '#4aac65' },
         ],
         // Everything Net subtracts, not just the expense half of it, so the gap
         // between the Collected bar and this line IS the net for that period.
-        line: { name: 'Money out', values: st.series.map(function (b) { return b.out_cents; }), color: '#e08a68' },
-      }, { fmt: moneyShort, label: 'Invoiced, collected and money out by period', onPick: function (i) { finAnchor = keyToAnchor(st.series[i].key); loadFinance(); } });
-      trend.appendChild(el('p', 'fin-note', 'Money out is expenses plus parts bought for customers plus PayPal fees — everything Net subtracts, so the gap between it and Collected is the net for that period.'));
+        line: { name: 'Money out', values: since.map(function (b) { return b.out_cents; }), color: '#e08a68' },
+      }, { fmt: moneyShort, w: window.innerWidth < 720 ? 460 : 960, h: window.innerWidth < 720 ? 280 : 250, label: 'Invoiced, collected and money out by period', onPick: function (i) { finAnchor = keyToAnchor(st.series[i + offset].key); loadFinance(); } });
+      tb.appendChild(el('p', 'fin-note', 'Money out is expenses, parts bought for customers and PayPal fees: everything Net subtracts, so the gap between it and Collected is the net for that period. Tap a period to open it.'));
       grid.appendChild(trend);
 
       // ---- clients ----
@@ -10846,22 +10953,10 @@
       cl.appendChild(clWrap);
       grid.appendChild(cl);
 
-      // ---- projected vs actual ----
-      var pj = finPanel('Projected vs actual', 'expected by due date, collected by paid date');
-      svgBars(pj, {
-        labels: st.projection.months.map(function (m) { return m.label.replace(/ 20/, ' ’'); }),
-        series: [
-          { name: 'Expected (open, by due date)', values: st.projection.months.map(function (m) { return m.expected_cents; }), color: '#e0c98a' },
-          { name: 'Collected', values: st.projection.months.map(function (m) { return m.actual_cents; }), color: '#4aac65' },
-        ],
-      }, { fmt: moneyShort, label: 'Projected versus collected, six months', empty: 'Nothing due or collected in this window.' });
-      var sentence = money(st.projection.due_30d_cents) + ' is due in the next 30 days' +
-        (st.projection.overdue_expected_cents ? '; ' + money(st.projection.overdue_expected_cents) + ' is already past due.' : '; nothing is past due.');
-      pj.appendChild(el('p', 'fin-note' + (st.projection.overdue_expected_cents ? ' warn' : ''), sentence));
-      grid.appendChild(pj);
-
       // ---- aging ----
       var ag = finPanel('Receivables aging', 'every open invoice as of today · ' + money(st.aging.total_cents) + ' across ' + st.aging.count);
+      // Full width now that it no longer shares a row with a projection.
+      ag.classList.add('wide');
       var agColors = ['#4aac65', '#e0c98a', '#c89830', '#e08a68', '#ef4444'];
       stackBar(ag, st.aging.buckets.map(function (b, i) {
         return { label: b.label, sub: b.count + (b.count === 1 ? ' invoice' : ' invoices'), value: b.cents, color: agColors[i],
