@@ -11313,7 +11313,7 @@
       var sub = [e.day, e.account_label];
       if (e.vendor && e.description !== e.vendor) sub.push(e.description);
       if (e.category) sub.push(e.category);
-      if (e.invoice_number && e.classification === 'invoice_payment') sub.push('paid ' + e.invoice_number + (e.invoice_status === 'paid' ? '' : ' (invoice still ' + e.invoice_status + ')'));
+      if (e.invoice_number && e.classification === 'invoice_payment') sub.push('for ' + e.invoice_number + (e.invoice_status === 'paid' ? '' : ' (invoice still ' + e.invoice_status + ')'));
       else if (e.invoice_number) sub.push('billed back on ' + e.invoice_number + (e.invoice_status === 'paid' ? ', paid' : e.invoice_status === 'void' ? ', voided' : ', still open'));
       if (e.parent) sub.push('part of the ' + money(e.parent.amount_cents) + ' ' + e.parent.description);
       if (e.source === 'manual') sub.push('typed in');
@@ -11717,8 +11717,8 @@
       body.appendChild(impBox);
       body.appendChild(catBox);
       body.appendChild(el('p', 'fin-note', 'Download the account history from ' + bankShort(a) + ' as CSV and import it here. ' +
-        'A deposit that was more than one thing (two checks, say) can be split: each part is filed on its own, ' +
-        'and a part that paid an invoice marks that invoice paid when the amount matches.' +
+        'A deposit that was more than one thing (two checks, say) can be split: each part is filed on its own. ' +
+        'Attributing a part to an invoice is for the books only; mark the invoice paid on the invoice itself, which sends the receipt.' +
         (/^efcu_/.test(a.account) ? ' Money moved between EFCU Checking and Savings appears on both statements: file it as a Transfer on each side, so it counts on neither.' : '')));
 
       var view = bankView[a.account] || 'review';
@@ -11754,7 +11754,7 @@
         var line = el('div', 'lg-part');
         line.appendChild(el('b', 'pp-amt ' + (pt.amount_cents < 0 ? 'out' : 'in'), money(pt.amount_cents)));
         var what = pt.category || (pt.classification ? LG_CLASS_LABEL[pt.classification] || pt.classification : 'not filed yet');
-        if (pt.invoice_number) what += ' · ' + pt.invoice_number + (pt.classification === 'invoice_payment' && pt.invoice_status !== 'paid' ? ' (still ' + pt.invoice_status + ')' : '');
+        if (pt.invoice_number) what += ' · ' + pt.invoice_number + (pt.classification === 'invoice_payment' && pt.invoice_status !== 'paid' ? ' (invoice still ' + pt.invoice_status + ')' : '');
         line.appendChild(el('span', null, what));
         if (pt.note) line.appendChild(el('span', 'row-sub', pt.note));
         box.appendChild(line);
@@ -11763,10 +11763,10 @@
     }
 
     function lgUnsplit(e) {
-      if (!confirm('Put the ' + money(e.amount_cents) + ' ' + e.description + ' back together? Its parts are removed and it goes back to Needs review.')) return;
+      if (!confirm('Put the ' + money(e.amount_cents) + ' ' + e.description + ' back together? Its parts are removed and it goes back to Needs review. No invoice changes.')) return;
       api('/admin/ledger/' + e.id + '/split', { method: 'DELETE' }).then(function (r) {
         if (!r || !r.ok) return alert((r && r.message) || 'Could not put it back together.');
-        toast('Back to one row' + (r.invoices_still_paid && r.invoices_still_paid.length ? ' · ' + r.invoices_still_paid.join(', ') + ' stays paid' : ''));
+        toast('Back to one row');
         lgRefresh();
       });
     }
@@ -11788,12 +11788,14 @@
       return v.number + ' · ' + money(v.amount_cents) + ' · ' + (v.customer_name || v.email || '') + ' · ' + v.status;
     }
 
+    // Attribution is bookkeeping only. The toast says so when the invoice is still open,
+    // because marking it paid (and sending the receipt) is a step on the invoice.
     function paidToast(pay) {
       if (!pay) return '';
-      if (pay.marked_paid) return pay.invoice_number + ' marked paid, receipt sent';
-      if (pay.partial) return pay.invoice_number + ' left open (amount differs)';
-      if (pay.already_paid) return pay.invoice_number + ' was already paid';
-      return 'linked to ' + pay.invoice_number;
+      var t = 'attributed to ' + pay.invoice_number;
+      if (pay.amount_matches === false) t += ' (amounts differ)';
+      if (pay.invoice_status === 'open' || pay.invoice_status === 'pending') t += ' · mark it paid on the invoice to send the receipt';
+      return t;
     }
 
     // One whole row paid one invoice. The same invoice picker as parts, shown as a
@@ -11803,7 +11805,7 @@
         list = list.slice(0, 25);
         if (!list.length) return alert('There are no invoices to link this to.');
         var exact = list.filter(function (v) { return v.amount_cents === e.amount_cents && v.status !== 'paid'; });
-        var pick = prompt('Which invoice did ' + money(e.amount_cents) + ' pay?' +
+        var pick = prompt('Which invoice was ' + money(e.amount_cents) + ' for? (For the books only; the invoice is not changed.)' +
           (exact.length ? '\n\n' + exact[0].number + ' is for exactly this amount.' : '') + '\n\n' +
           list.map(function (v, i) { return (i + 1) + '. ' + invLabel(v); }).join('\n') + '\n\nType the number:',
           exact.length ? String(list.indexOf(exact[0]) + 1) : '');
@@ -11906,7 +11908,6 @@
         var k = p.cls.value;
         var needsInv = k === 'invoice_payment' || k === 'job_parts';
         p.invWrap.hidden = !needsInv;
-        p.markWrap.hidden = k !== 'invoice_payment';
         if (needsInv && !invoices) {
           lgInvoiceChoices().then(function (list) { invoices = list; parts.forEach(fillInvoices); });
         }
@@ -11927,13 +11928,6 @@
         p.inv = document.createElement('select');
         p.inv.setAttribute('aria-label', 'Invoice for part ' + (parts.length + 1));
         p.invWrap.appendChild(p.inv);
-        p.markWrap = el('label', 'lg-check');
-        p.mark = document.createElement('input');
-        p.mark.type = 'checkbox';
-        p.mark.checked = true;
-        p.markWrap.appendChild(p.mark);
-        p.markWrap.appendChild(document.createTextNode('mark it paid if the amount matches (sends the receipt)'));
-        p.invWrap.appendChild(p.markWrap);
         p.note = document.createElement('input');
         p.note.type = 'text';
         p.note.placeholder = 'Note (check number, who it was from)';
@@ -11993,7 +11987,6 @@
           if (k === 'invoice_payment' || k === 'job_parts') {
             if (!p.inv.value && k === 'invoice_payment') return alert('Part ' + (i + 1) + ': pick which invoice it paid.');
             if (p.inv.value) one.invoice_id = Number(p.inv.value);
-            if (k === 'invoice_payment') one.mark_paid = p.mark.checked;
           }
           body.parts.push(one);
         }
@@ -12366,7 +12359,7 @@
     function ppClassify(tx, body, done) {
       api('/admin/finance/paypal/' + encodeURIComponent(tx.transaction_id), { method: 'PATCH', body: body }).then(function (r) {
         if (!r || !r.ok) { alert((r && r.message) || 'Could not update (' + ((r && r.error) || 'unknown') + ')'); return; }
-        if (r.marked_paid) toast('Linked and marked ' + r.invoice_number + ' paid'); else toast(r.classification ? cap(r.classification) : 'Back to review');
+        if (r.invoice_number) toast(cap(paidToast(r))); else toast(r.classification ? cap(r.classification) : 'Back to review');
         if (done) done(r); else ppRowDone(tx, r);
       });
     }
@@ -12440,7 +12433,7 @@
           // classification itself takes either sign, so a draw filed here later is
           // still reported as a draw rather than added to the contributions.
           right.appendChild(licAction('Owner funding', null, function () { ppClassify(tx, { classification: 'owner_funding' }); }));
-          right.appendChild(licAction('Link to invoice…', 'prim', function () { ppLink(tx); }));
+          right.appendChild(licAction('Paid an invoice\u2026', 'prim', function () { ppLink(tx); }));
         } else {
           right.appendChild(licAction('Business expense', null, function () { ppClassify(tx, { classification: 'expense' }); }));
         }
@@ -12450,12 +12443,19 @@
         // A deposit from your own bank arrives as a T03xx and is auto-filed as a
         // transfer. That is right for the P&L either way, but it says nothing about
         // whose money it was, so give it one click rather than Undo and back again.
+        if (tx.direction === 'in') {
+          right.appendChild(licAction('Paid an invoice\u2026', 'prim', function () { ppLink(tx); }));
+        }
         if (tx.direction === 'in' && tx.classification !== 'owner_funding') {
           right.appendChild(licAction('Owner funding', null, function () { ppClassify(tx, { classification: 'owner_funding' }); }));
         }
         right.appendChild(licAction('Always\u2026', null, function () { ppAlways(tx); }));
         right.appendChild(licAction('Undo', null, function () { ppClassify(tx, { classification: null }); }));
       } else if (mode === 'business') {
+        if (tx.direction === 'in' && !tx.invoice_number) {
+          right.appendChild(licAction('Paid an invoice\u2026', null, function () { ppLink(tx); }));
+          right.appendChild(licAction('Owner funding', null, function () { ppClassify(tx, { classification: 'owner_funding' }); }));
+        }
         if (tx.classification === 'expense') {
           right.appendChild(licAction('Add to inventory', null, function () {
             showView('inventory');
@@ -12490,22 +12490,23 @@
       });
     }
 
-    // Links a payment to one of our open invoices. The Worker only accepts an exact
-    // amount match and marks it paid; anything else is refused with a reason.
+    // Attributes money in to one of our invoices: a PayPal payment, or a check deposited
+    // into PayPal. For the books only, like a bank deposit: the invoice does not change
+    // and nobody is emailed. Marking it paid is a step on the invoice.
     function ppLink(tx) {
-      api('/admin/invoices?view=open').then(function (r) {
-        var list = (r && r.invoices) || [];
-        var exact = list.filter(function (v) { return v.amount_cents === tx.gross_cents; });
-        var pool = exact.length ? exact : list;
-        if (!pool.length) return alert('There are no open invoices to link this payment to. Mark it Business instead.');
-        var lines = pool.slice(0, 20).map(function (v, i) { return (i + 1) + '. ' + v.number + ' · ' + money(v.amount_cents) + ' · ' + (v.customer_name || v.email); });
-        var pick = prompt('Link ' + money(tx.gross_cents) + ' from ' + (tx.counterparty || 'PayPal') + ' to which invoice?' +
-          (exact.length ? '' : '\n\n(No open invoice is for exactly this amount; a link is refused unless it matches.)') + '\n\n' + lines.join('\n') + '\n\nType the number:');
+      lgInvoiceChoices().then(function (list) {
+        list = list.slice(0, 25);
+        if (!list.length) return alert('There are no invoices to attribute this to. Mark it Business instead.');
+        var exact = list.filter(function (v) { return v.amount_cents === tx.gross_cents && v.status !== 'paid'; });
+        var pick = prompt('Which invoice was ' + money(tx.gross_cents) + ' from ' + (tx.counterparty || 'PayPal') + ' for?' +
+          (exact.length ? '\n\n' + exact[0].number + ' is for exactly this amount.' : '') + '\n\n' +
+          list.map(function (v, i) { return (i + 1) + '. ' + invLabel(v); }).join('\n') +
+          '\n\nThis is for the books only. The invoice is not changed and nobody is emailed.\n\nType the number:',
+          exact.length ? String(list.indexOf(exact[0]) + 1) : '');
+        if (pick === null) return;
         var n = Number(pick);
-        if (!(n >= 1 && n <= pool.length)) return;
-        var v = pool[n - 1];
-        if (!confirm('Mark ' + v.number + ' paid with PayPal ' + tx.transaction_id + ' (' + money(tx.gross_cents) + ')? A receipt goes to ' + (v.email || 'the customer') + '.')) return;
-        ppClassify(tx, { invoice_id: v.id });
+        if (!(n >= 1 && n <= list.length)) return;
+        ppClassify(tx, { invoice_id: list[n - 1].id });
       });
     }
 
