@@ -85,6 +85,41 @@
     .badge.paid { background:rgba(74,172,101,0.14); color:#6dc882; border:1px solid rgba(74,172,101,0.35); }
     .badge.pending { background:rgba(74,172,101,0.1); color:#8aa48d; border:1px solid var(--line); }
     .badge.late { background:rgba(214,120,90,0.14); color:#e08a68; border:1px solid rgba(214,120,90,0.35); }
+    /* Subscription card: icon | details | price and action. Footer row on phones. */
+    .subcard { display:grid; grid-template-columns:48px minmax(0,1fr) auto; gap:1rem 1.35rem; align-items:center; padding:1.2rem 1.4rem; margin-bottom:0.85rem; border:1px solid var(--line); border-radius:16px; background:linear-gradient(135deg, rgba(74,172,101,0.08), rgba(74,172,101,0) 55%), var(--card); }
+    .subcard.is-live { border-color:rgba(74,172,101,0.32); }
+    .subcard.is-warn { border-color:rgba(200,152,48,0.4); background:linear-gradient(135deg, rgba(200,152,48,0.08), rgba(200,152,48,0) 55%), var(--card); }
+    .sc-icon { width:48px; height:48px; border-radius:14px; display:grid; place-items:center; font-size:1.15rem; color:#7fd497; background:rgba(74,172,101,0.12); border:1px solid rgba(74,172,101,0.28); }
+    .subcard.is-warn .sc-icon { color:#e6c68a; background:rgba(200,152,48,0.12); border-color:rgba(200,152,48,0.3); }
+    .subcard.is-off .sc-icon { color:var(--muted); background:var(--card-2); border-color:var(--line); }
+    .sc-title { display:flex; align-items:center; flex-wrap:wrap; gap:0.4rem 0.65rem; }
+    .sc-title h3 { margin:0; font-family:"Montserrat",sans-serif; font-weight:800; font-size:1.06rem; color:#fff; letter-spacing:0.01em; }
+    .sc-status { display:inline-flex; align-items:center; gap:0.4rem; padding:0.18rem 0.6rem; border-radius:999px; font-size:0.72rem; font-weight:600; color:#8fd6a3; background:rgba(74,172,101,0.12); border:1px solid rgba(74,172,101,0.3); }
+    .sc-status::before { content:""; width:6px; height:6px; border-radius:50%; background:currentColor; }
+    .sc-status.warn { color:#e6c68a; background:rgba(200,152,48,0.12); border-color:rgba(200,152,48,0.35); }
+    .sc-status.off { color:var(--muted); background:var(--card-2); border-color:var(--line); }
+    .sc-facts { display:flex; flex-wrap:wrap; gap:0.4rem 1.75rem; margin:0.6rem 0 0; }
+    .sc-facts div { display:flex; flex-direction:column; gap:0.1rem; }
+    .sc-facts dt { font-size:0.66rem; font-weight:700; text-transform:uppercase; letter-spacing:0.08em; color:var(--muted); }
+    .sc-facts dd { margin:0; font-size:0.9rem; font-weight:500; color:#dfe9e1; }
+    .sc-side { display:flex; flex-direction:column; align-items:flex-end; justify-content:center; gap:0.6rem; text-align:right; }
+    .sc-price { display:flex; align-items:baseline; gap:0.3rem; white-space:nowrap; }
+    .sc-amt { font-family:"Montserrat",sans-serif; font-weight:800; font-size:1.55rem; color:#fff; line-height:1; }
+    .sc-per { font-size:0.82rem; color:var(--muted); }
+    .sc-manage { display:inline-flex; align-items:center; justify-content:center; gap:0.5rem; min-height:40px; padding:0 0.95rem; border-radius:10px; border:1px solid var(--line); background:rgba(255,255,255,0.02); color:#d6e5d9; font-size:0.84rem; font-weight:600; text-decoration:none; white-space:nowrap; transition:border-color .15s, color .15s, background .15s; }
+    .sc-manage:hover { border-color:var(--green); color:#fff; background:rgba(74,172,101,0.08); }
+    .sc-manage .fa-arrow-up-right-from-square { font-size:0.7rem; opacity:0.7; }
+    .sc-note { grid-column:1 / -1; display:flex; align-items:flex-start; gap:0.6rem; padding:0.7rem 0.85rem; border-radius:10px; font-size:0.85rem; line-height:1.45; color:#e6c68a; background:rgba(200,152,48,0.1); border:1px solid rgba(200,152,48,0.3); }
+    @media (max-width:600px) {
+      .subcard { grid-template-columns:44px minmax(0,1fr); padding:1.05rem 1.1rem; }
+      .sc-icon { width:44px; height:44px; }
+      .sc-side { grid-column:1 / -1; flex-direction:row; align-items:center; justify-content:space-between; padding-top:0.9rem; border-top:1px solid var(--line); }
+    }
+    @media (max-width:480px) {
+      .sc-side { flex-direction:column; align-items:stretch; gap:0.75rem; text-align:center; }
+      .sc-price { justify-content:center; }
+      .sc-manage { width:100%; }
+    }
     .inv-actions { margin-top:1rem; display:flex; flex-wrap:wrap; gap:0.6rem; align-items:center; }
     .inv-actions .btn { margin-top:0; }
     .pay-panel { margin-top:1rem; padding-top:1rem; border-top:1px solid var(--line); display:none; }
@@ -207,6 +242,9 @@
 
     <h2 class="sec-title" id="histHead" hidden>Payment history <span class="count" id="histCount"></span></h2>
     <div id="histBox"></div>
+
+    <h2 class="sec-title" id="subsHead" hidden>Subscriptions <span class="count" id="subsCount"></span></h2>
+    <div id="subsList"></div>
 
     <h2 class="sec-title">More billing options</h2>
     <div class="pgrid">
@@ -858,6 +896,70 @@
         box.appendChild(c);
       });
     }
+    // Subscriptions such as Website Watch. Shown only when there is one; a customer with
+    // none sees nothing here rather than an empty heading.
+    var SUB_ICON = { 'website-watch': 'fa-heart-pulse' };
+    var SUB_STATUS = {
+      active: { text: 'Active', cls: '', card: 'is-live' },
+      past_due: { text: 'Payment problem', cls: 'warn', card: 'is-warn' },
+      canceled: { text: 'Canceled', cls: 'off', card: 'is-off' },
+      expired: { text: 'Ended', cls: 'off', card: 'is-off' },
+    };
+    function renderSubscriptions(list) {
+      var head = document.getElementById('subsHead'), box = document.getElementById('subsList');
+      if (!list || !list.length) return;
+      head.hidden = false;
+      document.getElementById('subsCount').textContent = list.length + ' total';
+      list.forEach(function (sub) {
+        var st = SUB_STATUS[sub.status] || { text: sub.status, cls: 'off', card: 'is-off' };
+        var live = sub.status === 'active' || sub.status === 'past_due';
+        var yearly = sub.cadence === 'annual';
+        var when = sub.current_period_end ? TESInvoices.formatDate(new Date(sub.current_period_end * 1000)) : null;
+
+        var card = el('article', 'subcard ' + st.card);
+        var icon = el('div', 'sc-icon');
+        icon.setAttribute('aria-hidden', 'true');
+        icon.appendChild(el('i', 'fa-solid ' + (SUB_ICON[sub.product] || 'fa-rotate')));
+        card.appendChild(icon);
+
+        var body = el('div', 'sc-body');
+        var title = el('div', 'sc-title');
+        title.appendChild(el('h3', null, sub.name));
+        title.appendChild(el('span', 'sc-status ' + st.cls, st.text));
+        body.appendChild(title);
+        var facts = el('dl', 'sc-facts');
+        var fact = function (k, v) { var d = el('div'); d.appendChild(el('dt', null, k)); d.appendChild(el('dd', null, v)); facts.appendChild(d); };
+        fact('Billed', yearly ? 'Yearly' : 'Monthly');
+        if (when) fact(live ? 'Next charge' : sub.access ? 'Access until' : 'Ended', when);
+        body.appendChild(facts);
+        card.appendChild(body);
+
+        var side = el('div', 'sc-side');
+        var price = el('div', 'sc-price');
+        price.appendChild(el('span', 'sc-amt', TESInvoices.formatUSD(sub.price_cents / 100)));
+        price.appendChild(el('span', 'sc-per', yearly ? '/ year' : '/ month'));
+        side.appendChild(price);
+        if (live) {
+          var a = el('a', 'sc-manage');
+          a.href = sub.manage_url; a.target = '_blank'; a.rel = 'noopener';
+          a.appendChild(el('i', 'fa-brands fa-paypal'));
+          a.appendChild(document.createTextNode('Manage in PayPal'));
+          a.appendChild(el('i', 'fa-solid fa-arrow-up-right-from-square'));
+          side.appendChild(a);
+        }
+        card.appendChild(side);
+
+        if (sub.status === 'past_due') {
+          var note = el('div', 'sc-note');
+          note.appendChild(el('i', 'fa-solid fa-triangle-exclamation'));
+          note.appendChild(el('span', null, 'Your last payment did not go through. PayPal will try again; updating your payment method in PayPal fixes it.'));
+          card.appendChild(note);
+        }
+        box.appendChild(card);
+      });
+    }
+    fetch('/portal-api/subscriptions', { credentials: 'same-origin' }).then(function (r) { return r.ok ? r.json() : null; }).then(function (d) { if (d && d.ok) renderSubscriptions(d.subscriptions); }).catch(function () { /* a courtesy list, like quotes */ });
+
     fetch('/portal-api/quotes', { credentials: 'same-origin' }).then(function (r) { return r.ok ? r.json() : null; }).then(function (d) { if (d && d.ok) renderQuotes(d.quotes); }).catch(function () { /* the quotes list is a courtesy here */ });
 
     TESInvoices.getIdentity().then(function (id) {
