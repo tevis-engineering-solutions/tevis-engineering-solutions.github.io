@@ -278,6 +278,19 @@
     .sb-hist { margin:0 1rem 0.85rem 3.15rem; padding:0.55rem 0.8rem; border-left:2px solid var(--line); display:grid; gap:0.35rem; }
     .sb-hist .ev { display:grid; grid-template-columns:9.5rem 1fr; gap:0.6rem; font-size:0.78rem; color:var(--muted); }
     .sb-hist .ev b { color:var(--text); font-weight:500; }
+    .sb-titlerow { display:flex; align-items:center; justify-content:space-between; gap:0.75rem; flex-wrap:wrap; }
+    .sb-add { display:inline-flex; align-items:center; gap:0.45rem; min-height:38px; padding:0 0.95rem; border-radius:10px; border:1px solid rgba(74,172,101,0.4); background:rgba(74,172,101,0.1); color:#cfe9d6; font-weight:600; font-size:0.84rem; cursor:pointer; }
+    .sb-add:hover { background:rgba(74,172,101,0.18); color:#fff; }
+    .sb-wform { border:1px solid var(--line); border-radius:14px; padding:1rem; margin:0.4rem 0 1rem; background:var(--bg); }
+    .sb-wcheck { display:flex; align-items:center; gap:0.55rem; padding-top:1.4rem; }
+    .sb-wcheck input { width:18px; height:18px; accent-color:var(--gold); }
+    .sb-wcheck label { margin:0; text-transform:none; letter-spacing:0; font-size:0.86rem; color:var(--text); font-weight:500; }
+    .sb-ico.sm { width:34px; height:34px; border-radius:10px; font-size:0.85rem; }
+    .sb-ico.down { color:#f0a58f; background:rgba(214,120,90,0.14); border-color:rgba(214,120,90,0.4); }
+    .sb-ico.off { color:var(--muted); background:var(--card-2); border-color:var(--line); }
+    .sb-pill.bad { color:#f0a58f; background:rgba(214,120,90,0.14); border-color:rgba(214,120,90,0.4); }
+    .sb-when b.warn { color:var(--gold); }
+    .sb-when b.bad { color:#f0a58f; }
     .sb-empty { text-align:center; padding:1.6rem 1rem; color:var(--muted); font-size:0.88rem; border:1px dashed var(--line); border-radius:14px; }
     @media (max-width:760px) {
       .sb-hero { grid-template-columns:1fr; }
@@ -2507,7 +2520,7 @@
       </div>
     </section>
 
-    <div id="calGrid"><div class="state">Loading the diary&hellip;</div></div>
+    <div id="calGrid"><div class="state">Loading the calendar&hellip;</div></div>
   </main>
 
   <main class="wrap" id="viewInventory" aria-label="Inventory" hidden>
@@ -3033,6 +3046,41 @@
       <h2 id="subHead">Subscriptions</h2>
       <p class="fnote">Recurring revenue across service agreements, Ohio Crash and memberships. A membership turns active only when PayPal confirms it.</p>
       <div id="subBody"><div class="state">Loading&hellip;</div></div>
+    </section>
+
+    <section class="newinv" id="watchPanel" aria-labelledby="watchHead">
+      <div class="sb-titlerow">
+        <h2 id="watchHead">Watched sites</h2>
+        <button type="button" class="sb-add" id="watchAddBtn"><i class="fa-solid fa-plus" aria-hidden="true"></i> Watch a client site</button>
+      </div>
+      <p class="fnote">Website Watch: uptime every 15 minutes, domain and certificate renewals, and a monthly report card. Sites you add here are free for the client and page you on Telegram when they go down.</p>
+      <form id="watchForm" class="sb-wform" hidden>
+        <div class="fgrid">
+          <div>
+            <label for="watchEmail">Customer email</label>
+            <input id="watchEmail" type="email" required placeholder="owner@client.com">
+          </div>
+          <div>
+            <label for="watchUrl">Website</label>
+            <input id="watchUrl" type="text" required placeholder="clientsite.com">
+          </div>
+        </div>
+        <div class="fgrid">
+          <div>
+            <label for="watchLabel">Label (optional)</label>
+            <input id="watchLabel" type="text" maxlength="80" placeholder="Main site">
+          </div>
+          <div class="sb-wcheck">
+            <input type="checkbox" id="watchPage" checked>
+            <label for="watchPage">Page me on Telegram when it goes down</label>
+          </div>
+        </div>
+        <div class="inv-actions">
+          <button type="submit" class="prim" id="watchSave">Start watching</button>
+          <button type="button" id="watchCancel">Cancel</button>
+        </div>
+      </form>
+      <div id="watchBody"><div class="state">Loading&hellip;</div></div>
     </section>
 
     <section class="newinv">
@@ -6161,7 +6209,7 @@
       }
       return api('/admin/calendar?from=' + from + '&to=' + to).then(function (r) {
         calGrid.textContent = '';
-        if (!r.ok) { calGrid.appendChild(el('div', 'state', 'Could not load the diary.')); return; }
+        if (!r.ok) { calGrid.appendChild(el('div', 'state', 'Could not load the calendar.')); return; }
         document.getElementById('calRange').textContent = calRangeLabel(from, to);
         var today = dayStartOf(Math.floor(Date.now() / 1000), 0);
         if (calView === 'month') renderMonth(r, from, weeks, today);
@@ -7939,6 +7987,124 @@
       });
       return item;
     }
+
+    // ---- Website Watch -------------------------------------------------------
+    var watchBody = document.getElementById('watchBody');
+    var watchForm = document.getElementById('watchForm');
+    var WSTATE = { up: ['Up', ''], down: ['Down', 'bad'], unknown: ['First check pending', 'warn'] };
+    var renewCls = function (d) { return d == null ? null : d <= 7 ? 'bad' : d <= 30 ? 'warn' : null; };
+
+    document.getElementById('watchAddBtn').addEventListener('click', function () {
+      watchForm.hidden = !watchForm.hidden;
+      if (!watchForm.hidden) document.getElementById('watchEmail').focus();
+    });
+    document.getElementById('watchCancel').addEventListener('click', function () { watchForm.hidden = true; watchForm.reset(); });
+    watchForm.addEventListener('submit', function (ev) {
+      ev.preventDefault();
+      if (!watchForm.reportValidity()) return;
+      var btn = document.getElementById('watchSave');
+      btn.disabled = true;
+      api('/admin/watches', { method: 'POST', body: {
+        email: document.getElementById('watchEmail').value.trim(),
+        url: document.getElementById('watchUrl').value.trim(),
+        label: document.getElementById('watchLabel').value.trim(),
+        page_staff: document.getElementById('watchPage').checked,
+      } }).then(function (r) {
+        btn.disabled = false;
+        if (!r.ok) { toast(r.message || 'Could not add the site'); return; }
+        toast('Watching ' + r.host + '. The first check runs within two minutes.');
+        watchForm.reset(); watchForm.hidden = true;
+        loadWatches();
+      });
+    });
+
+    function loadWatches() {
+      return api('/admin/watches').then(function (r) {
+        watchBody.textContent = '';
+        if (!r.ok) { watchBody.appendChild(el('div', 'sb-empty', 'Could not load watched sites.')); return; }
+        var list = r.watches || [];
+        if (!list.length) {
+          watchBody.appendChild(el('div', 'sb-empty', 'No sites watched yet. Add a client site above, or they appear here when somebody subscribes to Website Watch.'));
+          return;
+        }
+        var wrap = el('div', 'sb-list');
+        var head = el('div', 'sb-listhead');
+        ['Site', 'Uptime, 30 days', 'Status', 'Renews', ''].forEach(function (t) { head.appendChild(el('span', null, t)); });
+        wrap.appendChild(head);
+        list.forEach(function (w) { wrap.appendChild(watchRow(w)); });
+        watchBody.appendChild(wrap);
+      });
+    }
+
+    function watchRow(w) {
+      var item = el('div', 'sb-item');
+      var r = el('div', 'sb-row');
+      var paused = w.status === 'paused';
+      var notWatched = !w.entitled;
+      var st = paused ? ['Paused', 'off'] : notWatched ? (w.membership_status === 'pending' ? ['Awaiting payment', 'warn'] : ['Not paid', 'off']) : (WSTATE[w.state] || [w.state, 'off']);
+
+      var who = el('div', 'sb-who');
+      var ic = el('div', 'sb-ico sm' + (w.state === 'down' && !paused ? ' down' : paused || notWatched ? ' off' : ''));
+      ic.appendChild(icon(w.source === 'staff' ? 'fa-shield-heart' : 'fa-heart-pulse'));
+      who.appendChild(ic);
+      var nm = el('div', 'sb-name');
+      nm.appendChild(el('b', null, w.label ? w.label + ' · ' + w.host : w.host));
+      nm.appendChild(el('small', null, [w.company || w.name, w.email, w.source === 'staff' ? 'care plan' : 'self-serve'].filter(Boolean).join(' · ')));
+      who.appendChild(nm);
+      r.appendChild(who);
+
+      var up = el('div', 'sb-plan');
+      up.appendChild(el('b', null, w.uptime_30d == null ? '–' : w.uptime_30d.toFixed(2) + '%'));
+      up.appendChild(el('small', null, w.last_ms ? w.last_ms + ' ms · checked ' + fmtAgo(w.last_checked_at) : 'not checked yet'));
+      r.appendChild(up);
+
+      r.appendChild(el('span', 'sb-pill ' + st[1], st[0]));
+
+      var when = el('div', 'sb-when');
+      var soonest = [['Domain', w.domain_days], ['Certificate', w.cert_days]].filter(function (x) { return x[1] != null; })
+        .sort(function (a, b) { return a[1] - b[1]; })[0];
+      if (soonest) {
+        when.appendChild(el('b', renewCls(soonest[1]), soonest[1] + ' days'));
+        when.appendChild(el('small', null, soonest[0].toLowerCase()));
+      } else when.appendChild(el('small', null, '—'));
+      r.appendChild(when);
+
+      var acts = el('div', 'sb-acts');
+      var btn = function (ico, label) { var b = el('button', 'sb-btn'); b.type = 'button'; b.title = label; b.setAttribute('aria-label', label); b.appendChild(icon(ico)); acts.appendChild(b); return b; };
+      var chk = btn('fa-rotate-right', 'Check now');
+      var pause = btn(paused ? 'fa-play' : 'fa-pause', paused ? 'Resume' : 'Pause');
+      var rm = btn('fa-xmark', 'Stop watching');
+      r.appendChild(acts);
+      item.appendChild(r);
+
+      chk.addEventListener('click', function () {
+        chk.disabled = true;
+        api('/admin/watches/' + w.id + '/check', { method: 'POST' }).then(function (x) {
+          chk.disabled = false;
+          toast(!x.ok ? 'Could not check it' : x.ok && x.state === 'up' ? w.host + ' is up' : w.host + ' did not answer');
+          loadWatches();
+        });
+      });
+      pause.addEventListener('click', function () {
+        api('/admin/watches/' + w.id, { method: 'PATCH', body: { status: paused ? 'active' : 'paused' } }).then(function (x) {
+          toast(x.ok ? (paused ? 'Resumed' : 'Paused') : 'Could not change it');
+          loadWatches();
+        });
+      });
+      rm.addEventListener('click', function () {
+        if (!confirm('Stop watching ' + w.host + '? Its history is kept.' + (w.source === 'checkout' ? ' Their PayPal subscription is not canceled by this.' : ''))) return;
+        api('/admin/watches/' + w.id, { method: 'PATCH', body: { status: 'ended' } }).then(function (x) {
+          toast(x.ok ? 'Stopped watching ' + w.host : 'Could not change it');
+          loadWatches();
+        });
+      });
+      return item;
+    }
+    var fmtAgo = function (ts) {
+      if (!ts) return 'never';
+      var m = Math.round((Date.now() / 1000 - ts) / 60);
+      return m < 1 ? 'just now' : m < 60 ? m + ' min ago' : m < 1440 ? Math.round(m / 60) + ' hr ago' : fmtDate(ts);
+    };
 
     function loadKeys() {
       return api('/admin/licenses?archived=' + keyFilter).then(function (r) {
@@ -12999,7 +13165,7 @@
       rptTile(tiles, 'Rating', rp.ratings.average == null ? '—' : rp.ratings.average + ' / 5',
         rp.ratings.count ? 'from ' + rp.ratings.count + (rp.ratings.count === 1 ? ' rating' : ' ratings') : 'nobody rated a ticket');
       rptTile(tiles, 'Appointments', String(rp.appointments.total),
-        rp.appointments.total ? rp.appointments.done + ' done · ' + rp.appointments.no_show + ' no-show' : 'nothing in the diary');
+        rp.appointments.total ? rp.appointments.done + ' done · ' + rp.appointments.no_show + ' no-show' : 'nothing on the calendar');
       rptBody.appendChild(tiles);
 
       var grid = el('div', 'tiles fin-grid');
@@ -13237,6 +13403,16 @@
       var wrap = el('div', 'chart-panel');
       wrap.appendChild(el('h3', null, 'Needs attention'));
 
+      if ((a.sites || []).length) {
+        any = true;
+        var sS = attSection('Sites down', a.sites.length, true);
+        a.sites.forEach(function (w) {
+          var right = el('div', 'cust-badges');
+          right.appendChild(badge(w.down_min != null ? 'down ' + (w.down_min < 60 ? w.down_min + ' min' : Math.round(w.down_min / 60) + ' hr') : 'down', '#ef4444'));
+          sS.appendChild(row(w.host, (w.who || '') + (w.last_error ? ' · ' + w.last_error : ''), right, function () { showView('keys'); document.getElementById('watchPanel').scrollIntoView(); }));
+        });
+        wrap.appendChild(sS);
+      }
       if (a.tickets.sla_risk.length) {
         any = true;
         var s1 = attSection('Response due', a.tickets.sla_risk.length, true);
@@ -13335,7 +13511,7 @@
       var appts = (a.appointments && a.appointments.upcoming) || [];
       if (appts.length) {
         any = true;
-        var sAp = attSection('In the diary', appts.length, false);
+        var sAp = attSection('On the calendar', appts.length, false);
         appts.forEach(function (ap) {
           sAp.appendChild(row(ap.when + ' \u00b7 ' + ap.who, (ap.kind_label || ap.kind) + ' \u00b7 ' + ap.title + (ap.address ? ' \u00b7 ' + ap.address : ''), ap.today ? el('b', 'num', 'today') : null, function () { openObject('appointment', ap.id); }));
         });
@@ -19400,7 +19576,7 @@
       contracting: { view: 'viewContracting', nav: 'navContracting', load: loadContracting, always: true },
       projects: { view: 'viewProjects', nav: 'navProjects', load: loadProjects, always: true },
       marketing: { view: 'viewMarketing', nav: 'navMarketing', load: function () { mkLoadMode(); }, always: true },
-      keys: { view: 'viewKeys', nav: 'navKeys', load: function () { loadSubscriptions(); return loadKeys(); }, always: true }
+      keys: { view: 'viewKeys', nav: 'navKeys', load: function () { loadSubscriptions(); loadWatches(); return loadKeys(); }, always: true }
     };
     var loaded = {};
     var suppressHashPush = false;

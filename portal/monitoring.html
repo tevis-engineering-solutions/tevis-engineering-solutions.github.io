@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Website Watch | TES Customer Portal</title>
+  <meta name="description" content="The websites Tevis Engineering Solutions watches for you: uptime, outages, renewal dates and the monthly report card.">
+  <meta name="robots" content="noindex, nofollow">
+  <link rel="canonical" href="https://tevisengineering.com/portal/monitoring.html">
+  <link rel="icon" type="image/png" href="../assets/favicon.png">
+  <meta http-equiv="X-Content-Type-Options" content="nosniff">
+  <meta name="referrer" content="strict-origin-when-cross-origin">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Montserrat:wght@500;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+  <script src="../assets/js/portal.js?v=56" defer></script>
+  <link rel="stylesheet" href="../assets/css/portal.css?v=55">
+  <style>
+    /* .sumgrid/.sec-title/.state set display, which beats the UA [hidden] rule. */
+    [hidden] { display:none !important; }
+    .pgrid { display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); gap:1rem; }
+    .pcard { background:var(--card); border:1px solid var(--line); border-radius:14px; padding:1.35rem; display:flex; flex-direction:column; }
+    .pcard.feat { border-color:rgba(200,152,48,0.4); }
+    .pcard .ic { width:42px; height:42px; border-radius:11px; background:rgba(74,172,101,0.1); border:1px solid rgba(74,172,101,0.22); color:var(--green); display:grid; place-items:center; font-size:1.1rem; margin-bottom:0.9rem; }
+    .pcard.feat .ic { background:rgba(200,152,48,0.12); border-color:rgba(200,152,48,0.3); color:var(--gold); }
+    .pcard h2 { font-family:"Montserrat",sans-serif; font-size:1.1rem; color:#fff; margin-bottom:0.4rem; }
+    .pcard p { color:var(--muted); font-size:0.9rem; margin-bottom:1rem; }
+    .pill { display:inline-flex; align-items:center; gap:0.4rem; font-size:0.72rem; font-weight:700; text-transform:uppercase; letter-spacing:0.05em; padding:0.25rem 0.7rem; border-radius:999px; width:max-content; }
+    .pill.muted { background:var(--card-2); color:var(--muted); border:1px solid var(--line); margin-bottom:1rem; }
+    .btn { text-decoration:none; border-radius:999px; padding:0.7rem 1.1rem; font-weight:700; border:1px solid transparent; font-size:0.82rem; font-family:"Montserrat",sans-serif; text-transform:uppercase; letter-spacing:0.03em; display:inline-flex; align-items:center; gap:0.5rem; justify-content:center; margin-top:auto; cursor:pointer; }
+    .btn-primary { background:linear-gradient(135deg,#c89830,#e0b840); color:#0d1710; }
+    .btn-ghost { border-color:var(--line); color:#cfe0d2; background:var(--card); }
+    .btn-ghost:hover { border-color:var(--green); }
+    .sec-title { font-family:"Montserrat",sans-serif; text-transform:uppercase; letter-spacing:0.04em; font-size:1rem; color:#f1f7f1; margin:2.2rem 0 0.8rem; display:flex; align-items:center; gap:0.6rem; flex-wrap:wrap; }
+    .sec-title .count { font-size:0.72rem; font-weight:700; color:var(--muted); background:var(--card-2); border:1px solid var(--line); border-radius:999px; padding:0.1rem 0.6rem; letter-spacing:0.04em; }
+    .empty-row { background:var(--card); border:1px dashed var(--line); border-radius:14px; padding:1.8rem 1.5rem; text-align:center; color:var(--muted); font-size:0.9rem; }
+    .empty-row i { color:#33513c; font-size:1.6rem; display:block; margin-bottom:0.5rem; }
+
+    /* --- account summary tiles --- */
+    .sumgrid { display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:1rem; }
+    .sumtile { background:var(--card); border:1px solid var(--line); border-radius:14px; padding:1.1rem 1.25rem; }
+    .sumtile.due { border-color:rgba(200,152,48,0.4); background:linear-gradient(180deg,rgba(200,152,48,0.07),rgba(20,32,25,0.9)); }
+    .sumtile .lab { font-family:"Montserrat",sans-serif; font-size:0.68rem; text-transform:uppercase; letter-spacing:0.09em; color:var(--muted); font-weight:700; }
+    .sumtile .val { font-family:"Montserrat",sans-serif; font-size:1.65rem; font-weight:800; color:#fff; line-height:1.25; margin-top:0.2rem; }
+    .sumtile.due .val { color:var(--gold); }
+    .sumtile .sub { font-size:0.78rem; color:var(--muted); }
+
+    /* --- loading / empty / error states --- */
+    .state { background:var(--card); border:1px solid var(--line); border-radius:14px; padding:1.4rem 1.5rem; color:var(--muted); font-size:0.9rem; display:flex; gap:0.9rem; align-items:flex-start; margin-top:1rem; }
+    .state i { color:var(--gold); font-size:1.1rem; margin-top:0.15rem; }
+    .state b { color:#e4ede5; display:block; }
+    .state.bad { border-color:rgba(214,120,90,0.4); }
+    .state.bad i { color:#d6785a; }
+    .spin { display:inline-block; width:16px; height:16px; border:2px solid rgba(138,164,141,0.3); border-top-color:var(--green); border-radius:50%; animation:sp .8s linear infinite; flex-shrink:0; margin-top:0.2rem; }
+    @keyframes sp { to { transform:rotate(360deg); } }
+
+    /* --- invoice cards --- */
+    .inv { background:var(--card); border:1px solid var(--line); border-radius:14px; padding:1.25rem 1.35rem; margin-bottom:0.9rem; }
+    .inv.open { border-color:rgba(200,152,48,0.35); }
+    .inv-top { display:flex; flex-wrap:wrap; gap:0.8rem 1.2rem; align-items:flex-start; }
+    .inv-top > div:first-child { flex:1 1 14rem; min-width:0; }
+    .inv-id { overflow-wrap:anywhere; }
+    .inv-id { font-family:"Montserrat",sans-serif; font-weight:800; color:#fff; font-size:1.02rem; letter-spacing:0.02em; }
+    .inv-meta { color:var(--muted); font-size:0.83rem; margin-top:0.15rem; }
+    .inv-meta span + span::before { content:"\00b7"; margin:0 0.45rem; color:#3c5a45; }
+    .inv-meta span { white-space:nowrap; }
+    .inv-meta { display:flex; flex-wrap:wrap; align-items:baseline; }
+    .inv-spacer { flex:1; }
+    .inv-right { text-align:right; }
+    .inv-amt { font-family:"Montserrat",sans-serif; font-weight:800; font-size:1.35rem; color:#fff; white-space:nowrap; }
+    .inv.open .inv-amt { color:var(--gold); }
+    .inv-desc { color:#c3d4c6; font-size:0.88rem; margin-top:0.6rem; }
+    .badge { display:inline-flex; align-items:center; gap:0.35rem; font-size:0.68rem; font-weight:700; text-transform:uppercase; letter-spacing:0.06em; padding:0.2rem 0.6rem; border-radius:999px; }
+    .badge.due { background:rgba(200,152,48,0.14); color:#e0b840; border:1px solid rgba(200,152,48,0.35); }
+    .badge.paid { background:rgba(74,172,101,0.14); color:#6dc882; border:1px solid rgba(74,172,101,0.35); }
+    .badge.pending { background:rgba(74,172,101,0.1); color:#8aa48d; border:1px solid var(--line); }
+    .badge.late { background:rgba(214,120,90,0.14); color:#e08a68; border:1px solid rgba(214,120,90,0.35); }
+    .inv-actions { margin-top:1rem; display:flex; flex-wrap:wrap; gap:0.6rem; align-items:center; }
+    .inv-actions .btn { margin-top:0; }
+    .pay-panel { margin-top:1rem; padding-top:1rem; border-top:1px solid var(--line); display:none; }
+    .pay-panel.open { display:block; }
+    .pay-note { color:var(--muted); font-size:0.8rem; margin-bottom:0.7rem; }
+    .pp-box { max-width:460px; }
+    .paid-ok { background:rgba(74,172,101,0.09); border:1px solid rgba(74,172,101,0.3); border-radius:12px; padding:1.1rem 1.2rem; }
+    .paid-ok .tick { color:#6dc882; font-size:1.5rem; font-weight:800; line-height:1; }
+    .paid-ok b { display:block; color:#fff; font-family:"Montserrat",sans-serif; margin:0.35rem 0 0.2rem; }
+    .paid-ok p { color:var(--muted); font-size:0.85rem; margin:0; }
+    .paid-ok code { font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:0.78rem; color:#c3d4c6; }
+    .err-msg { color:#e08a68; font-size:0.85rem; }
+
+    /* --- payment history table --- */
+    .hist-wrap { overflow-x:auto; background:var(--card); border:1px solid var(--line); border-radius:14px; }
+    table.hist { width:100%; border-collapse:collapse; min-width:560px; }
+    table.hist th { text-align:left; font-family:"Montserrat",sans-serif; font-size:0.68rem; text-transform:uppercase; letter-spacing:0.08em; color:var(--muted); font-weight:700; padding:0.85rem 1.1rem; border-bottom:1px solid var(--line); white-space:nowrap; }
+    table.hist td { padding:0.85rem 1.1rem; border-bottom:1px solid rgba(44,66,50,0.55); font-size:0.88rem; color:#c3d4c6; }
+    table.hist tr:last-child td { border-bottom:none; }
+    table.hist td.num { font-family:"Montserrat",sans-serif; font-weight:700; color:#fff; white-space:nowrap; }
+    table.hist td.id { color:#fff; font-weight:600; white-space:nowrap; }
+    table.hist td.id a.hist-pdf { margin-left:0.4rem; font-family:"Montserrat",sans-serif; font-size:0.62rem; font-weight:700; text-transform:uppercase; letter-spacing:0.05em; color:var(--gold); text-decoration:none; border:1px solid rgba(200,152,48,0.45); border-radius:999px; padding:0.1rem 0.45rem; }
+    table.hist td.id a.hist-pdf:hover { background:rgba(200,152,48,0.14); }
+    .hist-foot { color:var(--muted); font-size:0.78rem; margin-top:0.6rem; }
+
+    /* --- Website Watch --- */
+    .mon-card { background:linear-gradient(160deg, rgba(74,172,101,0.07), rgba(74,172,101,0) 45%), var(--card); border:1px solid var(--line); border-radius:18px; padding:1.35rem 1.45rem; margin-bottom:1.1rem; }
+    .mon-card.is-up { border-color:rgba(74,172,101,0.32); }
+    .mon-card.is-down { border-color:rgba(214,120,90,0.5); background:linear-gradient(160deg, rgba(214,120,90,0.1), rgba(214,120,90,0) 45%), var(--card); }
+    .mon-top { display:flex; align-items:center; gap:0.85rem; flex-wrap:wrap; }
+    .mon-dot { width:12px; height:12px; border-radius:50%; flex:none; background:var(--muted); }
+    .mon-dot.up { background:#4aac65; animation:mon-pulse 2.2s infinite; }
+    .mon-dot.down { background:#e08a68; animation:mon-pulse-red 1.6s infinite; }
+    @keyframes mon-pulse { 0% { box-shadow:0 0 0 0 rgba(74,172,101,0.55); } 70% { box-shadow:0 0 0 9px rgba(74,172,101,0); } 100% { box-shadow:0 0 0 0 rgba(74,172,101,0); } }
+    @keyframes mon-pulse-red { 0% { box-shadow:0 0 0 0 rgba(224,138,104,0.6); } 70% { box-shadow:0 0 0 9px rgba(224,138,104,0); } 100% { box-shadow:0 0 0 0 rgba(224,138,104,0); } }
+    .mon-name { flex:1; min-width:0; }
+    .mon-name a { font-family:"Montserrat",sans-serif; font-weight:800; font-size:1.12rem; color:#fff; text-decoration:none; overflow-wrap:anywhere; }
+    .mon-name a:hover { color:#6dc882; }
+    .mon-name small { display:block; color:var(--muted); font-size:0.82rem; margin-top:0.1rem; }
+    .mon-chip { display:inline-flex; align-items:center; gap:0.4rem; padding:0.25rem 0.75rem; border-radius:999px; font-size:0.78rem; font-weight:700; white-space:nowrap; color:var(--muted); background:var(--card-2); border:1px solid var(--line); }
+    .mon-chip.up { color:#8fd6a3; background:rgba(74,172,101,0.12); border-color:rgba(74,172,101,0.32); }
+    .mon-chip.down { color:#f0a58f; background:rgba(214,120,90,0.14); border-color:rgba(214,120,90,0.4); }
+    .mon-chip.wait { color:#e6c68a; background:rgba(200,152,48,0.12); border-color:rgba(200,152,48,0.35); }
+    .mon-alert { margin-top:1rem; padding:0.75rem 0.9rem; border-radius:12px; font-size:0.9rem; color:#f0a58f; background:rgba(214,120,90,0.1); border:1px solid rgba(214,120,90,0.35); display:flex; gap:0.6rem; align-items:flex-start; }
+    .mon-stats { display:grid; grid-template-columns:repeat(4, minmax(0,1fr)); gap:0.75rem; margin-top:1.15rem; }
+    .mon-stat { border:1px solid var(--line); border-radius:14px; padding:0.85rem 0.95rem; background:rgba(0,0,0,0.18); text-align:center; }
+    .mon-stat span { display:block; font-size:0.66rem; font-weight:700; letter-spacing:0.08em; text-transform:uppercase; color:var(--muted); }
+    .mon-stat b { display:block; font-family:"Montserrat",sans-serif; font-weight:800; font-size:1.35rem; color:#fff; margin-top:0.25rem; font-variant-numeric:tabular-nums; }
+    .mon-stat small { display:block; font-size:0.76rem; color:var(--muted); margin-top:0.15rem; }
+    .mon-stat.warn b { color:#e0b840; }
+    .mon-stat.bad b { color:#f0a58f; }
+    .mon-strip { margin-top:1.15rem; }
+    .mon-strip-bars { display:grid; grid-template-columns:repeat(48, 1fr); gap:3px; height:30px; }
+    .mon-strip-bars i { border-radius:3px; background:linear-gradient(180deg,#5cc077,#3c8f55); }
+    .mon-strip-bars i.bad { background:linear-gradient(180deg,#ec9a7b,#c86a4c); }
+    .mon-strip-bars i.none { background:var(--card-2); }
+    .mon-strip-cap { display:flex; justify-content:space-between; font-size:0.74rem; color:var(--muted); margin-top:0.4rem; }
+    .mon-sub { display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr); gap:0.85rem; margin-top:1.15rem; }
+    .mon-box { border:1px solid var(--line); border-radius:14px; padding:0.95rem 1.05rem; background:rgba(0,0,0,0.14); }
+    .mon-box h3 { font-size:0.7rem; font-weight:700; letter-spacing:0.08em; text-transform:uppercase; color:var(--muted); margin:0 0 0.7rem; }
+    .mon-grade { display:flex; align-items:center; gap:0.85rem; }
+    .mon-grade b { width:52px; height:52px; border-radius:14px; display:grid; place-items:center; font-family:"Montserrat",sans-serif; font-weight:800; font-size:1.6rem; color:#0d1710; background:linear-gradient(135deg,#6dc882,#3c8f55); flex:none; }
+    .mon-grade b.c { background:linear-gradient(135deg,#e0b840,#c89830); }
+    .mon-grade b.d { background:linear-gradient(135deg,#ec9a7b,#c86a4c); }
+    .mon-grade div { font-size:0.88rem; color:#dfe9e1; line-height:1.5; }
+    .mon-grade small { color:var(--muted); }
+    .mon-fixes { margin:0.75rem 0 0; padding-left:1.15rem; color:#dfe9e1; font-size:0.88rem; line-height:1.6; }
+    .mon-inc { list-style:none; margin:0; padding:0; display:grid; gap:0.5rem; }
+    .mon-inc li { display:flex; justify-content:space-between; gap:0.75rem; font-size:0.86rem; color:#dfe9e1; }
+    .mon-inc li span { color:var(--muted); text-align:right; }
+    .mon-none { color:var(--muted); font-size:0.88rem; }
+    .mon-foot { text-align:center; color:var(--muted); font-size:0.9rem; margin-top:1.4rem; }
+    .mon-foot a { color:#6dc882; text-decoration:none; font-weight:600; }
+    .mon-empty { text-align:center; border:1px dashed var(--line); border-radius:18px; padding:2.4rem 1.5rem; }
+    .mon-empty i.big { font-size:2.2rem; color:#6dc882; margin-bottom:0.8rem; display:block; }
+    .mon-empty h2 { font-family:"Montserrat",sans-serif; color:#fff; font-size:1.2rem; margin-bottom:0.4rem; }
+    .mon-empty p { color:var(--muted); max-width:46ch; margin:0 auto 1.2rem; }
+    @media (max-width:760px) { .mon-stats { grid-template-columns:repeat(2, minmax(0,1fr)); } .mon-sub { grid-template-columns:1fr; } }
+    @media (max-width:480px) { .mon-card { padding:1.1rem 1rem; } .mon-strip-bars { grid-template-columns:repeat(24, 1fr); } .mon-strip-bars i:nth-child(-n+24) { display:none; } }
+  </style>
+</head>
+<body>
+  <div class="pbar">
+    <div class="pbar-inner">
+      <a class="pbrand" href="index.html">
+        <img src="../assets/logo-mark.png" alt="Tevis Engineering Solutions">
+        <span class="pl"><b>Tevis Engineering</b><s>Customer Portal</s></span>
+      </a>
+      <div class="pbar-spacer"></div>
+      <div class="pacct">
+        <div class="who"><b id="acctName">Your Account</b><span id="acctEmail">Signed in</span></div>
+        <div class="pavatar" id="acctAvatar" aria-hidden="true">TE</div>
+        <a class="psignout" href="#">Sign out</a>
+      </div>
+    </div>
+  </div>
+  <nav class="ptabs" aria-label="Portal sections">
+    <div class="ptabs-inner">
+      <a class="ptab" href="index.html"><i class="fa-solid fa-gauge-high"></i> Dashboard</a>
+      <a class="ptab" href="software.html"><i class="fa-solid fa-cubes"></i> My Software</a>
+      <a class="ptab" href="plan.html"><i class="fa-solid fa-file-contract"></i> Plan</a>
+      <a class="ptab" href="billing.html"><i class="fa-solid fa-credit-card"></i> Billing</a>
+      <a class="ptab" href="tickets.html"><i class="fa-solid fa-headset"></i> Support</a>
+      <a class="ptab" href="schedule.html"><i class="fa-solid fa-calendar-day"></i> Book a Time</a>
+      <a class="ptab" href="messages.html"><i class="fa-solid fa-comments"></i> Messages</a>
+      <a class="ptab" href="documents.html"><i class="fa-solid fa-folder-open"></i> Documents</a>
+      <a class="ptab" href="equipment.html"><i class="fa-solid fa-laptop"></i> Equipment</a>
+      <a class="ptab active" href="monitoring.html"><i class="fa-solid fa-heart-pulse"></i> Website Watch</a>
+      <a class="ptab" href="projects.html" hidden><i class="fa-solid fa-diagram-project"></i> Projects</a>
+      <a class="ptab" href="account.html"><i class="fa-solid fa-user-gear"></i> Account</a>
+    </div>
+  </nav>
+  <div class="pannounce" id="pAnnounce" hidden></div>
+
+  <main class="pmain">
+    <div class="phead">
+      <h1>Website Watch</h1>
+      <p>Your watched sites: whether they are up right now, how they have done this month, and when the domain and certificate renew.</p>
+    </div>
+
+    <div class="state" id="stateBox"><span class="spin"></span><div><b>Loading your sites&hellip;</b>One moment.</div></div>
+
+    <div id="monList"></div>
+
+    <p class="mon-foot" id="monFoot" hidden><a href="../website-watch.html"><i class="fa-solid fa-plus"></i> Watch another site</a> &middot; Questions? <a href="tickets.html">Open a ticket</a>.</p>
+  </main>
+
+  <footer class="pfoot">
+    <span>&copy; 2026 Tevis Engineering Solutions, LLC &middot; Cleveland, OH</span>
+    <span><a href="../index.html">Main site</a> &middot; <a href="../contact.html">Contact</a> &middot; <a href="../privacy_policy.html">Privacy &amp; Terms</a></span>
+  </footer>
+
+  <script src="../assets/js/invoices.js?v=2"></script>
+  <script>
+  (function () {
+    'use strict';
+
+    var stateBox = document.getElementById('stateBox');
+    var list = document.getElementById('monList');
+    var foot = document.getElementById('monFoot');
+
+    function el(tag, cls, text) { var n = document.createElement(tag); if (cls) n.className = cls; if (text != null) n.textContent = text; return n; }
+    function requireSession(id) {
+      if (!id || !id.email) { location.replace('../login.html'); return false; }
+      return true;
+    }
+    function showState(cls, icon, title, body) {
+      stateBox.hidden = false;
+      stateBox.className = 'state' + (cls ? ' ' + cls : '');
+      stateBox.textContent = '';
+      stateBox.appendChild(el('i', icon));
+      var d = el('div'); d.appendChild(el('b', null, title)); d.appendChild(document.createTextNode(body || ''));
+      stateBox.appendChild(d);
+    }
+    var day = function (ts) { return ts ? new Date(ts * 1000).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' }) : ''; };
+    var when = function (ts) { return ts ? new Date(ts * 1000).toLocaleString(undefined, { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' }) : ''; };
+    var ago = function (ts) {
+      if (!ts) return 'not yet';
+      var m = Math.round((Date.now() / 1000 - ts) / 60);
+      return m < 1 ? 'just now' : m < 60 ? m + ' min ago' : m < 1440 ? Math.round(m / 60) + ' hr ago' : day(ts);
+    };
+    var span = function (a, b) {
+      var m = Math.max(1, Math.round(((b || Date.now() / 1000) - a) / 60));
+      return m < 60 ? m + ' min' : m < 2880 ? Math.round(m / 60) + ' hr' : Math.round(m / 1440) + ' days';
+    };
+    function stat(label, value, sub, tone) {
+      var s = el('div', 'mon-stat' + (tone ? ' ' + tone : ''));
+      s.appendChild(el('span', null, label)); s.appendChild(el('b', null, value));
+      if (sub) s.appendChild(el('small', null, sub));
+      return s;
+    }
+    var renewTone = function (d) { return d == null ? '' : d <= 7 ? 'bad' : d <= 30 ? 'warn' : ''; };
+
+    function card(w) {
+      var waiting = !w.entitled && w.membership_status && w.membership_status !== 'canceled' && w.membership_status !== 'expired';
+      var ended = !w.entitled && !waiting;
+      var state = w.status === 'paused' ? 'paused' : waiting ? 'waiting' : ended ? 'ended' : w.state;
+      var c = el('article', 'mon-card' + (state === 'up' ? ' is-up' : state === 'down' ? ' is-down' : ''));
+
+      var top = el('div', 'mon-top');
+      top.appendChild(el('span', 'mon-dot' + (state === 'up' ? ' up' : state === 'down' ? ' down' : '')));
+      var nm = el('div', 'mon-name');
+      var a = el('a', null, w.label || w.host); a.href = w.url; a.target = '_blank'; a.rel = 'noopener';
+      nm.appendChild(a);
+      nm.appendChild(el('small', null, (w.label ? w.host + ' · ' : '') + 'Last checked ' + ago(w.last_checked_at)));
+      top.appendChild(nm);
+      var CHIP = { up: ['Up', 'up'], down: ['Down', 'down'], unknown: ['First check pending', 'wait'], waiting: ['Waiting for payment', 'wait'], paused: ['Paused', ''], ended: ['Not watched', ''] };
+      var chip = CHIP[state] || [state, ''];
+      top.appendChild(el('span', 'mon-chip ' + chip[1], chip[0]));
+      c.appendChild(top);
+
+      if (state === 'down') {
+        var al = el('div', 'mon-alert');
+        al.appendChild(el('i', 'fa-solid fa-triangle-exclamation'));
+        al.appendChild(el('span', null, 'Down since ' + when(w.down_since) + '. ' + (w.last_error ? w.last_error.replace(/[.!?]?$/, '.') + ' ' : '') + 'We will email you as soon as it is back.'));
+        c.appendChild(al);
+      }
+
+      var stats = el('div', 'mon-stats');
+      stats.appendChild(stat('Uptime, 30 days', w.uptime_30d == null ? '–' : w.uptime_30d.toFixed(w.uptime_30d === 100 ? 0 : 2) + '%', null,
+        w.uptime_30d != null && w.uptime_30d < 99 ? 'warn' : ''));
+      stats.appendChild(stat('Response', w.last_ms ? w.last_ms + ' ms' : '–', w.last_status ? 'HTTP ' + w.last_status : null));
+      stats.appendChild(stat('Domain renews', w.domain_days == null ? '–' : w.domain_days + ' days', day(w.domain_expires_at), renewTone(w.domain_days)));
+      stats.appendChild(stat('Certificate', w.cert_days == null ? '–' : w.cert_days + ' days', day(w.cert_expires_at), renewTone(w.cert_days)));
+      c.appendChild(stats);
+
+      var strip = el('div', 'mon-strip');
+      var bars = el('div', 'mon-strip-bars');
+      var recent = w.recent || [];
+      for (var i = 0; i < 48 - recent.length; i++) bars.appendChild(el('i', 'none'));
+      recent.forEach(function (r) { var b = el('i', r.ok ? '' : 'bad'); b.title = when(r.at) + (r.ok ? ' · up' + (r.ms ? ', ' + r.ms + ' ms' : '') : ' · no answer'); bars.appendChild(b); });
+      strip.appendChild(bars);
+      var cap = el('div', 'mon-strip-cap');
+      cap.appendChild(el('span', null, 'Last ' + (recent.length || 48) + ' checks'));
+      cap.appendChild(el('span', null, 'Every 15 minutes'));
+      strip.appendChild(cap);
+      c.appendChild(strip);
+
+      var sub = el('div', 'mon-sub');
+      var rep = el('div', 'mon-box');
+      rep.appendChild(el('h3', null, 'Latest report card'));
+      if (w.report && w.report.grade) {
+        var g = el('div', 'mon-grade');
+        var gb = el('b', /[CD]/.test(w.report.grade) ? 'c' : /F/.test(w.report.grade) ? 'd' : null, w.report.grade);
+        g.appendChild(gb);
+        var gd = el('div');
+        gd.appendChild(document.createTextNode(w.report.score + ' / 100'));
+        gd.appendChild(el('br'));
+        gd.appendChild(el('small', null, 'For ' + new Date(w.report.period + '-15T12:00:00Z').toLocaleDateString(undefined, { month: 'long', year: 'numeric' })));
+        g.appendChild(gd);
+        rep.appendChild(g);
+        if ((w.report.findings || []).length) {
+          var ol = el('ol', 'mon-fixes');
+          w.report.findings.forEach(function (f) { ol.appendChild(el('li', null, f.title)); });
+          rep.appendChild(ol);
+        }
+      } else {
+        rep.appendChild(el('p', 'mon-none', 'Your first report card arrives at the start of next month.'));
+      }
+      sub.appendChild(rep);
+
+      var inc = el('div', 'mon-box');
+      inc.appendChild(el('h3', null, 'Recent outages'));
+      if ((w.incidents || []).length) {
+        var ul = el('ul', 'mon-inc');
+        w.incidents.forEach(function (x) {
+          var li = el('li');
+          li.appendChild(el('b', null, when(x.started_at)));
+          li.appendChild(el('span', null, x.ended_at ? span(x.started_at, x.ended_at) : 'ongoing'));
+          ul.appendChild(li);
+        });
+        inc.appendChild(ul);
+      } else {
+        inc.appendChild(el('p', 'mon-none', 'None recorded. Good.'));
+      }
+      sub.appendChild(inc);
+      c.appendChild(sub);
+      return c;
+    }
+
+    function render(watches) {
+      stateBox.hidden = true;
+      list.textContent = '';
+      if (!watches.length) {
+        var e = el('div', 'mon-empty');
+        e.appendChild(el('i', 'fa-solid fa-heart-pulse big'));
+        e.appendChild(el('h2', null, 'No sites watched yet'));
+        e.appendChild(el('p', null, 'Website Watch checks your site every 15 minutes, emails you when it goes down, and warns you before your domain or certificate expires.'));
+        var a = el('a', 'btn btn-primary', 'See Website Watch'); a.href = '../website-watch.html';
+        e.appendChild(a);
+        list.appendChild(e);
+        return;
+      }
+      watches.forEach(function (w) { list.appendChild(card(w)); });
+      foot.hidden = false;
+    }
+
+    TESInvoices.getIdentity().then(function (id) {
+      if (!requireSession(id)) return null;
+      var display = id.name || id.email.split('@')[0];
+      var nameEl = document.getElementById('acctName');
+      var emailEl = document.getElementById('acctEmail');
+      var avatarEl = document.getElementById('acctAvatar');
+      if (nameEl) nameEl.textContent = display;
+      if (emailEl) emailEl.textContent = id.email;
+      if (avatarEl) avatarEl.textContent = (function (s) { var w = String(s).replace(/@.*/, '').split(/[^A-Za-z]+/).filter(Boolean); return ((w[0] || '').charAt(0) + (w.length > 1 ? w[w.length - 1].charAt(0) : (w[0] || '').charAt(1))).toUpperCase() || 'TE'; })(display);
+      return fetch('/portal-api/watches', { credentials: 'same-origin' })
+        .then(function (r) { return r.ok ? r.json() : null; })
+        .then(function (d) {
+          if (!d || !d.ok) throw new Error('unavailable');
+          render(d.watches || []);
+        });
+    }).catch(function () {
+      showState('bad', 'fa-solid fa-triangle-exclamation', 'Could not load your sites.', ' Please refresh in a moment. If it keeps happening, open a ticket.');
+    });
+  })();
+  </script>
+
+</body>
+</html>

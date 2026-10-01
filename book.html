@@ -262,6 +262,7 @@
     .bk-field input, .bk-field select, .bk-field textarea { width:100%; padding:0.75rem 0.9rem; border-radius:10px; border:1px solid var(--line); background:var(--bg); color:var(--text); font-family:inherit; font-size:0.95rem; min-height:48px; }
     .bk-field textarea { min-height:90px; resize:vertical; }
     .bk-field input:focus, .bk-field select:focus, .bk-field textarea:focus { outline:none; border-color:var(--blue); }
+    [hidden] { display:none !important; }
     .bk-loading { color:var(--muted); font-size:0.9rem; display:flex; align-items:center; gap:0.6rem; padding:1rem 0; }
     .spin { width:16px; height:16px; border-radius:50%; border:2px solid rgba(255,255,255,0.15); border-top-color:var(--blue); animation:bkspin 0.9s linear infinite; display:inline-block; }
     @keyframes bkspin { to { transform:rotate(360deg); } }
@@ -405,7 +406,7 @@
         </div>
       </div>
 
-      <div class="bk-loading" id="bkLoading"><span class="spin"></span> Checking the diary&hellip;</div>
+      <div class="bk-loading" id="bkLoading"><span class="spin"></span> Checking the calendar&hellip;</div>
       <div class="bk-days" id="bkDays" role="tablist" aria-label="Choose a day"></div>
       <div class="bk-times" id="bkTimes" role="group" aria-label="Choose a time"></div>
       <p class="bk-none" id="bkNone" hidden>
@@ -471,7 +472,7 @@
         <a href="contact.html">Send a message</a> and we will reply, or call
         <a href="tel:+12163028486">(216)&nbsp;302&#8209;8486</a> during business hours.
         Already a customer? <a href="login.html">Sign in</a> and book from your portal, where you can
-        also see and change what is already in the diary.
+        also see and change what is already on the calendar.
       </p>
     </div>
   </main>

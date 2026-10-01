@@ -32,6 +32,11 @@
     dot('tickets.html', me.waiting.tickets);
     dot('equipment.html', me.waiting.equipment);
     dot('billing.html', me.waiting.invoices_due);
+    /* The Website Watch tab only appears for an account with a watched site. */
+    if (me.waiting.watches) {
+      var mt = document.querySelector('.ptab[href="monitoring.html"]');
+      if (mt) mt.hidden = false;
+    }
     /* The Projects tab only appears for an account that has a project. */
     if (me.waiting.projects) {
       var pt = document.querySelector('.ptab[href="projects.html"]');
