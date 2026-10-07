@@ -16593,24 +16593,27 @@
       }
       var rr = el('div', 'reply-row');
       var send = function (thenBuild) {
-        // Only what is open goes to the server. A list read is mostly closed posts.
-        var toSend = d.kind === 'post' ? postings : open;
+        // Only what is open is added. An OhioBuys list sends its closed rows too: OhioBuys moves a
+        // revised solicitation to a new link and refuses the old one, so a post already in the
+        // queue needs its current link and end date even after it closes.
+        var toSend = d.kind === 'post' || d.site === 'ohiobuys' ? postings : open;
+        var notOpenSent = d.kind !== 'post' && d.site === 'ohiobuys' ? postings.length - open.length : 0;
         var batches = [];
         for (var i = 0; i < toSend.length; i += 200) batches.push(toSend.slice(i, i + 200));
-        var sum = { ok: true, added: 0, updated: 0, skipped: 0, past: 0, merged: 0, ids: [] };
+        var sum = { ok: true, added: 0, updated: 0, skipped: 0, past: 0, closed: 0, merged: 0, ids: [] };
         return batches.reduce(function (chain, b, n) {
           return chain.then(function (acc) {
             if (!acc || !acc.ok) return acc;
             if (batches.length > 1) toast('Saving ' + (n + 1) + ' of ' + batches.length + '…');
             return api('/admin/feed/import', { method: 'POST', body: { via: 'capture', postings: b } }).then(function (r) {
               if (!r.ok) return r;
-              acc.added += r.added; acc.updated += r.updated; acc.skipped += r.skipped; acc.past += r.past || 0; acc.merged += r.merged || 0; acc.ids = acc.ids.concat(r.ids || []);
+              acc.added += r.added; acc.updated += r.updated; acc.skipped += r.skipped; acc.past += r.past || 0; acc.closed += r.closed || 0; acc.merged += r.merged || 0; acc.ids = acc.ids.concat(r.ids || []);
               return acc;
             });
           });
         }, Promise.resolve(sum)).then(function (r) {
           if (!r.ok) { toast(ctErr(r)); return null; }
-          if (!thenBuild) { toast(r.added + ' new, ' + r.updated + ' updated' + (r.merged ? ', ' + r.merged + ' merged with a BidNet copy' : '') + (r.past ? ', ' + r.past + ' already closed and left out' : '') + (r.skipped - r.past > 0 ? ', ' + (r.skipped - r.past) + ' left out' : '')); box.hidden = true; box.textContent = ''; loadQueue(); return null; }
+          if (!thenBuild) { toast(r.added + ' new, ' + r.updated + ' updated' + (r.merged ? ', ' + r.merged + ' merged with a BidNet copy' : '') + (r.closed ? ', ' + r.closed + ' in the queue now closed or moved (link and date updated)' : '') + (r.past ? ', ' + r.past + ' already closed and left out' : '') + (r.skipped - r.past - notOpenSent > 0 ? ', ' + (r.skipped - r.past - notOpenSent) + ' left out' : '')); box.hidden = true; box.textContent = ''; loadQueue(); return null; }
           return r;
         });
       };
