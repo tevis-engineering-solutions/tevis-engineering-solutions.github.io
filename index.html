@@ -298,33 +298,65 @@
 
   /* ---------- Engineering ad ---------- */
   .eng-sec { max-width:var(--container); margin:0 auto; padding:4rem 5% 4.5rem; }
-  .eng-sec .eng-ad { margin-top:0; }
-  .eng-ad { position:relative; overflow:hidden; border:1px solid var(--wash-gold-border); border-radius:26px;
-    background:radial-gradient(120% 150% at 88% -10%,rgba(200,152,48,0.16),transparent 52%),radial-gradient(110% 130% at 0% 110%,rgba(74,172,101,0.13),transparent 55%),linear-gradient(160deg,#17281e,#0e1b13);
-    padding:2.6rem; display:grid; grid-template-columns:1.05fr 0.95fr; gap:2.25rem; align-items:center; margin-top:2.5rem; }
-  .eng-traces { position:absolute; inset:0; opacity:0.1; pointer-events:none;
-    background:repeating-linear-gradient(90deg,transparent 0 48px,var(--tes-gold-500) 48px 49px),repeating-linear-gradient(0deg,transparent 0 48px,var(--tes-gold-500) 48px 49px); }
-  .eng-traces::after { content:''; position:absolute; inset:0;
-    background:radial-gradient(circle at 49px 49px,var(--tes-gold-500) 0 2.5px,transparent 3px),radial-gradient(circle at 241px 145px,var(--tes-gold-500) 0 2.5px,transparent 3px),radial-gradient(circle at 433px 97px,var(--tes-gold-500) 0 2.5px,transparent 3px); }
+  @property --eng-a { syntax:'<angle>'; inherits:false; initial-value:0deg; }
+  .eng-ad { position:relative; overflow:hidden; isolation:isolate; border:1px solid rgba(200,152,48,0.18); border-radius:26px;
+    background:radial-gradient(70% 90% at 92% 0%,rgba(200,152,48,0.20),transparent 60%),radial-gradient(70% 90% at 0% 100%,rgba(74,172,101,0.18),transparent 60%),linear-gradient(160deg,#142a1d,#0a150e 70%);
+    padding:2.8rem; display:grid; grid-template-columns:1.05fr 0.95fr; gap:2.4rem; align-items:center;
+    box-shadow:0 30px 60px rgba(0,0,0,0.45), inset 0 1px 0 rgba(255,255,255,0.04); }
+  .eng-ad::before { content:''; position:absolute; inset:0; border-radius:inherit; padding:1.5px; z-index:3; pointer-events:none;
+    background:conic-gradient(from var(--eng-a), transparent 0 62%, rgba(74,172,101,0.9) 72%, #f3d27a 80%, rgba(224,184,64,0.9) 84%, transparent 92%);
+    -webkit-mask:linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0); -webkit-mask-composite:xor; mask-composite:exclude;
+    animation:engSpin 7s linear infinite; }
+  @keyframes engSpin { to { --eng-a:360deg; } }
+  .eng-traces { position:absolute; inset:0; opacity:0.55; pointer-events:none; z-index:0;
+    background-image:linear-gradient(rgba(200,152,48,0.07) 1px,transparent 1px),linear-gradient(90deg,rgba(200,152,48,0.07) 1px,transparent 1px); background-size:40px 40px;
+    -webkit-mask-image:radial-gradient(90% 90% at 50% 50%,#000 35%,transparent 85%); mask-image:radial-gradient(90% 90% at 50% 50%,#000 35%,transparent 85%); }
+  .eng-circuit { position:absolute; inset:0; width:100%; height:100%; z-index:0; pointer-events:none; }
+  .eng-circuit .t { fill:none; stroke:rgba(200,152,48,0.22); stroke-width:1.5; stroke-linejoin:round; }
+  .eng-circuit .n { fill:rgba(224,184,64,0.5); }
+  .eng-circuit .p { fill:none; stroke:#ffe39a; stroke-width:2.5; stroke-linecap:round; stroke-dasharray:6 94; stroke-dashoffset:100; filter:drop-shadow(0 0 4px #ffcf6b); animation:engFlow 4.2s linear infinite; }
+  .eng-circuit .p2 { animation-delay:1.1s; } .eng-circuit .p3 { animation-delay:2.2s; } .eng-circuit .p4 { animation-delay:3.1s; }
+  @keyframes engFlow { to { stroke-dashoffset:0; } }
+  .eng-scan { position:absolute; left:0; right:0; top:0; height:140px; z-index:1; pointer-events:none; background:linear-gradient(180deg,transparent,rgba(74,172,101,0.07),transparent); animation:engScan 6s linear infinite; }
+  @keyframes engScan { from { transform:translateY(-140px); } to { transform:translateY(720px); } }
   .eng-l { position:relative; z-index:2; }
-  .eng-eyebrow { display:inline-flex; align-items:center; gap:0.5rem; font-family:var(--font-display); font-size:0.7rem; font-weight:800; text-transform:uppercase; letter-spacing:0.12em; color:var(--brand-accent); margin:0 0 0.8rem; }
-  .eng-h { font-family:var(--font-display); text-transform:uppercase; letter-spacing:0.02em; font-weight:800; font-size:1.85rem; line-height:1.12; color:#fff; margin:0 0 0.9rem; }
-  .eng-pill { display:inline-flex; align-items:center; gap:0.5rem; font-family:var(--font-display); font-size:0.74rem; font-weight:700; text-transform:uppercase; letter-spacing:0.05em; color:var(--text-on-accent); background:linear-gradient(135deg,var(--tes-gold-500),var(--tes-gold-300)); padding:6px 14px; border-radius:999px; box-shadow:var(--shadow-gold); margin-bottom:1.1rem; }
-  .eng-p { color:var(--text-body); font-size:0.96rem; line-height:1.7; margin:0 0 0.9rem; }
-  .eng-note { color:var(--text-muted); font-size:0.84rem; line-height:1.55; margin:0 0 1.5rem; }
+  .eng-eyebrow { display:inline-flex; align-items:center; gap:0.55rem; font-family:var(--font-display); font-size:0.7rem; font-weight:800; text-transform:uppercase; letter-spacing:0.16em; color:var(--brand-accent); margin:0 0 0.9rem; padding:5px 12px 5px 10px; border:1px solid rgba(200,152,48,0.3); border-radius:999px; background:rgba(200,152,48,0.07); }
+  .eng-live { width:8px; height:8px; border-radius:50%; background:#6dd28a; box-shadow:0 0 0 0 rgba(109,210,138,0.6); animation:engLive 2s ease-out infinite; }
+  @keyframes engLive { 0% { box-shadow:0 0 0 0 rgba(109,210,138,0.6); } 80%, 100% { box-shadow:0 0 0 8px rgba(109,210,138,0); } }
+  .eng-h { font-family:var(--font-display); text-transform:uppercase; letter-spacing:0.02em; font-weight:800; font-size:2.1rem; line-height:1.08; color:#fff; margin:0 0 1rem; }
+  .eng-h span { background:linear-gradient(90deg,#f6e6bf,#e0b840 45%,#6dd28a); -webkit-background-clip:text; background-clip:text; color:transparent; }
+  .eng-p { color:var(--text-body); font-size:1rem; line-height:1.7; margin:0 0 1.2rem; max-width:34rem; }
+  .eng-specs { display:grid; grid-template-columns:repeat(3,1fr); gap:0.55rem; margin:0 0 1.1rem; max-width:34rem; }
+  .eng-spec { position:relative; padding:0.6rem 0.75rem 0.65rem; border:1px solid rgba(74,172,101,0.22); border-radius:12px; background:rgba(8,16,11,0.55); }
+  .eng-spec::before { content:''; position:absolute; left:0; top:22%; bottom:22%; width:2px; border-radius:2px; background:linear-gradient(#e0b840,#4aac65); }
+  .eng-spec b { display:block; font-family:var(--font-display); font-size:0.62rem; font-weight:800; letter-spacing:0.14em; text-transform:uppercase; color:#8aa48d; margin-bottom:0.2rem; }
+  .eng-spec span { display:block; font-family:var(--font-display); font-size:0.95rem; font-weight:800; color:#f3d27a; letter-spacing:0.02em; }
+  .eng-note { color:var(--text-muted); font-size:0.84rem; line-height:1.55; margin:0 0 1.5rem; max-width:34rem; }
   .eng-note strong { color:var(--text-strong); }
   .eng-cta { display:flex; gap:0.7rem; flex-wrap:wrap; }
-  .eng-r { position:relative; z-index:2; background:rgba(8,16,11,0.55); border:1px solid var(--border-default); border-radius:18px; padding:1.4rem; backdrop-filter:blur(2px); }
-  .eng-r-head { font-family:var(--font-display); font-size:0.66rem; font-weight:800; text-transform:uppercase; letter-spacing:0.12em; color:var(--brand-accent); margin:0 0 0.9rem; }
-  .eng-chips { display:grid; grid-template-columns:1fr 1fr; gap:0.6rem; }
-  .eng-chip { display:flex; align-items:center; gap:0.6rem; padding:0.65rem 0.75rem; background:var(--surface-card); border:1px solid var(--border-default); border-radius:11px; transition:border-color .18s,transform .18s,background .18s; }
-  .eng-chip:hover { border-color:var(--wash-gold-border); transform:translateY(-2px); background:var(--surface-raised); }
+  .eng-cta .btn i.fa-arrow-right { transition:transform .2s; }
+  .eng-cta .btn:hover i.fa-arrow-right { transform:translateX(4px); }
+  .eng-r { position:relative; z-index:2; background:linear-gradient(180deg,rgba(14,27,19,0.82),rgba(8,16,11,0.82)); border:1px solid rgba(74,172,101,0.22); border-radius:20px; padding:1.4rem; backdrop-filter:blur(8px); -webkit-backdrop-filter:blur(8px); box-shadow:0 20px 40px rgba(0,0,0,0.35); }
+  .eng-r::before, .eng-r::after { content:''; position:absolute; width:18px; height:18px; border:2px solid #e0b840; pointer-events:none; opacity:0.8; }
+  .eng-r::before { top:-1px; left:-1px; border-right:0; border-bottom:0; border-radius:20px 0 0 0; }
+  .eng-r::after { bottom:-1px; right:-1px; border-left:0; border-top:0; border-radius:0 0 20px 0; }
+  .eng-r-head { display:flex; justify-content:space-between; align-items:center; font-family:var(--font-display); font-size:0.66rem; font-weight:800; text-transform:uppercase; letter-spacing:0.14em; color:var(--brand-accent); margin:0 0 1rem; }
+  .eng-r-head small { font-size:0.62rem; letter-spacing:0.14em; color:#6f8f74; }
+  .eng-chips { display:grid; grid-template-columns:1fr; gap:0.5rem; }
+  .eng-chip { position:relative; overflow:hidden; display:flex; align-items:center; gap:0.7rem; min-height:54px; padding:0.55rem 0.8rem; background:rgba(20,32,25,0.75); border:1px solid rgba(74,172,101,0.18); border-radius:13px; text-decoration:none; color:inherit; transition:border-color .2s, transform .2s, box-shadow .2s, background .2s; }
+  .eng-chip::after { content:''; position:absolute; top:0; bottom:0; left:-60%; width:50%; background:linear-gradient(100deg,transparent,rgba(255,255,255,0.07),transparent); transform:skewX(-18deg); transition:left .5s ease; }
+  .eng-chip:hover { border-color:rgba(224,184,64,0.55); transform:translateY(-2px); background:rgba(28,46,34,0.9); box-shadow:0 10px 24px rgba(0,0,0,0.35), 0 0 0 1px rgba(224,184,64,0.15), 0 0 18px rgba(224,184,64,0.12); }
+  .eng-chip:hover::after { left:120%; }
+  .eng-chip:focus-visible { outline:2px solid #e0b840; outline-offset:2px; }
+  .eng-ic { flex:0 0 34px; height:34px; display:flex; align-items:center; justify-content:center; border-radius:10px; background:linear-gradient(145deg,rgba(74,172,101,0.28),rgba(200,152,48,0.18)); border:1px solid rgba(224,184,64,0.25); color:#f3d27a; font-size:0.92rem; }
+  .eng-txt { display:flex; flex-direction:column; min-width:0; flex:1; }
+  .eng-txt b { font-size:0.9rem; font-weight:700; color:#eef5ef; line-height:1.25; }
+  .eng-txt small { font-size:0.72rem; color:#8aa48d; line-height:1.3; margin-top:1px; }
+  .eng-go { color:#e0b840; font-size:0.75rem; opacity:0; transform:translateX(-6px); transition:opacity .2s, transform .2s; }
+  .eng-chip:hover .eng-go, .eng-chip:focus-visible .eng-go { opacity:1; transform:none; }
   .area-links a { color:var(--brand-accent); font-weight:600; text-decoration:none; }
   .area-links a:hover { text-decoration:underline; }
-  a.eng-chip { text-decoration:none; color:inherit; }
-  .eng-chip i { color:var(--brand-primary); width:18px; text-align:center; font-size:0.95rem; }
-  .eng-chip span { font-size:0.83rem; color:var(--text-body); font-weight:600; }
-  @media (max-width:880px) { .eng-ad { grid-template-columns:1fr; padding:2rem; } }
+  @media (max-width:880px) { .eng-ad { grid-template-columns:1fr; padding:2rem; } .eng-p, .eng-specs, .eng-note { max-width:none; } }
 
   /* ---------- Google Reviews (native Google look on dark bg) ---------- */
   .greviews { padding:3.5rem 5% 3.75rem; }
@@ -438,11 +470,19 @@
     .section { padding:3.25rem 5% 1rem; }
     .mh-cl { max-width:240px; }
     .sh h2 { font-size:2rem; }
-    .eng-ad { padding:1.6rem; }
-    .eng-h { font-size:1.5rem; }
+    .eng-ad { padding:1.5rem; }
+    .eng-h { font-size:1.55rem; }
+    .eng-specs { grid-template-columns:1fr 1fr 1fr; gap:0.4rem; }
+    .eng-spec { padding:0.5rem 0.55rem; }
+    .eng-spec span { font-size:0.74rem; white-space:nowrap; letter-spacing:0; }
+    .eng-spec b { font-size:0.56rem; letter-spacing:0.08em; }
+    .eng-circuit { display:none; }
     .eng-chips { grid-template-columns:1fr; }
+    .eng-go { opacity:1; transform:none; }
   }
   @media (prefers-reduced-motion:reduce) {
+    .eng-ad::before, .eng-circuit .p, .eng-scan, .eng-live { animation:none; }
+    .eng-circuit .p, .eng-scan { display:none; }
     .rv, .rv.is-in { opacity:1; transform:none; animation:none; }
     .mh-cl-trace, .mh-cl-node { animation:none; }
     .hx-prod, .hx-svc, .hx-shot img, .hx-cat-link { transition:none; }
@@ -480,10 +520,9 @@
           <div>
             <div class="tnav-col-head">Company &amp; Tools</div>
             <a class="tnav-link" href="service-areas.html"><span class="tnav-ic"><i class="fa-solid fa-location-dot"></i></span><span><span class="tnav-tt">Service Areas</span><span class="tnav-dd">Cleveland-area cities we support</span></span></a>
+            <a class="tnav-link" href="engineering-services-cleveland.html"><span class="tnav-ic"><i class="fa-solid fa-microchip"></i></span><span><span class="tnav-tt">Engineering Services</span><span class="tnav-dd">Product, PCB, software &amp; mechanical design</span></span></a>
+            <a class="tnav-link" href="software.html"><span class="tnav-ic"><i class="fa-solid fa-laptop-code"></i></span><span><span class="tnav-tt">TES Software</span><span class="tnav-dd">Cloud apps &amp; licensed software</span></span></a>
             <a class="tnav-link" href="service_catalog.html"><span class="tnav-ic"><i class="fa-solid fa-rectangle-list"></i></span><span><span class="tnav-tt">Services Catalog</span><span class="tnav-dd">Full rate card &amp; line sheet</span></span></a>
-            <a class="tnav-link" href="blog/index.html"><span class="tnav-ic"><i class="fa-solid fa-newspaper"></i></span><span><span class="tnav-tt">Blog / Knowledge Base</span><span class="tnav-dd">IT tips and guides for small businesses</span></span></a>
-            <a class="tnav-link" href="software.html"><span class="tnav-ic"><i class="fa-solid fa-laptop-code"></i></span><span><span class="tnav-tt">Software Services</span><span class="tnav-dd">Cloud apps &amp; licensed software</span></span></a>
-            <a class="tnav-link" href="pay_invoice.html"><span class="tnav-ic"><i class="fa-solid fa-credit-card"></i></span><span><span class="tnav-tt">Pay an Invoice</span><span class="tnav-dd">Look up and pay your balance online</span></span></a>
             <a class="tnav-link" href="contact.html"><span class="tnav-ic"><i class="fa-solid fa-envelope"></i></span><span><span class="tnav-tt">Contact</span><span class="tnav-dd">Send a message or request a quote</span></span></a>
             <a class="tnav-link" href="privacy_policy.html"><span class="tnav-ic"><i class="fa-solid fa-file-shield"></i></span><span><span class="tnav-tt">Privacy &amp; Terms</span><span class="tnav-dd">Payment terms and data policy</span></span></a>
           </div>
@@ -673,26 +712,42 @@
     <section class="eng-sec" id="engineering">
       <div class="eng-ad">
         <div class="eng-traces" aria-hidden="true"></div>
+        <svg class="eng-circuit" viewBox="0 0 1200 520" preserveAspectRatio="none" aria-hidden="true">
+          <path class="t" d="M1200 40 H1010 L970 80 H860"/>
+          <path class="t" d="M1200 505 H1010 L975 470 H840"/>
+          <path class="t" d="M0 510 H300 L325 488 H520"/>
+          <path class="t" d="M640 0 V28 L670 58 H780"/>
+          <path class="t" d="M600 520 V498 L628 472 H730"/>
+          <path class="t" d="M0 20 H120 L145 4"/>
+          <path class="p" pathLength="100" d="M1200 40 H1010 L970 80 H860"/><path class="p p2" pathLength="100" d="M0 510 H300 L325 488 H520"/>
+          <path class="p p3" pathLength="100" d="M1200 505 H1010 L975 470 H840"/><path class="p p4" pathLength="100" d="M640 0 V28 L670 58 H780"/>
+          <circle class="n" cx="860" cy="80" r="4"/><circle class="n" cx="840" cy="470" r="4"/><circle class="n" cx="520" cy="488" r="4"/><circle class="n" cx="780" cy="58" r="3"/><circle class="n" cx="730" cy="472" r="3"/>
+        </svg>
+        <div class="eng-scan" aria-hidden="true"></div>
         <div class="eng-l">
-          <p class="eng-eyebrow"><span style="color:var(--brand-accent)">&#9733;</span> Beyond support plans</p>
-          <h2 class="eng-h">Engineering Projects &amp; Specialized Work</h2>
-          <span class="eng-pill"><i class="fa-solid fa-diagram-project"></i> Milestone priced per SOW</span>
-          <p class="eng-p">Formally scoped design &amp; build work &mdash; circuit design, board layout, build &amp; test &mdash; with acceptance criteria agreed before we start. Billing is 50/50 under $5k, or a 40/30/30 milestone split over $5k.</p>
+          <p class="eng-eyebrow"><span class="eng-live" aria-hidden="true"></span> Beyond support plans</p>
+          <h2 class="eng-h">Engineering Projects <span>&amp; Specialized Work</span></h2>
+          <p class="eng-p">Hardware, software, IT and mechanical design, from a complete product to a single replacement part. Every project is scoped in writing, with acceptance criteria agreed before we start.</p>
+          <div class="eng-specs">
+            <div class="eng-spec"><b>Pricing</b><span>Per SOW</span></div>
+            <div class="eng-spec"><b>Up to $5k</b><span>50 / 50</span></div>
+            <div class="eng-spec"><b>Over $5k</b><span>40 / 30 / 30</span></div>
+          </div>
           <p class="eng-note"><strong>Not included in support plans.</strong> Requires a separate statement of work and a technical consultation first.</p>
           <div class="eng-cta">
-            <a class="btn btn--primary" href="contact.html"><i class="fa-solid fa-drafting-compass"></i> Scope a Project</a>
-            <a class="btn btn--secondary" href="engineering-services-cleveland.html">Engineering Services</a>
+            <a class="btn btn--primary" href="engineering-services-cleveland.html#get-started"><i class="fa-solid fa-drafting-compass"></i> Scope a Project</a>
+            <a class="btn btn--secondary" href="engineering-services-cleveland.html">Engineering Services <i class="fa-solid fa-arrow-right"></i></a>
           </div>
         </div>
         <div class="eng-r">
-          <p class="eng-r-head">Other specialized work</p>
+          <p class="eng-r-head">Specialized work <small>06 services</small></p>
           <div class="eng-chips">
-            <a class="eng-chip" href="engineering-services-cleveland.html#pcb"><i class="fa-solid fa-microchip"></i><span>PCB &amp; CAD Design</span></a>
-            <a class="eng-chip" href="engineering-services-cleveland.html#printing"><i class="fa-solid fa-cube"></i><span>3D Printing</span></a>
-            <a class="eng-chip" href="data_destruction.html"><i class="fa-solid fa-shield-halved"></i><span>Data Destruction</span></a>
-            <a class="eng-chip" href="knowledge_transfer.html"><i class="fa-solid fa-file-lines"></i><span>Knowledge Transfer</span></a>
-            <a class="eng-chip" href="website_creation.html"><i class="fa-solid fa-globe"></i><span>Web &amp; App Design</span></a>
-            <a class="eng-chip" href="engineering-services-cleveland.html#automation"><i class="fa-solid fa-gears"></i><span>Automation</span></a>
+            <a class="eng-chip" href="engineering-services-cleveland.html#pcb"><span class="eng-ic"><i class="fa-solid fa-microchip"></i></span><span class="eng-txt"><b>PCB &amp; CAD Design</b><small>Boards, enclosures, drawings</small></span><i class="fa-solid fa-arrow-right eng-go" aria-hidden="true"></i></a>
+            <a class="eng-chip" href="engineering-services-cleveland.html#printing"><span class="eng-ic"><i class="fa-solid fa-cube"></i></span><span class="eng-txt"><b>3D Printing</b><small>Prototypes and short runs</small></span><i class="fa-solid fa-arrow-right eng-go" aria-hidden="true"></i></a>
+            <a class="eng-chip" href="engineering-services-cleveland.html#automation"><span class="eng-ic"><i class="fa-solid fa-code"></i></span><span class="eng-txt"><b>Software &amp; Automation</b><small>Apps, scripts, integrations</small></span><i class="fa-solid fa-arrow-right eng-go" aria-hidden="true"></i></a>
+            <a class="eng-chip" href="website_creation.html"><span class="eng-ic"><i class="fa-solid fa-globe"></i></span><span class="eng-txt"><b>Web &amp; App Design</b><small>Sites, portals, tools</small></span><i class="fa-solid fa-arrow-right eng-go" aria-hidden="true"></i></a>
+            <a class="eng-chip" href="data_destruction.html"><span class="eng-ic"><i class="fa-solid fa-shield-halved"></i></span><span class="eng-txt"><b>Data Destruction</b><small>NIST-aligned, documented</small></span><i class="fa-solid fa-arrow-right eng-go" aria-hidden="true"></i></a>
+            <a class="eng-chip" href="knowledge_transfer.html"><span class="eng-ic"><i class="fa-solid fa-file-lines"></i></span><span class="eng-txt"><b>Knowledge Transfer</b><small>SOPs and documentation</small></span><i class="fa-solid fa-arrow-right eng-go" aria-hidden="true"></i></a>
           </div>
         </div>
       </div>
