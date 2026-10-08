@@ -25,7 +25,7 @@ var TES_TAGS = {
     purchase: '',           // left empty on purpose: invoice payments are existing clients, not ad conversions
     begin_checkout: 'OWlwCKS_o5UdEJSh9vVE',     // Website Watch or Ohio Crash checkout started
     start_trial: '9Y2-CPD7mpUdEJSh9vVE',        // Ohio Crash free trial requested
-    early_access_deposit: '',  // refundable early-access deposit (bid software); create an Ads conversion to fill this
+    early_access_deposit: 'Vxk5COfV25UdEJSh9vVE',  // refundable early-access deposit (bid software), value $49
   },
 };
 
