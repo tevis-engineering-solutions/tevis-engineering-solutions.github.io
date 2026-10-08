@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Moving Your Cleveland Business to Microsoft 365: When, Why, and What It Takes | TES Knowledge Base</title>
+  <meta name="description" content="Thinking about moving your Cleveland business to Microsoft 365? Here's when the switch makes sense, what a clean migration actually involves, and the mistakes that cost small businesses time and data.">
+  <meta name="author" content="Tyler Tevis, Tevis Engineering Solutions">
+  <meta property="og:type" content="article">
+  <meta property="og:site_name" content="Tevis Engineering Solutions">
+  <meta property="og:locale" content="en_US">
+  <meta property="og:url" content="https://tevisengineering.com/blog/moving-your-cleveland-business-to-microsoft-365.html">
+  <meta property="og:title" content="Moving Your Cleveland Business to Microsoft 365: When, Why, and What It Takes | TES Knowledge Base">
+  <meta property="og:description" content="When the switch to Microsoft 365 makes sense, what a clean migration involves, and the mistakes that cost small businesses time and data.">
+  <meta property="og:image" content="https://tevisengineering.com/assets/og-image.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="Cleveland IT Support &amp; Custom Engineering | Tevis Engineering Solutions">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Moving Your Cleveland Business to Microsoft 365">
+  <meta name="twitter:description" content="When the switch to Microsoft 365 makes sense, what a clean migration involves, and the mistakes to avoid.">
+  <meta name="twitter:image" content="https://tevisengineering.com/assets/og-image.png">
+  <link rel="canonical" href="https://tevisengineering.com/blog/moving-your-cleveland-business-to-microsoft-365.html">
+  <link rel="icon" type="image/png" href="../assets/favicon.png">
+  <meta http-equiv="X-Content-Type-Options" content="nosniff">
+  <meta name="referrer" content="strict-origin-when-cross-origin">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Montserrat:wght@500;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root { --bg: #0d1710; --card: #142019; --text: #e4ede5; --muted: #8aa48d; --line: #2c4232; --blue: #4aac65; --accent: #c89830; }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body { font-family: "Inter","Segoe UI",system-ui,sans-serif; background: radial-gradient(circle at top,#13253f 0%,var(--bg) 45%,#080d15 100%); color: var(--text); line-height: 1.7; }
+    .container { width: min(1200px,92%); margin: 0 auto; }
+    .topbar { position: sticky; top: 0; z-index: 20; backdrop-filter: blur(8px); background: rgba(10,20,14,0.92); border-bottom: 1px solid rgba(74,172,101,0.2); }
+    .topbar-inner { display: flex; align-items: center; justify-content: space-between; gap: 1rem; padding: 1.05rem 5%; width: 100%; max-width: none; box-sizing: border-box; margin: 0; position: relative; }
+    .brand { display: inline-flex; align-items: center; gap: 0.95rem; color: var(--text); text-decoration: none; }
+    .logo-slot { width: 44px; height: 44px; border-radius: 10px; object-fit: contain; background: transparent; border: 1px solid rgba(255,255,255,0.12); flex-shrink: 0; display: block; }
+    .logo-lockup { display: flex; flex-direction: column; gap: 0; font-family: "Montserrat",sans-serif; text-transform: uppercase; letter-spacing: 0.08em; white-space: nowrap; }
+    .logo-primary { font-size: 1rem; font-weight: 800; color: #fff; line-height: 1.15; }
+    .logo-secondary { font-size: 0.72rem; font-weight: 500; color: #d8e6ff; line-height: 1.15; }
+    .nav-center { position: relative; flex: 1; display: flex; justify-content: center; align-items: center; }
+    .menu-btn { display: inline-flex; align-items: center; gap: .45rem; padding: .52rem 1.1rem; border-radius: 999px; border: 1px solid rgba(74,172,101,.28); background: rgba(74,172,101,.08); color: #d4edd7; font-family: inherit; font-size: .93rem; font-weight: 600; cursor: pointer; transition: background .2s; white-space: nowrap; line-height: 1; }
+    .menu-btn:hover, .menu-btn[aria-expanded="true"] { background: rgba(74,172,101,.18); }
+    .menu-btn .chevron { transition: transform .2s; flex-shrink: 0; display: block; }
+    .menu-btn[aria-expanded="true"] .chevron { transform: rotate(180deg); }
+    .mega-drop { position: absolute; top: calc(100% + .6rem); left: 50%; transform: translateX(-50%) translateY(-6px); width: min(680px,94vw); background: #112018; border: 1px solid rgba(74,172,101,.22); border-radius: 16px; box-shadow: 0 24px 60px rgba(0,0,0,.75); padding: 1.35rem 1.35rem 1.05rem; display: grid; grid-template-columns: 1fr 1fr; gap: .2rem 1.5rem; z-index: 1000; opacity: 0; pointer-events: none; transition: opacity .18s, transform .18s; text-align: left; }
+    .mega-drop::before { content: ''; position: absolute; top: -.7rem; left: 0; right: 0; height: .7rem; }
+    .mega-drop.is-open { opacity: 1; pointer-events: all; transform: translateX(-50%) translateY(0); }
+    .mega-col-head { font-family: "Montserrat",sans-serif; font-size: .67rem; font-weight: 800; text-transform: uppercase; letter-spacing: .1em; color: #c89830; padding: 0 .55rem .4rem; margin-bottom: .2rem; border-bottom: 1px solid rgba(74,172,101,.14); }
+    .mega-link { display: flex; align-items: flex-start; gap: .65rem; padding: .5rem .55rem; border-radius: 9px; text-decoration: none; transition: background .14s; }
+    .mega-link:hover { background: rgba(74,172,101,.09); }
+    .mega-link-icon { width: 28px; height: 28px; min-width: 28px; border-radius: 7px; background: rgba(74,172,101,.1); border: 1px solid rgba(74,172,101,.18); display: flex; align-items: center; justify-content: center; color: #c89830; }
+    .mega-link-icon svg { width: 13px; height: 13px; }
+    .mega-link-text { display: flex; flex-direction: column; gap: .1rem; }
+    .mega-link-title { font-size: .86rem; font-weight: 600; color: #e6eefb; line-height: 1.25; }
+    .mega-link-desc { font-size: .73rem; color: #6a8ba8; line-height: 1.3; }
+    .nav-right { display: flex; align-items: center; gap: .65rem; flex-shrink: 0; }
+    .nav-support-btn { display: inline-flex; align-items: center; gap: .4rem; padding: .54rem 1rem; border-radius: 999px; background: linear-gradient(135deg,#c89830,#e0b840); color: #fff; font-family: "Montserrat",sans-serif; font-size: .77rem; font-weight: 700; text-transform: uppercase; letter-spacing: .04em; text-decoration: none; border: 1px solid rgba(255,255,255,.18); transition: transform .2s,filter .2s; white-space: nowrap; }
+    .nav-support-btn:hover { transform: translateY(-1px); filter: brightness(1.08); }
+    .nav-support-btn svg { width: 13px; height: 13px; flex-shrink: 0; }
+    .nav-hamburger { display: none; flex-direction: column; justify-content: center; gap: 5px; width: 40px; height: 40px; border: 1px solid rgba(255,255,255,.22); border-radius: 10px; background: rgba(0,0,0,.3); cursor: pointer; padding: 0 9px; flex-shrink: 0; }
+    .nav-hamburger span { display: block; width: 100%; height: 2px; background: #fff; border-radius: 2px; transition: transform .2s,opacity .2s; }
+    .nav-hamburger.is-open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+    .nav-hamburger.is-open span:nth-child(2) { opacity: 0; }
+    .nav-hamburger.is-open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+    .mobile-nav { display: none; flex-direction: column; gap: .22rem; padding: .55rem 1rem .8rem; border-top: 1px solid rgba(74,172,101,.12); width: 100%; position: relative; z-index: 40; }
+    .mobile-nav.is-open { display: flex; }
+    .mobile-nav a { display: block; padding: .64rem .82rem; border-radius: 9px; color: #d4edd7; text-decoration: none; font-size: .93rem; font-weight: 600; transition: background .14s; }
+    .mobile-nav a:hover { background: rgba(74,172,101,.1); }
+    @media (max-width: 768px) { .nav-center { display: none; } .nav-hamburger { display: flex; } .mega-drop { position: fixed; left: 0; right: 0; width: 100vw; transform: translateY(-6px); border-radius: 0 0 16px 16px; max-height: 80vh; overflow-y: auto; overflow-x: hidden; } .mega-drop.is-open { transform: translateY(0); } }
+    .article-wrap { max-width: 740px; margin: 0 auto; padding: 3rem 0 4rem; }
+    .back-link { display: inline-flex; align-items: center; gap: 0.4rem; color: var(--blue); text-decoration: none; font-size: 0.88rem; font-weight: 600; margin-bottom: 2rem; transition: opacity .2s; }
+    .back-link:hover { opacity: 0.75; }
+    .article-category { display: inline-block; font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.09em; padding: 0.22rem 0.6rem; border-radius: 999px; margin-bottom: 1rem; background: rgba(200, 100, 255, 0.12); color: #c87aff; border: 1px solid rgba(200, 100, 255, 0.22); }
+    .article-wrap h1 { font-family: "Montserrat",sans-serif; font-size: clamp(1.6rem,4vw,2.2rem); font-weight: 800; line-height: 1.2; color: #fff; margin-bottom: 1rem; }
+    .article-meta { display: flex; align-items: center; gap: 1rem; color: #5e7a9a; font-size: 0.85rem; margin-bottom: 2.2rem; padding-bottom: 1.5rem; border-bottom: 1px solid var(--line); flex-wrap: wrap; }
+    .article-meta strong { color: var(--muted); }
+    .article-body h2 { font-family: "Montserrat",sans-serif; font-size: 1.2rem; font-weight: 700; color: #d4e8ff; margin-top: 2.2rem; margin-bottom: 0.75rem; }
+    .article-body p { color: var(--muted); margin-bottom: 1.2rem; font-size: 1rem; }
+    .article-body ul, .article-body ol { color: var(--muted); margin-bottom: 1.2rem; padding-left: 1.4rem; }
+    .article-body li { margin-bottom: 0.5rem; }
+    .article-body strong { color: #c8deff; }
+    .callout { background: rgba(74,172,101,0.08); border: 1px solid rgba(74,172,101,0.25); border-left: 3px solid var(--blue); border-radius: 10px; padding: 1rem 1.2rem; margin: 1.6rem 0; }
+    .callout p { margin-bottom: 0; color: #b8d4f5; font-size: 0.96rem; }
+    .callout strong { color: #d4e8ff; }
+    .article-cta { margin-top: 3rem; padding: 1.8rem; background: var(--card); border: 1px solid var(--line); border-radius: 16px; text-align: center; }
+    .article-cta h3 { font-family: "Montserrat",sans-serif; font-size: 1.1rem; font-weight: 700; color: #e8f2ff; margin-bottom: 0.5rem; }
+    .article-cta p { font-size: 0.92rem; color: var(--muted); margin-bottom: 1.2rem; }
+    .btn-primary { display: inline-block; text-decoration: none; border-radius: 999px; padding: 0.75rem 1.4rem; font-weight: 700; font-family: "Montserrat",sans-serif; font-size: 0.86rem; text-transform: uppercase; letter-spacing: 0.04em; background: linear-gradient(135deg,var(--blue),#6dc882); color: #06101f; border: none; transition: filter .2s,transform .2s; }
+    .btn-primary:hover { filter: brightness(1.08); transform: translateY(-1px); }
+    footer { margin: 2.5rem 0 2rem; color: #8ea3c4; font-size: 0.93rem; }
+    footer a { color: #c89830; text-decoration: none; margin: 0 0.3rem; }
+    footer a:hover { text-decoration: underline; }
+    @media (max-width: 600px) { .topbar-inner { flex-wrap: wrap; } .brand { width: 100%; } .nav-right { width: 100%; justify-content: space-between; } .nav-hamburger { display: flex; } .nav-support-btn { display: inline-flex; } .logo-lockup { flex-direction: column; gap: 0.1rem; white-space: normal; align-items: flex-start; } .logo-primary { font-size: 1.05rem; } .logo-secondary { font-size: 0.7rem; } body { overflow-x: hidden; } }
+    @media (max-width: 480px) { .nav-support-btn { display: none; } .article-wrap { padding: 1.8rem 0 3rem; } }
+
+    /* Newsletter signup */
+    .newsletter-section { background: var(--card); border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); padding: 3.5rem 5%; margin-top: 4rem; }
+    .newsletter-inner { max-width: 640px; margin: 0 auto; text-align: center; }
+    .newsletter-heading { font-family: "Montserrat", sans-serif; font-size: 1.5rem; font-weight: 700; color: var(--text); margin: 0 0 0.5rem; text-transform: uppercase; letter-spacing: 0.04em; }
+    .newsletter-sub { color: var(--muted); font-size: 0.95rem; margin: 0 0 1.75rem; }
+    .newsletter-form { display: flex; gap: 0.6rem; justify-content: center; flex-wrap: wrap; }
+    .newsletter-input { flex: 1 1 220px; max-width: 320px; padding: 0.7rem 1rem; border-radius: 8px; border: 1px solid var(--line); background: var(--bg); color: var(--text); font-size: 0.95rem; font-family: "Inter", sans-serif; outline: none; transition: border-color 0.2s; }
+    .newsletter-input:focus { border-color: var(--blue); }
+    .newsletter-btn { padding: 0.7rem 1.5rem; border-radius: 8px; border: none; background: var(--blue); color: #0d1710; font-family: "Montserrat", sans-serif; font-weight: 700; font-size: 0.9rem; cursor: pointer; text-transform: uppercase; letter-spacing: 0.05em; transition: opacity 0.2s; }
+    .newsletter-btn:hover { opacity: 0.85; }
+    .newsletter-fine { margin-top: 1rem; font-size: 0.78rem; color: var(--muted); }
+    .newsletter-fine a { color: var(--muted); text-decoration: underline; }
+    .article-newsletter-cta { background: var(--card); border-left: 3px solid var(--blue); border-radius: 0 8px 8px 0; padding: 1rem 1.25rem; margin: 2.5rem 0 1rem; font-size: 0.95rem; color: var(--muted); }
+    .article-newsletter-cta strong { color: var(--text); }
+    .article-newsletter-link { color: var(--blue); text-decoration: none; font-weight: 600; }
+    .article-newsletter-link:hover { text-decoration: underline; }
+    .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); border: 0; }
+    /* ==================== NAV ==================== */
+    .tnav-bar{position:sticky;top:0;z-index:50;background:rgba(9,18,12,0.9);backdrop-filter:blur(12px);border-bottom:1px solid rgba(74,172,101,0.22);}
+    .tnav-inner{display:flex;align-items:center;gap:1.25rem;padding:0.8rem 5%;max-width:1280px;margin:0 auto;}
+    .tnav-brand{display:flex;align-items:center;gap:0.8rem;cursor:pointer;text-decoration:none;}
+    .tnav-brand img{width:44px;height:44px;border-radius:10px;border:1px solid rgba(255,255,255,0.15);}
+    .tnav-brand .bn{display:flex;flex-direction:column;font-family:'Montserrat','Segoe UI',system-ui,sans-serif;text-transform:uppercase;letter-spacing:0.08em;line-height:1.15;}
+    .tnav-brand .bn b{font-size:1rem;font-weight:800;color:#fff;}
+    .tnav-brand .bn s{font-size:0.7rem;font-weight:500;color:#8aa48d;text-decoration:none;}
+    .tnav-spacer{flex:1;}
+    .tnav-wrap{position:relative;}
+    .tnav-trigger{display:inline-flex;align-items:center;gap:0.5rem;font-family:'Montserrat','Segoe UI',system-ui,sans-serif;text-transform:uppercase;letter-spacing:0.06em;font-weight:700;font-size:0.85rem;color:#c2d2c5;background:transparent;border:1px solid transparent;padding:0.6rem 1rem;border-radius:999px;cursor:pointer;transition:color .2s,background .2s,border-color .2s;}
+    .tnav-wrap:hover .tnav-trigger,.tnav-trigger[aria-expanded="true"]{color:#fff;background:rgba(74,172,101,0.10);border-color:rgba(74,172,101,0.22);}
+    .tnav-chev{transition:transform .25s cubic-bezier(0.22,1,0.36,1);}
+    .tnav-wrap:hover .tnav-chev,.tnav-trigger[aria-expanded="true"] .tnav-chev{transform:rotate(180deg);}
+    .tnav-mega{position:fixed;top:72px;left:50%;width:min(840px,calc(100vw - 32px));max-height:calc(100vh - 92px);overflow-y:auto;background:#142019;border:1px solid #2c4232;border-radius:20px;box-shadow:0 24px 60px rgba(0,0,0,0.55);padding:1.4rem;display:grid;grid-template-columns:1fr 1fr 0.85fr;gap:1.1rem;opacity:0;visibility:hidden;pointer-events:none;transform:translateX(-50%) translateY(8px);transition:opacity .22s cubic-bezier(0.22,1,0.36,1),transform .22s cubic-bezier(0.22,1,0.36,1);z-index:60;}
+    .tnav-mega::before{content:'';position:absolute;top:-22px;left:0;right:0;height:24px;}
+    .tnav-mega.is-open{opacity:1;visibility:visible;pointer-events:auto;transform:translateX(-50%) translateY(0);}
+    .tnav-col-head{font-family:'Montserrat','Segoe UI',system-ui,sans-serif;font-size:0.64rem;font-weight:800;text-transform:uppercase;letter-spacing:0.14em;color:#c89830;margin:0 0 0.55rem;padding-left:0.45rem;}
+    .tnav-link{display:flex;gap:0.7rem;align-items:flex-start;padding:0.5rem;border-radius:12px;cursor:pointer;text-decoration:none;transition:background .18s,transform .18s;}
+    .tnav-link:hover{background:#1c2e22;transform:translateX(3px);}
+    .tnav-ic{width:34px;height:34px;flex-shrink:0;border-radius:9px;background:rgba(74,172,101,0.10);border:1px solid rgba(74,172,101,0.22);color:#4aac65;display:flex;align-items:center;justify-content:center;font-size:0.85rem;transition:background .18s,color .18s;}
+    .tnav-link:hover .tnav-ic{background:#4aac65;color:#0d1710;}
+    .tnav-tt{font-family:'Montserrat','Segoe UI',system-ui,sans-serif;font-weight:700;font-size:0.85rem;color:#e4ede5;line-height:1.2;display:block;}
+    .tnav-dd{font-size:0.73rem;color:#8aa48d;margin-top:2px;line-height:1.3;display:block;}
+    .tnav-cta{background:radial-gradient(110% 120% at 50% 0%,rgba(74,172,101,0.16),transparent 60%),linear-gradient(160deg,#16261d,#0f1c14);border:1px solid rgba(74,172,101,0.22);border-radius:18px;padding:1.3rem 1.1rem;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:0.5rem;}
+    .tnav-cta .star{color:#c89830;font-size:1.3rem;}
+    .tnav-cta h4{font-family:'Montserrat','Segoe UI',system-ui,sans-serif;text-transform:uppercase;letter-spacing:0.04em;font-size:0.95rem;color:#fff;margin:0.2rem 0 0;}
+    .tnav-cta p{font-size:0.76rem;color:#8aa48d;margin:0 0 0.6rem;line-height:1.45;}
+    .tnav-right{display:flex;align-items:center;gap:0.9rem;}
+    .tnav-sup-btn{display:inline-flex;align-items:center;justify-content:center;gap:0.5rem;font-family:'Montserrat','Segoe UI',system-ui,sans-serif;font-weight:700;text-transform:uppercase;letter-spacing:0.04em;text-decoration:none;border-radius:999px;cursor:pointer;border:2px solid rgba(255,255,255,0.45);padding:8px 18px;font-size:0.78rem;color:#e4ede5;background:transparent;transition:transform 0.2s,border-color 0.2s;}
+    .tnav-sup-btn:hover{transform:translateY(-2px);border-color:#fff;}
+    .tnav-cta-btn{display:inline-flex;align-items:center;justify-content:center;gap:0.5rem;font-family:'Montserrat','Segoe UI',system-ui,sans-serif;font-weight:700;text-transform:uppercase;letter-spacing:0.04em;text-decoration:none;border-radius:999px;cursor:pointer;border:1px solid rgba(255,255,255,0.25);padding:8px 18px;font-size:0.78rem;color:#0d1710;background:linear-gradient(135deg,#c89830,#e0b840);box-shadow:0 10px 20px rgba(200,152,48,0.28);transition:transform 0.2s,filter 0.2s;}
+    .tnav-cta-btn:hover{transform:translateY(-2px);filter:brightness(1.06);}
+    @media(max-width:860px){.tnav-mega{top:68px;left:4vw;right:4vw;width:auto;grid-template-columns:1fr;max-height:calc(100vh - 84px);transform:translateY(8px);}.tnav-mega.is-open{transform:translateY(0);}.tnav-cta,.tnav-brand .bn{display:none;}}
+    @media(max-width:460px){.tnav-inner{gap:0.6rem;padding:0.7rem 4%;}.tnav-trigger{padding:0.55rem 0.75rem;}.tnav-sup-btn span.lbl{display:none;}}
+    /* ==================== FOOTER ==================== */
+    .tfoot{background:#050b07;border-top:1px solid #2c4232;padding:3rem 5% 2rem;}
+    .tfoot-grid{max-width:1280px;margin:0 auto;display:grid;grid-template-columns:1.5fr 1fr 1fr 1fr;gap:2rem;}
+    .tfoot-brand{display:flex;align-items:center;gap:0.7rem;margin-bottom:1rem;cursor:pointer;text-decoration:none;}
+    .tfoot-brand img{width:40px;height:40px;border-radius:9px;}
+    .tfoot-brand b{font-family:'Montserrat','Segoe UI',system-ui,sans-serif;font-weight:800;text-transform:uppercase;letter-spacing:0.06em;color:#fff;font-size:0.95rem;}
+    .tfoot-blurb{color:#8aa48d;font-size:0.9rem;line-height:1.7;max-width:34ch;margin:0 0 1rem;}
+    .tfoot-nap{color:#8aa48d;font-size:0.85rem;line-height:1.7;margin:0 0 1rem;}
+    .tfoot-nap a{color:#8aa48d;text-decoration:none;}
+    .tfoot-nap a:hover{color:#4aac65;}
+    .tfoot-col h5{font-family:'Montserrat','Segoe UI',system-ui,sans-serif;font-size:0.7rem;font-weight:800;text-transform:uppercase;letter-spacing:0.1em;color:#c89830;margin-bottom:0.9rem;}
+    .tfoot-col a{display:block;color:#8aa48d;text-decoration:none;font-size:0.88rem;padding:0.3rem 0;transition:color 0.2s,transform 0.2s;}
+    .tfoot-col a:hover{color:#4aac65;transform:translateX(3px);}
+    .tfoot-bar{max-width:1280px;margin:2rem auto 0;padding-top:1.5rem;border-top:1px solid #2c4232;display:flex;justify-content:space-between;flex-wrap:wrap;gap:0.5rem;align-items:center;}
+    .tfoot-bar span{color:#8aa48d;font-size:0.82rem;}
+    .tfoot-social{display:flex;gap:1.2rem;}
+    .tfoot-social a{color:#8aa48d;font-size:1.1rem;transition:color 0.2s;}
+    .tfoot-social a:hover{color:#4aac65;}
+    .tfoot-veteran{display:inline-flex;align-items:center;gap:0.45rem;font-family:'Montserrat','Segoe UI',system-ui,sans-serif;font-size:0.78rem;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;padding:6px 12px;border-radius:999px;line-height:1;background:linear-gradient(135deg,#2d6a3f,#3d8a55);border:1px solid rgba(255,255,255,0.18);color:#fff;}
+    @media(max-width:780px){.tfoot-grid{grid-template-columns:1fr 1fr;}}
+    @media(max-width:480px){.tfoot-grid{grid-template-columns:1fr;}}
+      .related-reading { margin-top: 2.5rem; padding: 1.4rem 1.6rem; background: var(--card); border: 1px solid var(--line); border-radius: 14px; }
+    .related-reading h2 { font-family:"Montserrat",sans-serif; font-size:0.8rem; font-weight:800; text-transform:uppercase; letter-spacing:0.1em; color:#c89830; margin:0 0 0.9rem; }
+    .related-reading ul { list-style:none; margin:0; padding:0; }
+    .related-reading li { position:relative; padding-left:1.4rem; margin-bottom:0.6rem; }
+    .related-reading li::before { content:"\2192"; position:absolute; left:0; color:var(--blue); font-weight:700; }
+    .related-reading li a { color:var(--text); text-decoration:none; font-weight:600; font-size:0.98rem; }
+    .related-reading li a:hover { color:var(--blue); text-decoration:underline; }
+    .related-reading .rr-service { margin:1rem 0 0; padding-top:0.9rem; border-top:1px solid var(--line); font-size:0.92rem; color:var(--muted); }
+    .related-reading .rr-service a { color:#c89830; font-weight:700; text-decoration:none; }
+    .related-reading .rr-service a:hover { text-decoration:underline; }
+  </style>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": "Moving Your Cleveland Business to Microsoft 365: When, Why, and What It Takes",
+    "description": "Thinking about moving your Cleveland business to Microsoft 365? Here's when the switch makes sense, what a clean migration actually involves, and the mistakes that cost small businesses time and data.",
+    "url": "https://tevisengineering.com/blog/moving-your-cleveland-business-to-microsoft-365.html",
+    "datePublished": "2026-10-08",
+    "dateModified": "2026-10-08",
+    "author": {
+      "@type": "Person",
+      "name": "Tyler Tevis",
+      "url": "https://tevisengineering.com"
+    },
+    "publisher": {"@id": "https://tevisengineering.com/#business"},
+    "image": "https://tevisengineering.com/assets/og-image.png",
+    "inLanguage": "en-US",
+    "isPartOf": {
+      "@type": "Blog",
+      "name": "TES Knowledge Base",
+      "url": "https://tevisengineering.com/blog/index.html"
+    }
+  }
+  </script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+  <meta property="article:published_time" content="2026-10-08">
+  <meta property="article:modified_time" content="2026-10-08">
+  <meta property="article:author" content="Tyler Tevis">
+  <meta property="article:section" content="Knowledge Base">
+  <script type="application/ld+json">
+  {"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://tevisengineering.com/"},{"@type":"ListItem","position":2,"name":"Blog","item":"https://tevisengineering.com/blog/index.html"},{"@type":"ListItem","position":3,"name":"Moving Your Cleveland Business to Microsoft 365","item":"https://tevisengineering.com/blog/moving-your-cleveland-business-to-microsoft-365.html"}]}
+  </script>
+</head>
+<body>
+<div class="tnav-bar">
+  <div class="tnav-inner">
+    <a class="tnav-brand" href="../index.html">
+      <img src="../assets/logo-mark.png" alt="Tevis Engineering Solutions">
+      <span class="bn"><b>Tevis Engineering</b><s>Solutions</s></span>
+    </a>
+    <div class="tnav-spacer"></div>
+    <div class="tnav-wrap" id="navWrap">
+      <button class="tnav-trigger" id="navTrigger" type="button" aria-haspopup="true" aria-expanded="false">
+        Menu <svg class="tnav-chev" width="10" height="7" viewBox="0 0 10 7" fill="none" aria-hidden="true"><path d="M1 1.5l4 4 4-4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+      <div class="tnav-mega" id="navMega">
+        <div>
+          <p class="tnav-col-head">Services</p>
+          <a class="tnav-link" href="../how_support_works.html"><span class="tnav-ic"><i class="fa-regular fa-circle-question"></i></span><span><b class="tnav-tt">How Support Works</b><span class="tnav-dd">Intake, scope, delivery, and billing</span></span></a>
+          <a class="tnav-link" href="../pricing_sheet.html"><span class="tnav-ic"><i class="fa-solid fa-tag"></i></span><span><b class="tnav-tt">Pricing</b><span class="tnav-dd">Flat rates, hourly, and retainer plans</span></span></a>
+          <a class="tnav-link" href="../portfolio.html"><span class="tnav-ic"><i class="fa-solid fa-briefcase"></i></span><span><b class="tnav-tt">Portfolio</b><span class="tnav-dd">Case studies across IT and engineering</span></span></a>
+          <a class="tnav-link" href="../assessment.html"><span class="tnav-ic"><i class="fa-solid fa-chart-bar"></i></span><span><b class="tnav-tt">IT Assessment</b><span class="tnav-dd">Free 7-question readiness quiz</span></span></a>
+          <a class="tnav-link" href="../website_creation.html"><span class="tnav-ic"><i class="fa-solid fa-globe"></i></span><span><b class="tnav-tt">Web &amp; App Design</b><span class="tnav-dd">Sites, tools, and digital presence</span></span></a>
+          <a class="tnav-link" href="../data_destruction.html"><span class="tnav-ic"><i class="fa-solid fa-shield-halved"></i></span><span><b class="tnav-tt">Data Destruction</b><span class="tnav-dd">NIST-aligned secure media sanitization</span></span></a>
+          <a class="tnav-link" href="../knowledge_transfer.html"><span class="tnav-ic"><i class="fa-solid fa-file-lines"></i></span><span><b class="tnav-tt">Knowledge Transfer</b><span class="tnav-dd">Documentation and process handoffs</span></span></a>
+        </div>
+        <div>
+          <p class="tnav-col-head">Company &amp; Tools</p>
+          <a class="tnav-link" href="../service-areas.html"><span class="tnav-ic"><i class="fa-solid fa-location-dot"></i></span><span><b class="tnav-tt">Service Areas</b><span class="tnav-dd">Cleveland-area cities we support</span></span></a>
+          <a class="tnav-link" href="index.html"><span class="tnav-ic"><i class="fa-solid fa-newspaper"></i></span><span><b class="tnav-tt">Blog / Knowledge Base</b><span class="tnav-dd">IT tips and guides for small businesses</span></span></a>
+          <a class="tnav-link" href="../software.html"><span class="tnav-ic"><i class="fa-solid fa-laptop-code"></i></span><span><b class="tnav-tt">Software Services</b><span class="tnav-dd">Cloud apps &amp; licensed software</span></span></a>
+          <a class="tnav-link" href="../service_catalog.html"><span class="tnav-ic"><i class="fa-solid fa-rectangle-list"></i></span><span><b class="tnav-tt">Services Catalog</b><span class="tnav-dd">Full rate card &amp; line sheet</span></span></a>
+          <a class="tnav-link" href="../pay_invoice.html"><span class="tnav-ic"><i class="fa-solid fa-credit-card"></i></span><span><b class="tnav-tt">Pay an Invoice</b><span class="tnav-dd">Look up and pay your balance online</span></span></a>
+          <a class="tnav-link" href="../contact.html"><span class="tnav-ic"><i class="fa-solid fa-envelope"></i></span><span><b class="tnav-tt">Contact</b><span class="tnav-dd">Send a message or request a quote</span></span></a>
+          <a class="tnav-link" href="../privacy_policy.html"><span class="tnav-ic"><i class="fa-solid fa-file-shield"></i></span><span><b class="tnav-tt">Privacy &amp; Terms</b><span class="tnav-dd">Payment terms and data policy</span></span></a>
+        </div>
+        <div class="tnav-cta">
+          <span class="star"><i class="fa-solid fa-star"></i></span>
+          <h4>Veteran Owned</h4>
+          <p>Air Force veteran serving Cleveland businesses with honest IT and engineering.</p>
+          <a class="tnav-cta-btn" href="../make_ticket.html"><i class="fa-solid fa-headset"></i> Get Support Now</a>
+        </div>
+      </div>
+    </div>
+    <div class="tnav-spacer"></div>
+    <div class="tnav-right">
+      <a class="tnav-sup-btn" href="../login.html"><i class="fa-solid fa-right-to-bracket"></i> <span class="lbl">LOGIN</span></a>
+    </div>
+  </div>
+</div>
+
+  <main class="container">
+    <article class="article-wrap">
+      <a href="index.html" class="back-link"><svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true"><path d="M9 2L4 7l5 5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg> Back to Knowledge Base</a>
+      <span class="article-category">Cleveland SMB</span>
+      <h1>Moving Your Cleveland Business to Microsoft 365: When, Why, and What It Takes</h1>
+      <div class="article-meta">
+        <span>By <strong>Tyler Tevis</strong></span>
+        <span>October 2026</span>
+        <span>8 min read</span>
+      </div>
+
+      <div class="article-body">
+        <p>Most of the Cleveland small businesses we talk to are already using Microsoft Office in some form — Word, Excel, maybe Outlook running off an old email account from their internet provider. So when the question of moving to Microsoft 365 comes up, it rarely sounds dramatic. It sounds like "we're kind of already on this, right?" Not quite. Moving your Cleveland business to Microsoft 365 means shifting your email, files, and the apps your team uses every day onto Microsoft's cloud — and done well, it quietly removes a whole category of problems. Done carelessly, it loses mail and leaves everyone locked out on a Monday morning.</p>
+
+        <p>This is a walk through when the switch actually earns its keep, what a clean migration involves, and the mistakes that turn a weekend project into a week of frustration. It's written for the owner who wants to understand the decision, not become an IT administrator.</p>
+
+        <h2>What Microsoft 365 Actually Is (and Isn't)</h2>
+        <p>Microsoft 365 is a subscription that bundles three things most small businesses are paying for separately, or doing without. First, business email on your own domain — <strong>you@yourcompany.com</strong> instead of a Gmail or Roadrunner address — hosted in Outlook/Exchange Online. Second, the Office apps: Word, Excel, PowerPoint, and Outlook, kept up to date automatically. Third, cloud storage and collaboration through OneDrive, SharePoint, and Teams, so files live in one shared place instead of scattered across laptops and thumb drives.</p>
+
+        <p>What it <em>isn't</em> is a magic shield. It doesn't automatically back up your data in the way most people assume, it doesn't configure its own security, and it won't stop a convincing phishing email on its own. Microsoft gives you a strong platform; someone still has to set it up correctly. That gap — between "we bought 365" and "365 is set up right" — is where most of the small-business headaches we see actually come from.</p>
+
+        <h2>Signs It's Time to Make the Move</h2>
+        <p>You don't need a reason as grand as "digital transformation." The practical triggers are usually mundane and specific. If several of these sound familiar, the move is probably overdue:</p>
+        <ul>
+          <li><strong>Your email is tied to your internet provider.</strong> Addresses ending in an ISP domain are a liability — switch providers and you can lose the mailbox, and they rarely offer the controls a business needs.</li>
+          <li><strong>Files live everywhere and nowhere.</strong> The real copy of a document is "on Sarah's laptop," and nobody's sure which version is current.</li>
+          <li><strong>You're adding people.</strong> Onboarding a new hire means standing up a mailbox and access in minutes, not rebuilding a PC from scratch.</li>
+          <li><strong>You want to work from anywhere.</strong> A shop in Parma, a client site in Westlake, a home office in Shaker Heights — the same files and mail should follow you to all of them.</li>
+          <li><strong>Security and compliance matter.</strong> If you handle client, patient, or payment data, you need multi-factor authentication, access controls, and an audit trail. 365 supports all of it.</li>
+        </ul>
+
+        <div class="callout">
+          <p><strong>The quiet win:</strong> Most owners expect the benefit to be the apps. In practice, the biggest relief is that email and files stop being fragile. No more "my Outlook lost everything," no more hunting for the latest version of a quote. That reliability is worth more than any single feature.</p>
+        </div>
+
+        <h2>Which Plan Do You Actually Need?</h2>
+        <p>Microsoft offers a few business tiers, and the names change often enough that it's not worth memorizing them. The real decision comes down to two questions. <strong>Do you need the installed desktop apps, or just the web versions?</strong> A team that lives in Excel wants the full desktop suite; a lighter user may be fine in a browser. <strong>How much security and device management do you need?</strong> The higher business tiers add tools that matter a great deal if you handle sensitive data or manage company laptops, and are overkill if you don't.</p>
+
+        <p>Our general guidance for a typical Cleveland small business: start with the mid-tier business plan that includes the desktop apps, then add the security tier only for the accounts that genuinely need it rather than paying for it across the board. Overbuying licenses is one of the most common ways businesses quietly waste money on 365. You can always move up; you rarely need to start at the top.</p>
+
+        <h2>What a Clean Migration Actually Involves</h2>
+        <p>Here's the part people underestimate. Moving to Microsoft 365 isn't "install the apps and log in." Done properly, a migration runs in a deliberate order so that nothing drops in the gaps:</p>
+        <ol>
+          <li><strong>Inventory first.</strong> What email addresses exist, how much mail and how many files there are, which apps and old systems depend on them. You can't move cleanly what you haven't counted.</li>
+          <li><strong>Set up the tenant and domain.</strong> Create the 365 environment, verify your domain, and configure the DNS records that tell the world where your mail now lives — without breaking the mail you're still receiving mid-move.</li>
+          <li><strong>Migrate mail and files.</strong> Copy existing mailboxes and documents into 365 <em>before</em> flipping the switch, so everything is waiting when the change goes live. The actual cutover then becomes a quiet moment rather than a cliff.</li>
+          <li><strong>Configure security.</strong> Turn on multi-factor authentication, set sensible access policies, and lock down the defaults Microsoft leaves open. This is not optional for a business.</li>
+          <li><strong>Set up the people.</strong> Install and sign in the apps on each machine, confirm mail flows, and make sure phones and shared calendars work before anyone's counting on them.</li>
+        </ol>
+
+        <p>The sequence matters because email is unforgiving. Change the wrong DNS record at the wrong moment and inbound mail bounces with no warning. Done in order, the whole thing is invisible to your customers. Done out of order, it's the kind of outage people remember.</p>
+
+        <h2>The Mistakes That Cost People</h2>
+        <p>Nearly every migration horror story we've cleaned up traces back to one of a handful of avoidable errors. The big one is <strong>assuming Microsoft backs up your data</strong>. It keeps your service running, but its retention windows are short, and a deleted-then-emptied mailbox or a ransomware-encrypted OneDrive can be gone for good. A proper third-party backup of your 365 data is a separate, necessary thing.</p>
+
+        <p>The second is <strong>skipping multi-factor authentication</strong> because it feels like friction. A business email account protected by a password alone is one leaked password away from a wire-fraud incident. The third is a <strong>sloppy DNS cutover</strong> that drops mail during the switch. And the fourth, quieter one is <strong>no cleanup afterward</strong> — old accounts left active, former employees never removed, shared mailboxes nobody owns. A migration isn't done when the apps open; it's done when the environment is tidy and secured.</p>
+
+        <div class="callout">
+          <p><strong>Before you touch DNS:</strong> make sure email is backed up and tested, and that you have a working rollback. We cover the "backups you can actually restore" principle in detail in <a href="small-business-backup-strategy.html" style="color:#6dc882;text-decoration:underline;">The Small Business Backup Strategy That Actually Works</a> — the same logic applies to your 365 data.</p>
+        </div>
+
+        <h2>Doing It Yourself vs. Bringing in Help</h2>
+        <p>Can a technically comfortable owner migrate a two- or three-person business to 365 over a weekend? Sometimes, yes — and if that's you, the biggest favors you can do yourself are to migrate mail before cutover, turn on MFA, and set up a real backup. The risk scales fast, though. Once you're past a handful of mailboxes, or you have shared calendars, old line-of-business software, or any compliance obligation, the cost of a mistake starts to outweigh the cost of help.</p>
+
+        <p>That's the honest line we draw with clients. If your setup is simple and you're comfortable, we'll tell you so. If it's the kind of move where a dropped DNS record means a day of lost orders, that's exactly when a fixed-price migration pays for itself — you buy a clean cutover and a secured environment, not a stack of hours and a prayer.</p>
+
+        <h2>What It Looks Like When It's Done Right</h2>
+        <p>A good Microsoft 365 migration is anticlimactic. On cutover day, mail keeps arriving, files are already in place, and the team logs into apps that look familiar. The difference shows up over the following weeks: nobody loses an email, the new hire in Lakewood is working within an hour of starting, and the owner stops being the person who gets called when "the computer ate my document." The technology moved to the cloud, but what actually changed is that a recurring source of friction simply went away.</p>
+
+        <p>If you're a Cleveland-area business weighing the move — or you're already on 365 and quietly unsure whether it was set up properly — that's a conversation worth having before anything breaks, not after. The planning is cheap. The cleanup isn't.</p>
+      </div>
+
+      <aside class="related-reading" aria-label="Related reading">
+        <h2>Related Reading</h2>
+        <ul>
+        <li><a href="cybersecurity-basics-for-cleveland-small-business.html">Cybersecurity Basics Every Cleveland Small Business Needs</a></li>
+        <li><a href="small-business-backup-strategy.html">The Small Business Backup Strategy That Actually Works</a></li>
+        </ul>
+        <p class="rr-service">Planning a move? <a href="../contact.html">Talk to us about a Microsoft 365 migration</a>.</p>
+      </aside>
+      <div class="article-newsletter-cta">
+        <strong>Found this useful?</strong> Get monthly IT Tips for Individuals &amp; Small Businesses — straight to your inbox.
+        <a href="#newsletter" class="article-newsletter-link">Subscribe below →</a>
+      </div>
+
+      <div class="article-cta">
+        <h3>Thinking About Moving to Microsoft 365?</h3>
+        <p>TES handles Microsoft 365 setup and migrations for Cleveland-area small businesses — mail, files, security, and backup, done in the right order so nothing drops. Fixed-price, veteran-owned, and we'll tell you honestly if you don't need us. Get in touch for a straight answer.</p>
+        <a href="../contact.html" class="btn-primary">Talk to Us About Your Migration</a>
+      </div>
+    </article>
+
+    <!-- NEWSLETTER SIGNUP — BUTTONDOWN_USERNAME: replace tevisengineering in the form action below -->
+    <section class="newsletter-section" id="newsletter" aria-label="Email newsletter signup">
+      <div class="newsletter-inner">
+        <div class="newsletter-text">
+          <h2 class="newsletter-heading">IT Tips for Individuals &amp; Small Businesses</h2>
+          <p class="newsletter-sub">Monthly practical advice — no spam, no upsells. Unsubscribe anytime.</p>
+        </div>
+        <form
+          action="https://buttondown.com/api/emails/embed-subscribe/tevisengineering"
+          method="post"
+          target="popupwindow"
+          class="newsletter-form"
+          id="newsletterForm"
+        >
+          <!-- BUTTONDOWN_USERNAME: replace tevisengineering in the action URL above -->
+          <input type="hidden" value="1" name="embed">
+          <label for="newsletterEmail" class="sr-only">Email address</label>
+          <input
+            type="email"
+            id="newsletterEmail"
+            name="email"
+            placeholder="your@email.com"
+            required
+            autocomplete="email"
+            class="newsletter-input"
+          >
+          <button type="submit" class="newsletter-btn">Subscribe</button>
+          <noscript><p style="margin-top:0.75rem;font-size:0.85rem;">To subscribe, visit <a href="https://buttondown.com/tevisengineering" target="_blank" rel="noopener noreferrer">buttondown.email</a> directly.</p></noscript>
+        </form>
+        <p class="newsletter-fine">
+          Powered by <a href="https://buttondown.com/refer/tevisengineering" target="_blank" rel="noopener noreferrer">Buttondown</a>.
+          Read our <a href="../privacy_policy.html" rel="noopener">privacy policy</a>.
+        </p>
+      </div>
+    </section>
+
+  </main>
+  <footer class="tfoot">
+    <div class="tfoot-grid">
+      <div>
+        <a class="tfoot-brand" href="../index.html"><img src="../assets/logo-mark.png" alt="TES"><b>Tevis Engineering</b></a>
+        <p class="tfoot-blurb">IT Support, Engineering, 3D Design/Printing and tangential services for small businesses and individuals in the Cleveland, Ohio area and beyond.</p>
+        <p class="tfoot-nap"><a href="tel:+12163028486">(216)&nbsp;302&#8209;8486</a> &middot; Cleveland,&nbsp;OH</p>
+      </div>
+      <div class="tfoot-col">
+        <h5>Services</h5>
+        <a href="../service_catalog.html">Services Catalog</a>
+        <a href="../pricing_sheet.html">Managed IT Support</a>
+        <a href="../website_creation.html">Web &amp; App Design</a>
+        <a href="../portfolio.html">PCB &amp; CAD Design</a>
+        <a href="../portfolio.html">3D Printing</a>
+        <a href="../data_destruction.html">Data Destruction</a>
+      </div>
+      <div class="tfoot-col">
+        <h5>Company</h5>
+        <a href="../service-areas.html">Service Areas</a>
+        <a href="../how_support_works.html">How Support Works</a>
+        <a href="../portfolio.html">Portfolio</a>
+        <a href="index.html">Blog</a>
+        <a href="../pricing_sheet.html">Pricing</a>
+        <a href="../contact.html">Contact</a>
+      </div>
+      <div class="tfoot-col">
+        <h5>Get Started</h5>
+        <a href="../make_ticket.html">Make a Ticket</a>
+        <a href="../pay_invoice.html">Pay Invoice</a>
+        <a href="../assessment.html">IT Assessment</a>
+        <a href="../how_support_works.html">How Support Works</a>
+      </div>
+    </div>
+    <div class="tfoot-bar">
+      <span>&copy; 2026 Tevis Engineering Solutions, LLC &middot; Cleveland, OH</span>
+      <div class="tfoot-social">
+        <a href="https://linkedin.com/in/tylertevis/" aria-label="LinkedIn"><i class="fa-brands fa-linkedin"></i></a>
+        <a href="https://github.com/tevis-engineering-solutions" aria-label="GitHub"><i class="fa-brands fa-github"></i></a>
+        <a href="../contact.html" aria-label="Email"><i class="fa-solid fa-envelope"></i></a>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    (function() {
+      var wrap = document.getElementById('navWrap');
+      var trigger = document.getElementById('navTrigger');
+      var mega = document.getElementById('navMega');
+      function setOpen(o) { mega.classList.toggle('is-open', o); trigger.setAttribute('aria-expanded', o ? 'true' : 'false'); if (window.innerWidth <= 860 && typeof Tawk_API !== 'undefined') { o ? Tawk_API.hideWidget() : Tawk_API.showWidget(); } }
+      var closeTimer;
+      trigger.addEventListener('click', function(e) { e.stopPropagation(); setOpen(!mega.classList.contains('is-open')); });
+      if (window.matchMedia && window.matchMedia('(hover: hover)').matches) {
+        wrap.addEventListener('mouseenter', function() { clearTimeout(closeTimer); setOpen(true); });
+        wrap.addEventListener('mouseleave', function() { closeTimer = setTimeout(function() { setOpen(false); }, 150); });
+        mega.addEventListener('mouseenter', function() { clearTimeout(closeTimer); });
+        mega.addEventListener('mouseleave', function() { closeTimer = setTimeout(function() { setOpen(false); }, 150); });
+      }
+      document.addEventListener('click', function(e) { if (!wrap.contains(e.target)) setOpen(false); });
+      document.addEventListener('keydown', function(e) { if (e.key === 'Escape') setOpen(false); });
+      mega.querySelectorAll('a').forEach(function(a) { a.addEventListener('click', function() { setOpen(false); }); });
+      // Newsletter popup — BUTTONDOWN_USERNAME: replace tevisengineering below
+      var form = document.getElementById('newsletterForm');
+      if (form) {
+        form.addEventListener('submit', function() {
+          window.open('https://buttondown.com/tevisengineering', 'popupwindow', 'scrollbars=yes,width=800,height=600');
+        });
+      }
+    })();
+  </script>
+
+<script type="text/javascript">
+var Tawk_API=Tawk_API||{}, Tawk_LoadStart=new Date();
+(function(){
+var s1=document.createElement("script"),s0=document.getElementsByTagName("script")[0];
+s1.async=true;
+s1.src='https://embed.tawk.to/6a2d769e0f46281c35cc68ee/1jr0pemhe';
+s1.charset='UTF-8';
+s1.setAttribute('crossorigin','*');
+s0.parentNode.insertBefore(s1,s0);
+})();
+</script>
+</body>
+</html>
