@@ -184,6 +184,26 @@
     .catalog-cta p { color: var(--muted); max-width: 640px; margin: 0 auto 1.2rem; }
     .catalog-cta .cta-row { justify-content: center; margin-bottom: 2.2rem; }
     .catalog-cta .mini-note { margin-top: 0; }
+    /* Text version of the rate card */
+    .cat-text { padding: 0 0 2.5rem; }
+    .cat-text h2 { font-family: "Montserrat", sans-serif; text-transform: uppercase; letter-spacing: 0.03em; font-size: 1.4rem; color: #f1f7f2; margin-bottom: 0.6rem; }
+    .cat-text h3 { font-family: "Montserrat", sans-serif; text-transform: uppercase; letter-spacing: 0.08em; font-size: 0.85rem; color: var(--accent, #c89830); margin: 1.4rem 0 0.6rem; }
+    .cat-lede { color: var(--muted); max-width: 760px; margin-bottom: 0.4rem; }
+    .cat-text ul { list-style: none; margin: 0; padding: 0; }
+    .cat-text li { display: grid; grid-template-columns: minmax(0, 15rem) minmax(0, 1fr) auto; gap: 0.25rem 1rem; align-items: baseline; padding: 0.55rem 0; border-bottom: 1px solid var(--line); }
+    .cat-text li b { color: #e4ede5; font-weight: 600; }
+    .cat-text li span { color: var(--muted); font-size: 0.92rem; }
+    .cat-text li em { font-style: normal; color: var(--accent, #c89830); font-weight: 700; white-space: nowrap; }
+    .cat-group { border: 1px solid var(--line); border-radius: 12px; background: var(--card); margin-top: 0.7rem; }
+    .cat-group summary { cursor: pointer; list-style: none; display: flex; justify-content: space-between; align-items: center; gap: 1rem; padding: 0.9rem 1.1rem; font-family: "Montserrat", sans-serif; font-weight: 700; color: #e4ede5; }
+    .cat-group summary::-webkit-details-marker { display: none; }
+    .cat-group summary::after { content: "+"; color: var(--accent, #c89830); font-size: 1.2rem; }
+    .cat-group[open] summary::after { content: "\2212"; }
+    .cat-group summary small { margin-left: auto; color: var(--muted); font-weight: 600; font-size: 0.78rem; }
+    .cat-group > p, .cat-group > ul { padding: 0 1.1rem; }
+    .cat-group > p { color: var(--muted); font-size: 0.92rem; margin: 0 0 0.3rem; }
+    .cat-group > ul { padding-bottom: 0.6rem; }
+    @media (max-width: 640px) { .cat-text li { grid-template-columns: 1fr auto; } .cat-text li span { grid-column: 1 / -1; grid-row: 2; } }
     /* ===== TES NAV ===== */
     .tnav-bar { position:sticky; top:0; z-index:50; background:rgba(9,18,12,0.9); backdrop-filter:blur(12px); border-bottom:1px solid rgba(74,172,101,0.22); }
     .tnav-inner { display:flex; align-items:center; gap:1.25rem; padding:0.8rem 5%; max-width:1280px; margin:0 auto; }
@@ -259,7 +279,7 @@
 <div class="tnav-bar">
   <div class="tnav-inner">
     <a class="tnav-brand" href="index.html">
-      <img src="assets/logo-mark.png" alt="Tevis Engineering Solutions">
+      <img width="44" height="44" src="assets/logo-mark.png" alt="Tevis Engineering Solutions">
       <span class="bn"><b>Tevis Engineering</b><s>Solutions</s></span>
     </a>
     <div class="tnav-spacer"></div>
@@ -324,6 +344,181 @@
       </div>
       <p class="mini-note">📞 <a href="tel:+12163028486" style="color:var(--blue);">(216)&nbsp;302&#8209;8486</a> &nbsp;&middot;&nbsp; ✉ <a href="mailto:sales@tevisengineering.com" style="color:var(--blue);">sales@tevisengineering.com</a> &nbsp;&middot;&nbsp; Cleveland, Ohio</p>
     </section>
+    <!-- Text version of the rate card. Generated from the poster's own data
+         (assets/services-catalog-poster.html), so the two always agree. Regenerate
+         after re-exporting the poster. -->
+    <section class="container cat-text" aria-labelledby="catTextH">
+      <h2 id="catTextH">Services and Starting Prices</h2>
+      <p class="cat-lede">Tevis Engineering Solutions provides IT support, engineering, software and web services to small businesses and individuals in Cleveland and Northeast Ohio. Every price below is a starting price. Each job is scoped and quoted before work begins.</p>
+      <h3>Most requested</h3>
+      <ul class="cat-spot">
+        <li><b>Quick Fix &amp; Diagnosis</b> <span>Password resets, error triage, fast answers at an hourly rate.</span> <em>From $80/hr</em></li>
+        <li><b>Single-Device Setup</b> <span>A new PC, laptop, or printer configured and ready.</span> <em>From $160</em></li>
+        <li><b>Slow PC Tune-Up</b> <span>Cleanup and tuning for sluggish machines — with honest upgrade advice when hardware is past its prime.</span> <em>From $160</em></li>
+        <li><b>Virus &amp; Malware Removal</b> <span>Threats removed, system restored and hardened.</span> <em>From $160</em></li>
+        <li><b>Data Wipe + Certificate</b> <span>NIST-aligned drive sanitization with proof, for compliance-driven organizations.</span> <em>From $160</em></li>
+        <li><b>Data Backup</b> <span>3-2-1 backup — local and cloud copies to prevent disaster.</span> <em>From $200</em></li>
+        <li><b>Senior Tech Tutoring</b> <span>Patient one-on-one help, per session.</span> <em>$80–$160 / session</em></li>
+        <li><b>3D Print-Ready File</b> <span>You supply the model; we print it.</span> <em>From $40 + material</em></li>
+        <li><b>Procurement &amp; Management</b> <span>Buy your hardware, software, and services through us — we handle sourcing, setup, and warranty tracking.</span> <em>Request a quote</em></li>
+        <li><b>Website Hosting &amp; Management</b> <span>Reliable hosting with updates, backups, and monitoring — tiered plans to fit your site.</span> <em>Tiered — request a quote</em></li>
+      </ul>
+      <details class="cat-group">
+        <summary><span>Setup &amp; Deployment</span><small>7 services</small></summary>
+        <p>Desktops, networks, Microsoft 365, phone systems, and smart-home or 3D-printer commissioning — installed right the first time.</p>
+        <ul>
+          <li><b>Single Device Setup</b> <span>Unboxed, configured, and ready to work on day one</span> <em>From $160</em></li>
+          <li><b>Workstation Deployment</b> <span>1–3 devices set up identically and ready to go</span> <em>From $400</em></li>
+          <li><b>Multi-Device Rollout</b> <span>4–10 devices deployed consistently across your team</span> <em>From $800</em></li>
+          <li><b>Network &amp; Wi-Fi Optimization</b> <span>Faster, more reliable coverage in every corner</span> <em>From $300</em></li>
+          <li><b>Azure / Microsoft 365 Tenant Setup</b> <span>A secure, properly licensed cloud foundation</span> <em>From $600</em></li>
+          <li><b>Phone Tree / RingCentral System</b> <span>A professional phone system that never drops a caller</span> <em>From $400</em></li>
+          <li><b>Smart Home / 3D Printer Commissioning</b> <span>Dialed-in and ready to run from the first job</span> <em>From $200</em></li>
+        </ul>
+      </details>
+      <details class="cat-group">
+        <summary><span>Troubleshooting &amp; Repair</span><small>7 services</small></summary>
+        <p>From mystery slowdowns to virus cleanup and data recovery — diagnosed and fixed.</p>
+        <ul>
+          <li><b>Quick Diagnosis / Password Reset</b> <span>Remote or on-site triage to pinpoint the issue fast</span> <em>From $80</em></li>
+          <li><b>Slow PC Optimization &amp; Cleanup</b> <span>Startup, disk, and junk cleanup with trusted tuning tools</span> <em>From $160</em></li>
+          <li><b>Virus / Malware Removal</b> <span>Deep scans with Malwarebytes and enterprise-grade tools</span> <em>From $160</em></li>
+          <li><b>Hardware Diagnosis &amp; Repair</b> <span>Component testing and sourcing for dependable parts</span> <em>From $200</em></li>
+          <li><b>Data Backup &amp; Restore</b> <span>Secure local and cloud backups via Backblaze or OneDrive</span> <em>From $200</em></li>
+          <li><b>Wi-Fi / Connectivity Troubleshooting</b> <span>Signal mapping and router tuning for stable coverage</span> <em>From $100</em></li>
+          <li><b>Major System Recovery</b> <span>Drive recovery and full OS rebuild when data is at risk</span> <em>From $400</em></li>
+        </ul>
+      </details>
+      <details class="cat-group">
+        <summary><span>Automation &amp; Efficiency</span><small>6 services</small></summary>
+        <p>Custom scripts, Excel tools, call trees, and AI deployments that do the busywork for you.</p>
+        <ul>
+          <li><b>Single-Task Automation Script</b> <span>Automate a repetitive chore and reclaim hours each week</span> <em>From $200</em></li>
+          <li><b>Excel Macro / Data Tool</b> <span>Turn manual spreadsheet work into one-click reports</span> <em>From $300</em></li>
+          <li><b>Multi-Step Workflow Automation</b> <span>Let data move between your apps on its own, error-free</span> <em>From $600</em></li>
+          <li><b>RingCentral Call Tree / IVR</b> <span>Route every caller to the right place, automatically</span> <em>From $400</em></li>
+          <li><b>AI Tool Selection &amp; Deployment</b> <span>Put the right AI tools to work without the guesswork</span> <em>From $400</em></li>
+          <li><b>Business Process Redesign + Automation</b> <span>Rebuild a slow process around automation that scales</span> <em>Request a quote</em></li>
+        </ul>
+      </details>
+      <details class="cat-group">
+        <summary><span>IT Consulting</span><small>6 services</small></summary>
+        <p>Strategy, roadmaps, audits, and budgets — clear direction for your technology.</p>
+        <ul>
+          <li><b>Technical Consultation</b> <span>Expert answers up front — credited 100% to your project</span> <em>$50 / hr</em></li>
+          <li><b>Workflow Efficiency Audit</b> <span>Pinpoint the bottlenecks quietly costing you time and money</span> <em>From $400</em></li>
+          <li><b>Technology Strategy &amp; Roadmap</b> <span>A clear plan so tech spending follows your goals</span> <em>From $600</em></li>
+          <li><b>Cloud Migration Planning</b> <span>Move to the cloud without downtime or surprises</span> <em>From $600</em></li>
+          <li><b>Hardware Spec &amp; Procurement Plan</b> <span>Buy the right gear once, at the right price</span> <em>From $300</em></li>
+          <li><b>Small Business Tech Budget Plan</b> <span>Predictable tech spending with no surprise costs</span> <em>From $400</em></li>
+        </ul>
+      </details>
+      <details class="cat-group">
+        <summary><span>3D Printing &amp; CAD Design</span><small>7 services</small></summary>
+        <p>Custom design, functional parts, and small-batch production. Material is always quoted separately.</p>
+        <ul>
+          <li><b>Print-Ready File</b> <span>You supply the STL; we print and finish it</span> <em>From $40 + material</em></li>
+          <li><b>Custom CAD Design</b> <span>Brackets, enclosures, and mounts from your specs</span> <em>From $200 + material</em></li>
+          <li><b>Functional Part / Replacement</b> <span>Recreate a broken or discontinued part</span> <em>From $400 + material</em></li>
+          <li><b>Complex / Multi-Part Assembly</b> <span>Tight tolerances and moving parts</span> <em>From $800 + material</em></li>
+          <li><b>Prototype Iteration</b> <span>Design–print–test loops before production</span> <em>From $600 + material</em></li>
+          <li><b>Small Batch Production</b> <span>Short runs of 5–25 finished units</span> <em>Request a quote</em></li>
+          <li><b>Printer Setup &amp; Calibration</b> <span>Dialed in for clean, reliable prints</span> <em>From $100</em></li>
+        </ul>
+      </details>
+      <details class="cat-group">
+        <summary><span>Hardware Design</span><small>2 services</small></summary>
+        <p>Custom electronics and mechanical engineering — from circuit boards to the housings that hold them.</p>
+        <ul>
+          <li><b>Circuit Board Design</b> <span>Schematic capture and board layout, ready for fabrication</span> <em>Request a quote</em></li>
+          <li><b>Mechanical Design</b> <span>Precision-fit enclosures, brackets, and mounts for your build</span> <em>Request a quote</em></li>
+        </ul>
+      </details>
+      <details class="cat-group">
+        <summary><span>Cybersecurity &amp; Home Support</span><small>6 services</small></summary>
+        <p>Antivirus, backups, smart-home setup, and patient help for everyday users.</p>
+        <ul>
+          <li><b>Antivirus / Backup Setup</b> <span></span> <em>From $100</em></li>
+          <li><b>Security Baseline Audit</b> <span>Home or small business</span> <em>From $200</em></li>
+          <li><b>Senior Tech Tutoring</b> <span>Per session</span> <em>$80–$160</em></li>
+          <li><b>Video Calling / Streaming Setup</b> <span>Walkthrough, tailored instructions, and a test call</span> <em>From $100</em></li>
+          <li><b>Smart Home Setup &amp; Integration</b> <span>Google Home, Nest, Alexa, smart locks &amp; more</span> <em>From $200</em></li>
+          <li><b>Monthly Support Plan Onboarding</b> <span>Ask about ongoing plans</span> <em>Included in plan</em></li>
+        </ul>
+      </details>
+      <details class="cat-group">
+        <summary><span>Data Destruction</span><small>5 services</small></summary>
+        <p>NIST SP 800-88 media sanitization with chain-of-custody and certificates — audit-ready records.</p>
+        <ul>
+          <li><b>Single Drive Wipe</b> <span>Drive securely erased to NIST standards</span> <em>From $55</em></li>
+          <li><b>Drive Wipe + Certificate of Destruction</b> <span>Erased, plus a signed certificate for your records</span> <em>From $110</em></li>
+          <li><b>Multi-Device Batch</b> <span>3–10 drives wiped with one audit-ready report</span> <em>From $210</em></li>
+          <li><b>Physical Destruction + Documentation</b> <span>Drive destroyed with photo proof and paperwork</span> <em>From $70</em></li>
+          <li><b>Full Decommission</b> <span>Wiped, documented, and responsibly disposed</span> <em>From $210</em></li>
+        </ul>
+      </details>
+      <details class="cat-group">
+        <summary><span>Knowledge Transfer</span><small>6 services</small></summary>
+        <p>Capture the workflows, equipment know-how, and legacy systems your business depends on — so a dated ERP, a specialized machine, or a process living in one person’s head can be documented and run by anyone you hire.</p>
+        <ul>
+          <li><b>Single Process Document (SOP)</b> <span>A step-by-step runbook anyone can follow</span> <em>Request a quote</em></li>
+          <li><b>Onboarding Guide</b> <span>Get new hires productive in days, not weeks</span> <em>Request a quote</em></li>
+          <li><b>IT Environment Documentation</b> <span>Your network, assets, and logins in one record</span> <em>Request a quote</em></li>
+          <li><b>Tribal Knowledge Capture</b> <span>Save what is stuck in one expert’s head</span> <em>Request a quote</em></li>
+          <li><b>Training Guide with Walkthrough</b> <span>Annotated, screenshot-led steps</span> <em>Request a quote</em></li>
+          <li><b>Knowledge Base Setup</b> <span>A searchable home for all your how-tos</span> <em>From $250</em></li>
+        </ul>
+      </details>
+      <details class="cat-group">
+        <summary><span>Website &amp; Application Design</span><small>6 services</small></summary>
+        <p>Brochure sites to e-commerce and custom portals, plus ongoing care plans.</p>
+        <ul>
+          <li><b>Brochure Website</b> <span>A polished landing site that gets your business found online</span> <em>From $1,250</em></li>
+          <li><b>Business Website</b> <span>A multi-page site with a blog, photo galleries, and contact forms</span> <em>Request a quote</em></li>
+          <li><b>Interactive Website</b> <span>Online booking, newsletters, and customer tools</span> <em>Request a quote</em></li>
+          <li><b>Online Store</b> <span>Sell products online with a catalog, shopping cart, and secure checkout</span> <em>Request a quote</em></li>
+          <li><b>Customer Portal</b> <span>Client logins, dashboards, and custom tools built around your workflow</span> <em>Request a quote</em></li>
+          <li><b>Website Care Plan</b> <span>Updates, backups, and monitoring that keep your site fast and secure</span> <em>From $150 / mo</em></li>
+        </ul>
+      </details>
+      <details class="cat-group">
+        <summary><span>Mobile App Development</span><small>5 services</small></summary>
+        <p>Custom mobile apps for iPhone and Android — from a first proof-of-concept to a polished, app-store-ready product. Every build is scoped carefully and quoted conservatively, so you know exactly what you are getting and where it will live.</p>
+        <ul>
+          <li><b>Discovery Sprint</b> <span>Wireframes, a feature plan, and an honest build / no-build call before you spend on development</span> <em>From $750</em></li>
+          <li><b>Starter App</b> <span>A focused first version on one platform (iPhone or Android), ready to put in front of real users</span> <em>Request a quote</em></li>
+          <li><b>Cross-Device App</b> <span>A single app that runs on both iPhone and Android, published to the App Store and Google Play</span> <em>Request a quote</em></li>
+          <li><b>Full-Featured App</b> <span>Accounts, push notifications, and your core features — launch-ready on both app stores</span> <em>Request a quote</em></li>
+          <li><b>Advanced App</b> <span>Payments, live data, and offline access, engineered to scale on iPhone and Android</span> <em>Request a quote</em></li>
+        </ul>
+      </details>
+      <details class="cat-group">
+        <summary><span>Technology Workshops</span><small>4 services</small></summary>
+        <p>On-site group tech instruction and frustration fixing workshop for your community or organization — senior centers, nonprofits, libraries, teams, and clubs alike. Fixed per-seat and daily rates.</p>
+        <ul>
+          <li><b>2-Hour Workshop</b> <span>$400 / day minimum</span> <em>$35–$50 / seat</em></li>
+          <li><b>4-Hour Half-Day</b> <span>$600 / day minimum</span> <em>$60–$85 / seat</em></li>
+          <li><b>6-Hour Full-Day</b> <span>$800 / day minimum</span> <em>$90–$125 / seat</em></li>
+          <li><b>Recurring Series</b> <span>4+ sessions</span> <em>10–15% off / seat</em></li>
+        </ul>
+      </details>
+      <details class="cat-group">
+        <summary><span>Business Solution Packages</span><small>10 services</small></summary>
+        <p>Fixed-scope, fully documented engagements built on proven TES best practices — repeatable solutions that strengthen your business infrastructure and scale with you.</p>
+        <ul>
+          <li><b>IT Baseline &amp; Stability Package</b> <span>Setup + quarterly health checks</span> <em>undefined</em></li>
+          <li><b>Quarterly IT Health Review</b> <span>Recurring infrastructure check-ups</span> <em>undefined</em></li>
+          <li><b>Security Audit &amp; Gap Report</b> <span>Scorecard + policy starter pack</span> <em>undefined</em></li>
+          <li><b>M365 Migration-in-a-Box</b> <span>Guided email &amp; identity migration</span> <em>undefined</em></li>
+          <li><b>Communication Stack Setup</b> <span>Teams, Zoom, or RingCentral</span> <em>undefined</em></li>
+          <li><b>IoT Deployment Plan</b> <span>Architecture + documentation</span> <em>undefined</em></li>
+          <li><b>Business Data Setup &amp; Cleanup</b> <span>Schema, ETL, and reporting</span> <em>undefined</em></li>
+          <li><b>Process Audit &amp; Automation Plan</b> <span>Prioritized 30/60/90 roadmap</span> <em>undefined</em></li>
+          <li><b>Custom Workflow Automation</b> <span>API &amp; connector builds</span> <em>undefined</em></li>
+          <li><b>Vendor &amp; Subscription Optimization</b> <span>Find and cut wasted spend</span> <em>undefined</em></li>
+        </ul>
+      </details>
+    </section>
   </main>
 
   <!-- NEWSLETTER SIGNUP -->
@@ -365,7 +560,7 @@
   <footer class="tfoot">
     <div class="tfoot-grid">
       <div>
-        <a class="tfoot-brand" href="index.html"><img src="assets/logo-mark.png" alt="TES"><b>Tevis Engineering</b></a>
+        <a class="tfoot-brand" href="index.html"><img width="44" height="44" src="assets/logo-mark.png" alt="TES"><b>Tevis Engineering</b></a>
         <p class="tfoot-blurb">IT Support, Engineering, 3D Design/Printing and tangential services for small businesses and individuals in the Cleveland, Ohio area and beyond.</p>
         <p class="tfoot-nap"><a href="tel:+12163028486">(216)&nbsp;302&#8209;8486</a> &middot; Cleveland,&nbsp;OH</p>
       </div>

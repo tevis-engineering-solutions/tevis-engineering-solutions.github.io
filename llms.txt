@@ -1,0 +1,53 @@
+# Tevis Engineering Solutions
+
+> Veteran-owned IT support, software and engineering firm in Cleveland, Ohio.
+> Managed IT and help desk for small businesses, custom software and websites,
+> and product engineering: PCB design, CAD and mechanical design, 3D printing,
+> and replacement parts. Founded by Tyler Tevis, an Air Force veteran and
+> computer engineer. Not affiliated with TES Engineering, the MEP firm in Westlake.
+
+## What we do
+- Managed IT support and help desk for small businesses, on-site and remote: https://tevisengineering.com/how_support_works.html
+- Engineering services: product design, PCB design, CAD and mechanical design, 3D printing, prototypes and replacement parts: https://tevisengineering.com/engineering-services-cleveland.html
+- Web design, web apps and customer portals: https://tevisengineering.com/website_creation.html
+- Software products: https://tevisengineering.com/software.html
+  - Ohio crash report leads for law firms: https://tevisengineering.com/ohio-crash-report-analysis-tool.html
+  - ShingleAI roof estimate tool for roofers: https://tevisengineering.com/shingleai-roof-estimate-tool.html
+  - 3D Shed Builder for shed dealers: https://tevisengineering.com/3d-shed-builder-tool.html
+  - Website Watch uptime monitoring: https://tevisengineering.com/website-watch.html
+  - Bid management software for Ohio public contracts: https://tevisengineering.com/bid-management-software.html
+  - Cleveland Geo Visualizer, a free map of Cleveland open data: https://tevisengineering.com/cleveland-geo-visualizer.html
+- Data destruction (NIST-aligned media sanitization): https://tevisengineering.com/data_destruction.html
+- Knowledge transfer and IT documentation: https://tevisengineering.com/knowledge_transfer.html
+- Office setup and IT equipment: https://tevisengineering.com/office-setup.html
+- Free website analysis: https://tevisengineering.com/free-website-analysis.html
+
+## Where we work
+Cleveland and Northeast Ohio. On-site service in Cleveland, Lakewood, Parma,
+Westlake, Rocky River, Strongsville, Beachwood, Cleveland Heights, Shaker Heights
+and University Heights. Remote support and design work for clients anywhere.
+Service areas: https://tevisengineering.com/service-areas.html
+
+## Hours
+Monday to Friday, 9am to 6pm Eastern.
+
+## Pricing
+- Standard engineering rate: $80 per hour. Every job is scoped and quoted before work starts.
+- Engineering projects: a $50 per hour technical consultation, credited to the project, then a written statement of work. Projects up to $5,000 bill 50/50; larger projects bill 40/30/30 at milestones.
+- Website Watch: $12 per month or $120 per year per site.
+- Full rate card with starting prices: https://tevisengineering.com/service_catalog.html
+- Pricing sheet: https://tevisengineering.com/pricing_sheet.html
+
+## Contact
+- Phone: (216) 302-8486
+- Email: tyler@tevisengineering.com
+- Sales: sales@tevisengineering.com
+- Support: support@tevisengineering.com
+- Billing: billing@tevisengineering.com
+- Location: Cleveland, Ohio (service area business; no public street address)
+- Contact page: https://tevisengineering.com/contact.html
+- Book a free consultation: https://tevisengineering.com/book.html
+- Submit a support ticket: https://tevisengineering.com/make_ticket.html
+
+## Guides
+- IT tips and guides for small businesses: https://tevisengineering.com/blog/
