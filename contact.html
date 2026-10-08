@@ -375,7 +375,7 @@
           <h2 id="formHeading">Send a Message</h2>
           <p class="lede" id="formLede">Fill this out and it lands in the inbox directly. Expect a reply within one business day.</p>
 
-          <form class="form" id="contactForm" action="https://formspree.io/f/maqvanal" method="POST">
+          <form class="form" id="contactForm" action="https://formspree.io/f/maqvanal" method="POST" data-send-once>
             <div class="form-success" id="formSuccess" role="status">
               <div class="sicon"><i class="fa-solid fa-circle-check"></i></div>
               <h3>Message Sent</h3>
@@ -590,6 +590,8 @@
         success.scrollIntoView({ behavior: 'smooth', block: 'center' });
       }
 
+      form.addEventListener('tes:sent', function (e) { e.preventDefault(); showSuccess(); });
+
       // The Formspree fallback path comes back here with ?submitted=1.
       if (window.location.search.indexOf('submitted=1') !== -1) { showSuccess(); return; }
 
@@ -620,6 +622,7 @@
 
       function fallbackToEmail() {
         try { if (window.turnstile) window.turnstile.reset(); } catch (e) {}
+        if (window.TESFormOnce) TESFormOnce.mark(form);
         form.submit();
       }
 
@@ -698,5 +701,6 @@
   s0.parentNode.insertBefore(s1,s0);
   })();
   </script>
+<script src="assets/js/form-once.js" defer></script>
 </body>
 </html>

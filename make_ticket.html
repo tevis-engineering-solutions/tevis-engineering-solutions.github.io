@@ -315,7 +315,7 @@
 
   <div id="formWrapper">
     <!-- S9: onsubmit moved to addEventListener in <script> block below -->
-    <form id="ticketForm" action="https://formspree.io/f/maqvanal" method="POST">
+    <form id="ticketForm" action="https://formspree.io/f/maqvanal" method="POST" data-send-once data-sent-hide="#formWrapper" data-sent-show="#successCard" data-sent-class="visible">
 
       <!-- Contact Info -->
       <div class="form-card">
@@ -565,10 +565,12 @@
         showTicketSuccess(r.ticket_number);
       } else {
         try { if (window.turnstile) window.turnstile.reset(); } catch (e) {}
+        if (window.TESFormOnce) TESFormOnce.mark(ticketForm);
         ticketForm.submit();
       }
     }).catch(function () {
       try { if (window.turnstile) window.turnstile.reset(); } catch (e) {}
+      if (window.TESFormOnce) TESFormOnce.mark(ticketForm);
       ticketForm.submit();
     });
   }
@@ -610,7 +612,7 @@
     var wrap = document.getElementById('navWrap');
     var trigger = document.getElementById('navTrigger');
     var mega = document.getElementById('navMega');
-    function setOpen(o) { mega.classList.toggle('is-open', o); trigger.setAttribute('aria-expanded', o ? 'true' : 'false'); if (window.innerWidth <= 860 && typeof Tawk_API !== 'undefined') { o ? Tawk_API.hideWidget() : Tawk_API.showWidget(); } }
+    function setOpen(o) { mega.classList.toggle('is-open', o); trigger.setAttribute('aria-expanded', o ? 'true' : 'false'); if (window.innerWidth <= 860 && typeof Tawk_API !== 'undefined' && typeof Tawk_API.hideWidget === 'function') { o ? Tawk_API.hideWidget() : Tawk_API.showWidget(); } }
     var closeTimer;
     trigger.addEventListener('click', function(e) { e.stopPropagation(); setOpen(!mega.classList.contains('is-open')); });
     if (window.matchMedia && window.matchMedia('(hover: hover)').matches) {
@@ -625,16 +627,6 @@
   })();
 </script>
 
-<script type="text/javascript">
-var Tawk_API=Tawk_API||{}, Tawk_LoadStart=new Date();
-(function(){
-var s1=document.createElement("script"),s0=document.getElementsByTagName("script")[0];
-s1.async=true;
-s1.src='https://embed.tawk.to/6a2d769e0f46281c35cc68ee/1jr0pemhe';
-s1.charset='UTF-8';
-s1.setAttribute('crossorigin','*');
-s0.parentNode.insertBefore(s1,s0);
-})();
-</script>
+<script src="assets/js/form-once.js" defer></script>
 </body>
 </html>

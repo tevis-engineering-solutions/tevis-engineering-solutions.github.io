@@ -615,7 +615,7 @@
         <p class="lead">Use this form for invoice corrections, payment confirmation, failed transactions, and billing record updates.</p>
 
         <div id="billingFormWrapper">
-          <form class="support-form" action="https://formspree.io/f/mzdoowdj" method="POST">
+          <form class="support-form" id="billingForm" action="https://formspree.io/f/mzdoowdj" method="POST" data-send-once data-sent-hide="#billingFormWrapper" data-sent-show="#billingSuccessCard" data-sent-class="visible">
             <div>
               <label for="bill-name" style="display:block; font-size:0.8rem; font-weight:700; color:#b4c3dd; margin-bottom:0.25rem;">Full Name <span style="color:#ff6a8e;">*</span></label>
               <input id="bill-name" type="text" name="name" placeholder="Your full name" required autocomplete="name">
@@ -995,7 +995,7 @@
       var wrap = document.getElementById('navWrap');
       var trigger = document.getElementById('navTrigger');
       var mega = document.getElementById('navMega');
-      function setOpen(o) { mega.classList.toggle('is-open', o); trigger.setAttribute('aria-expanded', o ? 'true' : 'false'); if (window.innerWidth <= 860 && typeof Tawk_API !== 'undefined') { o ? Tawk_API.hideWidget() : Tawk_API.showWidget(); } }
+      function setOpen(o) { mega.classList.toggle('is-open', o); trigger.setAttribute('aria-expanded', o ? 'true' : 'false'); if (window.innerWidth <= 860 && typeof Tawk_API !== 'undefined' && typeof Tawk_API.hideWidget === 'function') { o ? Tawk_API.hideWidget() : Tawk_API.showWidget(); } }
       var closeTimer;
       trigger.addEventListener('click', function(e) { e.stopPropagation(); setOpen(!mega.classList.contains('is-open')); });
       if (window.matchMedia && window.matchMedia('(hover: hover)').matches) {
@@ -1009,5 +1009,6 @@
       mega.querySelectorAll('a').forEach(function(a) { a.addEventListener('click', function() { setOpen(false); }); });
     })();
 </script>
+<script src="assets/js/form-once.js" defer></script>
 </body>
 </html>

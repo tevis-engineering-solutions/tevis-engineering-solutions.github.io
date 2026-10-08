@@ -698,7 +698,7 @@
       <div class="req-success suggest-success" id="sugSuccess" hidden>
         <strong>Thanks &mdash; got it.</strong> Suggestions are read the day they arrive. If you left an email, you will hear back when something comes of it.
       </div>
-      <form id="sugForm" class="suggest-form" action="https://formspree.io/f/maqvanal" method="POST">
+      <form id="sugForm" class="suggest-form" action="https://formspree.io/f/maqvanal" method="POST" data-send-once data-sent-show="#sugSuccess">
         <input type="hidden" name="_subject" value="Cleveland Geo Visualizer — Suggestion">
         <input type="hidden" name="_next" value="https://tevisengineering.com/cleveland-geo-visualizer.html?suggested=1#suggest">
         <input type="hidden" name="product" value="Cleveland Geo Visualizer">
@@ -853,7 +853,7 @@
       <div class="req-success" id="reqSuccess" style="display:none;">
         <strong>Thanks &mdash; your request is in.</strong> We'll reply within one business day. For anything urgent, call <a href="tel:+12163028486" class="success-tel">(216)&nbsp;302&#8209;8486</a>.
       </div>
-      <form id="reqForm" class="req-form" action="https://formspree.io/f/maqvanal" method="POST">
+      <form id="reqForm" class="req-form" action="https://formspree.io/f/maqvanal" method="POST" data-send-once data-sent-show="#reqSuccess">
         <input type="hidden" name="_subject" value="Cleveland Geo Visualizer — Quote / Consult Request">
         <input type="hidden" name="_next" value="https://tevisengineering.com/cleveland-geo-visualizer.html?requested=1">
         <input type="hidden" name="product" value="Cleveland Geo Visualizer">
@@ -972,7 +972,7 @@
       var wrap = document.getElementById('navWrap');
       var trigger = document.getElementById('navTrigger');
       var mega = document.getElementById('navMega');
-      function setOpen(o) { mega.classList.toggle('is-open', o); trigger.setAttribute('aria-expanded', o ? 'true' : 'false'); if (window.innerWidth <= 860 && typeof Tawk_API !== 'undefined') { o ? Tawk_API.hideWidget() : Tawk_API.showWidget(); } }
+      function setOpen(o) { mega.classList.toggle('is-open', o); trigger.setAttribute('aria-expanded', o ? 'true' : 'false'); if (window.innerWidth <= 860 && typeof Tawk_API !== 'undefined' && typeof Tawk_API.hideWidget === 'function') { o ? Tawk_API.hideWidget() : Tawk_API.showWidget(); } }
       var closeTimer;
       trigger.addEventListener('click', function(e) { e.stopPropagation(); setOpen(!mega.classList.contains('is-open')); });
       if (window.matchMedia && window.matchMedia('(hover: hover)').matches) {
@@ -1009,7 +1009,7 @@
         fetch(form.action, { method: 'POST', body: new FormData(form), headers: { 'Accept': 'application/json' }, signal: ctl ? ctl.signal : undefined })
           .then(function(r) { if (!r.ok) throw new Error('http ' + r.status); return r.json(); })
           .then(function() { if (timer) clearTimeout(timer); done(); })
-          .catch(function() { if (timer) clearTimeout(timer); busy = false; btn.disabled = false; form.submit(); });
+          .catch(function() { if (timer) clearTimeout(timer); busy = false; btn.disabled = false; if (window.TESFormOnce) TESFormOnce.mark(form); form.submit(); });
       });
     })();
     // Trial/quote request success state (Formspree _next redirect back with ?requested=1)
@@ -1023,16 +1023,6 @@
   </script>
 
   <script src="assets/js/geo-coverage.js" defer></script>
-<script type="text/javascript">
-var Tawk_API=Tawk_API||{}, Tawk_LoadStart=new Date();
-(function(){
-var s1=document.createElement("script"),s0=document.getElementsByTagName("script")[0];
-s1.async=true;
-s1.src='https://embed.tawk.to/6a2d769e0f46281c35cc68ee/1jr0pemhe';
-s1.charset='UTF-8';
-s1.setAttribute('crossorigin','*');
-s0.parentNode.insertBefore(s1,s0);
-})();
-</script>
+<script src="assets/js/form-once.js" defer></script>
 </body>
 </html>

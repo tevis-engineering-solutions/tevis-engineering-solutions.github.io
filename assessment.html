@@ -997,7 +997,7 @@
       var wrap = document.getElementById('navWrap');
       var trigger = document.getElementById('navTrigger');
       var mega = document.getElementById('navMega');
-      function setOpen(o) { mega.classList.toggle('is-open', o); trigger.setAttribute('aria-expanded', o ? 'true' : 'false'); if (window.innerWidth <= 860 && typeof Tawk_API !== 'undefined') { o ? Tawk_API.hideWidget() : Tawk_API.showWidget(); } }
+      function setOpen(o) { mega.classList.toggle('is-open', o); trigger.setAttribute('aria-expanded', o ? 'true' : 'false'); if (window.innerWidth <= 860 && typeof Tawk_API !== 'undefined' && typeof Tawk_API.hideWidget === 'function') { o ? Tawk_API.hideWidget() : Tawk_API.showWidget(); } }
       var closeTimer;
       trigger.addEventListener('click', function(e) { e.stopPropagation(); setOpen(!mega.classList.contains('is-open')); });
       if (window.matchMedia && window.matchMedia('(hover: hover)').matches) {
