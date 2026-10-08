@@ -16,15 +16,15 @@
  * API keys belong in this file.
  */
 var TES_TAGS = {
-  ga4: '',
-  ads: '',
+  ga4: 'G-NQ5EFM8YLR',
+  ads: 'AW-18500915348',
   adsLabels: {
-    generate_lead: '',      // contact, project and product requests, assessment, office setup
-    book_appointment: '',   // a consultation booked on book.html
-    phone_click: '',        // a tap or click on the phone number
-    purchase: '',           // an invoice paid through PayPal
-    begin_checkout: '',     // Website Watch or Ohio Crash checkout started
-    start_trial: '',        // Ohio Crash free trial requested
+    generate_lead: 'TQ5eCOf7mpUdEJSh9vVE',      // contact, project and product requests, assessment, office setup
+    book_appointment: 'iuLCCOr7mpUdEJSh9vVE',   // a consultation booked on book.html
+    phone_click: 'TCVgCO37mpUdEJSh9vVE',        // a tap or click on the phone number
+    purchase: '',           // left empty on purpose: invoice payments are existing clients, not ad conversions
+    begin_checkout: 'OWlwCKS_o5UdEJSh9vVE',     // Website Watch or Ohio Crash checkout started
+    start_trial: '9Y2-CPD7mpUdEJSh9vVE',        // Ohio Crash free trial requested
   },
 };
 
