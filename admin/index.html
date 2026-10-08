@@ -3216,6 +3216,14 @@
       <div id="watchBody"><div class="state">Loading&hellip;</div></div>
     </section>
 
+    <section class="newinv" id="depositPanel" aria-labelledby="depositHead">
+      <div class="sb-titlerow">
+        <h2 id="depositHead">Early-access deposits</h2>
+      </div>
+      <p class="fnote">Refundable deposits from waitlist pages. Money held, not revenue: credit it toward the first bill when the product opens, or refund it here.</p>
+      <div id="depositBody"><div class="state">Loading&hellip;</div></div>
+    </section>
+
     <section class="newinv">
       <h2>Issue a key &mdash; Ohio Crash Report Analysis Tool</h2>
       <form id="keyForm">
@@ -8338,6 +8346,63 @@
         loadWatches();
       });
     });
+
+    var depositBody = document.getElementById('depositBody');
+    function loadDeposits() {
+      return api('/admin/deposits').then(function (r) {
+        depositBody.textContent = '';
+        if (!r.ok) { depositBody.appendChild(el('div', 'sb-empty', 'Could not load deposits.')); return; }
+        var list = r.deposits || [];
+        if (!list.length) { depositBody.appendChild(el('div', 'sb-empty', 'No deposits yet. They appear here when somebody reserves a spot from a waitlist page.')); return; }
+        var wrap = el('div', 'sb-list');
+        var head = el('div', 'sb-listhead');
+        ['Who', 'Product', 'Status', 'Paid', ''].forEach(function (t) { head.appendChild(el('span', null, t)); });
+        wrap.appendChild(head);
+        list.forEach(function (d) { wrap.appendChild(depositRow(d)); });
+        depositBody.appendChild(wrap);
+      });
+    }
+    function depositRow(d) {
+      var item = el('div', 'sb-item');
+      var r = el('div', 'sb-row');
+      var who = el('div', 'sb-who');
+      var ic = el('div', 'sb-ico sm' + (d.status === 'refunded' ? ' off' : ''));
+      ic.appendChild(icon('fa-hand-holding-dollar'));
+      who.appendChild(ic);
+      var nm = el('div', 'sb-name');
+      nm.appendChild(el('b', null, d.company || d.name || d.email));
+      nm.appendChild(el('small', null, [d.name && d.company ? d.name : null, d.email, 'DEP-' + d.id].filter(Boolean).join(' · ')));
+      who.appendChild(nm);
+      r.appendChild(who);
+      var pl = el('div', 'sb-plan');
+      pl.appendChild(el('b', null, money(d.amount_cents)));
+      pl.appendChild(el('small', null, d.list_label));
+      r.appendChild(pl);
+      r.appendChild(el('span', 'sb-pill' + (d.status === 'paid' ? '' : ' off'), d.status === 'paid' ? 'Held' : 'Refunded'));
+      var when = el('div', 'sb-when');
+      when.appendChild(el('b', null, fmtDate(d.paid_at)));
+      when.appendChild(el('small', null, d.status === 'refunded' ? 'refunded ' + fmtDate(d.refunded_at) : 'paid'));
+      r.appendChild(when);
+      var acts = el('div', 'sb-acts');
+      var btn = function (ico, label) { var b = el('button', 'sb-btn'); b.type = 'button'; b.title = label; b.setAttribute('aria-label', label); b.appendChild(icon(ico)); acts.appendChild(b); return b; };
+      if (d.lead_id) btn('fa-user', 'Open the lead').addEventListener('click', function () { location.hash = '#l=' + d.lead_id; });
+      if (d.status === 'paid') {
+        var rf = btn('fa-rotate-left', 'Refund through PayPal');
+        rf.addEventListener('click', function () {
+          if (!confirm('Refund ' + money(d.amount_cents) + ' to ' + d.email + ' through PayPal? They are emailed that it was refunded.')) return;
+          rf.disabled = true;
+          api('/admin/deposits/' + d.id + '/refund', { method: 'POST', body: {} }).then(function (x) {
+            rf.disabled = false;
+            if (!x.ok) { toast(x.error === 'refund_failed' ? 'PayPal refused the refund: ' + (x.detail || '') : 'Could not refund (' + (x.error || 'error') + ')'); return; }
+            toast('Refunded DEP-' + d.id);
+            loadDeposits();
+          });
+        });
+      }
+      r.appendChild(acts);
+      item.appendChild(r);
+      return item;
+    }
 
     function loadWatches() {
       return api('/admin/watches').then(function (r) {
@@ -20538,7 +20603,7 @@
       contracting: { view: 'viewContracting', nav: 'navContracting', load: loadContracting, always: true },
       projects: { view: 'viewProjects', nav: 'navProjects', load: loadProjects, always: true },
       marketing: { view: 'viewMarketing', nav: 'navMarketing', load: function () { mkLoadMode(); }, always: true },
-      keys: { view: 'viewKeys', nav: 'navKeys', load: function () { loadSubscriptions(); loadWatches(); return loadKeys(); }, always: true }
+      keys: { view: 'viewKeys', nav: 'navKeys', load: function () { loadSubscriptions(); loadWatches(); loadDeposits(); return loadKeys(); }, always: true }
     };
     var loaded = {};
     var suppressHashPush = false;

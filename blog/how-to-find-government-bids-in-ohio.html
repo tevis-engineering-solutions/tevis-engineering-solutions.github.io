@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>How to Find Government Bids in Ohio | Tevis Engineering</title>
+  <meta name="description" content="Where Ohio public bids are posted: City of Cleveland, Cuyahoga County, OhioBuys, SAM.gov and aggregators, and how a small vendor can check them all each week.">
+  <meta name="author" content="Tyler Tevis, Tevis Engineering Solutions">
+  <meta property="og:type" content="article">
+  <meta property="og:site_name" content="Tevis Engineering Solutions">
+  <meta property="og:locale" content="en_US">
+  <meta property="og:url" content="https://tevisengineering.com/blog/how-to-find-government-bids-in-ohio.html">
+  <meta property="og:title" content="How to Find Government Bids in Ohio | Tevis Engineering">
+  <meta property="og:description" content="Where Ohio city, county, state and federal bids are posted, and how to check them all without losing a day each week.">
+  <meta property="og:image" content="https://tevisengineering.com/assets/og-image.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="Ohio government bids and bid management software | Tevis Engineering Solutions">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="How to Find Government Bids in Ohio">
+  <meta name="twitter:description" content="Where Ohio city, county, state and federal bids are posted, and how to check them all without losing a day each week.">
+  <meta name="twitter:image" content="https://tevisengineering.com/assets/og-image.png">
+  <link rel="canonical" href="https://tevisengineering.com/blog/how-to-find-government-bids-in-ohio.html">
+  <link rel="icon" type="image/png" href="../assets/favicon.png">
+  <link rel="apple-touch-icon" href="../assets/apple-touch-icon.png">
+  <meta name="theme-color" content="#0d1710">
+  <meta http-equiv="X-Content-Type-Options" content="nosniff">
+  <meta name="referrer" content="strict-origin-when-cross-origin">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Montserrat:wght@500;700;800&display=swap" media="print" data-async-css><noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Montserrat:wght@500;700;800&display=swap"></noscript>
+  <style>
+    :root {
+      --bg: #0d1710;
+      --card: #142019;
+      --text: #e4ede5;
+      --muted: #8aa48d;
+      --line: #2c4232;
+      --blue: #4aac65;
+      --accent: #c89830;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: "Inter", "Segoe UI", system-ui, sans-serif;
+      background: radial-gradient(circle at top, #172b1c 0%, var(--bg) 45%, #060e08 100%);
+      color: var(--text);
+      line-height: 1.7;
+    }
+    .container { width: min(1200px, 92%); margin: 0 auto; }
+
+    .topbar { position: sticky; top: 0; z-index: 20; backdrop-filter: blur(8px); background: rgba(10,20,14,0.92); border-bottom: 1px solid rgba(74,172,101,0.2); }
+    .topbar-inner { display: flex; align-items: center; justify-content: space-between; gap: 1rem; padding: 1.05rem 5%; width: 100%; max-width: none; box-sizing: border-box; margin: 0; position: relative; }
+    .brand { display: inline-flex; align-items: center; gap: 0.95rem; color: var(--text); text-decoration: none; }
+    .logo-slot { width: 44px; height: 44px; border-radius: 10px; object-fit: contain; background: transparent; border: 1px solid rgba(255,255,255,0.12); flex-shrink: 0; display: block; }
+    .logo-lockup { display: flex; flex-direction: column; gap: 0; font-family: "Montserrat",sans-serif; text-transform: uppercase; letter-spacing: 0.08em; white-space: nowrap; }
+    .logo-primary { font-size: 1rem; font-weight: 800; color: #fff; line-height: 1.15; }
+    .logo-secondary { font-size: 0.72rem; font-weight: 500; color: #d8e6ff; line-height: 1.15; }
+
+    .nav-center { position: relative; flex: 1; display: flex; justify-content: center; align-items: center; }
+    .menu-btn { display: inline-flex; align-items: center; gap: .45rem; padding: .52rem 1.1rem; border-radius: 999px; border: 1px solid rgba(74,172,101,.28); background: rgba(74,172,101,.08); color: #d4edd7; font-family: inherit; font-size: .93rem; font-weight: 600; cursor: pointer; transition: background .2s ease; white-space: nowrap; line-height: 1; }
+    .menu-btn:hover, .menu-btn[aria-expanded="true"] { background: rgba(74,172,101,.18); }
+    .menu-btn .chevron { transition: transform .2s ease; flex-shrink: 0; display: block; }
+    .menu-btn[aria-expanded="true"] .chevron { transform: rotate(180deg); }
+    .mega-drop { position: absolute; top: calc(100% + .6rem); left: 50%; transform: translateX(-50%) translateY(-6px); width: min(680px,94vw); background: #112018; border: 1px solid rgba(74,172,101,.22); border-radius: 16px; box-shadow: 0 24px 60px rgba(0,0,0,.75); padding: 1.35rem 1.35rem 1.05rem; display: grid; grid-template-columns: 1fr 1fr; gap: .2rem 1.5rem; z-index: 1000; opacity: 0; pointer-events: none; transition: opacity .18s ease, transform .18s ease; text-align: left; }
+    .mega-drop::before { content: ''; position: absolute; top: -.7rem; left: 0; right: 0; height: .7rem; }
+    .mega-drop.is-open { opacity: 1; pointer-events: all; transform: translateX(-50%) translateY(0); }
+    .mega-col-head { font-family: "Montserrat",sans-serif; font-size: .67rem; font-weight: 800; text-transform: uppercase; letter-spacing: .1em; color: #c89830; padding: 0 .55rem .4rem; margin-bottom: .2rem; border-bottom: 1px solid rgba(74,172,101,.14); }
+    .mega-link { display: flex; align-items: flex-start; gap: .65rem; padding: .5rem .55rem; border-radius: 9px; text-decoration: none; transition: background .14s ease; }
+    .mega-link:hover { background: rgba(74,172,101,.09); }
+    .mega-link-icon { width: 28px; height: 28px; min-width: 28px; border-radius: 7px; background: rgba(74,172,101,.1); border: 1px solid rgba(74,172,101,.18); display: flex; align-items: center; justify-content: center; color: #c89830; }
+    .mega-link-icon svg { width: 13px; height: 13px; }
+    .mega-link-text { display: flex; flex-direction: column; gap: .1rem; }
+    .mega-link-title { font-size: .86rem; font-weight: 600; color: #e6eefb; line-height: 1.25; }
+    .mega-link-desc { font-size: .73rem; color: #6a8ba8; line-height: 1.3; }
+    .nav-right { display: flex; align-items: center; gap: .65rem; flex-shrink: 0; }
+    .nav-support-btn { display: inline-flex; align-items: center; gap: .4rem; padding: .54rem 1rem; border-radius: 999px; background: linear-gradient(135deg,#c89830,#e0b840); color: #fff; font-family: "Montserrat",sans-serif; font-size: .77rem; font-weight: 700; text-transform: uppercase; letter-spacing: .04em; text-decoration: none; border: 1px solid rgba(255,255,255,.18); transition: transform .2s ease, filter .2s ease; white-space: nowrap; }
+    .nav-support-btn:hover { transform: translateY(-1px); filter: brightness(1.08); }
+    .nav-support-btn svg { width: 13px; height: 13px; flex-shrink: 0; }
+    .nav-hamburger { display: none; flex-direction: column; justify-content: center; gap: 5px; width: 40px; height: 40px; border: 1px solid rgba(255,255,255,.22); border-radius: 10px; background: rgba(0,0,0,.3); cursor: pointer; padding: 0 9px; flex-shrink: 0; }
+    .nav-hamburger span { display: block; width: 100%; height: 2px; background: #fff; border-radius: 2px; transition: transform .2s ease, opacity .2s ease; }
+    .nav-hamburger.is-open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+    .nav-hamburger.is-open span:nth-child(2) { opacity: 0; }
+    .nav-hamburger.is-open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+    .mobile-nav { display: none; flex-direction: column; gap: .22rem; padding: .55rem 1rem .8rem; border-top: 1px solid rgba(74,172,101,.12); width: 100%; position: relative; z-index: 40; }
+    .mobile-nav.is-open { display: flex; }
+    .mobile-nav a { display: block; padding: .64rem .82rem; border-radius: 9px; color: #d4edd7; text-decoration: none; font-size: .93rem; font-weight: 600; transition: background .14s ease; }
+    .mobile-nav a:hover { background: rgba(74,172,101,.1); }
+    @media (max-width: 768px) { .nav-center { display: none; } .nav-hamburger { display: flex; } .mega-drop { position: fixed; left: 0; right: 0; width: 100vw; transform: translateY(-6px); border-radius: 0 0 16px 16px; max-height: 80vh; overflow-y: auto; overflow-x: hidden; } .mega-drop.is-open { transform: translateY(0); } }
+
+    .article-wrap { max-width: 740px; margin: 0 auto; padding: 3rem 0 4rem; }
+    .back-link { display: inline-flex; align-items: center; gap: 0.4rem; color: var(--blue); text-decoration: none; font-size: 0.88rem; font-weight: 600; margin-bottom: 2rem; transition: opacity 0.2s; }
+    .back-link:hover { opacity: 0.75; }
+    .article-category { display: inline-block; font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.09em; padding: 0.22rem 0.6rem; border-radius: 999px; margin-bottom: 1rem; background: rgba(74,172,101,0.15); color: #6dc882; border: 1px solid rgba(74,172,101,0.25); }
+    .article-wrap h1 { font-family: "Montserrat",sans-serif; font-size: clamp(1.6rem,4vw,2.2rem); font-weight: 800; line-height: 1.2; color: #ffffff; margin-bottom: 1rem; }
+    .article-meta { display: flex; align-items: center; gap: 1rem; color: #5e7a9a; font-size: 0.85rem; margin-bottom: 2.2rem; padding-bottom: 1.5rem; border-bottom: 1px solid var(--line); flex-wrap: wrap; }
+    .article-meta strong { color: var(--muted); }
+    .article-body h2 { font-family: "Montserrat",sans-serif; font-size: 1.2rem; font-weight: 700; color: #d4e8ff; margin-top: 2.2rem; margin-bottom: 0.75rem; }
+    .article-body p { color: var(--muted); margin-bottom: 1.2rem; font-size: 1rem; }
+    .article-body ul, .article-body ol { color: var(--muted); margin-bottom: 1.2rem; padding-left: 1.4rem; }
+    .article-body li { margin-bottom: 0.5rem; }
+    .article-body strong { color: #c8deff; }
+    .callout { background: rgba(74,172,101,0.08); border: 1px solid rgba(74,172,101,0.25); border-left: 3px solid var(--blue); border-radius: 10px; padding: 1rem 1.2rem; margin: 1.6rem 0; }
+    .callout p { margin-bottom: 0; color: #b8d4f5; font-size: 0.96rem; }
+    .callout strong { color: #d4e8ff; }
+    .compare-table { width: 100%; border-collapse: collapse; margin: 1.6rem 0; font-size: 0.93rem; }
+    .compare-table th { background: rgba(74,172,101,0.12); color: #d4e8ff; font-family: "Montserrat",sans-serif; font-size: 0.78rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; padding: 0.7rem 1rem; text-align: left; border-bottom: 1px solid rgba(74,172,101,0.2); }
+    .compare-table td { padding: 0.65rem 1rem; border-bottom: 1px solid rgba(255,255,255,0.06); color: var(--muted); vertical-align: top; }
+    .compare-table tr:last-child td { border-bottom: none; }
+    .compare-table td:first-child { color: #c8deff; font-weight: 600; }
+    .article-cta { margin-top: 3rem; padding: 1.8rem; background: var(--card); border: 1px solid var(--line); border-radius: 16px; text-align: center; }
+    .article-cta h3 { font-family: "Montserrat",sans-serif; font-size: 1.1rem; font-weight: 700; color: #e8f2ff; margin-bottom: 0.5rem; }
+    .article-cta p { font-size: 0.92rem; color: var(--muted); margin-bottom: 1.2rem; }
+    .btn-primary { display: inline-block; text-decoration: none; border-radius: 999px; padding: 0.75rem 1.4rem; font-weight: 700; font-family: "Montserrat",sans-serif; font-size: 0.86rem; text-transform: uppercase; letter-spacing: 0.04em; background: linear-gradient(135deg,var(--blue),#6dc882); color: #06101f; border: none; transition: filter 0.2s ease, transform 0.2s ease; }
+    .btn-primary:hover { filter: brightness(1.08); transform: translateY(-1px); }
+    footer { margin: 2.5rem 0 2rem; color: #8ea3c4; font-size: 0.93rem; }
+    footer a { color: #c89830; text-decoration: none; margin: 0 0.3rem; }
+    footer a:hover { text-decoration: underline; }
+
+    @media (max-width: 600px) {
+      .topbar-inner { flex-wrap: wrap; }
+      .brand { width: 100%; }
+      .nav-right { width: 100%; justify-content: space-between; }
+      .nav-hamburger { display: flex; }
+      .nav-support-btn { display: inline-flex; }
+      .logo-lockup { flex-direction: column; gap: 0.1rem; white-space: normal; align-items: flex-start; }
+      .logo-primary { font-size: 1.05rem; }
+      .logo-secondary { font-size: 0.7rem; }
+      body { overflow-x: hidden; }
+      .compare-table { font-size: 0.82rem; }
+      .compare-table th, .compare-table td { padding: 0.5rem 0.65rem; }
+    }
+    @media (max-width: 480px) { .nav-support-btn { display: none; } .article-wrap { padding: 1.8rem 0 3rem; } }
+
+    /* Newsletter signup */
+    .newsletter-section { background: var(--card); border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); padding: 3.5rem 5%; margin-top: 4rem; }
+    .newsletter-inner { max-width: 640px; margin: 0 auto; text-align: center; }
+    .newsletter-heading { font-family: "Montserrat", sans-serif; font-size: 1.5rem; font-weight: 700; color: var(--text); margin: 0 0 0.5rem; text-transform: uppercase; letter-spacing: 0.04em; }
+    .newsletter-sub { color: var(--muted); font-size: 0.95rem; margin: 0 0 1.75rem; }
+    .newsletter-form { display: flex; gap: 0.6rem; justify-content: center; flex-wrap: wrap; }
+    .newsletter-input { flex: 1 1 220px; max-width: 320px; padding: 0.7rem 1rem; border-radius: 8px; border: 1px solid var(--line); background: var(--bg); color: var(--text); font-size: 0.95rem; font-family: "Inter", sans-serif; outline: none; transition: border-color 0.2s; }
+    .newsletter-input:focus { border-color: var(--blue); }
+    .newsletter-btn { padding: 0.7rem 1.5rem; border-radius: 8px; border: none; background: var(--blue); color: #0d1710; font-family: "Montserrat", sans-serif; font-weight: 700; font-size: 0.9rem; cursor: pointer; text-transform: uppercase; letter-spacing: 0.05em; transition: opacity 0.2s; }
+    .newsletter-btn:hover { opacity: 0.85; }
+    .newsletter-fine { margin-top: 1rem; font-size: 0.78rem; color: var(--muted); }
+    .newsletter-fine a { color: var(--muted); text-decoration: underline; }
+    .article-newsletter-cta { background: var(--card); border-left: 3px solid var(--blue); border-radius: 0 8px 8px 0; padding: 1rem 1.25rem; margin: 2.5rem 0 1rem; font-size: 0.95rem; color: var(--muted); }
+    .article-newsletter-cta strong { color: var(--text); }
+    .article-newsletter-link { color: var(--blue); text-decoration: none; font-weight: 600; }
+    .article-newsletter-link:hover { text-decoration: underline; }
+    /* ==================== NAV ==================== */
+    .tnav-bar{position:sticky;top:0;z-index:50;background:rgba(9,18,12,0.9);backdrop-filter:blur(12px);border-bottom:1px solid rgba(74,172,101,0.22);}
+    .tnav-inner{display:flex;align-items:center;gap:1.25rem;padding:0.8rem 5%;max-width:1280px;margin:0 auto;}
+    .tnav-brand{display:flex;align-items:center;gap:0.8rem;cursor:pointer;text-decoration:none;}
+    .tnav-brand img{width:44px;height:44px;border-radius:10px;border:1px solid rgba(255,255,255,0.15);}
+    .tnav-brand .bn{display:flex;flex-direction:column;font-family:'Montserrat','Segoe UI',system-ui,sans-serif;text-transform:uppercase;letter-spacing:0.08em;line-height:1.15;}
+    .tnav-brand .bn b{font-size:1rem;font-weight:800;color:#fff;}
+    .tnav-brand .bn s{font-size:0.7rem;font-weight:500;color:#8aa48d;text-decoration:none;}
+    .tnav-spacer{flex:1;}
+    .tnav-wrap{position:relative;}
+    .tnav-trigger{display:inline-flex;align-items:center;gap:0.5rem;font-family:'Montserrat','Segoe UI',system-ui,sans-serif;text-transform:uppercase;letter-spacing:0.06em;font-weight:700;font-size:0.85rem;color:#c2d2c5;background:transparent;border:1px solid transparent;padding:0.6rem 1rem;border-radius:999px;cursor:pointer;transition:color .2s,background .2s,border-color .2s;}
+    .tnav-wrap:hover .tnav-trigger,.tnav-trigger[aria-expanded="true"]{color:#fff;background:rgba(74,172,101,0.10);border-color:rgba(74,172,101,0.22);}
+    .tnav-chev{transition:transform .25s cubic-bezier(0.22,1,0.36,1);}
+    .tnav-wrap:hover .tnav-chev,.tnav-trigger[aria-expanded="true"] .tnav-chev{transform:rotate(180deg);}
+    .tnav-mega{position:fixed;top:72px;left:50%;width:min(840px,calc(100vw - 32px));max-height:calc(100vh - 92px);overflow-y:auto;background:#142019;border:1px solid #2c4232;border-radius:20px;box-shadow:0 24px 60px rgba(0,0,0,0.55);padding:1.4rem;display:grid;grid-template-columns:1fr 1fr 0.85fr;gap:1.1rem;opacity:0;visibility:hidden;pointer-events:none;transform:translateX(-50%) translateY(8px);transition:opacity .22s cubic-bezier(0.22,1,0.36,1),transform .22s cubic-bezier(0.22,1,0.36,1);z-index:60;}
+    .tnav-mega::before{content:'';position:absolute;top:-22px;left:0;right:0;height:24px;}
+    .tnav-mega.is-open{opacity:1;visibility:visible;pointer-events:auto;transform:translateX(-50%) translateY(0);}
+    .tnav-col-head{font-family:'Montserrat','Segoe UI',system-ui,sans-serif;font-size:0.64rem;font-weight:800;text-transform:uppercase;letter-spacing:0.14em;color:#c89830;margin:0 0 0.55rem;padding-left:0.45rem;}
+    .tnav-link{display:flex;gap:0.7rem;align-items:flex-start;padding:0.5rem;border-radius:12px;cursor:pointer;text-decoration:none;transition:background .18s,transform .18s;}
+    .tnav-link:hover{background:#1c2e22;transform:translateX(3px);}
+    .tnav-ic{width:34px;height:34px;flex-shrink:0;border-radius:9px;background:rgba(74,172,101,0.10);border:1px solid rgba(74,172,101,0.22);color:#4aac65;display:flex;align-items:center;justify-content:center;font-size:0.85rem;transition:background .18s,color .18s;}
+    .tnav-link:hover .tnav-ic{background:#4aac65;color:#0d1710;}
+    .tnav-tt{font-family:'Montserrat','Segoe UI',system-ui,sans-serif;font-weight:700;font-size:0.85rem;color:#e4ede5;line-height:1.2;display:block;}
+    .tnav-dd{font-size:0.73rem;color:#8aa48d;margin-top:2px;line-height:1.3;display:block;}
+    .tnav-cta{background:radial-gradient(110% 120% at 50% 0%,rgba(74,172,101,0.16),transparent 60%),linear-gradient(160deg,#16261d,#0f1c14);border:1px solid rgba(74,172,101,0.22);border-radius:18px;padding:1.3rem 1.1rem;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:0.5rem;}
+    .tnav-cta .star{color:#c89830;font-size:1.3rem;}
+    .tnav-cta .tnav-cta-t{font-weight:700;line-height:inherit;font-family:'Montserrat','Segoe UI',system-ui,sans-serif;text-transform:uppercase;letter-spacing:0.04em;font-size:0.95rem;color:#fff;margin:0.2rem 0 0;}
+    .tnav-cta p{font-size:0.76rem;color:#8aa48d;margin:0 0 0.6rem;line-height:1.45;}
+    .tnav-right{display:flex;align-items:center;gap:0.9rem;}
+    .tnav-sup-btn{display:inline-flex;align-items:center;justify-content:center;gap:0.5rem;font-family:'Montserrat','Segoe UI',system-ui,sans-serif;font-weight:700;text-transform:uppercase;letter-spacing:0.04em;text-decoration:none;border-radius:999px;cursor:pointer;border:2px solid rgba(255,255,255,0.45);padding:8px 18px;font-size:0.78rem;color:#e4ede5;background:transparent;transition:transform 0.2s,border-color 0.2s;}
+    .tnav-sup-btn:hover{transform:translateY(-2px);border-color:#fff;}
+    .tnav-cta-btn{display:inline-flex;align-items:center;justify-content:center;gap:0.5rem;font-family:'Montserrat','Segoe UI',system-ui,sans-serif;font-weight:700;text-transform:uppercase;letter-spacing:0.04em;text-decoration:none;border-radius:999px;cursor:pointer;border:1px solid rgba(255,255,255,0.25);padding:8px 18px;font-size:0.78rem;color:#0d1710;background:linear-gradient(135deg,#c89830,#e0b840);box-shadow:0 10px 20px rgba(200,152,48,0.28);transition:transform 0.2s,filter 0.2s;}
+    .tnav-cta-btn:hover{transform:translateY(-2px);filter:brightness(1.06);}
+    @media(max-width:860px){.tnav-mega{top:68px;left:4vw;right:4vw;width:auto;grid-template-columns:1fr;max-height:calc(100vh - 84px);transform:translateY(8px);}.tnav-mega.is-open{transform:translateY(0);}.tnav-cta,.tnav-brand .bn{display:none;}}
+    @media(max-width:460px){.tnav-inner{gap:0.6rem;padding:0.7rem 4%;}.tnav-trigger{padding:0.55rem 0.75rem;}.tnav-sup-btn span.lbl{display:none;}}
+    /* ==================== FOOTER ==================== */
+    .tfoot{background:#050b07;border-top:1px solid #2c4232;padding:3rem 5% 2rem;}
+    .tfoot-grid{max-width:1280px;margin:0 auto;display:grid;grid-template-columns:1.5fr 1fr 1fr 1fr;gap:2rem;}
+    .tfoot-brand{display:flex;align-items:center;gap:0.7rem;margin-bottom:1rem;cursor:pointer;text-decoration:none;}
+    .tfoot-brand img{width:40px;height:40px;border-radius:9px;}
+    .tfoot-brand b{font-family:'Montserrat','Segoe UI',system-ui,sans-serif;font-weight:800;text-transform:uppercase;letter-spacing:0.06em;color:#fff;font-size:0.95rem;}
+    .tfoot-blurb{color:#8aa48d;font-size:0.9rem;line-height:1.7;max-width:34ch;margin:0 0 1rem;}
+    .tfoot-nap{color:#8aa48d;font-size:0.85rem;line-height:1.7;margin:0 0 1rem;}
+    .tfoot-nap a{color:#8aa48d;text-decoration:none;}
+    .tfoot-nap a:hover{color:#4aac65;}
+    .tfoot-col .tfoot-h{line-height:inherit;font-family:'Montserrat','Segoe UI',system-ui,sans-serif;font-size:0.7rem;font-weight:800;text-transform:uppercase;letter-spacing:0.1em;color:#c89830;margin-bottom:0.9rem;}
+    .tfoot-col a{display:block;color:#8aa48d;text-decoration:none;font-size:0.88rem;padding:0.3rem 0;transition:color 0.2s,transform 0.2s;}
+    .tfoot-col a:hover{color:#4aac65;transform:translateX(3px);}
+    .tfoot-bar{max-width:1280px;margin:2rem auto 0;padding-top:1.5rem;border-top:1px solid #2c4232;display:flex;justify-content:space-between;flex-wrap:wrap;gap:0.5rem;align-items:center;}
+    .tfoot-bar span{color:#8aa48d;font-size:0.82rem;}
+    .tfoot-social{display:flex;gap:1.2rem;}
+    .tfoot-social a{color:#8aa48d;font-size:1.1rem;transition:color 0.2s;}
+    .tfoot-social a:hover{color:#4aac65;}
+    .tfoot-veteran{display:inline-flex;align-items:center;gap:0.45rem;font-family:'Montserrat','Segoe UI',system-ui,sans-serif;font-size:0.78rem;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;padding:6px 12px;border-radius:999px;line-height:1;background:linear-gradient(135deg,#2d6a3f,#3d8a55);border:1px solid rgba(255,255,255,0.18);color:#fff;}
+    @media(max-width:780px){.tfoot-grid{grid-template-columns:1fr 1fr;}}
+    @media(max-width:480px){.tfoot-grid{grid-template-columns:1fr;}}
+    .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); border: 0; }
+      .related-reading { margin-top: 2.5rem; padding: 1.4rem 1.6rem; background: var(--card); border: 1px solid var(--line); border-radius: 14px; }
+    .related-reading h2 { font-family:"Montserrat",sans-serif; font-size:0.8rem; font-weight:800; text-transform:uppercase; letter-spacing:0.1em; color:#c89830; margin:0 0 0.9rem; }
+    .related-reading ul { list-style:none; margin:0; padding:0; }
+    .related-reading li { position:relative; padding-left:1.4rem; margin-bottom:0.6rem; }
+    .related-reading li::before { content:"\2192"; position:absolute; left:0; color:var(--blue); font-weight:700; }
+    .related-reading li a { color:var(--text); text-decoration:none; font-weight:600; font-size:0.98rem; }
+    .related-reading li a:hover { color:var(--blue); text-decoration:underline; }
+    .related-reading .rr-service { margin:1rem 0 0; padding-top:0.9rem; border-top:1px solid var(--line); font-size:0.92rem; color:var(--muted); }
+    .related-reading .rr-service a { color:#c89830; font-weight:700; text-decoration:none; }
+    .related-reading .rr-service a:hover { text-decoration:underline; }
+  </style>
+  <script type="application/ld+json">
+  {"@context":"https://schema.org","@type":"Article","headline":"How to Find Government Bids in Ohio: Where Public Contracts Are Posted","description":"Where Ohio public bids are posted: City of Cleveland, Cuyahoga County, OhioBuys, SAM.gov and aggregators, and how a small vendor can check them all each week.","url":"https://tevisengineering.com/blog/how-to-find-government-bids-in-ohio.html","datePublished":"2026-10-08","dateModified":"2026-10-08","author":{"@type":"Person","name":"Tyler Tevis","url":"https://tevisengineering.com"},"publisher":{"@id":"https://tevisengineering.com/#business"},"image":"https://tevisengineering.com/assets/og-image.png","inLanguage":"en-US","isPartOf":{"@type":"Blog","name":"TES Knowledge Base","url":"https://tevisengineering.com/blog/index.html"}}
+  </script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" media="print" data-async-css><noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"></noscript>
+  <script>document.querySelectorAll('link[data-async-css]').forEach(function (l) { function on() { l.media = 'all'; } if (l.sheet) on(); else l.addEventListener('load', on); });</script>
+  <meta property="article:published_time" content="2026-10-08">
+  <meta property="article:modified_time" content="2026-10-08">
+  <meta property="article:author" content="Tyler Tevis">
+  <meta property="article:section" content="Knowledge Base">
+  <script type="application/ld+json">
+  {"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://tevisengineering.com/"},{"@type":"ListItem","position":2,"name":"Blog","item":"https://tevisengineering.com/blog/index.html"},{"@type":"ListItem","position":3,"name":"How to Find Government Bids in Ohio: Where Public Contracts Are Posted","item":"https://tevisengineering.com/blog/how-to-find-government-bids-in-ohio.html"}]}
+  </script>
+  <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
+</head>
+<body>
+<div class="tnav-bar">
+  <div class="tnav-inner">
+    <a class="tnav-brand" href="../index.html">
+      <img width="44" height="44" src="../assets/logo-mark-88.webp" alt="Tevis Engineering Solutions">
+      <span class="bn"><b>Tevis Engineering</b><s>Solutions</s></span>
+    </a>
+    <div class="tnav-spacer"></div>
+    <div class="tnav-wrap" id="navWrap">
+      <button class="tnav-trigger" id="navTrigger" type="button" aria-haspopup="true" aria-expanded="false">
+        Menu <svg class="tnav-chev" width="10" height="7" viewBox="0 0 10 7" fill="none" aria-hidden="true"><path d="M1 1.5l4 4 4-4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+      <div class="tnav-mega" id="navMega">
+        <div>
+          <p class="tnav-col-head">Services</p>
+          <a class="tnav-link" href="../how_support_works.html"><span class="tnav-ic"><i class="fa-regular fa-circle-question"></i></span><span><b class="tnav-tt">How Support Works</b><span class="tnav-dd">Intake, scope, delivery, and billing</span></span></a>
+          <a class="tnav-link" href="../pricing_sheet.html"><span class="tnav-ic"><i class="fa-solid fa-tag"></i></span><span><b class="tnav-tt">Pricing</b><span class="tnav-dd">Flat rates, hourly, and retainer plans</span></span></a>
+          <a class="tnav-link" href="../portfolio.html"><span class="tnav-ic"><i class="fa-solid fa-briefcase"></i></span><span><b class="tnav-tt">Portfolio</b><span class="tnav-dd">Case studies across IT and engineering</span></span></a>
+          <a class="tnav-link" href="../assessment.html"><span class="tnav-ic"><i class="fa-solid fa-chart-bar"></i></span><span><b class="tnav-tt">IT Assessment</b><span class="tnav-dd">Free 7-question readiness quiz</span></span></a>
+          <a class="tnav-link" href="../website_creation.html"><span class="tnav-ic"><i class="fa-solid fa-globe"></i></span><span><b class="tnav-tt">Web &amp; App Design</b><span class="tnav-dd">Sites, tools, and digital presence</span></span></a>
+          <a class="tnav-link" href="../data_destruction.html"><span class="tnav-ic"><i class="fa-solid fa-shield-halved"></i></span><span><b class="tnav-tt">Data Destruction</b><span class="tnav-dd">NIST-aligned secure media sanitization</span></span></a>
+          <a class="tnav-link" href="../knowledge_transfer.html"><span class="tnav-ic"><i class="fa-solid fa-file-lines"></i></span><span><b class="tnav-tt">Knowledge Transfer</b><span class="tnav-dd">Documentation and process handoffs</span></span></a>
+        </div>
+        <div>
+          <p class="tnav-col-head">Company &amp; Tools</p>
+          <a class="tnav-link" href="../service-areas.html"><span class="tnav-ic"><i class="fa-solid fa-location-dot"></i></span><span><b class="tnav-tt">Service Areas</b><span class="tnav-dd">Cleveland-area cities we support</span></span></a>
+          <a class="tnav-link" href="../engineering-services-cleveland.html"><span class="tnav-ic"><i class="fa-solid fa-microchip"></i></span><span><b class="tnav-tt">Engineering Services</b><span class="tnav-dd">Product, PCB, software &amp; mechanical design</span></span></a>
+          <a class="tnav-link" href="../software.html"><span class="tnav-ic"><i class="fa-solid fa-laptop-code"></i></span><span><b class="tnav-tt">TES Software</b><span class="tnav-dd">Cloud apps &amp; licensed software</span></span></a>
+          <a class="tnav-link" href="../service_catalog.html"><span class="tnav-ic"><i class="fa-solid fa-rectangle-list"></i></span><span><b class="tnav-tt">Services Catalog</b><span class="tnav-dd">Full rate card &amp; line sheet</span></span></a>
+          <a class="tnav-link" href="../contact.html"><span class="tnav-ic"><i class="fa-solid fa-envelope"></i></span><span><b class="tnav-tt">Contact</b><span class="tnav-dd">Send a message or request a quote</span></span></a>
+          <a class="tnav-link" href="../privacy_policy.html"><span class="tnav-ic"><i class="fa-solid fa-file-shield"></i></span><span><b class="tnav-tt">Privacy &amp; Terms</b><span class="tnav-dd">Payment terms and data policy</span></span></a>
+        </div>
+        <div class="tnav-cta">
+          <span class="star"><i class="fa-solid fa-star"></i></span>
+          <p class="tnav-cta-t">Veteran Owned</p>
+          <p>Air Force veteran serving Cleveland businesses with honest IT and engineering.</p>
+          <a class="tnav-cta-btn" href="../make_ticket.html"><i class="fa-solid fa-headset"></i> Get Support Now</a>
+        </div>
+      </div>
+    </div>
+    <div class="tnav-spacer"></div>
+    <div class="tnav-right">
+      <a class="tnav-sup-btn" href="../login.html" aria-label="Customer login"><i class="fa-solid fa-right-to-bracket"></i> <span class="lbl">LOGIN</span></a>
+    </div>
+  </div>
+</div>
+
+  <main class="container">
+    <article class="article-wrap">
+      <a href="index.html" class="back-link">
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true"><path d="M9 2L4 7l5 5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        Back to Knowledge Base
+      </a>
+
+      <span class="article-category">Government Bids</span>
+      <h1>How to Find Government Bids in Ohio: Where Public Contracts Are Posted</h1>
+      <div class="article-meta">
+        <span>By <strong>Tyler Tevis</strong></span>
+        <span>October 2026</span>
+        <span>7 min read</span>
+      </div>
+
+      <div class="article-body">
+        <p>Public agencies in Ohio buy everything from laptops and radios to janitorial supplies and IT services, and most of it is put out for bid. The hard part for a small vendor is not winning the work. It is finding it, because every level of government posts in a different place.</p>
+
+        <p>Here is where Ohio bids actually show up, what each source is good for, and how to check them all without losing a day every week.</p>
+
+        <h2>City Bids: Each City Posts Its Own</h2>
+        <p>Cities publish their own solicitations, usually on the purchasing or finance page of the city website. The <strong>City of Cleveland</strong>, for example, keeps one page of invitations to bid and small-purchase requests for bids, and a separate page for requests for qualifications and proposals.</p>
+        <p>The format tells you how to respond. Sealed invitations to bid are usually delivered on paper by a set time. Smaller requests are often answered by email. Read the posting itself before you start pricing, because the delivery method and the deadline are not negotiable.</p>
+        <p>Suburbs do the same on their own sites, which is why vendors who sell to several cities end up with a long list of bookmarks.</p>
+
+        <h2>County Bids: Online Procurement Portals</h2>
+        <p>Larger counties run bids through an online procurement portal. <strong>Cuyahoga County</strong> lists its open events with a closing date for each, and the documents are attached to the event page. Responding usually means registering as a supplier in the portal, so it is worth doing before a bid you want appears.</p>
+        <p>We cover both Cleveland and Cuyahoga County in more detail in <a href="cuyahoga-county-and-cleveland-bids.html">Bidding on Cuyahoga County and City of Cleveland Contracts</a>.</p>
+
+        <h2>State Bids: OhioBuys</h2>
+        <p>State of Ohio agencies post through <strong>OhioBuys</strong>, the state's procurement system. Listings show a status such as open for bidding and an end date, and some are set aside for certified Minority Business Enterprises, which is marked on the listing.</p>
+        <p>OhioBuys has quirks worth knowing, such as revised solicitations moving to a new link. See <a href="ohiobuys-for-small-vendors.html">OhioBuys for Small Vendors</a>.</p>
+
+        <h2>Federal Bids in Ohio: SAM.gov</h2>
+        <p>Federal agencies post contract opportunities on <strong>SAM.gov</strong>. You can filter by place of performance and by NAICS code, which narrows thousands of notices to the ones in Ohio that match what you sell. Not every notice is a chance to bid: award notices and justifications only report decisions already made. To bid on most federal work a business registers in SAM.gov and receives a Unique Entity ID.</p>
+
+        <h2>Bid Aggregators</h2>
+        <p>Aggregators such as BidNet Direct collect postings from many agencies into one list, including many Ohio cities, schools and authorities. They save time, but they republish what agencies post, so the same bid often appears in two places, and full details may need a paid membership. Always confirm the deadline and documents on the agency's own posting.</p>
+
+        <h2>Use Your NAICS Codes and Keywords</h2>
+        <p>Most sources can be filtered by NAICS code, the six-digit code that describes what a business does. Pick the handful of codes that match your work, then add plain keywords such as "laptop", "camera system" or "network cabling". Keywords catch the bids that were coded loosely, which happens often.</p>
+        <p>Watch for false matches too. A word like "repair" or "installation" appears in road and plumbing jobs as often as in technology work.</p>
+
+        <h2>Make It a Weekly Routine</h2>
+        <p>Most vendors who win public work check their sources on a schedule rather than when they remember. A simple routine:</p>
+        <ul>
+          <li>Check city and county pages twice a week. Short-deadline requests can open and close within days.</li>
+          <li>Run your saved SAM.gov and OhioBuys searches once a week.</li>
+          <li>Write down the closing date and the question deadline the moment you find a bid worth pursuing.</li>
+          <li>Pass on bids quickly. Saying no early leaves time for the ones you can win.</li>
+        </ul>
+
+        <h2>Checking Every Source in One Place</h2>
+        <p>We built software for exactly this because we bid on Cleveland and Cuyahoga County work ourselves. <a href="../bid-management-software.html">Bid Management Software</a> reads City of Cleveland, Cuyahoga County and SAM.gov postings automatically, captures OhioBuys and BidNet listings from your own account, and scores every open bid against your service codes. It is in early access now.</p>
+      </div>
+
+      <aside class="related-reading" aria-label="Related reading">
+        <h2>Related Reading</h2>
+        <ul>
+        <li><a href="ohiobuys-for-small-vendors.html">OhioBuys for Small Vendors: How to Find and Track State of Ohio Bids</a></li>
+        <li><a href="how-to-price-a-government-bid.html">How to Price a Government Bid Line by Line Without Losing Money</a></li>
+        </ul>
+        <p class="rr-service">Bid on Ohio public work? <a href="../bid-management-software.html">See Bid Management Software for Ohio public bids</a>.</p>
+      </aside>
+      <div class="article-newsletter-cta">
+        <strong>Found this useful?</strong> Get practical tools and tips from TES &mdash; straight to your inbox.
+        <a href="#newsletter" class="article-newsletter-link">Subscribe below →</a>
+      </div>
+
+      <div class="article-cta">
+        <h3>Tired of Checking Five Bid Sites?</h3>
+        <p>Bid Management Software reads Ohio city, county and federal postings for you and scores them against what you sell. Join the early-access waitlist free.</p>
+        <a href="../bid-management-software.html#waitlist" class="btn-primary">Get Early Access</a>
+      </div>
+    </article>
+
+    <!-- NEWSLETTER SIGNUP — BUTTONDOWN_USERNAME: replace tevisengineering in the form action below -->
+    <section class="newsletter-section" id="newsletter" aria-label="Email newsletter signup">
+      <div class="newsletter-inner">
+        <div class="newsletter-text">
+          <h2 class="newsletter-heading">IT Tips for Individuals &amp; Small Businesses</h2>
+          <p class="newsletter-sub">Monthly practical advice — no spam, no upsells. Unsubscribe anytime.</p>
+        </div>
+        <form
+          action="https://buttondown.com/api/emails/embed-subscribe/tevisengineering"
+          method="post"
+          target="popupwindow"
+          class="newsletter-form"
+          id="newsletterForm"
+        >
+          <!-- BUTTONDOWN_USERNAME: replace tevisengineering in the action URL above -->
+          <input type="hidden" value="1" name="embed">
+          <label for="newsletterEmail" class="sr-only">Email address</label>
+          <input
+            type="email"
+            id="newsletterEmail"
+            name="email"
+            placeholder="your@email.com"
+            required
+            autocomplete="email"
+            class="newsletter-input"
+          >
+          <button type="submit" class="newsletter-btn">Subscribe</button>
+          <noscript><p style="margin-top:0.75rem;font-size:0.85rem;">To subscribe, visit <a href="https://buttondown.com/tevisengineering" target="_blank" rel="noopener noreferrer">buttondown.email</a> directly.</p></noscript>
+        </form>
+        <p class="newsletter-fine">
+          Powered by <a href="https://buttondown.com/refer/tevisengineering" target="_blank" rel="noopener noreferrer">Buttondown</a>.
+          Read our <a href="../privacy_policy.html" rel="noopener">privacy policy</a>.
+        </p>
+      </div>
+    </section>
+
+  </main>
+  <footer class="tfoot">
+    <div class="tfoot-grid">
+      <div>
+        <a class="tfoot-brand" href="../index.html"><img width="44" height="44" src="../assets/logo-mark-88.webp" alt=""><b>Tevis Engineering</b></a>
+        <p class="tfoot-blurb">IT Support, Engineering, 3D Design/Printing and tangential services for small businesses and individuals in the Cleveland, Ohio area and beyond.</p>
+        <p class="tfoot-nap"><a href="tel:+12163028486">(216)&nbsp;302&#8209;8486</a> &middot; Cleveland,&nbsp;OH</p>
+      </div>
+      <div class="tfoot-col">
+        <p class="tfoot-h">Services</p>
+        <a href="../service_catalog.html">Services Catalog</a>
+        <a href="../pricing_sheet.html">Managed IT Support</a>
+        <a href="../website_creation.html">Web &amp; App Design</a>
+        <a href="../engineering-services-cleveland.html#pcb">PCB &amp; CAD Design</a>
+        <a href="../engineering-services-cleveland.html#printing">3D Printing</a>
+        <a href="../data_destruction.html">Data Destruction</a>
+      </div>
+      <div class="tfoot-col">
+        <p class="tfoot-h">Company</p>
+        <a href="../service-areas.html">Service Areas</a>
+        <a href="../how_support_works.html">How Support Works</a>
+        <a href="../portfolio.html">Portfolio</a>
+        <a href="index.html">Blog</a>
+        <a href="../pricing_sheet.html">Pricing</a>
+        <a href="../contact.html">Contact</a>
+      </div>
+      <div class="tfoot-col">
+        <p class="tfoot-h">Get Started</p>
+        <a href="../make_ticket.html">Make a Ticket</a>
+        <a href="../pay_invoice.html">Pay Invoice</a>
+        <a href="../assessment.html">IT Assessment</a>
+        <a href="../how_support_works.html">How Support Works</a>
+      </div>
+    </div>
+    <div class="tfoot-bar">
+      <span>&copy; 2026 Tevis Engineering Solutions, LLC &middot; Cleveland, OH</span>
+      <div class="tfoot-social">
+        <a href="https://linkedin.com/in/tylertevis/" aria-label="LinkedIn"><i class="fa-brands fa-linkedin"></i></a>
+        <a href="https://github.com/tevis-engineering-solutions" aria-label="GitHub"><i class="fa-brands fa-github"></i></a>
+        <a href="../contact.html" aria-label="Email"><i class="fa-solid fa-envelope"></i></a>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    (function() {
+      var wrap = document.getElementById('navWrap');
+      var trigger = document.getElementById('navTrigger');
+      var mega = document.getElementById('navMega');
+      function setOpen(o) { mega.classList.toggle('is-open', o); trigger.setAttribute('aria-expanded', o ? 'true' : 'false'); if (window.innerWidth <= 860 && typeof Tawk_API !== 'undefined' && typeof Tawk_API.hideWidget === 'function') { o ? Tawk_API.hideWidget() : Tawk_API.showWidget(); } }
+      var closeTimer;
+      trigger.addEventListener('click', function(e) { e.stopPropagation(); setOpen(!mega.classList.contains('is-open')); });
+      if (window.matchMedia && window.matchMedia('(hover: hover)').matches) {
+        wrap.addEventListener('mouseenter', function() { clearTimeout(closeTimer); setOpen(true); });
+        wrap.addEventListener('mouseleave', function() { closeTimer = setTimeout(function() { setOpen(false); }, 150); });
+        mega.addEventListener('mouseenter', function() { clearTimeout(closeTimer); });
+        mega.addEventListener('mouseleave', function() { closeTimer = setTimeout(function() { setOpen(false); }, 150); });
+      }
+      document.addEventListener('click', function(e) { if (!wrap.contains(e.target)) setOpen(false); });
+      document.addEventListener('keydown', function(e) { if (e.key === 'Escape') setOpen(false); });
+      mega.querySelectorAll('a').forEach(function(a) { a.addEventListener('click', function() { setOpen(false); }); });
+      // Newsletter popup — BUTTONDOWN_USERNAME: replace tevisengineering below
+      var form = document.getElementById('newsletterForm');
+      if (form) {
+        form.addEventListener('submit', function() {
+          window.open('https://buttondown.com/tevisengineering', 'popupwindow', 'scrollbars=yes,width=800,height=600');
+        });
+      }
+    })();
+  </script>
+<script src="../assets/js/tes-analytics.js" defer></script>
+</body>
+</html>

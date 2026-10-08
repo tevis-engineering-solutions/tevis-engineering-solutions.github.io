@@ -629,6 +629,12 @@
     .bm-done-ic { font-size:2.6rem; color:#6dc882; margin-bottom:0.6rem; }
     .bm-done h3 { font-family:"Montserrat",sans-serif; color:#fff; margin-bottom:0.4rem; }
     .bm-done p { color:var(--muted); max-width:44ch; margin:0 auto; line-height:1.6; }
+    .bm-dep, .bm-dep-ok { margin-top:1.6rem; padding-top:1.4rem; border-top:1px solid rgba(200,152,48,0.3); display:grid; gap:0.7rem; justify-items:center; }
+    .bm-dep h4, .bm-dep-ok h4 { font-family:"Montserrat",sans-serif; color:#fff; font-size:1.1rem; margin:0; }
+    .bm-dep strong { color:#e0b840; }
+    .bm-dep-go { min-width:220px; }
+    .bm-dep-pay { width:min(340px, 100%); }
+    .bm-dep .bm-err { width:100%; }
 
     .bm-faq { width:min(780px, 100%); margin:0 auto; display:grid; gap:0.7rem; }
     .bm-faq details { border:1px solid var(--line); border-radius:14px; background:rgba(20,32,25,0.72); padding:0 1.2rem; }
@@ -658,10 +664,10 @@
   {"@context":"https://schema.org","@type":"SoftwareApplication","name":"Bid Management Software","applicationCategory":"BusinessApplication","operatingSystem":"Any modern web browser","url":"https://tevisengineering.com/bid-management-software.html","description":"Find, price and track Ohio public bids in one workspace: open City of Cleveland, Cuyahoga County and SAM.gov solicitations scored for your business, line-by-line pricing with live margins, AI first drafts, and tracking from submission to delivery.","provider":{"@id":"https://tevisengineering.com/#business"},"featureList":["Solicitation queue scored by NAICS code and keyword","Line pricing with live margins","Triage checklist and risk flags","AI first draft from the solicitation packet","Response document printed to PDF","Deadline and compliance reminders","Award to project tracking"]}
   </script>
   <script type="application/ld+json">
-  {"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://tevisengineering.com/"},{"@type":"ListItem","position":2,"name":"Software Services","item":"https://tevisengineering.com/software.html"},{"@type":"ListItem","position":3,"name":"Bid Management Software","item":"https://tevisengineering.com/bid-management-software.html"}]}
+  {"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://tevisengineering.com/"},{"@type":"ListItem","position":2,"name":"TES Software","item":"https://tevisengineering.com/software.html"},{"@type":"ListItem","position":3,"name":"Bid Management Software","item":"https://tevisengineering.com/bid-management-software.html"}]}
   </script>
   <script type="application/ld+json">
-  {"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Who is it for?","acceptedAnswer":{"@type":"Answer","text":"Small businesses that bid on public work in Ohio: suppliers, IT and technology firms, trades and service companies, usually with one or two people handling the bids alongside everything else."}},{"@type":"Question","name":"Which procurement sites does it read?","acceptedAnswer":{"@type":"Answer","text":"City of Cleveland and Cuyahoga County postings are read automatically, along with federal notices from SAM.gov. OhioBuys and BidNet postings are captured with a browser bookmark while you are signed in to your own account there, and are saved to your workspace only."}},{"@type":"Question","name":"Can anyone else see my pricing?","acceptedAnswer":{"@type":"Answer","text":"No. Each company has its own separate workspace. Your bids, costs, files and drafts are never visible to anyone else, including other vendors bidding the same solicitation."}},{"@type":"Question","name":"Does the AI write the bid for me?","acceptedAnswer":{"@type":"Answer","text":"It writes a first draft from the solicitation documents: triage notes, line items, risks and questions for the buyer. You check and price every line, and nothing is submitted without you."}},{"@type":"Question","name":"What will it cost?","acceptedAnswer":{"@type":"Answer","text":"Pricing will be set before early access opens, as a monthly subscription. Everyone on the waitlist hears it first."}}]}
+  {"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Who is it for?","acceptedAnswer":{"@type":"Answer","text":"Small businesses that bid on public work in Ohio: suppliers, IT and technology firms, trades and service companies, usually with one or two people handling the bids alongside everything else."}},{"@type":"Question","name":"Which procurement sites does it read?","acceptedAnswer":{"@type":"Answer","text":"City of Cleveland and Cuyahoga County postings are read automatically, along with federal notices from SAM.gov. OhioBuys and BidNet postings are captured with a browser bookmark while you are signed in to your own account there, and are saved to your workspace only."}},{"@type":"Question","name":"Can anyone else see my pricing?","acceptedAnswer":{"@type":"Answer","text":"No. Each company has its own separate workspace. Your bids, costs, files and drafts are never visible to anyone else, including other vendors bidding the same solicitation."}},{"@type":"Question","name":"Does the AI write the bid for me?","acceptedAnswer":{"@type":"Answer","text":"It writes a first draft from the solicitation documents: triage notes, line items, risks and questions for the buyer. You check and price every line, and nothing is submitted without you."}},{"@type":"Question","name":"What will it cost?","acceptedAnswer":{"@type":"Answer","text":"Pricing will be set before early access opens, as a monthly subscription. Everyone on the waitlist hears it first."}},{"@type":"Question","name":"Do I have to pay anything to join?","acceptedAnswer":{"@type":"Answer","text":"No. Joining the waitlist is free. After you join you can choose to reserve a spot in the first group with a $49 deposit, paid through PayPal. It is credited toward your first bill when early access opens, and refunded in full if you ask or if the product does not launch."}}]}
   </script>
   <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
 </head>
@@ -716,7 +722,7 @@
 
 <main class="bm">
     <section class="bm-hero">
-      <span class="eyebrow">Early access &middot; Ohio public bids</span>
+      <span class="eyebrow">Early access &middot; Ohio bid management software</span>
       <h1>Find, Price and Win Ohio Public Bids</h1>
       <p class="bm-lede">
         One workspace for small vendors who bid on city, county, state and federal work in Ohio. Open
@@ -724,7 +730,7 @@
         the posting to the delivery.
       </p>
       <div class="bm-cta">
-        <a class="btn btn-primary" href="#waitlist">Join the Waitlist</a>
+        <a class="btn btn-primary" href="#waitlist">Join the Free Waitlist</a>
         <a class="btn btn-secondary" href="#how">See How It Works</a>
       </div>
       <figure class="bm-shot bm-shot-hero">
@@ -865,6 +871,20 @@
           <div class="bm-done-ic"><i class="fa-solid fa-circle-check"></i></div>
           <h3>You are on the list</h3>
           <p>Thanks. Tyler will reach out personally to set up a short call. A confirmation is on its way to your inbox.</p>
+          <div class="bm-dep" id="bmDep" hidden>
+            <span class="bm-kicker">Optional</span>
+            <h4>Reserve a spot in the first group</h4>
+            <p>Early access opens to a few companies at a time. A <strong id="bmDepAmt">$49</strong> deposit puts you in the first group. It is credited toward your first bill when it opens, and refunded in full if you change your mind or if it does not launch.</p>
+            <button type="button" class="btn btn-primary bm-dep-go" id="bmDepGo">Reserve My Spot</button>
+            <div class="bm-dep-pay" id="bmDepPay" hidden></div>
+            <p class="bm-err" id="bmDepErr" role="alert" hidden></p>
+            <p class="bm-fine">Paid securely through PayPal. Reply to your confirmation email any time to ask for a refund.</p>
+          </div>
+          <div class="bm-dep-ok" id="bmDepOk" hidden>
+            <div class="bm-done-ic"><i class="fa-solid fa-star"></i></div>
+            <h4>Your spot is reserved</h4>
+            <p>Thank you. Your deposit reference is <strong id="bmDepRef"></strong>, and a receipt is on its way to your inbox.</p>
+          </div>
         </div>
       </div>
     </section>
@@ -894,6 +914,10 @@
         <details>
           <summary>What will it cost?</summary>
           <div class="faq-a">Pricing will be set before early access opens, as a monthly subscription. Everyone on the waitlist hears it first.</div>
+        </details>
+        <details>
+          <summary>Do I have to pay anything to join?</summary>
+          <div class="faq-a">No. Joining the waitlist is free. After you join you can choose to reserve a spot in the first group with a $49 deposit, paid through PayPal. It is credited toward your first bill when early access opens, and refunded in full if you ask or if the product does not launch.</div>
         </details>
       </div>
     </section>
@@ -1029,11 +1053,70 @@
           website: $('bmSite').value.trim(), bids_on: $('bmBids').value, message: $('bmMsg').value.trim(),
           hp: $('bmHp').value, turnstileToken: tokenEl ? tokenEl.value : '' }),
       }).then(function (r) { return r.json().catch(function () { return { ok: false }; }); }).then(function (d) {
-        if (d && d.ok) { form.hidden = true; $('bmDone').hidden = false; return; }
+        if (d && d.ok) {
+          form.hidden = true; $('bmDone').hidden = false;
+          offerDeposit({ email: email, name: name, company: $('bmCompany').value.trim() });
+          return;
+        }
         fail((d && MESSAGES[d.error]) || 'Something went wrong. Please try again, or email tyler@tevisengineering.com.');
         if (window.turnstile) try { window.turnstile.reset(); } catch (e) {}
       }).catch(function () { fail('Could not reach us. Check your connection and try again.'); });
     });
+
+    // ---- Optional refundable deposit, offered after joining ----
+    // The amount comes from the server; the page never sends one. PayPal's script is
+    // loaded only when the visitor asks to reserve, so the page stays light otherwise.
+    var PAYPAL_CLIENT = 'Ab_dnVs8tumZ0eMkFfSuR9eR5ut5xYKPmEbgCRODAyopaxWByLowbaOpY9pgZJKAa_nliulcrbPBQ9IC';
+    var DEP_ERRORS = {
+      already_reserved: 'This email already has a spot reserved. Check your inbox for the receipt.',
+      payments_unavailable: 'Deposits are not available right now. You are still on the list.',
+      rate_limited: 'Too many attempts from this connection. Please try again in a little while.',
+    };
+    function post(path, data) {
+      return fetch(path, { method: 'POST', headers: { 'content-type': 'application/json' }, credentials: 'same-origin', body: JSON.stringify(data) })
+        .then(function (r) { return r.json().catch(function () { return { ok: false }; }); });
+    }
+    function depFail(msg) { var e = $('bmDepErr'); e.textContent = msg; e.hidden = false; }
+    function offerDeposit(who) {
+      fetch('/portal-api/public/deposit/offer?list=contracting', { credentials: 'same-origin' })
+        .then(function (r) { return r.json(); }).then(function (d) {
+          if (!d || !d.ok || !d.offer) return;
+          var amt = '$' + (d.offer.amount_cents / 100).toFixed(2).replace(/\.00$/, '');
+          $('bmDepAmt').textContent = amt;
+          $('bmDep').hidden = false;
+          $('bmDepGo').addEventListener('click', function () { startPay(who, d.offer.amount_cents); });
+        }).catch(function () {});
+    }
+    function startPay(who, cents) {
+      var go2 = $('bmDepGo'); go2.disabled = true; go2.textContent = 'Loading PayPal…';
+      $('bmDepErr').hidden = true;
+      var s = document.createElement('script');
+      s.src = 'https://www.paypal.com/sdk/js?client-id=' + PAYPAL_CLIENT + '&currency=USD&intent=capture&components=buttons';
+      s.onerror = function () { go2.disabled = false; go2.textContent = 'Reserve My Spot'; depFail('PayPal could not be reached. Please try again.'); };
+      s.onload = function () {
+        go2.hidden = true; $('bmDepPay').hidden = false;
+        var depositId = null;
+        window.paypal.Buttons({
+          style: { layout: 'vertical', shape: 'pill', label: 'pay' },
+          createOrder: function () {
+            return post('/portal-api/public/deposit/order', { list: 'contracting', email: who.email, name: who.name, company: who.company })
+              .then(function (d) {
+                if (!d.ok) { depFail(DEP_ERRORS[d.error] || 'Could not start the deposit. Please try again.'); throw new Error(d.error || 'order'); }
+                depositId = d.deposit_id; return d.order_id;
+              });
+          },
+          onApprove: function (data) {
+            return post('/portal-api/public/deposit/capture', { deposit_id: depositId, order_id: data.orderID }).then(function (d) {
+              if (!d.ok) { depFail('PayPal did not complete the payment. Nothing was charged. Please try again.'); return; }
+              $('bmDep').hidden = true; $('bmDepRef').textContent = d.reference; $('bmDepOk').hidden = false;
+              if (window.tesTrack) window.tesTrack('early_access_deposit', { value: cents / 100, currency: 'USD', transaction_id: d.reference, product: 'bid_management_software' });
+            });
+          },
+          onError: function () { depFail('PayPal reported a problem. Nothing was charged. Please try again.'); },
+        }).render('#bmDepPay');
+      };
+      document.head.appendChild(s);
+    }
   })();
 </script>
 

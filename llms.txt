@@ -11,12 +11,13 @@
 - Engineering services: product design, PCB design, CAD and mechanical design, 3D printing, prototypes and replacement parts: https://tevisengineering.com/engineering-services-cleveland.html
   - Replacement and discontinued parts, measured, modeled in CAD and 3D printed: https://tevisengineering.com/replacement-parts-cleveland.html
 - Web design, web apps and customer portals: https://tevisengineering.com/website_creation.html
-- Software products: https://tevisengineering.com/software.html
+- TES Software (free trials, subscriptions, outright purchase and early access): https://tevisengineering.com/software.html
   - Ohio crash report leads for law firms: https://tevisengineering.com/ohio-crash-report-analysis-tool.html
   - ShingleAI roof estimate tool for roofers: https://tevisengineering.com/shingleai-roof-estimate-tool.html
   - 3D Shed Builder for shed dealers: https://tevisengineering.com/3d-shed-builder-tool.html
   - Website Watch uptime monitoring: https://tevisengineering.com/website-watch.html
-  - Bid management software for Ohio public contracts: https://tevisengineering.com/bid-management-software.html
+  - Bid Management Software for Ohio public bids (early access, free waitlist, optional refundable deposit): https://tevisengineering.com/bid-management-software.html
+    - Guide: how to find government bids in Ohio: https://tevisengineering.com/blog/how-to-find-government-bids-in-ohio.html
   - Cleveland Geo Visualizer, a free map of Cleveland open data: https://tevisengineering.com/cleveland-geo-visualizer.html
 - Data destruction (NIST-aligned media sanitization): https://tevisengineering.com/data_destruction.html
 - Knowledge transfer and IT documentation: https://tevisengineering.com/knowledge_transfer.html
