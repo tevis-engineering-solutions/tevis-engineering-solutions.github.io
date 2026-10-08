@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Cleveland IT Support &amp; Engineering Services | Tevis Engineering</title>
-  <meta name="description" content="Veteran-owned IT support, managed IT, PCB and CAD design, 3D printing and web design for small businesses in Cleveland and Northeast Ohio. Talk to the engineer directly.">
+  <meta name="description" content="Veteran-owned IT support, managed IT, software, PCB and CAD design, and 3D printing for Cleveland and Northeast Ohio. Talk to the engineer directly.">
   <meta name="author" content="Tyler Tevis, Tevis Engineering Solutions">
   <!-- Open Graph / Social Sharing -->
   <meta property="og:type" content="website">
@@ -23,13 +23,17 @@
   <meta name="twitter:image" content="https://tevisengineering.com/assets/og-image.png">
   <link rel="canonical" href="https://tevisengineering.com/">
   <link rel="icon" type="image/png" href="assets/favicon.png">
+  <link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
+  <meta name="theme-color" content="#0d1710">
+  <link rel="preload" as="image" href="assets/hero-bg.webp" fetchpriority="high">
   <meta http-equiv="X-Content-Type-Options" content="nosniff">
   <meta name="referrer" content="strict-origin-when-cross-origin">
   <!-- Fonts + icons (CDN — same as the rest of the site). Self-host long-term. -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Montserrat:wght@500;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Montserrat:wght@500;600;700;800&display=swap" media="print" data-async-css><noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Montserrat:wght@500;600;700;800&display=swap"></noscript>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" media="print" data-async-css><noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"></noscript>
+  <script>document.querySelectorAll('link[data-async-css]').forEach(function (l) { function on() { l.media = 'all'; } if (l.sheet) on(); else l.addEventListener('load', on); });</script>
 
   <style>
   /* ============================================================
@@ -123,7 +127,7 @@
   .tnav-dd { font-size:0.73rem; color:var(--text-muted); margin-top:2px; line-height:1.3; display:block; }
   .tnav-cta { background:radial-gradient(110% 120% at 50% 0%,rgba(74,172,101,0.16),transparent 60%),linear-gradient(160deg,#16261d,#0f1c14); border:1px solid var(--wash-green-border); border-radius:var(--radius-lg); padding:1.3rem 1.1rem; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; gap:0.5rem; }
   .tnav-cta .star { color:var(--brand-accent); font-size:1.3rem; filter:drop-shadow(0 0 8px rgba(224,184,64,0.5)); }
-  .tnav-cta h4 { font-family:var(--font-display); text-transform:uppercase; letter-spacing:0.04em; font-size:0.95rem; color:#fff; margin:0.2rem 0 0; }
+  .tnav-cta .tnav-cta-t { font-weight:700; line-height:inherit; font-family:var(--font-display); text-transform:uppercase; letter-spacing:0.04em; font-size:0.95rem; color:#fff; margin:0.2rem 0 0; }
   .tnav-cta p { font-size:0.76rem; color:var(--text-muted); margin:0 0 0.6rem; line-height:1.45; }
   .tnav-spacer { flex:1; }
   .tnav-right { display:flex; align-items:center; gap:0.9rem; }
@@ -140,13 +144,75 @@
 
   /* ---------- HERO ---------- */
   .hero { position:relative; color:#fff; text-align:center; overflow:hidden; padding:clamp(3rem,9vw,5rem) 1.25rem clamp(2.75rem,8vw,4.5rem); }
-  .hero-bg { position:absolute; inset:0; background:url('assets/hero-bg.jpg') center/cover; filter:blur(5px); transform:scale(1.08); z-index:1; }
+  .hero-bg { position:absolute; inset:0; background:url('assets/hero-bg.webp') center/cover; filter:blur(5px); transform:scale(1.08); z-index:1; }
   .hero-scrim { position:absolute; inset:0; background:linear-gradient(to bottom,rgba(4,14,8,0.62) 0%,rgba(4,14,8,0.70) 60%,rgba(4,14,8,0.80) 100%); z-index:2; }
   .hero-inner { position:relative; z-index:5; max-width:900px; margin:0 auto; }
   .hero-eyebrow { font-family:var(--font-display); font-size:0.95rem; opacity:0.9; margin-bottom:0.5rem; }
   .hero h1 { font-family:var(--font-display); text-transform:uppercase; letter-spacing:0.02em; font-size:clamp(1.95rem,7vw,3.4rem); font-weight:700; line-height:1.1; margin:0 0 0.5rem; text-shadow:0 4px 18px rgba(0,0,0,0.5); }
   .hero-sub { font-size:clamp(1.05rem,3.5vw,1.4rem); color:#a0c4ff; margin-bottom:2rem; }
   .hero-cta { display:flex; gap:0.9rem; justify-content:center; flex-wrap:wrap; align-items:center; }
+  /* ---------- Hero dock: three launch tiles on a circuit bus ---------- */
+  @property --hd-a { syntax:'<angle>'; inherits:false; initial-value:0deg; }
+  .hero-dock { position:relative; z-index:5; max-width:1080px; margin:0.6rem auto 0; display:grid; grid-template-columns:repeat(3,1fr); gap:1.3rem; text-align:left; }
+  .hd-bus { position:absolute; left:-3%; width:106%; top:50%; height:60px; transform:translateY(-50%); z-index:0; pointer-events:none; overflow:visible; }
+  .hd-bus path { fill:none; stroke-linecap:round; }
+  .hd-bus .hd-rail { stroke:rgba(200,152,48,0.3); stroke-width:1.5; }
+  .hd-bus .hd-run { stroke:var(--tes-gold-300); stroke-width:2.5; stroke-dasharray:46 420; filter:drop-shadow(0 0 5px rgba(224,184,64,0.9)); animation:hdRun 3.6s linear infinite; }
+  .hd-bus .hd-run.r2 { stroke:var(--tes-green-300); stroke-dasharray:28 438; animation-duration:5.2s; animation-delay:-2s; filter:drop-shadow(0 0 5px rgba(143,214,163,0.9)); }
+  @keyframes hdRun { from { stroke-dashoffset:466; } to { stroke-dashoffset:0; } }
+  .hd-tile { --mx:50%; --my:50%; position:relative; z-index:1; display:flex; align-items:center; gap:1rem; padding:1.15rem 1.2rem; min-height:96px;
+    text-decoration:none; color:#fff; border-radius:18px; isolation:isolate;
+    background:linear-gradient(160deg,rgba(23,40,30,0.84),rgba(9,18,12,0.88)); border:1px solid rgba(255,255,255,0.13);
+    backdrop-filter:blur(10px); -webkit-backdrop-filter:blur(10px); box-shadow:0 14px 34px rgba(0,0,0,0.42);
+    opacity:0; transform:translateY(22px); animation:hdIn .75s var(--ease-out) forwards;
+    transition:transform .3s var(--ease-out),box-shadow .3s,border-color .3s; }
+  .hd-tile:nth-of-type(2) { animation-delay:.12s; }
+  .hd-tile:nth-of-type(3) { animation-delay:.24s; }
+  @keyframes hdIn { to { opacity:1; transform:none; } }
+  /* rotating gold edge: on hover, always on for the featured tile */
+  .hd-tile::before { content:''; position:absolute; inset:-1px; border-radius:inherit; padding:1.5px; z-index:-1;
+    background:conic-gradient(from var(--hd-a),transparent 0 55%,var(--tes-gold-300) 72%,var(--tes-green-300) 86%,transparent 100%);
+    -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0); -webkit-mask-composite:xor; mask-composite:exclude;
+    opacity:0; transition:opacity .35s; animation:hdSpin 4s linear infinite; }
+  @keyframes hdSpin { to { --hd-a:360deg; } }
+  /* glow that follows the pointer */
+  .hd-tile::after { content:''; position:absolute; inset:0; border-radius:inherit; z-index:-1; pointer-events:none; opacity:0; transition:opacity .3s;
+    background:radial-gradient(240px circle at var(--mx) var(--my),rgba(224,184,64,0.2),transparent 60%); }
+  .hd-tile:hover, .hd-tile:focus-visible { transform:translateY(-5px); border-color:rgba(224,184,64,0.35); box-shadow:0 22px 46px rgba(0,0,0,0.5),0 0 34px rgba(200,152,48,0.18); }
+  .hd-tile:hover::before, .hd-tile:focus-visible::before, .hd-tile:hover::after { opacity:1; }
+  .hd-tile:focus-visible { outline:2px solid var(--tes-gold-300); outline-offset:3px; }
+  .hd-ic { position:relative; flex-shrink:0; width:54px; height:54px; border-radius:14px; display:flex; align-items:center; justify-content:center; font-size:1.35rem;
+    color:var(--tes-green-300); background:rgba(74,172,101,0.12); border:1px solid rgba(74,172,101,0.35); transition:background .3s,color .3s,transform .3s; }
+  .hd-ic::after { content:''; position:absolute; inset:-5px; border-radius:17px; border:1px solid rgba(74,172,101,0.4); opacity:0; animation:hdPing 2.8s ease-out infinite; }
+  .hd-tile:nth-of-type(2) .hd-ic::after { animation-delay:.9s; }
+  .hd-tile:nth-of-type(3) .hd-ic::after { animation-delay:1.8s; }
+  @keyframes hdPing { 0% { opacity:0.8; transform:scale(0.92); } 70%,100% { opacity:0; transform:scale(1.18); } }
+  .hd-tile:hover .hd-ic { background:var(--tes-green-500); color:#0d1710; transform:rotate(-6deg) scale(1.05); }
+  .hd-txt { display:flex; flex-direction:column; gap:3px; min-width:0; flex:1; }
+  .hd-k { font-family:var(--font-display); font-size:0.66rem; font-weight:800; letter-spacing:0.16em; text-transform:uppercase; color:var(--tes-gold-300); }
+  .hd-t { font-family:var(--font-display); font-weight:800; font-size:1.08rem; text-transform:uppercase; letter-spacing:0.03em; line-height:1.15; }
+  .hd-d { font-size:0.82rem; color:#b9cdbb; line-height:1.35; }
+  .hd-go { flex-shrink:0; width:34px; height:34px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:0.85rem;
+    color:var(--tes-gold-300); border:1px solid rgba(224,184,64,0.35); transition:transform .3s var(--ease-out),background .3s,color .3s; }
+  .hd-tile:hover .hd-go { transform:translateX(4px); background:var(--tes-gold-300); color:#0d1710; }
+  /* featured: Engineering */
+  .hd-tile--feat { background:radial-gradient(120% 140% at 0% 0%,rgba(200,152,48,0.24),transparent 55%),linear-gradient(160deg,rgba(38,46,24,0.9),rgba(14,22,12,0.92)); border-color:rgba(224,184,64,0.35); }
+  .hd-tile--feat::before { opacity:0.85; }
+  .hd-tile--feat .hd-ic { color:var(--tes-gold-300); background:rgba(200,152,48,0.14); border-color:rgba(224,184,64,0.45); }
+  .hd-tile--feat .hd-ic::after { border-color:rgba(224,184,64,0.5); }
+  .hd-tile--feat:hover .hd-ic { background:linear-gradient(135deg,var(--tes-gold-500),var(--tes-gold-300)); color:#0d1710; }
+  .hd-tile--feat .hd-go { background:linear-gradient(135deg,var(--tes-gold-500),var(--tes-gold-300)); color:#0d1710; border-color:transparent; }
+  @media (max-width:900px) {
+    .hero-dock { grid-template-columns:1fr; max-width:520px; gap:0.85rem; margin-top:0.2rem; }
+    .hd-bus { display:none; }
+    .hd-tile { min-height:84px; padding:1rem; }
+  }
+  @media (max-width:420px) { .hd-d { display:none; } .hd-ic { width:46px; height:46px; font-size:1.15rem; } }
+  @media (prefers-reduced-motion:reduce) {
+    .hd-tile { opacity:1; transform:none; animation:none; }
+    .hd-tile::before { animation:none; }
+    .hd-ic::after, .hd-bus .hd-run { display:none; }
+  }
 
   /* ---------- Trust strip ---------- */
   .trust-strip { background:var(--surface-well); border-bottom:1px solid var(--border-default); padding:1.1rem 5%; }
@@ -433,7 +499,7 @@
     .tfoot-nap { color:#8aa48d; font-size:0.85rem; line-height:1.7; margin:0 0 1rem; }
     .tfoot-nap a { color:#8aa48d; text-decoration:none; }
     .tfoot-nap a:hover { color:#4aac65; }
-  .tfoot-col h5 { font-family:var(--font-display); font-size:0.7rem; font-weight:800; text-transform:uppercase; letter-spacing:0.1em; color:var(--brand-accent); margin-bottom:0.9rem; }
+  .tfoot-col .tfoot-h { line-height:inherit; font-family:var(--font-display); font-size:0.7rem; font-weight:800; text-transform:uppercase; letter-spacing:0.1em; color:var(--brand-accent); margin-bottom:0.9rem; }
   .tfoot-col a { display:block; color:var(--text-muted); text-decoration:none; font-size:0.88rem; padding:0.3rem 0; transition:color var(--dur-base),transform var(--dur-base); }
   .tfoot-col a:hover { color:var(--brand-primary); transform:translateX(3px); }
   .tfoot-bar { max-width:var(--container-wide); margin:2rem auto 0; padding-top:1.5rem; border-top:1px solid var(--border-default); display:flex; justify-content:space-between; flex-wrap:wrap; gap:0.5rem; align-items:center; }
@@ -489,6 +555,7 @@
     html { scroll-behavior:auto; }
   }
   </style>
+  <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
 </head>
 <body>
 
@@ -496,7 +563,7 @@
   <div class="tnav-bar">
     <div class="tnav-inner">
       <a class="tnav-brand" href="index.html">
-        <img width="44" height="44" src="assets/logo-mark.png" alt="Tevis Engineering Solutions">
+        <img width="44" height="44" src="assets/logo-mark-88.webp" alt="Tevis Engineering Solutions">
         <span class="bn"><b>Tevis Engineering</b><s>Solutions</s></span>
       </a>
 
@@ -528,7 +595,7 @@
           </div>
           <div class="tnav-cta">
             <span class="star">&#9733;</span>
-            <h4>Need help now?</h4>
+            <p class="tnav-cta-t">Need help now?</p>
             <p>Talk straight to the engineer &mdash; no call center, one-business-day reply.</p>
             <a class="btn btn--primary btn--sm" href="make_ticket.html"><i class="fa-solid fa-headset"></i> <span class="btn-txt"><span class="btn-eyebrow">Need Help?</span>Get Support Now</span></a>
           </div>
@@ -537,7 +604,7 @@
 
       <div class="tnav-spacer"></div>
       <div class="tnav-right">
-        <a class="btn btn--secondary btn--sm" href="login.html"><i class="fa-solid fa-right-to-bracket"></i> <span class="lbl btn-txt"><span class="btn-eyebrow">Current Customer?</span>LOGIN</span></a>
+        <a class="btn btn--secondary btn--sm" href="login.html" aria-label="Customer login"><i class="fa-solid fa-right-to-bracket"></i> <span class="lbl btn-txt"><span class="btn-eyebrow">Current Customer?</span>LOGIN</span></a>
       </div>
     </div>
   </div>
@@ -550,12 +617,29 @@
       <p class="hero-eyebrow">Cleveland-Based &middot; Air Force Veteran Owned</p>
       <h1>Cleveland IT Support &amp; Custom Engineering</h1>
       <p class="hero-sub">Military-Grade Reliability for Small Businesses and Individuals</p>
-      <div class="hero-cta">
-        <a class="btn btn--primary btn--lg" href="make_ticket.html"><i class="fa-solid fa-headset"></i> <span class="btn-txt"><span class="btn-eyebrow">Need Help?</span>Get Support Now</span></a>
-        <a class="btn btn--secondary btn--lg" href="contact.html">Start a Project</a>
-        <a class="btn btn--tertiary" href="service_catalog.html">View Service Catalog <i class="fa-solid fa-arrow-right"></i></a>
-      </div>
     </div>
+    <nav class="hero-dock" aria-label="Get started">
+      <svg class="hd-bus" viewBox="0 0 1200 60" preserveAspectRatio="none" aria-hidden="true">
+        <path class="hd-rail" d="M0,30 H120 L140,14 H420 L440,30 H760 L780,46 H1060 L1080,30 H1200"/>
+        <path class="hd-run" d="M0,30 H120 L140,14 H420 L440,30 H760 L780,46 H1060 L1080,30 H1200"/>
+        <path class="hd-run r2" d="M0,30 H120 L140,14 H420 L440,30 H760 L780,46 H1060 L1080,30 H1200"/>
+      </svg>
+      <a class="hd-tile hd-tile--feat" href="engineering-services-cleveland.html">
+        <span class="hd-ic"><i class="fa-solid fa-microchip" aria-hidden="true"></i></span>
+        <span class="hd-txt"><span class="hd-k">Build something</span><span class="hd-t">Engineering Services</span><span class="hd-d">Hardware, software &amp; mechanical design</span></span>
+        <span class="hd-go" aria-hidden="true"><i class="fa-solid fa-arrow-right"></i></span>
+      </a>
+      <a class="hd-tile" href="contact.html">
+        <span class="hd-ic"><i class="fa-solid fa-comments" aria-hidden="true"></i></span>
+        <span class="hd-txt"><span class="hd-k">Talk to us</span><span class="hd-t">Contact TES</span><span class="hd-d">Call, email, or book a free consult</span></span>
+        <span class="hd-go" aria-hidden="true"><i class="fa-solid fa-arrow-right"></i></span>
+      </a>
+      <a class="hd-tile" href="service_catalog.html">
+        <span class="hd-ic"><i class="fa-solid fa-rectangle-list" aria-hidden="true"></i></span>
+        <span class="hd-txt"><span class="hd-k">See what we do</span><span class="hd-t">Services Catalog</span><span class="hd-d">Every service, with starting prices</span></span>
+        <span class="hd-go" aria-hidden="true"><i class="fa-solid fa-arrow-right"></i></span>
+      </a>
+    </nav>
   </header>
 
   <!-- ============ TRUST STRIP ============
@@ -570,7 +654,7 @@
 
   <!-- ============ SERVICES ============ -->
   <section class="section" id="services">
-    <div class="sh"><p class="eyebrow">What we do</p><h2>Software and Services</h2><span class="rule"></span></div>
+    <div class="sh"><p class="eyebrow">What we do</p><h2>IT Services and Software in Cleveland</h2><span class="rule"></span></div>
     <div class="mh-cl"><svg viewBox="0 0 1200 40" preserveAspectRatio="none" aria-hidden="true"><path class="mh-cl-trace" d="M0,20 H150 L180,8 H470 L500,32 H760 L790,12 H1020 L1050,20 H1200"/><circle cx="180" cy="8" r="4" class="mh-cl-node" style="animation-delay:0s"/><circle cx="470" cy="32" r="4" class="mh-cl-node" style="animation-delay:.5s"/><circle cx="760" cy="12" r="4" class="mh-cl-node" style="animation-delay:1s"/><circle cx="1020" cy="20" r="4" class="mh-cl-node" style="animation-delay:1.5s"/></svg></div>
     <p class="lead">We build and run our own software, and we handle the hands-on technology work that keeps a business moving. Everything is scoped and quoted before a minute is billed.</p>
 
@@ -589,7 +673,7 @@
       <div class="hx-prod-grid">
         <div class="rv"><a class="hx-prod" href="ohio-crash-report-analysis-tool.html">
           <div class="hx-shot">
-            <img src="assets/crash/lead-dashboard.png" alt="The Ohio Crash List lead dashboard, showing de-duplicated injury-crash records" loading="lazy" decoding="async" width="1500" height="938">
+            <img src="assets/crash/lead-dashboard.webp" alt="The Ohio Crash List lead dashboard, showing de-duplicated injury-crash records" loading="lazy" decoding="async" width="1500" height="938">
             <span class="hx-live"><i class="fa-solid fa-circle-check" aria-hidden="true"></i> NEW</span>
           </div>
           <div class="hx-prod-b">
@@ -602,7 +686,7 @@
 
         <div class="rv"><a class="hx-prod" href="shingleai-roof-estimate-tool.html">
           <div class="hx-shot">
-            <img src="assets/shingleai/card-thumb.jpg" alt="The ShingleAI roof estimator: an aerial view of a house with the roof outline measured and traced" loading="lazy" decoding="async" width="1200" height="750">
+            <img src="assets/shingleai/card-thumb-640.webp" alt="The ShingleAI roof estimator: an aerial view of a house with the roof outline measured and traced" loading="lazy" decoding="async" width="1200" height="750">
             <span class="hx-live"><i class="fa-solid fa-satellite" aria-hidden="true"></i> Try it Now!</span>
           </div>
           <div class="hx-prod-b">
@@ -615,7 +699,7 @@
 
         <div class="rv"><a class="hx-prod" href="3d-shed-builder-tool.html">
           <div class="hx-shot">
-            <img src="assets/shed/card-thumb.jpg" alt="The 3D Shed Builder: a white lofted barn with a red gambrel roof rendered live in 3D" loading="lazy" decoding="async" width="1200" height="750">
+            <img src="assets/shed/card-thumb-640.webp" alt="The 3D Shed Builder: a white lofted barn with a red gambrel roof rendered live in 3D" loading="lazy" decoding="async" width="1200" height="750">
             <span class="hx-live"><i class="fa-solid fa-cube" aria-hidden="true"></i> Try it Now!</span>
           </div>
           <div class="hx-prod-b">
@@ -628,7 +712,7 @@
 
         <div class="rv"><a class="hx-prod" href="cleveland-geo-visualizer.html">
           <div class="hx-shot">
-            <img src="assets/geo-map/card-thumb.jpg" alt="The Cleveland Geo Visualizer: two public datasets stacked on a dark street map, Cleveland Heights police reports as colored severity clusters with license-plate camera locations over them" loading="lazy" decoding="async" width="1200" height="750">
+            <img src="assets/geo-map/card-thumb-640.webp" alt="The Cleveland Geo Visualizer: two public datasets stacked on a dark street map, Cleveland Heights police reports as colored severity clusters with license-plate camera locations over them" loading="lazy" decoding="async" width="1200" height="750">
             <span class="hx-live"><i class="fa-solid fa-map-location-dot" aria-hidden="true"></i> Free &middot; Try it Now!</span>
           </div>
           <div class="hx-prod-b">
@@ -702,7 +786,7 @@
     <div class="sh"><p class="eyebrow">Who we are</p><h2>About Tevis Engineering</h2><span class="rule"></span></div>
     <p class="a1">Founded by Tyler Tevis, an Air Force Veteran and professional computer engineer with a successful career in research and 7 years of experience in engineering design and IT support, Tevis Engineering Solutions is a versatile technology-forward company dedicated to providing elite services. With such extensive experience in prototype design across engineering disciplines, solving complex problems is second nature.</p>
     <p class="a2">Providing reliable local and remote IT support, engineering and tangential solutions in the Cleveland area, Tevis Engineering Solutions offers scaled-to-fit solutions that don't break the bank. We deliver military-grade precision along with practical, actionable consulting and 3D printing solutions. Truly a one-stop-shop for your technology needs at an affordable rate.</p>
-    <p class="a2 area-links">On-site and remote IT support across Greater Cleveland, including <a href="it-support-lakewood.html">Lakewood</a>, <a href="it-support-parma.html">Parma</a>, <a href="it-support-westlake.html">Westlake</a>, <a href="it-support-beachwood.html">Beachwood</a>, <a href="it-support-cleveland-heights.html">Cleveland Heights</a>, <a href="it-support-shaker-heights.html">Shaker Heights</a> and <a href="it-support-university-heights.html">University Heights</a>. <a href="service-areas.html">See all service areas</a>.</p>
+    <p class="a2 area-links">On-site and remote IT support across Greater Cleveland, including <a href="it-support-lakewood.html">Lakewood</a>, <a href="it-support-parma.html">Parma</a>, <a href="it-support-westlake.html">Westlake</a>, <a href="it-support-rocky-river.html">Rocky River</a>, <a href="it-support-strongsville.html">Strongsville</a>, <a href="it-support-independence.html">Independence</a>, <a href="it-support-beachwood.html">Beachwood</a>, <a href="it-support-solon.html">Solon</a>, <a href="it-support-mentor.html">Mentor</a>, <a href="it-support-cleveland-heights.html">Cleveland Heights</a>, <a href="it-support-shaker-heights.html">Shaker Heights</a> and <a href="it-support-university-heights.html">University Heights</a>. <a href="service-areas.html">See all service areas</a>.</p>
     <p class="a2">Contact us to see how we can improve antiquated processes, expand your network, deploy those workstations and/or harness the technology that's out there to take your productivity to the next level &mdash; or restore it to its former glory!</p>
     <span class="badge badge--veteran">Precision &middot; Integrity &middot; Results</span>
   </section>
@@ -836,7 +920,7 @@
   <section class="tnl" aria-label="Email newsletter signup">
     <div class="tnl-inner">
       <div class="tnl-brand">
-        <img width="44" height="44" class="tnl-mark" src="assets/logo-mark.png" alt="Tevis Engineering Solutions">
+        <img width="44" height="44" class="tnl-mark" src="assets/logo-mark-88.webp" alt="Tevis Engineering Solutions">
         <span class="tnl-wordmark"><b>Tevis Engineering</b><s>Solutions</s></span>
       </div>
       <p class="tnl-eyebrow">Free Monthly Newsletter</p>
@@ -856,12 +940,12 @@
   <footer class="tfoot">
     <div class="tfoot-grid">
       <div>
-        <a class="tfoot-brand" href="index.html"><img width="44" height="44" src="assets/logo-mark.png" alt="TES"><b>Tevis Engineering</b></a>
+        <a class="tfoot-brand" href="index.html"><img width="44" height="44" src="assets/logo-mark-88.webp" alt=""><b>Tevis Engineering</b></a>
         <p class="tfoot-blurb">IT Support, Engineering, 3D Design/Printing and tangential services for small businesses and individuals in the Cleveland, Ohio area and beyond.</p>
         <p class="tfoot-nap"><a href="tel:+12163028486">(216)&nbsp;302&#8209;8486</a> &middot; Cleveland,&nbsp;OH</p>
       </div>
       <div class="tfoot-col">
-        <h5>Services</h5>
+        <p class="tfoot-h">Services</p>
         <a href="service_catalog.html">Services Catalog</a>
         <a href="pricing_sheet.html">Managed IT Support</a>
         <a href="website_creation.html">Web &amp; App Design</a>
@@ -870,7 +954,7 @@
         <a href="data_destruction.html">Data Destruction</a>
       </div>
       <div class="tfoot-col">
-        <h5>Company</h5>
+        <p class="tfoot-h">Company</p>
         <a href="service-areas.html">Service Areas</a>
         <a href="how_support_works.html">How Support Works</a>
         <a href="portfolio.html">Portfolio</a>
@@ -879,7 +963,7 @@
         <a href="contact.html">Contact</a>
       </div>
       <div class="tfoot-col">
-        <h5>Get Started</h5>
+        <p class="tfoot-h">Get Started</p>
         <a href="make_ticket.html">Make a Ticket</a>
         <a href="pay_invoice.html">Pay Invoice</a>
         <a href="assessment.html">IT Assessment</a>
@@ -936,6 +1020,9 @@
           { "@type": "City", "name": "Strongsville" },
           { "@type": "City", "name": "Cleveland Heights" },
           { "@type": "City", "name": "University Heights" },
+          { "@type": "City", "name": "Independence" },
+          { "@type": "City", "name": "Solon" },
+          { "@type": "City", "name": "Mentor" },
           { "@type": "GeoCircle", "geoMidpoint": { "@type": "GeoCoordinates", "latitude": 41.4993, "longitude": -81.6944 }, "geoRadius": "50000" }
         ],
         "serviceType": [
@@ -1168,40 +1255,33 @@
     }
   })();
   </script>
-  <!-- Cookie consent notice — dismissal stored in sessionStorage -->
-  <div id="cookieBanner" style="display:none; position:fixed; bottom:0; left:0; right:0; z-index:9999; background:rgba(11,17,26,0.97); border-top:1px solid rgba(74,172,101,0.22); padding:0.75rem 1.5rem; font-size:0.85rem; color:var(--muted,#8aa48d); font-family:'Inter','Segoe UI',sans-serif; align-items:center; justify-content:space-between; gap:1rem; flex-wrap:wrap;">
-    <span>This site uses essential cookies only — no tracking or analytics. <a href="privacy_policy.html" style="color:#4aac65; text-decoration:none;">Privacy Policy</a></span>
-    <button type="button" id="cookieDismiss" style="background:rgba(74,172,101,0.18); border:1px solid rgba(74,172,101,0.5); color:#e8efff; border-radius:999px; padding:0.4rem 1rem; font-size:0.83rem; font-weight:700; cursor:pointer; white-space:nowrap;">Got it</button>
-  </div>
-  <script>
-  (function () {
-    var banner = document.getElementById('cookieBanner');
-    if (!sessionStorage.getItem('cookieOk')) {
-      banner.style.display = 'flex';
-      requestAnimationFrame(function () {
-        document.body.style.paddingBottom = banner.getBoundingClientRect().height + 'px';
-      });
-    }
-    document.getElementById('cookieDismiss').addEventListener('click', function () {
-      sessionStorage.setItem('cookieOk', '1');
-      banner.style.display = 'none';
-      document.body.style.paddingBottom = '';
-    });
-  })();
-  </script>
 
   <!-- Tawk.to live chat -->
   <script type="text/javascript">
   var Tawk_API=Tawk_API||{}, Tawk_LoadStart=new Date();
   (function(){
+function tesLoadChat(){ if (tesLoadChat.done) return; tesLoadChat.done = true;
   var s1=document.createElement("script"),s0=document.getElementsByTagName("script")[0];
   s1.async=true;
   s1.src='https://embed.tawk.to/6a2d769e0f46281c35cc68ee/1jr0pemhe';
   s1.charset='UTF-8';
   s1.setAttribute('crossorigin','*');
   s0.parentNode.insertBefore(s1,s0);
-  })();
+  }
+['scroll','pointerdown','keydown','touchstart'].forEach(function(e){ window.addEventListener(e, tesLoadChat, { once: true, passive: true }); });
+window.addEventListener('load', function(){ setTimeout(tesLoadChat, 4000); });
+})();
   </script>
 
+  <script>
+  document.querySelectorAll('.hd-tile').forEach(function (t) {
+    t.addEventListener('pointermove', function (e) {
+      var r = t.getBoundingClientRect();
+      t.style.setProperty('--mx', (e.clientX - r.left) + 'px');
+      t.style.setProperty('--my', (e.clientY - r.top) + 'px');
+    });
+  });
+  </script>
+<script src="assets/js/tes-analytics.js" defer></script>
 </body>
 </html>

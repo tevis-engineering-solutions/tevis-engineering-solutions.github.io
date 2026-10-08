@@ -9,11 +9,14 @@
   <!-- Not an indexable page: it renders one visitor's own scan, held in their browser. -->
   <meta name="robots" content="noindex, nofollow">
   <link rel="icon" type="image/png" href="assets/favicon.png">
+  <link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
+  <meta name="theme-color" content="#0d1710">
   <meta http-equiv="X-Content-Type-Options" content="nosniff">
   <meta name="referrer" content="strict-origin-when-cross-origin">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Montserrat:wght@500;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Montserrat:wght@500;700;800&display=swap" media="print" data-async-css><noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Montserrat:wght@500;700;800&display=swap"></noscript>
+  <script>document.querySelectorAll('link[data-async-css]').forEach(function (l) { function on() { l.media = 'all'; } if (l.sheet) on(); else l.addEventListener('load', on); });</script>
   <style>
     /* This page is deliberately LIGHT while the rest of the site is dark.
        It is a document, not a web page: it prints to PDF cleanly, it reads as
@@ -233,7 +236,7 @@
 
     <div class="brandbar">
       <a class="lockup" href="index.html">
-        <img width="44" height="44" src="assets/logo-mark.png" alt="Tevis Engineering Solutions">
+        <img width="44" height="44" src="assets/logo-mark-88.webp" alt="Tevis Engineering Solutions">
         <span class="rule"></span>
         <span class="wordmark">
           <span class="n1">TEVIS ENGINEERING</span>
@@ -351,5 +354,6 @@
   </div>
 
   <script src="assets/js/site-audit.js" defer></script>
+<script src="assets/js/tes-analytics.js" defer></script>
 </body>
 </html>

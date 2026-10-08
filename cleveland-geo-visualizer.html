@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Cleveland Open Data Map: Free Geo Visualizer | Tevis Engineering</title>
-  <meta name="description" content="Free interactive map of Cleveland-area public data. Stack property values and sales, tax delinquency, permits, code violations, police reports, dispatch calls, license-plate cameras and census context on one map with one timeline, and run your own analysis. No sign-up, refreshed nightly. Built by Tevis Engineering Solutions in Cleveland, Ohio, who build the same tool on your data.">
+  <meta name="description" content="Free interactive map of Cleveland public data: property values, sales, permits, code violations, police reports and cameras on one timeline. No sign-up.">
   <meta name="author" content="Tyler Tevis, Tevis Engineering Solutions">
   <meta property="og:type" content="website">
   <meta property="og:site_name" content="Tevis Engineering Solutions">
@@ -22,12 +22,15 @@
   <meta name="twitter:image" content="https://tevisengineering.com/assets/geo-map/heat-decade.jpg">
   <link rel="canonical" href="https://tevisengineering.com/cleveland-geo-visualizer.html">
   <link rel="icon" type="image/png" href="assets/favicon.png">
+  <link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
+  <meta name="theme-color" content="#0d1710">
   <meta http-equiv="X-Content-Type-Options" content="nosniff">
   <meta name="referrer" content="strict-origin-when-cross-origin">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Montserrat:wght@500;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Montserrat:wght@500;700;800&display=swap" media="print" data-async-css><noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Montserrat:wght@500;700;800&display=swap"></noscript>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" media="print" data-async-css><noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"></noscript>
+  <script>document.querySelectorAll('link[data-async-css]').forEach(function (l) { function on() { l.media = 'all'; } if (l.sheet) on(); else l.addEventListener('load', on); });</script>
   <style>
     :root {
       --bg: #0d1710;
@@ -241,7 +244,7 @@
     .tnav-dd { font-size:0.73rem; color:#8aa48d; margin-top:2px; line-height:1.3; display:block; }
     .tnav-cta { background:radial-gradient(110% 120% at 50% 0%,rgba(74,172,101,0.16),transparent 60%),linear-gradient(160deg,#16261d,#0f1c14); border:1px solid rgba(74,172,101,0.22); border-radius:18px; padding:1.3rem 1.1rem; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; gap:0.5rem; }
     .tnav-cta .star { color:#c89830; font-size:1.3rem; }
-    .tnav-cta h4 { font-family:'Montserrat','Segoe UI',system-ui,sans-serif; text-transform:uppercase; letter-spacing:0.04em; font-size:0.95rem; color:#fff; margin:0.2rem 0 0; }
+    .tnav-cta .tnav-cta-t { font-weight:700; line-height:inherit; font-family:'Montserrat','Segoe UI',system-ui,sans-serif; text-transform:uppercase; letter-spacing:0.04em; font-size:0.95rem; color:#fff; margin:0.2rem 0 0; }
     .tnav-cta p { font-size:0.76rem; color:#8aa48d; margin:0 0 0.6rem; line-height:1.45; }
     .tnav-right { display:flex; align-items:center; gap:0.9rem; }
     .tnav-sup-btn { display:inline-flex; align-items:center; justify-content:center; gap:0.5rem; font-family:'Montserrat','Segoe UI',system-ui,sans-serif; font-weight:700; text-transform:uppercase; letter-spacing:0.04em; text-decoration:none; border-radius:999px; cursor:pointer; border:2px solid rgba(255,255,255,0.45); padding:8px 18px; font-size:0.78rem; color:#e4ede5; background:transparent; transition:transform 0.2s,border-color 0.2s; }
@@ -260,7 +263,7 @@
     .tfoot-nap { color:#8aa48d; font-size:0.85rem; line-height:1.7; margin:0 0 1rem; }
     .tfoot-nap a { color:#8aa48d; text-decoration:none; }
     .tfoot-nap a:hover { color:#4aac65; }
-    .tfoot-col h5 { font-family:'Montserrat','Segoe UI',system-ui,sans-serif; font-size:0.7rem; font-weight:800; text-transform:uppercase; letter-spacing:0.1em; color:#c89830; margin-bottom:0.9rem; }
+    .tfoot-col .tfoot-h { line-height:inherit; font-family:'Montserrat','Segoe UI',system-ui,sans-serif; font-size:0.7rem; font-weight:800; text-transform:uppercase; letter-spacing:0.1em; color:#c89830; margin-bottom:0.9rem; }
     .tfoot-col a { display:block; color:#8aa48d; text-decoration:none; font-size:0.88rem; padding:0.3rem 0; transition:color 0.2s,transform 0.2s; }
     .tfoot-col a:hover { color:#4aac65; transform:translateX(3px); }
     .tfoot-bar { max-width:1280px; margin:2rem auto 0; padding-top:1.5rem; border-top:1px solid #2c4232; display:flex; justify-content:space-between; flex-wrap:wrap; gap:0.5rem; align-items:center; }
@@ -423,13 +426,14 @@
   }
   </script>
   <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+  <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
 </head>
 <body>
 <!-- ===== NAV ===== -->
 <div class="tnav-bar">
   <div class="tnav-inner">
     <a class="tnav-brand" href="index.html">
-      <img width="44" height="44" src="assets/logo-mark.png" alt="Tevis Engineering Solutions">
+      <img width="44" height="44" src="assets/logo-mark-88.webp" alt="Tevis Engineering Solutions">
       <span class="bn"><b>Tevis Engineering</b><s>Solutions</s></span>
     </a>
     <div class="tnav-spacer"></div>
@@ -460,7 +464,7 @@
         </div>
         <div class="tnav-cta">
           <span class="star">&#9733;</span>
-          <h4>Need help now?</h4>
+          <p class="tnav-cta-t">Need help now?</p>
           <p>Talk straight to the engineer &mdash; no call center, one-business-day reply.</p>
           <a class="tnav-cta-btn" href="make_ticket.html"><i class="fa-solid fa-headset"></i> Get Support Now</a>
         </div>
@@ -468,7 +472,7 @@
     </div>
     <div class="tnav-spacer"></div>
     <div class="tnav-right">
-      <a class="tnav-sup-btn" href="login.html"><i class="fa-solid fa-right-to-bracket"></i> <span class="lbl">LOGIN</span></a>
+      <a class="tnav-sup-btn" href="login.html" aria-label="Customer login"><i class="fa-solid fa-right-to-bracket"></i> <span class="lbl">LOGIN</span></a>
     </div>
   </div>
 </div>
@@ -577,26 +581,26 @@
       </div>
       <div class="shots-2 even">
         <figure class="shot">
-          <img src="assets/geo-map/parcel-values.jpg" alt="Street-level view of Cleveland Heights with every parcel drawn as a dot colored purple below, white at, and green above the city's residential median of 182,500 dollars, over a dark street map with the property-value legend at the right." width="1400" height="900" loading="lazy" decoding="async">
+          <img src="assets/geo-map/parcel-values.webp" alt="Street-level view of Cleveland Heights with every parcel drawn as a dot colored purple below, white at, and green above the city's residential median of 182,500 dollars, over a dark street map with the property-value legend at the right." width="1400" height="900" loading="lazy" decoding="async">
           <figcaption><span class="tag">Property</span><b>Every parcel against its own city&rsquo;s median.</b> Live from the county, drawn as you pan. Click one for the full dossier: sales, taxes, owner of record, the lot, comparable sales.</figcaption>
         </figure>
         <figure class="shot">
-          <img src="assets/geo-map/camera-net.jpg" alt="Cuyahoga County with roughly 1,300 license-plate reader cameras mapped as purple clusters along the major roads from Avon Lake to Solon, with a timeline of install dates below." width="1400" height="900" loading="lazy" decoding="async">
+          <img src="assets/geo-map/camera-net.webp" alt="Cuyahoga County with roughly 1,300 license-plate reader cameras mapped as purple clusters along the major roads from Avon Lake to Solon, with a timeline of install dates below." width="1400" height="900" loading="lazy" decoding="async">
           <figcaption><span class="tag">Cameras</span><b>About 1,300 license-plate readers, county-wide.</b> Where they are and which way each one faces. The timeline below is their install dates, so you can watch the net grow.</figcaption>
         </figure>
       </div>
       <div class="shots-2 even">
         <figure class="shot">
-          <img src="assets/geo-map/heat-decade.jpg" alt="Ten years of Cleveland Heights reports as a heat surface: a yellow-to-red gradient concentrated along the main corridors, with purple license-plate camera cones overlaid, and the full 2016 to 2026 timeline below." width="1400" height="900" loading="lazy" decoding="async">
+          <img src="assets/geo-map/heat-decade.webp" alt="Ten years of Cleveland Heights reports as a heat surface: a yellow-to-red gradient concentrated along the main corridors, with purple license-plate camera cones overlaid, and the full 2016 to 2026 timeline below." width="1400" height="900" loading="lazy" decoding="async">
           <figcaption><span class="tag">Two layers stacked</span><b>Ten years of reports as a heat surface, with the camera net over it.</b> This is the whole idea in one picture: two unrelated public datasets, one map, and a question you can now answer.</figcaption>
         </figure>
         <figure class="shot">
-          <img src="assets/geo-map/month-cleveland-heights.jpg" alt="A month of Cleveland Heights police reports on a dark map: numbered clusters colored red for violent, orange for serious, yellow for property and green for disorder, inside the city boundary, with the guided-views panel on the left and the ten-year timeline below." width="1400" height="900" loading="lazy" decoding="async">
+          <img src="assets/geo-map/month-cleveland-heights.webp" alt="A month of Cleveland Heights police reports on a dark map: numbered clusters colored red for violent, orange for serious, yellow for property and green for disorder, inside the city boundary, with the guided-views panel on the left and the ten-year timeline below." width="1400" height="900" loading="lazy" decoding="async">
           <figcaption><span class="tag">This month</span><b>A guided view in Explore.</b> Every report from the last 30 days, colored by severity. The picker at the top switches between the eight departments.</figcaption>
         </figure>
       </div>
       <figure class="shot shot-wide">
-        <img src="assets/geo-map/timeline-scrub.jpg" alt="The Analyze view: a severity panel listing violent, serious, property, disorder and traffic counts with offense-type chips, the Cleveland Heights map clustered by severity, and the timeline brushed to a 90-day window from June to September 2026." width="1400" height="900" loading="lazy" decoding="async">
+        <img src="assets/geo-map/timeline-scrub.webp" alt="The Analyze view: a severity panel listing violent, serious, property, disorder and traffic counts with offense-type chips, the Cleveland Heights map clustered by severity, and the timeline brushed to a 90-day window from June to September 2026." width="1400" height="900" loading="lazy" decoding="async">
         <figcaption><span class="tag">Analyze</span><b>The timeline is shared by every layer.</b> Drag a window and every dataset on the map filters to it together. Click a category to hide it, click a chip to keep only that kind. Add another layer and it joins the same timeline.</figcaption>
       </figure>
     </section>
@@ -928,12 +932,12 @@
   <footer class="tfoot">
     <div class="tfoot-grid">
       <div>
-        <a class="tfoot-brand" href="index.html"><img width="44" height="44" src="assets/logo-mark.png" alt="TES"><b>Tevis Engineering</b></a>
+        <a class="tfoot-brand" href="index.html"><img width="44" height="44" src="assets/logo-mark-88.webp" alt=""><b>Tevis Engineering</b></a>
         <p class="tfoot-blurb">IT Support, Engineering, 3D Design/Printing and tangential services for small businesses and individuals in the Cleveland, Ohio area and beyond.</p>
         <p class="tfoot-nap"><a href="tel:+12163028486">(216)&nbsp;302&#8209;8486</a> &middot; Cleveland,&nbsp;OH</p>
       </div>
       <div class="tfoot-col">
-        <h5>Services</h5>
+        <p class="tfoot-h">Services</p>
         <a href="service_catalog.html">Services Catalog</a>
         <a href="pricing_sheet.html">Managed IT Support</a>
         <a href="website_creation.html">Web &amp; App Design</a>
@@ -942,7 +946,7 @@
         <a href="data_destruction.html">Data Destruction</a>
       </div>
       <div class="tfoot-col">
-        <h5>Company</h5>
+        <p class="tfoot-h">Company</p>
         <a href="service-areas.html">Service Areas</a>
         <a href="how_support_works.html">How Support Works</a>
         <a href="portfolio.html">Portfolio</a>
@@ -951,7 +955,7 @@
         <a href="contact.html">Contact</a>
       </div>
       <div class="tfoot-col">
-        <h5>Get Started</h5>
+        <p class="tfoot-h">Get Started</p>
         <a href="make_ticket.html">Make a Ticket</a>
         <a href="pay_invoice.html">Pay Invoice</a>
         <a href="assessment.html">IT Assessment</a>
@@ -1026,5 +1030,6 @@
   <script src="assets/js/geo-coverage.js" defer></script>
 <script src="assets/js/form-ack.js" defer></script>
 <script src="assets/js/form-once.js" defer></script>
+<script src="assets/js/tes-analytics.js" defer></script>
 </body>
 </html>

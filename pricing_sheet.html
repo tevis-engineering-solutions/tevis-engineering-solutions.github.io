@@ -22,12 +22,14 @@
   <meta name="twitter:image" content="https://tevisengineering.com/assets/og-image.png">
   <link rel="canonical" href="https://tevisengineering.com/pricing_sheet.html">
   <link rel="icon" type="image/png" href="assets/favicon.png">
+  <link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
+  <meta name="theme-color" content="#0d1710">
   <meta http-equiv="X-Content-Type-Options" content="nosniff">
   <meta name="referrer" content="strict-origin-when-cross-origin">
   <!-- S3: Google Fonts CDN sends visitor IPs to Google. Self-host Inter + Montserrat long-term. -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Montserrat:wght@500;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Montserrat:wght@500;700;800&display=swap" media="print" data-async-css><noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Montserrat:wght@500;700;800&display=swap"></noscript>
   <style>
     :root {
       /* Sheet content — light/white for print readability */
@@ -433,7 +435,7 @@
     .tnav-dd { font-size:0.73rem; color:#8aa48d; margin-top:2px; line-height:1.3; display:block; }
     .tnav-cta { background:radial-gradient(110% 120% at 50% 0%,rgba(74,172,101,0.16),transparent 60%),linear-gradient(160deg,#16261d,#0f1c14); border:1px solid rgba(74,172,101,0.22); border-radius:18px; padding:1.3rem 1.1rem; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; gap:0.5rem; }
     .tnav-cta .star { color:#c89830; font-size:1.3rem; }
-    .tnav-cta h4 { font-family:'Montserrat','Segoe UI',system-ui,sans-serif; text-transform:uppercase; letter-spacing:0.04em; font-size:0.95rem; color:#fff; margin:0.2rem 0 0; }
+    .tnav-cta .tnav-cta-t { font-weight:700; line-height:inherit; font-family:'Montserrat','Segoe UI',system-ui,sans-serif; text-transform:uppercase; letter-spacing:0.04em; font-size:0.95rem; color:#fff; margin:0.2rem 0 0; }
     .tnav-cta p { font-size:0.76rem; color:#8aa48d; margin:0 0 0.6rem; line-height:1.45; }
     .tnav-right { display:flex; align-items:center; gap:0.9rem; }
     .tnav-sup-btn { display:inline-flex; align-items:center; justify-content:center; gap:0.5rem; font-family:'Montserrat','Segoe UI',system-ui,sans-serif; font-weight:700; text-transform:uppercase; letter-spacing:0.04em; text-decoration:none; border-radius:999px; cursor:pointer; border:2px solid rgba(255,255,255,0.45); padding:8px 18px; font-size:0.78rem; color:#e4ede5; background:transparent; transition:transform 0.2s,border-color 0.2s; }
@@ -502,13 +504,35 @@
     }
     @media (max-width: 380px) { h1 { font-size: 1.2rem; } }
   </style>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" media="print" data-async-css><noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"></noscript>
+  <script>document.querySelectorAll('link[data-async-css]').forEach(function (l) { function on() { l.media = 'all'; } if (l.sheet) on(); else l.addEventListener('load', on); });</script>
+  <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "name": "Home",
+        "item": "https://tevisengineering.com/"
+      },
+      {
+        "@type": "ListItem",
+        "position": 2,
+        "name": "Pricing",
+        "item": "https://tevisengineering.com/pricing_sheet.html"
+      }
+    ]
+  }
+  </script>
 </head>
 <body>
   <div class="tnav-bar">
     <div class="tnav-inner">
       <a class="tnav-brand" href="index.html">
-        <img width="44" height="44" src="assets/logo-mark.png" alt="Tevis Engineering Solutions">
+        <img width="44" height="44" src="assets/logo-mark-88.webp" alt="Tevis Engineering Solutions">
         <span class="bn"><b>Tevis Engineering</b><s>Solutions</s></span>
       </a>
       <div class="tnav-spacer"></div>
@@ -539,7 +563,7 @@
           </div>
           <div class="tnav-cta">
             <span class="star">&#9733;</span>
-            <h4>Need help now?</h4>
+            <p class="tnav-cta-t">Need help now?</p>
             <p>Talk straight to the engineer &mdash; no call center, one-business-day reply.</p>
             <a class="tnav-cta-btn" href="make_ticket.html"><i class="fa-solid fa-headset"></i> Get Support Now</a>
           </div>
@@ -547,7 +571,7 @@
       </div>
       <div class="tnav-spacer"></div>
       <div class="tnav-right">
-        <a class="tnav-sup-btn" href="login.html"><i class="fa-solid fa-right-to-bracket"></i> <span class="lbl">LOGIN</span></a>
+        <a class="tnav-sup-btn" href="login.html" aria-label="Customer login"><i class="fa-solid fa-right-to-bracket"></i> <span class="lbl">LOGIN</span></a>
       </div>
     </div>
   </div>
@@ -561,7 +585,7 @@
     <section class="hero">
       <div class="topline">
         <div class="brand-header">
-          <img width="44" height="44" src="assets/logo-mark.png" alt="Tevis Engineering Solutions" class="logo-slot">
+          <img width="44" height="44" src="assets/logo-mark-88.webp" alt="Tevis Engineering Solutions" class="logo-slot">
           <div>
             <h1>
               <span class="brand-primary">Tevis Engineering</span>
@@ -767,5 +791,6 @@
       mega.querySelectorAll('a').forEach(function(a) { a.addEventListener('click', function() { setOpen(false); }); });
     })();
   </script>
+<script src="assets/js/tes-analytics.js" defer></script>
 </body>
 </html>

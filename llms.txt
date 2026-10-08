@@ -9,6 +9,7 @@
 ## What we do
 - Managed IT support and help desk for small businesses, on-site and remote: https://tevisengineering.com/how_support_works.html
 - Engineering services: product design, PCB design, CAD and mechanical design, 3D printing, prototypes and replacement parts: https://tevisengineering.com/engineering-services-cleveland.html
+  - Replacement and discontinued parts, measured, modeled in CAD and 3D printed: https://tevisengineering.com/replacement-parts-cleveland.html
 - Web design, web apps and customer portals: https://tevisengineering.com/website_creation.html
 - Software products: https://tevisengineering.com/software.html
   - Ohio crash report leads for law firms: https://tevisengineering.com/ohio-crash-report-analysis-tool.html
@@ -24,8 +25,8 @@
 
 ## Where we work
 Cleveland and Northeast Ohio. On-site service in Cleveland, Lakewood, Parma,
-Westlake, Rocky River, Strongsville, Beachwood, Cleveland Heights, Shaker Heights
-and University Heights. Remote support and design work for clients anywhere.
+Westlake, Rocky River, Strongsville, Independence, Solon, Beachwood, Mentor,
+Cleveland Heights, Shaker Heights and University Heights. Remote support and design work for clients anywhere.
 Service areas: https://tevisengineering.com/service-areas.html
 
 ## Hours

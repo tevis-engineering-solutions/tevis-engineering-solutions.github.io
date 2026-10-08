@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>3D Shed Builder for Shed Dealers | Tevis Engineering</title>
-  <meta name="description" content="Try the 3D building configurator free on this page, then get a quote for your own. Customers pick a style, size, colors, doors and windows, watch it build in 3D, and see an itemized price and a rent-to-own payment. The demo is a generic shed line; your version is built around your buildings, materials and prices — sheds, garages, carports, cabins and more. Whitelabeled and installed by Tevis Engineering Solutions in Cleveland, Ohio.">
+  <meta name="description" content="A 3D shed builder for your dealer website: customers design a shed, see an itemized price and send you the quote. Try the free demo, then get yours.">
   <meta name="author" content="Tyler Tevis, Tevis Engineering Solutions">
   <meta property="og:type" content="website">
   <meta property="og:site_name" content="Tevis Engineering Solutions">
@@ -22,12 +22,15 @@
   <meta name="twitter:image" content="https://tevisengineering.com/assets/shed/configurator.jpg">
   <link rel="canonical" href="https://tevisengineering.com/3d-shed-builder-tool.html">
   <link rel="icon" type="image/png" href="assets/favicon.png">
+  <link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
+  <meta name="theme-color" content="#0d1710">
   <meta http-equiv="X-Content-Type-Options" content="nosniff">
   <meta name="referrer" content="strict-origin-when-cross-origin">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Montserrat:wght@500;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Montserrat:wght@500;700;800&display=swap" media="print" data-async-css><noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Montserrat:wght@500;700;800&display=swap"></noscript>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" media="print" data-async-css><noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"></noscript>
+  <script>document.querySelectorAll('link[data-async-css]').forEach(function (l) { function on() { l.media = 'all'; } if (l.sheet) on(); else l.addEventListener('load', on); });</script>
   <style>
     :root {
       --bg: #0d1710;
@@ -202,7 +205,7 @@
     .tnav-dd { font-size:0.73rem; color:#8aa48d; margin-top:2px; line-height:1.3; display:block; }
     .tnav-cta { background:radial-gradient(110% 120% at 50% 0%,rgba(74,172,101,0.16),transparent 60%),linear-gradient(160deg,#16261d,#0f1c14); border:1px solid rgba(74,172,101,0.22); border-radius:18px; padding:1.3rem 1.1rem; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; gap:0.5rem; }
     .tnav-cta .star { color:#c89830; font-size:1.3rem; }
-    .tnav-cta h4 { font-family:'Montserrat','Segoe UI',system-ui,sans-serif; text-transform:uppercase; letter-spacing:0.04em; font-size:0.95rem; color:#fff; margin:0.2rem 0 0; }
+    .tnav-cta .tnav-cta-t { font-weight:700; line-height:inherit; font-family:'Montserrat','Segoe UI',system-ui,sans-serif; text-transform:uppercase; letter-spacing:0.04em; font-size:0.95rem; color:#fff; margin:0.2rem 0 0; }
     .tnav-cta p { font-size:0.76rem; color:#8aa48d; margin:0 0 0.6rem; line-height:1.45; }
     .tnav-right { display:flex; align-items:center; gap:0.9rem; }
     .tnav-sup-btn { display:inline-flex; align-items:center; justify-content:center; gap:0.5rem; font-family:'Montserrat','Segoe UI',system-ui,sans-serif; font-weight:700; text-transform:uppercase; letter-spacing:0.04em; text-decoration:none; border-radius:999px; cursor:pointer; border:2px solid rgba(255,255,255,0.45); padding:8px 18px; font-size:0.78rem; color:#e4ede5; background:transparent; transition:transform 0.2s,border-color 0.2s; }
@@ -221,7 +224,7 @@
     .tfoot-nap { color:#8aa48d; font-size:0.85rem; line-height:1.7; margin:0 0 1rem; }
     .tfoot-nap a { color:#8aa48d; text-decoration:none; }
     .tfoot-nap a:hover { color:#4aac65; }
-    .tfoot-col h5 { font-family:'Montserrat','Segoe UI',system-ui,sans-serif; font-size:0.7rem; font-weight:800; text-transform:uppercase; letter-spacing:0.1em; color:#c89830; margin-bottom:0.9rem; }
+    .tfoot-col .tfoot-h { line-height:inherit; font-family:'Montserrat','Segoe UI',system-ui,sans-serif; font-size:0.7rem; font-weight:800; text-transform:uppercase; letter-spacing:0.1em; color:#c89830; margin-bottom:0.9rem; }
     .tfoot-col a { display:block; color:#8aa48d; text-decoration:none; font-size:0.88rem; padding:0.3rem 0; transition:color 0.2s,transform 0.2s; }
     .tfoot-col a:hover { color:#4aac65; transform:translateX(3px); }
     .tfoot-bar { max-width:1280px; margin:2rem auto 0; padding-top:1.5rem; border-top:1px solid #2c4232; display:flex; justify-content:space-between; flex-wrap:wrap; gap:0.5rem; align-items:center; }
@@ -332,13 +335,14 @@
   }
   </script>
   <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+  <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
 </head>
 <body>
 <!-- ===== NAV ===== -->
 <div class="tnav-bar">
   <div class="tnav-inner">
     <a class="tnav-brand" href="index.html">
-      <img width="44" height="44" src="assets/logo-mark.png" alt="Tevis Engineering Solutions">
+      <img width="44" height="44" src="assets/logo-mark-88.webp" alt="Tevis Engineering Solutions">
       <span class="bn"><b>Tevis Engineering</b><s>Solutions</s></span>
     </a>
     <div class="tnav-spacer"></div>
@@ -369,7 +373,7 @@
         </div>
         <div class="tnav-cta">
           <span class="star">&#9733;</span>
-          <h4>Need help now?</h4>
+          <p class="tnav-cta-t">Need help now?</p>
           <p>Talk straight to the engineer &mdash; no call center, one-business-day reply.</p>
           <a class="tnav-cta-btn" href="make_ticket.html"><i class="fa-solid fa-headset"></i> Get Support Now</a>
         </div>
@@ -377,7 +381,7 @@
     </div>
     <div class="tnav-spacer"></div>
     <div class="tnav-right">
-      <a class="tnav-sup-btn" href="login.html"><i class="fa-solid fa-right-to-bracket"></i> <span class="lbl">LOGIN</span></a>
+      <a class="tnav-sup-btn" href="login.html" aria-label="Customer login"><i class="fa-solid fa-right-to-bracket"></i> <span class="lbl">LOGIN</span></a>
     </div>
   </div>
 </div>
@@ -472,15 +476,15 @@
       </div>
       <div class="shots-3">
         <figure class="shot">
-          <img src="assets/shed/style-utility.jpg" alt="A hunter-green utility shed rendered in 3D with a charcoal gable roof, white trim, a double door on the gable end and a window on the side wall." width="760" height="475" loading="lazy" decoding="async">
+          <img src="assets/shed/style-utility.webp" alt="A hunter-green utility shed rendered in 3D with a charcoal gable roof, white trim, a double door on the gable end and a window on the side wall." width="760" height="475" loading="lazy" decoding="async">
           <figcaption><span class="tag">Utility</span>Straight walls, simple gable roof.</figcaption>
         </figure>
         <figure class="shot">
-          <img src="assets/shed/style-barn.jpg" alt="A white lofted barn rendered in 3D with a barn-red gambrel roof, a six-foot double door on the gable end and two windows along the side wall." width="760" height="475" loading="lazy" decoding="async">
+          <img src="assets/shed/style-barn.webp" alt="A white lofted barn rendered in 3D with a barn-red gambrel roof, a six-foot double door on the gable end and two windows along the side wall." width="760" height="475" loading="lazy" decoding="async">
           <figcaption><span class="tag">Lofted Barn</span>The gambrel silhouette, with loft storage overhead.</figcaption>
         </figure>
         <figure class="shot">
-          <img src="assets/shed/style-leanto.jpg" alt="A clay-colored lean-to shed rendered in 3D with a single-slope galvalume metal roof and a walk-in door on the front wall." width="760" height="475" loading="lazy" decoding="async">
+          <img src="assets/shed/style-leanto.webp" alt="A clay-colored lean-to shed rendered in 3D with a single-slope galvalume metal roof and a walk-in door on the front wall." width="760" height="475" loading="lazy" decoding="async">
           <figcaption><span class="tag">Lean-To</span>Single slope, sits tight to a fence or a building.</figcaption>
         </figure>
       </div>
@@ -514,11 +518,11 @@
       </div>
       <div class="shots-2 even">
         <figure class="shot">
-          <img src="assets/shed/price-breakdown.jpg" alt="The price panel expanded: a 10 by 16 lofted barn at 5,095 dollars, LP SmartSide at 685 dollars, architectural shingle at 485 dollars, a 5-foot double door at 465 dollars, two 24 by 36 windows at 310 dollars, a loft storage kit at 385 dollars, a ridge vent at 85 dollars, and a 6 percent regional adjustment of 450 dollars 60 cents, totalling 7,960 dollars 60 cents." width="660" height="901" loading="lazy" decoding="async">
+          <img src="assets/shed/price-breakdown.webp" alt="The price panel expanded: a 10 by 16 lofted barn at 5,095 dollars, LP SmartSide at 685 dollars, architectural shingle at 485 dollars, a 5-foot double door at 465 dollars, two 24 by 36 windows at 310 dollars, a loft storage kit at 385 dollars, a ridge vent at 85 dollars, and a 6 percent regional adjustment of 450 dollars 60 cents, totalling 7,960 dollars 60 cents." width="660" height="901" loading="lazy" decoding="async">
           <figcaption><span class="tag">Itemized</span><b>Every dollar is accounted for.</b> Base building, upgrades, each opening, each add-on, and your regional adjustment. Customers trust a number they can take apart.</figcaption>
         </figure>
         <figure class="shot">
-          <img src="assets/shed/drawings.jpg" alt="The drawings tab: four dimensioned elevations of a 10 by 16 lofted barn. Front elevation showing 12 feet 11 inches to the peak with a 5-foot door located 2 feet 6 inches from each corner, right side showing two 2-foot windows spaced along a 16-foot wall with 7-foot walls, plus back and left side elevations." width="1400" height="759" loading="lazy" decoding="async">
+          <img src="assets/shed/drawings.webp" alt="The drawings tab: four dimensioned elevations of a 10 by 16 lofted barn. Front elevation showing 12 feet 11 inches to the peak with a 5-foot door located 2 feet 6 inches from each corner, right side showing two 2-foot windows spaced along a 16-foot wall with 7-foot walls, plus back and left side elevations." width="1400" height="759" loading="lazy" decoding="async">
           <figcaption><span class="tag">Drawings</span><b>Dimensioned elevations of the same building.</b> Front, back and both sides, with every opening located. Customers print it, and it is useful on the clipboard when the building gets set.</figcaption>
         </figure>
       </div>
@@ -538,7 +542,7 @@
         <code>Link to the design</code>
       </div>
       <figure class="shot shot-wide">
-        <img src="assets/shed/quote-form.jpg" alt="The Get this quote panel over the 3D builder: a short form for name, email, phone, delivery ZIP and a notes box, headed 10 by 16 Lofted Barn at 7,960 dollars 60 cents, with a Send my design button." width="1400" height="877" loading="lazy" decoding="async">
+        <img src="assets/shed/quote-form.webp" alt="The Get this quote panel over the 3D builder: a short form for name, email, phone, delivery ZIP and a notes box, headed 10 by 16 Lofted Barn at 7,960 dollars 60 cents, with a Send my design button." width="1400" height="877" loading="lazy" decoding="async">
         <figcaption><span class="tag">Quote capture</span><b>Four fields and a note.</b> Short on purpose &mdash; the design is already the qualification. The customer keeps their own link, so the conversation can pick up days later without either of you rebuilding anything.</figcaption>
       </figure>
       <div class="notice">
@@ -662,12 +666,12 @@
   <footer class="tfoot">
     <div class="tfoot-grid">
       <div>
-        <a class="tfoot-brand" href="index.html"><img width="44" height="44" src="assets/logo-mark.png" alt="TES"><b>Tevis Engineering</b></a>
+        <a class="tfoot-brand" href="index.html"><img width="44" height="44" src="assets/logo-mark-88.webp" alt=""><b>Tevis Engineering</b></a>
         <p class="tfoot-blurb">IT Support, Engineering, 3D Design/Printing and tangential services for small businesses and individuals in the Cleveland, Ohio area and beyond.</p>
         <p class="tfoot-nap"><a href="tel:+12163028486">(216)&nbsp;302&#8209;8486</a> &middot; Cleveland,&nbsp;OH</p>
       </div>
       <div class="tfoot-col">
-        <h5>Services</h5>
+        <p class="tfoot-h">Services</p>
         <a href="service_catalog.html">Services Catalog</a>
         <a href="pricing_sheet.html">Managed IT Support</a>
         <a href="website_creation.html">Web &amp; App Design</a>
@@ -676,7 +680,7 @@
         <a href="data_destruction.html">Data Destruction</a>
       </div>
       <div class="tfoot-col">
-        <h5>Company</h5>
+        <p class="tfoot-h">Company</p>
         <a href="service-areas.html">Service Areas</a>
         <a href="how_support_works.html">How Support Works</a>
         <a href="portfolio.html">Portfolio</a>
@@ -685,7 +689,7 @@
         <a href="contact.html">Contact</a>
       </div>
       <div class="tfoot-col">
-        <h5>Get Started</h5>
+        <p class="tfoot-h">Get Started</p>
         <a href="make_ticket.html">Make a Ticket</a>
         <a href="pay_invoice.html">Pay Invoice</a>
         <a href="assessment.html">IT Assessment</a>
@@ -738,5 +742,6 @@
 
 <script src="assets/js/form-ack.js" defer></script>
 <script src="assets/js/form-once.js" defer></script>
+<script src="assets/js/tes-analytics.js" defer></script>
 </body>
 </html>

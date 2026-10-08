@@ -22,14 +22,17 @@
   <meta name="twitter:image" content="https://tevisengineering.com/assets/og-image.png">
   <link rel="canonical" href="https://tevisengineering.com/privacy_policy.html">
   <link rel="icon" type="image/png" href="assets/favicon.png">
+  <link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
+  <meta name="theme-color" content="#0d1710">
   <!-- S5: partial coverage via <meta> — full headers require Cloudflare/CDN (see /_headers) -->
   <meta http-equiv="X-Content-Type-Options" content="nosniff">
   <meta name="referrer" content="strict-origin-when-cross-origin">
   <!-- S3/S4: CDN fonts/icons send visitor IPs to Google/Cloudflare. Self-host long-term. -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Montserrat:wght@500;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Montserrat:wght@500;700;800&display=swap" media="print" data-async-css><noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Montserrat:wght@500;700;800&display=swap"></noscript>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" media="print" data-async-css><noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"></noscript>
+  <script>document.querySelectorAll('link[data-async-css]').forEach(function (l) { function on() { l.media = 'all'; } if (l.sheet) on(); else l.addEventListener('load', on); });</script>
   <style>
     :root {
       --bg: #0d1710;
@@ -78,7 +81,7 @@
     .tnav-dd { font-size:0.73rem; color:#8aa48d; margin-top:2px; line-height:1.3; display:block; }
     .tnav-cta { background:radial-gradient(110% 120% at 50% 0%,rgba(74,172,101,0.16),transparent 60%),linear-gradient(160deg,#16261d,#0f1c14); border:1px solid rgba(74,172,101,0.22); border-radius:18px; padding:1.3rem 1.1rem; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; gap:0.5rem; }
     .tnav-cta .star { color:#c89830; font-size:1.3rem; }
-    .tnav-cta h4 { font-family:'Montserrat','Segoe UI',system-ui,sans-serif; text-transform:uppercase; letter-spacing:0.04em; font-size:0.95rem; color:#fff; margin:0.2rem 0 0; }
+    .tnav-cta .tnav-cta-t { font-weight:700; line-height:inherit; font-family:'Montserrat','Segoe UI',system-ui,sans-serif; text-transform:uppercase; letter-spacing:0.04em; font-size:0.95rem; color:#fff; margin:0.2rem 0 0; }
     .tnav-cta p { font-size:0.76rem; color:#8aa48d; margin:0 0 0.6rem; line-height:1.45; }
     .tnav-right { display:flex; align-items:center; gap:0.9rem; }
     .tnav-sup-btn { display:inline-flex; align-items:center; justify-content:center; gap:0.5rem; font-family:'Montserrat','Segoe UI',system-ui,sans-serif; font-weight:700; text-transform:uppercase; letter-spacing:0.04em; text-decoration:none; border-radius:999px; cursor:pointer; border:2px solid rgba(255,255,255,0.45); padding:8px 18px; font-size:0.78rem; color:#e4ede5; background:transparent; transition:transform 0.2s,border-color 0.2s; }
@@ -97,7 +100,7 @@
     .tfoot-nap { color:#8aa48d; font-size:0.85rem; line-height:1.7; margin:0 0 1rem; }
     .tfoot-nap a { color:#8aa48d; text-decoration:none; }
     .tfoot-nap a:hover { color:#4aac65; }
-    .tfoot-col h5 { font-family:'Montserrat','Segoe UI',system-ui,sans-serif; font-size:0.7rem; font-weight:800; text-transform:uppercase; letter-spacing:0.1em; color:#c89830; margin-bottom:0.9rem; }
+    .tfoot-col .tfoot-h { line-height:inherit; font-family:'Montserrat','Segoe UI',system-ui,sans-serif; font-size:0.7rem; font-weight:800; text-transform:uppercase; letter-spacing:0.1em; color:#c89830; margin-bottom:0.9rem; }
     .tfoot-col a { display:block; color:#8aa48d; text-decoration:none; font-size:0.88rem; padding:0.3rem 0; transition:color 0.2s,transform 0.2s; }
     .tfoot-col a:hover { color:#4aac65; transform:translateX(3px); }
     .tfoot-bar { max-width:1280px; margin:2rem auto 0; padding-top:1.5rem; border-top:1px solid #2c4232; display:flex; justify-content:space-between; flex-wrap:wrap; gap:0.5rem; align-items:center; }
@@ -156,14 +159,38 @@
     .brave-badge { display:inline-flex; align-items:center; gap:0.45rem; margin-left:0.35rem; font-family:"Montserrat",sans-serif; font-size:0.72rem; font-weight:800; letter-spacing:0.06em; color:var(--text); text-decoration:none; border:1px solid var(--border); border-radius:999px; padding:0.25rem 0.7rem; white-space:nowrap; vertical-align:middle; }
     .brave-badge i { color:#fb542b; font-size:1rem; }
     .brave-badge:hover { border-color:var(--accent); }
+      .cookie-reset { font: 600 0.85rem Montserrat, sans-serif; color: var(--text); background: transparent; border: 1px solid var(--border); border-radius: 999px; padding: 0.55rem 1rem; min-height: 40px; cursor: pointer; }
+    .cookie-reset:hover { border-color: #4aac65; }
+    .cookie-reset-note { color: var(--muted); font-size: 0.85rem; margin-left: 0.5rem; }
   </style>
+  <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "name": "Home",
+        "item": "https://tevisengineering.com/"
+      },
+      {
+        "@type": "ListItem",
+        "position": 2,
+        "name": "Privacy Policy & Terms",
+        "item": "https://tevisengineering.com/privacy_policy.html"
+      }
+    ]
+  }
+  </script>
 </head>
 <body>
 <!-- ===== NAV ===== -->
 <div class="tnav-bar">
   <div class="tnav-inner">
     <a class="tnav-brand" href="index.html">
-      <img width="44" height="44" src="assets/logo-mark.png" alt="Tevis Engineering Solutions">
+      <img width="44" height="44" src="assets/logo-mark-88.webp" alt="Tevis Engineering Solutions">
       <span class="bn"><b>Tevis Engineering</b><s>Solutions</s></span>
     </a>
     <div class="tnav-spacer"></div>
@@ -194,7 +221,7 @@
         </div>
         <div class="tnav-cta">
           <span class="star">&#9733;</span>
-          <h4>Need help now?</h4>
+          <p class="tnav-cta-t">Need help now?</p>
           <p>Talk straight to the engineer &mdash; no call center, one-business-day reply.</p>
           <a class="tnav-cta-btn" href="make_ticket.html"><i class="fa-solid fa-headset"></i> Get Support Now</a>
         </div>
@@ -202,7 +229,7 @@
     </div>
     <div class="tnav-spacer"></div>
     <div class="tnav-right">
-      <a class="tnav-sup-btn" href="login.html"><i class="fa-solid fa-right-to-bracket"></i> <span class="lbl">LOGIN</span></a>
+      <a class="tnav-sup-btn" href="login.html" aria-label="Customer login"><i class="fa-solid fa-right-to-bracket"></i> <span class="lbl">LOGIN</span></a>
     </div>
   </div>
 </div>
@@ -210,7 +237,7 @@
 <div class="page">
 
   <h1 class="page-title">Privacy Policy &amp; Terms of Service</h1>
-  <p class="page-meta">Last updated: September 2026 &nbsp;·&nbsp; Tevis Engineering Solutions, Cleveland, Ohio</p>
+  <p class="page-meta">Last updated: October 2026 &nbsp;·&nbsp; Tevis Engineering Solutions, Cleveland, Ohio</p>
 
   <div class="toc">
     <h2>Table of Contents</h2>
@@ -237,7 +264,8 @@
       <li><strong>Device &amp; Technical Information:</strong> Descriptions of hardware, software, operating systems, and network configurations you provide in support requests.</li>
       <li><strong>Payment Information:</strong> Invoice identifiers and payment confirmation records. Credit card and payment data is processed directly by PayPal — we do not store card numbers or sensitive payment credentials.</li>
       <li><strong>Communications:</strong> Email correspondence, ticket submissions, and notes from service sessions, retained for record-keeping and future reference.</li>
-      <li><strong>Website Usage Data:</strong> Standard web server logs (IP address, browser type, pages visited) for security and analytics purposes. We do not use tracking cookies beyond what GitHub Pages may set by default.</li>
+      <li><strong>Website Usage Data:</strong> Standard web server logs (IP address, browser type, pages visited) for security and analytics purposes.</li>
+      <li><strong>Analytics and Advertising Cookies:</strong> We use Google Analytics and Google Ads to see which pages, searches and ads bring people to us, and which forms, calls and bookings follow. These tools set cookies and record pages viewed, buttons and links clicked, and that a form was submitted. They do not receive what you type into our forms. Links that carry a payment or quote token have that token removed before anything is sent to Google.</li>
     </ul>
 
     <h3>1.2 How We Use Your Information</h3>
@@ -263,10 +291,14 @@
     <p>We retain service records, communications, and invoices for a minimum of <strong>3 years</strong> for accounting and business continuity purposes. You may request deletion of your personal information by contacting us directly, subject to our legal record-keeping obligations.</p>
 
     <h3>1.5 Third-Party Services</h3>
-    <p>Our website and tools may link to or integrate with third-party services (PayPal, Formspree, Google Fonts, Font Awesome, GitHub Pages, Chart.js, Brave Search). These services have their own privacy policies and we are not responsible for their data practices.</p>
+    <p>Our website and tools may link to or integrate with third-party services (PayPal, Formspree, Google Analytics, Google Ads, Google Fonts, Font Awesome, GitHub Pages, Cloudflare, Tawk.to live chat, Chart.js, Brave Search). These services have their own privacy policies and we are not responsible for their data practices.</p>
     <p>Our business-research tools use the Brave Search API to find the public websites of newly registered Ohio businesses. <a class="brave-badge" href="https://brave.com/search/api/" target="_blank" rel="noopener noreferrer"><i class="fa-brands fa-brave" aria-hidden="true"></i> POWERED BY BRAVE</a></p>
 
-    <h3>1.6 Your Rights</h3>
+    <h3 id="cookies">1.6 Cookie Choices</h3>
+    <p>The first time you visit, a bar at the bottom of the page lets you accept or decline analytics and advertising cookies. Visitors in the European Economic Area, the United Kingdom and Switzerland are opted out until they accept. If you decline, Google receives only cookieless signals and no advertising profile is built from your visit. Your choice is saved in your browser. You can also use Google's <a href="https://tools.google.com/dlpage/gaoptout" target="_blank" rel="noopener noreferrer">Analytics opt-out add-on</a> and <a href="https://adssettings.google.com" target="_blank" rel="noopener noreferrer">Ad Settings</a>.</p>
+    <p><button type="button" class="cookie-reset" id="cookieReset">Change my cookie choice</button> <span class="cookie-reset-note" id="cookieResetNote" role="status"></span></p>
+
+    <h3>1.7 Your Rights</h3>
     <p>You may at any time:</p>
     <ul>
       <li>Request a copy of the personal information we hold about you.</li>
@@ -276,10 +308,10 @@
     </ul>
     <p>To exercise these rights, contact us at <a href="mailto:tyler@tevisengineering.com">tyler@tevisengineering.com</a>.</p>
 
-    <h3>1.7 Children's Privacy</h3>
+    <h3>1.8 Children's Privacy</h3>
     <p>Our services are not directed to children under 13. We do not knowingly collect personal information from children. If you believe we have inadvertently collected such information, please contact us immediately.</p>
 
-    <h3>1.8 Changes to This Policy</h3>
+    <h3>1.9 Changes to This Policy</h3>
     <p>We may update this Privacy Policy from time to time. The "Last Updated" date at the top of this page reflects the most recent revision. Continued use of our services constitutes acceptance of any updated policy.</p>
   </section>
 
@@ -380,12 +412,12 @@
   <footer class="tfoot">
     <div class="tfoot-grid">
       <div>
-        <a class="tfoot-brand" href="index.html"><img width="44" height="44" src="assets/logo-mark.png" alt="TES"><b>Tevis Engineering</b></a>
+        <a class="tfoot-brand" href="index.html"><img width="44" height="44" src="assets/logo-mark-88.webp" alt=""><b>Tevis Engineering</b></a>
         <p class="tfoot-blurb">IT Support, Engineering, 3D Design/Printing and tangential services for small businesses and individuals in the Cleveland, Ohio area and beyond.</p>
         <p class="tfoot-nap"><a href="tel:+12163028486">(216)&nbsp;302&#8209;8486</a> &middot; Cleveland,&nbsp;OH</p>
       </div>
       <div class="tfoot-col">
-        <h5>Services</h5>
+        <p class="tfoot-h">Services</p>
         <a href="service_catalog.html">Services Catalog</a>
         <a href="pricing_sheet.html">Managed IT Support</a>
         <a href="website_creation.html">Web &amp; App Design</a>
@@ -394,7 +426,7 @@
         <a href="data_destruction.html">Data Destruction</a>
       </div>
       <div class="tfoot-col">
-        <h5>Company</h5>
+        <p class="tfoot-h">Company</p>
         <a href="service-areas.html">Service Areas</a>
         <a href="how_support_works.html">How Support Works</a>
         <a href="portfolio.html">Portfolio</a>
@@ -403,7 +435,7 @@
         <a href="contact.html">Contact</a>
       </div>
       <div class="tfoot-col">
-        <h5>Get Started</h5>
+        <p class="tfoot-h">Get Started</p>
         <a href="make_ticket.html">Make a Ticket</a>
         <a href="pay_invoice.html">Pay Invoice</a>
         <a href="assessment.html">IT Assessment</a>
@@ -439,6 +471,13 @@
     document.addEventListener('keydown', function(e) { if (e.key === 'Escape') setOpen(false); });
     mega.querySelectorAll('a').forEach(function(a) { a.addEventListener('click', function() { setOpen(false); }); });
   })();
+</script>
+<script src="assets/js/tes-analytics.js" defer></script>
+<script>
+  document.getElementById('cookieReset').addEventListener('click', function () {
+    try { localStorage.removeItem('tesConsent'); } catch (e) {}
+    document.getElementById('cookieResetNote').textContent = 'Cleared. Reload the page to choose again.';
+  });
 </script>
 </body>
 </html>

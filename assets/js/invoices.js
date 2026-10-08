@@ -301,6 +301,9 @@
               if (handlers.onError) handlers.onError((d && d.error) || 'capture_failed');
               return;
             }
+            if (global.tesTrack) {
+              global.tesTrack('purchase', { transaction_id: data.orderID, value: Number(inv.amount) || 0, currency: 'USD', items: [{ item_name: 'Invoice payment' }] });
+            }
             if (handlers.onPaid) handlers.onPaid(data.orderID);
           });
         },

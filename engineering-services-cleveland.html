@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Engineering Services in Cleveland, Ohio | Tevis Engineering Solutions</title>
-  <meta name="description" content="Product design, electronics and PCB design, custom software, IT systems, CAD and 3D printing for businesses and founders in Cleveland and Northeast Ohio.">
+  <meta name="description" content="Engineering services in Cleveland: product design, electronics and PCB design, CAD, 3D printing and custom software for businesses across Northeast Ohio.">
   <meta name="author" content="Tyler Tevis, Tevis Engineering Solutions">
   <meta property="og:type" content="website">
   <meta property="og:site_name" content="Tevis Engineering Solutions">
@@ -22,12 +22,15 @@
   <meta name="twitter:image" content="https://tevisengineering.com/assets/og-image.png">
   <link rel="canonical" href="https://tevisengineering.com/engineering-services-cleveland.html">
   <link rel="icon" type="image/png" href="assets/favicon.png">
+  <link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
+  <meta name="theme-color" content="#0d1710">
   <meta http-equiv="X-Content-Type-Options" content="nosniff">
   <meta name="referrer" content="strict-origin-when-cross-origin">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Montserrat:wght@500;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Montserrat:wght@500;700;800&display=swap" media="print" data-async-css><noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Montserrat:wght@500;700;800&display=swap"></noscript>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" media="print" data-async-css><noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"></noscript>
+  <script>document.querySelectorAll('link[data-async-css]').forEach(function (l) { function on() { l.media = 'all'; } if (l.sheet) on(); else l.addEventListener('load', on); });</script>
   <style>
     :root {
       --bg: #0d1710;
@@ -141,6 +144,8 @@
     .ex-build h2 { font-family:"Montserrat",sans-serif; text-transform:uppercase; letter-spacing:0.04em; font-size:1.35rem; color:#f1f7f1; margin-bottom:1rem; }
     .ex-cards { display:grid; grid-template-columns:repeat(3,1fr); gap:1.1rem; }
     .ex-card { background:linear-gradient(180deg,#152419,#101b14); border:1px solid var(--line); border-radius:18px; padding:0.9rem 0.9rem 1.2rem; transition:border-color .25s, transform .25s, box-shadow .25s; scroll-margin-top:90px; }
+    .ex-more { color:var(--gold); font-weight:700; text-decoration:none; white-space:nowrap; }
+    .ex-more:hover { text-decoration:underline; }
     .ex-card:hover { border-color:rgba(200,152,48,0.55); transform:translateY(-4px); box-shadow:0 18px 40px rgba(0,0,0,0.4), 0 0 0 1px rgba(200,152,48,0.15); }
     .ex-viz { border-radius:12px; overflow:hidden; background:radial-gradient(120% 90% at 50% 0%, rgba(74,172,101,0.12), transparent 60%), linear-gradient(#0b150e,#0b150e); background-image:radial-gradient(120% 90% at 50% 0%, rgba(74,172,101,0.12), transparent 60%), linear-gradient(rgba(74,172,101,0.07) 1px, transparent 1px), linear-gradient(90deg, rgba(74,172,101,0.07) 1px, transparent 1px); background-size:auto, 18px 18px, 18px 18px; background-color:#0b150e; border:1px solid #1f3427; margin-bottom:1rem; }
     .ex-viz svg { display:block; width:100%; height:auto; }
@@ -150,6 +155,8 @@
     .ex-tags li { font-size:0.75rem; font-weight:600; letter-spacing:0.03em; color:#e8cf8f; border:1px solid rgba(200,152,48,0.35); background:rgba(200,152,48,0.08); border-radius:999px; padding:0.2rem 0.6rem; }
     .ex-also { margin-top:1rem; color:var(--muted); font-size:0.92rem; text-align:center; }
     .ex-also i { color:var(--gold); margin-right:0.35rem; }
+    .ex-also a { color:var(--green); font-weight:600; text-decoration:none; }
+    .ex-also a:hover { text-decoration:underline; }
 
     /* card visuals */
     .sch path, .sch rect { fill:none; stroke:#4aac65; stroke-width:2; stroke-linecap:round; stroke-linejoin:round; }
@@ -341,7 +348,7 @@
     .tnav-dd { font-size:0.73rem; color:#8aa48d; margin-top:2px; line-height:1.3; display:block; }
     .tnav-cta { background:radial-gradient(110% 120% at 50% 0%,rgba(74,172,101,0.16),transparent 60%),linear-gradient(160deg,#16261d,#0f1c14); border:1px solid rgba(74,172,101,0.22); border-radius:18px; padding:1.3rem 1.1rem; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; gap:0.5rem; }
     .tnav-cta .star { color:#c89830; font-size:1.3rem; }
-    .tnav-cta h4 { font-family:'Montserrat','Segoe UI',system-ui,sans-serif; text-transform:uppercase; letter-spacing:0.04em; font-size:0.95rem; color:#fff; margin:0.2rem 0 0; }
+    .tnav-cta .tnav-cta-t { font-weight:700; line-height:inherit; font-family:'Montserrat','Segoe UI',system-ui,sans-serif; text-transform:uppercase; letter-spacing:0.04em; font-size:0.95rem; color:#fff; margin:0.2rem 0 0; }
     .tnav-cta p { font-size:0.76rem; color:#8aa48d; margin:0 0 0.6rem; line-height:1.45; }
     .tnav-right { display:flex; align-items:center; gap:0.9rem; }
     .tnav-sup-btn { display:inline-flex; align-items:center; justify-content:center; gap:0.5rem; font-family:'Montserrat','Segoe UI',system-ui,sans-serif; font-weight:700; text-transform:uppercase; letter-spacing:0.04em; text-decoration:none; border-radius:999px; cursor:pointer; border:2px solid rgba(255,255,255,0.45); padding:8px 18px; font-size:0.78rem; color:#e4ede5; background:transparent; transition:transform 0.2s,border-color 0.2s; }
@@ -360,7 +367,7 @@
     .tfoot-nap { color:#8aa48d; font-size:0.85rem; line-height:1.7; margin:0 0 1rem; }
     .tfoot-nap a { color:#8aa48d; text-decoration:none; }
     .tfoot-nap a:hover { color:#4aac65; }
-    .tfoot-col h5 { font-family:'Montserrat','Segoe UI',system-ui,sans-serif; font-size:0.7rem; font-weight:800; text-transform:uppercase; letter-spacing:0.1em; color:#c89830; margin-bottom:0.9rem; }
+    .tfoot-col .tfoot-h { line-height:inherit; font-family:'Montserrat','Segoe UI',system-ui,sans-serif; font-size:0.7rem; font-weight:800; text-transform:uppercase; letter-spacing:0.1em; color:#c89830; margin-bottom:0.9rem; }
     .tfoot-col a { display:block; color:#8aa48d; text-decoration:none; font-size:0.88rem; padding:0.3rem 0; transition:color 0.2s,transform 0.2s; }
     .tfoot-col a:hover { color:#4aac65; transform:translateX(3px); }
     .tfoot-bar { max-width:1280px; margin:2rem auto 0; padding-top:1.5rem; border-top:1px solid #2c4232; display:flex; justify-content:space-between; flex-wrap:wrap; gap:0.5rem; align-items:center; }
@@ -516,7 +523,7 @@
         "name": "Can you recreate a part that is no longer made?",
         "acceptedAnswer": {
           "@type": "Answer",
-          "text": "Usually. We measure what is left of it, model it in CAD and test the fit before printing a batch."
+          "text": "Usually. We measure what is left of it, model it in CAD and test the fit before printing a batch. See replacement and discontinued parts."
         }
       },
       {
@@ -539,13 +546,14 @@
   }
   </script>
   <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+  <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
 </head>
 <body>
 <!-- ===== NAV ===== -->
 <div class="tnav-bar">
   <div class="tnav-inner">
     <a class="tnav-brand" href="index.html">
-      <img width="44" height="44" src="assets/logo-mark.png" alt="Tevis Engineering Solutions">
+      <img width="44" height="44" src="assets/logo-mark-88.webp" alt="Tevis Engineering Solutions">
       <span class="bn"><b>Tevis Engineering</b><s>Solutions</s></span>
     </a>
     <div class="tnav-spacer"></div>
@@ -576,7 +584,7 @@
         </div>
         <div class="tnav-cta">
           <span class="star">&#9733;</span>
-          <h4>Need help now?</h4>
+          <p class="tnav-cta-t">Need help now?</p>
           <p>Talk straight to the engineer &mdash; no call center, one-business-day reply.</p>
           <a class="tnav-cta-btn" href="make_ticket.html"><i class="fa-solid fa-headset"></i> Get Support Now</a>
         </div>
@@ -584,7 +592,7 @@
     </div>
     <div class="tnav-spacer"></div>
     <div class="tnav-right">
-      <a class="tnav-sup-btn" href="login.html"><i class="fa-solid fa-right-to-bracket"></i> <span class="lbl">LOGIN</span></a>
+      <a class="tnav-sup-btn" href="login.html" aria-label="Customer login"><i class="fa-solid fa-right-to-bracket"></i> <span class="lbl">LOGIN</span></a>
     </div>
   </div>
 </div>
@@ -683,7 +691,7 @@
           <rect x="200" y="130" width="160" height="160" rx="4" class="ex-court"/>
           <rect x="220" y="150" width="120" height="120" rx="7" fill="url(#exChip)" stroke="#3b4c40"/>
           <circle cx="234" cy="164" r="3.5" fill="#2c3830"/>
-          <image href="assets/logo-mark.png" x="247" y="171" width="66" height="66" class="ex-logo"/>
+          <image href="assets/logo-mark-176.webp" x="247" y="171" width="66" height="66" class="ex-logo"/>
           <text x="280" y="257" class="ex-chip-label">TES-A1</text>
           <rect x="136" y="96" width="40" height="16" rx="8" class="ex-xtal"/>
           <rect x="424" y="56" width="46" height="28" rx="3" fill="url(#exChip)" stroke="#3b4c40"/>
@@ -968,15 +976,15 @@
             </svg>
           </div>
           <h3>Custom &amp; Replacement Parts</h3>
-          <p>Bring us the broken original or a sketch. We measure it, model it, draw it and print it.</p>
+          <p>Bring us the broken original or a sketch. We measure it, model it, draw it and print it. <a class="ex-more" href="replacement-parts-cleveland.html">Replacement parts &rarr;</a></p>
           <ul class="ex-tags"><li>Recreate a part</li><li>Custom design</li><li>Dimensioned drawings</li></ul>
         </article>
       </div>
-      <p class="ex-also" id="automation"><i class="fa-solid fa-code"></i> Also: custom software, apps, automation, networks and IT systems, on their own or built into a product.</p>
+      <p class="ex-also" id="automation"><i class="fa-solid fa-code"></i> Also: <a href="software.html">custom software</a>, apps, automation, <a href="how_support_works.html">networks and IT systems</a>, on their own or built into a product.</p>
     </section>
 
     <section class="section" id="faq">
-      <h2>Questions</h2>
+      <h2>Engineering Services Questions</h2>
       <div class="faq">
         <details>
           <summary>What does an engineering project cost?</summary>
@@ -984,7 +992,7 @@
         </details>
         <details>
           <summary>Can you recreate a part that is no longer made?</summary>
-          <div class="faq-a">Usually. We measure what is left of it, model it in CAD and test the fit before printing a batch.</div>
+          <div class="faq-a">Usually. We measure what is left of it, model it in CAD and test the fit before printing a batch. See <a href="replacement-parts-cleveland.html">replacement and discontinued parts</a>.</div>
         </details>
         <details>
           <summary>What files do I get?</summary>
@@ -992,7 +1000,7 @@
         </details>
         <details>
           <summary>Do you work outside Cleveland?</summary>
-          <div class="faq-a">Yes. We meet clients across Northeast Ohio, and design work can be done remotely for anyone.</div>
+          <div class="faq-a">Yes. We meet clients across <a href="service-areas.html">Northeast Ohio</a>, and design work can be done remotely for anyone.</div>
         </details>
       </div>
     </section>
@@ -1233,12 +1241,12 @@
   <footer class="tfoot">
     <div class="tfoot-grid">
       <div>
-        <a class="tfoot-brand" href="index.html"><img width="44" height="44" src="assets/logo-mark.png" alt="TES"><b>Tevis Engineering</b></a>
+        <a class="tfoot-brand" href="index.html"><img width="44" height="44" src="assets/logo-mark-88.webp" alt=""><b>Tevis Engineering</b></a>
         <p class="tfoot-blurb">IT Support, Engineering, 3D Design/Printing and tangential services for small businesses and individuals in the Cleveland, Ohio area and beyond.</p>
         <p class="tfoot-nap"><a href="tel:+12163028486">(216)&nbsp;302&#8209;8486</a> &middot; Cleveland,&nbsp;OH</p>
       </div>
       <div class="tfoot-col">
-        <h5>Services</h5>
+        <p class="tfoot-h">Services</p>
         <a href="service_catalog.html">Services Catalog</a>
         <a href="pricing_sheet.html">Managed IT Support</a>
         <a href="website_creation.html">Web &amp; App Design</a>
@@ -1247,7 +1255,7 @@
         <a href="data_destruction.html">Data Destruction</a>
       </div>
       <div class="tfoot-col">
-        <h5>Company</h5>
+        <p class="tfoot-h">Company</p>
         <a href="service-areas.html">Service Areas</a>
         <a href="how_support_works.html">How Support Works</a>
         <a href="portfolio.html">Portfolio</a>
@@ -1255,7 +1263,7 @@
         <a href="contact.html">Contact</a>
       </div>
       <div class="tfoot-col">
-        <h5>Get Started</h5>
+        <p class="tfoot-h">Get Started</p>
         <a href="make_ticket.html">Make a Ticket</a>
         <a href="pay_invoice.html">Pay Invoice</a>
         <a href="assessment.html">IT Assessment</a>
@@ -1300,5 +1308,6 @@
 
 <script src="assets/js/form-ack.js" defer></script>
 <script src="assets/js/form-once.js" defer></script>
+<script src="assets/js/tes-analytics.js" defer></script>
 </body>
 </html>
