@@ -723,7 +723,7 @@
       <div class="req-success" id="reqSuccess" style="display:none;">
         <strong>Thanks &mdash; your request is in.</strong> We&rsquo;ll reply within one business day with a quote, payment details, or whatever the arrangement needs. For anything urgent, call <a href="tel:+12163028486" style="color:#cdeed6;">(216)&nbsp;302&#8209;8486</a>.
       </div>
-      <form id="reqForm" class="req-form" action="https://formspree.io/f/maqvanal" method="POST" data-send-once data-sent-show="#reqSuccess">
+      <form id="reqForm" class="req-form" action="https://formspree.io/f/maqvanal" method="POST" data-send-once data-sent-show="#reqSuccess" data-ack="crash">
         <input type="hidden" name="_subject" value="Ohio Crash Tool — Quote / Custom Arrangement">
         <input type="hidden" name="_next" value="https://tevisengineering.com/ohio-crash-report-analysis-tool.html?requested=1">
         <input type="hidden" name="product" value="Ohio Crash Report Analysis Tool">
@@ -778,6 +778,7 @@
           <label for="reqCounties">Target counties or agencies (and anything else)</label>
           <textarea id="reqCounties" name="counties" rows="3" placeholder="e.g. Cuyahoga, Summit, Lorain — weekly; or Ohio State Highway Patrol statewide"></textarea>
         </div>
+        <div class="cf-turnstile full" data-sitekey="0x4AAAAAAEfjPSABvMOUzIl3" data-theme="dark" data-size="flexible"></div>
         <button type="submit" class="btn btn-primary">Send My Request</button>
       </form>
     </section>
@@ -1065,6 +1066,7 @@
     })();
   </script>
 
+<script src="assets/js/form-ack.js" defer></script>
 <script src="assets/js/form-once.js" defer></script>
 </body>
 </html>

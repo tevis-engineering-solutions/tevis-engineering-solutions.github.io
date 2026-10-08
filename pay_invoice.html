@@ -480,6 +480,7 @@
       .card { padding: 0.85rem; }
     }
   </style>
+  <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
 </head>
 <body>
   <!-- ===== NAV ===== -->
@@ -615,7 +616,7 @@
         <p class="lead">Use this form for invoice corrections, payment confirmation, failed transactions, and billing record updates.</p>
 
         <div id="billingFormWrapper">
-          <form class="support-form" id="billingForm" action="https://formspree.io/f/mzdoowdj" method="POST" data-send-once data-sent-hide="#billingFormWrapper" data-sent-show="#billingSuccessCard" data-sent-class="visible">
+          <form class="support-form" id="billingForm" action="https://formspree.io/f/mzdoowdj" method="POST" data-send-once data-sent-hide="#billingFormWrapper" data-sent-show="#billingSuccessCard" data-sent-class="visible" data-ack="billing">
             <div>
               <label for="bill-name" style="display:block; font-size:0.8rem; font-weight:700; color:#b4c3dd; margin-bottom:0.25rem;">Full Name <span style="color:#ff6a8e;">*</span></label>
               <input id="bill-name" type="text" name="name" placeholder="Your full name" required autocomplete="name">
@@ -657,6 +658,7 @@
             <input type="hidden" name="_next" value="https://tevisengineering.com/pay_invoice.html?billing_submitted=1">
             <input type="text" name="_honeypot" style="display:none;" tabindex="-1" autocomplete="off">
 
+            <div class="cf-turnstile full" data-sitekey="0x4AAAAAAEfjPSABvMOUzIl3" data-theme="dark" data-size="flexible"></div>
             <button class="btn btn-primary" type="submit">Submit Billing Request</button>
             <p class="small">For billing issues, contact: billing@tevisengineering.com</p>
           </form>
@@ -1009,6 +1011,7 @@
       mega.querySelectorAll('a').forEach(function(a) { a.addEventListener('click', function() { setOpen(false); }); });
     })();
 </script>
+<script src="assets/js/form-ack.js" defer></script>
 <script src="assets/js/form-once.js" defer></script>
 </body>
 </html>

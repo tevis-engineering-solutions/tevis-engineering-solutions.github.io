@@ -366,6 +366,7 @@
   {"@type":"Question","name":"What happens if a roof is not covered by the survey data?","acceptedAnswer":{"@type":"Answer","text":"The estimator falls back to a hand trace: the homeowner outlines the roof on the aerial and picks a pitch, and the footprint is corrected to a surface area from there. Every lead is labeled measured or traced, in the app, in the lead record, and in your email, so you always know whether you are looking at survey data or a homeowner's best guess before you drive out."}}
   ]}
   </script>
+  <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
 </head>
 <body>
 <!-- ===== NAV ===== -->
@@ -670,7 +671,7 @@
       <div class="req-success" id="reqSuccess" hidden>
         <strong>Thanks &mdash; your request is in.</strong> We&rsquo;ll reply within one business day to set up your demo. For anything urgent, call <a href="tel:+12163028486" class="success-tel">(216)&nbsp;302&#8209;8486</a>.
       </div>
-      <form id="reqForm" class="req-form" action="https://formspree.io/f/maqvanal" method="POST" data-send-once data-sent-show="#reqSuccess">
+      <form id="reqForm" class="req-form" action="https://formspree.io/f/maqvanal" method="POST" data-send-once data-sent-show="#reqSuccess" data-ack="shingleai">
         <input type="hidden" name="_subject" value="ShingleAI Roof Estimator &mdash; Demo / Quote Request">
         <input type="hidden" name="_next" value="https://tevisengineering.com/shingleai-roof-estimate-tool.html?requested=1">
         <input type="hidden" name="product" value="ShingleAI Roof Estimator">
@@ -708,6 +709,7 @@
           <label for="reqNotes">Your markets, materials, or anything else</label>
           <textarea id="reqNotes" name="notes" rows="3" placeholder="e.g. Cleveland west side, asphalt and standing seam; site is on WordPress"></textarea>
         </div>
+        <div class="cf-turnstile full" data-sitekey="0x4AAAAAAEfjPSABvMOUzIl3" data-theme="dark" data-size="flexible"></div>
         <button type="submit" class="btn btn-primary">Request My Demo</button>
       </form>
     </section>
@@ -1201,6 +1203,7 @@
     })();
   </script>
 
+<script src="assets/js/form-ack.js" defer></script>
 <script src="assets/js/form-once.js" defer></script>
 </body>
 </html>

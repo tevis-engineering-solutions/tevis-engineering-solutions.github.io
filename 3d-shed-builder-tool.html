@@ -331,6 +331,7 @@
     ]
   }
   </script>
+  <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
 </head>
 <body>
 <!-- ===== NAV ===== -->
@@ -587,7 +588,7 @@
       <div class="req-success" id="reqSuccess" style="display:none;">
         <strong>Thanks &mdash; your request is in.</strong> We'll reply within one business day. For anything urgent, call <a href="tel:+12163028486" class="success-tel">(216)&nbsp;302&#8209;8486</a>.
       </div>
-      <form id="reqForm" class="req-form" action="https://formspree.io/f/maqvanal" method="POST" data-send-once data-sent-show="#reqSuccess">
+      <form id="reqForm" class="req-form" action="https://formspree.io/f/maqvanal" method="POST" data-send-once data-sent-show="#reqSuccess" data-ack="shed">
         <input type="hidden" name="_subject" value="3D Shed Builder — Demo / Quote Request">
         <input type="hidden" name="_next" value="https://tevisengineering.com/3d-shed-builder-tool.html?requested=1">
         <input type="hidden" name="product" value="3D Shed Builder">
@@ -625,6 +626,7 @@
           <label for="reqNotes">What you build, and anything else</label>
           <textarea id="reqNotes" name="notes" rows="3" placeholder="e.g. utility and lofted barns plus 1-car garages, 8x8 up to 14x32, rent-to-own through a local provider; site is on WordPress"></textarea>
         </div>
+        <div class="cf-turnstile full" data-sitekey="0x4AAAAAAEfjPSABvMOUzIl3" data-theme="dark" data-size="flexible"></div>
         <button type="submit" class="btn btn-primary">Get My Quote</button>
       </form>
     </section>
@@ -735,6 +737,7 @@
     })();
   </script>
 
+<script src="assets/js/form-ack.js" defer></script>
 <script src="assets/js/form-once.js" defer></script>
 </body>
 </html>
