@@ -1,0 +1,84 @@
+# Tells Bing (and the other IndexNow search engines) which public pages changed in a push
+# to main, so new and edited pages are crawled within hours instead of waiting for the
+# sitemap. The key file at the site root (bdf545d49fbb8dd8ff8aaf49658f7d2a.txt) proves we
+# own the site; it is public by design.
+#
+# What is sent: every .html file added, changed or deleted in the push, except the console,
+# the portal, generated and asset folders, and pages marked noindex. Deleted pages are sent
+# too, so Bing drops them sooner.
+#
+# Run it by hand from the Actions tab (Run workflow) to send every page in sitemap.xml.
+
+name: IndexNow
+
+on:
+  push:
+    branches: [main]
+    paths: ['**.html', 'sitemap.xml']
+  workflow_dispatch:
+
+jobs:
+  submit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Collect changed public pages
+        id: urls
+        env:
+          BEFORE: ${{ github.event.before }}
+          AFTER: ${{ github.sha }}
+          EVENT: ${{ github.event_name }}
+        run: |
+          set -euo pipefail
+          SITE="https://tevisengineering.com"
+          : > urls.txt
+
+          if [ "$EVENT" = "workflow_dispatch" ]; then
+            grep -o '<loc>[^<]*' sitemap.xml | sed 's/<loc>//' > urls.txt
+          else
+            # A brand-new branch or a force push has no usable "before"; compare with the
+            # previous commit instead.
+            if [ -z "$BEFORE" ] || ! git cat-file -e "$BEFORE^{commit}" 2>/dev/null || [ "$BEFORE" = "0000000000000000000000000000000000000000" ]; then
+              BEFORE="$AFTER~1"
+            fi
+            git diff --name-only "$BEFORE" "$AFTER" -- '*.html' | while read -r f; do
+              case "$f" in
+                admin/*|portal/*|shed-demo/*|assets/*|_ops/*|.github/*) continue ;;
+              esac
+              # Skip pages that ask not to be indexed (only when the file still exists).
+              if [ -f "$f" ] && grep -qi 'name="robots" content="noindex' "$f"; then continue; fi
+              case "$f" in
+                index.html) echo "$SITE/" ;;
+                */index.html) echo "$SITE/${f%index.html}" ;;
+                *) echo "$SITE/$f" ;;
+              esac
+            done >> urls.txt
+          fi
+
+          sort -u urls.txt -o urls.txt
+          echo "count=$(wc -l < urls.txt | tr -d ' ')" >> "$GITHUB_OUTPUT"
+          cat urls.txt
+
+      - name: Wait for GitHub Pages to publish
+        if: steps.urls.outputs.count != '0'
+        run: sleep 90
+
+      - name: Send to IndexNow
+        if: steps.urls.outputs.count != '0'
+        run: |
+          set -euo pipefail
+          KEY="bdf545d49fbb8dd8ff8aaf49658f7d2a"
+          BODY=$(jq -Rn --arg key "$KEY" '{
+            host: "tevisengineering.com",
+            key: $key,
+            keyLocation: ("https://tevisengineering.com/" + $key + ".txt"),
+            urlList: [inputs | select(length > 0)]
+          }' < urls.txt)
+          CODE=$(curl -s -o resp.txt -w '%{http_code}' -X POST https://api.indexnow.org/indexnow \
+            -H 'Content-Type: application/json; charset=utf-8' --data "$BODY")
+          echo "IndexNow answered $CODE"; cat resp.txt || true
+          # 200 = accepted, 202 = accepted and the key is still being checked.
+          case "$CODE" in 200|202) ;; *) exit 1 ;; esac
