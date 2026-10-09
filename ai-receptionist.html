@@ -1,0 +1,1668 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI Receptionist for Small Businesses | Tevis Engineering</title>
+  <meta name="description" content="An AI receptionist that answers the calls you miss, books into your calendar and flags emergencies. Plugs into your systems. Hear it handle real calls.">
+  <meta name="author" content="Tyler Tevis, Tevis Engineering Solutions">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Tevis Engineering Solutions">
+  <meta property="og:locale" content="en_US">
+  <meta property="og:url" content="https://tevisengineering.com/ai-receptionist.html">
+  <meta property="og:title" content="AI Receptionist for Small Businesses | Tevis Engineering">
+  <meta property="og:description" content="Never miss another call. It answers when you can’t, books the job, and only interrupts you for a real emergency. Hear the highlight reel.">
+  <meta property="og:image" content="https://tevisengineering.com/assets/receptionist/og.jpg">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="A call summary from the AI receptionist: an after-hours no-heat call sorted as an emergency, with the on-call technician alerted">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="AI Receptionist for Small Businesses | Tevis Engineering">
+  <meta name="twitter:description" content="Never miss another call. It answers when you can’t, books the job, and only interrupts you for a real emergency. Hear the highlight reel.">
+  <meta name="twitter:image" content="https://tevisengineering.com/assets/receptionist/og.jpg">
+  <link rel="canonical" href="https://tevisengineering.com/ai-receptionist.html">
+  <link rel="icon" type="image/png" href="assets/favicon.png">
+  <link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
+  <meta name="theme-color" content="#0d1710">
+  <meta http-equiv="X-Content-Type-Options" content="nosniff">
+  <meta name="referrer" content="strict-origin-when-cross-origin">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Montserrat:wght@500;700;800&display=swap" media="print" data-async-css><noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Montserrat:wght@500;700;800&display=swap"></noscript>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" media="print" data-async-css><noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"></noscript>
+  <script>document.querySelectorAll('link[data-async-css]').forEach(function (l) { function on() { l.media = 'all'; } if (l.sheet) on(); else l.addEventListener('load', on); });</script>
+  <style>
+    :root {
+      --bg: #0d1710;
+      --card: #142019;
+      --card-2: #1c2e22;
+      --line: #2c4232;
+      --text: #e4ede5;
+      --muted: #8aa48d;
+      --blue: #4aac65;
+      --green: #4aac65;
+      --gold: #c89830;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: "Inter", "Segoe UI", system-ui, sans-serif;
+      color: var(--text);
+      background: radial-gradient(circle at top, #172b1c 0%, #0d1710 45%, #060e08 100%);
+      line-height: 1.65;
+    }
+    .container { width: min(1120px, 92%); margin: 0 auto; }
+    .eyebrow { display:inline-flex; align-items:center; gap:0.4rem; border:1px solid rgba(74,172,101,0.45); border-radius:999px; padding:0.32rem 0.8rem; font-size:0.8rem; font-weight:700; text-transform:uppercase; letter-spacing:0.08em; color:#cdeed6; background:rgba(74,172,101,0.12); margin-bottom:0.9rem; }
+    h1 { font-family:"Montserrat",sans-serif; text-transform:uppercase; letter-spacing:0.02em; font-size:clamp(2rem,6vw,3.15rem); line-height:1.12; margin-bottom:0.9rem; }
+    h1 .grad { background:linear-gradient(90deg,#4aac65,#c89830); -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent; }
+    .cta-row { margin-top:1.4rem; display:flex; gap:0.8rem; flex-wrap:wrap; }
+    .btn { text-decoration:none; border-radius:999px; padding:0.78rem 1.2rem; font-weight:700; border:1px solid transparent; font-size:0.9rem; font-family:"Montserrat",sans-serif; text-transform:uppercase; letter-spacing:0.03em; }
+    .btn-primary { background:linear-gradient(135deg,#c89830,#e0b840); color:#0d1710; box-shadow:0 10px 20px rgba(200,152,48,0.25); }
+    .btn-secondary { border-color:rgba(74,172,101,0.4); background:rgba(74,172,101,0.1); color:#cdeed6; }
+    .section { margin-top:1.25rem; background:rgba(20,32,25,0.74); border:1px solid var(--line); border-radius:16px; padding:1.5rem; }
+    .section h2 { font-family:"Montserrat",sans-serif; text-transform:uppercase; letter-spacing:0.03em; font-size:1.3rem; margin-bottom:0.75rem; color:#f1f7f1; }
+    .section p { color:var(--muted); margin-bottom:0.7rem; }
+    .section p strong, .section li strong { color:#dfeadf; }
+    .faq { margin-top:0.6rem; }
+    .faq details { border:1px solid var(--line); border-radius:12px; background:var(--card); margin-bottom:0.6rem; overflow:hidden; }
+    .faq summary { cursor:pointer; padding:0.9rem 1rem; font-family:"Montserrat",sans-serif; font-weight:700; font-size:0.98rem; color:#e4ede5; list-style:none; display:flex; justify-content:space-between; align-items:center; gap:1rem; }
+    .faq summary::-webkit-details-marker { display:none; }
+    .faq summary::after { content:"+"; color:var(--gold); font-weight:800; font-size:1.2rem; }
+    .faq details[open] summary::after { content:"\2212"; }
+    .faq details[open] summary { border-bottom:1px solid var(--line); }
+    .faq .faq-a { padding:0.9rem 1rem; color:var(--muted); font-size:0.95rem; }
+    .faq .faq-a a { color:var(--green); }
+    .cta-band { margin-top:1.25rem; background:radial-gradient(120% 130% at 50% 0%,rgba(74,172,101,0.14),transparent 60%),linear-gradient(160deg,#16261d,#0f1c14); border:1px solid rgba(74,172,101,0.28); border-radius:16px; padding:1.8rem 1.5rem; text-align:center; }
+    .cta-band h2 { font-family:"Montserrat",sans-serif; text-transform:uppercase; letter-spacing:0.03em; font-size:1.4rem; color:#fff; margin-bottom:0.5rem; }
+    .cta-band p { color:var(--muted); max-width:620px; margin:0 auto 1.2rem; }
+    .req-form { max-width:700px; margin:1.4rem auto 0; display:grid; grid-template-columns:1fr 1fr; gap:0.85rem; text-align:left; }
+    .req-form .full { grid-column:1 / -1; }
+    .req-form label, .ex-opts legend { display:block; font:700 0.74rem "Montserrat",sans-serif; text-transform:uppercase; letter-spacing:0.08em; color:#a8c4ad; margin-bottom:0.35rem; }
+    .ex-opts legend span { color:#6f8f74; font-weight:600; letter-spacing:0.04em; text-transform:none; margin-left:0.35rem; }
+    .req-form input, .req-form select, .req-form textarea { width:100%; padding:0.7rem 0.8rem; border-radius:10px; border:1px solid var(--line); background:rgba(8,18,12,0.85); color:var(--text); font:inherit; font-size:0.95rem; }
+    .req-form input:focus, .req-form select:focus, .req-form textarea:focus { outline:none; border-color:var(--gold); box-shadow:0 0 0 3px rgba(200,152,48,0.18); }
+    .req-form .trap { position:absolute; left:-9999px; opacity:0; height:0; overflow:hidden; }
+    .req-form button { grid-column:1 / -1; justify-self:center; min-width:240px; cursor:pointer; }
+    .ex-opts { border:0; padding:0; margin:0; display:flex; flex-wrap:wrap; gap:0.5rem; }
+    .ex-opts legend { width:100%; margin-bottom:0.55rem; }
+    .req-form .ex-opt { position:relative; display:inline-flex; margin:0; cursor:pointer; text-transform:none; letter-spacing:0; font:inherit; color:inherit; }
+    .ex-opt input { position:absolute; opacity:0; width:1px; height:1px; }
+    .ex-opt span { display:flex; align-items:center; gap:0.45rem; min-height:40px; padding:0.45rem 0.8rem; border-radius:10px; border:1px solid rgba(74,172,101,0.3); background:rgba(11,21,14,0.7); color:#dfeadf; font:600 0.86rem "Inter",sans-serif; transition:border-color .2s, background .2s, box-shadow .2s; }
+    .ex-opt span i { color:var(--gold); width:1rem; text-align:center; }
+    .ex-opt:hover span { border-color:rgba(200,152,48,0.55); }
+    .ex-opt input:checked + span { border-color:#e0b840; background:rgba(200,152,48,0.16); color:#fff; box-shadow:0 0 0 1px rgba(224,184,64,0.35), 0 0 14px rgba(224,184,64,0.18); }
+    .ex-opt input:focus-visible + span { outline:2px solid #e0b840; outline-offset:2px; }
+    .req-success { max-width:640px; margin:1rem auto 0; background:rgba(74,172,101,0.1); border:1px solid rgba(74,172,101,0.35); border-radius:12px; padding:1.2rem; color:#cdeed6; }
+    .success-tel { color:#cdeed6; }
+    .ex-start .ex-start-alt { margin:1.2rem auto 0; font-size:0.9rem; }
+    .ex-start-alt a { color:var(--green); font-weight:600; }
+    @media (max-width:560px) { .req-form { grid-template-columns:1fr; } .req-form button { width:100%; min-width:0; } }
+    .cta-band .cta-row { justify-content:center; }
+    .breadcrumbs { padding:1.25rem 0 0; font-size:0.82rem; color:var(--muted); }
+    .breadcrumbs a { color:var(--muted); text-decoration:none; }
+    .breadcrumbs a:hover { color:var(--green); }
+    @media (max-width:700px) { .hero { padding-top:2.8rem; } .section { padding:1.1rem; } }
+    @media (max-width:480px) { .hero { padding:2.2rem 0 1.5rem; } .cta-row { flex-direction:column; align-items:stretch; } .cta-row .btn { text-align:center; } }
+
+    /* Newsletter signup */
+    .newsletter-section { background: var(--card); border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); padding: 3.5rem 5%; margin-top: 4rem; }
+    .newsletter-inner { max-width: 640px; margin: 0 auto; text-align: center; }
+    .newsletter-heading { font-family: "Montserrat", sans-serif; font-size: 1.5rem; font-weight: 700; color: var(--text); margin: 0 0 0.5rem; text-transform: uppercase; letter-spacing: 0.04em; }
+    .newsletter-sub { color: var(--muted); font-size: 0.95rem; margin: 0 0 1.75rem; }
+    .newsletter-form { display: flex; gap: 0.6rem; justify-content: center; flex-wrap: wrap; }
+    .newsletter-input { flex: 1 1 220px; max-width: 320px; padding: 0.7rem 1rem; border-radius: 8px; border: 1px solid var(--line); background: var(--bg); color: var(--text); font-size: 0.95rem; font-family: "Inter", sans-serif; outline: none; transition: border-color 0.2s; }
+    .newsletter-input:focus { border-color: var(--blue); }
+    .newsletter-btn { padding: 0.7rem 1.5rem; border-radius: 8px; border: none; background: var(--blue); color: #0d1710; font-family: "Montserrat", sans-serif; font-weight: 700; font-size: 0.9rem; cursor: pointer; text-transform: uppercase; letter-spacing: 0.05em; transition: opacity 0.2s; }
+    .newsletter-btn:hover { opacity: 0.85; }
+    .newsletter-fine { margin-top: 1rem; font-size: 0.78rem; color: var(--muted); }
+    .newsletter-fine a { color: var(--muted); text-decoration: underline; }
+    .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); border: 0; }
+    /* ===== TES NAV ===== */
+    .tnav-bar { position:sticky; top:0; z-index:50; background:rgba(9,18,12,0.9); backdrop-filter:blur(12px); border-bottom:1px solid rgba(74,172,101,0.22); }
+    .tnav-inner { display:flex; align-items:center; gap:1.25rem; padding:0.8rem 5%; max-width:1280px; margin:0 auto; }
+    .tnav-brand { display:flex; align-items:center; gap:0.8rem; cursor:pointer; text-decoration:none; }
+    .tnav-brand img { width:44px; height:44px; border-radius:10px; border:1px solid rgba(255,255,255,0.15); }
+    .tnav-brand .bn { display:flex; flex-direction:column; font-family:'Montserrat','Segoe UI',system-ui,sans-serif; text-transform:uppercase; letter-spacing:0.08em; line-height:1.15; }
+    .tnav-brand .bn b { font-size:1rem; font-weight:800; color:#fff; }
+    .tnav-brand .bn s { font-size:0.7rem; font-weight:500; color:#8aa48d; text-decoration:none; }
+    .tnav-spacer { flex:1; }
+    .tnav-wrap { position:relative; }
+    .tnav-trigger { display:inline-flex; align-items:center; gap:0.5rem; font-family:'Montserrat','Segoe UI',system-ui,sans-serif; text-transform:uppercase; letter-spacing:0.06em; font-weight:700; font-size:0.85rem; color:#c2d2c5; background:transparent; border:1px solid transparent; padding:0.6rem 1rem; border-radius:999px; cursor:pointer; transition:color .2s,background .2s,border-color .2s; }
+    .tnav-wrap:hover .tnav-trigger,.tnav-trigger[aria-expanded="true"] { color:#fff; background:rgba(74,172,101,0.10); border-color:rgba(74,172,101,0.22); }
+    .tnav-chev { transition:transform .25s cubic-bezier(0.22,1,0.36,1); }
+    .tnav-wrap:hover .tnav-chev,.tnav-trigger[aria-expanded="true"] .tnav-chev { transform:rotate(180deg); }
+    .tnav-mega { position:fixed; top:72px; left:50%; width:min(840px,calc(100vw - 32px)); max-height:calc(100vh - 92px); overflow-y:auto; background:#142019; border:1px solid #2c4232; border-radius:20px; box-shadow:0 24px 60px rgba(0,0,0,0.55); padding:1.4rem; display:grid; grid-template-columns:1fr 1fr 0.85fr; gap:1.1rem; opacity:0; visibility:hidden; pointer-events:none; transform:translateX(-50%) translateY(8px); transition:opacity .22s cubic-bezier(0.22,1,0.36,1),transform .22s cubic-bezier(0.22,1,0.36,1); z-index:60; }
+    .tnav-mega::before { content:''; position:absolute; top:-22px; left:0; right:0; height:24px; }
+    .tnav-mega.is-open { opacity:1; visibility:visible; pointer-events:auto; transform:translateX(-50%) translateY(0); }
+    .tnav-col-head { font-family:'Montserrat','Segoe UI',system-ui,sans-serif; font-size:0.64rem; font-weight:800; text-transform:uppercase; letter-spacing:0.14em; color:#c89830; margin:0 0 0.55rem; padding-left:0.45rem; }
+    .tnav-link { display:flex; gap:0.7rem; align-items:flex-start; padding:0.5rem; border-radius:12px; cursor:pointer; text-decoration:none; transition:background .18s,transform .18s; }
+    .tnav-link:hover { background:#1c2e22; transform:translateX(3px); }
+    .tnav-ic { width:34px; height:34px; flex-shrink:0; border-radius:9px; background:rgba(74,172,101,0.10); border:1px solid rgba(74,172,101,0.22); color:#4aac65; display:flex; align-items:center; justify-content:center; font-size:0.85rem; transition:background .18s,color .18s; }
+    .tnav-link:hover .tnav-ic { background:#4aac65; color:#0d1710; }
+    .tnav-tt { font-family:'Montserrat','Segoe UI',system-ui,sans-serif; font-weight:700; font-size:0.85rem; color:#e4ede5; line-height:1.2; display:block; }
+    .tnav-dd { font-size:0.73rem; color:#8aa48d; margin-top:2px; line-height:1.3; display:block; }
+    .tnav-cta { background:radial-gradient(110% 120% at 50% 0%,rgba(74,172,101,0.16),transparent 60%),linear-gradient(160deg,#16261d,#0f1c14); border:1px solid rgba(74,172,101,0.22); border-radius:18px; padding:1.3rem 1.1rem; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; gap:0.5rem; }
+    .tnav-cta .star { color:#c89830; font-size:1.3rem; }
+    .tnav-cta .tnav-cta-t { font-weight:700; line-height:inherit; font-family:'Montserrat','Segoe UI',system-ui,sans-serif; text-transform:uppercase; letter-spacing:0.04em; font-size:0.95rem; color:#fff; margin:0.2rem 0 0; }
+    .tnav-cta p { font-size:0.76rem; color:#8aa48d; margin:0 0 0.6rem; line-height:1.45; }
+    .tnav-right { display:flex; align-items:center; gap:0.9rem; }
+    .tnav-sup-btn { display:inline-flex; align-items:center; justify-content:center; gap:0.5rem; font-family:'Montserrat','Segoe UI',system-ui,sans-serif; font-weight:700; text-transform:uppercase; letter-spacing:0.04em; text-decoration:none; border-radius:999px; cursor:pointer; border:2px solid rgba(255,255,255,0.45); padding:8px 18px; font-size:0.78rem; color:#e4ede5; background:transparent; transition:transform 0.2s,border-color 0.2s; }
+    .tnav-sup-btn:hover { transform:translateY(-2px); border-color:#fff; }
+    .tnav-cta-btn { display:inline-flex; align-items:center; justify-content:center; gap:0.5rem; font-family:'Montserrat','Segoe UI',system-ui,sans-serif; font-weight:700; text-transform:uppercase; letter-spacing:0.04em; text-decoration:none; border-radius:999px; cursor:pointer; border:1px solid rgba(255,255,255,0.25); padding:8px 18px; font-size:0.78rem; color:#0d1710; background:linear-gradient(135deg,#c89830,#e0b840); box-shadow:0 10px 20px rgba(200,152,48,0.28); transition:transform 0.2s,filter 0.2s; }
+    .tnav-cta-btn:hover { transform:translateY(-2px); filter:brightness(1.06); }
+    @media (max-width:860px) { .tnav-mega { top:68px; left:4vw; right:4vw; width:auto; grid-template-columns:1fr; max-height:calc(100vh - 84px); transform:translateY(8px); } .tnav-mega.is-open { transform:translateY(0); } .tnav-cta,.tnav-brand .bn { display:none; } }
+    @media (max-width:460px) { .tnav-inner { gap:0.6rem; padding:0.7rem 4%; } .tnav-trigger { padding:0.55rem 0.75rem; } .tnav-sup-btn span.lbl { display:none; } }
+    /* ===== TES FOOTER ===== */
+    .tfoot { background:#050b07; border-top:1px solid #2c4232; padding:3rem 5% 2rem; }
+    .tfoot-grid { max-width:1280px; margin:0 auto; display:grid; grid-template-columns:1.5fr 1fr 1fr 1fr; gap:2rem; }
+    .tfoot-brand { display:flex; align-items:center; gap:0.7rem; margin-bottom:1rem; cursor:pointer; text-decoration:none; }
+    .tfoot-brand img { width:40px; height:40px; border-radius:9px; }
+    .tfoot-brand b { font-family:'Montserrat','Segoe UI',system-ui,sans-serif; font-weight:800; text-transform:uppercase; letter-spacing:0.06em; color:#fff; font-size:0.95rem; }
+    .tfoot-blurb { color:#8aa48d; font-size:0.9rem; line-height:1.7; max-width:34ch; margin:0 0 1rem; }
+    .tfoot-nap { color:#8aa48d; font-size:0.85rem; line-height:1.7; margin:0 0 1rem; }
+    .tfoot-nap a { color:#8aa48d; text-decoration:none; }
+    .tfoot-nap a:hover { color:#4aac65; }
+    .tfoot-col .tfoot-h { line-height:inherit; font-family:'Montserrat','Segoe UI',system-ui,sans-serif; font-size:0.7rem; font-weight:800; text-transform:uppercase; letter-spacing:0.1em; color:#c89830; margin-bottom:0.9rem; }
+    .tfoot-col a { display:block; color:#8aa48d; text-decoration:none; font-size:0.88rem; padding:0.3rem 0; transition:color 0.2s,transform 0.2s; }
+    .tfoot-col a:hover { color:#4aac65; transform:translateX(3px); }
+    .tfoot-bar { max-width:1280px; margin:2rem auto 0; padding-top:1.5rem; border-top:1px solid #2c4232; display:flex; justify-content:space-between; flex-wrap:wrap; gap:0.5rem; align-items:center; }
+    .tfoot-bar span { color:#8aa48d; font-size:0.82rem; }
+    .tfoot-social { display:flex; gap:1.2rem; }
+    .tfoot-social a { color:#8aa48d; font-size:1.1rem; transition:color 0.2s; }
+    .tfoot-social a:hover { color:#4aac65; }
+    .tfoot-veteran { display:inline-flex; align-items:center; gap:0.45rem; font-family:'Montserrat','Segoe UI',system-ui,sans-serif; font-size:0.78rem; font-weight:700; letter-spacing:0.06em; text-transform:uppercase; padding:6px 12px; border-radius:999px; line-height:1; background:linear-gradient(135deg,#2d6a3f,#3d8a55); border:1px solid rgba(255,255,255,0.18); color:#fff; }
+    @media (max-width:780px) { .tfoot-grid { grid-template-columns:1fr 1fr; } }
+    @media (max-width:480px) { .tfoot-grid { grid-template-columns:1fr; } }
+
+    /* ===== AI Receptionist, flagship page (ar-) ===== */
+    .ar { overflow-x:clip; }
+    .ar .container { position:relative; z-index:1; }
+    .ar-kicker { display:inline-block; font:700 0.74rem "Montserrat",sans-serif; text-transform:uppercase; letter-spacing:0.24em; color:var(--gold); margin-bottom:0.8rem; }
+    .ar-h2 { font:800 clamp(1.9rem,4.6vw,3.2rem)/1.06 "Montserrat",sans-serif; text-transform:uppercase; letter-spacing:0.005em; color:#fff; margin-bottom:1rem; text-wrap:balance; }
+    .ar-h2.big { font-size:clamp(2.3rem,6.4vw,4.4rem); }
+    .ar-sub { color:var(--muted); font-size:1.08rem; line-height:1.6; max-width:40rem; }
+    .ar-head { text-align:center; margin:0 auto 2.8rem; max-width:54rem; }
+    .ar-head .ar-sub { margin:0 auto; }
+    .ar-band { position:relative; padding:6rem 0; }
+    .ar .btn { display:inline-flex; align-items:center; justify-content:center; gap:0.6rem; cursor:pointer; padding:1rem 1.6rem; font-size:0.92rem; line-height:1.2; }
+    .ar-js .rv { opacity:0; transform:translateY(30px); transition:opacity .9s ease, transform .9s cubic-bezier(.2,.7,.2,1); }
+    .ar-js .rv.in { opacity:1; transform:none; }
+
+    /* hero */
+    .ar-hero { position:relative; padding:0 0 4.5rem; overflow:hidden; }
+    .ar-orb { position:absolute; border-radius:50%; filter:blur(70px); pointer-events:none; z-index:0; }
+    .ar-orb.a { width:560px; height:560px; right:-140px; top:20px; background:radial-gradient(circle, rgba(200,152,48,0.32), transparent 68%); animation:arDrift 14s ease-in-out infinite alternate; }
+    .ar-orb.b { width:640px; height:640px; left:-260px; top:240px; background:radial-gradient(circle, rgba(74,172,101,0.28), transparent 68%); animation:arDrift 19s ease-in-out infinite alternate-reverse; }
+    @keyframes arDrift { to { transform:translate(70px,-50px) scale(1.12); } }
+    .ar-hero-grid { display:grid; grid-template-columns:1.12fr 0.88fr; gap:3rem; align-items:center; min-height:660px; }
+    .ar-hero h1 { font-size:clamp(2.9rem,7.4vw,5.6rem); line-height:0.96; margin:0.5rem 0 1.3rem; }
+    .ar-hero h1 .grad { display:inline-block; }
+    .ar-lede { font-size:1.22rem; color:#cfe0d2; max-width:33rem; line-height:1.55; }
+    .ar-cta { display:flex; gap:0.8rem; flex-wrap:wrap; margin-top:2rem; }
+    .ar-cta.center { justify-content:center; }
+    .ar-go { animation:arGlow 2.6s ease-out infinite; }
+    @keyframes arGlow { 0% { box-shadow:0 0 0 0 rgba(224,184,64,0.5), 0 12px 28px rgba(200,152,48,0.3); } 70%, 100% { box-shadow:0 0 0 18px rgba(224,184,64,0), 0 12px 28px rgba(200,152,48,0.3); } }
+    .ar-demo { margin-top:1.3rem; color:var(--muted); font-size:0.95rem; display:flex; align-items:center; gap:0.7rem; flex-wrap:wrap; }
+    .ar-demo.center { justify-content:center; }
+    .ar-demo a { display:inline-flex; align-items:center; gap:0.5rem; color:#fff; font-weight:700; text-decoration:none; border:1px dashed rgba(200,152,48,0.6); border-radius:12px; padding:0.5rem 0.9rem; background:rgba(200,152,48,0.07); }
+    .ar-demo a i { color:var(--gold); }
+    .ar-demo a:hover { border-style:solid; background:rgba(200,152,48,0.15); }
+
+    .ar-hero-art { display:flex; justify-content:center; perspective:1400px; }
+    .ar-phone { position:relative; width:292px; height:596px; border-radius:50px; padding:11px; background:linear-gradient(145deg,#33463a,#0a120c 38%,#1d2c22 80%,#3b5243); box-shadow:0 50px 90px rgba(0,0,0,0.6), 0 0 0 1px rgba(255,255,255,0.06), 0 0 110px rgba(200,152,48,0.2); transform:rotateY(-14deg) rotateX(5deg); animation:arFloat 7s ease-in-out infinite; }
+    @keyframes arFloat { 50% { transform:rotateY(-9deg) rotateX(2deg) translateY(-14px); } }
+    .ar-phone::before { content:""; position:absolute; top:22px; left:50%; width:90px; height:26px; margin-left:-45px; border-radius:20px; background:#040805; z-index:4; }
+    .ar-phone-in { position:relative; height:100%; border-radius:40px; overflow:hidden; background:radial-gradient(130% 70% at 50% 0%, #1f3d29, #0a140d 62%); }
+    .ar-ph-bar { position:relative; z-index:3; display:flex; justify-content:space-between; padding:17px 28px 0; font:600 12px "Inter",sans-serif; color:#dfeadf; }
+    .ar-ph-ic i { font-size:10px; margin-left:3px; }
+    .ar-ph-ring, .ar-ph-talk { position:absolute; inset:52px 0 0; transition:opacity .6s ease, transform .6s ease; }
+    .ar-ph-ring { display:flex; flex-direction:column; align-items:center; padding-top:70px; text-align:center; opacity:0; transform:scale(0.96); pointer-events:none; }
+    .ar-ph-av { position:relative; width:104px; height:104px; border-radius:50%; display:flex; align-items:center; justify-content:center; background:linear-gradient(135deg,#c89830,#4aac65); font:800 2rem "Montserrat",sans-serif; color:#0d1710; margin-bottom:1.2rem; }
+    .ar-ph-av::before, .ar-ph-av::after { content:""; position:absolute; inset:0; border-radius:50%; border:2px solid rgba(224,184,64,0.6); animation:arRing 1.8s ease-out infinite; }
+    .ar-ph-av::after { animation-delay:.9s; }
+    @keyframes arRing { to { transform:scale(1.8); opacity:0; } }
+    .ar-ph-ring b { font:700 1.35rem "Montserrat",sans-serif; color:#fff; }
+    .ar-ph-ring small { color:#8aa48d; font-size:0.85rem; margin-top:0.3rem; }
+    .ar-ph-btns { display:flex; gap:4.2rem; margin-top:auto; margin-bottom:62px; }
+    .ar-ph-btns span { width:62px; height:62px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:1.3rem; color:#fff; }
+    .ar-ph-btns .no { background:#c4553f; }
+    .ar-ph-btns .yes { background:#3f9d5a; animation:arBob 1s ease-in-out infinite; }
+    @keyframes arBob { 50% { transform:translateY(-6px); } }
+    .ar-ph-talk { display:flex; flex-direction:column; padding:14px 14px 0; opacity:0; transform:translateY(14px); }
+    .ar-ph-head { display:flex; align-items:center; gap:0.45rem; font:700 0.78rem "Montserrat",sans-serif; color:#fff; text-transform:uppercase; letter-spacing:0.06em; padding:0 4px 12px; border-bottom:1px solid rgba(255,255,255,0.08); }
+    .ar-ph-head small { margin-left:auto; color:#8aa48d; font:600 0.7rem "Inter",sans-serif; text-transform:none; letter-spacing:0; }
+    .ar-ph-dot { width:8px; height:8px; border-radius:50%; background:#4aac65; box-shadow:0 0 10px #4aac65; }
+    .ar-ph-msgs { display:flex; flex-direction:column; gap:9px; padding-top:14px; }
+    .ar-ph-msgs p { max-width:86%; padding:9px 12px; border-radius:16px; font-size:0.82rem; line-height:1.4; transition:opacity .5s ease, transform .5s ease; }
+    .ar-ph-msgs .c { align-self:flex-start; background:rgba(255,255,255,0.08); color:#dfeadf; border-bottom-left-radius:5px; }
+    .ar-ph-msgs .a { align-self:flex-end; background:linear-gradient(135deg,rgba(200,152,48,0.95),rgba(224,184,64,0.9)); color:#14100a; border-bottom-right-radius:5px; font-weight:500; }
+    .ar-js .ar-ph-msgs p { opacity:0; transform:translateY(10px) scale(0.98); }
+    .ar-js .ar-ph-msgs p.show { opacity:1; transform:none; }
+    .ar-ph-note { position:absolute; left:10px; right:10px; top:44px; z-index:3; display:flex; gap:10px; align-items:flex-start; padding:11px 12px; border-radius:18px; background:rgba(235,244,236,0.94); color:#10200f; font-size:0.78rem; line-height:1.35; box-shadow:0 14px 30px rgba(0,0,0,0.45); opacity:0; transform:translateY(-30px); transition:opacity .5s ease, transform .6s cubic-bezier(.2,.8,.2,1.2); }
+    .ar-ph-note i { width:30px; height:30px; flex:0 0 auto; border-radius:9px; display:flex; align-items:center; justify-content:center; background:#c4553f; color:#fff; font-size:0.85rem; }
+    .ar-ph-note b { display:block; font-size:0.82rem; }
+    .ar-phone[data-s="ring"] .ar-ph-ring { opacity:1; transform:none; }
+    .ar-phone[data-s="talk"] .ar-ph-talk, .ar-phone[data-s="note"] .ar-ph-talk { opacity:1; transform:none; }
+    .ar-phone[data-s="note"] .ar-ph-note { opacity:1; transform:none; }
+
+    /* marquee */
+    .ar-mq { position:relative; overflow:hidden; border-block:1px solid rgba(74,172,101,0.18); background:rgba(7,14,10,0.75); padding:1.15rem 0; -webkit-mask-image:linear-gradient(90deg,transparent,#000 7%,#000 93%,transparent); mask-image:linear-gradient(90deg,transparent,#000 7%,#000 93%,transparent); }
+    .ar-mq-track { display:flex; width:max-content; animation:arMq 42s linear infinite; }
+    .ar-mq-set { display:flex; gap:2.8rem; padding-right:2.8rem; }
+    .ar-mq span { display:inline-flex; align-items:center; gap:0.6rem; font:700 0.92rem "Montserrat",sans-serif; text-transform:uppercase; letter-spacing:0.1em; color:#cfe0d2; white-space:nowrap; }
+    .ar-mq span i { color:var(--gold); }
+    @keyframes arMq { to { transform:translateX(-50%); } }
+
+    /* highlight reel */
+    .ar-reel { position:relative; padding:6.5rem 0 6rem; background:linear-gradient(180deg, transparent, rgba(6,12,8,0.82) 10%, rgba(6,12,8,0.82) 90%, transparent); }
+    .ar-reel::before { content:""; position:absolute; inset:0; background-image:linear-gradient(rgba(74,172,101,0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(74,172,101,0.05) 1px, transparent 1px); background-size:34px 34px; -webkit-mask-image:radial-gradient(70% 60% at 50% 50%, #000, transparent); mask-image:radial-gradient(70% 60% at 50% 50%, #000, transparent); pointer-events:none; }
+    .ar-stage { position:relative; border-radius:30px; padding:1.4rem 1.4rem 1.2rem; background:linear-gradient(160deg, rgba(30,50,37,0.78), rgba(10,19,13,0.94)); border:1px solid rgba(200,152,48,0.3); box-shadow:0 50px 100px rgba(0,0,0,0.55), inset 0 1px 0 rgba(255,255,255,0.05), 0 0 0 1px rgba(0,0,0,0.3); }
+    .ar-bars { display:flex; gap:6px; margin:0 0.4rem 0.6rem; }
+    .ar-bars span { flex:1; height:4px; border-radius:4px; background:rgba(255,255,255,0.12); overflow:hidden; }
+    .ar-bars i { display:block; height:100%; width:0; background:linear-gradient(90deg,#c89830,#ffe08a); border-radius:4px; }
+    .ar-viewport { overflow:hidden; border-radius:22px; touch-action:pan-y; }
+    .ar-track { display:flex; transition:transform .75s cubic-bezier(.7,0,.2,1); }
+    .ar-slide { flex:0 0 100%; min-width:0; display:grid; grid-template-columns:0.85fr 1.15fr; gap:2.6rem; align-items:center; padding:1.8rem 1.4rem 1.4rem; }
+    .ar-slide-n { display:block; font:800 4.6rem/1 "Montserrat",sans-serif; color:transparent; -webkit-text-stroke:1.5px rgba(224,184,64,0.65); margin-bottom:0.5rem; }
+    .ar-slide h3 { font:800 clamp(1.75rem,3.6vw,2.8rem)/1.03 "Montserrat",sans-serif; text-transform:uppercase; color:#fff; margin-bottom:0.9rem; text-wrap:balance; }
+    .ar-slide-copy p { color:var(--muted); font-size:1.06rem; max-width:24rem; }
+    .ar-chips { list-style:none; display:flex; flex-wrap:wrap; gap:0.45rem; margin-top:1.3rem; }
+    .ar-chips li { font-size:0.78rem; font-weight:700; letter-spacing:0.03em; border-radius:999px; padding:0.28rem 0.75rem; transition:opacity .5s ease, transform .5s ease; }
+    .ar-chips .em { color:#ffd0c4; background:rgba(226,115,90,0.14); border:1px solid rgba(226,115,90,0.5); }
+    .ar-chips .rt { color:#cdeed6; background:rgba(74,172,101,0.12); border:1px solid rgba(74,172,101,0.45); }
+    .ar-chips .ok { color:#ffe7a8; background:rgba(200,152,48,0.12); border:1px solid rgba(200,152,48,0.5); }
+    .ar-js .ar-slide .ar-chips li { opacity:0; transform:translateY(8px); }
+    .ar-js .ar-slide.is-on .ar-chips li { opacity:1; transform:none; transition-delay:.45s; }
+    .ar-js .ar-slide.is-on .ar-chips li + li { transition-delay:.65s; }
+    .ar-screen { position:relative; background:rgba(5,11,7,0.88); border:1px solid #213a2a; border-radius:22px; padding:1rem 1.15rem 0.9rem; box-shadow:0 24px 48px rgba(0,0,0,0.45); }
+    .ar-screen::before { content:""; position:absolute; inset:-1px; border-radius:22px; padding:1px; background:linear-gradient(140deg, rgba(224,184,64,0.55), transparent 40%, transparent 65%, rgba(74,172,101,0.45)); -webkit-mask:linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0); -webkit-mask-composite:xor; mask-composite:exclude; pointer-events:none; }
+    .ar-screen-top { display:flex; justify-content:space-between; align-items:center; gap:0.6rem; flex-wrap:wrap; margin-bottom:0.7rem; }
+    .ar-screen-biz { font:700 0.72rem "Montserrat",sans-serif; text-transform:uppercase; letter-spacing:0.12em; color:#cdeed6; }
+    .ar-screen-biz i { color:var(--gold); margin-right:0.3rem; }
+    .ar-screen-time { font-size:0.78rem; color:#6f8f74; }
+    .ar-cap { position:relative; height:250px; overflow-y:auto; scrollbar-width:none; padding:0.5rem 0.15rem; -webkit-mask-image:linear-gradient(transparent, #000 9%, #000 86%, transparent); mask-image:linear-gradient(transparent, #000 9%, #000 86%, transparent); scroll-behavior:smooth; }
+    .ar-cap::-webkit-scrollbar { display:none; }
+    .ar-turn { font-size:1.04rem; line-height:1.55; color:#eef5ef; margin-bottom:0.85rem; }
+    .ar-turn b { display:block; font:700 0.64rem "Montserrat",sans-serif; text-transform:uppercase; letter-spacing:0.16em; color:#7c9a80; margin-bottom:0.15rem; }
+    .ar-turn.ai b { color:var(--gold); }
+    .ar-turn.caller { color:#b9cdbc; }
+    .ar-turn .w { transition:opacity .2s ease; }
+    .is-live .ar-turn .w { opacity:0.2; }
+    .is-live .ar-turn .w.on { opacity:1; }
+    .ar-screen-ctl { display:flex; align-items:center; gap:0.85rem; border-top:1px solid #1b2f22; padding-top:0.8rem; margin-top:0.3rem; }
+    .ar-pbtn { width:48px; height:48px; flex:0 0 auto; border-radius:50%; border:0; cursor:pointer; background:linear-gradient(135deg,#c89830,#e0b840); color:#0d1710; display:flex; align-items:center; justify-content:center; font-size:1rem; box-shadow:0 8px 20px rgba(200,152,48,0.3); transition:transform .2s ease; }
+    .ar-pbtn:hover { transform:scale(1.06); }
+    .ar-pbtn:focus-visible { outline:2px solid #fff; outline-offset:3px; }
+    .ar-pbtn .fa-play { margin-left:2px; }
+    .ar-pbtn.big { width:60px; height:60px; font-size:1.2rem; }
+    .ar-mini { flex:1; min-width:0; height:34px; display:flex; align-items:center; gap:2px; }
+    .ar-mini i { flex:1; min-width:0; height:30%; border-radius:2px; background:#2b4433; transition:background .15s; }
+    .ar-mini i.on { background:#e0b840; }
+    .ar-mini-t { font:600 0.8rem "Inter",sans-serif; color:var(--muted); font-variant-numeric:tabular-nums; min-width:4.6rem; text-align:right; }
+    .ar-ctl { display:flex; align-items:center; gap:0.8rem; margin-top:1.1rem; padding:0 0.4rem; }
+    .ar-arrow { width:48px; height:48px; border-radius:50%; border:1px solid rgba(74,172,101,0.4); background:rgba(74,172,101,0.08); color:#cdeed6; cursor:pointer; font-size:0.95rem; transition:background .2s, border-color .2s; }
+    .ar-arrow:hover { background:rgba(200,152,48,0.14); border-color:rgba(200,152,48,0.6); }
+    .ar-count { font:700 0.86rem "Montserrat",sans-serif; letter-spacing:0.14em; color:var(--muted); font-variant-numeric:tabular-nums; min-width:4.6rem; text-align:center; }
+    .ar-all { margin-left:auto; display:inline-flex; align-items:center; gap:0.55rem; min-height:48px; padding:0 1.3rem; border-radius:999px; border:1px solid rgba(200,152,48,0.6); background:rgba(200,152,48,0.12); color:#fff; font:700 0.85rem "Montserrat",sans-serif; text-transform:uppercase; letter-spacing:0.06em; cursor:pointer; }
+    .ar-all i { color:var(--gold); }
+    .ar-all small { color:var(--muted); font-weight:600; }
+    .ar-all:hover { background:rgba(200,152,48,0.2); }
+    .ar-end { grid-template-columns:1fr; text-align:center; min-height:400px; place-items:center; background:radial-gradient(60% 70% at 50% 40%, rgba(200,152,48,0.16), transparent 70%); }
+    .ar-end h3 { font-size:clamp(2rem,4.8vw,3.4rem); margin:0.2rem auto 0.4rem; max-width:40rem; }
+
+    /* split sections */
+    .ar-split { display:grid; grid-template-columns:1fr 1fr; gap:4.5rem; align-items:center; }
+    .ar-ticks { list-style:none; margin-top:1.6rem; display:grid; gap:0.75rem; }
+    .ar-ticks li { position:relative; padding-left:2rem; color:#dfeadf; }
+    .ar-ticks li i { position:absolute; left:0; top:0.15rem; width:1.35rem; height:1.35rem; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:0.7rem; background:rgba(74,172,101,0.18); color:#8fe0a6; }
+    .ar-flow { display:flex; flex-direction:column; align-items:center; }
+    .ar-node { display:inline-flex; align-items:center; gap:0.6rem; padding:0.75rem 1.05rem; border-radius:14px; background:rgba(20,32,25,0.9); border:1px solid var(--line); color:#e4ede5; font-weight:600; font-size:0.92rem; }
+    .ar-node i { color:var(--gold); }
+    .ar-node.hot { border-color:rgba(226,115,90,0.5); }
+    .ar-node.hot i { color:#ef8f78; }
+    .ar-flow-wire { position:relative; width:2px; height:48px; background:linear-gradient(rgba(200,152,48,0.12), rgba(200,152,48,0.65)); }
+    .ar-flow-wire i { position:absolute; left:-3px; top:0; width:8px; height:8px; border-radius:50%; background:#ffe08a; box-shadow:0 0 12px #e0b840; animation:arWire 1.7s linear infinite; }
+    @keyframes arWire { 0% { top:-4px; opacity:0; } 25% { opacity:1; } 100% { top:44px; opacity:0; } }
+    .ar-core { display:flex; flex-direction:column; align-items:center; gap:0.15rem; padding:1.2rem 2rem; border-radius:22px; background:radial-gradient(circle at 50% 0%, rgba(200,152,48,0.28), rgba(18,30,22,0.96) 70%); border:1px solid rgba(200,152,48,0.65); box-shadow:0 0 60px rgba(200,152,48,0.22); }
+    .ar-core i { color:var(--gold); font-size:1.7rem; margin-bottom:0.3rem; }
+    .ar-core b { font:800 1.15rem "Montserrat",sans-serif; text-transform:uppercase; letter-spacing:0.05em; color:#fff; }
+    .ar-core small { color:var(--muted); }
+    .ar-flow-out { display:grid; grid-template-columns:1fr 1fr; gap:0.6rem; width:100%; max-width:470px; }
+    .ar-flow-out .ar-node:last-child { grid-column:1 / -1; justify-content:center; }
+
+    .ar-lock { position:relative; margin:0 auto; width:330px; min-height:560px; border-radius:48px; padding:2.6rem 1rem 1.6rem; border:10px solid #0a120c; background:radial-gradient(120% 80% at 50% 0%, #2c4d35, #0b150e 72%); box-shadow:0 50px 90px rgba(0,0,0,0.55), 0 0 0 1px rgba(255,255,255,0.05), 0 0 90px rgba(74,172,101,0.15); }
+    .ar-lock-time { font:300 4.6rem/1 "Inter",sans-serif; text-align:center; color:#fff; letter-spacing:-0.02em; }
+    .ar-lock-date { text-align:center; color:#cfe0d2; font-weight:600; margin-top:0.3rem; }
+    .ar-notes { margin-top:2.2rem; display:grid; gap:0.6rem; }
+    .ar-note { display:flex; gap:0.7rem; align-items:flex-start; padding:0.8rem 0.9rem; border-radius:20px; background:rgba(235,244,236,0.11); border:1px solid rgba(255,255,255,0.08); -webkit-backdrop-filter:blur(10px); backdrop-filter:blur(10px); transition:opacity .6s ease, transform .7s cubic-bezier(.2,.8,.2,1.15); }
+    .ar-note i { width:34px; height:34px; flex:0 0 auto; border-radius:10px; display:flex; align-items:center; justify-content:center; background:rgba(200,152,48,0.9); color:#14100a; font-size:0.9rem; }
+    .ar-note.em i { background:#c4553f; color:#fff; }
+    .ar-note b { display:block; font-size:0.84rem; color:#fff; }
+    .ar-note span { display:block; font-size:0.8rem; color:#cfe0d2; line-height:1.4; }
+    .ar-js .ar-lock .ar-note { opacity:0; transform:translateY(-16px) scale(0.97); }
+    .ar-js .ar-lock.in .ar-note { opacity:1; transform:none; }
+    .ar-js .ar-lock.in .ar-note:nth-child(1) { transition-delay:.35s; }
+    .ar-js .ar-lock.in .ar-note:nth-child(2) { transition-delay:.7s; }
+    .ar-js .ar-lock.in .ar-note:nth-child(3) { transition-delay:1.05s; }
+    .ar-stats { display:flex; gap:2.4rem; flex-wrap:wrap; margin-top:2rem; }
+    .ar-stats b { display:block; font:800 3rem/1 "Montserrat",sans-serif; background:linear-gradient(90deg,#4aac65,#e0b840); -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent; }
+    .ar-stats span { display:block; color:var(--muted); font-size:0.9rem; margin-top:0.35rem; max-width:9rem; }
+
+    /* voices */
+    .ar-vgrid { display:flex; flex-wrap:wrap; justify-content:center; gap:0.9rem; max-width:900px; margin:0 auto; }
+    .ar-vgrid .ar-voice { flex:0 0 132px; }
+    .ar-voice { display:flex; flex-direction:column; align-items:center; gap:0.25rem; padding:1.15rem 0.6rem 1rem; border-radius:20px; background:rgba(20,32,25,0.72); border:1px solid var(--line); color:#e4ede5; cursor:pointer; font:inherit; text-decoration:none; transition:transform .25s ease, border-color .25s ease, background .25s ease; }
+    .ar-voice:hover, .ar-voice.is-playing { transform:translateY(-4px); border-color:rgba(200,152,48,0.6); background:rgba(28,46,34,0.85); }
+    .ar-voice:focus-visible { outline:2px solid #e0b840; outline-offset:3px; }
+    .ar-voice-ring { position:relative; width:64px; height:64px; border-radius:50%; display:flex; align-items:center; justify-content:center; margin-bottom:0.45rem; background:radial-gradient(circle at 30% 30%, rgba(224,184,64,0.38), rgba(74,172,101,0.14)); border:1px solid rgba(200,152,48,0.5); color:var(--gold); font-size:1.05rem; }
+    .ar-voice-ring .fa-play { margin-left:3px; }
+    .ar-voice b { font:700 0.98rem "Montserrat",sans-serif; }
+    .ar-voice small { color:var(--muted); font-size:0.78rem; }
+    .eq { display:none; align-items:flex-end; gap:3px; height:22px; }
+    .eq i { width:4px; height:30%; border-radius:2px; background:#e0b840; animation:arEq .9s ease-in-out infinite; }
+    .eq i:nth-child(2) { animation-delay:.15s; } .eq i:nth-child(3) { animation-delay:.3s; } .eq i:nth-child(4) { animation-delay:.45s; }
+    @keyframes arEq { 50% { height:100%; } }
+    .ar-voice.is-playing .fa-play { display:none; }
+    .ar-voice.is-playing .eq { display:flex; }
+    .ar-voice.is-playing .ar-voice-ring { box-shadow:0 0 0 6px rgba(224,184,64,0.12), 0 0 30px rgba(224,184,64,0.35); }
+    .ar-clone { border-style:dashed; border-color:rgba(200,152,48,0.55); background:rgba(200,152,48,0.06); }
+    .ar-clone .ar-voice-ring { background:rgba(200,152,48,0.14); }
+
+    /* capabilities */
+    .ar-cgrid { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:1rem; }
+    .ar-cgrid div { padding:1.4rem 1.15rem; border-radius:20px; background:linear-gradient(180deg, rgba(28,46,34,0.62), rgba(12,22,16,0.62)); border:1px solid var(--line); transition:border-color .25s, transform .25s; }
+    .ar-cgrid div:hover { border-color:rgba(200,152,48,0.5); transform:translateY(-3px); }
+    .ar-cgrid i { display:block; color:var(--gold); font-size:1.4rem; margin-bottom:0.8rem; }
+    .ar-cgrid b { display:block; font:700 1.02rem "Montserrat",sans-serif; color:#fff; margin-bottom:0.25rem; }
+    .ar-cgrid span { color:var(--muted); font-size:0.9rem; }
+
+    /* full-call playlist */
+    .ar-pl { display:grid; grid-template-columns:330px minmax(0,1fr); gap:1.1rem; padding:1rem; border-radius:28px; background:linear-gradient(160deg, rgba(28,46,34,0.65), rgba(10,19,13,0.9)); border:1px solid rgba(74,172,101,0.25); box-shadow:0 40px 80px rgba(0,0,0,0.4); }
+    .ar-pl-list { list-style:none; display:grid; gap:0.4rem; align-content:start; }
+    .ar-pl-item { width:100%; display:flex; align-items:center; gap:0.8rem; text-align:left; padding:0.8rem 0.9rem; border-radius:16px; border:1px solid transparent; background:transparent; color:#e4ede5; cursor:pointer; font:inherit; transition:background .2s, border-color .2s; }
+    .ar-pl-item:hover { background:rgba(255,255,255,0.04); }
+    .ar-pl-item.is-on { background:rgba(200,152,48,0.1); border-color:rgba(200,152,48,0.45); }
+    .ar-pl-item > i { width:38px; height:38px; flex:0 0 auto; border-radius:12px; display:flex; align-items:center; justify-content:center; background:rgba(74,172,101,0.12); color:var(--gold); }
+    .ar-pl-item .t { flex:1; min-width:0; }
+    .ar-pl-item b { display:block; font-size:0.93rem; color:#fff; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+    .ar-pl-item small { color:var(--muted); font-size:0.8rem; }
+    .ar-pl-item .d { color:var(--muted); font-size:0.8rem; font-variant-numeric:tabular-nums; }
+    .ar-pl-now { min-width:0; border-radius:20px; background:rgba(5,11,7,0.85); border:1px solid #1d3326; padding:1.1rem 1.2rem; }
+    .ar-pl-top { display:flex; align-items:center; gap:1rem; }
+    .ar-pl-meta { flex:1; min-width:0; }
+    .ar-pl-meta b { display:block; font:700 1.08rem "Montserrat",sans-serif; color:#fff; }
+    .ar-pl-meta small { color:var(--muted); font-size:0.85rem; }
+    .ar-pl-time { font:600 0.85rem "Inter",sans-serif; color:var(--muted); font-variant-numeric:tabular-nums; }
+    .ar-pl-wave { position:relative; height:56px; margin:1rem 0 0.6rem; }
+    .ar-pl-bars { position:absolute; inset:0; display:flex; align-items:center; gap:2px; }
+    .ar-pl-bars i { flex:1; min-width:0; border-radius:2px; background:#2b4433; }
+    .ar-pl-bars i.on { background:#e0b840; }
+    .ar-pl-seek { position:absolute; inset:0; width:100%; height:100%; margin:0; opacity:0; cursor:pointer; }
+    .ar-pl-wave:focus-within { outline:2px solid #e0b840; outline-offset:4px; border-radius:8px; }
+    .ar-pl-scroll { position:relative; height:330px; overflow-y:auto; padding-right:0.4rem; scrollbar-width:thin; scrollbar-color:#2c4232 transparent; }
+    .ar-pl-tx .ar-turn { cursor:pointer; padding:0.55rem 0.7rem; border-radius:12px; margin-bottom:0.35rem; font-size:0.95rem; transition:background .2s; }
+    .ar-pl-tx .ar-turn:hover { background:rgba(255,255,255,0.04); }
+    .ar-pl-tx .ar-turn.cur { background:rgba(200,152,48,0.12); box-shadow:inset 3px 0 0 #e0b840; }
+
+    /* setup, never, faq */
+    .ar-ways { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:1.1rem; }
+    .ar-way { position:relative; padding:1.7rem 1.4rem 1.5rem; border-radius:24px; background:linear-gradient(180deg, rgba(28,46,34,0.6), rgba(12,22,16,0.7)); border:1px solid var(--line); }
+    .ar-way > i { display:inline-flex; width:52px; height:52px; border-radius:16px; align-items:center; justify-content:center; background:rgba(200,152,48,0.12); border:1px solid rgba(200,152,48,0.4); color:var(--gold); font-size:1.25rem; margin-bottom:1rem; }
+    .ar-way h3 { font:800 1.1rem "Montserrat",sans-serif; text-transform:uppercase; letter-spacing:0.03em; color:#fff; margin-bottom:0.5rem; }
+    .ar-way p { color:var(--muted); font-size:0.95rem; }
+    .ar-way.feat { border-color:transparent; background:linear-gradient(180deg, rgba(36,58,42,0.85), rgba(14,26,18,0.9)) padding-box, linear-gradient(140deg,#e0b840,rgba(74,172,101,0.7)) border-box; border:1px solid transparent; box-shadow:0 24px 60px rgba(0,0,0,0.4), 0 0 50px rgba(200,152,48,0.12); }
+    .ar-tag { position:absolute; top:1.2rem; right:1.2rem; font:700 0.66rem "Montserrat",sans-serif; text-transform:uppercase; letter-spacing:0.12em; color:#14100a; background:linear-gradient(135deg,#c89830,#e0b840); border-radius:999px; padding:0.3rem 0.65rem; }
+    .ar-note-line { margin-top:1.6rem; text-align:center; color:var(--muted); }
+    .ar-note-line i { color:var(--green); margin-right:0.4rem; }
+    .ar-nlist { list-style:none; display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:0.8rem; max-width:960px; margin:0 auto; }
+    .ar-nlist li { display:flex; align-items:center; gap:0.75rem; padding:1rem 1.1rem; border-radius:16px; background:rgba(20,32,25,0.7); border:1px solid var(--line); color:#e4ede5; font-weight:600; }
+    .ar-nlist li i { width:28px; height:28px; flex:0 0 auto; border-radius:50%; display:flex; align-items:center; justify-content:center; background:rgba(226,115,90,0.14); color:#ef8f78; font-size:0.8rem; }
+    .ar-faqband { padding-top:2rem; }
+    .ar-faq { max-width:900px; margin:0 auto; }
+
+    /* close */
+    .ar-close { position:relative; overflow:hidden; padding:6.5rem 0 4.5rem; background:radial-gradient(60% 40% at 50% 24%, rgba(200,152,48,0.14), transparent 72%); scroll-margin-top:70px; }
+    .ar-orb.c { width:700px; height:400px; left:50%; top:30px; margin-left:-350px; background:radial-gradient(closest-side, rgba(224,184,64,0.22), transparent); }
+    .ar-close-head { text-align:center; max-width:46rem; margin:0 auto; }
+    .ar-close-head .ar-sub { margin:0 auto; }
+    .ar-form { max-width:780px; margin:2.2rem auto 0; padding:1.8rem; border-radius:26px; background:rgba(10,19,13,0.82); border:1px solid rgba(200,152,48,0.28); box-shadow:0 40px 80px rgba(0,0,0,0.45); }
+    .ar .ex-start-alt { margin:1.4rem auto 0; text-align:center; color:var(--muted); font-size:0.92rem; }
+
+    @media (max-width:980px) {
+      .ar-hero-grid { grid-template-columns:1fr; min-height:0; gap:2.6rem; padding-top:0.8rem; }
+      .ar-hero-copy { text-align:center; }
+      .ar-lede { margin:0 auto; }
+      .ar-cta, .ar-demo { justify-content:center; }
+      .ar-phone { transform:none; animation:none; }
+      .ar-split { grid-template-columns:1fr; gap:3rem; }
+      .ar-split .ar-split-copy { text-align:center; }
+      .ar-split .ar-sub { margin:0 auto; }
+      .ar-ticks { max-width:30rem; margin-left:auto; margin-right:auto; text-align:left; }
+      .ar-stats { justify-content:center; }
+      .ar-slide { grid-template-columns:1fr; gap:1.4rem; padding:1.4rem 0.8rem 1rem; }
+      .ar-slide-n { font-size:3rem; }
+      .ar-cap { height:210px; }
+      .ar-cgrid { grid-template-columns:repeat(2,minmax(0,1fr)); }
+      .ar-pl { grid-template-columns:minmax(0,1fr); }
+      .ar-pl-list { grid-template-columns:repeat(2,minmax(0,1fr)); }
+      .ar-ways { grid-template-columns:minmax(0,1fr); max-width:560px; margin:0 auto; }
+      .ar-nlist { grid-template-columns:repeat(2,minmax(0,1fr)); }
+    }
+    @media (max-width:600px) {
+      .ar-band { padding:4.2rem 0; }
+      .ar-reel { padding:4.5rem 0; }
+      .ar-stage { padding:1rem 0.7rem 0.9rem; border-radius:24px; }
+      .ar-slide { padding:1.1rem 0.4rem 0.6rem; }
+      .ar-screen { padding:0.9rem 0.85rem 0.8rem; }
+      .ar-turn { font-size:0.97rem; }
+      .ar-mini-t { min-width:0; font-size:0.74rem; }
+      .ar-mini { gap:1px; }
+      .ar-ctl { flex-wrap:wrap; justify-content:center; }
+      .ar-all { margin-left:0; width:100%; justify-content:center; }
+      .ar-pl { padding:0.6rem; border-radius:22px; }
+      .ar-pl-list { grid-template-columns:minmax(0,1fr); }
+      .ar-pl-now { padding:0.9rem; }
+      .ar-pl-scroll { height:300px; }
+      .ar-nlist { grid-template-columns:minmax(0,1fr); }
+      .ar-stats { gap:1.6rem; }
+      .ar-stats b { font-size:2.4rem; }
+      .ar-lock { width:100%; max-width:320px; min-height:520px; }
+      .ar-flow-out { grid-template-columns:minmax(0,1fr); }
+      .ar-form { padding:1.2rem; }
+      .ar .btn { width:100%; }
+      .ar-cta .btn { width:100%; }
+      .ar-mq span { font-size:0.82rem; }
+    }
+    @media (max-width:600px) { .ar-vgrid .ar-voice { flex-basis:calc(33.33% - 0.7rem); } }
+    @media (max-width:380px) {
+      .ar-phone { width:270px; height:560px; }
+      .ar-vgrid .ar-voice { flex-basis:calc(50% - 0.45rem); }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .ar-orb, .ar-phone, .ar-go, .ar-ph-av::before, .ar-ph-av::after, .ar-ph-btns .yes, .ar-flow-wire i, .eq i { animation:none !important; }
+      .ar-mq-track { animation-duration:180s; }
+      .ar-track { transition:none; }
+    }
+  </style>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Service",
+    "name": "AI Receptionist",
+    "alternateName": "AI phone receptionist",
+    "description": "An AI phone receptionist set up for one business. It answers missed and after-hours calls, sorts them into emergency, urgent or routine, books appointments into open calendar times, takes messages and alerts the owner to emergencies. It works alongside the business’s staff, set up standalone or connected to its website, calendar and other systems, and is quoted per business.",
+    "serviceType": "AI phone answering service",
+    "provider": {
+      "@id": "https://tevisengineering.com/#business"
+    },
+    "areaServed": {
+      "@type": "Country",
+      "name": "United States"
+    },
+    "url": "https://tevisengineering.com/ai-receptionist.html",
+    "audience": {
+      "@type": "BusinessAudience",
+      "audienceType": "Small businesses: home-service trades, auto repair, dental and medical offices, law firms, accountants, salons and shops"
+    }
+  }
+  </script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "name": "Home",
+        "item": "https://tevisengineering.com/"
+      },
+      {
+        "@type": "ListItem",
+        "position": 2,
+        "name": "TES Software",
+        "item": "https://tevisengineering.com/software.html"
+      },
+      {
+        "@type": "ListItem",
+        "position": 3,
+        "name": "AI Receptionist",
+        "item": "https://tevisengineering.com/ai-receptionist.html"
+      }
+    ]
+  }
+  </script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "Will callers know they are talking to an AI?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Yes. It tells every caller it is an AI assistant at the start of the call, and again if anyone asks."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Does it replace my receptionist?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "No. It backs up the people you have. It answers when they are busy or gone for the day, and hands every call over with a summary so nothing slips through."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Can it work with my calendar, booking page or CRM?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Yes. Connecting it to the systems you already run is part of the setup we scope and quote with you. It only books into the open times your calendar offers."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Can it answer my existing number?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Yes. It can pick up your existing number when a call goes unanswered, or answer a new number of its own."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Can it sound like us?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Pick any of its ten built-in voices, or have a custom voice made with a voice cloning service such as ElevenLabs, including your own, as a custom setup."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "What does it do in an emergency?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "It gives your safety instruction first, then gets the caller’s name, number and address and either transfers the call to you or alerts you right away."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "What does it cost?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "It depends on your business, how many calls you get, and what we connect it to. We quote it after a short call, before any work starts."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "What is it built on?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "OpenAI’s realtime voice model, hosted on Microsoft Azure. The setup, call handling, safeguards and integrations are built and maintained by Tevis Engineering Solutions in Cleveland."
+        }
+      }
+    ]
+  }
+  </script>
+  <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+  <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
+  <script>document.documentElement.classList.add('ar-js');</script>
+</head>
+<body>
+<!-- ===== NAV ===== -->
+<div class="tnav-bar">
+  <div class="tnav-inner">
+    <a class="tnav-brand" href="index.html">
+      <img width="44" height="44" src="assets/logo-mark-88.webp" alt="Tevis Engineering Solutions">
+      <span class="bn"><b>Tevis Engineering</b><s>Solutions</s></span>
+    </a>
+    <div class="tnav-spacer"></div>
+    <div class="tnav-wrap" id="navWrap">
+      <button class="tnav-trigger" type="button" aria-haspopup="true" aria-expanded="false" id="navTrigger">
+        Menu
+        <svg class="tnav-chev" width="11" height="7" viewBox="0 0 10 7" fill="none" aria-hidden="true"><path d="M1 1.5l4 4 4-4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+      <div class="tnav-mega" id="navMega" role="navigation" aria-label="Site navigation">
+        <div>
+          <div class="tnav-col-head">Services</div>
+          <a class="tnav-link" href="how_support_works.html"><span class="tnav-ic"><i class="fa-regular fa-circle-question"></i></span><span><span class="tnav-tt">How Support Works</span><span class="tnav-dd">Intake, scope, delivery, and billing</span></span></a>
+          <a class="tnav-link" href="pricing_sheet.html"><span class="tnav-ic"><i class="fa-solid fa-tag"></i></span><span><span class="tnav-tt">Pricing</span><span class="tnav-dd">Flat rates, hourly, and retainer plans</span></span></a>
+          <a class="tnav-link" href="portfolio.html"><span class="tnav-ic"><i class="fa-solid fa-briefcase"></i></span><span><span class="tnav-tt">Portfolio</span><span class="tnav-dd">Case studies across IT and engineering</span></span></a>
+          <a class="tnav-link" href="assessment.html"><span class="tnav-ic"><i class="fa-solid fa-chart-simple"></i></span><span><span class="tnav-tt">IT Assessment</span><span class="tnav-dd">Free 7-question readiness quiz</span></span></a>
+          <a class="tnav-link" href="website_creation.html"><span class="tnav-ic"><i class="fa-solid fa-globe"></i></span><span><span class="tnav-tt">Web &amp; App Design</span><span class="tnav-dd">Sites, tools, and digital presence</span></span></a>
+          <a class="tnav-link" href="data_destruction.html"><span class="tnav-ic"><i class="fa-solid fa-shield-halved"></i></span><span><span class="tnav-tt">Data Destruction</span><span class="tnav-dd">NIST-aligned secure media sanitization</span></span></a>
+          <a class="tnav-link" href="knowledge_transfer.html"><span class="tnav-ic"><i class="fa-solid fa-file-lines"></i></span><span><span class="tnav-tt">Knowledge Transfer</span><span class="tnav-dd">Documentation and process handoffs</span></span></a>
+        </div>
+        <div>
+          <div class="tnav-col-head">Company &amp; Tools</div>
+          <a class="tnav-link" href="service-areas.html"><span class="tnav-ic"><i class="fa-solid fa-location-dot"></i></span><span><span class="tnav-tt">Service Areas</span><span class="tnav-dd">Cleveland-area cities we support</span></span></a>
+          <a class="tnav-link" href="engineering-services-cleveland.html"><span class="tnav-ic"><i class="fa-solid fa-microchip"></i></span><span><span class="tnav-tt">Engineering Services</span><span class="tnav-dd">Product, PCB, software &amp; mechanical design</span></span></a>
+          <a class="tnav-link" href="software.html"><span class="tnav-ic"><i class="fa-solid fa-laptop-code"></i></span><span><span class="tnav-tt">TES Software</span><span class="tnav-dd">Cloud apps &amp; licensed software</span></span></a>
+          <a class="tnav-link" href="service_catalog.html"><span class="tnav-ic"><i class="fa-solid fa-rectangle-list"></i></span><span><span class="tnav-tt">Services Catalog</span><span class="tnav-dd">Full rate card &amp; line sheet</span></span></a>
+          <a class="tnav-link" href="contact.html"><span class="tnav-ic"><i class="fa-solid fa-envelope"></i></span><span><span class="tnav-tt">Contact</span><span class="tnav-dd">Send a message or request a quote</span></span></a>
+          <a class="tnav-link" href="privacy_policy.html"><span class="tnav-ic"><i class="fa-solid fa-file-shield"></i></span><span><span class="tnav-tt">Privacy &amp; Terms</span><span class="tnav-dd">Payment terms and data policy</span></span></a>
+        </div>
+        <div class="tnav-cta">
+          <span class="star">&#9733;</span>
+          <p class="tnav-cta-t">Need help now?</p>
+          <p>Talk straight to the engineer &mdash; no call center, one-business-day reply.</p>
+          <a class="tnav-cta-btn" href="make_ticket.html"><i class="fa-solid fa-headset"></i> Get Support Now</a>
+        </div>
+      </div>
+    </div>
+    <div class="tnav-spacer"></div>
+    <div class="tnav-right">
+      <a class="tnav-sup-btn" href="login.html" aria-label="Customer login"><i class="fa-solid fa-right-to-bracket"></i> <span class="lbl">LOGIN</span></a>
+    </div>
+  </div>
+</div>
+
+  <main class="ar">
+    <section class="ar-hero">
+      <div class="ar-orb a" aria-hidden="true"></div><div class="ar-orb b" aria-hidden="true"></div>
+      <div class="container">
+        <nav class="breadcrumbs" aria-label="Breadcrumb">
+          <a href="index.html">Home</a> &rsaquo; <a href="software.html">TES Software</a> &rsaquo; <span>AI Receptionist</span>
+        </nav>
+        <div class="ar-hero-grid">
+          <div class="ar-hero-copy">
+            <span class="eyebrow"><i class="fa-solid fa-phone-volume" aria-hidden="true"></i> AI Receptionist &middot; TES Software</span>
+            <h1>Never miss <span class="grad">another call.</span></h1>
+            <p class="ar-lede">It answers when you can&rsquo;t, books the job, and only interrupts you for a real emergency. It works alongside your team and plugs into the tools you already use.</p>
+            <div class="ar-cta">
+              <button class="btn btn-primary ar-go" type="button" data-reel-play><i class="fa-solid fa-play" aria-hidden="true"></i> Play the Highlight Reel</button>
+              <a class="btn btn-secondary" href="#get-started">Get a Quote</a>
+            </div>
+            <p class="ar-demo">Or call it right now: <a href="tel:+12162380505"><i class="fa-solid fa-phone" aria-hidden="true"></i> (216)&nbsp;238&#8209;0505</a></p>
+          </div>
+          <div class="ar-hero-art">
+            <div class="ar-phone" data-s="note" aria-label="An animated sample call: an after-hours caller with no heat, answered by the AI receptionist" role="img">
+              <div class="ar-phone-in">
+                <div class="ar-ph-bar"><span>11:05</span><span class="ar-ph-ic"><i class="fa-solid fa-signal"></i> <i class="fa-solid fa-battery-three-quarters"></i></span></div>
+                <div class="ar-ph-ring">
+                  <div class="ar-ph-av"><span>MS</span></div>
+                  <b>Mike Sullivan</b>
+                  <small>Incoming call &middot; after hours</small>
+                  <div class="ar-ph-btns"><span class="no"><i class="fa-solid fa-phone-slash"></i></span><span class="yes"><i class="fa-solid fa-phone"></i></span></div>
+                </div>
+                <div class="ar-ph-talk">
+                  <div class="ar-ph-head"><span class="ar-ph-dot"></span> AI Receptionist <small>Lakeside Comfort</small></div>
+                  <div class="ar-ph-msgs">
+                    <p class="c">My furnace stopped working and it&rsquo;s really cold in the house.</p>
+                    <p class="a">Safety first: if you smell gas or your carbon monoxide alarm is going off, leave the house now and call 911.</p>
+                    <p class="c">My 82-year-old mother lives here with me.</p>
+                    <p class="a">The on-call technician is being alerted right now.</p>
+                  </div>
+                </div>
+                <div class="ar-ph-note"><i class="fa-solid fa-bell"></i><span><b>Emergency handled</b> On-call technician alerted &middot; summary ready</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div class="ar-mq" aria-label="Made for heating and cooling, plumbing, electrical, roofing, auto repair, dental and medical offices, law firms, accountants, salons, spas and shops" role="img">
+      <div class="ar-mq-track"><div class="ar-mq-set"><span><i class="fa-solid fa-fire-flame-simple" aria-hidden="true"></i>Heating &amp; cooling</span><span><i class="fa-solid fa-faucet-drip" aria-hidden="true"></i>Plumbing</span><span><i class="fa-solid fa-bolt" aria-hidden="true"></i>Electrical</span><span><i class="fa-solid fa-house-chimney" aria-hidden="true"></i>Roofing</span><span><i class="fa-solid fa-car" aria-hidden="true"></i>Auto repair</span><span><i class="fa-solid fa-tooth" aria-hidden="true"></i>Dental</span><span><i class="fa-solid fa-stethoscope" aria-hidden="true"></i>Medical offices</span><span><i class="fa-solid fa-scale-balanced" aria-hidden="true"></i>Law firms</span><span><i class="fa-solid fa-calculator" aria-hidden="true"></i>Accountants</span><span><i class="fa-solid fa-scissors" aria-hidden="true"></i>Salons &amp; spas</span><span><i class="fa-solid fa-store" aria-hidden="true"></i>Shops</span></div><div class="ar-mq-set"><span><i class="fa-solid fa-fire-flame-simple" aria-hidden="true"></i>Heating &amp; cooling</span><span><i class="fa-solid fa-faucet-drip" aria-hidden="true"></i>Plumbing</span><span><i class="fa-solid fa-bolt" aria-hidden="true"></i>Electrical</span><span><i class="fa-solid fa-house-chimney" aria-hidden="true"></i>Roofing</span><span><i class="fa-solid fa-car" aria-hidden="true"></i>Auto repair</span><span><i class="fa-solid fa-tooth" aria-hidden="true"></i>Dental</span><span><i class="fa-solid fa-stethoscope" aria-hidden="true"></i>Medical offices</span><span><i class="fa-solid fa-scale-balanced" aria-hidden="true"></i>Law firms</span><span><i class="fa-solid fa-calculator" aria-hidden="true"></i>Accountants</span><span><i class="fa-solid fa-scissors" aria-hidden="true"></i>Salons &amp; spas</span><span><i class="fa-solid fa-store" aria-hidden="true"></i>Shops</span></div></div>
+    </div>
+
+    <section class="ar-reel" id="reel">
+      <div class="container">
+        <div class="ar-head rv">
+          <span class="ar-kicker">The highlight reel</span>
+          <h2 class="ar-h2">Hear it handle the hard calls.</h2>
+          <p class="ar-sub">Seven moments from sample calls. The receptionist is unedited; the callers and businesses are samples.</p>
+        </div>
+        <section class="ar-stage rv" aria-roledescription="carousel" aria-label="Highlight reel">
+          <div class="ar-bars" aria-hidden="true"><span><i></i></span><span><i></i></span><span><i></i></span><span><i></i></span><span><i></i></span><span><i></i></span><span><i></i></span></div>
+          <div class="ar-viewport">
+            <div class="ar-track">
+          <div class="ar-slide" role="group" aria-roledescription="slide" aria-label="1 of 7: 11:05 PM. Still answering." data-src="assets/receptionist/reel-after-hours.mp3" data-seconds="15">
+            <div class="ar-slide-copy">
+              <span class="ar-slide-n">01</span>
+              <h3>11:05 PM. Still answering.</h3>
+              <p>After hours it tells callers when you reopen, then books the next opening or takes a message.</p>
+              <ul class="ar-chips"><li class="ok">Answered after hours</li></ul>
+            </div>
+            <div class="ar-screen">
+              <div class="ar-screen-top"><span class="ar-screen-biz"><i class="fa-solid fa-fire-flame-simple" aria-hidden="true"></i> Lakeside Comfort</span><span class="ar-screen-time">Tue 11:05 PM</span></div>
+              <div class="ar-cap">
+                <p class="ar-turn ai" data-t0="0" data-t1="14.7"><b>Receptionist</b> <span class="w">Thank</span> <span class="w">you</span> <span class="w">for</span> <span class="w">calling</span> <span class="w">Lakeside</span> <span class="w">Comfort</span> <span class="w">Heating,</span> <span class="w">Cooling,</span> <span class="w">and</span> <span class="w">Plumbing.</span> <span class="w">Our</span> <span class="w">office</span> <span class="w">is</span> <span class="w">closed</span> <span class="w">right</span> <span class="w">now</span> <span class="w">and</span> <span class="w">reopens</span> <span class="w">tomorrow,</span> <span class="w">Wednesday,</span> <span class="w">at</span> <span class="w">7:30</span> <span class="w">AM.</span> <span class="w">I'm</span> <span class="w">the</span> <span class="w">AI</span> <span class="w">assistant,</span> <span class="w">and</span> <span class="w">the</span> <span class="w">call</span> <span class="w">is</span> <span class="w">recorded</span> <span class="w">and</span> <span class="w">transcribed.</span> <span class="w">I</span> <span class="w">can</span> <span class="w">take</span> <span class="w">a</span> <span class="w">message,</span> <span class="w">book</span> <span class="w">a</span> <span class="w">time,</span> <span class="w">or</span> <span class="w">help</span> <span class="w">with</span> <span class="w">something</span> <span class="w">urgent.</span> <span class="w">How</span> <span class="w">can</span> <span class="w">I</span> <span class="w">help?</span></p>
+              </div>
+              <div class="ar-screen-ctl">
+                <button class="ar-pbtn ar-slide-play" type="button" aria-label="Play this moment: 11:05 PM. Still answering."><i class="fa-solid fa-play" aria-hidden="true"></i></button>
+                <div class="ar-mini" data-peaks="0.85,0.51,0.93,0.82,0.73,0.74,0.80,0.53,0.28,0.06,1.00,0.65,0.75,0.63,0.78,0.61,0.88,0.64,0.56,0.60,0.49,0.06,0.60,0.99,0.60,0.17,0.47,0.81,0.86,0.63,0.65,0.06,0.75,0.80,0.65,0.47,0.77,0.73,0.71,0.92,0.31,0.06,0.91,0.40,0.06,0.06" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+                <span class="ar-mini-t">0:15</span>
+              </div>
+            </div>
+          </div>
+          <div class="ar-slide" role="group" aria-roledescription="slide" aria-label="2 of 7: Gas smell? Safety first." data-src="assets/receptionist/reel-safety.mp3" data-seconds="21.6">
+            <div class="ar-slide-copy">
+              <span class="ar-slide-n">02</span>
+              <h3>Gas smell? Safety first.</h3>
+              <p>Your safety instruction comes before anything else.</p>
+              <ul class="ar-chips"><li class="em">Emergency</li><li class="ok">Safety line first</li></ul>
+            </div>
+            <div class="ar-screen">
+              <div class="ar-screen-top"><span class="ar-screen-biz"><i class="fa-solid fa-fire-flame-simple" aria-hidden="true"></i> Lakeside Comfort</span><span class="ar-screen-time">Tue 7:45 PM</span></div>
+              <div class="ar-cap">
+                <p class="ar-turn caller" data-t0="0.12" data-t1="8.22"><b>Erin Walsh</b> <span class="w">Hi,</span> <span class="w">this</span> <span class="w">is</span> <span class="w">Erin</span> <span class="w">Walsh.</span> <span class="w">I</span> <span class="w">noticed</span> <span class="w">a</span> <span class="w">strong</span> <span class="w">gas</span> <span class="w">smell</span> <span class="w">near</span> <span class="w">my</span> <span class="w">furnace</span> <span class="w">and</span> <span class="w">I'm</span> <span class="w">worried</span> <span class="w">about</span> <span class="w">safety.</span> <span class="w">Can</span> <span class="w">someone</span> <span class="w">come</span> <span class="w">check</span> <span class="w">it</span> <span class="w">as</span> <span class="w">soon</span> <span class="w">as</span> <span class="w">possible?</span></p>
+                <p class="ar-turn ai" data-t0="8.72" data-t1="21.32"><b>Receptionist</b> <span class="w">Thank</span> <span class="w">you</span> <span class="w">for</span> <span class="w">letting</span> <span class="w">me</span> <span class="w">know,</span> <span class="w">Erin.</span> <span class="w">If</span> <span class="w">you</span> <span class="w">smell</span> <span class="w">gas,</span> <span class="w">or</span> <span class="w">a</span> <span class="w">carbon</span> <span class="w">monoxide</span> <span class="w">alarm</span> <span class="w">is</span> <span class="w">sounding,</span> <span class="w">you</span> <span class="w">should</span> <span class="w">leave</span> <span class="w">the</span> <span class="w">house</span> <span class="w">immediately</span> <span class="w">and</span> <span class="w">call</span> <span class="w">911</span> <span class="w">or</span> <span class="w">your</span> <span class="w">gas</span> <span class="w">company's</span> <span class="w">emergency</span> <span class="w">line</span> <span class="w">from</span> <span class="w">outside.</span> <span class="w">Now,</span> <span class="w">let’s</span> <span class="w">get</span> <span class="w">your</span> <span class="w">callback</span> <span class="w">number.</span> <span class="w">Could</span> <span class="w">you</span> <span class="w">please</span> <span class="w">provide</span> <span class="w">that?</span></p>
+              </div>
+              <div class="ar-screen-ctl">
+                <button class="ar-pbtn ar-slide-play" type="button" aria-label="Play this moment: Gas smell? Safety first."><i class="fa-solid fa-play" aria-hidden="true"></i></button>
+                <div class="ar-mini" data-peaks="0.87,0.57,0.77,0.34,0.75,0.60,0.93,0.66,0.67,0.56,0.71,0.45,0.11,1.00,0.60,0.68,0.53,0.29,0.58,0.87,0.85,0.37,0.68,0.95,0.74,0.96,0.80,0.52,0.51,0.75,0.65,0.79,0.77,0.60,0.69,0.94,0.47,0.40,0.06,0.90,0.93,0.63,0.75,0.68,0.06,0.06" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+                <span class="ar-mini-t">0:22</span>
+              </div>
+            </div>
+          </div>
+          <div class="ar-slide" role="group" aria-roledescription="slide" aria-label="3 of 7: Real emergencies reach you." data-src="assets/receptionist/reel-emergency.mp3" data-seconds="25.4">
+            <div class="ar-slide-copy">
+              <span class="ar-slide-n">03</span>
+              <h3>Real emergencies reach you.</h3>
+              <p>It sorts every call, so only the urgent ones interrupt you.</p>
+              <ul class="ar-chips"><li class="em">Emergency</li><li class="ok">On-call technician alerted</li></ul>
+            </div>
+            <div class="ar-screen">
+              <div class="ar-screen-top"><span class="ar-screen-biz"><i class="fa-solid fa-fire-flame-simple" aria-hidden="true"></i> Lakeside Comfort</span><span class="ar-screen-time">Tue 11:05 PM</span></div>
+              <div class="ar-cap">
+                <p class="ar-turn caller" data-t0="0.12" data-t1="7.63"><b>Mike Sullivan</b> <span class="w">The</span> <span class="w">service</span> <span class="w">address</span> <span class="w">is</span> <span class="w">5412</span> <span class="w">Ridge</span> <span class="w">Road,</span> <span class="w">near</span> <span class="w">Snow</span> <span class="w">Road.</span> <span class="w">My</span> <span class="w">82-year-old</span> <span class="w">mother</span> <span class="w">lives</span> <span class="w">here</span> <span class="w">with</span> <span class="w">me,</span> <span class="w">so</span> <span class="w">we</span> <span class="w">need</span> <span class="w">help</span> <span class="w">urgently.</span></p>
+                <p class="ar-turn ai" data-t0="8.22" data-t1="25.42"><b>Receptionist</b> <span class="w">Thank</span> <span class="w">you,</span> <span class="w">Mike.</span> <span class="w">I’ve</span> <span class="w">got</span> <span class="w">the</span> <span class="w">address</span> <span class="w">as</span> <span class="w">5412</span> <span class="w">Ridge</span> <span class="w">Road,</span> <span class="w">near</span> <span class="w">Snow</span> <span class="w">Road.</span> <span class="w">And</span> <span class="w">I</span> <span class="w">understand</span> <span class="w">your</span> <span class="w">82-year-old</span> <span class="w">mother</span> <span class="w">is</span> <span class="w">there,</span> <span class="w">so</span> <span class="w">we’ll</span> <span class="w">mark</span> <span class="w">this</span> <span class="w">as</span> <span class="w">urgent.</span> <span class="w">I’m</span> <span class="w">going</span> <span class="w">to</span> <span class="w">take</span> <span class="w">a</span> <span class="w">message</span> <span class="w">now.</span> <span class="w">The</span> <span class="w">on-call</span> <span class="w">technician</span> <span class="w">is</span> <span class="w">being</span> <span class="w">alerted</span> <span class="w">right</span> <span class="w">now</span> <span class="w">and</span> <span class="w">will</span> <span class="w">call</span> <span class="w">back</span> <span class="w">as</span> <span class="w">soon</span> <span class="w">as</span> <span class="w">possible.</span> <span class="w">Thank</span> <span class="w">you</span> <span class="w">for</span> <span class="w">calling,</span> <span class="w">and</span> <span class="w">we’ll</span> <span class="w">have</span> <span class="w">someone</span> <span class="w">reach</span> <span class="w">out</span> <span class="w">soon.</span> <span class="w">Goodbye,</span> <span class="w">and</span> <span class="w">take</span> <span class="w">care.</span></p>
+              </div>
+              <div class="ar-screen-ctl">
+                <button class="ar-pbtn ar-slide-play" type="button" aria-label="Play this moment: Real emergencies reach you."><i class="fa-solid fa-play" aria-hidden="true"></i></button>
+                <div class="ar-mini" data-peaks="0.68,0.50,0.72,0.59,0.92,0.60,0.62,0.29,1.00,0.77,0.38,0.55,0.89,0.51,0.30,0.52,0.32,0.84,0.66,0.72,0.68,0.63,0.44,0.71,0.73,0.63,0.30,0.62,0.46,0.13,0.75,0.65,0.61,0.77,0.78,0.82,0.63,0.57,0.39,0.50,0.78,0.65,0.90,0.32,0.74,0.28" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+                <span class="ar-mini-t">0:25</span>
+              </div>
+            </div>
+          </div>
+          <div class="ar-slide" role="group" aria-roledescription="slide" aria-label="4 of 7: Books real openings." data-src="assets/receptionist/reel-booking.mp3" data-seconds="18.6">
+            <div class="ar-slide-copy">
+              <span class="ar-slide-n">04</span>
+              <h3>Books real openings.</h3>
+              <p>Only the times your calendar actually has. Then it confirms them.</p>
+              <ul class="ar-chips"><li class="ok">Appointment booked</li></ul>
+            </div>
+            <div class="ar-screen">
+              <div class="ar-screen-top"><span class="ar-screen-biz"><i class="fa-solid fa-tooth" aria-hidden="true"></i> Maple Ridge Family Dental</span><span class="ar-screen-time">Tue 10:00 AM</span></div>
+              <div class="ar-cap">
+                <p class="ar-turn caller" data-t0="0.12" data-t1="4.22"><b>Karen Mills</b> <span class="w">Yes,</span> <span class="w">that's</span> <span class="w">correct.</span> <span class="w">When</span> <span class="w">is</span> <span class="w">the</span> <span class="w">earliest</span> <span class="w">available</span> <span class="w">appointment?</span></p>
+                <p class="ar-turn ai" data-t0="4.72" data-t1="15.67"><b>Receptionist</b> <span class="w">One</span> <span class="w">moment</span> <span class="w">while</span> <span class="w">I</span> <span class="w">check</span> <span class="w">the</span> <span class="w">availability.</span> <span class="w">Here</span> <span class="w">are</span> <span class="w">the</span> <span class="w">earliest</span> <span class="w">available</span> <span class="w">times:</span> <span class="w">tomorrow,</span> <span class="w">Wednesday,</span> <span class="w">at</span> <span class="w">10:00</span> <span class="w">AM,</span> <span class="w">or</span> <span class="w">at</span> <span class="w">11:00</span> <span class="w">AM,</span> <span class="w">or</span> <span class="w">at</span> <span class="w">11:30</span> <span class="w">AM.</span> <span class="w">Which</span> <span class="w">one</span> <span class="w">works</span> <span class="w">best</span> <span class="w">for</span> <span class="w">you?</span></p>
+                <p class="ar-turn caller" data-t0="16.12" data-t1="18.31"><b>Karen Mills</b> <span class="w">I'll</span> <span class="w">take</span> <span class="w">the</span> <span class="w">10:00</span> <span class="w">AM</span> <span class="w">appointment</span> <span class="w">tomorrow,</span> <span class="w">please.</span></p>
+              </div>
+              <div class="ar-screen-ctl">
+                <button class="ar-pbtn ar-slide-play" type="button" aria-label="Play this moment: Books real openings."><i class="fa-solid fa-play" aria-hidden="true"></i></button>
+                <div class="ar-mini" data-peaks="0.52,0.40,0.61,0.06,0.41,0.64,0.84,0.73,0.61,0.26,0.06,0.10,0.34,0.26,0.29,0.41,0.19,0.06,0.51,0.36,0.42,0.40,0.19,0.06,0.70,0.57,0.44,0.45,0.38,0.49,0.27,0.41,0.26,0.12,0.18,0.56,0.26,0.16,0.06,0.36,0.66,1.00,0.68,0.75,0.44,0.06" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+                <span class="ar-mini-t">0:19</span>
+              </div>
+            </div>
+          </div>
+          <div class="ar-slide" role="group" aria-roledescription="slide" aria-label="5 of 7: Habla español." data-src="assets/receptionist/reel-spanish.mp3" data-seconds="12.2">
+            <div class="ar-slide-copy">
+              <span class="ar-slide-n">05</span>
+              <h3>Habla espa&ntilde;ol.</h3>
+              <p>When the caller switches to Spanish, so does it.</p>
+              <ul class="ar-chips"><li class="rt">En espa&ntilde;ol</li></ul>
+            </div>
+            <div class="ar-screen">
+              <div class="ar-screen-top"><span class="ar-screen-biz"><i class="fa-solid fa-tooth" aria-hidden="true"></i> Maple Ridge Family Dental</span><span class="ar-screen-time">Tue 10:15 AM</span></div>
+              <div class="ar-cap">
+                <p class="ar-turn caller" data-t0="0.12" data-t1="6.28"><b>Rosa Delgado</b> <span class="w">Hola,</span> <span class="w">quisiera</span> <span class="w">agendar</span> <span class="w">una</span> <span class="w">cita</span> <span class="w">para</span> <span class="w">una</span> <span class="w">limpieza</span> <span class="w">dental</span> <span class="w">la</span> <span class="w">próxima</span> <span class="w">semana,</span> <span class="w">por</span> <span class="w">las</span> <span class="w">mañanas</span> <span class="w">si</span> <span class="w">es</span> <span class="w">posible.</span></p>
+                <p class="ar-turn ai" data-t0="7.43" data-t1="11.93"><b>Receptionist</b> <span class="w">Claro,</span> <span class="w">con</span> <span class="w">gusto</span> <span class="w">le</span> <span class="w">ayudo</span> <span class="w">con</span> <span class="w">eso.</span> <span class="w">Primero,</span> <span class="w">su</span> <span class="w">nombre,</span> <span class="w">por</span> <span class="w">favor.</span></p>
+              </div>
+              <div class="ar-screen-ctl">
+                <button class="ar-pbtn ar-slide-play" type="button" aria-label="Play this moment: Habla español."><i class="fa-solid fa-play" aria-hidden="true"></i></button>
+                <div class="ar-mini" data-peaks="0.60,0.72,0.06,0.77,0.78,1.00,0.67,0.54,0.75,0.60,0.71,0.60,0.71,0.52,0.57,0.77,0.06,0.80,0.60,0.80,0.58,0.23,0.36,0.06,0.06,0.06,0.06,0.06,0.46,0.14,0.23,0.29,0.51,0.36,0.25,0.09,0.06,0.53,0.30,0.47,0.44,0.22,0.11,0.06,0.06,0.06" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+                <span class="ar-mini-t">0:12</span>
+              </div>
+            </div>
+          </div>
+          <div class="ar-slide" role="group" aria-roledescription="slide" aria-label="6 of 7: Your prices. Nothing else." data-src="assets/receptionist/reel-price.mp3" data-seconds="14.3">
+            <div class="ar-slide-copy">
+              <span class="ar-slide-n">06</span>
+              <h3>Your prices. Nothing else.</h3>
+              <p>It never guesses at a quote. It books the estimate instead.</p>
+              <ul class="ar-chips"><li class="rt">No made-up prices</li><li class="ok">Estimate booked</li></ul>
+            </div>
+            <div class="ar-screen">
+              <div class="ar-screen-top"><span class="ar-screen-biz"><i class="fa-solid fa-fire-flame-simple" aria-hidden="true"></i> Lakeside Comfort</span><span class="ar-screen-time">Tue 12:20 PM</span></div>
+              <div class="ar-cap">
+                <p class="ar-turn caller" data-t0="0.12" data-t1="4.06"><b>Carl Jensen</b> <span class="w">Yes,</span> <span class="w">that's</span> <span class="w">right.</span> <span class="w">Other</span> <span class="w">companies</span> <span class="w">told</span> <span class="w">me</span> <span class="w">eight</span> <span class="w">grand,</span> <span class="w">is</span> <span class="w">that</span> <span class="w">right?</span></p>
+                <p class="ar-turn ai" data-t0="4.57" data-t1="13.97"><b>Receptionist</b> <span class="w">Thanks</span> <span class="w">for</span> <span class="w">confirming.</span> <span class="w">I</span> <span class="w">can't</span> <span class="w">provide</span> <span class="w">estimates</span> <span class="w">over</span> <span class="w">the</span> <span class="w">phone.</span> <span class="w">Our</span> <span class="w">team</span> <span class="w">will</span> <span class="w">quote</span> <span class="w">the</span> <span class="w">price</span> <span class="w">on</span> <span class="w">site</span> <span class="w">once</span> <span class="w">they</span> <span class="w">assess</span> <span class="w">the</span> <span class="w">situation.</span> <span class="w">Would</span> <span class="w">you</span> <span class="w">like</span> <span class="w">to</span> <span class="w">schedule</span> <span class="w">an</span> <span class="w">appointment</span> <span class="w">for</span> <span class="w">a</span> <span class="w">free</span> <span class="w">replacement</span> <span class="w">estimate?</span></p>
+              </div>
+              <div class="ar-screen-ctl">
+                <button class="ar-pbtn ar-slide-play" type="button" aria-label="Play this moment: Your prices. Nothing else."><i class="fa-solid fa-play" aria-hidden="true"></i></button>
+                <div class="ar-mini" data-peaks="0.90,0.66,0.86,0.81,0.52,0.61,0.54,0.26,0.81,0.65,0.06,0.57,0.52,0.06,0.58,0.65,0.77,0.38,0.72,0.80,0.59,0.76,0.50,0.23,0.55,1.00,0.89,0.71,0.69,0.71,0.73,0.54,0.38,0.29,0.06,0.88,0.57,0.85,0.55,0.55,0.84,0.61,0.41,0.06,0.06,0.06" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+                <span class="ar-mini-t">0:14</span>
+              </div>
+            </div>
+          </div>
+          <div class="ar-slide" role="group" aria-roledescription="slide" aria-label="7 of 7: Knows what not to say." data-src="assets/receptionist/reel-limits.mp3" data-seconds="22.7">
+            <div class="ar-slide-copy">
+              <span class="ar-slide-n">07</span>
+              <h3>Knows what not to say.</h3>
+              <p>No legal, medical or financial advice. It books the expert.</p>
+              <ul class="ar-chips"><li class="rt">No legal advice</li><li class="ok">Consultation booked</li></ul>
+            </div>
+            <div class="ar-screen">
+              <div class="ar-screen-top"><span class="ar-screen-biz"><i class="fa-solid fa-scale-balanced" aria-hidden="true"></i> Harper and Lowe</span><span class="ar-screen-time">Wed 10:30 AM</span></div>
+              <div class="ar-cap">
+                <p class="ar-turn caller" data-t0="0.12" data-t1="9.32"><b>Teresa Molina</b> <span class="w">Hi,</span> <span class="w">my</span> <span class="w">name</span> <span class="w">is</span> <span class="w">Teresa</span> <span class="w">Molina.</span> <span class="w">I</span> <span class="w">was</span> <span class="w">rear-ended</span> <span class="w">last</span> <span class="w">week</span> <span class="w">on</span> <span class="w">I-90</span> <span class="w">and</span> <span class="w">my</span> <span class="w">neck</span> <span class="w">has</span> <span class="w">been</span> <span class="w">hurting</span> <span class="w">since.</span> <span class="w">I</span> <span class="w">wanted</span> <span class="w">to</span> <span class="w">see</span> <span class="w">if</span> <span class="w">I</span> <span class="w">have</span> <span class="w">a</span> <span class="w">case</span> <span class="w">and</span> <span class="w">what</span> <span class="w">it's</span> <span class="w">worth.</span></p>
+                <p class="ar-turn ai" data-t0="9.82" data-t1="22.42"><b>Receptionist</b> <span class="w">Hello,</span> <span class="w">Teresa.</span> <span class="w">Thank</span> <span class="w">you</span> <span class="w">for</span> <span class="w">sharing</span> <span class="w">that.</span> <span class="w">I</span> <span class="w">want</span> <span class="w">to</span> <span class="w">let</span> <span class="w">you</span> <span class="w">know</span> <span class="w">that</span> <span class="w">I</span> <span class="w">can’t</span> <span class="w">give</span> <span class="w">an</span> <span class="w">assessment</span> <span class="w">on</span> <span class="w">the</span> <span class="w">case</span> <span class="w">or</span> <span class="w">its</span> <span class="w">value</span> <span class="w">right</span> <span class="w">now.</span> <span class="w">An</span> <span class="w">attorney</span> <span class="w">will</span> <span class="w">go</span> <span class="w">over</span> <span class="w">that</span> <span class="w">in</span> <span class="w">a</span> <span class="w">consultation.</span> <span class="w">Could</span> <span class="w">you</span> <span class="w">please</span> <span class="w">provide</span> <span class="w">a</span> <span class="w">callback</span> <span class="w">number,</span> <span class="w">so</span> <span class="w">I</span> <span class="w">can</span> <span class="w">confirm</span> <span class="w">it?</span></p>
+              </div>
+              <div class="ar-screen-ctl">
+                <button class="ar-pbtn ar-slide-play" type="button" aria-label="Play this moment: Knows what not to say."><i class="fa-solid fa-play" aria-hidden="true"></i></button>
+                <div class="ar-mini" data-peaks="0.82,1.00,0.57,0.52,0.53,0.71,0.43,0.63,0.30,0.35,0.55,0.52,0.14,0.12,0.78,0.79,0.45,0.48,0.41,0.06,0.30,0.14,0.47,0.33,0.11,0.49,0.60,0.28,0.33,0.20,0.28,0.28,0.13,0.24,0.44,0.44,0.20,0.15,0.23,0.50,0.47,0.54,0.36,0.20,0.06,0.06" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+                <span class="ar-mini-t">0:23</span>
+              </div>
+            </div>
+          </div>
+              <div class="ar-slide ar-end" role="group" aria-roledescription="slide" aria-label="Your turn">
+                <div class="ar-end-in">
+                  <span class="ar-kicker">That was seven calls without you.</span>
+                  <h3>Now picture it answering yours.</h3>
+                  <div class="ar-cta center">
+                    <a class="btn btn-primary" href="#get-started">Get a Quote</a>
+                    <a class="btn btn-secondary" href="tel:+12162380505"><i class="fa-solid fa-phone" aria-hidden="true"></i> Call the Demo Line</a>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="ar-ctl">
+            <button class="ar-arrow ar-prev" type="button" aria-label="Previous moment"><i class="fa-solid fa-arrow-left" aria-hidden="true"></i></button>
+            <span class="ar-count" aria-live="polite">01 / 07</span>
+            <button class="ar-arrow ar-next" type="button" aria-label="Next moment"><i class="fa-solid fa-arrow-right" aria-hidden="true"></i></button>
+            <button class="ar-all" type="button" data-reel-play><i class="fa-solid fa-play" aria-hidden="true"></i> <span>Play all</span> <small>2:10</small></button>
+          </div>
+        </section>
+      </div>
+    </section>
+
+    <section class="ar-band ar-team">
+      <div class="container ar-split">
+        <div class="ar-split-copy rv">
+          <span class="ar-kicker">Works with your team</span>
+          <h2 class="ar-h2">It backs up your front desk. It doesn&rsquo;t replace it.</h2>
+          <p class="ar-sub">It catches the calls your people can&rsquo;t get to, answers the same way every time, and hands each one back with a clean summary. Your callers get an answer instead of voicemail. Your team keeps its focus.</p>
+          <ul class="ar-ticks">
+            <li><i class="fa-solid fa-check" aria-hidden="true"></i>Answers your number when a call goes unanswered, or a new one</li>
+            <li><i class="fa-solid fa-check" aria-hidden="true"></i>Books into your calendar or the booking page on your website</li>
+            <li><i class="fa-solid fa-check" aria-hidden="true"></i>Sends messages to your ticket queue, CRM or lead list</li>
+          </ul>
+        </div>
+        <div class="ar-flow rv" aria-label="Calls come in, the AI receptionist answers, and the result goes to your calendar, ticket queue, lead list, call log and your phone" role="img">
+          <div class="ar-flow-in"><span class="ar-node"><i class="fa-solid fa-phone-volume"></i>Your calls</span></div>
+          <div class="ar-flow-wire" aria-hidden="true"><i></i></div>
+          <div class="ar-flow-core"><span class="ar-core"><i class="fa-solid fa-headset"></i><b>AI Receptionist</b><small>answers &middot; sorts &middot; books</small></span></div>
+          <div class="ar-flow-wire" aria-hidden="true"><i></i></div>
+          <div class="ar-flow-out">
+            <span class="ar-node"><i class="fa-solid fa-calendar-check"></i>Your calendar</span>
+            <span class="ar-node"><i class="fa-solid fa-ticket"></i>Ticket or job queue</span>
+            <span class="ar-node"><i class="fa-solid fa-address-book"></i>CRM &amp; lead list</span>
+            <span class="ar-node"><i class="fa-solid fa-file-lines"></i>Call log &amp; transcripts</span>
+            <span class="ar-node hot"><i class="fa-solid fa-bell"></i>Emergency alert to you</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="ar-band ar-wake">
+      <div class="container ar-split rev">
+        <div class="ar-lock rv" role="img" aria-label="A phone lock screen at 7:02 AM with three call summaries from the AI receptionist: an emergency handled overnight, a new patient booked, and a consultation booked">
+          <div class="ar-lock-time">7:02</div>
+          <div class="ar-lock-date">Wednesday</div>
+          <div class="ar-notes">
+            <div class="ar-note em"><i class="fa-solid fa-bell"></i><div><b>Emergency &middot; 11:05 PM</b><span>Mike S. &middot; no heat, 82-year-old at home. On-call technician alerted.</span></div></div>
+            <div class="ar-note"><i class="fa-solid fa-calendar-check"></i><div><b>Booked &middot; new patient</b><span>Karen M. &middot; cleaning and exam, Wed 10:00 AM.</span></div></div>
+            <div class="ar-note"><i class="fa-solid fa-scale-balanced"></i><div><b>Consultation booked</b><span>Teresa M. &middot; car accident, Thu 9:30 AM.</span></div></div>
+          </div>
+        </div>
+        <div class="ar-split-copy rv">
+          <span class="ar-kicker">After every call</span>
+          <h2 class="ar-h2">Wake up to answers, not voicemail.</h2>
+          <p class="ar-sub">Every call ends as a short summary with the transcript and recording behind it. You choose where they land.</p>
+          <div class="ar-stats">
+            <div><b>3</b><span>urgency levels: emergency, urgent, routine</span></div>
+            <div><b>2</b><span>languages, English and Spanish</span></div>
+            <div><b>10</b><span>voices to choose from</span></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="ar-band ar-voices" id="voices">
+      <div class="container">
+        <div class="ar-head rv">
+          <span class="ar-kicker">Its voice, your choice</span>
+          <h2 class="ar-h2">Ten voices. Or one that sounds like you.</h2>
+          <p class="ar-sub">Tap a voice to hear it answer a sample business. Want something unmistakably yours? We can set it up with a custom voice made with a cloning service such as ElevenLabs.</p>
+        </div>
+        <div class="ar-vgrid rv">
+          <button class="ar-voice" type="button" data-src="assets/receptionist/voice-marin.mp3" aria-label="Play the Marin voice"><span class="ar-voice-ring" aria-hidden="true"><i class="fa-solid fa-play"></i><span class="eq"><i></i><i></i><i></i><i></i></span></span><b>Marin</b><small>Female</small></button>
+          <button class="ar-voice" type="button" data-src="assets/receptionist/voice-cedar.mp3" aria-label="Play the Cedar voice"><span class="ar-voice-ring" aria-hidden="true"><i class="fa-solid fa-play"></i><span class="eq"><i></i><i></i><i></i><i></i></span></span><b>Cedar</b><small>Male</small></button>
+          <button class="ar-voice" type="button" data-src="assets/receptionist/voice-coral.mp3" aria-label="Play the Coral voice"><span class="ar-voice-ring" aria-hidden="true"><i class="fa-solid fa-play"></i><span class="eq"><i></i><i></i><i></i><i></i></span></span><b>Coral</b><small>Female</small></button>
+          <button class="ar-voice" type="button" data-src="assets/receptionist/voice-sage.mp3" aria-label="Play the Sage voice"><span class="ar-voice-ring" aria-hidden="true"><i class="fa-solid fa-play"></i><span class="eq"><i></i><i></i><i></i><i></i></span></span><b>Sage</b><small>Female</small></button>
+          <button class="ar-voice" type="button" data-src="assets/receptionist/voice-shimmer.mp3" aria-label="Play the Shimmer voice"><span class="ar-voice-ring" aria-hidden="true"><i class="fa-solid fa-play"></i><span class="eq"><i></i><i></i><i></i><i></i></span></span><b>Shimmer</b><small>Female</small></button>
+          <button class="ar-voice" type="button" data-src="assets/receptionist/voice-ash.mp3" aria-label="Play the Ash voice"><span class="ar-voice-ring" aria-hidden="true"><i class="fa-solid fa-play"></i><span class="eq"><i></i><i></i><i></i><i></i></span></span><b>Ash</b><small>Male</small></button>
+          <button class="ar-voice" type="button" data-src="assets/receptionist/voice-ballad.mp3" aria-label="Play the Ballad voice"><span class="ar-voice-ring" aria-hidden="true"><i class="fa-solid fa-play"></i><span class="eq"><i></i><i></i><i></i><i></i></span></span><b>Ballad</b><small>Male</small></button>
+          <button class="ar-voice" type="button" data-src="assets/receptionist/voice-verse.mp3" aria-label="Play the Verse voice"><span class="ar-voice-ring" aria-hidden="true"><i class="fa-solid fa-play"></i><span class="eq"><i></i><i></i><i></i><i></i></span></span><b>Verse</b><small>Male</small></button>
+          <button class="ar-voice" type="button" data-src="assets/receptionist/voice-alloy.mp3" aria-label="Play the Alloy voice"><span class="ar-voice-ring" aria-hidden="true"><i class="fa-solid fa-play"></i><span class="eq"><i></i><i></i><i></i><i></i></span></span><b>Alloy</b><small>Neutral</small></button>
+          <button class="ar-voice" type="button" data-src="assets/receptionist/voice-echo.mp3" aria-label="Play the Echo voice"><span class="ar-voice-ring" aria-hidden="true"><i class="fa-solid fa-play"></i><span class="eq"><i></i><i></i><i></i><i></i></span></span><b>Echo</b><small>Male</small></button>
+          <a class="ar-voice ar-clone" href="#get-started"><span class="ar-voice-ring" aria-hidden="true"><i class="fa-solid fa-microphone-lines"></i></span><b>Your voice</b><small>Custom clone</small></a>
+        </div>
+      </div>
+    </section>
+
+    <section class="ar-band ar-caps">
+      <div class="container">
+        <div class="ar-head rv"><span class="ar-kicker">On every call</span><h2 class="ar-h2">Everything a great front desk does.</h2></div>
+        <div class="ar-cgrid rv">
+          <div><i class="fa-solid fa-moon" aria-hidden="true"></i><b>Day and night</b><span>After hours, weekends, busy times</span></div>
+          <div><i class="fa-solid fa-arrow-down-wide-short" aria-hidden="true"></i><b>Sorts every call</b><span>Emergency, urgent or routine</span></div>
+          <div><i class="fa-solid fa-calendar-check" aria-hidden="true"></i><b>Books openings</b><span>Only times you really have</span></div>
+          <div><i class="fa-solid fa-clipboard-list" aria-hidden="true"></i><b>Whole messages</b><span>Number read back, every time</span></div>
+          <div><i class="fa-solid fa-language" aria-hidden="true"></i><b>English &amp; Spanish</b><span>Switches when the caller does</span></div>
+          <div><i class="fa-solid fa-users" aria-hidden="true"></i><b>Many calls at once</b><span>Nobody waits for a free line</span></div>
+          <div><i class="fa-solid fa-shield-halved" aria-hidden="true"></i><b>Sticks to your rules</b><span>Approved prices, no advice</span></div>
+          <div><i class="fa-solid fa-robot" aria-hidden="true"></i><b>Honest about it</b><span>Tells callers it is an AI</span></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="ar-band ar-calls" id="calls">
+      <div class="container">
+        <div class="ar-head rv"><span class="ar-kicker">Full calls</span><h2 class="ar-h2">Listen start to finish.</h2><p class="ar-sub">Nothing cut. Tap any line of the transcript to jump to it.</p></div>
+        <div class="ar-pl rv">
+          <ul class="ar-pl-list">
+            <li><button class="ar-pl-item is-on" type="button" data-call="no-heat" aria-pressed="true"><i class="fa-solid fa-fire-flame-simple" aria-hidden="true"></i><span class="t"><b>No heat at 11 PM</b><small>Heating &amp; cooling</small></span><span class="d">1:28</span></button></li>
+            <li><button class="ar-pl-item" type="button" data-call="gas-leak" aria-pressed="false"><i class="fa-solid fa-triangle-exclamation" aria-hidden="true"></i><span class="t"><b>A gas smell near the furnace</b><small>Heating &amp; cooling</small></span><span class="d">1:42</span></button></li>
+            <li><button class="ar-pl-item" type="button" data-call="price" aria-pressed="false"><i class="fa-solid fa-tag" aria-hidden="true"></i><span class="t"><b>&ldquo;They said eight grand&rdquo;</b><small>Heating &amp; cooling</small></span><span class="d">2:03</span></button></li>
+            <li><button class="ar-pl-item" type="button" data-call="new-patient" aria-pressed="false"><i class="fa-solid fa-tooth" aria-hidden="true"></i><span class="t"><b>New patient, asks the price</b><small>Dental office</small></span><span class="d">1:35</span></button></li>
+            <li><button class="ar-pl-item" type="button" data-call="spanish" aria-pressed="false"><i class="fa-solid fa-language" aria-hidden="true"></i><span class="t"><b>Una llamada en espa&ntilde;ol</b><small>Dental office</small></span><span class="d">1:33</span></button></li>
+            <li><button class="ar-pl-item" type="button" data-call="law-intake" aria-pressed="false"><i class="fa-solid fa-scale-balanced" aria-hidden="true"></i><span class="t"><b>&ldquo;Do I have a case?&rdquo;</b><small>Law office</small></span><span class="d">1:26</span></button></li>
+            <li><button class="ar-pl-item" type="button" data-call="salon" aria-pressed="false"><i class="fa-solid fa-scissors" aria-hidden="true"></i><span class="t"><b>Highlights on Saturday?</b><small>Salon</small></span><span class="d">1:38</span></button></li>
+          </ul>
+          <div class="ar-pl-now">
+            <div class="ar-pl-top">
+              <button class="ar-pbtn big ar-pl-play" type="button" aria-label="Play the call"><i class="fa-solid fa-play" aria-hidden="true"></i></button>
+              <div class="ar-pl-meta"><b class="ar-pl-title">No heat at 11 PM</b><small class="ar-pl-biz">Heating &amp; cooling</small></div>
+              <span class="ar-pl-time">0:00 / 1:28</span>
+            </div>
+            <div class="ar-pl-wave"><div class="ar-pl-bars" aria-hidden="true"></div><input class="ar-pl-seek" type="range" min="0" max="1000" step="1" value="0" aria-label="Position in the call"></div>
+            <div class="ar-pl-scroll">
+            <div class="ar-pl-tx" data-call="no-heat" data-src="assets/receptionist/call-no-heat.mp3" data-seconds="87.7" data-title="No heat at 11 PM" data-biz="Heating &amp; cooling" data-peaks="0.74,0.74,0.69,0.46,0.63,0.66,0.61,0.73,0.55,0.26,0.79,0.28,0.78,0.53,0.62,0.54,0.69,0.73,0.38,0.50,0.39,0.88,0.39,0.74,0.35,0.99,0.39,0.49,0.75,0.51,0.48,0.65,0.64,0.75,0.46,0.59,0.53,0.74,0.68,0.67,0.44,0.79,0.65,0.68,0.35,0.06,0.62,0.79,0.56,0.78,0.52,0.55,0.53,0.61,0.09,0.43,0.32,0.82,0.71,0.65,0.68,0.19,0.61,0.63,0.51,0.06,0.65,0.61,0.51,0.47,0.71,0.72,0.50,0.67,0.36,0.76,0.56,0.20,1.00,0.80,0.63,0.77,0.79,0.66,0.11,0.58,0.49,0.73,0.79,0.66,0.34,0.89,0.74,0.29,0.90,0.49,0.50,0.30,0.77,0.76,0.69,0.62,0.51,0.77,0.62,0.18,0.65,0.21,0.80,0.38,0.83,0.86,0.72,0.57,0.30,0.71,0.72,0.81,0.47,0.52">
+              <p class="ar-turn ai" data-t0="0" data-t1="14.7"><b>Receptionist</b> Thank you for calling Lakeside Comfort Heating, Cooling, and Plumbing. Our office is closed right now and reopens tomorrow, Wednesday, at 7:30 AM. I'm the AI assistant, and the call is recorded and transcribed. I can take a message, book a time, or help with something urgent. How can I help?</p>
+              <p class="ar-turn caller" data-t0="15.15" data-t1="19.66"><b>Mike Sullivan</b> My furnace stopped working and it's really cold in the house. I need urgent help please.</p>
+              <p class="ar-turn ai" data-t0="20.2" data-t1="33.65"><b>Receptionist</b> I'm really sorry you're dealing with that. Safety first: if you smell gas or your carbon monoxide alarm is going off, you should leave the house now and call 911 or your gas company’s emergency line from outside. Could you give me your name, and the callback number you'd like me to use?</p>
+              <p class="ar-turn caller" data-t0="34.1" data-t1="39.75"><b>Mike Sullivan</b> My name is Mike Sullivan, and you can call me back at 216-555-0191.</p>
+              <p class="ar-turn ai" data-t0="40.25" data-t1="47.76"><b>Receptionist</b> Thank you, Mike. I have your callback number as 216-555-0191. Is that correct? Please confirm the number for me.</p>
+              <p class="ar-turn caller" data-t0="48.25" data-t1="49.59"><b>Mike Sullivan</b> Yes, that's correct.</p>
+              <p class="ar-turn ai" data-t0="50.1" data-t1="61.93"><b>Receptionist</b> Thank you for confirming. Could you also provide the service address and the nearest cross street? That way, the on-call technician can get ready. And is there anyone in the home who’s vulnerable to the cold, like infants, elderly, or people with medical needs?</p>
+              <p class="ar-turn caller" data-t0="62.4" data-t1="69.91"><b>Mike Sullivan</b> The service address is 5412 Ridge Road, near Snow Road. My 82-year-old mother lives here with me, so we need help urgently.</p>
+              <p class="ar-turn ai" data-t0="70.5" data-t1="87.7"><b>Receptionist</b> Thank you, Mike. I’ve got the address as 5412 Ridge Road, near Snow Road. And I understand your 82-year-old mother is there, so we’ll mark this as urgent. I’m going to take a message now. The on-call technician is being alerted right now and will call back as soon as possible. Thank you for calling, and we’ll have someone reach out soon. Goodbye, and take care.</p>
+            </div>
+            <div class="ar-pl-tx" data-call="gas-leak" data-src="assets/receptionist/call-gas-leak.mp3" data-seconds="102" data-title="A gas smell near the furnace" data-biz="Heating &amp; cooling" data-peaks="0.84,0.64,0.67,0.39,0.99,0.65,0.93,0.62,0.52,1.00,0.77,0.78,0.42,0.71,0.83,0.76,0.83,0.06,0.67,0.72,0.65,0.77,0.61,0.68,0.45,0.71,0.64,0.42,0.56,0.78,0.53,0.83,0.84,0.54,0.65,0.72,0.64,0.80,0.44,0.49,0.83,0.62,0.48,0.44,0.54,0.94,0.83,0.75,0.97,0.50,0.44,0.63,0.83,0.93,0.82,0.48,0.65,0.24,0.54,0.27,0.50,0.75,0.74,0.61,0.55,0.64,0.48,0.06,0.75,0.73,0.56,0.65,0.85,0.44,0.43,0.46,0.79,0.82,0.61,0.69,0.56,0.82,0.20,0.52,0.67,0.72,0.55,0.56,0.52,0.50,0.55,0.30,0.48,0.70,0.39,0.81,0.47,0.80,0.76,0.70,0.55,0.58,0.44,0.89,0.98,0.82,0.41,0.78,0.51,0.58,0.82,0.70,0.23,0.82,0.84,0.68,0.93,0.46,0.46,0.27" hidden>
+              <p class="ar-turn ai" data-t0="0" data-t1="15.1"><b>Receptionist</b> Thank you for calling Lakeside Comfort Heating, Cooling, and Plumbing. The office is closed right now and will reopen tomorrow, Wednesday, at 7:30 AM. I am the AI assistant, and this call is recorded and transcribed. I can take a message, book a time, or help with something urgent. How can I help you today?</p>
+              <p class="ar-turn caller" data-t0="15.55" data-t1="23.65"><b>Erin Walsh</b> Hi, this is Erin Walsh. I noticed a strong gas smell near my furnace and I'm worried about safety. Can someone come check it as soon as possible?</p>
+              <p class="ar-turn ai" data-t0="24.15" data-t1="36.75"><b>Receptionist</b> Thank you for letting me know, Erin. If you smell gas, or a carbon monoxide alarm is sounding, you should leave the house immediately and call 911 or your gas company's emergency line from outside. Now, let’s get your callback number. Could you please provide that?</p>
+              <p class="ar-turn caller" data-t0="37.2" data-t1="42.4"><b>Erin Walsh</b> Yes, my number is 440-555-0140.</p>
+              <p class="ar-turn ai" data-t0="42.9" data-t1="48.95"><b>Receptionist</b> Thank you. Let me confirm that: 440-555-0140. Is that the correct number?</p>
+              <p class="ar-turn caller" data-t0="49.4" data-t1="50.5"><b>Erin Walsh</b> Yes, that's correct.</p>
+              <p class="ar-turn ai" data-t0="51" data-t1="57.45"><b>Receptionist</b> Thank you, Erin. Could you tell me the service address and the nearest cross street? This way, the team will have all the details they need.</p>
+              <p class="ar-turn caller" data-t0="57.9" data-t1="63.45"><b>Erin Walsh</b> Sure, the address is 123 Maple Drive, and the nearest cross street is Oak Avenue.</p>
+              <p class="ar-turn ai" data-t0="63.95" data-t1="70.45"><b>Receptionist</b> Thank you. And could you let me know what's happening with the furnace—what specifically did you notice? That way, the team will have all the details.</p>
+              <p class="ar-turn caller" data-t0="70.9" data-t1="77.45"><b>Erin Walsh</b> I just noticed this strong gas smell right near the furnace, but it isn’t making noises or anything unusual besides the smell.</p>
+              <p class="ar-turn ai" data-t0="77.95" data-t1="101.97"><b>Receptionist</b> Got it. Thank you for sharing that detail. I'll take a message for you urgently. Just to confirm, the service address is 123 Maple Drive, with the nearest cross street Oak Avenue. The callback number is 440-555-0140. The team will call you back as soon as possible. Thanks for calling, and I hope everything gets resolved quickly. The on-call technician is being alerted now, Erin, and they'll call back as soon as possible. Thank you, and take care.</p>
+            </div>
+            <div class="ar-pl-tx" data-call="price" data-src="assets/receptionist/call-price.mp3" data-seconds="123.2" data-title="“They said eight grand”" data-biz="Heating &amp; cooling" data-peaks="0.75,0.66,0.55,0.75,0.62,0.63,0.75,0.09,0.65,0.54,0.66,0.75,0.61,0.59,0.44,0.55,0.57,0.59,0.85,0.46,0.21,0.44,0.71,0.52,0.74,0.78,0.20,0.39,0.57,0.70,0.71,0.33,0.06,0.56,0.66,0.55,0.46,0.45,0.47,0.65,0.38,0.80,0.57,0.23,0.68,0.59,0.20,0.54,0.53,0.53,0.14,0.73,0.69,0.87,0.30,0.92,0.80,0.57,0.87,0.44,0.37,0.47,0.74,0.50,0.50,0.45,0.48,0.89,0.74,0.62,0.65,0.07,0.69,0.83,0.65,0.54,0.36,0.31,0.77,0.65,0.75,0.33,0.86,0.58,0.68,0.34,0.56,0.72,0.62,0.56,0.70,0.55,0.50,0.39,0.66,0.80,0.87,0.77,0.75,0.68,0.63,0.06,0.55,0.46,0.60,0.66,0.47,0.57,0.38,0.63,0.77,0.80,0.57,0.21,1.00,0.58,0.78,0.30,0.93,0.29" hidden>
+              <p class="ar-turn ai" data-t0="0" data-t1="7.8"><b>Receptionist</b> Thank you for calling Lakeside Comfort Heating, Cooling and Plumbing. I’m the AI assistant, and the call is recorded and transcribed. How can I help you today?</p>
+              <p class="ar-turn caller" data-t0="8.25" data-t1="15.4"><b>Carl Jensen</b> Hi, I’m Carl Jensen. I’m thinking about replacing my 22-year-old furnace and wanted to get a price.</p>
+              <p class="ar-turn ai" data-t0="15.9" data-t1="21.9"><b>Receptionist</b> Hi Carl, thank you for calling. Could you provide the callback number you’d like us to use, so we can confirm it?</p>
+              <p class="ar-turn caller" data-t0="22.37" data-t1="27.42"><b>Carl Jensen</b> Sure, it's 216-555-0146.</p>
+              <p class="ar-turn ai" data-t0="27.92" data-t1="33.92"><b>Receptionist</b> Thank you, Carl. That’s 216-555-0146, correct?</p>
+              <p class="ar-turn caller" data-t0="34.39" data-t1="38.33"><b>Carl Jensen</b> Yes, that's right. Other companies told me eight grand, is that right?</p>
+              <p class="ar-turn ai" data-t0="38.84" data-t1="48.24"><b>Receptionist</b> Thanks for confirming. I can't provide estimates over the phone. Our team will quote the price on site once they assess the situation. Would you like to schedule an appointment for a free replacement estimate?</p>
+              <p class="ar-turn caller" data-t0="48.69" data-t1="51.51"><b>Carl Jensen</b> Yes, please schedule an appointment. When could someone come by?</p>
+              <p class="ar-turn ai" data-t0="52.04" data-t1="62.69"><b>Receptionist</b> One moment, let me check the availability. Here are the available times: today at 2:30 PM, 3:00 PM, or 3:30 PM, or tomorrow at 9:30 AM or 10:00 AM. Which would you prefer?</p>
+              <p class="ar-turn caller" data-t0="63.14" data-t1="66.07"><b>Carl Jensen</b> I can do tomorrow at 10:00 AM. That works for me.</p>
+              <p class="ar-turn ai" data-t0="66.59" data-t1="73.59"><b>Receptionist</b> Great, let's book that. Could you please confirm the service address and the nearest cross street? That way, the technician will have all the details.</p>
+              <p class="ar-turn caller" data-t0="74.04" data-t1="78.74"><b>Carl Jensen</b> Sure, it's 4729 Maplewood Drive, near Oak Street.</p>
+              <p class="ar-turn ai" data-t0="79.24" data-t1="88.24"><b>Receptionist</b> Thank you. Just to confirm, the address is 4729 Maplewood Drive near Oak Street. Could you tell me a bit about the furnace—just what it's currently doing, or not doing?</p>
+              <p class="ar-turn caller" data-t0="88.69" data-t1="95.49"><b>Carl Jensen</b> The furnace is pretty old—sometimes it just doesn't kick on at all, or it struggles to heat the house evenly.</p>
+              <p class="ar-turn ai" data-t0="95.99" data-t1="104.36"><b>Receptionist</b> Got it, thanks for sharing that. Now, I'll go ahead and book the appointment for tomorrow at 10:00 AM. Could you also please confirm your preferred callback number once more?</p>
+              <p class="ar-turn caller" data-t0="104.94" data-t1="111.29"><b>Carl Jensen</b> That's 216-555-0146, as I mentioned before.</p>
+              <p class="ar-turn ai" data-t0="111.79" data-t1="123.24"><b>Receptionist</b> Great, the appointment is booked for tomorrow, Wednesday, at 10:00 AM for the free replacement estimate. The team will follow up with you at 216-555-0146. Thank you for calling, and have a great day!</p>
+            </div>
+            <div class="ar-pl-tx" data-call="new-patient" data-src="assets/receptionist/call-new-patient.mp3" data-seconds="95.3" data-title="New patient, asks the price" data-biz="Dental office" data-peaks="0.63,0.52,0.49,0.80,0.52,0.59,0.32,0.52,0.26,0.06,0.74,0.87,0.82,0.64,0.61,0.41,0.71,0.57,0.58,0.58,0.12,0.43,0.29,0.63,0.29,0.37,0.35,0.27,0.08,0.58,0.26,0.31,0.09,0.45,0.47,0.27,0.06,0.73,0.72,0.18,0.27,0.36,0.48,0.29,0.17,0.45,0.54,0.62,0.64,0.63,0.96,0.55,0.23,0.15,0.43,0.32,0.36,0.41,0.22,0.06,0.06,0.56,0.41,0.64,1.00,0.52,0.13,0.32,0.35,0.13,0.42,0.41,0.13,0.59,0.42,0.39,0.30,0.22,0.31,0.34,0.06,0.62,0.76,0.48,0.17,0.31,0.50,0.40,0.35,0.39,0.25,0.13,0.45,0.27,0.31,0.36,0.46,0.38,0.32,0.35,0.25,0.26,0.31,0.36,0.35,0.23,0.49,0.44,0.36,0.46,0.37,0.30,0.24,0.32,0.44,0.14,0.26,0.36,0.38,0.15" hidden>
+              <p class="ar-turn ai" data-t0="0" data-t1="7.55"><b>Receptionist</b> Thank you for calling Maple Ridge Family Dental. I’m the AI assistant, and the call is recorded and transcribed. How can I help you today?</p>
+              <p class="ar-turn caller" data-t0="8" data-t1="16.25"><b>Karen Mills</b> Hi, I just moved here and I'd like to book a new patient cleaning and exam. I have a Delta Dental PPO plan. What's the cost?</p>
+              <p class="ar-turn ai" data-t0="16.75" data-t1="28.9"><b>Receptionist</b> Thanks for letting me know. The new-patient exam with cleaning and x-rays is $189 without insurance. For your Delta Dental PPO, the team will verify coverage. Let’s get you booked. Could I have your name, please?</p>
+              <p class="ar-turn caller" data-t0="29.35" data-t1="31.18"><b>Karen Mills</b> Sure, it's Karen Mills.</p>
+              <p class="ar-turn ai" data-t0="31.7" data-t1="35.65"><b>Receptionist</b> Thank you, Karen. Could you give me a callback number, so I can confirm it?</p>
+              <p class="ar-turn caller" data-t0="36.1" data-t1="41.44"><b>Karen Mills</b> Yes, it's 216-555-0122.</p>
+              <p class="ar-turn ai" data-t0="41.95" data-t1="47.95"><b>Receptionist</b> Thank you. That’s 216-555-0122, correct?</p>
+              <p class="ar-turn caller" data-t0="48.42" data-t1="52.52"><b>Karen Mills</b> Yes, that's correct. When is the earliest available appointment?</p>
+              <p class="ar-turn ai" data-t0="53.02" data-t1="63.97"><b>Receptionist</b> One moment while I check the availability. Here are the earliest available times: tomorrow, Wednesday, at 10:00 AM, or at 11:00 AM, or at 11:30 AM. Which one works best for you?</p>
+              <p class="ar-turn caller" data-t0="64.42" data-t1="66.61"><b>Karen Mills</b> I'll take the 10:00 AM appointment tomorrow, please.</p>
+              <p class="ar-turn ai" data-t0="67.12" data-t1="95.27"><b>Receptionist</b> Great. I'll go ahead and book you for tomorrow, Wednesday, at 10:00 AM for the new-patient exam and cleaning. Now, I’ll need to confirm your details: your name is Karen Mills, and your callback number is 216-555-0122. Once booked, the dentist will provide a written estimate. Let me book that now. Your appointment is confirmed for tomorrow, Wednesday, at 10:00 AM for the new-patient exam and cleaning. The team will follow up on the insurance details. You’ll be all set. Thank you for calling, and have a wonderful day!</p>
+            </div>
+            <div class="ar-pl-tx" data-call="spanish" data-src="assets/receptionist/call-spanish.mp3" data-seconds="93.4" data-title="Una llamada en español" data-biz="Dental office" data-peaks="0.51,0.52,0.34,0.42,0.52,0.42,0.50,0.38,0.11,0.37,0.06,0.50,0.87,0.74,0.68,0.60,0.54,0.64,0.39,0.06,0.22,0.20,0.35,0.24,0.32,0.12,0.06,0.83,0.49,0.06,0.20,0.26,0.24,0.40,0.24,0.32,0.27,0.13,0.06,0.77,0.84,0.25,0.66,0.50,0.80,0.31,0.06,0.21,0.30,0.35,0.24,0.20,0.25,0.17,0.32,0.27,0.19,0.32,0.07,0.27,0.31,0.16,0.30,0.29,0.19,0.25,0.29,0.23,0.24,0.27,0.13,0.41,0.11,0.23,0.88,0.77,0.73,0.78,0.50,0.19,0.12,0.20,0.42,0.29,0.23,0.29,0.19,0.31,0.31,0.21,0.28,0.17,0.30,0.34,0.21,0.14,0.06,0.54,1.00,0.55,0.06,0.77,0.55,0.06,0.79,0.80,0.59,0.06,0.18,0.30,0.27,0.30,0.27,0.18,0.31,0.30,0.23,0.25,0.35,0.06" hidden>
+              <p class="ar-turn ai" data-t0="0" data-t1="8.2"><b>Receptionist</b> Thank you for calling Maple Ridge Family Dental, this is the AI assistant. Just a note, the call is recorded and transcribed. How can I help you today?</p>
+              <p class="ar-turn caller" data-t0="8.7" data-t1="14.86"><b>Rosa Delgado</b> Hola, quisiera agendar una cita para una limpieza dental la próxima semana, por las mañanas si es posible.</p>
+              <p class="ar-turn ai" data-t0="16.01" data-t1="20.51"><b>Receptionist</b> Claro, con gusto le ayudo con eso. Primero, su nombre, por favor.</p>
+              <p class="ar-turn caller" data-t0="21.01" data-t1="22.76"><b>Rosa Delgado</b> Me llamo Rosa Delgado.</p>
+              <p class="ar-turn ai" data-t0="23.73" data-t1="30.23"><b>Receptionist</b> Gracias, Rosa Delgado. Y el número de contacto, por favor. Voy a anotarlo y luego lo confirmaré.</p>
+              <p class="ar-turn caller" data-t0="30.73" data-t1="35.79"><b>Rosa Delgado</b> Mi número es 216-555-0133.</p>
+              <p class="ar-turn ai" data-t0="36.94" data-t1="56.99"><b>Receptionist</b> Perfecto. El número es 216-555-0133, es correcto. Ahora voy a buscar disponibilidad. Un momento, por favor. Aquí tiene algunas opciones: el viernes a las 8:00 de la mañana, a las 8:30, a las 9:30, a las 10:00, a las 11:00 o a las 11:30. ¿Cuál le gustaría reservar?</p>
+              <p class="ar-turn caller" data-t0="57.49" data-t1="61.84"><b>Rosa Delgado</b> Me gustaría reservar para el viernes a las 9:30 de la mañana, por favor.</p>
+              <p class="ar-turn ai" data-t0="62.99" data-t1="75.04"><b>Receptionist</b> Perfecto, voy a anotar la cita para el viernes a las 9:30 de la mañana. Ahora, confirmemos su número de contacto: 216-555-0133, ¿verdad?</p>
+              <p class="ar-turn caller" data-t0="75.54" data-t1="83.28"><b>Rosa Delgado</b> Sí, ese es mi número correcto. Muchas gracias por su ayuda. Nos vemos el viernes a las 9:30.</p>
+              <p class="ar-turn ai" data-t0="84.42" data-t1="93.42"><b>Receptionist</b> La cita ha quedado agendada para el viernes a las 9:30 de la mañana. El equipo revisará todo antes de su visita. Gracias por llamar, que tenga un buen día.</p>
+            </div>
+            <div class="ar-pl-tx" data-call="law-intake" data-src="assets/receptionist/call-law-intake.mp3" data-seconds="86.1" data-title="“Do I have a case?”" data-biz="Law office" data-peaks="0.68,0.60,0.67,0.33,0.48,0.42,0.48,0.42,0.43,0.45,0.17,0.73,0.19,0.06,0.86,0.71,0.60,0.69,0.50,0.43,0.50,0.45,0.11,0.60,0.60,0.46,0.35,0.20,0.12,0.37,0.19,0.43,0.33,0.24,0.19,0.24,0.16,0.43,0.32,0.13,0.32,0.36,0.37,0.20,0.06,0.38,0.56,0.96,0.66,0.37,0.58,0.81,0.22,1.00,0.39,0.45,0.80,0.43,0.06,0.31,0.14,0.32,0.27,0.29,0.30,0.38,0.21,0.37,0.14,0.34,0.29,0.24,0.33,0.25,0.06,0.46,0.90,0.54,0.43,0.27,0.18,0.07,0.32,0.24,0.22,0.27,0.26,0.11,0.50,0.29,0.15,0.26,0.26,0.25,0.15,0.24,0.06,0.50,0.59,0.53,0.73,0.44,0.93,0.64,0.74,0.42,0.11,0.25,0.40,0.26,0.28,0.26,0.30,0.13,0.50,0.18,0.31,0.34,0.20,0.06" hidden>
+              <p class="ar-turn ai" data-t0="0" data-t1="9.55"><b>Receptionist</b> Thank you for calling Harper and Lowe, Attorneys at Law. This is the AI assistant, and I’d like to let you know that this call is recorded and transcribed. How can I help you today?</p>
+              <p class="ar-turn caller" data-t0="10" data-t1="19.2"><b>Teresa Molina</b> Hi, my name is Teresa Molina. I was rear-ended last week on I-90 and my neck has been hurting since. I wanted to see if I have a case and what it's worth.</p>
+              <p class="ar-turn ai" data-t0="19.7" data-t1="32.3"><b>Receptionist</b> Hello, Teresa. Thank you for sharing that. I want to let you know that I can’t give an assessment on the case or its value right now. An attorney will go over that in a consultation. Could you please provide a callback number, so I can confirm it?</p>
+              <p class="ar-turn caller" data-t0="32.75" data-t1="41.8"><b>Teresa Molina</b> Sure, my number is 216-555-0135. When could I schedule that consultation?</p>
+              <p class="ar-turn ai" data-t0="42.3" data-t1="53.75"><b>Receptionist</b> Here are a few options: tomorrow, Thursday, at 8:30 in the morning, or 9:30 in the morning, or 10:30 in the morning. Which time works best for you? Once you pick, I’ll confirm your details.</p>
+              <p class="ar-turn caller" data-t0="54.2" data-t1="57.74"><b>Teresa Molina</b> 9:30 in the morning tomorrow works for me. Thank you.</p>
+              <p class="ar-turn ai" data-t0="58.25" data-t1="69.7"><b>Receptionist</b> Great. Just to confirm, that’s tomorrow, Thursday, at 9:30 in the morning. Before booking, let me repeat your callback number—216-555-0135, is that correct?</p>
+              <p class="ar-turn caller" data-t0="70.15" data-t1="75.83"><b>Teresa Molina</b> Yes, that's correct. Thank you for your help. I'll be ready for the consultation tomorrow at 9:30.</p>
+              <p class="ar-turn ai" data-t0="76.35" data-t1="86.1"><b>Receptionist</b> Perfect. Your consultation is booked for tomorrow, Thursday, at 9:30 in the morning. The team will follow up with you then. Thank you for calling, and I wish you a good day.</p>
+            </div>
+            <div class="ar-pl-tx" data-call="salon" data-src="assets/receptionist/call-salon.mp3" data-seconds="98" data-title="Highlights on Saturday?" data-biz="Salon" data-peaks="0.73,0.79,0.38,0.97,0.55,0.80,0.50,0.89,0.16,0.59,0.54,0.47,0.57,0.53,0.52,0.64,0.54,0.14,0.66,0.75,0.51,0.71,0.76,0.51,0.53,0.47,0.36,0.44,0.81,0.59,0.84,0.54,0.73,0.85,0.63,0.45,0.79,0.61,0.56,0.63,0.38,0.64,0.67,0.42,0.54,0.20,0.80,0.61,0.62,0.37,0.93,0.66,0.83,0.79,0.91,0.61,0.72,0.75,0.26,0.70,0.85,0.49,0.28,0.34,0.80,0.89,0.22,0.72,0.40,0.67,0.53,0.48,0.74,0.60,0.96,0.36,0.06,0.59,0.98,1.00,0.80,0.76,0.55,0.81,0.91,0.64,0.44,0.40,0.54,0.54,0.52,0.48,0.51,0.10,0.30,0.65,0.57,0.97,0.69,0.62,0.64,0.31,0.78,0.43,0.45,0.67,0.60,0.70,0.61,0.54,0.59,0.68,0.56,0.61,0.50,0.47,0.75,0.61,0.58,0.32" hidden>
+              <p class="ar-turn ai" data-t0="0" data-t1="7.1"><b>Receptionist</b> Thank you for calling Willow and Ash Salon. I am the AI assistant, and the call is recorded and transcribed. How can I help you today?</p>
+              <p class="ar-turn caller" data-t0="7.55" data-t1="14.3"><b>Brittany Kowalski</b> Hi, I'm Brittany Kowalski. I was wondering how much highlights cost and if you have any appointments available Saturday morning?</p>
+              <p class="ar-turn ai" data-t0="14.8" data-t1="32"><b>Receptionist</b> Hi Brittany, nice to meet you. Thank you for calling. Highlights start at $120, and the final price depends on length and the stylist. Let's check Saturday morning availability. One moment, please. It looks like there aren’t any morning appointments available this Saturday. Would you like to consider another time or day?</p>
+              <p class="ar-turn caller" data-t0="32.45" data-t1="37.2"><b>Brittany Kowalski</b> Oh, okay. What's the earliest available appointment you have after Saturday morning?</p>
+              <p class="ar-turn ai" data-t0="37.7" data-t1="50.75"><b>Receptionist</b> One moment while I check for the next available time. The earliest available appointment after Saturday morning is tomorrow, Friday, at 9:00 AM. Do you want to book that time, or is there another time you prefer? Also, could I get your callback number, just to confirm?</p>
+              <p class="ar-turn caller" data-t0="51.2" data-t1="62.11"><b>Brittany Kowalski</b> Thanks for checking. I can do tomorrow at 9:00 AM. Please book me for highlights then. My number is 216-555-0137.</p>
+              <p class="ar-turn ai" data-t0="62.65" data-t1="70.9"><b>Receptionist</b> Thank you. The number you provided is 216-555-0137, is that correct? Do you have a favorite stylist, and is this your first visit?</p>
+              <p class="ar-turn caller" data-t0="71.35" data-t1="76.15"><b>Brittany Kowalski</b> Yes, that's correct. I don't have a favorite stylist yet, and this is my first visit.</p>
+              <p class="ar-turn ai" data-t0="76.65" data-t1="97.95"><b>Receptionist</b> Great, thank you for confirming. Now, I’ll go ahead and book the appointment for highlights tomorrow, Friday, at 9:00 AM. I’ll confirm everything once it’s done. One moment. Your appointment is confirmed for highlights tomorrow, Friday, at 9:00 AM. The team has your callback number as 216-555-0137. They’ll follow up if needed. Thank you for calling, and have a great day!</p>
+            </div>
+            </div>
+            <noscript><p class="ar-sub">Listen: <a href="assets/receptionist/call-no-heat.mp3">No heat at 11 PM</a> &middot; <a href="assets/receptionist/call-gas-leak.mp3">A gas smell near the furnace</a> &middot; <a href="assets/receptionist/call-price.mp3">&ldquo;They said eight grand&rdquo;</a> &middot; <a href="assets/receptionist/call-new-patient.mp3">New patient, asks the price</a> &middot; <a href="assets/receptionist/call-spanish.mp3">Una llamada en espa&ntilde;ol</a> &middot; <a href="assets/receptionist/call-law-intake.mp3">&ldquo;Do I have a case?&rdquo;</a> &middot; <a href="assets/receptionist/call-salon.mp3">Highlights on Saturday?</a></p></noscript>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="ar-band ar-setup" id="setup">
+      <div class="container">
+        <div class="ar-head rv"><span class="ar-kicker">Set it up your way</span><h2 class="ar-h2">Standalone, plugged in, or built around you.</h2></div>
+        <div class="ar-ways rv">
+          <article class="ar-way"><i class="fa-solid fa-phone" aria-hidden="true"></i><h3>Standalone</h3><p>Its own number, or yours when a call goes unanswered. Nothing to change on your website.</p></article>
+          <article class="ar-way feat"><span class="ar-tag">Recommended</span><i class="fa-solid fa-plug" aria-hidden="true"></i><h3>Plugged into your systems</h3><p>Books into your calendar or website booking page, files messages in your ticket queue, adds new callers to your CRM.</p></article>
+          <article class="ar-way"><i class="fa-solid fa-sliders" aria-hidden="true"></i><h3>Built around you</h3><p>After hours only, several locations, your intake questions, a cloned voice, hosted by us or in your own accounts.</p></article>
+        </div>
+        <p class="ar-note-line rv">Every setup is scoped and quoted on its own: your business, your call volume, and what we connect it to.</p>
+      </div>
+    </section>
+
+    <section class="ar-band ar-never">
+      <div class="container">
+        <div class="ar-head rv"><span class="ar-kicker">Safeguards</span><h2 class="ar-h2">It never&hellip;</h2></div>
+        <ul class="ar-nlist rv">
+          <li><i class="fa-solid fa-xmark" aria-hidden="true"></i>Guesses at a price</li>
+          <li><i class="fa-solid fa-xmark" aria-hidden="true"></i>Promises a discount or an arrival time</li>
+          <li><i class="fa-solid fa-xmark" aria-hidden="true"></i>Gives legal, medical or financial advice</li>
+          <li><i class="fa-solid fa-xmark" aria-hidden="true"></i>Takes card or Social Security numbers</li>
+          <li><i class="fa-solid fa-xmark" aria-hidden="true"></i>Pretends to be a person</li>
+          <li><i class="fa-solid fa-xmark" aria-hidden="true"></i>Gets talked out of its rules</li>
+        </ul>
+        <p class="ar-note-line rv"><i class="fa-solid fa-flask-vial" aria-hidden="true"></i> Tested with dozens of simulated callers before it answers a real one.</p>
+      </div>
+    </section>
+
+    <section class="ar-band ar-faqband" id="faq">
+      <div class="container">
+        <div class="section ar-faq rv">
+          <h2>AI Receptionist Questions</h2>
+          <div class="faq">
+          <details>
+            <summary>Will callers know they are talking to an AI?</summary>
+            <div class="faq-a">Yes. It tells every caller it is an AI assistant at the start of the call, and again if anyone asks.</div>
+          </details>
+          <details>
+            <summary>Does it replace my receptionist?</summary>
+            <div class="faq-a">No. It backs up the people you have. It answers when they are busy or gone for the day, and hands every call over with a summary so nothing slips through.</div>
+          </details>
+          <details>
+            <summary>Can it work with my calendar, booking page or CRM?</summary>
+            <div class="faq-a">Yes. Connecting it to the systems you already run is part of the setup we scope and quote with you. It only books into the open times your calendar offers.</div>
+          </details>
+          <details>
+            <summary>Can it answer my existing number?</summary>
+            <div class="faq-a">Yes. It can pick up your existing number when a call goes unanswered, or answer a new number of its own.</div>
+          </details>
+          <details>
+            <summary>Can it sound like us?</summary>
+            <div class="faq-a">Pick any of its ten built-in voices, or have a custom voice made with a voice cloning service such as ElevenLabs, including your own, as a custom setup.</div>
+          </details>
+          <details>
+            <summary>What does it do in an emergency?</summary>
+            <div class="faq-a">It gives your safety instruction first, then gets the caller&rsquo;s name, number and address and either transfers the call to you or alerts you right away.</div>
+          </details>
+          <details>
+            <summary>What does it cost?</summary>
+            <div class="faq-a">It depends on your business, how many calls you get, and what we connect it to. We quote it after a short call, before any work starts.</div>
+          </details>
+          <details>
+            <summary>What is it built on?</summary>
+            <div class="faq-a">OpenAI&rsquo;s realtime voice model, hosted on Microsoft Azure. The setup, call handling, safeguards and integrations are built and maintained by Tevis Engineering Solutions in Cleveland.</div>
+          </details>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="ar-close" id="get-started">
+      <div class="ar-orb c" aria-hidden="true"></div>
+      <div class="container">
+        <div class="ar-close-head rv">
+          <span class="ar-kicker">Get a quote</span>
+          <h2 class="ar-h2 big">Put it on your phone line.</h2>
+          <p class="ar-sub">Tell us about your calls. We reply within one business day to set up a short call and scope it with you.</p>
+          <p class="ar-demo center">Not sure yet? Call the demo line: <a href="tel:+12162380505"><i class="fa-solid fa-phone" aria-hidden="true"></i> (216)&nbsp;238&#8209;0505</a></p>
+        </div>
+        <div class="req-success" id="reqSuccess" hidden>
+          <strong>Thanks, your request is in.</strong> We will reply within one business day to set up a short call. For anything urgent, call <a href="tel:+12163028486" class="success-tel">(216)&nbsp;302&#8209;8486</a>.
+        </div>
+        <form id="reqForm" class="req-form ar-form rv" action="https://formspree.io/f/maqvanal" method="POST" data-send-once data-sent-show="#reqSuccess" data-ack="receptionist">
+          <input type="hidden" name="_subject" value="AI Receptionist: Quote Request">
+          <input type="hidden" name="_next" value="https://tevisengineering.com/ai-receptionist.html?requested=1#get-started">
+          <input type="hidden" name="product" value="AI Receptionist">
+          <input type="text" name="_honeypot" class="trap" tabindex="-1" autocomplete="off" aria-hidden="true">
+          <div>
+            <label for="arBiz">Type of business</label>
+            <select id="arBiz" name="business_type">
+              <option value="Heating, cooling or plumbing">Heating, cooling or plumbing</option>
+              <option value="Electrical or roofing">Electrical or roofing</option>
+              <option value="Auto repair or towing">Auto repair or towing</option>
+              <option value="Dental or medical office">Dental or medical office</option>
+              <option value="Law office">Law office</option>
+              <option value="Accounting or financial office">Accounting or financial office</option>
+              <option value="Salon or spa">Salon or spa</option>
+              <option value="Retail or shop">Retail or shop</option>
+              <option value="Something else">Something else</option>
+            </select>
+          </div>
+          <div>
+            <label for="arVol">Calls a week</label>
+            <select id="arVol" name="call_volume">
+              <option value="Not sure">Not sure</option>
+              <option value="Under 25">Under 25</option>
+              <option value="25 to 100">25 to 100</option>
+              <option value="100 to 300">100 to 300</option>
+              <option value="More than 300">More than 300</option>
+            </select>
+          </div>
+          <fieldset class="full ex-opts">
+            <legend>Set it up as <span>Pick any</span></legend>
+            <label class="ex-opt"><input type="checkbox" name="setup[]" value="Standalone"><span><i class="fa-solid fa-phone" aria-hidden="true"></i> Standalone</span></label>
+            <label class="ex-opt"><input type="checkbox" name="setup[]" value="Plugged into my systems"><span><i class="fa-solid fa-plug" aria-hidden="true"></i> Plugged into my systems</span></label>
+            <label class="ex-opt"><input type="checkbox" name="setup[]" value="Custom voice"><span><i class="fa-solid fa-microphone-lines" aria-hidden="true"></i> Custom voice</span></label>
+            <label class="ex-opt"><input type="checkbox" name="setup[]" value="Not sure yet"><span><i class="fa-regular fa-circle-question" aria-hidden="true"></i> Not sure yet</span></label>
+          </fieldset>
+          <fieldset class="full ex-opts">
+            <legend>Connect it to <span>Pick any</span></legend>
+            <label class="ex-opt"><input type="checkbox" name="connect[]" value="Calendar or booking page"><span><i class="fa-solid fa-calendar-check" aria-hidden="true"></i> Calendar or booking page</span></label>
+            <label class="ex-opt"><input type="checkbox" name="connect[]" value="Ticket or job queue"><span><i class="fa-solid fa-ticket" aria-hidden="true"></i> Ticket or job queue</span></label>
+            <label class="ex-opt"><input type="checkbox" name="connect[]" value="CRM or lead list"><span><i class="fa-solid fa-address-book" aria-hidden="true"></i> CRM or lead list</span></label>
+            <label class="ex-opt"><input type="checkbox" name="connect[]" value="My current phone number"><span><i class="fa-solid fa-phone-volume" aria-hidden="true"></i> My current phone number</span></label>
+          </fieldset>
+          <div class="full">
+            <label for="arNotes">Tell us about your calls</label>
+            <textarea id="arNotes" name="notes" rows="4" required placeholder="e.g. Three-truck plumbing shop. We miss calls when everyone is on a job, and after 5 PM it all goes to voicemail. We book on Google Calendar."></textarea>
+          </div>
+          <div>
+            <label for="arName">Name</label>
+            <input id="arName" type="text" name="name" required autocomplete="name">
+          </div>
+          <div>
+            <label for="arEmail">Email</label>
+            <input id="arEmail" type="email" name="email" required autocomplete="email">
+          </div>
+          <div>
+            <label for="arPhone">Phone</label>
+            <input id="arPhone" type="tel" name="phone" autocomplete="tel">
+          </div>
+          <div>
+            <label for="arCompany">Business name</label>
+            <input id="arCompany" type="text" name="company" autocomplete="organization">
+          </div>
+          <div class="cf-turnstile full" data-sitekey="0x4AAAAAAEfjPSABvMOUzIl3" data-theme="dark" data-size="flexible"></div>
+          <button type="submit" class="btn btn-primary">Request a Quote</button>
+        </form>
+        <p class="ex-start-alt">Prefer to talk first? <a href="book.html">Book a free consultation</a> or call <a href="tel:+12163028486">(216)&nbsp;302&#8209;8486</a>.</p>
+      </div>
+    </section>
+  </main>
+  <script>
+    (function () {
+      var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      var current = null;
+      // One sound at a time across the reel, the playlist and the voices.
+      function claim(a) { if (current && current !== a && !current.paused) current.pause(); current = a; }
+      function fmt(s) { s = Math.max(0, Math.round(s || 0)); return Math.floor(s / 60) + ':' + ('0' + (s % 60)).slice(-2); }
+      function pad(x) { return (x < 10 ? '0' : '') + x; }
+      function track(name, p) { if (window.tesTrack) window.tesTrack(name, p || {}); }
+      function each(list, fn) { Array.prototype.forEach.call(list, fn); }
+      function heights(bars, peaks) {
+        each(bars, function (b, i) { b.style.height = Math.round(12 + Math.pow(Number(peaks[i]) || 0, 1.4) * 88) + '%'; });
+      }
+
+      // ---- sections fade up as they arrive
+      var rv = [].slice.call(document.querySelectorAll('.rv'));
+      if ('IntersectionObserver' in window && !reduce) {
+        var io = new IntersectionObserver(function (es) {
+          es.forEach(function (e) { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } });
+        }, { threshold: 0, rootMargin: '0px 0px -40px 0px' });
+        rv.forEach(function (el) { io.observe(el); });
+        // A fast scroll or a jump to an anchor can pass a section without it ever intersecting:
+        // anything already above the bottom of the screen is shown.
+        var sweep = 0;
+        window.addEventListener('scroll', function () {
+          if (sweep) return;
+          sweep = requestAnimationFrame(function () {
+            sweep = 0;
+            rv = rv.filter(function (el) { if (el.classList.contains('in')) return false; if (el.getBoundingClientRect().top < window.innerHeight) { el.classList.add('in'); return false; } return true; });
+          });
+        }, { passive: true });
+      } else rv.forEach(function (el) { el.classList.add('in'); });
+
+      // ---- the hero phone: rings, answers, talks, reports
+      (function () {
+        var ph = document.querySelector('.ar-phone');
+        if (!ph) return;
+        var msgs = ph.querySelectorAll('.ar-ph-msgs p'), timers = [], running = false;
+        if (reduce) { ph.setAttribute('data-s', 'note'); each(msgs, function (m) { m.classList.add('show'); }); return; }
+        function at(ms, fn) { timers.push(setTimeout(fn, ms)); }
+        function stop() { timers.forEach(clearTimeout); timers = []; }
+        function cycle() {
+          stop();
+          ph.setAttribute('data-s', 'ring');
+          each(msgs, function (m) { m.classList.remove('show'); });
+          at(2800, function () { ph.setAttribute('data-s', 'talk'); });
+          each(msgs, function (m, i) { at(3500 + i * 2300, function () { m.classList.add('show'); }); });
+          var end = 3500 + msgs.length * 2300;
+          at(end + 300, function () { ph.setAttribute('data-s', 'note'); });
+          at(end + 4800, cycle);
+        }
+        if ('IntersectionObserver' in window) {
+          new IntersectionObserver(function (es) {
+            var v = es[0].isIntersecting;
+            if (v && !running) { running = true; cycle(); } else if (!v && running) { running = false; stop(); }
+          }).observe(ph);
+        } else cycle();
+      })();
+
+      // ---- the highlight reel
+      var reel = (function () {
+        var stage = document.querySelector('.ar-stage');
+        if (!stage) return null;
+        var trackEl = stage.querySelector('.ar-track'), slides = [].slice.call(stage.querySelectorAll('.ar-slide'));
+        var bars = [].slice.call(stage.querySelectorAll('.ar-bars i')), count = stage.querySelector('.ar-count');
+        var allBtn = stage.querySelector('.ar-all'), allIcon = allBtn && allBtn.querySelector('i'), allText = allBtn && allBtn.querySelector('span');
+        var n = slides.length, moments = bars.length;
+        var audio = new Audio();
+        audio.preload = 'none';
+        var idx = 0, mode = 'idle', raf = 0, visible = false, touched = false, hover = false, autoAt = 0, autoRaf = 0;
+        var AUTO = 7000;
+
+        slides.forEach(function (s) {
+          var m = s.querySelector('.ar-mini');
+          if (m) heights(m.children, (m.getAttribute('data-peaks') || '').split(','));
+        });
+
+        function setBtn(s, playing) {
+          var b = s.querySelector('.ar-slide-play');
+          if (!b) return;
+          var label = b.getAttribute('data-label') || b.getAttribute('aria-label');
+          b.setAttribute('data-label', label);
+          b.firstElementChild.className = playing ? 'fa-solid fa-pause' : 'fa-solid fa-play';
+          b.setAttribute('aria-label', playing ? label.replace(/^Play/, 'Pause') : label);
+        }
+        function setAll(playing) {
+          if (!allBtn) return;
+          allIcon.className = playing ? 'fa-solid fa-pause' : 'fa-solid fa-play';
+          allText.textContent = playing ? 'Pause' : (mode === 'all' && slides[idx].classList.contains('is-live') ? 'Resume' : 'Play all');
+        }
+        function resetSlide(s) {
+          s.classList.remove('is-live');
+          each(s.querySelectorAll('.w.on, .ar-mini i.on'), function (w) { w.classList.remove('on'); });
+          var cap = s.querySelector('.ar-cap');
+          if (cap) cap.scrollTop = 0;
+          var t = s.querySelector('.ar-mini-t');
+          if (t) t.textContent = fmt(Number(s.getAttribute('data-seconds')));
+          setBtn(s, false);
+        }
+        function show(i) {
+          idx = (i + n) % n;
+          trackEl.style.transform = 'translateX(' + (-100 * idx) + '%)';
+          slides.forEach(function (s, k) {
+            var on = k === idx;
+            s.classList.toggle('is-on', on);
+            if (on) s.removeAttribute('inert'); else s.setAttribute('inert', '');
+            resetSlide(s);
+          });
+          bars.forEach(function (b, k) { b.style.width = k < idx ? '100%' : '0%'; });
+          count.textContent = idx < moments ? pad(idx + 1) + ' / ' + pad(moments) : 'Your turn';
+        }
+        function paint() {
+          var s = slides[idx], d = isFinite(audio.duration) && audio.duration > 0 ? audio.duration : Number(s.getAttribute('data-seconds')) || 1;
+          var t = audio.currentTime, last = null;
+          if (bars[idx]) bars[idx].style.width = Math.min(100, t / d * 100) + '%';
+          each(s.querySelectorAll('.ar-turn'), function (p) {
+            var t0 = Number(p.getAttribute('data-t0')), t1 = Number(p.getAttribute('data-t1')), ws = p.querySelectorAll('.w');
+            var k = t >= t1 ? ws.length : t <= t0 ? 0 : Math.ceil((t - t0) / (t1 - t0) * ws.length);
+            for (var j = 0; j < ws.length; j++) ws[j].classList.toggle('on', j < k);
+            if (k > 0) last = ws[k - 1];
+          });
+          var cap = s.querySelector('.ar-cap');
+          if (last && cap && last.offsetTop > cap.scrollTop + cap.clientHeight * 0.68) cap.scrollTop = last.offsetTop - cap.clientHeight * 0.3;
+          var mb = s.querySelectorAll('.ar-mini i'), on = Math.floor(t / d * mb.length);
+          for (var q = 0; q < mb.length; q++) mb[q].classList.toggle('on', q < on);
+          var tt = s.querySelector('.ar-mini-t');
+          if (tt) tt.textContent = fmt(t) + ' / ' + fmt(d);
+        }
+        function loop() { paint(); if (!audio.paused) raf = requestAnimationFrame(loop); }
+        function play(i) {
+          stopAuto();
+          show(i);
+          var s = slides[idx], src = s.getAttribute('data-src');
+          if (!src) { mode = 'idle'; setAll(false); return; }
+          audio.src = src;
+          claim(audio);
+          s.classList.add('is-live');
+          var go = audio.play();
+          if (go && go.catch) go.catch(function () { resetSlide(s); mode = 'idle'; setAll(false); });
+          track('reel_play', { moment: idx + 1, mode: mode });
+        }
+        audio.addEventListener('play', function () { setBtn(slides[idx], true); setAll(mode === 'all'); cancelAnimationFrame(raf); loop(); });
+        audio.addEventListener('pause', function () { setBtn(slides[idx], false); setAll(false); });
+        audio.addEventListener('ended', function () {
+          paint();
+          var s = slides[idx];
+          s.classList.remove('is-live');
+          setBtn(s, false);
+          if (mode === 'all') { if (idx < moments - 1) play(idx + 1); else { mode = 'idle'; show(moments); setAll(false); } }
+          else { mode = 'idle'; setAll(false); }
+        });
+
+        // Before anyone presses play, the reel previews itself while it is on screen.
+        function stopAuto() { cancelAnimationFrame(autoRaf); autoRaf = 0; }
+        function auto() {
+          stopAuto();
+          if (touched || !visible || reduce || mode !== 'idle') return;
+          autoAt = performance.now();
+          (function tick(now) {
+            if (touched || !visible || mode !== 'idle') { autoRaf = 0; return; }
+            if (hover) autoAt = now - (Number(bars[idx] && parseFloat(bars[idx].style.width)) || 0) / 100 * AUTO;
+            var p = (now - autoAt) / AUTO;
+            if (bars[idx]) bars[idx].style.width = Math.min(100, p * 100) + '%';
+            if (p >= 1) { show(idx + 1 >= n ? 0 : idx + 1); autoAt = now; }
+            autoRaf = requestAnimationFrame(tick);
+          })(autoAt);
+        }
+        function user() { touched = true; stopAuto(); }
+
+        stage.querySelector('.ar-prev').addEventListener('click', function () { user(); audio.pause(); mode = 'idle'; show(idx - 1); });
+        stage.querySelector('.ar-next').addEventListener('click', function () { user(); audio.pause(); mode = 'idle'; show(idx + 1); });
+        slides.forEach(function (s, i) {
+          var b = s.querySelector('.ar-slide-play');
+          if (!b) return;
+          b.addEventListener('click', function () {
+            user();
+            if (idx === i && s.classList.contains('is-live')) { if (audio.paused) { claim(audio); audio.play(); } else audio.pause(); return; }
+            mode = 'one';
+            play(i);
+          });
+        });
+        function playAll() {
+          user();
+          if (mode === 'all' && slides[idx].classList.contains('is-live')) { if (audio.paused) { claim(audio); audio.play(); } else audio.pause(); return; }
+          mode = 'all';
+          play(0);
+        }
+        stage.addEventListener('keydown', function (e) {
+          if (e.target.closest('button, a, input')) return;
+          if (e.key === 'ArrowRight') { user(); audio.pause(); mode = 'idle'; show(idx + 1); }
+          if (e.key === 'ArrowLeft') { user(); audio.pause(); mode = 'idle'; show(idx - 1); }
+        });
+        var x0 = null;
+        stage.querySelector('.ar-viewport').addEventListener('pointerdown', function (e) { x0 = e.clientX; });
+        stage.querySelector('.ar-viewport').addEventListener('pointerup', function (e) {
+          if (x0 == null) return;
+          var dx = e.clientX - x0;
+          x0 = null;
+          if (Math.abs(dx) < 50) return;
+          user(); audio.pause(); mode = 'idle'; show(idx + (dx < 0 ? 1 : -1));
+        });
+        stage.addEventListener('mouseenter', function () { hover = true; });
+        stage.addEventListener('mouseleave', function () { hover = false; });
+        if ('IntersectionObserver' in window) {
+          new IntersectionObserver(function (es) { visible = es[0].isIntersecting; if (visible) auto(); else stopAuto(); }, { threshold: 0.35 }).observe(stage);
+        }
+        show(0);
+        return { playAll: playAll, stage: stage };
+      })();
+
+      each(document.querySelectorAll('[data-reel-play]'), function (b) {
+        b.addEventListener('click', function () {
+          if (!reel) return;
+          if (!b.closest('.ar-stage')) reel.stage.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'center' });
+          reel.playAll();
+        });
+      });
+
+      // ---- full calls
+      (function () {
+        var pl = document.querySelector('.ar-pl');
+        if (!pl) return;
+        var items = [].slice.call(pl.querySelectorAll('.ar-pl-item')), txs = [].slice.call(pl.querySelectorAll('.ar-pl-tx'));
+        var btn = pl.querySelector('.ar-pl-play'), icon = btn.querySelector('i'), seek = pl.querySelector('.ar-pl-seek');
+        var barsEl = pl.querySelector('.ar-pl-bars'), time = pl.querySelector('.ar-pl-time'), title = pl.querySelector('.ar-pl-title'), biz = pl.querySelector('.ar-pl-biz'), box = pl.querySelector('.ar-pl-scroll');
+        var audio = new Audio();
+        audio.preload = 'none';
+        var tx = txs[0], bars = [], pending = null, lit = -1, curTurn = null;
+        function len() { return isFinite(audio.duration) && audio.duration > 0 ? audio.duration : Number(tx.getAttribute('data-seconds')); }
+        function paint(t) {
+          var d = len(), on = d ? Math.floor(t / d * bars.length) : 0;
+          if (on !== lit) { bars.forEach(function (b, i) { b.classList.toggle('on', i < on); }); lit = on; }
+          seek.value = d ? Math.round(t / d * 1000) : 0;
+          time.textContent = fmt(t) + ' / ' + fmt(d);
+          var cur = null;
+          each(tx.querySelectorAll('.ar-turn'), function (p) { if (Number(p.getAttribute('data-t0')) <= t + 0.05) cur = p; });
+          if (t === 0 && audio.paused) cur = null;
+          if (cur !== curTurn) {
+            if (curTurn) curTurn.classList.remove('cur');
+            curTurn = cur;
+            if (cur) { cur.classList.add('cur'); box.scrollTop = Math.max(0, cur.offsetTop - box.clientHeight * 0.3); }
+          }
+        }
+        function select(key, go) {
+          tx = txs.filter(function (t) { return t.getAttribute('data-call') === key; })[0] || txs[0];
+          txs.forEach(function (t) { t.hidden = t !== tx; });
+          items.forEach(function (b) { var on = b.getAttribute('data-call') === key; b.classList.toggle('is-on', on); b.setAttribute('aria-pressed', on ? 'true' : 'false'); });
+          title.textContent = tx.getAttribute('data-title');
+          biz.textContent = tx.getAttribute('data-biz');
+          audio.pause();
+          audio.src = tx.getAttribute('data-src');
+          pending = null; lit = -1;
+          if (curTurn) curTurn.classList.remove('cur');
+          curTurn = null;
+          barsEl.textContent = '';
+          bars = (tx.getAttribute('data-peaks') || '').split(',').map(function () { var i = document.createElement('i'); barsEl.appendChild(i); return i; });
+          heights(bars, (tx.getAttribute('data-peaks') || '').split(','));
+          box.scrollTop = 0;
+          paint(0);
+          if (go) start();
+        }
+        function start() {
+          claim(audio);
+          var go = audio.play();
+          if (go && go.catch) go.catch(function () {});
+          track('sample_call_play', { call: tx.getAttribute('data-call') });
+        }
+        btn.addEventListener('click', function () { if (audio.paused) start(); else audio.pause(); });
+        audio.addEventListener('play', function () { icon.className = 'fa-solid fa-pause'; btn.setAttribute('aria-label', 'Pause the call'); });
+        audio.addEventListener('pause', function () { icon.className = 'fa-solid fa-play'; btn.setAttribute('aria-label', 'Play the call'); });
+        audio.addEventListener('timeupdate', function () { paint(audio.currentTime); });
+        audio.addEventListener('loadedmetadata', function () { if (pending != null) { audio.currentTime = pending; pending = null; } paint(audio.currentTime); });
+        seek.addEventListener('input', function () {
+          var t = seek.value / 1000 * len();
+          if (audio.readyState >= 1) audio.currentTime = t; else pending = t;
+          paint(t);
+        });
+        items.forEach(function (b) { b.addEventListener('click', function () { select(b.getAttribute('data-call'), true); }); });
+        box.addEventListener('click', function (e) {
+          var p = e.target.closest('.ar-turn');
+          if (!p) return;
+          var t = Number(p.getAttribute('data-t0'));
+          if (audio.readyState >= 1) audio.currentTime = t; else pending = t;
+          paint(t);
+          if (audio.paused) start();
+        });
+        select(items[0].getAttribute('data-call'), false);
+      })();
+
+      // ---- voices
+      (function () {
+        var audio = new Audio(), on = null;
+        audio.preload = 'none';
+        function off() { if (on) on.classList.remove('is-playing'); }
+        each(document.querySelectorAll('button.ar-voice'), function (b) {
+          b.addEventListener('click', function () {
+            if (on === b && !audio.paused) { audio.pause(); return; }
+            off();
+            on = b;
+            audio.src = b.getAttribute('data-src');
+            claim(audio);
+            var go = audio.play();
+            if (go && go.catch) go.catch(off);
+            b.classList.add('is-playing');
+            track('voice_sample_play', { voice: b.querySelector('b').textContent });
+          });
+        });
+        audio.addEventListener('pause', off);
+        audio.addEventListener('ended', off);
+      })();
+
+      var ok = document.getElementById('reqSuccess'), rf = document.getElementById('reqForm');
+      if (window.location.search.indexOf('requested=1') !== -1 && ok && rf) { rf.reset(); rf.hidden = true; ok.hidden = false; }
+    })();
+
+  </script>
+
+  <!-- NEWSLETTER SIGNUP -->
+  <section class="newsletter-section" aria-label="Email newsletter signup">
+    <div class="newsletter-inner">
+      <div class="newsletter-text">
+        <h2 class="newsletter-heading">IT Tips for Individuals &amp; Small Businesses</h2>
+        <p class="newsletter-sub">Monthly practical advice — no spam, no upsells. Unsubscribe anytime.</p>
+      </div>
+      <form
+        action="https://buttondown.com/api/emails/embed-subscribe/tevisengineering"
+        method="post"
+        target="popupwindow"
+        class="newsletter-form"
+        id="newsletterForm"
+      >
+        <input type="hidden" value="1" name="embed">
+        <label for="newsletterEmail" class="sr-only">Email address</label>
+        <input
+          type="email"
+          id="newsletterEmail"
+          name="email"
+          placeholder="your@email.com"
+          required
+          autocomplete="email"
+          class="newsletter-input"
+        >
+        <button type="submit" class="newsletter-btn">Subscribe</button>
+        <noscript><p style="margin-top:0.75rem;font-size:0.85rem;">To subscribe, visit <a href="https://buttondown.com/tevisengineering" target="_blank" rel="noopener noreferrer">buttondown.email</a> directly.</p></noscript>
+      </form>
+      <p class="newsletter-fine">
+        Powered by <a href="https://buttondown.com/refer/tevisengineering" target="_blank" rel="noopener noreferrer">Buttondown</a>.
+        Read our <a href="privacy_policy.html" rel="noopener">privacy policy</a>.
+      </p>
+    </div>
+  </section>
+
+  <!-- ===== FOOTER ===== -->
+  <footer class="tfoot">
+    <div class="tfoot-grid">
+      <div>
+        <a class="tfoot-brand" href="index.html"><img width="44" height="44" src="assets/logo-mark-88.webp" alt=""><b>Tevis Engineering</b></a>
+        <p class="tfoot-blurb">IT Support, Engineering, 3D Design/Printing and tangential services for small businesses and individuals in the Cleveland, Ohio area and beyond.</p>
+        <p class="tfoot-nap"><a href="tel:+12163028486">(216)&nbsp;302&#8209;8486</a> &middot; Cleveland,&nbsp;OH</p>
+      </div>
+      <div class="tfoot-col">
+        <p class="tfoot-h">Services</p>
+        <a href="service_catalog.html">Services Catalog</a>
+        <a href="pricing_sheet.html">Managed IT Support</a>
+        <a href="website_creation.html">Web &amp; App Design</a>
+        <a href="engineering-services-cleveland.html#pcb">PCB &amp; CAD Design</a>
+        <a href="engineering-services-cleveland.html#printing">3D Printing</a>
+        <a href="data_destruction.html">Data Destruction</a>
+      </div>
+      <div class="tfoot-col">
+        <p class="tfoot-h">Company</p>
+        <a href="service-areas.html">Service Areas</a>
+        <a href="how_support_works.html">How Support Works</a>
+        <a href="portfolio.html">Portfolio</a>
+        <a href="blog/index.html">Blog</a>
+        <a href="contact.html">Contact</a>
+      </div>
+      <div class="tfoot-col">
+        <p class="tfoot-h">Get Started</p>
+        <a href="make_ticket.html">Make a Ticket</a>
+        <a href="pay_invoice.html">Pay Invoice</a>
+        <a href="assessment.html">IT Assessment</a>
+        <a href="how_support_works.html">How Support Works</a>
+      </div>
+    </div>
+    <div class="tfoot-bar">
+      <span>&copy; 2026 Tevis Engineering Solutions, LLC &middot; Cleveland, OH</span>
+      <div class="tfoot-social">
+        <a href="https://linkedin.com/in/tylertevis/" aria-label="LinkedIn"><i class="fa-brands fa-linkedin"></i></a>
+        <a href="https://github.com/tevis-engineering-solutions" aria-label="GitHub"><i class="fa-brands fa-github"></i></a>
+        <a href="contact.html" aria-label="Email"><i class="fa-solid fa-envelope"></i></a>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    (function() {
+      var wrap = document.getElementById('navWrap');
+      var trigger = document.getElementById('navTrigger');
+      var mega = document.getElementById('navMega');
+      function setOpen(o) { mega.classList.toggle('is-open', o); trigger.setAttribute('aria-expanded', o ? 'true' : 'false'); if (window.innerWidth <= 860 && typeof Tawk_API !== 'undefined' && typeof Tawk_API.hideWidget === 'function') { o ? Tawk_API.hideWidget() : Tawk_API.showWidget(); } }
+      var closeTimer;
+      trigger.addEventListener('click', function(e) { e.stopPropagation(); setOpen(!mega.classList.contains('is-open')); });
+      if (window.matchMedia && window.matchMedia('(hover: hover)').matches) {
+        wrap.addEventListener('mouseenter', function() { clearTimeout(closeTimer); setOpen(true); });
+        wrap.addEventListener('mouseleave', function() { closeTimer = setTimeout(function() { setOpen(false); }, 150); });
+        mega.addEventListener('mouseenter', function() { clearTimeout(closeTimer); });
+        mega.addEventListener('mouseleave', function() { closeTimer = setTimeout(function() { setOpen(false); }, 150); });
+      }
+      document.addEventListener('click', function(e) { if (!wrap.contains(e.target)) setOpen(false); });
+      document.addEventListener('keydown', function(e) { if (e.key === 'Escape') setOpen(false); });
+      mega.querySelectorAll('a').forEach(function(a) { a.addEventListener('click', function() { setOpen(false); }); });
+    })();
+    var form = document.getElementById('newsletterForm');
+    if (form) {
+      form.addEventListener('submit', function() {
+        window.open('https://buttondown.com/tevisengineering', 'popupwindow', 'scrollbars=yes,width=800,height=600');
+      });
+    }
+  </script>
+
+<script src="assets/js/form-ack.js" defer></script>
+<script src="assets/js/form-once.js" defer></script>
+<script src="assets/js/tes-analytics.js" defer></script>
+</body>
+</html>

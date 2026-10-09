@@ -12,6 +12,7 @@
   - Replacement and discontinued parts, measured, modeled in CAD and 3D printed: https://tevisengineering.com/replacement-parts-cleveland.html
 - Web design, web apps and customer portals: https://tevisengineering.com/website_creation.html
 - TES Software (free trials, subscriptions, outright purchase and early access): https://tevisengineering.com/software.html
+  - AI Receptionist: answers missed and after-hours calls, books appointments, flags emergencies, works alongside staff and connects to existing calendars and systems; ten voices or a custom cloned voice; quoted per business; demo line (216) 238-0505: https://tevisengineering.com/ai-receptionist.html
   - Ohio crash report leads for law firms: https://tevisengineering.com/ohio-crash-report-analysis-tool.html
   - ShingleAI roof estimate tool for roofers: https://tevisengineering.com/shingleai-roof-estimate-tool.html
   - 3D Shed Builder for shed dealers: https://tevisengineering.com/3d-shed-builder-tool.html

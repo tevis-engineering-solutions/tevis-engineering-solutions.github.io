@@ -115,13 +115,14 @@ var TES_TAGS = {
   }, true);
 
   // ---- Clicks ----
-  var CTA = /(?:^|\/)(contact|book|make_ticket|login|engineering-services-cleveland|replacement-parts-cleveland|pricing_sheet|service_catalog)\.html|#get-started/;
+  var CTA = /(?:^|\/)(contact|book|make_ticket|login|engineering-services-cleveland|replacement-parts-cleveland|ai-receptionist|pricing_sheet|service_catalog)\.html|#get-started/;
   document.addEventListener('click', function (e) {
     var a = e.target.closest && e.target.closest('a[href]');
     if (!a) return;
     var href = a.getAttribute('href');
     var text = (a.textContent || a.getAttribute('aria-label') || '').replace(/\s+/g, ' ').trim().slice(0, 60);
-    if (/^tel:/i.test(href)) track('phone_click', { link_text: text });
+    // The AI receptionist's demo line is a product demo, not a call to TES: its own event, not the Ads conversion.
+    if (/^tel:/i.test(href)) track(/2162380505/.test(href) ? 'demo_line_call' : 'phone_click', { link_text: text });
     else if (/^mailto:/i.test(href)) track('email_click', { link_text: text, email: href.slice(7).split('?')[0] });
     else if (/\.pdf($|\?)/i.test(href)) track('file_download', { file_name: href.split('/').pop(), link_text: text });
     else if (CTA.test(href)) track('cta_click', { link_text: text, link_url: href });

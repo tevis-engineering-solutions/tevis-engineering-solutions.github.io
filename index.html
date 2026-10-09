@@ -259,29 +259,81 @@
   .hx-sub { color:var(--text-body); font-size:0.98rem; line-height:1.7; margin:0.85rem 0 0; max-width:620px; }
   .hx-head-cta { flex-shrink:0; }
 
-  /* Product cards */
-  .hx-prod-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:1.1rem; }
-  .hx-prod { display:flex; flex-direction:column; text-decoration:none; overflow:hidden; height:100%;
-    background:rgba(8,16,11,0.62); border:1px solid var(--border-default); border-radius:16px; backdrop-filter:blur(2px);
+  /* Product rail: a horizontally scrolling row of tiles */
+  .hx-rail-wrap { position:relative; }
+  .hx-rail-head { display:flex; align-items:center; justify-content:space-between; gap:1rem; margin:0.4rem 0 0.9rem; }
+  .hx-rail-k { font-family:var(--font-display); font-size:0.72rem; font-weight:800; text-transform:uppercase; letter-spacing:0.16em; color:var(--brand-accent); margin:0; }
+  .hx-rail-nav { display:flex; gap:0.5rem; }
+  .hx-rail-btn { width:42px; height:42px; border-radius:50%; cursor:pointer; color:#cdeed6; background:rgba(74,172,101,0.08); border:1px solid rgba(74,172,101,0.4);
+    transition:background var(--dur-base),border-color var(--dur-base),opacity var(--dur-base); }
+  .hx-rail-btn:hover { background:rgba(200,152,48,0.15); border-color:var(--wash-gold-border); }
+  .hx-rail-btn:disabled { opacity:0.3; cursor:default; }
+  .hx-rail { display:flex; gap:1rem; overflow-x:auto; scroll-snap-type:x mandatory; scroll-padding:0 2px; padding:0.4rem 2px 1.1rem; scrollbar-width:none;
+    -webkit-mask-image:linear-gradient(90deg,#000 0,#000 calc(100% - 70px),transparent); mask-image:linear-gradient(90deg,#000 0,#000 calc(100% - 70px),transparent); }
+  .hx-rail.at-end { -webkit-mask-image:none; mask-image:none; }
+  .hx-rail::-webkit-scrollbar { display:none; }
+  .hx-rail:focus-visible { outline:2px solid var(--tes-gold-300); outline-offset:4px; border-radius:18px; }
+  .hx-tile { position:relative; flex:0 0 272px; height:360px; scroll-snap-align:start; border-radius:20px; overflow:hidden; text-decoration:none; isolation:isolate;
+    background:var(--surface-well); border:1px solid var(--border-default); box-shadow:0 14px 34px rgba(0,0,0,0.35);
     transition:transform var(--dur-base) var(--ease-out),border-color var(--dur-base),box-shadow var(--dur-base); }
-  .hx-prod:hover { transform:translateY(-5px); border-color:var(--wash-gold-border); box-shadow:0 18px 40px rgba(0,0,0,0.45); }
-  .hx-shot { position:relative; aspect-ratio:16/10; overflow:hidden; background:var(--surface-well); border-bottom:1px solid var(--border-default); }
-  .hx-shot img { width:100%; height:100%; object-fit:cover; object-position:top center; display:block;
-    transition:transform 0.45s var(--ease-out); }
-  .hx-prod:hover .hx-shot img { transform:scale(1.05); }
-  .hx-shot::after { content:''; position:absolute; inset:0; background:linear-gradient(to top,rgba(8,16,11,0.78),transparent 55%); }
-  .hx-live { position:absolute; left:0.85rem; bottom:0.8rem; z-index:2; display:inline-flex; align-items:center; gap:0.4rem;
-    font-family:var(--font-display); font-size:0.62rem; font-weight:800; text-transform:uppercase; letter-spacing:0.1em;
-    color:var(--text-on-accent); background:linear-gradient(135deg,var(--tes-gold-500),var(--tes-gold-300));
-    padding:5px 11px; border-radius:999px; box-shadow:var(--shadow-gold); }
-  .hx-prod-b { padding:1.15rem 1.2rem 1.25rem; display:flex; flex-direction:column; flex:1; }
-  .hx-prod-b h4 { font-family:var(--font-display); font-weight:700; font-size:1.02rem; line-height:1.3; color:var(--text-strong); margin:0 0 0.35rem; }
-  .hx-who { font-size:0.76rem; font-weight:600; color:var(--brand-primary); margin:0 0 0.6rem; line-height:1.4; }
-  .hx-desc { font-size:0.86rem; color:var(--text-muted); line-height:1.6; margin:0 0 1rem; flex:1; }
-  .hx-go { display:inline-flex; align-items:center; gap:0.4rem; font-family:var(--font-display); font-size:0.74rem; font-weight:700;
-    text-transform:uppercase; letter-spacing:0.05em; color:var(--brand-accent); }
-  .hx-go i { transition:transform var(--dur-base) var(--ease-out); }
-  .hx-prod:hover .hx-go i { transform:translateX(4px); }
+  .hx-tile:hover, .hx-tile:focus-visible { transform:translateY(-6px); border-color:var(--wash-gold-border); box-shadow:0 22px 46px rgba(0,0,0,0.5),0 0 40px rgba(200,152,48,0.14); }
+  .hx-tile img { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; object-position:top center; z-index:-2; transition:transform 0.6s var(--ease-out); }
+  .hx-tile:hover img { transform:scale(1.07); }
+  .hx-tile::after { content:''; position:absolute; inset:0; z-index:-1;
+    background:linear-gradient(to top,rgba(6,12,8,0.98) 0%,rgba(6,12,8,0.9) 38%,rgba(6,12,8,0.35) 68%,rgba(6,12,8,0.05) 100%); }
+  .hx-tile-tag { position:absolute; top:0.9rem; left:0.9rem; display:inline-flex; align-items:center; gap:0.4rem; font-family:var(--font-display); font-size:0.6rem; font-weight:800;
+    text-transform:uppercase; letter-spacing:0.1em; color:var(--text-on-accent); background:linear-gradient(135deg,var(--tes-gold-500),var(--tes-gold-300)); padding:5px 11px;
+    border-radius:999px; box-shadow:var(--shadow-gold); }
+  .hx-tile-body { position:absolute; left:0; right:0; bottom:0; padding:1.15rem 1.2rem 1.2rem; display:flex; flex-direction:column; gap:0.35rem; }
+  .hx-tile-who { font-size:0.7rem; font-weight:700; text-transform:uppercase; letter-spacing:0.08em; color:var(--brand-primary); }
+  .hx-tile strong { font-family:var(--font-display); font-size:1.12rem; font-weight:800; line-height:1.2; color:#fff; }
+  .hx-tile-line { font-size:0.84rem; line-height:1.5; color:#cfe0d2; }
+  .hx-tile-go { display:inline-flex; align-items:center; gap:0.4rem; margin-top:0.35rem; font-family:var(--font-display); font-size:0.7rem; font-weight:800;
+    text-transform:uppercase; letter-spacing:0.06em; color:var(--brand-accent); }
+  .hx-tile-go i { transition:transform var(--dur-base) var(--ease-out); }
+  .hx-tile:hover .hx-tile-go i { transform:translateX(4px); }
+  .hx-tile-all { display:flex; flex-direction:column; justify-content:center; gap:0.5rem; padding:1.4rem; border-style:dashed; border-color:var(--wash-gold-border);
+    background:radial-gradient(120% 80% at 50% 0%,rgba(200,152,48,0.18),transparent 70%),rgba(8,16,11,0.7); }
+  .hx-tile-all::after { display:none; }
+  .hx-tile-all-ic { width:54px; height:54px; border-radius:16px; display:flex; align-items:center; justify-content:center; font-size:1.3rem; color:var(--brand-accent);
+    background:var(--wash-gold); border:1px solid var(--wash-gold-border); margin-bottom:0.4rem; }
+
+  /* Flagship spotlight: the AI Receptionist */
+  .hx-spot { display:grid; grid-template-columns:1.05fr 1fr; gap:2rem; align-items:center; margin-bottom:1.4rem; padding:1.7rem;
+    border-radius:20px; border:1px solid transparent;
+    background:linear-gradient(160deg,rgba(30,52,38,0.94),rgba(9,18,12,0.96)) padding-box,
+               linear-gradient(130deg,var(--tes-gold-300),rgba(74,172,101,0.55) 45%,rgba(200,152,48,0.25)) border-box;
+    box-shadow:0 26px 60px rgba(0,0,0,0.45),0 0 70px rgba(200,152,48,0.12); }
+  .hx-spot-badges { display:flex; gap:0.45rem; flex-wrap:wrap; margin-bottom:0.85rem; }
+  .hx-new { display:inline-flex; align-items:center; gap:0.4rem; font-family:var(--font-display); font-size:0.62rem; font-weight:800; text-transform:uppercase; letter-spacing:0.1em;
+    color:var(--text-on-accent); background:linear-gradient(135deg,var(--tes-gold-500),var(--tes-gold-300)); padding:5px 11px; border-radius:999px; box-shadow:var(--shadow-gold); }
+  .hx-flag { display:inline-flex; align-items:center; font-family:var(--font-display); font-size:0.62rem; font-weight:800; text-transform:uppercase; letter-spacing:0.12em;
+    color:var(--brand-accent); border:1px solid var(--wash-gold-border); padding:4px 11px; border-radius:999px; }
+  .hx-spot h4 { font-family:var(--font-display); font-weight:800; text-transform:uppercase; letter-spacing:0.01em; font-size:2rem; line-height:1.04; color:#fff; margin:0 0 0.45rem; }
+  .hx-spot-desc { color:var(--text-body); font-size:0.97rem; line-height:1.65; margin:0 0 1rem; max-width:34rem; }
+  .hx-spot-feats { list-style:none; display:flex; flex-wrap:wrap; gap:0.4rem; margin:0 0 1.3rem; padding:0; }
+  .hx-spot-feats li { font-size:0.74rem; font-weight:700; color:#cdeed6; border:1px solid rgba(74,172,101,0.4); background:rgba(74,172,101,0.1); border-radius:999px; padding:0.25rem 0.65rem; }
+  .hx-spot > * { min-width:0; }
+  .hx-spot-cta { display:flex; gap:0.7rem; flex-wrap:wrap; }
+  .hx-spot-cta .btn { padding:12px 22px; font-size:0.8rem; }
+  .hx-spot-vis { border-radius:16px; padding:1.1rem 1.1rem 0.9rem; background:rgba(5,11,7,0.9); border:1px solid #213a2a; box-shadow:0 18px 40px rgba(0,0,0,0.4); }
+  .hx-spot-top { display:flex; justify-content:space-between; align-items:center; gap:0.6rem; flex-wrap:wrap; font-family:var(--font-display); font-size:0.66rem; font-weight:800;
+    text-transform:uppercase; letter-spacing:0.12em; color:#cdeed6; margin-bottom:0.9rem; }
+  .hx-spot-top i { color:var(--brand-accent); }
+  .hx-spot-tag { color:#e8cf8f; border:1px solid var(--wash-gold-border); border-radius:999px; padding:2px 9px; font-size:0.6rem; }
+  .hx-spot-bub { max-width:88%; padding:0.6rem 0.8rem; border-radius:14px; font-size:0.86rem; line-height:1.45; margin:0 0 0.55rem; }
+  .hx-spot-bub.c { background:rgba(255,255,255,0.07); color:#dfeadf; border-bottom-left-radius:4px; }
+  .hx-spot-bub.a { margin-left:auto; background:linear-gradient(135deg,var(--tes-gold-500),var(--tes-gold-300)); color:#14100a; border-bottom-right-radius:4px; }
+  .hx-spot-note { margin:0.55rem 0 0; font-size:0.72rem; color:var(--text-muted); text-align:center; }
+  .spot-play { display:flex; align-items:center; gap:0.75rem; width:100%; margin-top:0.85rem; padding:0.55rem 0.75rem; border-radius:12px; cursor:pointer;
+    border:1px solid var(--wash-gold-border); background:rgba(200,152,48,0.08); color:var(--text-strong); font:inherit; min-height:52px; }
+  .spot-play:hover { background:rgba(200,152,48,0.15); }
+  .spot-play .pb { width:38px; height:38px; flex:0 0 auto; border-radius:50%; display:flex; align-items:center; justify-content:center;
+    background:linear-gradient(135deg,var(--tes-gold-500),var(--tes-gold-300)); color:#0d1710; font-size:0.85rem; }
+  .spot-play .lbl { font-family:var(--font-display); font-size:0.72rem; font-weight:800; text-transform:uppercase; letter-spacing:0.06em; white-space:nowrap; }
+  .spot-play .bar { flex:1; min-width:30px; height:4px; border-radius:4px; background:rgba(255,255,255,0.12); overflow:hidden; }
+  .spot-play .bar i { display:block; height:100%; width:0; background:linear-gradient(90deg,var(--tes-gold-500),var(--tes-gold-300)); }
+  .spot-play .t { font-size:0.76rem; color:var(--text-muted); font-variant-numeric:tabular-nums; white-space:nowrap; }
 
   /* Build-to-spec call */
   .hx-build { display:flex; align-items:center; gap:1.25rem; margin-top:1.1rem; padding:1.25rem 1.4rem; text-decoration:none;
@@ -339,15 +391,23 @@
   .hx-cat-link:hover .hx-cat-arrow { transform:translateX(4px); }
 
   @media (max-width:980px) {
-    .hx-prod-grid, .hx-core { grid-template-columns:1fr 1fr; }
+    .hx-spot { grid-template-columns:minmax(0,1fr); }
+    .hx-core { grid-template-columns:1fr 1fr; }
     .hx-core > :nth-child(3) { grid-column:1 / -1; }
   }
   @media (max-width:720px) {
     .hx-soft { padding:1.6rem; border-radius:20px; }
+    .hx-spot { padding:1.1rem; gap:1.4rem; }
+    .hx-spot h4 { font-size:1.55rem; }
+    .hx-spot-cta .btn { width:100%; }
+    .hx-spot-vis { padding:0.9rem 0.8rem 0.8rem; }
+    .spot-play .lbl { display:none; }
     .hx-h { font-size:1.55rem; }
     .hx-core-head .hx-h { font-size:1.45rem; }
     .hx-core-head { margin-top:2.75rem; }
-    .hx-prod-grid, .hx-core { grid-template-columns:1fr; }
+    .hx-core { grid-template-columns:1fr; }
+    .hx-tile { flex-basis:78%; height:340px; }
+    .hx-rail-nav { display:none; }
     .hx-core > :nth-child(3) { grid-column:auto; }
     .hx-head-cta { width:100%; }
     .hx-build { flex-wrap:wrap; gap:0.9rem; }
@@ -551,7 +611,7 @@
     .eng-circuit .p, .eng-scan { display:none; }
     .rv, .rv.is-in { opacity:1; transform:none; animation:none; }
     .mh-cl-trace, .mh-cl-node { animation:none; }
-    .hx-prod, .hx-svc, .hx-shot img, .hx-cat-link { transition:none; }
+    .hx-tile, .hx-tile img, .hx-svc, .hx-cat-link { transition:none; }
     html { scroll-behavior:auto; }
   }
   </style>
@@ -670,68 +730,104 @@
         <a class="btn btn--primary hx-head-cta" href="software.html"><i class="fa-solid fa-boxes-stacked" aria-hidden="true"></i> Explore All Software</a>
       </div>
 
-      <div class="hx-prod-grid">
-        <div class="rv"><a class="hx-prod" href="ohio-crash-report-analysis-tool.html">
-          <div class="hx-shot">
-            <img src="assets/crash/lead-dashboard.webp" alt="The Ohio Crash List lead dashboard, showing de-duplicated injury-crash records" loading="lazy" decoding="async" width="1500" height="938">
-            <span class="hx-live"><i class="fa-solid fa-circle-check" aria-hidden="true"></i> NEW</span>
+      <article class="hx-spot rv" aria-labelledby="spotTitle">
+        <div>
+          <div class="hx-spot-badges"><span class="hx-new"><i class="fa-solid fa-star" aria-hidden="true"></i> New</span><span class="hx-flag">Flagship</span></div>
+          <h4 id="spotTitle">AI Receptionist</h4>
+          <p class="hx-who">For trades, offices, salons &amp; shops that miss calls</p>
+          <p class="hx-spot-desc">It answers when you can&rsquo;t, books the job, and only interrupts you for a real emergency. It works alongside your team and plugs into the tools you already use.</p>
+          <ul class="hx-spot-feats"><li>Answers day &amp; night</li><li>Books your calendar</li><li>English &amp; Spanish</li><li>10 voices</li></ul>
+          <div class="hx-spot-cta">
+            <a class="btn btn--primary" href="ai-receptionist.html"><i class="fa-solid fa-play" aria-hidden="true"></i> See it in action</a>
+            <a class="btn btn--secondary" href="tel:+12162380505"><i class="fa-solid fa-phone" aria-hidden="true"></i> Call the demo line</a>
           </div>
-          <div class="hx-prod-b">
-            <h4>Ohio Crash Report Analysis Tool</h4>
-            <p class="hx-who">Personal-injury firms &amp; injury-care practices</p>
-            <p class="hx-desc">Turns Ohio crash reports into a clean list of injury-crash leads that belongs to you.</p>
-            <span class="hx-go">See the product <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></span>
-          </div>
-        </a></div>
+        </div>
+        <div class="hx-spot-vis">
+          <div class="hx-spot-top"><span><i class="fa-solid fa-fire-flame-simple" aria-hidden="true"></i> Lakeside Comfort &middot; 7:45 PM</span><span class="hx-spot-tag">After hours</span></div>
+          <p class="hx-spot-bub c">I noticed a strong gas smell near my furnace and I&rsquo;m worried about safety.</p>
+          <p class="hx-spot-bub a">If you smell gas, or a carbon monoxide alarm is sounding, you should leave the house immediately and call 911&hellip;</p>
+          <button class="spot-play" type="button" data-src="assets/receptionist/reel-safety.mp3" data-seconds="22" aria-label="Play a sample call: a gas leak reported after hours"><span class="pb"><i class="fa-solid fa-play" aria-hidden="true"></i></span><span class="lbl">Hear it answer</span><span class="bar"><i></i></span><span class="t">0:22</span></button>
+          <p class="hx-spot-note">A sample call to a fictional heating company</p>
+        </div>
+      </article>
 
-        <div class="rv"><a class="hx-prod" href="shingleai-roof-estimate-tool.html">
-          <div class="hx-shot">
+      <div class="hx-rail-wrap rv">
+        <div class="hx-rail-head">
+          <p class="hx-rail-k">More from TES Software</p>
+          <div class="hx-rail-nav">
+            <button class="hx-rail-btn" type="button" data-dir="-1" aria-label="Scroll the software list back"><i class="fa-solid fa-arrow-left" aria-hidden="true"></i></button>
+            <button class="hx-rail-btn" type="button" data-dir="1" aria-label="Scroll the software list forward"><i class="fa-solid fa-arrow-right" aria-hidden="true"></i></button>
+          </div>
+        </div>
+        <div class="hx-rail" role="region" aria-label="TES Software products" tabindex="0">
+          <a class="hx-tile" href="ohio-crash-report-analysis-tool.html">
+            <img src="assets/crash/lead-dashboard-640.webp" alt="The Ohio Crash List lead dashboard, showing de-duplicated injury-crash records" loading="lazy" decoding="async" width="1500" height="1167">
+            <span class="hx-tile-tag"><i class="fa-solid fa-circle-check" aria-hidden="true"></i> Free trial</span>
+            <span class="hx-tile-body">
+              <span class="hx-tile-who">Personal-injury firms</span>
+              <strong>Ohio Crash Report Analysis Tool</strong>
+              <span class="hx-tile-line">Injury-crash leads from Ohio crash reports, yours to keep.</span>
+              <span class="hx-tile-go">See it <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></span>
+            </span>
+          </a>
+          <a class="hx-tile" href="shingleai-roof-estimate-tool.html">
             <img src="assets/shingleai/card-thumb-640.webp" alt="The ShingleAI roof estimator: an aerial view of a house with the roof outline measured and traced" loading="lazy" decoding="async" width="1200" height="750">
-            <span class="hx-live"><i class="fa-solid fa-satellite" aria-hidden="true"></i> Try it Now!</span>
-          </div>
-          <div class="hx-prod-b">
-            <h4>ShingleAI Roof Estimator</h4>
-            <p class="hx-who">Roofing contractors &mdash; whitelabeled to your brand</p>
-            <p class="hx-desc">A homeowner types their address, the roof is measured from the air, and a priced lead lands in your inbox.</p>
-            <span class="hx-go">See the product <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></span>
-          </div>
-        </a></div>
-
-        <div class="rv"><a class="hx-prod" href="3d-shed-builder-tool.html">
-          <div class="hx-shot">
+            <span class="hx-tile-tag"><i class="fa-solid fa-satellite" aria-hidden="true"></i> Live demo</span>
+            <span class="hx-tile-body">
+              <span class="hx-tile-who">Roofing contractors</span>
+              <strong>ShingleAI Roof Estimator</strong>
+              <span class="hx-tile-line">An instant roof price on your website, measured from the air.</span>
+              <span class="hx-tile-go">See it <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></span>
+            </span>
+          </a>
+          <a class="hx-tile" href="website-watch.html">
+            <img src="assets/website-watch/card-thumb-640.webp" alt="Website Watch status card: a site marked up, uptime checks and a B grade" loading="lazy" decoding="async" width="1200" height="750">
+            <span class="hx-tile-tag"><i class="fa-solid fa-heart-pulse" aria-hidden="true"></i> Subscribe</span>
+            <span class="hx-tile-body">
+              <span class="hx-tile-who">Any business with a website</span>
+              <strong>Website Watch</strong>
+              <span class="hx-tile-line">Your site checked every 15 minutes, with an email the minute it goes down.</span>
+              <span class="hx-tile-go">See it <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></span>
+            </span>
+          </a>
+          <a class="hx-tile" href="3d-shed-builder-tool.html">
             <img src="assets/shed/card-thumb-640.webp" alt="The 3D Shed Builder: a white lofted barn with a red gambrel roof rendered live in 3D" loading="lazy" decoding="async" width="1200" height="750">
-            <span class="hx-live"><i class="fa-solid fa-cube" aria-hidden="true"></i> Try it Now!</span>
-          </div>
-          <div class="hx-prod-b">
-            <h4>3D Shed Builder</h4>
-            <p class="hx-who">Shed builders &amp; barn dealers &mdash; whitelabeled to your brand</p>
-            <p class="hx-desc">Customers design their shed in 3D, watch the price update as they click, and send it to you as a lead.</p>
-            <span class="hx-go">See the product <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></span>
-          </div>
-        </a></div>
-
-        <div class="rv"><a class="hx-prod" href="cleveland-geo-visualizer.html">
-          <div class="hx-shot">
-            <img src="assets/geo-map/card-thumb-640.webp" alt="The Cleveland Geo Visualizer: two public datasets stacked on a dark street map, Cleveland Heights police reports as colored severity clusters with license-plate camera locations over them" loading="lazy" decoding="async" width="1200" height="750">
-            <span class="hx-live"><i class="fa-solid fa-map-location-dot" aria-hidden="true"></i> Free &middot; Try it Now!</span>
-          </div>
-          <div class="hx-prod-b">
-            <h4>Cleveland Geo Visualizer</h4>
-            <p class="hx-who">Free for everyone &mdash; custom builds for cities, newsrooms &amp; firms</p>
-            <p class="hx-desc">Property values, sales, permits, police reports, dispatch and license-plate cameras from county and city open data, stacked on one map. The same engine can run on your data.</p>
-            <span class="hx-go">See the product <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></span>
-          </div>
-        </a></div>
+            <span class="hx-tile-tag"><i class="fa-solid fa-cube" aria-hidden="true"></i> Build one now</span>
+            <span class="hx-tile-body">
+              <span class="hx-tile-who">Shed builders &amp; barn dealers</span>
+              <strong>3D Shed Builder</strong>
+              <span class="hx-tile-line">Customers design their shed in 3D and send you the priced lead.</span>
+              <span class="hx-tile-go">See it <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></span>
+            </span>
+          </a>
+          <a class="hx-tile" href="bid-management-software.html">
+            <img src="assets/contracting/card-thumb-640.webp" alt="Bid board with bids in finding, triage and pricing, each showing the agency, closing date and margin" loading="lazy" decoding="async" width="1200" height="750">
+            <span class="hx-tile-tag"><i class="fa-solid fa-hourglass-half" aria-hidden="true"></i> Early access</span>
+            <span class="hx-tile-body">
+              <span class="hx-tile-who">Vendors bidding on Ohio public work</span>
+              <strong>Bid Management Software</strong>
+              <span class="hx-tile-line">Find, price and track Ohio public bids in one place.</span>
+              <span class="hx-tile-go">See it <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></span>
+            </span>
+          </a>
+          <a class="hx-tile" href="cleveland-geo-visualizer.html">
+            <img src="assets/geo-map/card-thumb-640.webp" alt="The Cleveland Geo Visualizer: Cleveland Heights police reports as colored clusters with license-plate camera locations over them" loading="lazy" decoding="async" width="1200" height="750">
+            <span class="hx-tile-tag"><i class="fa-solid fa-map-location-dot" aria-hidden="true"></i> Free to use</span>
+            <span class="hx-tile-body">
+              <span class="hx-tile-who">Everyone, plus custom builds</span>
+              <strong>Cleveland Geo Visualizer</strong>
+              <span class="hx-tile-line">Cleveland open data, stacked on one map.</span>
+              <span class="hx-tile-go">See it <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></span>
+            </span>
+          </a>
+          <a class="hx-tile hx-tile-all" href="software.html">
+            <span class="hx-tile-all-ic" aria-hidden="true"><i class="fa-solid fa-boxes-stacked"></i></span>
+            <strong>Explore all software</strong>
+            <span class="hx-tile-line">Trials, demos, subscriptions and early access.</span>
+            <span class="hx-tile-go">See them all <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></span>
+          </a>
+        </div>
       </div>
-
-      <a class="hx-build" href="bid-management-software.html">
-        <span class="hx-build-ic" aria-hidden="true"><i class="fa-solid fa-hourglass-half"></i></span>
-        <span class="hx-build-t">
-          <strong>Early access: Bid Management Software for Ohio public bids</strong>
-          <span>Find, price and track City of Cleveland, Cuyahoga County, OhioBuys and SAM.gov bids in one place. Join the waitlist free.</span>
-        </span>
-        <span class="hx-build-go">Get early access <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></span>
-      </a>
 
       <a class="hx-build" href="contact.html">
         <span class="hx-build-ic" aria-hidden="true"><i class="fa-solid fa-wand-magic-sparkles"></i></span>
@@ -1290,6 +1386,53 @@ window.addEventListener('load', function(){ setTimeout(tesLoadChat, 4000); });
       t.style.setProperty('--my', (e.clientY - r.top) + 'px');
     });
   });
+  </script>
+  <script>
+  (function () {
+    var b = document.querySelector('.spot-play');
+    if (!b) return;
+    var a = new Audio(), icon = b.querySelector('.pb i'), bar = b.querySelector('.bar i'), t = b.querySelector('.t');
+    var total = Number(b.getAttribute('data-seconds')) || 0;
+    a.preload = 'none';
+    function fmt(s) { s = Math.max(0, Math.round(s || 0)); return Math.floor(s / 60) + ':' + ('0' + (s % 60)).slice(-2); }
+    b.addEventListener('click', function () {
+      if (!a.getAttribute('src')) a.src = b.getAttribute('data-src');
+      if (a.paused) {
+        var p = a.play();
+        if (p && p.catch) p.catch(function () {});
+        if (window.tesTrack) window.tesTrack('spotlight_play', { page: 'home' });
+      } else a.pause();
+    });
+    a.addEventListener('play', function () { icon.className = 'fa-solid fa-pause'; b.setAttribute('aria-label', 'Pause the sample call'); });
+    a.addEventListener('pause', function () { icon.className = 'fa-solid fa-play'; b.setAttribute('aria-label', 'Play a sample call: a gas leak reported after hours'); });
+    a.addEventListener('timeupdate', function () {
+      var d = isFinite(a.duration) && a.duration > 0 ? a.duration : total;
+      bar.style.width = (d ? a.currentTime / d * 100 : 0) + '%';
+      t.textContent = fmt(a.currentTime) + ' / ' + fmt(d);
+    });
+    a.addEventListener('ended', function () { a.currentTime = 0; bar.style.width = '0%'; t.textContent = fmt(total); });
+  })();
+  </script>
+  <script>
+  (function () {
+    var rail = document.querySelector('.hx-rail');
+    if (!rail) return;
+    var btns = document.querySelectorAll('.hx-rail-btn');
+    var smooth = !(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+    function step() { var t = rail.querySelector('.hx-tile'); return t ? t.getBoundingClientRect().width + 16 : 280; }
+    function state() {
+      var max = rail.scrollWidth - rail.clientWidth - 2;
+      btns[0].disabled = rail.scrollLeft <= 2;
+      btns[1].disabled = rail.scrollLeft >= max;
+      rail.classList.toggle('at-end', rail.scrollLeft >= max);
+    }
+    btns.forEach(function (b) {
+      b.addEventListener('click', function () { rail.scrollBy({ left: Number(b.getAttribute('data-dir')) * step(), behavior: smooth ? 'smooth' : 'auto' }); });
+    });
+    rail.addEventListener('scroll', state, { passive: true });
+    window.addEventListener('resize', state);
+    state();
+  })();
   </script>
 <script src="assets/js/tes-analytics.js" defer></script>
 </body>
