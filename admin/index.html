@@ -1528,6 +1528,17 @@
     .row.appt-hist .row-sub { white-space:normal; }
     .calbusy { font-size:0.62rem; color:var(--muted); background:repeating-linear-gradient(135deg, rgba(138,164,141,0.10) 0 6px, rgba(138,164,141,0.04) 6px 12px); border:1px solid rgba(138,164,141,0.25); border-radius:6px; padding:0.15rem 0.35rem; margin-bottom:0.2rem; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
     @media (max-width:640px) { .calmonth .calbusy { font-size:0; padding:0; height:4px; border:0; background:rgba(138,164,141,0.45); } }
+    /* Reminders: dated nudges with no money attached (tes-portal src/reminders.js). */
+    .calrem { display:block; width:100%; text-align:left; border:1px solid rgba(200,152,48,0.5); background:rgba(200,152,48,0.12); border-radius:8px; padding:0.25rem 0.45rem; margin-bottom:0.3rem; cursor:pointer; color:var(--text); font-family:inherit; font-size:0.7rem; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+    .calrem i { color:var(--gold); margin-right:0.3rem; }
+    .calrem.done { opacity:0.55; text-decoration:line-through; }
+    .calweek .calrem { white-space:normal; }
+    @media (max-width:640px) { .calmonth .calrem { font-size:0; padding:0; height:6px; border:0; background:var(--gold); } }
+    .calag-row.rem .calag-t { color:var(--gold); }
+    .calremlist { margin-top:1rem; margin-bottom:0; }
+    .calremlist .row { width:100%; }
+    .calremlist .late { color:#e0c98a; }
+    .remnotes { white-space:pre-wrap; }
     .calfeeds { border:1px solid var(--line); border-radius:10px; padding:0.6rem 0.75rem; margin-bottom:0.9rem; background:var(--bg); }
     .calfeeds-h { display:flex; align-items:center; justify-content:space-between; gap:0.6rem; margin-bottom:0.35rem; }
     .calfeeds-h b { font-family:"Montserrat",sans-serif; font-size:0.72rem; text-transform:uppercase; letter-spacing:0.05em; color:var(--gold); }
@@ -2479,6 +2490,7 @@
       <h2 id="calRange" aria-live="polite">This month</h2>
       <span class="calsp"></span>
       <button type="button" class="prim" id="calBook">+ Book for a customer</button>
+      <button type="button" id="calRemind">+ Reminder</button>
       <button type="button" id="calHours">Working hours</button>
     </div>
 
@@ -2551,6 +2563,37 @@
       </div>
     </section>
 
+    <section class="newinv" id="calRemForm" hidden>
+      <h2 id="remFormHead">New reminder</h2>
+      <p class="fnote calformnote">A dated nudge with no money attached. Telegram pages you the business morning it comes due, and it stays on Home until you mark it done.</p>
+      <div class="fgrid">
+        <div>
+          <label for="remTitle">What</label>
+          <input id="remTitle" type="text" maxlength="200" placeholder="Renew the domain">
+        </div>
+        <div>
+          <label for="remDate">Day</label>
+          <input id="remDate" type="date">
+        </div>
+        <div>
+          <label for="remItem">Inventory item (optional)</label>
+          <select id="remItem"><option value="">None</option></select>
+        </div>
+        <div>
+          <label for="remUrl">Link (optional)</label>
+          <input id="remUrl" type="url" maxlength="500" placeholder="https://">
+        </div>
+      </div>
+      <div class="fwide">
+        <label for="remNotes">Notes</label>
+        <textarea id="remNotes" rows="3" placeholder="What to do when it comes up"></textarea>
+      </div>
+      <div class="inv-actions">
+        <button type="button" class="prim" id="remSave">Save reminder</button>
+        <button type="button" id="remCancel">Cancel</button>
+      </div>
+    </section>
+
     <section class="newinv" id="calHoursForm" hidden>
       <h2>When customers can book</h2>
       <p class="hoursnote">These are the windows the booking page offers. Blocks below take time out of them for a holiday or a day off. Slots are offered on the half hour, at least 24 hours ahead, with 30 minutes either side of anything already booked.</p>
@@ -2612,6 +2655,7 @@
     </section>
 
     <div id="calGrid"><div class="state">Loading the calendar&hellip;</div></div>
+    <div id="calRems" class="calfeeds calremlist" hidden></div>
   </main>
 
   <main class="wrap" id="viewInventory" aria-label="Inventory" hidden>
@@ -6311,6 +6355,7 @@
         blocks: (r.blocks || []).filter(function (b) { return b.starts_at < de && b.ends_at > ds; }),
         busy: (r.busy || []).filter(function (b) { return b.starts_at < de && b.ends_at > ds; }),
         rules: (r.rules || []).filter(function (x) { return x.active && x.dow === dow; }).sort(function (a, b) { return a.start_hm < b.start_hm ? -1 : 1; }),
+        rems: (r.reminders || []).filter(function (x) { return x.due_on === dayKey(ds); }),
       };
     }
     function busyChip(b, ds, de) {
@@ -6348,7 +6393,10 @@
         weeks = Math.ceil(Math.round((shiftMonth(calAnchor, 1) - from) / 86400) / 7);
         to = dayStartOf(from, weeks * 7);
       }
+      loadRemList();
       return api('/admin/calendar?from=' + from + '&to=' + to).then(function (r) {
+        // A deep link (#a=, #r=) opens its card while this is still loading; keep it.
+        if (calDetailOpen) return;
         calGrid.textContent = '';
         if (!r.ok) { calGrid.appendChild(el('div', 'state', 'Could not load the calendar.')); return; }
         document.getElementById('calRange').textContent = calRangeLabel(from, to);
@@ -6368,13 +6416,14 @@
           var date = new Date(ds * 1000);
           var x = calDayParts(r, ds, de);
           var d = el('div', 'calday' + (ds === today ? ' today' : '') + (x.rules.length ? '' : ' off') +
-            (date.getMonth() !== thisMonth ? ' out' : '') + (x.mine.length || x.blocks.length || x.busy.length ? '' : ' empty'));
+            (date.getMonth() !== thisMonth ? ' out' : '') + (x.mine.length || x.blocks.length || x.busy.length || x.rems.length ? '' : ' empty'));
           var h = el('button', 'calnum', String(date.getDate()));
           h.type = 'button';
           h.setAttribute('aria-label', 'Open ' + date.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' }));
           h.addEventListener('click', function () { goDay(ds); });
           d.appendChild(h);
           x.blocks.forEach(function (b) { d.appendChild(el('div', 'calblock', b.reason || 'Unavailable')); });
+          x.rems.forEach(function (m) { d.appendChild(remChip(m)); });
           x.busy.forEach(function (b) { d.appendChild(busyChip(b, ds, de)); });
           x.mine.forEach(function (a) { d.appendChild(apptChip(a, false)); });
           month.appendChild(d);
@@ -6390,7 +6439,7 @@
           var date = new Date(ds * 1000);
           var x = calDayParts(r, ds, de);
           var d = el('div', 'calday' + (ds === today ? ' today' : '') + (x.rules.length ? '' : ' off') +
-            (x.mine.length || x.blocks.length || x.busy.length ? '' : ' empty'));
+            (x.mine.length || x.blocks.length || x.busy.length || x.rems.length ? '' : ' empty'));
           var h = el('button', 'calwkhead');
           h.type = 'button';
           h.setAttribute('aria-label', 'Open ' + date.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' }));
@@ -6400,13 +6449,14 @@
           d.appendChild(h);
           d.appendChild(el('div', 'calhrs', hoursText(x.rules)));
           x.blocks.forEach(function (b) { d.appendChild(el('div', 'calblock', b.reason || 'Unavailable')); });
+          x.rems.forEach(function (m) { d.appendChild(remChip(m)); });
           // Busy time and appointments in time order.
           var items = x.busy.map(function (b) { return { at: b.starts_at, node: busyChip(b, ds, de) }; })
             .concat(x.mine.map(function (a) { return { at: a.starts_at, node: apptChip(a, true) }; }))
             .sort(function (p, q) { return p.at - q.at; });
           items.forEach(function (it) { d.appendChild(it.node); });
           // The hours line already says 'Not bookable' on a day with no windows.
-          if (!items.length && !x.blocks.length && x.rules.length) d.appendChild(el('div', 'calempty', 'Free'));
+          if (!items.length && !x.blocks.length && !x.rems.length && x.rules.length) d.appendChild(el('div', 'calempty', 'Free'));
           week.appendChild(d);
         })(dayStartOf(from, i), dayStartOf(from, i + 1));
       }
@@ -6423,14 +6473,25 @@
       hrs.appendChild(el('span', null, hoursText(x.rules)));
       p.appendChild(hrs);
       var items = [];
+      // Reminders belong to the whole day, so they lead.
+      x.rems.forEach(function (m) { items.push({ at: ds - 1, kind: 'rem', m: m }); });
       x.blocks.forEach(function (b) { items.push({ at: Math.max(b.starts_at, ds), kind: 'block', b: b }); });
       x.busy.forEach(function (b) { items.push({ at: Math.max(b.starts_at, ds), kind: 'busy', b: b }); });
       x.mine.forEach(function (a) { items.push({ at: a.starts_at, kind: 'appt', a: a }); });
       items.sort(function (m, n) { return m.at - n.at; });
       if (!items.length) p.appendChild(el('div', 'calag-empty', x.rules.length ? 'Nothing booked or busy. Every working window is open.' : 'No working hours on this day, and nothing on it.'));
       items.forEach(function (it) {
-        var row = el(it.kind === 'appt' ? 'button' : 'div', 'calag-row ' + it.kind);
-        if (it.kind === 'appt') {
+        var row = el(it.kind === 'appt' || it.kind === 'rem' ? 'button' : 'div', 'calag-row ' + it.kind);
+        if (it.kind === 'rem') {
+          var m = it.m;
+          row.type = 'button';
+          row.appendChild(el('span', 'calag-t', 'Reminder'));
+          var rb = el('span', 'calag-b');
+          rb.appendChild(el('b', null, m.title));
+          rb.appendChild(el('span', null, [m.status === 'done' ? 'Done' : null, m.inventory_tag, m.notes ? m.notes.split('\n')[0] : null].filter(Boolean).join(' · ')));
+          row.appendChild(rb);
+          row.addEventListener('click', function () { openReminder(m.id); });
+        } else if (it.kind === 'appt') {
           var a = it.a;
           row.type = 'button';
           row.appendChild(el('span', 'calag-t', hhmmOf(a.starts_at) + '–' + hhmmOf(a.ends_at)));
@@ -6476,6 +6537,181 @@
       if (b) calSetView(b.getAttribute('data-view'));
     });
     document.getElementById('calToday').addEventListener('click', function () { calFocus = dayStartOf(Math.floor(Date.now() / 1000), 0); loadCalendar(); });
+
+    // ---- reminders ----
+    // Dated nudges with no money attached (tes-portal src/reminders.js). They ride on
+    // the /admin/calendar answer for the days on screen; the list under the grid is
+    // every open one, so a reminder two years out is still in sight.
+    var remEditId = null;
+    var remItemsLoaded = false;
+    var remShowAll = false;
+
+    // A local day as YYYY-MM-DD, the shape due_on is stored in.
+    function dayKey(ts) {
+      var d = new Date(ts * 1000);
+      return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+    }
+    function dayOfKey(k) { return Math.floor(new Date(k + 'T00:00:00').getTime() / 1000); }
+    function remDayLabel(k) { return new Date(k + 'T12:00:00').toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' }); }
+    function remWhen(m) {
+      var n = m.days_until;
+      if (n === 0) return 'today';
+      if (n === 1) return 'tomorrow';
+      if (n < 0) return (-n) + (n === -1 ? ' day' : ' days') + ' ago';
+      return n < 60 ? 'in ' + n + ' days' : n < 730 ? 'in ' + Math.round(n / 30.4) + ' months' : 'in ' + (n / 365.25).toFixed(1) + ' years';
+    }
+    function remChip(m) {
+      var b = el('button', 'calrem' + (m.status === 'done' ? ' done' : ''));
+      b.type = 'button';
+      b.title = 'Reminder · ' + m.title + (m.inventory_tag ? ' · ' + m.inventory_tag : '');
+      var ic = el('i', 'fa-solid fa-bell'); ic.setAttribute('aria-hidden', 'true');
+      b.appendChild(ic);
+      b.appendChild(document.createTextNode(m.title));
+      b.addEventListener('click', function (e) { e.stopPropagation(); openReminder(m.id); });
+      return b;
+    }
+
+    function loadRemList() {
+      var box = document.getElementById('calRems');
+      return api('/admin/reminders?view=open').then(function (r) {
+        if (!r.ok) { box.hidden = true; return; }
+        var list = r.reminders || [];
+        box.hidden = false; box.textContent = '';
+        var h = el('div', 'calfeeds-h');
+        h.appendChild(el('b', null, 'Reminders' + (list.length ? ' · ' + list.length + ' open' : '')));
+        var add = el('button', null, '+ Reminder'); add.type = 'button';
+        add.addEventListener('click', function () { openRemForm(null); });
+        h.appendChild(add);
+        box.appendChild(h);
+        if (!list.length) { box.appendChild(el('div', 'row-sub', 'None open. Add one for anything with a date and no invoice: a certificate, a renewal, a filing.')); return; }
+        (remShowAll ? list : list.slice(0, 8)).forEach(function (m) {
+          var right = el('b', 'num' + (m.days_until < 0 ? ' late' : ''), remWhen(m));
+          box.appendChild(row(m.title, remDayLabel(m.due_on) + (m.inventory_tag ? ' · ' + m.inventory_tag : ''), right, function () { openReminder(m.id); }));
+        });
+        if (list.length > 8) {
+          var more = el('button', 'linkish', remShowAll ? 'Show fewer' : 'Show all ' + list.length); more.type = 'button';
+          more.addEventListener('click', function () { remShowAll = !remShowAll; loadRemList(); });
+          box.appendChild(more);
+        }
+      });
+    }
+
+    function remFillItems(selected) {
+      var sel = document.getElementById('remItem');
+      var pick = function () { sel.value = selected ? String(selected) : ''; };
+      if (remItemsLoaded) { pick(); return; }
+      api('/admin/inventory?view=all').then(function (r) {
+        if (!r.ok) return;
+        remItemsLoaded = true;
+        (r.items || []).slice().sort(function (a, b) { return a.tag < b.tag ? -1 : 1; }).forEach(function (it) {
+          var o = el('option', null, it.tag + ' · ' + it.name); o.value = String(it.id);
+          sel.appendChild(o);
+        });
+        pick();
+      });
+    }
+
+    // null for a new one; a reminder object to edit it.
+    function openRemForm(m) {
+      remEditId = m ? m.id : null;
+      document.getElementById('remFormHead').textContent = m ? 'Edit reminder' : 'New reminder';
+      document.getElementById('remSave').textContent = m ? 'Save changes' : 'Save reminder';
+      document.getElementById('remTitle').value = m ? m.title : '';
+      document.getElementById('remDate').value = m ? m.due_on : dayKey(calFocus || Math.floor(Date.now() / 1000));
+      document.getElementById('remUrl').value = m && m.url ? m.url : '';
+      document.getElementById('remNotes').value = m ? m.notes || '' : '';
+      remFillItems(m ? m.inventory_id : null);
+      document.getElementById('calBookForm').hidden = true;
+      document.getElementById('calHoursForm').hidden = true;
+      var f = document.getElementById('calRemForm');
+      f.hidden = false;
+      f.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      document.getElementById('remTitle').focus();
+    }
+    document.getElementById('calRemind').addEventListener('click', function () {
+      var f = document.getElementById('calRemForm');
+      if (!f.hidden && !remEditId) { f.hidden = true; return; }
+      openRemForm(null);
+    });
+    document.getElementById('remCancel').addEventListener('click', function () { document.getElementById('calRemForm').hidden = true; remEditId = null; });
+    document.getElementById('remSave').addEventListener('click', function () {
+      var title = document.getElementById('remTitle').value.trim();
+      var due = document.getElementById('remDate').value;
+      if (!title) return toast('What is the reminder for?');
+      if (!due) return toast('Pick a day');
+      var item = document.getElementById('remItem').value;
+      var body = { title: title, due_on: due, notes: document.getElementById('remNotes').value,
+        inventory_id: item ? Number(item) : null, url: document.getElementById('remUrl').value.trim() || null };
+      var btn = this; btn.disabled = true;
+      var editing = remEditId;
+      api(editing ? '/admin/reminders/' + editing : '/admin/reminders', { method: editing ? 'PATCH' : 'POST', body: body }).then(function (r) {
+        btn.disabled = false;
+        if (!r.ok) return toast(r.message || r.error || 'Could not save it');
+        toast(editing ? 'Saved' : 'Reminder set for ' + remDayLabel(due));
+        document.getElementById('calRemForm').hidden = true;
+        remEditId = null;
+        calFocus = dayOfKey(due);
+        if (editing) openReminder(editing); else loadCalendar();
+      });
+    });
+
+    function remPatch(id, body, done) {
+      return api('/admin/reminders/' + id, { method: 'PATCH', body: body }).then(function (x) {
+        if (!x.ok) return toast(x.message || x.error || 'Failed');
+        toast(done);
+        openReminder(id);
+        loadRemList();
+      });
+    }
+
+    function openReminder(id) {
+      calDetailOpen = true;
+      api('/admin/reminders/' + id).then(function (r) {
+        if (!r.ok) { calDetailOpen = false; return toast('That reminder is gone'); }
+        var m = r.reminder;
+        calGrid.textContent = '';
+        var c = el('div', 'apptcard');
+        c.appendChild(el('h3', null, m.title));
+        c.appendChild(el('div', 'who', [remDayLabel(m.due_on), remWhen(m), m.status === 'open' ? null : m.status].filter(Boolean).join(' · ')));
+        if (m.notes) c.appendChild(el('div', 'row-sub remnotes', m.notes));
+        if (m.inventory_id) {
+          var it = el('button', 'linkish', m.inventory_tag ? m.inventory_tag + ' · ' + (m.inventory_name || '') : 'Inventory item #' + m.inventory_id + ' (no longer in Inventory)');
+          it.type = 'button';
+          if (m.inventory_tag) it.addEventListener('click', function () { routeHash('#i=' + m.inventory_id, true); });
+          c.appendChild(it);
+        }
+        if (m.url) {
+          var a = el('a', 'linkish', m.url); a.href = m.url; a.target = '_blank'; a.rel = 'noopener noreferrer';
+          c.appendChild(a);
+        }
+        c.appendChild(el('div', 'row-sub', m.notified_on && m.notified_on === m.due_on
+          ? 'Telegram paged you for this day.'
+          : m.status === 'open' ? 'Telegram pages you the first business morning on or after this day.' : 'Closed ' + fmt(m.closed_at) + '.'));
+        var acts = el('div', 'inv-actions');
+        function ract(label, cls, fn) { var b = el('button', cls || null, label); b.type = 'button'; b.addEventListener('click', fn); acts.appendChild(b); return b; }
+        if (m.status === 'open') {
+          ract('Mark done', 'prim', function () { remPatch(id, { status: 'done' }, 'Done'); });
+          ract('Move', null, function () {
+            var d = prompt('Move it to which day? (YYYY-MM-DD)\nIt pages again on the new day.', m.due_on);
+            if (!d || d === m.due_on) return;
+            remPatch(id, { due_on: d.trim() }, 'Moved to ' + d.trim());
+          });
+          ract('Dismiss', null, function () { remPatch(id, { status: 'dismissed' }, 'Dismissed'); });
+        } else {
+          ract('Reopen', 'prim', function () { remPatch(id, { status: 'open' }, 'Reopened'); });
+        }
+        ract('Edit', null, function () { openRemForm(m); });
+        ract('Delete', 'danger', function () {
+          if (!confirm('Delete "' + m.title + '"? It will not page, and it cannot be brought back.')) return;
+          api('/admin/reminders/' + id, { method: 'DELETE' }).then(function (x) { toast(x.ok ? 'Deleted' : 'Failed'); loadCalendar(); });
+        });
+        ract('Show the day', null, function () { calFocus = dayOfKey(m.due_on); loadCalendar(); });
+        ract('Back to the calendar', null, function () { loadCalendar(); });
+        c.appendChild(acts);
+        calGrid.appendChild(c);
+        calGrid.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      });
+    }
 
     function openAppointment(id) {
       calDetailOpen = true;
@@ -6555,6 +6791,7 @@
       var f = document.getElementById('calBookForm');
       f.hidden = !f.hidden;
       document.getElementById('calHoursForm').hidden = true;
+      document.getElementById('calRemForm').hidden = true;
       if (!f.hidden) document.getElementById('calCustQ').focus();
     });
     document.getElementById('calCancelForm').addEventListener('click', function () { document.getElementById('calBookForm').hidden = true; });
@@ -14206,6 +14443,7 @@
       else if (type === 'invoice') { var mnum = /^(\S+)/.exec(summary || ''); if (mnum) showInvoice(mnum[1]); else showView('invoices'); }
       else if (type === 'quote') { showQuote(Number(id)); }
       else if (type === 'appointment') { showView('calendar'); openAppointment(Number(id)); }
+      else if (type === 'reminder') { showView('calendar'); openReminder(Number(id)); }
       else if (type === 'inventory') { showView('inventory'); var go = function () { flashInvt(Number(id)); }; if (invtAll.length) go(); else loadInventory().then(go); }
       else if (type === 'license') { showView('keys'); flashKey(String(id)); }
       else if (type === 'membership') { showView('keys'); setTimeout(function () { document.getElementById('subPanel').scrollIntoView({ behavior: 'smooth', block: 'start' }); }, 250); }
@@ -14355,6 +14593,15 @@
           sP.appendChild(row(x.number + ' \u00b7 ' + x.name, x.reason, x.urgent ? el('b', 'num', 'late') : null, function () { openObject('project', x.project_id); }));
         });
         wrap.appendChild(sP);
+      }
+      if ((a.reminders || []).length) {
+        any = true;
+        var sRm = attSection('Reminders', a.reminders.length, true);
+        a.reminders.forEach(function (m) {
+          sRm.appendChild(row(m.title, 'Due ' + remDayLabel(m.due_on) + (m.inventory_tag ? ' · ' + m.inventory_tag : ''),
+            el('b', 'num', m.days_late > 0 ? m.days_late + 'd late' : 'today'), function () { openObject('reminder', m.id); }));
+        });
+        wrap.appendChild(sRm);
       }
       var appts = (a.appointments && a.appointments.upcoming) || [];
       if (appts.length) {
@@ -14885,6 +15132,7 @@
       else if ((m = /^#inv=(.+)/.exec(hash))) { showInvoice(decodeURIComponent(m[1])); }
       else if ((m = /^#q=(\d+)/.exec(hash))) { showQuote(Number(m[1])); }
       else if ((m = /^#a=(\d+)/.exec(hash))) { showView('calendar'); openAppointment(Number(m[1])); }
+      else if ((m = /^#r=(\d+)/.exec(hash))) { showView('calendar'); openReminder(Number(m[1])); }
       // showView writes '#calendar'; '#cal' is the older short form links still use.
       else if (hash === '#cal' || hash === '#calendar') showView('calendar');
       else if ((m = /^#i=(\d+)/.exec(hash))) { loaded.inventory = true; showView('inventory'); loadInventory().then(function () { flashInvt(Number(m[1])); }); }
@@ -15777,7 +16025,7 @@
       d5.appendChild(sysBox);
       var line = function (cls, ico, text) { var l = el('div', 'sys-line ' + cls); l.appendChild(icon(ico)); l.appendChild(el('span', null, text)); return l; };
       // The cron names its jobs in code; these are the words for them.
-      var JOB_NAMES = { provisioning: 'License provisioning', sla: 'Response times', reminder: 'Invoice reminders', renewal: 'Equipment renewals', quote: 'Quote follow-ups', agreement: 'Agreement billing', appointment: 'Appointment reminders', contracting: 'Bid windows', feed: 'Bid queue', sos: 'State filings', 'sos lookup': 'Website lookups', 'website watch': 'Website Watch', 'membership reconcile': 'Subscription check', 'claude credit': 'Claude credit', 'busy feeds': 'Calendar busy times', 'scheduled nudges': 'Weekly messages', 'billing nudges': 'Time to invoice', 'usage limit': 'Usage limits', 'paypal sync': 'PayPal sync', backup: 'Backup', 'tax nudge': 'Estimated tax', 'property probe': 'Property data check' };
+      var JOB_NAMES = { provisioning: 'License provisioning', sla: 'Response times', reminder: 'Invoice reminders', renewal: 'Equipment renewals', quote: 'Quote follow-ups', agreement: 'Agreement billing', appointment: 'Appointment reminders', contracting: 'Bid windows', feed: 'Bid queue', sos: 'State filings', 'sos lookup': 'Website lookups', 'website watch': 'Website Watch', 'membership reconcile': 'Subscription check', 'claude credit': 'Claude credit', 'busy feeds': 'Calendar busy times', 'scheduled nudges': 'Weekly messages', 'billing nudges': 'Time to invoice', 'usage limit': 'Usage limits', 'paypal sync': 'PayPal sync', backup: 'Backup', 'tax nudge': 'Estimated tax', 'property probe': 'Property data check', 'dated reminder': 'Your reminders' };
       var agoMin = function (ts) { if (!ts) return 'never'; var m = Math.round((Date.now() / 1000 - ts) / 60); return m < 1 ? 'just now' : m < 120 ? m + ' min ago' : Math.round(m / 60) + ' hr ago'; };
       var renderSystem = function () {
         api('/admin/system').then(function (r) {
@@ -20611,7 +20859,7 @@
     // second, redundant history entry.
     var HASH_OF = {
       home: /^(#home|#|)$/, inbox: /^#(inbox|m=)/, tickets: /^#(tickets|t=)/, customers: /^#(customers|c=|o=)/,
-      invoices: /^#(invoices|inv=|q=)/, calendar: /^#(cal|a=)/, inventory: /^#(inventory|i=)/, finance: /^#finance/,
+      invoices: /^#(invoices|inv=|q=)/, calendar: /^#(cal|a=|r=)/, inventory: /^#(inventory|i=)/, finance: /^#finance/,
       reports: /^#reports/, keys: /^#keys/, contracting: /^#(contracting|b=)/, projects: /^#(projects|p=)/, marketing: /^#(marketing|l=|sos|campaigns|trends)/,
     };
 
