@@ -121,6 +121,20 @@
     .q-err { color: #ffb4a8; font-size: 13px; margin-top: 10px; }
     .q-fine { font-size: 11.5px; color: #8aa48d; margin-top: 14px; }
 
+    /* A quote whose document is a PDF: the file, and how to go ahead. */
+    .q-doc { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
+    .q-doc-ic { width: 46px; height: 56px; flex-shrink: 0; border-radius: 6px; background: #fbeee9; border: 1px solid #f0cfc4; color: var(--red); display: flex; align-items: flex-end; justify-content: center; padding-bottom: 8px; font: 700 10.5px "Montserrat", sans-serif; letter-spacing: 0.6px; }
+    .q-doc-t { flex: 1 1 220px; min-width: 0; }
+    .q-doc-t b { display: block; font-size: 15px; overflow-wrap: anywhere; }
+    .q-doc-t span { display: block; font-size: 12.5px; color: var(--muted); }
+    .q-doc-acts { display: flex; gap: 10px; flex-wrap: wrap; }
+    .q-doc-total { margin-top: 16px; padding-top: 14px; border-top: 1px solid var(--line); display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; font-size: 14px; }
+    .q-doc-total b { font-family: "Montserrat", sans-serif; font-size: 17px; }
+    .q-how { background: var(--brand-dark); color: #d8e6da; border-radius: 14px; padding: 20px 24px; margin-bottom: 16px; }
+    .q-how h2 { color: var(--brand-green-300); font-size: 12px; text-transform: uppercase; letter-spacing: 1.4px; margin-bottom: 10px; }
+    .q-how p { font-size: 14px; margin-bottom: 8px; }
+    .q-how a { color: var(--brand-green-300); font-weight: 600; }
+
     .q-done { background: var(--card); border: 1px solid var(--brand-green); border-radius: 14px; padding: 22px 24px; }
     .q-done h2 { font-size: 18px; margin-bottom: 8px; }
     .q-done p { font-size: 14px; color: #33463c; margin-bottom: 8px; }
@@ -197,7 +211,27 @@
         <div class="q-intro" id="qIntro"></div>
       </section>
 
-      <section class="q-sec">
+      <!-- An uploaded quote: the PDF is the document. Shown instead of the line items. -->
+      <section class="q-sec" id="qDocSec" hidden>
+        <h2 id="qDocH">The quote</h2>
+        <div class="q-doc">
+          <div class="q-doc-ic" aria-hidden="true">PDF</div>
+          <div class="q-doc-t"><b id="qDocName"></b><span id="qDocSub">The full document, with the details and the terms.</span></div>
+          <div class="q-doc-acts">
+            <a class="tbtn" id="qDocOpen" href="#" target="_blank" rel="noopener">Open</a>
+            <a class="tbtn ghost" id="qDocSave" href="#">Download</a>
+          </div>
+        </div>
+        <div class="q-doc-total" id="qDocTotal" hidden><span>Total</span><b id="qDocTotalN"></b></div>
+      </section>
+
+      <section class="q-how noprint" id="qHow" hidden>
+        <h2>How to go ahead</h2>
+        <p id="qHowP">Follow the steps in the document to accept it, or reply to the email it came with and we will take it from there.</p>
+        <p>Questions, or want something changed? Reply to that email or call <a href="tel:+12163028486">(216)&nbsp;302&#8209;8486</a>.</p>
+      </section>
+
+      <section class="q-sec" id="qItemsSec">
         <h2>What is included</h2>
         <table class="q-items" aria-label="Quote line items">
           <thead><tr><th>Item</th><th class="qty num">Qty</th><th class="num">Amount</th></tr></thead>
@@ -418,6 +452,27 @@
       }
       if (quote.next_step) { $('qNextSec').hidden = false; $('qNext').textContent = quote.next_step; }
 
+      // Built outside the console: the PDF is the document, with its own terms and its
+      // own way to accept (usually a signed copy). The page shows the file and the total
+      // instead of line items, and offers no one-click accept.
+      var isPdf = quote.source === 'pdf';
+      if (isPdf) {
+        var lower = isSow ? 'Statement of Work' : word.toLowerCase();
+        $('qItemsSec').hidden = true;
+        $('qPrint').hidden = true;
+        $('qDocSec').hidden = !quote.has_pdf;
+        $('qDocH').textContent = 'The ' + lower;
+        $('qDocName').textContent = quote.pdf_filename || (quote.number + '.pdf');
+        var href = API + '/quote/pdf?t=' + encodeURIComponent(token);
+        $('qDocOpen').href = href;
+        $('qDocOpen').textContent = 'Open the ' + lower;
+        $('qDocSave').href = href + '&download=1';
+        var head = headline();
+        if (head) { $('qDocTotal').hidden = false; $('qDocTotalN').textContent = head; }
+        $('qToolMsg').textContent = 'The full ' + lower + ' is in the PDF below.';
+        if (isSow) $('qHowP').textContent = 'Sign it as the document describes, or reply to the email it came with and we will take it from there.';
+      }
+
       var open = (quote.status === 'sent' || quote.status === 'viewed') && !quote.expired;
       var pill = $('qPill'), valid = $('qValid'), done = $('qDone');
       pill.className = 'q-pill';
@@ -430,6 +485,17 @@
           + (quote.invoice_number ? 'Invoice ' + quote.invoice_number + ' has been raised; the work is scheduled once it is paid.' : 'We will send the first invoice, and the work is scheduled once it is paid.')));
         done.appendChild(el('p', null, 'Keep this page or print it for your records.'));
         $('qToolMsg').textContent = 'This Statement of Work has been signed.';
+      } else if ((quote.status === 'accepted' || quote.status === 'converted') && isPdf) {
+        // Its next steps are in the PDF, so this does not promise the console's
+        // "a Statement of Work follows".
+        pill.textContent = 'Accepted';
+        valid.textContent = 'Accepted ' + longDate(quote.decided_at) + (quote.signature_name ? ' by ' + quote.signature_name : '');
+        done.hidden = false; done.className = 'q-done';
+        done.appendChild(el('h2', null, 'Thank you. This ' + word.toLowerCase() + ' is accepted.'));
+        done.appendChild(el('p', null, 'Accepted on ' + longDate(quote.decided_at) + (quote.signature_name ? ', signed by ' + quote.signature_name : '') + '. '
+          + (quote.invoice_number ? 'Invoice ' + quote.invoice_number + ' has been raised.' : 'We will be in touch about the next step.')));
+        done.appendChild(el('p', null, 'The document stays here for your records.'));
+        $('qToolMsg').textContent = 'This ' + word.toLowerCase() + ' has been accepted.';
       } else if (quote.status === 'accepted' || quote.status === 'converted') {
         pill.textContent = 'Accepted';
         valid.textContent = 'Accepted ' + longDate(quote.decided_at) + (quote.signature_name ? ' by ' + quote.signature_name : '');
@@ -455,7 +521,8 @@
       } else {
         pill.textContent = 'Open';
         if (quote.valid_until) { valid.textContent = ''; valid.appendChild(document.createTextNode('Valid until ')); valid.appendChild(el('b', null, longDate(quote.valid_until))); }
-        $('qAccept').hidden = false;
+        if (isPdf) $('qHow').hidden = false;
+        else $('qAccept').hidden = false;
       }
       renderItems(open);
       renderTotals();

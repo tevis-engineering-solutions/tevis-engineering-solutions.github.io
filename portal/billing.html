@@ -892,8 +892,13 @@
         top.appendChild(left);
         top.appendChild(el('div', 'inv-spacer'));
         var right = el('div', 'inv-right');
-        right.appendChild(el('div', 'inv-amt', TESInvoices.formatUSD((done ? q.accepted_cents : q.total_cents) / 100)));
-        if (q.url) { var a = el('a', 'btn btn-primary'); a.href = q.url; a.target = '_blank'; a.rel = 'noopener'; a.appendChild(el('i', 'fa-solid fa-file-signature')); a.appendChild(document.createTextNode(sow ? ' Review & sign' : ' Review & accept')); right.appendChild(a); }
+        // A quote sent as a PDF may have no figure typed beside it; its total is in the
+        // document, so nothing is shown rather than $0.00.
+        var amt = done ? q.accepted_cents : q.total_cents;
+        if (amt || q.source !== 'pdf') right.appendChild(el('div', 'inv-amt', TESInvoices.formatUSD(amt / 100)));
+        var word = q.doc_type === 'estimate' ? 'estimate' : sow ? 'Statement of Work' : 'quote';
+        if (q.url) { var a = el('a', 'btn btn-primary'); a.href = q.url; a.target = '_blank'; a.rel = 'noopener'; a.appendChild(el('i', 'fa-solid fa-file-signature')); a.appendChild(document.createTextNode(q.source === 'pdf' ? ' View the ' + word : sow ? ' Review & sign' : ' Review & accept')); right.appendChild(a); }
+        else if (q.pdf_url) { var p = el('a', 'btn btn-ghost'); p.href = q.pdf_url; p.target = '_blank'; p.rel = 'noopener'; p.appendChild(el('i', 'fa-solid fa-file-pdf')); p.appendChild(document.createTextNode(' Open the PDF')); right.appendChild(p); }
         top.appendChild(right);
         c.appendChild(top);
         box.appendChild(c);

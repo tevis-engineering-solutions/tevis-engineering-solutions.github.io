@@ -801,7 +801,10 @@
       letter-spacing:0.05em; color:var(--muted); margin-bottom:0.3rem; }
     .adlg-form input { width:100%; box-sizing:border-box; height:40px; padding:0 0.65rem; border-radius:8px; border:1px solid var(--line);
       background:var(--bg); color:var(--text); font:inherit; font-size:0.85rem; color-scheme:dark; }
-    .adlg-form input:focus { outline:none; border-color:var(--green); }
+    .adlg-form select { width:100%; box-sizing:border-box; height:40px; padding:0 0.55rem; border-radius:8px; border:1px solid var(--line);
+      background:var(--bg); color:var(--text); font:inherit; font-size:0.85rem; color-scheme:dark; }
+    .adlg-form input[type=file] { height:auto; padding:0.45rem 0.55rem; font-size:0.78rem; }
+    .adlg-form input:focus, .adlg-form select:focus { outline:none; border-color:var(--green); }
     .adlg-form input:disabled { opacity:0.6; }
     .adlg-form .hint { font-size:0.72rem; color:#e0c98a; margin-top:0.25rem; }
     @media (max-width:520px) {
@@ -1441,6 +1444,22 @@
     .qdoc { display:flex; align-items:center; gap:0.5rem; flex-wrap:wrap; margin-bottom:0.2rem; }
     .qdoc-l { font-family:"Montserrat",sans-serif; font-size:0.68rem; text-transform:uppercase; letter-spacing:0.05em; color:var(--muted); font-weight:700; }
     .qdoc-h { font-size:0.74rem; color:var(--muted); flex:1 1 14rem; min-width:0; }
+    /* Built here, or uploaded as a PDF: the form shows one set of fields or the other.
+       Several of these carry display rules of their own (.fgrid is a grid), which beat
+       the browser's [hidden], so the mode switch says it outright. */
+    #quoteForm [data-qmode][hidden] { display:none !important; }
+    .quotes .qhead-btns { display:inline-flex; gap:0.5rem; flex-wrap:wrap; }
+    .quotes .qhead-btns[hidden] { display:none; }
+    .quotes .qhead button.ghost { font-family:"Montserrat",sans-serif; font-size:0.7rem; font-weight:700; text-transform:uppercase; letter-spacing:0.03em; padding:0.5rem 0.9rem; border-radius:999px; border:1px solid rgba(200,152,48,0.55); background:transparent; color:var(--gold); cursor:pointer; min-height:36px; }
+    .quotes .qhead button.ghost:hover { background:rgba(200,152,48,0.1); }
+    .qt-rec { display:flex; gap:0.5rem; }
+    .qt-rec input { flex:1 1 auto; min-width:0; }
+    .fgrid .qt-rec select { flex:0 0 8.5rem; width:auto; }
+    .qt-pdf-note { font-size:0.76rem; color:var(--muted); margin:0.1rem 0 0.7rem; line-height:1.5; }
+    .qt-manual { display:inline-flex; align-items:center; gap:0.45rem; flex-wrap:wrap; }
+    .qt-manual label { font-size:0.76rem; color:var(--muted); }
+    .qt-manual input[type=date] { min-height:32px; padding:0.3rem 0.5rem; border-radius:8px; border:1px solid var(--line); background:var(--bg); color:var(--text); font-family:inherit; font-size:0.8rem; color-scheme:dark; }
+    .q-pdf-chip { display:inline-flex; align-items:center; gap:0.3rem; font-size:0.66rem; font-weight:700; letter-spacing:0.04em; text-transform:uppercase; color:#e0a090; border:1px solid rgba(224,160,144,0.45); border-radius:5px; padding:0.05rem 0.35rem; margin-right:0.35rem; vertical-align:1px; }
 
     /* Drafting from the handbook. Gold, because it writes the document. */
     .qai { margin:0.9rem 0; padding:0.75rem 0.8rem; border:1px solid rgba(200,152,48,0.4); background:rgba(200,152,48,0.05); border-radius:10px; }
@@ -2517,7 +2536,10 @@
     <section class="newinv quotes" id="quoteBox">
       <div class="qhead">
         <h2 id="quoteFormTitle">Quotes</h2>
-        <button type="button" class="prim" id="quoteNewBtn">+ New quote</button>
+        <span class="qhead-btns">
+          <button type="button" class="ghost" id="quotePdfBtn">+ Upload a PDF</button>
+          <button type="button" class="prim" id="quoteNewBtn">+ New quote</button>
+        </span>
       </div>
       <form id="quoteForm" hidden>
         <input type="hidden" id="quoteId" value="">
@@ -2527,6 +2549,17 @@
           <button type="button" class="fpill" id="qtTypeEstimate">Estimate</button>
           <button type="button" class="fpill" id="qtTypeSow">Statement of Work</button>
           <span class="qdoc-h" id="qtTypeHint">Firm prices. Non-binding until a Statement of Work is signed.</span>
+        </div>
+        <!-- A quote built outside the console: its PDF is the document. The filename is
+             the number; the customer, the valid-until date, a title and a summary are
+             read off it as suggestions, checked before anything is saved. -->
+        <div data-qmode="pdf" hidden>
+          <div class="dz" id="qtDrop" tabindex="0" role="button" aria-label="Attach the quote PDF">
+            <input type="file" id="qtFile" accept="application/pdf,.pdf" hidden>
+            <div class="dz-main">Drop the quote PDF here, or click to choose one</div>
+            <div class="dz-sub">The filename is the number. The customer, the valid-until date, a title and a summary are read from it for you to check.</div>
+          </div>
+          <div class="dz-file" id="qtFileInfo" hidden></div>
         </div>
         <div class="fwide custpick">
           <label for="qtCustQ">Customer</label>
@@ -2551,17 +2584,43 @@
             <label for="qtTitle">Title</label>
             <input id="qtTitle" type="text" required placeholder="Office network refresh">
           </div>
-          <div>
+          <div data-qmode="build">
             <label for="qtValid">Valid for (days)</label>
             <input id="qtValid" type="number" min="1" max="365" value="30">
           </div>
+          <div data-qmode="pdf" hidden>
+            <label for="qtNumber">Number (from the file)</label>
+            <input id="qtNumber" type="text" maxlength="60" placeholder="TES-EST-MRL-2026-001" autocomplete="off">
+          </div>
+          <div data-qmode="pdf" hidden>
+            <label for="qtValidDate">Valid until</label>
+            <input id="qtValidDate" type="date">
+          </div>
         </div>
         <div class="fwide">
-          <label for="qtIntro">About this work (shown at the top)</label>
+          <label for="qtIntro" id="qtIntroL">About this work (shown at the top)</label>
           <textarea id="qtIntro" rows="2" placeholder="What the job is and what it solves, in a sentence or two."></textarea>
         </div>
+        <div class="fgrid" data-qmode="pdf" hidden>
+          <div>
+            <label for="qtAmtOnce">One-time total (optional)</label>
+            <input id="qtAmtOnce" type="text" inputmode="decimal" placeholder="550.00" autocomplete="off">
+          </div>
+          <div>
+            <label for="qtAmtRec">Recurring (optional)</label>
+            <div class="qt-rec">
+              <input id="qtAmtRec" type="text" inputmode="decimal" placeholder="300.00" autocomplete="off">
+              <select id="qtRecInt" aria-label="How often the recurring amount is charged">
+                <option value="month">per month</option>
+                <option value="quarter">per quarter</option>
+                <option value="year">per year</option>
+              </select>
+            </div>
+          </div>
+        </div>
+        <p class="qt-pdf-note" data-qmode="pdf" hidden>The customer sees the PDF. These figures are for tracking and for invoicing it later; leave them blank if the document offers options and nothing is chosen yet. You can set them when it is accepted.</p>
 
-        <div class="qai" id="qtAi">
+        <div class="qai" id="qtAi" data-qmode="build">
           <div class="qai-h">
             <span>Draft it from the handbook</span>
             <span class="qai-s" id="qtRefState">Checking reference material&hellip;</span>
@@ -2574,7 +2633,7 @@
           </div>
           <div id="qtDraftOut"></div>
         </div>
-        <div class="qlines">
+        <div class="qlines" data-qmode="build">
           <div class="qlines-h"><span>Line items</span><span class="qlines-hint">Tick Optional for add-ons the customer can choose. Sales tax is its own line: use Add sales tax.</span></div>
           <div id="qtLines"></div>
           <button type="button" id="qtAddLine">+ Add a line</button>
@@ -2583,21 +2642,26 @@
           <div class="qtotals" id="qtTotals"></div>
         </div>
 
-        <div class="fwide">
+        <div class="fwide" data-qmode="build">
           <label for="qtExclusions">What this does not include (one per line)</label>
           <textarea id="qtExclusions" rows="3" placeholder="Any commitment to begin work &mdash; no work starts without a signed Statement of Work and deposit"></textarea>
         </div>
-        <div class="fwide">
+        <div class="fwide" data-qmode="build">
           <label for="qtNextStep">Next step</label>
           <textarea id="qtNextStep" rows="2" placeholder="Left blank, this is written from the total: 50/50 up to $5,000, 40/30/30 above."></textarea>
         </div>
-        <div class="fwide">
+        <div class="fwide" data-qmode="build">
           <label for="qtTerms">Terms (printed on the quote)</label>
           <textarea id="qtTerms" rows="3"></textarea>
         </div>
         <div class="inv-actions">
           <button type="submit" class="prim" id="qtSave">Save draft</button>
           <button type="button" id="qtSaveSend" class="prim">Save &amp; send</button>
+          <span class="qt-manual" id="qtManualBox" data-qmode="pdf" hidden>
+            <button type="button" class="prim" id="qtSaveManual">Save, I sent it myself</button>
+            <label for="qtSentOn">on</label>
+            <input type="date" id="qtSentOn">
+          </span>
           <button type="button" id="qtCancel">Cancel</button>
         </div>
       </form>
@@ -7286,7 +7350,7 @@
     var qtTimer = null;
     var quoteView = 'open';
     var QUOTE_COLOR = { draft: '#8aa48d', sent: '#4fa2ff', viewed: '#4aac65', accepted: '#22c55e', converted: '#22c55e', declined: '#6a8ba8', expired: '#c89830' };
-    var QUOTE_ERROR = { invalid_email: 'That email is not valid', title_required: 'Give the quote a title', items_required: 'Add at least one line with a description', bad_qty: 'A quantity is not a number', bad_price: 'A price is not a number', bad_interval: 'A line has an interval nobody recognizes', bad_range: 'A line has a high price below its low price', not_editable: 'This quote has been decided and cannot be edited', not_sendable: 'This quote cannot be sent in its current state', send_failed: 'Resend refused the email', mail_unconfigured: 'Email is not configured on the Worker', not_accepted: 'The customer has not accepted; tick the verbal box to convert anyway', already_converted: 'Already converted', duplicate_number: 'An invoice with that number already exists', not_draft: 'Only a draft can be deleted', not_open: 'This quote is no longer open', nothing_priced: 'Every required line is $0.00. Price at least one required line before sending; optional add-ons do not count, because the customer can accept without them.', nothing_to_convert: 'Everything on this quote is recurring, and the service agreement could not be started, so there is nothing to convert it into yet' };
+    var QUOTE_ERROR = { not_pdf: 'That file is not a PDF', missing_file: 'Drop the PDF first', too_large: 'That PDF is over 10 MB', empty_file: 'That file is empty', bad_encoding: 'The file could not be read', bad_number: 'The number can only have letters, digits and dashes', number_taken: 'A quote with that number already exists', duplicate_pdf: 'That PDF is already on another quote', same_pdf: 'That is the PDF already on file', bad_date: 'That date is not valid', future_date: 'The day it was sent cannot be in the future', no_pdf: 'This quote has no PDF on file', pdf_missing: 'The stored PDF could not be read', how_required: 'Say how they accepted', note_required: 'Say how it is being billed', pdf_quote: 'An uploaded quote cannot be copied; upload the revised PDF instead', number_fixed: 'The number cannot change once it has been sent', not_pdf_quote: 'That is only for uploaded quotes', storage_unavailable: 'File storage is not available', invalid_email: 'That email is not valid', title_required: 'Give the quote a title', items_required: 'Add at least one line with a description', bad_qty: 'A quantity is not a number', bad_price: 'A price is not a number', bad_interval: 'A line has an interval nobody recognizes', bad_range: 'A line has a high price below its low price', not_editable: 'This quote has been decided and cannot be edited', not_sendable: 'This quote cannot be sent in its current state', send_failed: 'Resend refused the email', mail_unconfigured: 'Email is not configured on the Worker', not_accepted: 'The customer has not accepted; tick the verbal box to convert anyway', already_converted: 'Already converted', duplicate_number: 'An invoice with that number already exists', not_draft: 'Only a draft can be deleted', not_open: 'This quote is no longer open', nothing_priced: 'Every required line is $0.00. Price at least one required line before sending; optional add-ons do not count, because the customer can accept without them.', nothing_to_convert: 'Everything on this quote is recurring, and the service agreement could not be started, so there is nothing to convert it into yet' };
     // Byte-identical to CONFIG.quoteTerms in the Worker (src/config.js). The two must
     // move together: this is what a new quote is seeded with, that is what the server
     // falls back to.
@@ -7294,6 +7358,9 @@
     var DEFAULT_SOW_TERMS = 'Signing this Statement of Work approves the scope, the price and the payment schedule above, and authorizes TES to schedule the work once the first payment is received. Anything outside the scope is quoted separately before it starts. The TES Terms of Service at tevisengineering.com/privacy_policy.html apply.';
     var DEFAULT_TERMS = 'This is a preliminary, non-binding estimate based on the information available at this time. It is not a Statement of Work and does not authorize TES to begin billable work. Prices cover the scope described; anything outside it is quoted separately before it starts. Accepting this document records your intent to proceed, after which TES issues a Statement of Work for signature. Work begins once that is signed and the deposit is received.';
     var qtDocType = 'quote';
+    // 'build' = the line-item builder; 'pdf' = a quote built elsewhere, uploaded as its PDF.
+    var qtMode = 'build';
+    var qtPdf = null;   // the dropped file: {name, size, data}
     var INTERVAL_OPTS = [['once', 'One-time'], ['month', 'Per month'], ['quarter', 'Per quarter'], ['year', 'Per year']];
     var INTERVAL_SUFFIX = { once: ' one-time', month: ' / month', quarter: ' / quarter', year: ' / year' };
 
@@ -7510,11 +7577,31 @@
     qtCustQ.addEventListener('keydown', function (e) { if (e.key === 'Escape') qtCustList.hidden = true; });
     document.addEventListener('click', function (e) { if (!qtCustList.contains(e.target) && e.target !== qtCustQ) qtCustList.hidden = true; });
 
-    function quoteFormOpen(q, c) {
+    // Built here, or a PDF built elsewhere. The two share the customer, the title and the
+    // summary; the rest belongs to one or the other and is shown or hidden as a set.
+    function qtSetMode(m) {
+      qtMode = m === 'pdf' ? 'pdf' : 'build';
+      Array.prototype.forEach.call(quoteForm.querySelectorAll('[data-qmode]'), function (n) { n.hidden = n.getAttribute('data-qmode') !== qtMode; });
+      document.getElementById('qtIntroL').textContent = qtMode === 'pdf' ? 'Summary (shown in the email and on their page)' : 'About this work (shown at the top)';
+      document.getElementById('qtSaveSend').textContent = qtMode === 'pdf' ? 'Save & send with the TES email' : 'Save & send';
+      document.getElementById('qtSave').textContent = 'Save draft';
+      document.getElementById('qtSaveSend').hidden = false;
+    }
+
+    function quoteFormOpen(q, c, mode) {
       quoteForm.hidden = false;
-      document.getElementById('quoteNewBtn').hidden = true;  // one quote at a time; Cancel or Save brings it back
+      qtSetMode(q ? (q.source === 'pdf' ? 'pdf' : 'build') : mode);
+      document.querySelector('#quoteBox .qhead-btns').hidden = true;  // one quote at a time; Cancel or Save brings them back
       document.getElementById('quoteId').value = q ? q.id : '';
-      document.getElementById('quoteFormTitle').textContent = q ? 'Edit ' + q.number : 'New quote';
+      document.getElementById('quoteFormTitle').textContent = q ? 'Edit ' + q.number : qtMode === 'pdf' ? 'Upload a quote PDF' : 'New quote';
+      qtPdf = null;
+      ['qtNumber', 'qtValidDate', 'qtAmtOnce', 'qtAmtRec'].forEach(function (id) { document.getElementById(id).value = ''; });
+      document.getElementById('qtRecInt').value = 'month';
+      document.getElementById('qtSentOn').value = ymd(new Date());
+      document.getElementById('qtSentOn').max = ymd(new Date());
+      document.getElementById('qtFileInfo').hidden = true;
+      document.getElementById('qtFileInfo').textContent = '';
+      document.getElementById('qtDrop').hidden = !!q;
       ['qtEmail', 'qtName', 'qtCompany', 'qtTitle', 'qtIntro', 'qtExclusions', 'qtNextStep', 'qtBrief'].forEach(function (id) { document.getElementById(id).value = ''; });
       document.getElementById('qtDraftOut').textContent = '';
       qtSetDocType(q ? (q.doc_type || 'quote') : 'quote');
@@ -7532,17 +7619,202 @@
         document.getElementById('qtExclusions').value = q.exclusions || '';
         document.getElementById('qtNextStep').value = q.next_step || '';
         if (q.valid_until) document.getElementById('qtValid').value = Math.max(1, Math.round((q.valid_until - Date.now() / 1000) / 86400));
-        (q.items || []).forEach(function (i) { qtLinesEl.appendChild(qtLine(i)); });
+        if (q.source === 'pdf') {
+          document.getElementById('qtNumber').value = q.number || '';
+          if (q.valid_until) document.getElementById('qtValidDate').value = ymd(new Date(q.valid_until * 1000));
+          (q.items || []).forEach(function (i) {
+            if ((i.interval || 'once') === 'once') document.getElementById('qtAmtOnce').value = (i.line_cents / 100).toFixed(2);
+            else { document.getElementById('qtAmtRec').value = (i.line_cents / 100).toFixed(2); document.getElementById('qtRecInt').value = i.interval; }
+          });
+          var info = document.getElementById('qtFileInfo');
+          info.hidden = false;
+          info.appendChild(document.createTextNode('On file: '));
+          info.appendChild(el('b', null, q.pdf_filename || 'no PDF'));
+          info.appendChild(document.createTextNode(' \u00b7 to replace it, use Replace PDF on the quote.'));
+          // Once it has gone to the customer, saving is just saving: resending and
+          // marking it sent live on the quote's card.
+          if (q.status !== 'draft') {
+            document.getElementById('qtSave').textContent = 'Save';
+            document.getElementById('qtSaveSend').hidden = true;
+            document.getElementById('qtManualBox').hidden = true;
+          }
+        } else (q.items || []).forEach(function (i) { qtLinesEl.appendChild(qtLine(i)); });
       } else {
         if (c) qtSelect(c);
         qtLinesEl.appendChild(qtLine());
       }
       qtRecalc();
       quoteForm.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      document.getElementById(q ? 'qtTitle' : 'qtCustQ').focus();
+      document.getElementById(q ? 'qtTitle' : qtMode === 'pdf' ? 'qtDrop' : 'qtCustQ').focus();
     }
-    function quoteFormClose() { quoteForm.hidden = true; document.getElementById('quoteNewBtn').hidden = false; document.getElementById('quoteFormTitle').textContent = 'Quotes'; }
+    function quoteFormClose() { quoteForm.hidden = true; qtPdf = null; document.querySelector('#quoteBox .qhead-btns').hidden = false; document.getElementById('quoteFormTitle').textContent = 'Quotes'; }
     document.getElementById('quoteNewBtn').addEventListener('click', function () { quoteFormOpen(null, null); });
+    document.getElementById('quotePdfBtn').addEventListener('click', function () { quoteFormOpen(null, null, 'pdf'); });
+
+    // ---- a quote built outside the console, uploaded as its PDF ------------------
+    //
+    // The PDF is read in the browser, the way the invoice drop zone reads an invoice:
+    // the filename gives the number, and the customer, the valid-until date, a title
+    // (from the document's own title) and the opening summary are read off it. All of
+    // it is a SUGGESTION in an editable form, and only blank fields are filled, so a
+    // customer picked first is not overwritten by what the parser guessed.
+
+    var QT_NUM_RE = /TES-(QT|EST|SOW|Q)-[A-Z0-9]+-\d{4}-\d{1,6}/i;
+
+    function qtReadPdf(file) {
+      return Promise.all([loadPdfjs(), file.arrayBuffer()]).then(function (res) {
+        return res[0].getDocument({ data: new Uint8Array(res[1]) }).promise;
+      }).then(function (doc) {
+        return doc.getMetadata().catch(function () { return null; }).then(function (meta) {
+          var pages = [], chain = Promise.resolve();
+          for (var p = 1; p <= Math.min(doc.numPages, 3); p++) {
+            (function (n) {
+              chain = chain.then(function () { return doc.getPage(n); })
+                .then(function (page) { return page.getTextContent(); })
+                .then(function (tc) {
+                  pages.push({ items: tc.items.filter(function (i) { return i.str && i.str.trim(); })
+                    .map(function (i) { return { str: i.str, x: i.transform[4], y: i.transform[5], w: i.width }; }) });
+                });
+            })(p);
+          }
+          return chain.then(function () { return { pages: pages, title: (meta && meta.info && meta.info.Title) || '' }; });
+        });
+      });
+    }
+
+    // "November 8, 2026", "11/8/2026" or "2026-11-08" -> "2026-11-08". '' when unreadable.
+    function qtDateOf(s) {
+      s = String(s || '').trim();
+      var m = /^([A-Za-z]{3,9})\.?\s+(\d{1,2}),?\s+(\d{4})$/.exec(s);
+      if (m) {
+        var k = m[1].toLowerCase();
+        var mo = MONTHS[k.slice(0, 4) === 'sept' ? 'sept' : k.slice(0, 3)];
+        if (mo == null) return '';
+        return ymd(new Date(+m[3], mo, +m[2]));
+      }
+      return ymd(parseDate(s));
+    }
+
+    // The block under "PREPARED FOR" (or "BILL TO"): the name, then the company. Read by
+    // position, because the right-hand column (number, dates) shares its baselines.
+    function qtPreparedFor(lines) {
+      for (var i = 0; i < lines.length; i++) {
+        var ln = lines[i];
+        if (!/^(prepared\s+for|bill(ed)?\s*to)\b/i.test(ln.text)) continue;
+        var labelX = ln.x, cut = labelX + 200;
+        ln.runs.forEach(function (rn) { if (rn.x > labelX + 80 && rn.x < cut) cut = rn.x; });
+        var got = [];
+        for (var j = i + 1; j < lines.length && j < i + 8 && got.length < 2; j++) {
+          if (lines[j].page !== ln.page) break;
+          var left = lines[j].runs.filter(function (rn) { return rn.x < cut - 4; })
+            .map(function (rn) { return rn.str; }).join(' ').replace(/\s+/g, ' ').trim();
+          if (!left) continue;
+          if (/@|\d{3}\D{0,3}\d{3}\D?\d{4}|^\d+\s/.test(left)) break;  // an email, a phone, a street: past the name
+          got.push(left);
+        }
+        return { name: got[0] || '', company: got[1] || '' };
+      }
+      return {};
+    }
+
+    // The paragraph between the letterhead and the "PREPARED FOR" block, which is how
+    // the house documents open. Used as the summary in the email.
+    function qtSummary(lines) {
+      var start = 0, stop = -1;
+      for (var i = 0; i < lines.length && i < 40; i++) {
+        if (/^(prepared\s+for|bill(ed)?\s*to)\b/i.test(lines[i].text)) { stop = i; break; }
+        if (/@tevisengineering\.com|^cleveland,?\s+oh\b|precision/i.test(lines[i].text)) start = i + 1;
+      }
+      if (stop <= start) return '';
+      var s = lines.slice(start, stop).map(function (l) { return l.text; }).join(' ').replace(/\s+/g, ' ').trim();
+      return s.length >= 20 && s.length <= 700 ? s : '';
+    }
+
+    function parseQuotePdf(r, filename) {
+      var out = {};
+      var lines = r && r.pages ? pdfLines(r.pages) : [];
+      var text = lines.map(function (l) { return l.text; }).join('\n');
+      var m = QT_NUM_RE.exec(filename || '') || QT_NUM_RE.exec(text);
+      if (m) out.number = m[0].toUpperCase();
+      var tag = out.number ? out.number.split('-')[1] : '';
+      out.doc_type = tag === 'EST' ? 'estimate' : tag === 'SOW' ? 'sow' : tag ? 'quote'
+        : /\bESTIMATE\b/.test(text.slice(0, 300)) ? 'estimate' : /STATEMENT OF WORK/i.test(text.slice(0, 300)) ? 'sow' : '';
+      var vu = /valid\s*(?:until|through)\s*:?\s*([A-Za-z]{3,9}\.?\s+\d{1,2},?\s+\d{4}|\d{1,2}\/\d{1,2}\/\d{2,4}|\d{4}-\d{2}-\d{2})/i.exec(text);
+      if (vu) out.valid_until = qtDateOf(vu[1]);
+      var emails = (text.match(/[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}/gi) || []).filter(function (e) { return !/@tevisengineering\.com$/i.test(e); });
+      if (emails.length) out.email = emails[0].toLowerCase();
+      var who = qtPreparedFor(lines);
+      if (who.name) out.contact_name = who.name;
+      if (who.company) out.company = who.company;
+      // The document's own title, less its number. A title that is only the client's
+      // name says nothing about the job, so the opening "Estimate for ..." is used then.
+      var t = String((r && r.title) || '').replace(QT_NUM_RE, '').replace(/^[\s\u2014\u2013:|-]+|[\s\u2014\u2013:|-]+$/g, '').trim();
+      var bare = function (x) { return String(x || '').toLowerCase().replace(/,?\s+(llc|inc\.?|ltd\.?|co\.?|pllc|lpa)$/i, '').trim(); };
+      if (t && bare(t) !== bare(out.company)) out.title = t;
+      if (!out.title) {
+        var ef = /\b(?:estimate|quote|proposal)\s+for\s+(.{8,120}?)(?:,|\.\s|\.$|$)/im.exec(text);
+        if (ef) { var tt = ef[1].replace(/^(a|an|the)\s+/i, ''); out.title = tt.charAt(0).toUpperCase() + tt.slice(1); }
+      }
+      out.intro = qtSummary(lines);
+      return out;
+    }
+
+    function qtApplyParsed(got) {
+      var filled = [];
+      var set = function (id, v, label) { var n = document.getElementById(id); if (v && !n.value.trim()) { n.value = v; filled.push(label); } };
+      set('qtNumber', got.number, 'number');
+      if (got.doc_type && !document.getElementById('quoteId').value) qtSetDocType(got.doc_type);
+      set('qtValidDate', got.valid_until, 'valid until');
+      set('qtEmail', got.email, 'email');
+      set('qtName', got.contact_name, 'name');
+      set('qtCompany', got.company, 'company');
+      set('qtTitle', got.title, 'title');
+      set('qtIntro', got.intro, 'summary');
+      return filled;
+    }
+
+    // The address on the document matched to the customer it belongs to, when exactly
+    // one has it. Nothing is picked on a near match.
+    function qtAutoMatch(email) {
+      if (!email || qtSelected) return;
+      api('/admin/customers?q=' + encodeURIComponent(email)).then(function (r) {
+        if (!r.ok || qtSelected) return;
+        var hits = (r.customers || []).filter(function (c) { return String(c.email || '').toLowerCase() === email; });
+        if (hits.length === 1) qtSelect(hits[0]);
+      });
+    }
+
+    function qtTakePdf(file) {
+      if (!/\.pdf$/i.test(file.name) && file.type !== 'application/pdf') return toast('That is not a PDF.');
+      if (file.size > 10 * 1024 * 1024) return toast('That PDF is over 10 MB.');
+      var info = document.getElementById('qtFileInfo');
+      info.hidden = false; info.textContent = 'Reading ' + file.name + '\u2026';
+      Promise.all([fileToBase64(file), qtReadPdf(file).catch(function () { return null; })]).then(function (res) {
+        qtPdf = { name: file.name, size: file.size, data: res[0] };
+        var got = res[1] ? parseQuotePdf(res[1], file.name) : { number: (QT_NUM_RE.exec(file.name) || [''])[0].toUpperCase() };
+        var filled = qtApplyParsed(got);
+        info.textContent = '';
+        info.appendChild(el('b', null, file.name));
+        info.appendChild(document.createTextNode(' \u00b7 ' + fmtSize(file.size) + ' \u00b7 ' + (filled.length
+          ? 'read: ' + filled.join(', ') + '. Check them below.'
+          : res[1] ? 'nothing new could be read off it; fill in the fields.' : 'its text could not be read; fill in the fields.')));
+        var ch = el('button', null, 'Change'); ch.type = 'button';
+        ch.addEventListener('click', function () { document.getElementById('qtFile').click(); });
+        info.appendChild(ch);
+        if (got.email) qtAutoMatch(got.email);
+        if (!document.getElementById('qtTitle').value) document.getElementById('qtTitle').focus();
+      }, function () { info.textContent = 'Could not read ' + file.name + '.'; });
+    }
+
+    (function () {
+      var drop = document.getElementById('qtDrop'), input = document.getElementById('qtFile');
+      drop.addEventListener('click', function () { input.click(); });
+      drop.addEventListener('keydown', function (e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); input.click(); } });
+      ['dragenter', 'dragover'].forEach(function (evn) { drop.addEventListener(evn, function (e) { e.preventDefault(); drop.classList.add('over'); }); });
+      ['dragleave', 'drop'].forEach(function (evn) { drop.addEventListener(evn, function (e) { e.preventDefault(); drop.classList.remove('over'); }); });
+      drop.addEventListener('drop', function (e) { var f = e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files[0]; if (f) qtTakePdf(f); });
+      input.addEventListener('change', function () { if (input.files && input.files[0]) qtTakePdf(input.files[0]); input.value = ''; });
+    })();
     document.getElementById('qtCancel').addEventListener('click', quoteFormClose);
 
     // ---- drafting from the handbook ----------------------------------------
@@ -7564,6 +7836,7 @@
         : qtDocType === 'sow'
           ? 'Signed online, and authorizes the work. Leave the next step blank for a payment schedule in stages.'
           : 'Firm prices. Non-binding until a Statement of Work is signed.';
+      if (qtMode === 'pdf') document.getElementById('qtTypeHint').textContent = 'Its prices, terms and next steps are in the PDF. The type sets what the email and their page call it.';
       // A new document carries its own type's default terms. Terms somebody has typed
       // are left alone; only a default is swapped for the other default.
       var termsEl = document.getElementById('qtTerms');
@@ -7922,6 +8195,23 @@
     }
 
     function quotePayload() {
+      if (qtMode === 'pdf') {
+        var pp = {
+          source: 'pdf', email: document.getElementById('qtEmail').value.trim(), contact_name: document.getElementById('qtName').value.trim(),
+          company: document.getElementById('qtCompany').value.trim(), title: document.getElementById('qtTitle').value.trim(),
+          intro: document.getElementById('qtIntro').value.trim(), number: document.getElementById('qtNumber').value.trim(),
+          valid_until: document.getElementById('qtValidDate').value, amount: document.getElementById('qtAmtOnce').value.trim(),
+          recurring: document.getElementById('qtAmtRec').value.trim(), recurring_interval: document.getElementById('qtRecInt').value,
+        };
+        if (!document.getElementById('quoteId').value) {
+          pp.doc_type = qtDocType;
+          if (qtPdf) pp.pdf = { filename: qtPdf.name, data: qtPdf.data };
+        }
+        if (qtSelected && qtSelected.account_id) pp.account_id = qtSelected.account_id;
+        if (qtSelected && qtSelected.org_id) pp.org_id = qtSelected.org_id;
+        if (qtSelected && qtSelected.lead_id && !document.getElementById('quoteId').value) pp.lead_id = qtSelected.lead_id;
+        return pp;
+      }
       var p = {
         email: document.getElementById('qtEmail').value.trim(), contact_name: document.getElementById('qtName').value.trim(), company: document.getElementById('qtCompany').value.trim(),
         title: document.getElementById('qtTitle').value.trim(), intro: document.getElementById('qtIntro').value.trim(), terms: document.getElementById('qtTerms').value.trim(),
@@ -7934,18 +8224,31 @@
       if (qtSelected && qtSelected.lead_id && !document.getElementById('quoteId').value) p.lead_id = qtSelected.lead_id;
       return p;
     }
+    // thenSend: false to save, true to send it with the TES email, 'manual' to record
+    // that Tyler sent it himself (an uploaded quote only).
     function quoteSave(thenSend) {
       var p = quotePayload();
+      var id = document.getElementById('quoteId').value;
+      if (qtMode === 'pdf' && !id && !qtPdf) return toast('Drop the quote PDF first');
       if (!p.email) return toast('Whose quote is it? Enter their email.');
       if (!p.title) return toast('Give the quote a title');
-      if (!p.items.length) return toast('Add at least one line');
-      var id = document.getElementById('quoteId').value;
-      var btn = document.getElementById(thenSend ? 'qtSaveSend' : 'qtSave'); btn.disabled = true;
+      if (qtMode !== 'pdf' && !p.items.length) return toast('Add at least one line');
+      if (thenSend === 'manual' && !document.getElementById('qtSentOn').value) return toast('Which day did you send it?');
+      var btn = document.getElementById(thenSend === 'manual' ? 'qtSaveManual' : thenSend ? 'qtSaveSend' : 'qtSave'); btn.disabled = true;
       var req = id ? api('/admin/quotes/' + id, { method: 'PATCH', body: p }) : api('/admin/quotes', { method: 'POST', body: p });
       req.then(function (r) {
         btn.disabled = false;
-        if (!r.ok) return toast((QUOTE_ERROR[r.error] || 'Could not save') + (r.description ? ' (' + r.description + ')' : ''));
+        if (!r.ok) return toast((QUOTE_ERROR[r.error] || 'Could not save') + (r.description ? ' (' + r.description + ')' : '') + (r.existing && r.existing.number ? ' (' + r.existing.number + ')' : ''));
         var q = r.quote;
+        if (thenSend === 'manual') {
+          btn.disabled = true;
+          api('/admin/quotes/' + q.id + '/mark-sent', { method: 'POST', body: { sent_on: document.getElementById('qtSentOn').value } }).then(function (s) {
+            btn.disabled = false;
+            toast(s.ok ? 'Saved ' + q.number + ' and marked sent to ' + q.email : 'Saved, but not marked sent: ' + (QUOTE_ERROR[s.error] || s.error));
+            quoteFormClose(); loadQuotes();
+          });
+          return;
+        }
         if (!thenSend) { toast('Saved ' + q.number); quoteFormClose(); loadQuotes(); return; }
         btn.disabled = true;
         api('/admin/quotes/' + q.id + '/send', { method: 'POST' }).then(function (s) {
@@ -7957,19 +8260,23 @@
     }
     quoteForm.addEventListener('submit', function (e) { e.preventDefault(); quoteSave(false); });
     document.getElementById('qtSaveSend').addEventListener('click', function () { quoteSave(true); });
+    document.getElementById('qtSaveManual').addEventListener('click', function () { quoteSave('manual'); });
 
     function quoteStatusLine(q) {
       var st = el('div', 'inv-meta qcard-status');
       var bits = [];
       if (q.status === 'draft') bits.push('Draft, not sent');
-      if (q.sent_at) bits.push('Sent ' + fmt(q.sent_at));
+      if (q.sent_at) bits.push(q.sent_via === 'manual' ? 'Sent from your mailbox ' + fmtDate(q.sent_at) : 'Sent ' + fmt(q.sent_at));
       if (q.viewed_at) bits.push('Opened ' + fmt(q.viewed_at));
-      if (q.status === 'sent' && q.sent_at && !q.viewed_at && Date.now() / 1000 - q.sent_at > 3 * 86400) bits.push('not opened yet');
+      // Only a link can tell us it was opened. One sent by hand without the link pasted in
+      // would read as "not opened" forever.
+      if (q.status === 'sent' && q.sent_at && !q.viewed_at && q.sent_via !== 'manual' && Date.now() / 1000 - q.sent_at > 3 * 86400) bits.push('not opened yet');
       if (q.follow_up_stage) bits.push('Follow-up ' + q.follow_up_stage + '/2 sent');
       st.appendChild(document.createTextNode(bits.join(' · ')));
       if (q.status === 'accepted' || q.status === 'converted') {
         st.appendChild(document.createTextNode(bits.length ? ' · ' : ''));
-        st.appendChild(el('span', 'q-sig', 'Accepted ' + fmt(q.decided_at) + (q.signature_name ? ' by ' + q.signature_name : q.decided_by && q.decided_by !== 'customer' ? ' (verbal, recorded by ' + q.decided_by + ')' : '')));
+        var staff = q.decided_by && q.decided_by !== 'customer';
+        st.appendChild(el('span', 'q-sig', 'Accepted ' + fmt(q.decided_at) + (q.signature_name ? (staff ? ', signed by ' + q.signature_name + ' (recorded by ' + q.decided_by + ')' : ' by ' + q.signature_name) : staff ? ' (' + (q.source === 'pdf' ? '' : 'verbal, ') + 'recorded by ' + q.decided_by + ')' : '')));
       }
       if (q.status === 'converted' && q.invoice_number) { st.appendChild(document.createTextNode(' · ')); var a = el('a', null, 'Invoice ' + q.invoice_number); a.href = '#inv=' + encodeURIComponent(q.invoice_number); st.appendChild(a); }
       if (q.status === 'declined') { st.appendChild(document.createTextNode(bits.length ? ' · ' : '')); st.appendChild(el('span', 'q-dead', 'Declined ' + fmt(q.decided_at) + (q.decline_reason ? ': "' + q.decline_reason + '"' : ''))); }
@@ -7978,28 +8285,143 @@
       return st;
     }
 
+    // Recorded as sent from Tyler's own mailbox. Nothing is emailed.
+    function markSentDialog(q) {
+      var wrap = el('div', 'adlg-form');
+      var f1 = el('div'); var l1 = el('label', null, 'Sent on'); var d = el('input'); d.type = 'date'; d.id = 'msDay'; d.value = ymd(new Date()); d.max = ymd(new Date()); l1.htmlFor = d.id; f1.appendChild(l1); f1.appendChild(d); wrap.appendChild(f1);
+      var f2 = el('div', 'wide'); var l2 = el('label', null, 'Note (optional)'); var n = el('input'); n.id = 'msNote'; n.placeholder = 'Proton Mail'; l2.htmlFor = n.id; f2.appendChild(l2); f2.appendChild(n); wrap.appendChild(f2);
+      var tip = el('p', 'adlg-meta', 'Nothing is emailed. Follow-ups are yours: the automatic reminders only run for quotes sent with the TES email. To see when they open it, paste the quote\u2019s link (Copy link) into your email.');
+      var body = el('div'); body.appendChild(wrap); body.appendChild(tip);
+      var out = null;
+      return askDialog({ title: 'Sent ' + q.number + ' yourself', lead: 'To ' + q.email, body: body, buttons: [
+        { label: 'Cancel', value: null },
+        { label: 'Mark sent', value: true, cls: 'prim', act: function () {
+          if (!d.value) return { error: 'Which day did you send it?' };
+          return api('/admin/quotes/' + q.id + '/mark-sent', { method: 'POST', body: { sent_on: d.value, note: n.value.trim() } }).then(function (r) {
+            if (!r.ok) return { error: QUOTE_ERROR[r.error] || 'Could not mark it sent' };
+            out = r; toast('Marked sent to ' + q.email);
+          });
+        } },
+      ] }).then(function (v) { return v ? out : null; });
+    }
+
+    // A revised PDF for an uploaded quote that is not decided yet.
+    function replaceQuotePdf(q, done) {
+      var input = document.createElement('input'); input.type = 'file'; input.accept = 'application/pdf,.pdf';
+      input.addEventListener('change', function () {
+        var f = input.files && input.files[0];
+        if (!f) return;
+        if (f.size > 10 * 1024 * 1024) return toast('That PDF is over 10 MB.');
+        fileToBase64(f).then(function (b64) {
+          return api('/admin/quotes/' + q.id + '/pdf', { method: 'POST', body: { filename: f.name, data: b64 } });
+        }).then(function (r) {
+          if (!r.ok) return toast((QUOTE_ERROR[r.error] || 'Could not replace it') + (r.existing && r.existing.number ? ' (' + r.existing.number + ')' : ''));
+          toast(q.sent_at ? 'Replaced. ' + q.email + ' has the earlier version; resend it if they need this one.' : 'Replaced with ' + f.name);
+          done();
+        });
+      });
+      input.click();
+    }
+
+    // An uploaded quote is accepted the way its PDF says (usually a signed copy), and
+    // recorded here: how, who signed, and the figures actually taken. A signed copy can
+    // be filed on the customer's file in the same step.
+    function acceptPdfDialog(q) {
+      var once = '', rec = '', recInt = 'month';
+      (q.items || []).forEach(function (i) {
+        if ((i.interval || 'once') === 'once') once = (i.line_cents / 100).toFixed(2);
+        else { rec = (i.line_cents / 100).toFixed(2); recInt = i.interval; }
+      });
+      if (!q.items) {
+        try { var tj = JSON.parse(q.totals_json || 'null') || {}; if (tj.once && tj.once.low) once = (tj.once.low / 100).toFixed(2); ['month', 'quarter', 'year'].forEach(function (k) { if (tj[k] && tj[k].low) { rec = (tj[k].low / 100).toFixed(2); recInt = k; } }); } catch (e) { /* none */ }
+      }
+      var form = el('div', 'adlg-form');
+      var field = function (label, input, cls) { var dv = el('div', cls || null); var l = el('label', null, label); l.htmlFor = input.id; dv.appendChild(l); dv.appendChild(input); form.appendChild(dv); return dv; };
+      var how = el('select'); how.id = 'paHow';
+      ['Signed copy returned', 'Accepted by email', 'Accepted by phone', 'Accepted in person'].forEach(function (t) { var o = el('option', null, t); o.value = t; how.appendChild(o); });
+      field('How', how);
+      var who = el('input'); who.id = 'paWho'; who.value = q.contact_name || ''; who.placeholder = 'Name on the signed copy';
+      field('Signed by (optional)', who);
+      var o1 = el('input'); o1.id = 'paOnce'; o1.inputMode = 'decimal'; o1.value = once; o1.placeholder = '0.00';
+      field('One-time amount taken', o1);
+      var r1 = el('input'); r1.id = 'paRec'; r1.inputMode = 'decimal'; r1.value = rec; r1.placeholder = 'none';
+      field('Recurring amount taken', r1);
+      var ri = el('select'); ri.id = 'paRecInt';
+      [['month', 'per month'], ['quarter', 'per quarter'], ['year', 'per year']].forEach(function (x) { var o = el('option', null, x[1]); o.value = x[0]; ri.appendChild(o); });
+      ri.value = recInt;
+      field('How often', ri);
+      var file = el('input'); file.id = 'paFile'; file.type = 'file'; file.accept = 'application/pdf,.pdf,image/*';
+      var holderBase = q.org_id ? '/admin/orgs/' + q.org_id : q.account_id ? '/admin/customers/' + q.account_id : null;
+      if (holderBase) field('Signed copy, filed on their customer file (optional)', file, 'wide');
+      var body = el('div'); body.appendChild(form);
+      body.appendChild(el('p', 'adlg-meta', 'Recorded as accepted by you, never as their signature. Set the figures to what they actually chose, so the invoice comes out right. No email is sent.'));
+      var out = null;
+      return askDialog({ title: 'Mark ' + q.number + ' accepted', lead: q.title, body: body, buttons: [
+        { label: 'Cancel', value: null },
+        { label: 'Mark accepted', value: true, cls: 'prim', act: function () {
+          var f = file.files && file.files[0];
+          if (f && f.size > 10 * 1024 * 1024) return { error: 'The signed copy is over 10 MB.' };
+          return api('/admin/quotes/' + q.id + '/accept', { method: 'POST', body: {
+            how: how.value, signed_by: who.value.trim(), amount: o1.value.trim(), recurring: r1.value.trim(), recurring_interval: ri.value,
+          } }).then(function (r) {
+            if (!r.ok) return { error: QUOTE_ERROR[r.error] || 'Could not mark it accepted' };
+            out = r;
+            if (!f || !holderBase) { toast('Marked accepted'); return; }
+            return fileToBase64(f).then(function (b64) {
+              return api(holderBase + '/documents', { method: 'POST', body: { filename: f.name, data: b64, content_type: f.type || 'application/pdf', label: 'Signed ' + q.number, note: how.value } });
+            }).then(function (x) { toast(x && x.ok ? 'Marked accepted; signed copy filed on their customer file' : 'Marked accepted, but the signed copy was not filed (' + ((x && x.error) || 'error') + ')'); });
+          });
+        } },
+      ] }).then(function (v) { return v ? out : null; });
+    }
+
     function quoteCard(q, onChange) {
       var reload = onChange || loadQuotes;
       var d = el('div', 'inv quote-' + q.status);
       var top = el('div', 'inv-top');
-      top.appendChild(el('span', 'inv-num', q.number + ' · ' + q.title));
+      var isPdf = q.source === 'pdf';
+      var num = el('span', 'inv-num');
+      if (isPdf) num.appendChild(el('span', 'q-pdf-chip', 'PDF'));
+      num.appendChild(document.createTextNode(q.number + ' · ' + q.title));
+      top.appendChild(num);
       var right = el('span');
       right.appendChild(badge(q.status === 'viewed' ? 'opened' : q.status, QUOTE_COLOR[q.status] || '#8aa48d'));
       right.appendChild(document.createTextNode(' '));
-      right.appendChild(el('span', 'inv-amt', money(q.status === 'accepted' || q.status === 'converted' ? q.accepted_cents : q.total_cents)));
+      var amt = q.status === 'accepted' || q.status === 'converted' ? q.accepted_cents : q.total_cents;
+      // An uploaded quote can have no figure yet, or only a recurring one; it shows what
+      // it has rather than $0.00.
+      var recur = '';
+      if (isPdf) {
+        try {
+          var tj = q.totals || JSON.parse(q.totals_json || 'null') || {};
+          ['month', 'quarter', 'year'].forEach(function (k) { if (tj[k] && tj[k].low) recur = money(tj[k].low) + ' / ' + k; });
+        } catch (e) { /* no totals */ }
+      }
+      right.appendChild(el('span', 'inv-amt', isPdf ? ([amt ? money(amt) : '', recur].filter(Boolean).join(' + ') || 'no figure') : money(amt)));
       top.appendChild(right);
       d.appendChild(top);
-      d.appendChild(el('div', 'inv-meta', [q.contact_name, q.company, q.email].filter(Boolean).join(' · ') + (q.item_count ? ' · ' + q.item_count + (q.item_count === 1 ? ' line' : ' lines') : '') + (q.optional_cents ? ' · ' + money(q.optional_cents) + ' optional' : '')));
+      d.appendChild(el('div', 'inv-meta', [q.contact_name, q.company, q.email].filter(Boolean).join(' · ')
+        + (isPdf ? (q.pdf_filename ? ' · ' + q.pdf_filename : ' · no PDF on file') : q.item_count ? ' · ' + q.item_count + (q.item_count === 1 ? ' line' : ' lines') : '')
+        + (q.optional_cents ? ' · ' + money(q.optional_cents) + ' optional' : '')));
       d.appendChild(quoteStatusLine(q));
       var acts = el('div', 'inv-actions');
       function qact(label, cls, fn) { var b = el('button', cls || null, label); b.type = 'button'; b.addEventListener('click', fn); acts.appendChild(b); return b; }
       var open = q.status === 'sent' || q.status === 'viewed';
+      if (isPdf && q.status === 'draft') {
+        // Sent from Tyler's own mailbox: recorded and tracked, nothing emailed.
+        qact('I sent it myself', 'prim', function () { markSentDialog(q).then(function (r) { if (r) reload(); }); });
+      }
       if (q.status === 'draft' || open || q.status === 'expired') {
-        var send = qact(q.sent_at ? 'Resend' : 'Send to customer', 'prim', function () {
+        var send = qact(isPdf ? (q.sent_at ? 'Resend with the TES email' : 'Send with the TES email') : q.sent_at ? 'Resend' : 'Send to customer', isPdf ? null : 'prim', function () {
+          if (isPdf && !confirm((q.sent_at ? 'Email a copy of ' : 'Email ') + q.number + ' to ' + q.email + ' from billing@ with the PDF attached?')) return;
           send.disabled = true;
           api('/admin/quotes/' + q.id + '/send', { method: 'POST' }).then(function (r) { send.disabled = false; toast(r.ok ? (r.resend ? 'Copy sent to ' : 'Sent to ') + r.to : (QUOTE_ERROR[r.error] || 'Could not send')); reload(); });
         });
         qact('Edit', null, function () { api('/admin/quotes/' + q.id).then(function (r) { if (r.ok) { showView('invoices'); quoteFormOpen(r.quote); } }); });
+      }
+      if (isPdf) {
+        qact('Open PDF', null, function () { window.open(API + '/admin/quotes/' + q.id + '/pdf', '_blank', 'noopener'); });
+        if (q.status === 'draft' || open || q.status === 'expired') qact('Replace PDF', null, function () { replaceQuotePdf(q, reload); });
       }
       if (open || q.status === 'draft') {
         qact('Copy link', null, function () {
@@ -8147,17 +8569,31 @@
           ],
         }).then(function (v) { return v ? result : null; });
       }
-      if (q.status === 'accepted') {
+      if (q.status === 'accepted' && isPdf) {
+        // An uploaded quote's recurring figure never starts an agreement on its own (its
+        // terms are in the PDF), so the one-time figure is the only thing to convert.
+        if (q.accepted_cents) qact('Convert to invoice', 'prim', function () { convertDialog(q, { due_days: 14 }).then(function (r) { if (r) { toast(r.deposit ? 'Deposit invoice ' + r.invoice_number + ' created' + (r.deposit.project_number ? ' \u00b7 project ' + r.deposit.project_number + ' bills the rest' : '') : 'Invoice ' + r.invoice_number + ' created' + (r.pay_url ? ' with a pay link' : '')); reload(); } }); });
+        qact('Close: billed another way', null, function () {
+          var note = prompt('How is it being billed? (an invoice made by hand, a service agreement, a project)', '');
+          if (note === null) return;
+          api('/admin/quotes/' + q.id + '/close', { method: 'POST', body: { note: note.trim() } }).then(function (r) { toast(r.ok ? 'Closed' : (QUOTE_ERROR[r.error] || 'Could not close')); reload(); });
+        });
+      } else if (q.status === 'accepted') {
         qact(agreementOnlyQuote(q) ? 'Start the agreement' : 'Convert to invoice', 'prim', function () {
           runConvert({}, 'Invoice ', ' created');
         });
       }
-      if (open) {
+      if (isPdf && (open || q.status === 'expired')) {
+        qact('Mark accepted', 'prim', function () { acceptPdfDialog(q).then(function (r) { if (r) reload(); }); });
+      }
+      if (open && !isPdf) {
         qact('Accepted by phone', null, function () {
           var note = prompt('How did they accept? (recorded on the quote as your note, never as their signature)', 'agreed by phone');
           if (note === null) return;
           runConvert({ verbal: note.trim() || 'verbal' }, 'Marked accepted and invoiced as ');
         });
+      }
+      if (open) {
         qact('Mark declined', null, function () {
           var reason = prompt('Reason, if they gave one:', '');
           if (reason === null) return;
@@ -8169,7 +8605,14 @@
           api('/admin/quotes/' + q.id + '/extend', { method: 'POST', body: { days: 30 } }).then(function (r) { toast(r.ok ? 'Valid until ' + fmtDate(r.quote.valid_until) : 'Failed'); reload(); });
         });
       }
-      if (q.status !== 'draft') {
+      if (q.status !== 'draft' && isPdf && (q.status === 'accepted' || q.status === 'converted')) qact('Start a project', null, function () {
+        api('/admin/quotes/' + q.id + '/project', { method: 'POST', body: {} }).then(function (r) {
+          if (r.ok) { toast('Project ' + r.number + ' started'); routeHash('#p=' + r.project_id, true); }
+          else if (r.error === 'already_converted') routeHash('#p=' + r.project_id, true);
+          else toast(r.message || 'Could not start a project');
+        });
+      });
+      if (q.status !== 'draft' && !isPdf) {
         var dup = function (as, label) {
           return function () {
             api('/admin/quotes/' + q.id + '/duplicate', { method: 'POST', body: as ? { as: as } : {} })
@@ -8253,9 +8696,9 @@
     }
 
     // From a customer's file: a new quote with them filled in.
-    function startQuoteFor(c) {
+    function startQuoteFor(c, mode) {
       showView('invoices');
-      quoteFormOpen(null, { account_id: c.account.id, email: c.account.email, name: c.profile.name || '', company: c.profile.company || '' });
+      quoteFormOpen(null, { account_id: c.account.id, email: c.account.email, name: c.profile.name || '', company: c.profile.company || '' }, mode);
     }
     // The dossier's Quotes pane.
     function quoteRows(parent, list, reload) {
@@ -10092,6 +10535,7 @@
       var pQ = tabs.pane('Quotes');
       var qs = sec('Quotes (' + (c.quotes || []).length + ')');
       qs.appendChild(licAction('New quote for this customer', 'prim', function () { startQuoteFor(c); }));
+      qs.appendChild(licAction('Upload a quote PDF', null, function () { startQuoteFor(c, 'pdf'); }));
       quoteRows(qs, c.quotes || [], function () { openCustomer(c.account.id); });
       pQ.appendChild(qs);
 
@@ -10846,6 +11290,7 @@
       oPInv.appendChild(oIvs);
       var oQs = sec('Quotes (' + (extra.quotes || []).length + ')');
       oQs.appendChild(licAction('New quote for this company', 'prim', function () { showView('invoices'); quoteFormOpen(null, { org_id: o.id, account_id: null, email: o.billing_email || '', name: '', company: o.name }); }));
+      oQs.appendChild(licAction('Upload a quote PDF', null, function () { showView('invoices'); quoteFormOpen(null, { org_id: o.id, account_id: null, email: o.billing_email || '', name: '', company: o.name }, 'pdf'); }));
       quoteRows(oQs, extra.quotes || [], function () { openOrg(o.id); });
       otabs.pane('Quotes').appendChild(oQs);
 
@@ -14750,8 +15195,9 @@
         any = true;
         var sQ = attSection('Quotes', a.quotes.length, true);
         a.quotes.forEach(function (q) {
-          var right = el('b', 'num', money(q.total_cents));
-          sQ.appendChild(row(q.number + ' · ' + q.title, q.who + ' · ' + (q.needs === 'convert' ? 'accepted, convert to an invoice' : q.unopened ? 'sent ' + ago(a.now - q.sent_at) + ' ago, not opened' : q.viewed ? 'opened, no decision yet' : 'sent ' + ago(a.now - (q.sent_at || a.now)) + ' ago') + (q.expires_in_sec != null && q.needs === 'decision' ? ' · ' + (q.expires_in_sec > 0 ? 'expires in ' + ago(q.expires_in_sec) : 'expired') : ''), right, function () { showQuote(q.id); }));
+          // An uploaded quote can carry no figure; its total is in the PDF.
+          var right = el('b', 'num', q.pdf && !q.total_cents ? 'PDF' : money(q.total_cents));
+          sQ.appendChild(row(q.number + ' · ' + q.title, q.who + ' · ' + (q.needs === 'convert' ? (q.pdf ? 'accepted, invoice it or close it' : 'accepted, convert to an invoice') : q.unopened ? 'sent ' + ago(a.now - q.sent_at) + ' ago, not opened' : q.viewed ? 'opened, no decision yet' : q.manual ? 'you sent it ' + ago(a.now - (q.sent_at || a.now)) + ' ago' + (q.chase ? ', no answer yet: follow up' : '') : 'sent ' + ago(a.now - (q.sent_at || a.now)) + ' ago') + (q.expires_in_sec != null && q.needs === 'decision' ? ' · ' + (q.expires_in_sec > 0 ? 'expires in ' + ago(q.expires_in_sec) : 'expired') : ''), right, function () { showQuote(q.id); }));
         });
         wrap.appendChild(sQ);
       }
