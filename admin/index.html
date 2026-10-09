@@ -473,18 +473,18 @@
     @media (max-width:600px) { .cu-modal { padding:0; } .cu-modal-box { border-radius:0; min-height:100%; margin:0; } .cu-modal-bar { border-radius:0; } }
     /* Calls (AI receptionist): the transcript reads as a conversation, the caller on the left. */
     /* The demo line panel on Marketing > Calls: who answers, and demos queued for prospects. */
-    .cl-line { border:1px solid var(--line); border-radius:14px; background:var(--card); padding:0.9rem 1rem; margin-bottom:1rem; }
+    .cl-demo { border:1px solid var(--line); border-radius:14px; background:var(--card); padding:0.9rem 1rem; margin-bottom:1rem; }
     .cl-line-head { display:flex; align-items:center; justify-content:space-between; gap:0.6rem; flex-wrap:wrap; }
     .cl-line-title { display:flex; align-items:baseline; gap:0.7rem; flex-wrap:wrap; min-width:0; }
     .cl-line-title h3 { font-family:"Montserrat",sans-serif; font-size:0.95rem; margin:0; }
     .cl-line-num { color:var(--gold); font-weight:700; font-size:0.95rem; white-space:nowrap; }
     .cl-line-note { color:var(--muted); font-size:0.82rem; line-height:1.5; margin:0.45rem 0 0.8rem; }
     .cl-line-def { display:grid; grid-template-columns:minmax(0,2fr) minmax(0,1fr) minmax(0,1fr) auto; gap:0.6rem; align-items:end; }
-    .cl-line label { display:block; font-size:0.68rem; text-transform:uppercase; letter-spacing:0.05em; color:var(--muted); font-weight:700; margin-bottom:0.3rem; }
-    .cl-line select, .cl-line input, .cl-line textarea { width:100%; box-sizing:border-box; }
-    .cl-line input, .cl-line textarea { padding:0.5rem 0.65rem; border-radius:8px; border:1px solid var(--line); background:var(--bg); color:var(--text); font-family:inherit; font-size:0.86rem; min-height:36px; }
-    .cl-line textarea { min-height:4.5rem; resize:vertical; line-height:1.45; }
-    .cl-line input:focus, .cl-line textarea:focus { outline:none; border-color:var(--green); }
+    .cl-demo label { display:block; font-size:0.68rem; text-transform:uppercase; letter-spacing:0.05em; color:var(--muted); font-weight:700; margin-bottom:0.3rem; }
+    .cl-demo select, .cl-demo input, .cl-demo textarea { width:100%; box-sizing:border-box; }
+    .cl-demo input, .cl-demo textarea { padding:0.5rem 0.65rem; border-radius:8px; border:1px solid var(--line); background:var(--bg); color:var(--text); font-family:inherit; font-size:0.86rem; min-height:36px; }
+    .cl-demo textarea { min-height:4.5rem; resize:vertical; line-height:1.45; }
+    .cl-demo input:focus, .cl-demo textarea:focus { outline:none; border-color:var(--green); }
     .cl-q { border-top:1px solid var(--line); margin-top:0.9rem; padding-top:0.75rem; }
     .cl-q summary { cursor:pointer; font-family:"Montserrat",sans-serif; font-size:0.72rem; font-weight:700; text-transform:uppercase; letter-spacing:0.04em; color:var(--gold); min-height:32px; display:flex; align-items:center; }
     .cl-q-grid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:0.6rem 0.7rem; margin-top:0.5rem; }
@@ -497,8 +497,18 @@
     .cl-qrow .t b { display:block; font-size:0.88rem; text-transform:none; letter-spacing:0; }
     .cl-qrow .t span { display:block; color:var(--muted); font-size:0.78rem; line-height:1.45; }
     .cl-qrow .ct-btn { flex:0 0 auto; }
+    .cl-lines { border:1px dashed var(--line); border-radius:10px; background:var(--bg); padding:0.7rem 0.8rem; margin-top:0.7rem; }
+    .cl-lines-head { display:flex; align-items:center; justify-content:space-between; gap:0.6rem; margin-bottom:0.3rem; }
+    .cl-lines-head b { font-family:"Montserrat",sans-serif; font-size:0.72rem; font-weight:700; text-transform:uppercase; letter-spacing:0.04em; color:var(--gold); }
+    .cl-lrow { display:flex; align-items:center; gap:0.6rem; padding:0.45rem 0; border-bottom:1px solid var(--line); min-height:40px; }
+    .cl-lrow .t { flex:1 1 auto; min-width:0; }
+    .cl-lrow .t b { font-size:0.9rem; white-space:nowrap; }
+    .cl-lrow .t span { color:var(--muted); font-size:0.82rem; margin-left:0.5rem; }
+    .cl-ltag { flex:0 0 auto; font-size:0.7rem; font-weight:700; text-transform:uppercase; letter-spacing:0.04em; color:var(--green); border:1px solid rgba(74,172,101,0.4); border-radius:6px; padding:0.15rem 0.45rem; }
+    .cl-ladd { display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr) auto; gap:0.6rem; align-items:end; margin-top:0.7rem; }
+    .cl-lines .hint { color:var(--muted); font-size:0.78rem; line-height:1.45; margin:0.55rem 0 0; }
     @media (max-width:760px) { .cl-line-def { grid-template-columns:1fr 1fr; } .cl-line-def .ct-btn { grid-column:1 / -1; } .cl-q-grid { grid-template-columns:1fr 1fr; } }
-    @media (max-width:520px) { .cl-line-def, .cl-q-grid { grid-template-columns:1fr; } .cl-q-go .ct-btn { width:100%; } }
+    @media (max-width:520px) { .cl-line-def, .cl-q-grid, .cl-ladd { grid-template-columns:1fr; } .cl-q-go .ct-btn, .cl-ladd .ct-btn { width:100%; } }
     #clDetail { padding:1rem 1.2rem 1.4rem; }
     .cl-head { display:flex; justify-content:space-between; gap:1rem; flex-wrap:wrap; align-items:flex-start; }
     .cl-head h3 { margin:0 0 0.2rem; font-size:1.15rem; }
@@ -20187,13 +20197,23 @@
       if (value) i.value = value;
       return i;
     }
+    // The demo line's number picker: the phone lines tes-portal keeps (VOICE_LINES until the
+    // console saves its own list), plus the two actions that open the list's editor.
+    var CL_ADD = '__add', CL_EDIT = '__edit';
+    var CL_LERR = { bad_number: 'That is not a phone number.', too_many_lines: 'The list holds twenty numbers.', line_in_use: 'That number is the demo line. Pick and save another first.', bad_lines: 'Could not save the list of numbers.' };
+    function clLines(list, num) {
+      var out = (list || []).slice();
+      if (num && !out.some(function (l) { return l.number === num; })) out.unshift({ number: num, label: '' });
+      return out;
+    }
+    function clLineText(l) { return fmtPhone(l.number) + (l.label ? ' \u00b7 ' + l.label : ''); }
     function clDemoPanel(v) {
       var personas = (v.personas || []).map(function (p) { return [p.key, p.label]; });
       var voices = v.voices || [];
       var voiceOpts = function (first) { return [['', first]].concat(voices.map(function (x) { return [x.key, x.label]; })); };
       var def = v.default || { persona: v.demo_persona, voice: '' };
       var num = v.number || '';
-      var box = el('section', 'cl-line');
+      var box = el('section', 'cl-demo');
       box.setAttribute('aria-label', 'Demo line');
       var head = el('div', 'cl-line-head');
       var title = el('div', 'cl-line-title');
@@ -20208,26 +20228,109 @@
       box.appendChild(head);
       box.appendChild(el('p', 'cl-line-note', 'When nothing is queued the line answers as the default below. Demo calls end at five minutes and each caller gets four a day; your own phone has no limits.'));
 
-      // The default: who answers anybody not queued.
+      // The default: who answers anybody not queued, and the line's number.
       var defRow = el('div', 'cl-line-def');
       var pPick = ctSelect(personas, def.persona);
       var vPick = ctSelect(voiceOpts('Its own voice'), def.voice || '');
-      var nIn = clInput('tel', '(216) 238-0505', num ? fmtPhone(num) : '');
+      var lines = clLines(v.lines, num);
+      var picked = num;
+      var nSel = document.createElement('select');
+      var mgr = el('div', 'cl-lines');
+      mgr.hidden = true;
+      function fillLines() {
+        while (nSel.firstChild) nSel.removeChild(nSel.firstChild);
+        var opt = function (val, text) { var o = document.createElement('option'); o.value = val; o.textContent = text; nSel.appendChild(o); };
+        if (!lines.length) opt('', 'No number yet');
+        lines.forEach(function (l) { opt(l.number, clLineText(l)); });
+        opt(CL_ADD, '+ Add a number\u2026');
+        if (lines.length) opt(CL_EDIT, 'Edit the list\u2026');
+        nSel.value = picked || '';
+      }
+      nSel.addEventListener('change', function () {
+        var val = nSel.value;
+        if (val === CL_ADD || val === CL_EDIT) { nSel.value = picked || ''; mgr.hidden = false; drawLines(val === CL_ADD); return; }
+        picked = val;
+      });
+      function saveLines(next, done) {
+        api('/admin/voice', { method: 'PUT', body: { lines: next } }).then(function (x) {
+          if (!x.ok) { toast(CL_LERR[x.error] || 'Could not save the list of numbers.'); done(false); return; }
+          lines = clLines(x.lines, num);
+          done(true);
+        });
+      }
+      function drawLines(focusAdd) {
+        while (mgr.firstChild) mgr.removeChild(mgr.firstChild);
+        var h = el('div', 'cl-lines-head');
+        h.appendChild(el('b', null, 'Phone lines'));
+        var close = el('button', 'ct-btn sm', 'Done'); close.type = 'button';
+        close.addEventListener('click', function () { mgr.hidden = true; nSel.focus(); });
+        h.appendChild(close);
+        mgr.appendChild(h);
+        lines.forEach(function (l) {
+          var r = el('div', 'cl-lrow');
+          var t = el('div', 't');
+          t.appendChild(el('b', null, fmtPhone(l.number)));
+          if (l.label) t.appendChild(el('span', null, l.label));
+          r.appendChild(t);
+          if (l.number === num) { var tag = el('span', 'cl-ltag', 'In use'); tag.title = 'The demo line uses this number. Pick and save another to remove it.'; r.appendChild(tag); mgr.appendChild(r); return; }
+          var rm = el('button', 'ct-btn sm danger', 'Remove'); rm.type = 'button';
+          rm.setAttribute('aria-label', 'Remove ' + fmtPhone(l.number) + ' from the list');
+          rm.addEventListener('click', function () {
+            rm.disabled = true;
+            saveLines(lines.filter(function (x) { return x.number !== l.number; }), function (ok) {
+              if (!ok) { rm.disabled = false; return; }
+              if (picked === l.number) picked = num;
+              toast('Removed ' + fmtPhone(l.number) + ' from the list.');
+              fillLines(); drawLines(false);
+            });
+          });
+          r.appendChild(rm);
+          mgr.appendChild(r);
+        });
+        var a = el('div', 'cl-ladd');
+        var aNum = clInput('tel', '(216) 555-0100');
+        var aLab = clInput('text', 'Main office');
+        aLab.maxLength = 40;
+        a.appendChild(clField('Number', aNum));
+        a.appendChild(clField('Label (optional)', aLab));
+        var aBtn = el('button', 'ct-btn', 'Add'); aBtn.type = 'button';
+        a.appendChild(aBtn);
+        mgr.appendChild(a);
+        mgr.appendChild(el('p', 'hint', 'This list is for picking and sharing numbers. A new number rings nothing until it is on the Twilio trunk and set up in the receptionist.'));
+        var addIt = function () {
+          if (!aNum.value.trim()) { aNum.focus(); return; }
+          aBtn.disabled = true;
+          var before = lines.map(function (x) { return x.number; });
+          saveLines(lines.concat([{ number: aNum.value.trim(), label: aLab.value.trim() }]), function (ok) {
+            aBtn.disabled = false;
+            if (!ok) { aNum.focus(); return; }
+            var added = lines.filter(function (x) { return before.indexOf(x.number) < 0; })[0];
+            if (added) { picked = added.number; toast('Added ' + fmtPhone(added.number) + '. Press Save to make it the demo line.'); }
+            else toast('That number is already on the list.');
+            fillLines(); drawLines(true);
+          });
+        };
+        aBtn.addEventListener('click', addIt);
+        [aNum, aLab].forEach(function (i) { i.addEventListener('keydown', function (e) { if (e.key === 'Enter') { e.preventDefault(); addIt(); } }); });
+        if (focusAdd) aNum.focus();
+      }
+      fillLines();
       defRow.appendChild(clField('Answers as', pPick));
       defRow.appendChild(clField('Voice', vPick));
-      defRow.appendChild(clField('Line number', nIn));
+      defRow.appendChild(clField('Line number', nSel));
       var save = el('button', 'ct-btn', 'Save'); save.type = 'button';
       save.addEventListener('click', function () {
         save.disabled = true;
-        api('/admin/voice', { method: 'PUT', body: { default: { persona: pPick.value, voice: vPick.value }, number: nIn.value.trim() } }).then(function (x) {
+        api('/admin/voice', { method: 'PUT', body: { default: { persona: pPick.value, voice: vPick.value }, number: picked || '' } }).then(function (x) {
           save.disabled = false;
-          if (!x.ok) { toast(x.error === 'bad_voice' ? 'Pick a voice from the list.' : 'Could not save the demo line.'); return; }
-          toast('The demo line now answers as ' + pPick.options[pPick.selectedIndex].text + '.');
+          if (!x.ok) { toast(x.error === 'bad_voice' ? 'Pick a voice from the list.' : CL_LERR[x.error] || 'Could not save the demo line.'); return; }
+          toast('Saved. ' + (x.number ? 'The demo line is ' + fmtPhone(x.number) + ' and answers as ' : 'The demo line answers as ') + pPick.options[pPick.selectedIndex].text + '.');
           clLoad();
         });
       });
       defRow.appendChild(save);
       box.appendChild(defRow);
+      box.appendChild(mgr);
 
       // Queue a demo for one prospect.
       var q = document.createElement('details');
