@@ -523,6 +523,89 @@
     .cl-line.assistant { align-self:flex-end; background:rgba(74,172,101,0.12); border:1px solid rgba(74,172,101,0.28); }
     .cl-line b { display:block; font-size:0.72rem; letter-spacing:0.06em; text-transform:uppercase; color:var(--muted); margin-bottom:0.15rem; }
     @media (max-width:600px) { .cl-line { max-width:100%; } }
+    /* A call's recording in the overlay: play, a waveform to click or drag, time, speed, download. */
+    .cl-rec-row { display:flex; align-items:center; gap:0.8rem; }
+    .cl-play { flex:0 0 auto; width:46px; height:46px; border-radius:50%; border:0; background:linear-gradient(135deg,var(--gold),#e0b840); color:#0d1710; display:inline-flex; align-items:center; justify-content:center; cursor:pointer; font-size:1rem; box-shadow:0 4px 14px rgba(200,152,48,0.25); }
+    .cl-play .fa-play { margin-left:3px; }
+    .cl-play:focus-visible { outline:2px solid var(--gold); outline-offset:3px; }
+    .cl-play:disabled { opacity:0.45; cursor:default; box-shadow:none; }
+    .cl-wave { flex:1 1 auto; min-width:0; height:48px; display:flex; align-items:center; gap:2px; cursor:pointer; position:relative; touch-action:none; }
+    .cl-wave i { flex:1 1 0; min-width:1px; border-radius:2px; background:rgba(138,164,141,0.42); transition:height 0.35s ease; }
+    .cl-wave i.on { background:var(--gold); }
+    .cl-wave.loading i { animation:clWait 1.2s ease-in-out infinite; }
+    .cl-wave:focus-visible { outline:2px solid var(--gold); outline-offset:4px; border-radius:6px; }
+    .cl-hover { position:absolute; top:-1.5rem; transform:translateX(-50%); font-size:0.7rem; font-variant-numeric:tabular-nums; color:var(--text); background:var(--bg); border:1px solid var(--line); border-radius:6px; padding:0.05rem 0.35rem; pointer-events:none; white-space:nowrap; }
+    @keyframes clWait { 50% { opacity:0.4; } }
+    .cl-time { flex:0 0 auto; font-variant-numeric:tabular-nums; font-size:0.84rem; color:var(--muted); min-width:5.4rem; text-align:right; }
+    .cl-rec-tools { display:flex; align-items:center; gap:0.5rem; flex-wrap:wrap; margin-top:0.6rem; }
+    .cl-rec-tools .hint { color:var(--muted); font-size:0.8rem; margin-right:auto; }
+    .cl-rec-tools a.ct-btn { text-decoration:none; display:inline-flex; align-items:center; }
+    .cl-rec-note { display:flex; align-items:center; gap:0.6rem 0.8rem; flex-wrap:wrap; color:var(--muted); font-size:0.88rem; line-height:1.5; }
+    .cl-rec-note span { flex:1 1 16rem; }
+    .cl-recchip { display:inline-flex; align-items:center; gap:0.35rem; color:var(--gold); font-weight:600; font-variant-numeric:tabular-nums; }
+    @media (prefers-reduced-motion:reduce) { .cl-wave i { transition:none; } .cl-wave.loading i { animation:none; } }
+    @media (max-width:520px) { .cl-rec-row { gap:0.55rem; } .cl-time { min-width:0; font-size:0.74rem; } .cl-rec-tools .hint { display:none; } }
+    /* The demo line: who answers now, and the schedule's week. */
+    .cl-now { display:flex; align-items:center; gap:0.6rem; font-size:0.86rem; line-height:1.45; margin:0 0 0.85rem; padding:0.55rem 0.75rem; border-radius:10px; background:rgba(74,172,101,0.07); border:1px solid rgba(74,172,101,0.22); }
+    .cl-now .dot { flex:0 0 auto; width:9px; height:9px; border-radius:50%; box-shadow:0 0 0 3px rgba(255,255,255,0.06); }
+    .cl-now-m { color:var(--muted); }
+    .cl-demo .cl-chk { display:inline-flex; align-items:center; gap:0.45rem; text-transform:none; letter-spacing:0; font-size:0.86rem; font-weight:500; color:var(--text); margin:0; min-height:36px; cursor:pointer; }
+    .cl-demo input[type=checkbox] { width:18px; height:18px; min-height:0; padding:0; margin:0; accent-color:var(--gold); flex:0 0 auto; cursor:pointer; }
+    .cl-flabel { display:block; font-size:0.68rem; text-transform:uppercase; letter-spacing:0.05em; color:var(--muted); font-weight:700; margin-bottom:0.3rem; }
+    .cl-sch-head { display:flex; justify-content:space-between; align-items:center; gap:0.5rem 0.8rem; flex-wrap:wrap; margin:0.2rem 0 0.7rem; }
+    .cl-sch-tools { display:flex; gap:0.45rem; flex-wrap:wrap; }
+    .cl-week { display:grid; gap:5px; margin-top:0.2rem; }
+    .cl-wk-row { display:grid; grid-template-columns:5.6rem minmax(0,1fr); align-items:center; gap:0.6rem; }
+    .cl-wk-day { font-size:0.74rem; font-weight:700; color:var(--muted); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+    .cl-wk-day.today { color:var(--gold); }
+    .cl-wk-sm { display:none; }
+    @media (max-width:520px) { .cl-wk-sm { display:inline; } }
+    .cl-wk-ticks { position:relative; height:1rem; }
+    .cl-wk-ticks span { position:absolute; transform:translateX(-50%); font-size:0.64rem; color:var(--muted); white-space:nowrap; }
+    .cl-wk-ticks span:first-child { transform:none; }
+    .cl-wk-ticks span:last-child { transform:translateX(-100%); }
+    .cl-wk-track { position:relative; height:28px; border-radius:7px; background:var(--bg); border:1px solid var(--line); overflow:hidden; }
+    .cl-wk-seg { position:absolute; top:0; bottom:0; display:flex; align-items:center; padding:0 0.45rem; border:0; border-right:1px solid rgba(13,23,16,0.35); font-family:inherit; font-size:0.66rem; font-weight:700; line-height:1; color:#0d1710; overflow:hidden; white-space:nowrap; text-overflow:ellipsis; cursor:pointer; text-align:left; }
+    .cl-wk-seg:hover, .cl-wk-seg:focus-visible { filter:brightness(1.12); outline:none; box-shadow:inset 0 0 0 2px rgba(255,255,255,0.65); }
+    .cl-wk-seg.def { background:repeating-linear-gradient(135deg, rgba(138,164,141,0.13) 0 6px, transparent 6px 12px); cursor:default; border-right:0; }
+    .cl-wk-now { position:absolute; top:0; bottom:0; width:2px; margin-left:-1px; background:#fff; box-shadow:0 0 0 1px rgba(13,23,16,0.55); pointer-events:none; }
+    .cl-legend { display:flex; flex-wrap:wrap; gap:0.35rem 0.9rem; font-size:0.76rem; color:var(--muted); margin:0.6rem 0 0 6.2rem; }
+    .cl-legend i { display:inline-block; width:10px; height:10px; border-radius:3px; margin-right:0.35rem; vertical-align:-1px; }
+    .cl-legend i.def { background:repeating-linear-gradient(135deg, rgba(138,164,141,0.5) 0 2px, transparent 2px 4px); border:1px solid var(--line); }
+    .cl-blist { display:grid; gap:0.45rem; margin-top:0.85rem; }
+    .cl-blk { display:flex; align-items:center; gap:0.6rem; border:1px solid var(--line); border-left:4px solid var(--gold); border-radius:10px; background:var(--bg); padding:0.5rem 0.7rem; }
+    .cl-blk .t { flex:1 1 auto; min-width:0; }
+    .cl-blk .t b { display:block; font-size:0.88rem; }
+    .cl-blk .t span { display:block; color:var(--muted); font-size:0.78rem; line-height:1.45; }
+    .cl-blk .ct-btn { flex:0 0 auto; }
+    .cl-bform { border:1px solid rgba(200,152,48,0.35); border-radius:12px; background:rgba(200,152,48,0.04); padding:0.8rem 0.9rem; margin:0 0 0.9rem; }
+    .cl-bform h4 { margin:0 0 0.5rem; font-family:"Montserrat",sans-serif; font-size:0.78rem; text-transform:uppercase; letter-spacing:0.05em; color:var(--gold); }
+    .cl-bgrid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:0.7rem; align-items:end; }
+    .cl-seg { display:inline-flex; border:1px solid var(--line); border-radius:999px; overflow:hidden; }
+    .cl-seg button { border:0; background:var(--bg); color:var(--muted); font:inherit; font-size:0.82rem; font-weight:600; padding:0 0.9rem; min-height:36px; cursor:pointer; }
+    .cl-seg button + button { border-left:1px solid var(--line); }
+    .cl-seg button[aria-pressed=true] { background:rgba(200,152,48,0.16); color:var(--gold); }
+    .cl-days { display:flex; flex-wrap:wrap; gap:0.35rem; align-items:center; }
+    .cl-days button { min-width:44px; min-height:36px; border-radius:8px; border:1px solid var(--line); background:var(--bg); color:var(--muted); font:inherit; font-size:0.8rem; font-weight:700; cursor:pointer; }
+    .cl-days button[aria-pressed=true] { background:rgba(200,152,48,0.16); border-color:var(--gold); color:var(--gold); }
+    .cl-days .cl-link { min-width:0; border:0; background:none; color:var(--green); font-weight:600; text-decoration:underline; text-underline-offset:2px; padding:0 0.3rem; }
+    .cl-hours { display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr) auto; gap:0.7rem; align-items:end; }
+    .cl-rot { display:grid; gap:0.45rem; margin-bottom:0.5rem; }
+    .cl-rot-row { display:grid; grid-template-columns:1.4rem minmax(0,2fr) minmax(0,1fr) auto; gap:0.5rem; align-items:center; }
+    .cl-rot-row .n { font-size:0.78rem; font-weight:700; color:var(--gold); text-align:center; }
+    .cl-rot-hours { grid-column:span 2; }
+    .cl-rot-prev { color:var(--muted); font-size:0.8rem; line-height:1.5; margin:0.7rem 0 0; }
+    @media (max-width:760px) { .cl-bgrid { grid-template-columns:1fr 1fr; } .cl-rot-hours { grid-column:1 / -1; } }
+    @media (max-width:520px) {
+      .cl-bgrid, .cl-hours { grid-template-columns:1fr; }
+      .cl-wk-row { grid-template-columns:3.6rem minmax(0,1fr); gap:0.4rem; }
+      .cl-wk-lg { display:none; }
+      .cl-legend { margin-left:0; }
+      .cl-wk-seg { font-size:0; padding:0; }
+      .cl-rot-row { grid-template-columns:1.2rem minmax(0,1fr) minmax(0,1fr); }
+      .cl-rot-row .ct-btn { grid-column:2 / -1; }
+      .cl-blk { flex-wrap:wrap; } .cl-blk .t { flex-basis:100%; }
+    }
 
     .cust { width:100%; text-align:left; border:1px solid var(--line); border-radius:12px; background:var(--card); padding:0.8rem 0.9rem; cursor:pointer; color:inherit; font:inherit; display:block; margin-bottom:0.5rem; }
     .cust:hover { border-color:var(--green); }
@@ -8954,10 +9037,31 @@
     }
 
     // cols: [{k, label, w, text(row), cell(row) optional, num: true for counts}]
+    // opts.sel (optional): {map: {id: true}, id(row), label(row), actions(bar, ids)} adds a
+    // checkbox to each row, select-all to the bar, and the actions once something is picked.
     function cuTable(key, cols, rows, opts) {
       var wrap = el('div');
       var bar = el('div', 'mk-bar');
-      bar.appendChild(el('span', 'mk-bar-n', opts.count));
+      var sel = opts.sel || null;
+      if (sel && rows.length) {
+        var picked = rows.filter(function (r) { return sel.map[sel.id(r)]; }).map(sel.id);
+        var all = document.createElement('input'); all.type = 'checkbox';
+        all.setAttribute('aria-label', 'Select every row shown');
+        all.checked = picked.length === rows.length;
+        all.indeterminate = picked.length > 0 && picked.length < rows.length;
+        all.addEventListener('change', function () {
+          rows.forEach(function (r) { if (all.checked) sel.map[sel.id(r)] = true; else delete sel.map[sel.id(r)]; });
+          opts.rerender();
+        });
+        bar.appendChild(all);
+        if (picked.length) {
+          bar.appendChild(el('span', 'mk-bar-n', picked.length + ' selected'));
+          sel.actions(bar, picked);
+          var clr = el('button', 'ct-btn sm', 'Clear'); clr.type = 'button';
+          clr.addEventListener('click', function () { picked.forEach(function (id) { delete sel.map[id]; }); opts.rerender(); });
+          bar.appendChild(clr);
+        } else bar.appendChild(el('span', 'mk-bar-n', opts.count));
+      } else bar.appendChild(el('span', 'mk-bar-n', opts.count));
       wrap.appendChild(bar);
       if (!rows.length) { wrap.appendChild(el('div', 'state cu-empty', opts.empty)); return wrap; }
 
@@ -8982,6 +9086,7 @@
       cuColsApply(list, ws);
 
       var h = el('div', 'mk-row mk-head');
+      if (sel) h.appendChild(el('span', 'mk-cbspace'));
       var hc = el('div', 'mk-open cu-cells');
       cols.forEach(function (c, i) {
         var cell = el('span', 'cu-c' + (i === 0 ? ' cu-first' : '') + (c.num ? ' cu-num' : ''));
@@ -9006,6 +9111,14 @@
 
       rows.forEach(function (r) {
         var li = el('div', 'mk-row' + (opts.isSel(r) ? ' sel' : ''));
+        if (sel) {
+          var cb = document.createElement('input'); cb.type = 'checkbox';
+          cb.checked = !!sel.map[sel.id(r)];
+          cb.setAttribute('aria-label', 'Select ' + ((sel.label || cols[0].text)(r) || 'this row'));
+          cb.addEventListener('click', function (e) { e.stopPropagation(); });
+          cb.addEventListener('change', function () { if (cb.checked) sel.map[sel.id(r)] = true; else delete sel.map[sel.id(r)]; opts.rerender(); });
+          li.appendChild(cb);
+        }
         var btn = el('div', 'mk-open cu-cells');
         btn.setAttribute('role', 'button');
         btn.tabIndex = 0;
@@ -20112,31 +20225,47 @@
 
     // ---- calls (the AI receptionist, tes-ai-lab) -----------------------------------
     // Every call the receptionist answered: the TES line's real calls (filed on a lead)
-    // and demo calls (never filed). "Needs a call back" is what Home counts.
-    var clView = 'open', clRows = [], clOpenId = null;
+    // and demo calls (never filed). "Needs a call back" is what Home counts. tes-portal
+    // copies each call's recording from Twilio (src/call_recordings.js); it plays in the
+    // call's overlay. Calls are deleted one at a time from the overlay, or picked on the list.
+    var clView = 'open', clRows = [], clOpenId = null, clSel = {}, clSetup = null;
+    function clDur(sec) { var t = Math.max(0, Math.round(Number(sec) || 0)); return Math.floor(t / 60) + ':' + String(t % 60).padStart(2, '0'); }
     var CL_OUTCOME = { booked: 'Booked', message: 'Message', transferred: 'Transferred', info_only: 'Answered', hangup: 'Hung up', spam: 'Spam' };
     var CL_URG = { emergency: '#ef4444', urgent: '#c89830', routine: '#8aa48d' };
     function clWho(c) { return c.caller_name || fmtPhone(c.from_number) || 'Unknown caller'; }
     var CL_COLS = [
-      { k: 'when', label: 'When', w: 150, text: function (c) { return fmt(c.started_at); }, sortv: function (c) { return c.started_at || 0; } },
-      { k: 'who', label: 'Caller', w: 190, text: clWho,
+      { k: 'when', label: 'When', w: 140, text: function (c) { return fmt(c.started_at); }, sortv: function (c) { return c.started_at || 0; } },
+      { k: 'who', label: 'Caller', w: 170, text: clWho,
         cell: function (c) {
           var s = el('span', 'cu-name');
           s.appendChild(el('span', 'cu-t', clWho(c)));
           if (c.demo) s.appendChild(badge('demo', '#8aa48d'));
           return s;
         } },
-      { k: 'outcome', label: 'Outcome', w: 120, text: function (c) { return CL_OUTCOME[c.outcome] || c.outcome; },
+      { k: 'outcome', label: 'Outcome', w: 110, text: function (c) { return CL_OUTCOME[c.outcome] || c.outcome; },
         cell: function (c) {
           var s = el('span', 'cust-badges');
           s.appendChild(badge(CL_OUTCOME[c.outcome] || c.outcome, c.outcome === 'booked' ? '#4aac65' : '#8aa48d'));
           if (c.urgency && c.urgency !== 'routine') s.appendChild(badge(c.urgency, CL_URG[c.urgency]));
           return s;
         } },
-      { k: 'hours', label: 'Hours', w: 92, text: function (c) { return c.after_hours ? 'After hours' : 'Open'; } },
-      { k: 'summary', label: 'Summary', w: 300, text: function (c) { return c.summary || ''; } },
-      { k: 'min', label: 'Minutes', w: 80, num: true, text: function (c) { return c.minutes != null ? c.minutes + ' min' : ''; }, sortv: function (c) { return c.minutes || 0; } },
-      { k: 'back', label: 'Called back', w: 110, text: function (c) { return c.callback_done_at ? fmt(c.callback_done_at) : ''; },
+      { k: 'hours', label: 'Hours', w: 80, text: function (c) { return c.after_hours ? 'After hours' : 'Open'; } },
+      { k: 'summary', label: 'Summary', w: 210, text: function (c) { return c.summary || ''; } },
+      { k: 'min', label: 'Minutes', w: 70, num: true, text: function (c) { return c.minutes != null ? c.minutes + ' min' : ''; }, sortv: function (c) { return c.minutes || 0; } },
+      { k: 'rec', label: 'Recording', w: 90, num: true, text: function (c) { return c.recording_status === 'ready' ? clDur(c.recording_seconds) : ''; },
+        sortv: function (c) { return c.recording_status === 'ready' ? (c.recording_seconds || 1) : 0; },
+        cell: function (c) {
+          if (c.recording_status === 'ready') {
+            var s = el('span', 'cl-recchip');
+            var i = el('i', 'fa-solid fa-circle-play'); i.setAttribute('aria-hidden', 'true');
+            s.appendChild(i); s.appendChild(document.createTextNode(clDur(c.recording_seconds)));
+            s.title = 'Has a recording';
+            return s;
+          }
+          if (!c.recording_status && clSetup && clSetup.configured) { var p = el('span', 'cu-t cu-blank', 'Copying'); p.title = 'Being copied from Twilio'; return p; }
+          return null;
+        } },
+      { k: 'back', label: 'Called back', w: 90, text: function (c) { return c.callback_done_at ? fmt(c.callback_done_at) : ''; },
         sortv: function (c) { return c.callback_done_at || 0; } },
     ];
     function clLoad() {
@@ -20156,6 +20285,11 @@
         w.appendChild(bar);
         if (!r.ok) { w.appendChild(el('div', 'state', 'Could not load the calls.')); return; }
         clRows = r.calls || [];
+        clSetup = r.recordings || null;
+        // A pick only means something for a row on screen.
+        var shown = {};
+        clRows.forEach(function (c) { shown[c.id] = true; });
+        Object.keys(clSel).forEach(function (k) { if (!shown[k]) delete clSel[k]; });
         var list = el('div');
         w.appendChild(list);
         function draw() {
@@ -20166,6 +20300,12 @@
             isSel: function (c) { return c.id === clOpenId; },
             rerender: draw,
             open: function (c) { clOpen(c.id); },
+            sel: { map: clSel, id: function (c) { return c.id; }, label: function (c) { return 'the call from ' + clWho(c) + ', ' + fmt(c.started_at); },
+              actions: function (b, ids) {
+                var del = el('button', 'ct-btn sm danger', 'Delete'); del.type = 'button';
+                del.addEventListener('click', function () { clDelete(ids); });
+                b.appendChild(del);
+              } },
           }));
         }
         draw();
@@ -20226,7 +20366,8 @@
         head.appendChild(copy);
       }
       box.appendChild(head);
-      box.appendChild(el('p', 'cl-line-note', 'When nothing is queued the line answers as the default below. Demo calls end at five minutes and each caller gets four a day; your own phone has no limits.'));
+      box.appendChild(el('p', 'cl-line-note', 'A demo queued for a prospect answers first, then the schedule, then the default below. Demo calls end at five minutes and each caller gets four a day; your own phone has no limits.'));
+      if (v.now) box.appendChild(clNowLine(v));
 
       // The default: who answers anybody not queued, and the line's number.
       var defRow = el('div', 'cl-line-def');
@@ -20332,6 +20473,8 @@
       box.appendChild(defRow);
       box.appendChild(mgr);
 
+      box.appendChild(clSchedule(v, personas, voiceOpts));
+
       // Queue a demo for one prospect.
       var q = document.createElement('details');
       q.className = 'cl-q';
@@ -20399,6 +20542,570 @@
       }
       return box;
     }
+    // ---- deleting calls --------------------------------------------------------------
+    function clDelete(ids, done) {
+      var n = ids.length;
+      if (!n) return;
+      var twilioNote = clSetup && clSetup.configured ? ' here and on Twilio' : ' here. tes-portal has no Twilio key yet, so the copy on Twilio stays';
+      if (!window.confirm('Delete ' + (n === 1 ? 'this call' : n + ' calls') + '? ' + (n === 1 ? 'Its recording and transcript are' : 'Their recordings and transcripts are') +
+        ' removed' + twilioNote + '. Leads and bookings made on ' + (n === 1 ? 'the call' : 'them') + ' stay. This cannot be undone.')) return;
+      var req = n === 1 ? api('/admin/calls/' + ids[0], { method: 'DELETE' }) : api('/admin/calls/delete', { method: 'POST', body: { ids: ids } });
+      req.then(function (x) {
+        if (!x.ok) { toast(x.error === 'not_found' ? 'That call was already deleted.' : 'Could not delete.'); clLoad(); return; }
+        ids.forEach(function (id) { delete clSel[id]; });
+        var t = x.twilio || {};
+        var said = 'Deleted ' + (x.deleted === 1 ? 'the call' : x.deleted + ' calls') + '.';
+        if (t.failed && t.failed.length) {
+          window.alert(said + ' Twilio did not answer for ' + (t.failed.length === 1 ? 'one of them' : t.failed.length + ' of them') +
+            ', so the recording is still on Twilio. Delete it in the Twilio console under call recordings' +
+            (t.failed[0].call_sid ? ' (call ' + t.failed.map(function (f) { return f.call_sid; }).filter(Boolean).join(', ') + ')' : '') + '.');
+        } else toast(said);
+        if (done) done();
+        clLoad();
+      });
+    }
+
+    // ---- the recording player ----------------------------------------------------------
+    // The whole MP3 is fetched once (a call is a few KB a second), so the waveform shows the
+    // call and seeking is instant. If that fetch fails the player streams it instead (the
+    // route answers range requests), without the waveform.
+    var clPlayer = null;
+    function clStopAudio() {
+      if (!clPlayer) return;
+      try { clPlayer.audio.pause(); } catch (e) { /* already gone */ }
+      if (clPlayer.raf) cancelAnimationFrame(clPlayer.raf);
+      if (clPlayer.url) URL.revokeObjectURL(clPlayer.url);
+      clPlayer = null;
+    }
+    var CL_RNOTE = { no_recording: 'Twilio has no recording of this call. Recording may have been off.', no_twilio_call: 'This call was not found on Twilio, so there is no recording.' };
+    var CL_RFETCH = { ready: 'Got the recording.', waiting: 'Not on Twilio yet. It is copied as soon as it arrives.', none: 'Twilio has no recording of this call.', retry: 'Twilio did not answer. It will try again.', error: 'Could not copy it.' };
+    function clRecBox(c) {
+      // Marking the call returned redraws the overlay: a recording playing keeps playing.
+      if (clPlayer && clPlayer.id === c.id && c.recording_status === 'ready') return clPlayer.node;
+      clStopAudio();
+      var box = el('div', 'cl-box cl-rec');
+      box.appendChild(el('h4', null, 'Recording'));
+      if (c.recording_status !== 'ready') {
+        var note = el('div', 'cl-rec-note');
+        var st = clSetup || {}, text, btnText = null;
+        if (c.recording_status === 'none') { text = CL_RNOTE[c.recording_error] || 'There is no recording of this call.'; btnText = 'Look again'; }
+        else if (c.recording_status === 'error') { text = 'Could not copy the recording from Twilio (' + (c.recording_error || 'error') + ').'; btnText = 'Try again'; }
+        else if (!st.configured) text = 'Recordings play here once tes-portal has the Twilio key (npm run portal:twilio in tes-ai-lab).';
+        else if (st.reason === 'key_refused') { text = 'Twilio refused tes-portal’s key, so recordings are not being copied.'; btnText = 'Check now'; }
+        else { text = 'Copying the recording from Twilio. It usually arrives a minute or two after the call ends.'; btnText = 'Check now'; }
+        note.appendChild(el('span', null, text));
+        if (btnText) {
+          var b = el('button', 'ct-btn sm', btnText); b.type = 'button';
+          b.addEventListener('click', function () {
+            b.disabled = true;
+            api('/admin/calls/' + c.id + '/recording', { method: 'POST' }).then(function (x) {
+              b.disabled = false;
+              if (!x.ok) { toast(x.error === 'twilio_auth' ? 'Twilio refused the key.' : x.error === 'twilio_unconfigured' ? 'tes-portal has no Twilio key yet.' : 'Could not check.'); return; }
+              toast(CL_RFETCH[x.result] || 'Checked.');
+              if (x.call && clOpenId === c.id) clRender(x.call);
+              if (x.result === 'ready') clLoad();
+            });
+          });
+          note.appendChild(b);
+        }
+        box.appendChild(note);
+        return box;
+      }
+
+      var src = API + '/admin/calls/' + c.id + '/recording';
+      var p = clPlayer = { id: c.id, node: box, audio: new Audio(), url: null, raf: 0 };
+      var a = p.audio;
+      a.preload = 'auto';
+      var row = el('div', 'cl-rec-row');
+      var play = el('button', 'cl-play'); play.type = 'button'; play.disabled = true;
+      var icon = el('i', 'fa-solid fa-play'); icon.setAttribute('aria-hidden', 'true');
+      play.appendChild(icon);
+      play.setAttribute('aria-label', 'Play the recording');
+      var N = window.innerWidth < 600 ? 44 : 84;
+      var wave = el('div', 'cl-wave loading');
+      wave.tabIndex = 0;
+      wave.setAttribute('role', 'slider');
+      wave.setAttribute('aria-label', 'Position in the recording');
+      wave.setAttribute('aria-valuemin', '0');
+      var bars = [];
+      for (var i = 0; i < N; i++) { var bar = el('i'); bar.style.height = '16%'; wave.appendChild(bar); bars.push(bar); }
+      var tip = el('span', 'cl-hover'); tip.hidden = true; wave.appendChild(tip);
+      var time = el('span', 'cl-time', '0:00 / ' + clDur(c.recording_seconds));
+      row.appendChild(play); row.appendChild(wave); row.appendChild(time);
+      box.appendChild(row);
+      var tools = el('div', 'cl-rec-tools');
+      tools.appendChild(el('span', 'hint', 'Click the waveform to jump. Arrow keys skip five seconds.'));
+      var speeds = [1, 1.25, 1.5, 2], si = 0;
+      var sp = el('button', 'ct-btn sm', '1×'); sp.type = 'button';
+      sp.setAttribute('aria-label', 'Playback speed, 1 times');
+      sp.addEventListener('click', function () {
+        si = (si + 1) % speeds.length;
+        a.playbackRate = speeds[si];
+        sp.textContent = speeds[si] + '×';
+        sp.setAttribute('aria-label', 'Playback speed, ' + speeds[si] + ' times');
+      });
+      var dl = el('a', 'ct-btn sm', 'Download'); dl.href = src + '?download=1';
+      tools.appendChild(sp); tools.appendChild(dl);
+      box.appendChild(tools);
+
+      function dur() { return isFinite(a.duration) && a.duration > 0 ? a.duration : (c.recording_seconds || 0); }
+      var lastOn = -1;
+      function paint() {
+        var d = dur(), t = a.currentTime || 0, on = d ? Math.round(Math.min(1, t / d) * N) : 0;
+        if (on !== lastOn) { bars.forEach(function (x, k) { x.classList.toggle('on', k < on); }); lastOn = on; }
+        time.textContent = clDur(t) + ' / ' + clDur(d);
+        wave.setAttribute('aria-valuemax', String(Math.round(d)));
+        wave.setAttribute('aria-valuenow', String(Math.round(t)));
+        wave.setAttribute('aria-valuetext', clDur(t) + ' of ' + clDur(d));
+      }
+      function loop() { paint(); if (!a.paused && clPlayer === p) p.raf = requestAnimationFrame(loop); }
+      function setIcon() {
+        var on = !a.paused;
+        icon.className = 'fa-solid ' + (on ? 'fa-pause' : 'fa-play');
+        play.setAttribute('aria-label', on ? 'Pause the recording' : 'Play the recording');
+      }
+      a.addEventListener('play', function () { setIcon(); loop(); });
+      a.addEventListener('pause', function () { setIcon(); paint(); });
+      a.addEventListener('ended', function () { setIcon(); paint(); });
+      a.addEventListener('loadedmetadata', paint);
+      // Frames pause in a background tab; the audio's own clock keeps the time moving there.
+      a.addEventListener('timeupdate', function () { if (document.hidden) paint(); });
+      function toggle() {
+        if (play.disabled) return;
+        if (a.paused) { var pr = a.play(); if (pr && pr.catch) pr.catch(function () { toast('Could not play the recording.'); }); }
+        else a.pause();
+      }
+      play.addEventListener('click', toggle);
+      function seekTo(frac) { var d = dur(); if (!d) return; a.currentTime = Math.max(0, Math.min(d - 0.05, frac * d)); paint(); }
+      function fracAt(e) { var r = wave.getBoundingClientRect(); return Math.max(0, Math.min(1, (e.clientX - r.left) / r.width)); }
+      var dragging = false;
+      wave.addEventListener('pointerdown', function (e) { if (e.button !== 0) return; dragging = true; try { wave.setPointerCapture(e.pointerId); } catch (x) { /* fine */ } seekTo(fracAt(e)); });
+      wave.addEventListener('pointermove', function (e) {
+        var f = fracAt(e);
+        tip.hidden = false; tip.textContent = clDur(f * dur()); tip.style.left = (f * 100) + '%';
+        if (dragging) seekTo(f);
+      });
+      wave.addEventListener('pointerup', function () { dragging = false; });
+      wave.addEventListener('pointercancel', function () { dragging = false; });
+      wave.addEventListener('pointerleave', function () { if (!dragging) tip.hidden = true; });
+      wave.addEventListener('keydown', function (e) {
+        var d = dur();
+        if (e.key === ' ' || e.key === 'Enter') { e.preventDefault(); toggle(); return; }
+        if (!d) return;
+        if (e.key === 'ArrowRight' || e.key === 'ArrowLeft') { e.preventDefault(); a.currentTime = Math.max(0, Math.min(d - 0.05, a.currentTime + (e.key === 'ArrowRight' ? 5 : -5))); paint(); }
+        else if (e.key === 'Home') { e.preventDefault(); a.currentTime = 0; paint(); }
+        else if (e.key === 'End') { e.preventDefault(); a.currentTime = Math.max(0, d - 0.05); paint(); }
+      });
+      function ready() { play.disabled = false; wave.classList.remove('loading'); }
+      fetch(src, { credentials: 'same-origin' }).then(function (r) {
+        if (!r.ok) throw new Error(String(r.status));
+        return r.arrayBuffer();
+      }).then(function (buf) {
+        if (clPlayer !== p) return;
+        p.url = URL.createObjectURL(new Blob([buf], { type: 'audio/mpeg' }));
+        a.src = p.url;
+        ready();
+        var AC = window.OfflineAudioContext || window.webkitOfflineAudioContext;
+        if (!AC) return;
+        return new AC(1, 1, 8000).decodeAudioData(buf.slice(0)).then(function (ab) {
+          if (clPlayer !== p) return;
+          var data = ab.getChannelData(0), step = Math.max(1, Math.floor(data.length / N)), peaks = [], max = 0;
+          for (var k = 0; k < N; k++) {
+            var m = 0;
+            // Loudness (RMS), not the peak: speech hits its peak in almost every slice, so
+            // peaks draw a flat bar; RMS shows the pauses between turns.
+            for (var j = k * step, e = Math.min(data.length, j + step); j < e; j++) m += data[j] * data[j];
+            m = Math.sqrt(m / step);
+            peaks.push(m); if (m > max) max = m;
+          }
+          peaks.forEach(function (pk, k) { bars[k].style.height = Math.round(8 + 92 * (max ? pk / max : 0)) + '%'; });
+        });
+      }).catch(function () {
+        if (clPlayer !== p) return;
+        if (!a.src) { a.src = src; ready(); }
+      });
+      return box;
+    }
+
+    // ---- who answers now, and the schedule -----------------------------------------------
+    // Blocks of time when the demo line answers as a given business and voice (tes-portal
+    // src/voice.js). A demo queued for a prospect still comes first; time no block covers
+    // answers as the default.
+    var CL_PCOL = { showcase: '#c89830', 'demo-hvac': '#4aac65', 'demo-dental': '#5aa9c8', 'demo-auto': '#d08a4a', 'demo-law': '#9a8fe0', 'demo-salon': '#d68aae' };
+    var CL_DAYS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+    var CL_SERR = { no_days: 'Pick at least one day.', bad_times: 'The end has to be after the start.', bad_date: 'Pick a date.', bad_persona: 'Pick a business from the list.', bad_voice: 'Pick a voice from the list.', too_many_blocks: 'The schedule holds sixty blocks.', bad_schedule: 'Could not save the schedule.' };
+    var CL_ROTATE = [['demo-dental', 'marin'], ['demo-hvac', 'cedar'], ['demo-auto', 'ash'], ['demo-law', 'coral'], ['demo-salon', 'shimmer']];
+    var clSchOpen = null;
+    function clShort(label) { return String(label || '').split(/[:(]/)[0].trim(); }
+    function clHm(m) {
+      if (m === 1440) return 'midnight';
+      var h = Math.floor(m / 60), mi = m % 60;
+      return ((h % 12) || 12) + ':' + String(mi).padStart(2, '0') + (h < 12 ? 'am' : 'pm');
+    }
+    function clSpan(b) { return b.start === 0 && b.end === 1440 ? 'all day' : clHm(b.start) + '–' + clHm(b.end); }
+    function clDaysText(days) {
+      var key = days.join();
+      if (key === '1,2,3,4,5,6,7') return 'Every day';
+      if (key === '1,2,3,4,5') return 'Weekdays';
+      if (key === '6,7') return 'Weekends';
+      var out = [], i = 0;
+      while (i < days.length) {
+        var j = i;
+        while (j + 1 < days.length && days[j + 1] === days[j] + 1) j++;
+        if (j - i >= 2) out.push(CL_DAYS[days[i] - 1] + '–' + CL_DAYS[days[j] - 1]);
+        else for (var k = i; k <= j; k++) out.push(CL_DAYS[days[k] - 1]);
+        i = j + 1;
+      }
+      return out.join(', ');
+    }
+    function clDate(s, opts) { var p = s.split('-').map(Number); return new Date(p[0], p[1] - 1, p[2]).toLocaleDateString(undefined, opts || { weekday: 'short', month: 'short', day: 'numeric' }); }
+    function clWhenText(b) { return (b.date ? clDate(b.date) : clDaysText(b.days)) + ', ' + clSpan(b); }
+    function clUntil(ts) {
+      var d = new Date(ts * 1000), today = new Date(), tm = new Date(); tm.setDate(today.getDate() + 1);
+      var t = d.toLocaleTimeString(undefined, { hour: 'numeric', minute: '2-digit' });
+      // Midnight tonight reads as midnight, not as tomorrow at 12:00 AM.
+      if (!d.getHours() && !d.getMinutes() && d.toDateString() === tm.toDateString()) return 'midnight';
+      if (d.toDateString() === today.toDateString()) return t;
+      if (d.toDateString() === tm.toDateString()) return 'tomorrow ' + t;
+      return d.toLocaleDateString(undefined, { weekday: 'short' }) + ' ' + t;
+    }
+    function clLabels(v) {
+      var pl = {}, vl = {};
+      (v.personas || []).forEach(function (x) { pl[x.key] = clShort(x.label); });
+      (v.voices || []).forEach(function (x) { vl[x.key] = clShort(x.label); });
+      return { p: function (k) { return pl[k] || k; }, v: function (k) { return k ? vl[k] || k : ''; } };
+    }
+    function clNowLine(v) {
+      var n = v.now, L = clLabels(v);
+      var blk = n.block_id ? ((v.schedule && v.schedule.blocks) || []).filter(function (x) { return x.id === n.block_id; })[0] : null;
+      var row = el('div', 'cl-now');
+      var dot = el('span', 'dot'); dot.style.background = CL_PCOL[n.persona] || '#4aac65';
+      row.appendChild(dot);
+      var t = el('span', 'cl-now-t');
+      t.appendChild(document.createTextNode('Answering now as '));
+      t.appendChild(el('b', null, n.source === 'queue' ? n.label : L.p(n.persona)));
+      var bits = [L.v(n.voice) ? L.v(n.voice) + ' voice' : 'its own voice',
+        n.source === 'schedule' ? 'from the schedule' + (blk && blk.label ? ' (' + blk.label + ')' : '') : n.source === 'queue' ? 'queued for anyone' : 'the default'];
+      if (n.until) bits.push('until ' + clUntil(n.until));
+      t.appendChild(el('span', 'cl-now-m', ' · ' + bits.join(' · ')));
+      row.appendChild(t);
+      return row;
+    }
+    function clWeek(v, byId, L, onEdit) {
+      var wk = v.week || { days: [] };
+      var box = el('div', 'cl-week');
+      var axis = el('div', 'cl-wk-row cl-wk-axis');
+      axis.setAttribute('aria-hidden', 'true');
+      axis.appendChild(el('span', 'cl-wk-day'));
+      var ticks = el('div', 'cl-wk-ticks');
+      ['12am', '6am', 'noon', '6pm', '12am'].forEach(function (t, i) { var s = el('span', null, t); s.style.left = (i * 25) + '%'; ticks.appendChild(s); });
+      axis.appendChild(ticks);
+      box.appendChild(axis);
+      wk.days.forEach(function (d, i) {
+        var row = el('div', 'cl-wk-row');
+        var name = i === 0 ? 'Today' : i === 1 ? 'Tomorrow' : CL_DAYS[d.dow - 1] + ' ' + Number(d.date.slice(8));
+        var dl = el('span', 'cl-wk-day' + (i === 0 ? ' today' : ''));
+        // Tomorrow does not fit a phone's day column; it shows the day there instead.
+        if (i === 1) { dl.appendChild(el('span', 'cl-wk-lg', name)); dl.appendChild(el('span', 'cl-wk-sm', CL_DAYS[d.dow - 1] + ' ' + Number(d.date.slice(8)))); } else dl.textContent = name;
+        row.appendChild(dl);
+        var track = el('div', 'cl-wk-track');
+        d.segments.forEach(function (sg) {
+          var b = sg.block_id ? byId[sg.block_id] : null;
+          var seg = el(b ? 'button' : 'span', 'cl-wk-seg' + (b ? '' : ' def'));
+          seg.style.left = (sg.start / 14.4) + '%';
+          seg.style.width = ((sg.end - sg.start) / 14.4) + '%';
+          var who = b ? L.p(b.persona) + (L.v(b.voice) ? ', ' + L.v(b.voice) : '') : 'Default: ' + L.p(v.default.persona);
+          seg.title = clSpan(sg) + ' · ' + who;
+          if (b) {
+            seg.type = 'button';
+            seg.style.background = CL_PCOL[b.persona] || '#8aa48d';
+            seg.setAttribute('aria-label', name + ', ' + clSpan(sg) + ': ' + who + '. Edit this block.');
+            seg.addEventListener('click', function () { onEdit(b.id); });
+            if (sg.end - sg.start >= 150) seg.textContent = b.label || L.p(b.persona);
+          }
+          track.appendChild(seg);
+        });
+        if (i === 0) { var now = el('span', 'cl-wk-now'); now.style.left = (wk.now_min / 14.4) + '%'; now.title = 'Now'; track.appendChild(now); }
+        row.appendChild(track);
+        box.appendChild(row);
+      });
+      return box;
+    }
+    function clQuarters(from, to) { var o = []; for (var m = from; m <= to; m += 15) o.push([m, clHm(m)]); return o; }
+    function clDayStr(add) { var x = new Date(); x.setDate(x.getDate() + (add || 0)); return x.getFullYear() + '-' + String(x.getMonth() + 1).padStart(2, '0') + '-' + String(x.getDate()).padStart(2, '0'); }
+    // From, To and All day: the hours a block covers, in quarter hours.
+    function clHours(start, end) {
+      var w = el('div', 'cl-hours');
+      var allL = el('label', 'cl-chk');
+      var all = document.createElement('input'); all.type = 'checkbox';
+      allL.appendChild(all); allL.appendChild(document.createTextNode(' All day'));
+      var from = ctSelect(clQuarters(0, 1425), start === 0 && end === 1440 ? 540 : start);
+      var to = ctSelect(clQuarters(15, 1440), start === 0 && end === 1440 ? 1020 : end);
+      all.checked = start === 0 && end === 1440;
+      function paint() { from.disabled = to.disabled = all.checked; }
+      all.addEventListener('change', paint);
+      paint();
+      w.appendChild(clField('From', from));
+      w.appendChild(clField('To', to));
+      w.appendChild(allL);
+      return { node: w, get: function () { return all.checked ? { start: 0, end: 1440 } : { start: Number(from.value), end: Number(to.value) }; } };
+    }
+    function clBlockForm(v, b, personas, voiceOpts, onSave, onCancel, onDelete) {
+      var f = el('div', 'cl-bform');
+      f.appendChild(el('h4', null, b ? 'Edit block' : 'New block'));
+      var mode = b && b.date ? 'date' : 'week';
+      var days = b && !b.date ? b.days.slice() : [1, 2, 3, 4, 5];
+      var grid = el('div', 'cl-bgrid');
+
+      var rep = el('div', 'cl-q-wide');
+      rep.appendChild(el('span', 'cl-flabel', 'Repeats'));
+      var seg = el('div', 'cl-seg'); seg.setAttribute('role', 'group'); seg.setAttribute('aria-label', 'Repeats');
+      var bW = el('button', null, 'Every week'), bD = el('button', null, 'One date');
+      bW.type = 'button'; bD.type = 'button';
+      seg.appendChild(bW); seg.appendChild(bD);
+      rep.appendChild(seg);
+      grid.appendChild(rep);
+
+      var wkBox = el('div', 'cl-q-wide');
+      wkBox.appendChild(el('span', 'cl-flabel', 'Days'));
+      var dayRow = el('div', 'cl-days'); dayRow.setAttribute('role', 'group'); dayRow.setAttribute('aria-label', 'Days');
+      var dayBtns = CL_DAYS.map(function (nm, i) {
+        var x = el('button', null, nm); x.type = 'button';
+        x.addEventListener('click', function () { var k = days.indexOf(i + 1); if (k >= 0) days.splice(k, 1); else days.push(i + 1); paintDays(); });
+        dayRow.appendChild(x);
+        return x;
+      });
+      [['Weekdays', [1, 2, 3, 4, 5]], ['Weekends', [6, 7]], ['Every day', [1, 2, 3, 4, 5, 6, 7]]].forEach(function (p) {
+        var x = el('button', 'cl-link', p[0]); x.type = 'button';
+        x.addEventListener('click', function () { days = p[1].slice(); paintDays(); });
+        dayRow.appendChild(x);
+      });
+      function paintDays() { dayBtns.forEach(function (x, i) { x.setAttribute('aria-pressed', days.indexOf(i + 1) >= 0 ? 'true' : 'false'); }); }
+      paintDays();
+      wkBox.appendChild(dayRow);
+      grid.appendChild(wkBox);
+
+      var dtBox = el('div');
+      var dateIn = clInput('date'); dateIn.min = clDayStr(0); dateIn.value = b && b.date ? b.date : clDayStr(1);
+      dtBox.appendChild(clField('Date', dateIn));
+      grid.appendChild(dtBox);
+      function paintMode() {
+        bW.setAttribute('aria-pressed', mode === 'week' ? 'true' : 'false');
+        bD.setAttribute('aria-pressed', mode === 'date' ? 'true' : 'false');
+        wkBox.hidden = mode !== 'week'; dtBox.hidden = mode !== 'date';
+      }
+      bW.addEventListener('click', function () { mode = 'week'; paintMode(); });
+      bD.addEventListener('click', function () { mode = 'date'; paintMode(); });
+      paintMode();
+
+      var hrs = clHours(b ? b.start : 540, b ? b.end : 1020);
+      hrs.node.classList.add('cl-q-wide');
+      grid.appendChild(hrs.node);
+      var pS = ctSelect(personas, b ? b.persona : 'demo-dental');
+      var vS = ctSelect(voiceOpts('Its own voice'), b ? b.voice : '');
+      var lab = clInput('text', 'Dentist outreach week', b ? b.label : '');
+      lab.maxLength = 40;
+      grid.appendChild(clField('Answers as', pS));
+      grid.appendChild(clField('Voice', vS));
+      grid.appendChild(clField('Label (optional)', lab));
+      f.appendChild(grid);
+
+      var go = el('div', 'cl-q-go');
+      var saveB = el('button', 'ct-btn prim', b ? 'Save block' : 'Add block'); saveB.type = 'button';
+      var cancelB = el('button', 'ct-btn', 'Cancel'); cancelB.type = 'button';
+      go.appendChild(saveB); go.appendChild(cancelB);
+      if (onDelete) {
+        var delB = el('button', 'ct-btn danger', 'Remove block'); delB.type = 'button';
+        delB.addEventListener('click', function () { delB.disabled = true; onDelete().then(function () { delB.disabled = false; }); });
+        go.appendChild(delB);
+      }
+      f.appendChild(go);
+      cancelB.addEventListener('click', onCancel);
+      saveB.addEventListener('click', function () {
+        var h = hrs.get();
+        if (mode === 'week' && !days.length) { toast('Pick at least one day.'); return; }
+        if (mode === 'date' && !dateIn.value) { toast('Pick a date.'); dateIn.focus(); return; }
+        if (h.end <= h.start) { toast('The end has to be after the start.'); return; }
+        saveB.disabled = true;
+        onSave({ days: mode === 'week' ? days.slice().sort(function (x, y) { return x - y; }) : [], date: mode === 'date' ? dateIn.value : '',
+          start: h.start, end: h.end, persona: pS.value, voice: vS.value, label: lab.value.trim() }).then(function () { saveB.disabled = false; });
+      });
+      return f;
+    }
+    // One business a day, through a list, then the list starts over. Days with the same
+    // business and voice become one weekly block.
+    function clRotateForm(v, personas, voiceOpts, blocks, L, onSave, onCancel) {
+      var f = el('div', 'cl-bform');
+      f.appendChild(el('h4', null, 'Rotate demos by day'));
+      f.appendChild(el('p', 'cl-line-note', 'Each day answers as the next business on the list, then the list starts over. This replaces the weekly blocks; blocks on single dates stay.'));
+      var picks = CL_ROTATE.map(function (x) { return { persona: x[0], voice: x[1] }; });
+      var listEl = el('div', 'cl-rot');
+      var add = el('button', 'ct-btn sm', '+ Add a business'); add.type = 'button';
+      var onDays = ctSelect([['all', 'Every day'], ['weekdays', 'Weekdays only']], 'all');
+      var hrs = clHours(0, 1440);
+      var prev = el('p', 'cl-rot-prev');
+      function dayList() { return onDays.value === 'weekdays' ? [1, 2, 3, 4, 5] : [1, 2, 3, 4, 5, 6, 7]; }
+      function paintPrev() { prev.textContent = dayList().map(function (d, k) { return CL_DAYS[d - 1] + ' ' + L.p(picks[k % picks.length].persona); }).join(' · '); }
+      function drawPicks() {
+        listEl.textContent = '';
+        picks.forEach(function (p, i) {
+          var r = el('div', 'cl-rot-row');
+          r.appendChild(el('span', 'n', String(i + 1)));
+          var ps = ctSelect(personas, p.persona); ps.setAttribute('aria-label', 'Business ' + (i + 1));
+          var vs = ctSelect(voiceOpts('Its own voice'), p.voice); vs.setAttribute('aria-label', 'Voice ' + (i + 1));
+          ps.addEventListener('change', function () { p.persona = ps.value; paintPrev(); });
+          vs.addEventListener('change', function () { p.voice = vs.value; });
+          r.appendChild(ps); r.appendChild(vs);
+          var rm = el('button', 'ct-btn sm', 'Remove'); rm.type = 'button'; rm.disabled = picks.length <= 1;
+          rm.setAttribute('aria-label', 'Remove business ' + (i + 1));
+          rm.addEventListener('click', function () { picks.splice(i, 1); drawPicks(); });
+          r.appendChild(rm);
+          listEl.appendChild(r);
+        });
+        add.disabled = picks.length >= 7;
+        paintPrev();
+      }
+      add.addEventListener('click', function () { picks.push({ persona: 'showcase', voice: '' }); drawPicks(); });
+      onDays.addEventListener('change', paintPrev);
+      f.appendChild(listEl);
+      f.appendChild(add);
+      var g = el('div', 'cl-bgrid');
+      g.appendChild(clField('On', onDays));
+      hrs.node.classList.add('cl-rot-hours');
+      g.appendChild(hrs.node);
+      f.appendChild(g);
+      f.appendChild(prev);
+      var go = el('div', 'cl-q-go');
+      var useB = el('button', 'ct-btn prim', 'Use this rotation'); useB.type = 'button';
+      var cancelB = el('button', 'ct-btn', 'Cancel'); cancelB.type = 'button';
+      go.appendChild(useB); go.appendChild(cancelB);
+      f.appendChild(go);
+      cancelB.addEventListener('click', onCancel);
+      useB.addEventListener('click', function () {
+        var h = hrs.get();
+        if (h.end <= h.start) { toast('The end has to be after the start.'); return; }
+        var groups = {}, order = [];
+        dayList().forEach(function (d, k) {
+          var p = picks[k % picks.length], key = p.persona + '|' + p.voice;
+          if (!groups[key]) { groups[key] = { days: [], date: '', start: h.start, end: h.end, persona: p.persona, voice: p.voice, label: '' }; order.push(key); }
+          groups[key].days.push(d);
+        });
+        var made = order.map(function (k) { return groups[k]; });
+        var weekly = blocks.filter(function (x) { return !x.date; }).length;
+        if (weekly && !window.confirm('This replaces your ' + weekly + ' weekly ' + (weekly === 1 ? 'block' : 'blocks') + '. Blocks on single dates stay.')) return;
+        useB.disabled = true;
+        onSave(blocks.filter(function (x) { return x.date; }).concat(made), made.length).then(function () { useB.disabled = false; });
+      });
+      drawPicks();
+      return f;
+    }
+    function clSchedule(v, personas, voiceOpts) {
+      var sch = v.schedule || { on: true, blocks: [] };
+      var blocks = sch.blocks || [];
+      var byId = {};
+      blocks.forEach(function (b) { byId[b.id] = b; });
+      var L = clLabels(v);
+      var d = document.createElement('details');
+      d.className = 'cl-q cl-sch';
+      if (clSchOpen === null) clSchOpen = blocks.length > 0;
+      d.open = clSchOpen;
+      d.addEventListener('toggle', function () { clSchOpen = d.open; });
+      d.appendChild(el('summary', null, 'Schedule' + (blocks.length ? ' · ' + blocks.length + (blocks.length === 1 ? ' block' : ' blocks') + (sch.on === false ? ', off' : '') : '')));
+      d.appendChild(el('p', 'cl-line-note', 'Rotate which business answers, and in which voice, by day and time (Eastern). A demo queued for a prospect still answers first; time with no block answers as the default.'));
+
+      var head = el('div', 'cl-sch-head');
+      var tl = el('label', 'cl-chk');
+      var tog = document.createElement('input'); tog.type = 'checkbox'; tog.checked = sch.on !== false;
+      tl.appendChild(tog); tl.appendChild(document.createTextNode(' Follow the schedule'));
+      tog.addEventListener('change', function () {
+        tog.disabled = true;
+        api('/admin/voice', { method: 'PUT', body: { schedule: { on: tog.checked } } }).then(function (x) {
+          tog.disabled = false;
+          if (!x.ok) { tog.checked = !tog.checked; toast('Could not save that.'); return; }
+          toast(tog.checked ? 'The demo line follows the schedule.' : 'Schedule off. The line answers as the default.');
+          clLoad();
+        });
+      });
+      head.appendChild(tl);
+      var tools = el('div', 'cl-sch-tools');
+      var addB = el('button', 'ct-btn sm', '+ Add a block'); addB.type = 'button';
+      var rotB = el('button', 'ct-btn sm', 'Rotate by day…'); rotB.type = 'button';
+      tools.appendChild(addB); tools.appendChild(rotB);
+      head.appendChild(tools);
+      d.appendChild(head);
+      var formHost = el('div');
+      d.appendChild(formHost);
+
+      function save(next, okMsg) {
+        return api('/admin/voice', { method: 'PUT', body: { schedule: { blocks: next } } }).then(function (x) {
+          if (!x.ok) {
+            var o = x.error === 'overlaps' ? next[x.with] : null;
+            toast(o ? 'That overlaps ' + clWhenText(o) + ' (' + L.p(o.persona) + '). Change one of them first.' : CL_SERR[x.error] || 'Could not save the schedule.');
+            return false;
+          }
+          toast(okMsg);
+          clLoad();
+          return true;
+        });
+      }
+      function open(node) {
+        formHost.textContent = '';
+        formHost.appendChild(node);
+        d.open = true; clSchOpen = true;
+        var first = node.querySelector('select, input, button');
+        if (first) first.focus();
+      }
+      function edit(id) {
+        var b = id ? byId[id] : null;
+        open(clBlockForm(v, b, personas, voiceOpts, function (blk) {
+          var next = b ? blocks.map(function (x) { return x.id === b.id ? Object.assign({ id: b.id }, blk) : x; }) : blocks.concat([blk]);
+          return save(next, b ? 'Block saved.' : 'Block added.');
+        }, function () { formHost.textContent = ''; }, b ? function () {
+          return save(blocks.filter(function (x) { return x.id !== b.id; }), 'Block removed.');
+        } : null));
+      }
+      addB.addEventListener('click', function () { edit(null); });
+      rotB.addEventListener('click', function () {
+        open(clRotateForm(v, personas, voiceOpts, blocks, L, function (next, n) {
+          return save(next, 'Rotation saved: ' + n + ' weekly ' + (n === 1 ? 'block' : 'blocks') + '.');
+        }, function () { formHost.textContent = ''; }));
+      });
+
+      d.appendChild(clWeek(v, byId, L, edit));
+      var leg = el('div', 'cl-legend');
+      var used = [];
+      blocks.forEach(function (b) { if (used.indexOf(b.persona) < 0) used.push(b.persona); });
+      used.forEach(function (k) { var s = el('span'); var sw = el('i'); sw.style.background = CL_PCOL[k] || '#8aa48d'; s.appendChild(sw); s.appendChild(document.createTextNode(L.p(k))); leg.appendChild(s); });
+      var ds = el('span'); ds.appendChild(el('i', 'def')); ds.appendChild(document.createTextNode('Default: ' + L.p(v.default.persona))); leg.appendChild(ds);
+      d.appendChild(leg);
+
+      if (blocks.length) {
+        var list = el('div', 'cl-blist');
+        var key = function (b) { return b.date ? '1' + b.date + String(b.start).padStart(4, '0') : '0' + b.days[0] + String(b.start).padStart(4, '0'); };
+        blocks.slice().sort(function (a, b) { return key(a) < key(b) ? -1 : 1; }).forEach(function (b) {
+          var r = el('div', 'cl-blk');
+          r.style.borderLeftColor = CL_PCOL[b.persona] || '#8aa48d';
+          var t = el('div', 't');
+          t.appendChild(el('b', null, (b.label ? b.label + ' · ' : '') + L.p(b.persona)));
+          t.appendChild(el('span', null, clWhenText(b) + ' · ' + (L.v(b.voice) ? L.v(b.voice) + ' voice' : 'its own voice')));
+          r.appendChild(t);
+          var e = el('button', 'ct-btn sm', 'Edit'); e.type = 'button';
+          e.setAttribute('aria-label', 'Edit the block ' + clWhenText(b));
+          e.addEventListener('click', function () { edit(b.id); });
+          r.appendChild(e);
+          var rm = el('button', 'ct-btn sm danger', 'Remove'); rm.type = 'button';
+          rm.setAttribute('aria-label', 'Remove the block ' + clWhenText(b));
+          rm.addEventListener('click', function () {
+            rm.disabled = true;
+            save(blocks.filter(function (x) { return x.id !== b.id; }), 'Block removed.').then(function (ok) { if (!ok) rm.disabled = false; });
+          });
+          r.appendChild(rm);
+          list.appendChild(r);
+        });
+        d.appendChild(list);
+      }
+      return d;
+    }
     var clModalEl = document.getElementById('clModal');
     var clDetailEl = document.getElementById('clDetail');
     var clModalFocus = null;
@@ -20406,6 +21113,7 @@
       clOpenId = id;
       return api('/admin/calls/' + id).then(function (r) {
         if (!r.ok) { toast('Could not open that call.'); return; }
+        if (r.recordings) clSetup = r.recordings;
         clRender(r.call);
         if (clModalEl.hidden) {
           clModalFocus = document.activeElement;
@@ -20423,7 +21131,7 @@
       var left = el('div');
       left.appendChild(el('h3', null, clWho(c)));
       left.appendChild(el('div', 'cl-meta', [c.from_number ? fmtPhone(c.from_number) : 'No caller ID', c.after_hours ? 'after hours' : 'during hours',
-        c.minutes != null ? c.minutes + ' min' : '', c.persona + (c.model ? ' \u00b7 ' + c.model : '')].filter(Boolean).join(' \u00b7 ')));
+        c.minutes != null ? c.minutes + ' min' : '', c.persona + (c.voice ? ' \u00b7 ' + c.voice : '') + (c.model ? ' \u00b7 ' + c.model : '')].filter(Boolean).join(' \u00b7 ')));
       head.appendChild(left);
       var right = el('div', 'cust-badges');
       right.appendChild(badge(CL_OUTCOME[c.outcome] || c.outcome, c.outcome === 'booked' ? '#4aac65' : '#8aa48d'));
@@ -20449,8 +21157,12 @@
       }
       if (c.lead_id) { var lead = el('a', 'ct-btn', 'Open the lead'); lead.href = '#l=' + c.lead_id; acts.appendChild(lead); }
       if (c.appointment_id) { var ap = el('a', 'ct-btn', 'Open the appointment'); ap.href = '#a=' + c.appointment_id; acts.appendChild(ap); }
+      var del = el('button', 'ct-btn danger', 'Delete call'); del.type = 'button';
+      del.addEventListener('click', function () { clDelete([c.id], clClose); });
+      acts.appendChild(del);
       clDetailEl.appendChild(acts);
       if (c.callback_done_at) clDetailEl.appendChild(el('div', 'cl-meta', 'Called back ' + fmt(c.callback_done_at) + (c.callback_done_by ? ' by ' + c.callback_done_by : '')));
+      clDetailEl.appendChild(clRecBox(c));
 
       if (c.summary) { var sb = el('div', 'cl-box'); sb.appendChild(el('h4', null, 'Summary')); sb.appendChild(el('p', 'cl-msg', c.summary)); clDetailEl.appendChild(sb); }
       if ((c.messages || []).length) {
@@ -20483,6 +21195,7 @@
       clDetailEl.appendChild(tb);
     }
     function clClose() {
+      clStopAudio();
       if (clModalEl.hidden) return;
       clModalEl.hidden = true;
       document.body.classList.remove('cu-locked');
