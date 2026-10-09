@@ -472,10 +472,33 @@
     body.cu-locked { overflow:hidden; }
     @media (max-width:600px) { .cu-modal { padding:0; } .cu-modal-box { border-radius:0; min-height:100%; margin:0; } .cu-modal-bar { border-radius:0; } }
     /* Calls (AI receptionist): the transcript reads as a conversation, the caller on the left. */
-    .cl-demo { display:flex; align-items:center; gap:0.6rem; flex-wrap:wrap; }
-    .cl-demo label { color:var(--muted); font-size:0.88rem; }
-    .cl-demo select { min-width:18rem; }
-    @media (max-width:600px) { .cl-demo { width:100%; } .cl-demo select { min-width:0; flex:1 1 auto; } }
+    /* The demo line panel on Marketing > Calls: who answers, and demos queued for prospects. */
+    .cl-line { border:1px solid var(--line); border-radius:14px; background:var(--card); padding:0.9rem 1rem; margin-bottom:1rem; }
+    .cl-line-head { display:flex; align-items:center; justify-content:space-between; gap:0.6rem; flex-wrap:wrap; }
+    .cl-line-title { display:flex; align-items:baseline; gap:0.7rem; flex-wrap:wrap; min-width:0; }
+    .cl-line-title h3 { font-family:"Montserrat",sans-serif; font-size:0.95rem; margin:0; }
+    .cl-line-num { color:var(--gold); font-weight:700; font-size:0.95rem; white-space:nowrap; }
+    .cl-line-note { color:var(--muted); font-size:0.82rem; line-height:1.5; margin:0.45rem 0 0.8rem; }
+    .cl-line-def { display:grid; grid-template-columns:minmax(0,2fr) minmax(0,1fr) minmax(0,1fr) auto; gap:0.6rem; align-items:end; }
+    .cl-line label { display:block; font-size:0.68rem; text-transform:uppercase; letter-spacing:0.05em; color:var(--muted); font-weight:700; margin-bottom:0.3rem; }
+    .cl-line select, .cl-line input, .cl-line textarea { width:100%; box-sizing:border-box; }
+    .cl-line input, .cl-line textarea { padding:0.5rem 0.65rem; border-radius:8px; border:1px solid var(--line); background:var(--bg); color:var(--text); font-family:inherit; font-size:0.86rem; min-height:36px; }
+    .cl-line textarea { min-height:4.5rem; resize:vertical; line-height:1.45; }
+    .cl-line input:focus, .cl-line textarea:focus { outline:none; border-color:var(--green); }
+    .cl-q { border-top:1px solid var(--line); margin-top:0.9rem; padding-top:0.75rem; }
+    .cl-q summary { cursor:pointer; font-family:"Montserrat",sans-serif; font-size:0.72rem; font-weight:700; text-transform:uppercase; letter-spacing:0.04em; color:var(--gold); min-height:32px; display:flex; align-items:center; }
+    .cl-q-grid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:0.6rem 0.7rem; margin-top:0.5rem; }
+    .cl-q-wide { grid-column:1 / -1; }
+    .cl-q-go { display:flex; gap:0.6rem; align-items:center; flex-wrap:wrap; margin-top:0.7rem; }
+    .cl-q-go .hint { color:var(--muted); font-size:0.8rem; }
+    .cl-qlist { margin-top:0.8rem; display:grid; gap:0.5rem; }
+    .cl-qrow { display:flex; align-items:center; gap:0.7rem; border:1px solid var(--line); border-left:3px solid var(--gold); border-radius:10px; background:var(--bg); padding:0.55rem 0.7rem; }
+    .cl-qrow .t { flex:1 1 auto; min-width:0; }
+    .cl-qrow .t b { display:block; font-size:0.88rem; text-transform:none; letter-spacing:0; }
+    .cl-qrow .t span { display:block; color:var(--muted); font-size:0.78rem; line-height:1.45; }
+    .cl-qrow .ct-btn { flex:0 0 auto; }
+    @media (max-width:760px) { .cl-line-def { grid-template-columns:1fr 1fr; } .cl-line-def .ct-btn { grid-column:1 / -1; } .cl-q-grid { grid-template-columns:1fr 1fr; } }
+    @media (max-width:520px) { .cl-line-def, .cl-q-grid { grid-template-columns:1fr; } .cl-q-go .ct-btn { width:100%; } }
     #clDetail { padding:1rem 1.2rem 1.4rem; }
     .cl-head { display:flex; justify-content:space-between; gap:1rem; flex-wrap:wrap; align-items:flex-start; }
     .cl-head h3 { margin:0 0 0.2rem; font-size:1.15rem; }
@@ -20119,22 +20142,7 @@
           pills.appendChild(b);
         });
         bar.appendChild(pills);
-        if (v && v.ok) {
-          var tools = el('div', 'ct-tools cl-demo');
-          var lab = el('label', null, 'Demo number answers as');
-          lab.htmlFor = 'clDemoPick';
-          var pick = ctSelect(v.personas.map(function (p) { return [p.key, p.label]; }), v.demo_persona);
-          pick.id = 'clDemoPick';
-          pick.addEventListener('change', function () {
-            pick.disabled = true;
-            api('/admin/voice', { method: 'PUT', body: { demo_persona: pick.value } }).then(function (x) {
-              pick.disabled = false;
-              toast(x.ok ? 'The demo number now answers as ' + pick.options[pick.selectedIndex].text + '.' : 'Could not switch the demo line.');
-            });
-          });
-          tools.appendChild(lab); tools.appendChild(pick);
-          bar.appendChild(tools);
-        }
+        if (v && v.ok) w.appendChild(clDemoPanel(v));
         w.appendChild(bar);
         if (!r.ok) { w.appendChild(el('div', 'state', 'Could not load the calls.')); return; }
         clRows = r.calls || [];
@@ -20152,6 +20160,141 @@
         }
         draw();
       });
+    }
+    // The demo line: what answers when nothing is queued, and demos set up for a prospect
+    // (tes-portal src/voice.js). A demo queued for a phone number answers only that number;
+    // one with no number answers everybody until it lapses.
+    var CL_SPANS = [[30, '30 minutes'], [60, '1 hour'], [120, '2 hours'], [480, 'Today (8 hours)'], [4320, '3 days']];
+    var CL_QERR = { bad_persona: 'Pick a business type.', bad_voice: 'Pick a voice from the list.', bad_caller: 'Their phone needs ten digits, or leave it blank for anyone.', bad_minutes: 'Pick how long it stays queued.', queue_full: 'Ten demos are queued already. Remove one first.' };
+    function clLeft(ts) {
+      var m = Math.max(0, Math.round((ts - Date.now() / 1000) / 60));
+      if (m < 60) return m + ' min left';
+      if (m < 1440) return Math.floor(m / 60) + ' h ' + (m % 60 ? (m % 60) + ' min ' : '') + 'left';
+      return Math.round(m / 1440) + ' days left';
+    }
+    function clField(label, input, cls) {
+      var d = el('div', cls || null);
+      var l = el('label', null, label);
+      if (!input.id) input.id = 'clf' + Math.random().toString(36).slice(2, 8);
+      l.htmlFor = input.id;
+      d.appendChild(l); d.appendChild(input);
+      return d;
+    }
+    function clInput(type, placeholder, value) {
+      var i = document.createElement(type === 'textarea' ? 'textarea' : 'input');
+      if (type !== 'textarea') i.type = type;
+      if (placeholder) i.placeholder = placeholder;
+      if (value) i.value = value;
+      return i;
+    }
+    function clDemoPanel(v) {
+      var personas = (v.personas || []).map(function (p) { return [p.key, p.label]; });
+      var voices = v.voices || [];
+      var voiceOpts = function (first) { return [['', first]].concat(voices.map(function (x) { return [x.key, x.label]; })); };
+      var def = v.default || { persona: v.demo_persona, voice: '' };
+      var num = v.number || '';
+      var box = el('section', 'cl-line');
+      box.setAttribute('aria-label', 'Demo line');
+      var head = el('div', 'cl-line-head');
+      var title = el('div', 'cl-line-title');
+      title.appendChild(el('h3', null, 'Demo line'));
+      title.appendChild(el('span', 'cl-line-num', num ? fmtPhone(num) : 'Number not set'));
+      head.appendChild(title);
+      if (num && navigator.clipboard) {
+        var copy = el('button', 'ct-btn sm', 'Copy number'); copy.type = 'button';
+        copy.addEventListener('click', function () { navigator.clipboard.writeText(fmtPhone(num)).then(function () { toast('Copied ' + fmtPhone(num) + '.'); }); });
+        head.appendChild(copy);
+      }
+      box.appendChild(head);
+      box.appendChild(el('p', 'cl-line-note', 'When nothing is queued the line answers as the default below. Demo calls end at five minutes and each caller gets four a day; your own phone has no limits.'));
+
+      // The default: who answers anybody not queued.
+      var defRow = el('div', 'cl-line-def');
+      var pPick = ctSelect(personas, def.persona);
+      var vPick = ctSelect(voiceOpts('Its own voice'), def.voice || '');
+      var nIn = clInput('tel', '(216) 238-0505', num ? fmtPhone(num) : '');
+      defRow.appendChild(clField('Answers as', pPick));
+      defRow.appendChild(clField('Voice', vPick));
+      defRow.appendChild(clField('Line number', nIn));
+      var save = el('button', 'ct-btn', 'Save'); save.type = 'button';
+      save.addEventListener('click', function () {
+        save.disabled = true;
+        api('/admin/voice', { method: 'PUT', body: { default: { persona: pPick.value, voice: vPick.value }, number: nIn.value.trim() } }).then(function (x) {
+          save.disabled = false;
+          if (!x.ok) { toast(x.error === 'bad_voice' ? 'Pick a voice from the list.' : 'Could not save the demo line.'); return; }
+          toast('The demo line now answers as ' + pPick.options[pPick.selectedIndex].text + '.');
+          clLoad();
+        });
+      });
+      defRow.appendChild(save);
+      box.appendChild(defRow);
+
+      // Queue a demo for one prospect.
+      var q = document.createElement('details');
+      q.className = 'cl-q';
+      q.appendChild(el('summary', null, 'Queue a demo for a prospect'));
+      var g = el('div', 'cl-q-grid');
+      var qP = ctSelect(personas.filter(function (p) { return p[0] !== 'showcase'; }).concat(personas.filter(function (p) { return p[0] === 'showcase'; })), 'demo-hvac');
+      var qV = ctSelect(voiceOpts('Default voice'), '');
+      var qSpan = ctSelect(CL_SPANS.map(function (x) { return [x[0], x[1]]; }), 120);
+      var qBiz = clInput('text', 'Hill Heating and Air');
+      var qWho = clInput('text', 'Marcus Hill');
+      var qTel = clInput('tel', 'Blank: anyone who calls');
+      var qNotes = clInput('textarea', 'A few facts to use, one per line: services, hours, a price they quote.');
+      qBiz.maxLength = 60; qWho.maxLength = 80; qNotes.maxLength = 1200;
+      g.appendChild(clField('Business type', qP));
+      g.appendChild(clField('Voice', qV));
+      g.appendChild(clField('Queued for', qSpan));
+      g.appendChild(clField('Their business name', qBiz));
+      g.appendChild(clField('Their name', qWho));
+      g.appendChild(clField('Their phone', qTel));
+      g.appendChild(clField('About their business (optional)', qNotes, 'cl-q-wide'));
+      q.appendChild(g);
+      var go = el('div', 'cl-q-go');
+      var qBtn = el('button', 'ct-btn prim', 'Queue it'); qBtn.type = 'button';
+      go.appendChild(qBtn);
+      go.appendChild(el('span', 'hint', num ? 'Then have them call ' + fmtPhone(num) + '.' : 'Then have them call the demo line.'));
+      q.appendChild(go);
+      qBtn.addEventListener('click', function () {
+        qBtn.disabled = true;
+        api('/admin/voice/queue', { method: 'POST', body: {
+          persona: qP.value, voice: qV.value, minutes: Number(qSpan.value), business_name: qBiz.value.trim(),
+          prospect: qWho.value.trim(), caller: qTel.value.trim(), notes: qNotes.value.trim() } }).then(function (x) {
+          qBtn.disabled = false;
+          if (!x.ok) { toast(CL_QERR[x.error] || 'Could not queue the demo.'); return; }
+          var e = x.entry;
+          toast('Queued: ' + (e.business_name || e.label) + (e.caller_pretty ? ' for ' + e.caller_pretty : ' for anyone who calls') + '.');
+          clLoad();
+        });
+      });
+      box.appendChild(q);
+
+      // What is queued now.
+      var list = (v.queue || []);
+      if (list.length) {
+        var ql = el('div', 'cl-qlist');
+        list.forEach(function (e) {
+          var r = el('div', 'cl-qrow');
+          var t = el('div', 't');
+          t.appendChild(el('b', null, (e.business_name || e.label) + (e.prospect && e.prospect !== e.business_name ? ' \u00b7 ' + e.prospect : '')));
+          var vName = (voices.filter(function (x) { return x.key === e.voice; })[0] || {}).label;
+          t.appendChild(el('span', null, [e.business_name ? e.label : '', e.caller_pretty ? 'Answers ' + e.caller_pretty + ' only' : 'Answers anyone who calls', vName ? 'Voice ' + vName : '', clLeft(e.expires_at)].filter(Boolean).join(' \u00b7 ')));
+          r.appendChild(t);
+          var rm = el('button', 'ct-btn sm danger', 'Remove'); rm.type = 'button';
+          rm.setAttribute('aria-label', 'Remove the queued demo for ' + (e.business_name || e.label));
+          rm.addEventListener('click', function () {
+            rm.disabled = true;
+            api('/admin/voice/queue/' + encodeURIComponent(e.id), { method: 'DELETE' }).then(function (x) {
+              if (!x.ok) { rm.disabled = false; toast('Could not remove it.'); return; }
+              clLoad();
+            });
+          });
+          r.appendChild(rm);
+          ql.appendChild(r);
+        });
+        box.appendChild(ql);
+      }
+      return box;
     }
     var clModalEl = document.getElementById('clModal');
     var clDetailEl = document.getElementById('clDetail');
