@@ -471,6 +471,25 @@
     .tk-newnote { margin:-0.4rem 0 0.8rem; }
     body.cu-locked { overflow:hidden; }
     @media (max-width:600px) { .cu-modal { padding:0; } .cu-modal-box { border-radius:0; min-height:100%; margin:0; } .cu-modal-bar { border-radius:0; } }
+    /* Calls (AI receptionist): the transcript reads as a conversation, the caller on the left. */
+    .cl-demo { display:flex; align-items:center; gap:0.6rem; flex-wrap:wrap; }
+    .cl-demo label { color:var(--muted); font-size:0.88rem; }
+    .cl-demo select { min-width:18rem; }
+    @media (max-width:600px) { .cl-demo { width:100%; } .cl-demo select { min-width:0; flex:1 1 auto; } }
+    #clDetail { padding:1rem 1.2rem 1.4rem; }
+    .cl-head { display:flex; justify-content:space-between; gap:1rem; flex-wrap:wrap; align-items:flex-start; }
+    .cl-head h3 { margin:0 0 0.2rem; font-size:1.15rem; }
+    .cl-meta { color:var(--muted); font-size:0.9rem; }
+    .cl-acts { display:flex; gap:0.5rem; flex-wrap:wrap; margin:0.9rem 0 0.2rem; }
+    .cl-box { border:1px solid var(--line); border-radius:12px; padding:0.8rem 1rem; margin-top:0.9rem; background:var(--card); }
+    .cl-box h4 { margin:0 0 0.4rem; font-size:0.78rem; letter-spacing:0.08em; text-transform:uppercase; color:var(--accent); }
+    .cl-msg { margin:0.35rem 0; line-height:1.45; }
+    .cl-tx { display:flex; flex-direction:column; gap:0.45rem; }
+    .cl-line { max-width:88%; padding:0.5rem 0.75rem; border-radius:12px; line-height:1.45; font-size:0.94rem; white-space:pre-wrap; }
+    .cl-line.caller { align-self:flex-start; background:var(--card-2); border:1px solid var(--line); }
+    .cl-line.assistant { align-self:flex-end; background:rgba(74,172,101,0.12); border:1px solid rgba(74,172,101,0.28); }
+    .cl-line b { display:block; font-size:0.72rem; letter-spacing:0.06em; text-transform:uppercase; color:var(--muted); margin-bottom:0.15rem; }
+    @media (max-width:600px) { .cl-line { max-width:100%; } }
 
     .cust { width:100%; text-align:left; border:1px solid var(--line); border-radius:12px; background:var(--card); padding:0.8rem 0.9rem; cursor:pointer; color:inherit; font:inherit; display:block; margin-bottom:0.5rem; }
     .cust:hover { border-color:var(--green); }
@@ -3094,6 +3113,7 @@
       <button type="button" class="mk-mode" id="mkModeSos" role="tab" aria-selected="false">New businesses</button>
       <button type="button" class="mk-mode" id="mkModeCamp" role="tab" aria-selected="false">Campaigns</button>
       <button type="button" class="mk-mode" id="mkModeTrends" role="tab" aria-selected="false">Trends</button>
+      <button type="button" class="mk-mode" id="mkModeCalls" role="tab" aria-selected="false">Calls</button>
     </div>
     <section id="mkSos" hidden aria-label="New Ohio businesses">
       <div class="mks-status">
@@ -3160,6 +3180,16 @@
     </section>
     <section id="mkCamp" hidden aria-label="Campaigns"></section>
     <section id="mkTrends" hidden aria-label="Trends"></section>
+    <section id="mkCalls" hidden aria-label="Phone calls answered by the AI receptionist"></section>
+    <div class="cu-modal" id="clModal" hidden>
+      <div class="cu-modal-box" role="dialog" aria-modal="true" aria-labelledby="clModalTitle">
+        <div class="cu-modal-bar">
+          <span id="clModalTitle">Call</span>
+          <button type="button" class="cu-modal-x" id="clModalX" aria-label="Close the call"><i class="fa-solid fa-xmark" aria-hidden="true"></i></button>
+        </div>
+        <section id="clDetail" aria-live="polite"></section>
+      </div>
+    </div>
     <div class="tiles mk-stages" id="mkStages"></div>
     <div class="ct-bar">
       <div class="filters ct-filters" id="mkFilters">
@@ -14499,6 +14529,17 @@
         });
         wrap.appendChild(sS);
       }
+      if ((a.calls || []).length) {
+        any = true;
+        var sCl = attSection('Calls to return', a.calls.length, true);
+        a.calls.forEach(function (c) {
+          var right = el('div', 'cust-badges');
+          if (c.urgency && c.urgency !== 'routine') right.appendChild(badge(c.urgency, c.urgency === 'emergency' ? '#ef4444' : '#c89830'));
+          right.appendChild(el('b', 'num', ago(Math.floor(Date.now() / 1000) - c.started_at) + ' ago'));
+          sCl.appendChild(row(c.who + (c.after_hours ? ' \u00b7 after hours' : ''), c.summary || (c.outcome === 'hangup' ? 'Hung up without a message' : 'Left a message'), right, function () { openCall(c.id); }));
+        });
+        wrap.appendChild(sCl);
+      }
       if (a.tickets.sla_risk.length) {
         any = true;
         var s1 = attSection('Response due', a.tickets.sla_risk.length, true);
@@ -15164,6 +15205,7 @@
       else if (hash === '#sos') { if (mkMode !== 'sos') mkSetMode('sos', true); suppressHashPush = true; showView('marketing'); suppressHashPush = false; }
       else if (hash === '#campaigns') { if (mkMode !== 'camp') mkSetMode('camp', true); suppressHashPush = true; showView('marketing'); suppressHashPush = false; }
       else if (hash === '#trends') { if (mkMode !== 'trends') mkSetMode('trends', true); suppressHashPush = true; showView('marketing'); suppressHashPush = false; }
+      else if (hash === '#calls') { if (mkMode !== 'calls') mkSetMode('calls', true); suppressHashPush = true; showView('marketing'); suppressHashPush = false; }
       else if (hash === '#inbox') showView('inbox');
       else if (hash === '#keys') showView('keys');
       else if (hash === '#customers') showView('customers');
@@ -20002,7 +20044,8 @@
 
     // Four views share the tab: Leads, New businesses, Campaigns, Trends.
     var MK_MODES = { leads: { btn: 'mkModeLeads', hash: '#marketing' }, sos: { btn: 'mkModeSos', hash: '#sos' },
-      camp: { btn: 'mkModeCamp', hash: '#campaigns' }, trends: { btn: 'mkModeTrends', hash: '#trends' } };
+      camp: { btn: 'mkModeCamp', hash: '#campaigns' }, trends: { btn: 'mkModeTrends', hash: '#trends' },
+      calls: { btn: 'mkModeCalls', hash: '#calls' } };
     function mkSetMode(mode, quiet) {
       if (!MK_MODES[mode]) mode = 'leads';
       mkMode = mode;
@@ -20014,6 +20057,7 @@
       document.getElementById('mkSos').hidden = mode !== 'sos';
       document.getElementById('mkCamp').hidden = mode !== 'camp';
       document.getElementById('mkTrends').hidden = mode !== 'trends';
+      document.getElementById('mkCalls').hidden = mode !== 'calls';
       ['mkStages', 'mkList', 'mkImport'].forEach(function (id) { document.getElementById(id).hidden = !leads; });
       document.querySelector('#viewMarketing > .ct-bar').hidden = !leads;
       if (!leads) { document.getElementById('mkNew').hidden = true; document.getElementById('mkRules').hidden = true; if (mkId) mkClose(); }
@@ -20026,11 +20070,192 @@
       if (mkMode === 'sos') return mksLoad();
       if (mkMode === 'camp') return mcLoad();
       if (mkMode === 'trends') return mtLoad();
+      if (mkMode === 'calls') return clLoad();
       return loadMarketing();
     }
     Object.keys(MK_MODES).forEach(function (k) {
       document.getElementById(MK_MODES[k].btn).addEventListener('click', function () { mkSetMode(k); });
     });
+
+    // ---- calls (the AI receptionist, tes-ai-lab) -----------------------------------
+    // Every call the receptionist answered: the TES line's real calls (filed on a lead)
+    // and demo calls (never filed). "Needs a call back" is what Home counts.
+    var clView = 'open', clRows = [], clOpenId = null;
+    var CL_OUTCOME = { booked: 'Booked', message: 'Message', transferred: 'Transferred', info_only: 'Answered', hangup: 'Hung up', spam: 'Spam' };
+    var CL_URG = { emergency: '#ef4444', urgent: '#c89830', routine: '#8aa48d' };
+    function clWho(c) { return c.caller_name || fmtPhone(c.from_number) || 'Unknown caller'; }
+    var CL_COLS = [
+      { k: 'when', label: 'When', w: 150, text: function (c) { return fmt(c.started_at); }, sortv: function (c) { return c.started_at || 0; } },
+      { k: 'who', label: 'Caller', w: 190, text: clWho,
+        cell: function (c) {
+          var s = el('span', 'cu-name');
+          s.appendChild(el('span', 'cu-t', clWho(c)));
+          if (c.demo) s.appendChild(badge('demo', '#8aa48d'));
+          return s;
+        } },
+      { k: 'outcome', label: 'Outcome', w: 120, text: function (c) { return CL_OUTCOME[c.outcome] || c.outcome; },
+        cell: function (c) {
+          var s = el('span', 'cust-badges');
+          s.appendChild(badge(CL_OUTCOME[c.outcome] || c.outcome, c.outcome === 'booked' ? '#4aac65' : '#8aa48d'));
+          if (c.urgency && c.urgency !== 'routine') s.appendChild(badge(c.urgency, CL_URG[c.urgency]));
+          return s;
+        } },
+      { k: 'hours', label: 'Hours', w: 92, text: function (c) { return c.after_hours ? 'After hours' : 'Open'; } },
+      { k: 'summary', label: 'Summary', w: 300, text: function (c) { return c.summary || ''; } },
+      { k: 'min', label: 'Minutes', w: 80, num: true, text: function (c) { return c.minutes != null ? c.minutes + ' min' : ''; }, sortv: function (c) { return c.minutes || 0; } },
+      { k: 'back', label: 'Called back', w: 110, text: function (c) { return c.callback_done_at ? fmt(c.callback_done_at) : ''; },
+        sortv: function (c) { return c.callback_done_at || 0; } },
+    ];
+    function clLoad() {
+      var w = document.getElementById('mkCalls');
+      return Promise.all([api('/admin/calls?view=' + clView), api('/admin/voice')]).then(function (rs) {
+        var r = rs[0], v = rs[1];
+        w.textContent = '';
+        var bar = el('div', 'ct-bar');
+        var pills = el('div', 'filters ct-filters');
+        [['open', 'Needs a call back'], ['real', 'TES line'], ['demo', 'Demo calls'], ['all', 'All']].forEach(function (p) {
+          var b = el('button', 'fpill' + (clView === p[0] ? ' on' : ''), p[1]); b.type = 'button';
+          b.addEventListener('click', function () { clView = p[0]; clLoad(); });
+          pills.appendChild(b);
+        });
+        bar.appendChild(pills);
+        if (v && v.ok) {
+          var tools = el('div', 'ct-tools cl-demo');
+          var lab = el('label', null, 'Demo number answers as');
+          lab.htmlFor = 'clDemoPick';
+          var pick = ctSelect(v.personas.map(function (p) { return [p.key, p.label]; }), v.demo_persona);
+          pick.id = 'clDemoPick';
+          pick.addEventListener('change', function () {
+            pick.disabled = true;
+            api('/admin/voice', { method: 'PUT', body: { demo_persona: pick.value } }).then(function (x) {
+              pick.disabled = false;
+              toast(x.ok ? 'The demo number now answers as ' + pick.options[pick.selectedIndex].text + '.' : 'Could not switch the demo line.');
+            });
+          });
+          tools.appendChild(lab); tools.appendChild(pick);
+          bar.appendChild(tools);
+        }
+        w.appendChild(bar);
+        if (!r.ok) { w.appendChild(el('div', 'state', 'Could not load the calls.')); return; }
+        clRows = r.calls || [];
+        var list = el('div');
+        w.appendChild(list);
+        function draw() {
+          list.textContent = '';
+          list.appendChild(cuTable('calls', CL_COLS, clRows, {
+            count: clRows.length + (clRows.length === 1 ? ' call' : ' calls'),
+            empty: clView === 'open' ? 'No calls waiting for a call back.' : 'No calls yet. Calls appear here when the AI receptionist answers.',
+            isSel: function (c) { return c.id === clOpenId; },
+            rerender: draw,
+            open: function (c) { clOpen(c.id); },
+          }));
+        }
+        draw();
+      });
+    }
+    var clModalEl = document.getElementById('clModal');
+    var clDetailEl = document.getElementById('clDetail');
+    var clModalFocus = null;
+    function clOpen(id) {
+      clOpenId = id;
+      return api('/admin/calls/' + id).then(function (r) {
+        if (!r.ok) { toast('Could not open that call.'); return; }
+        clRender(r.call);
+        if (clModalEl.hidden) {
+          clModalFocus = document.activeElement;
+          clModalEl.hidden = false;
+          document.body.classList.add('cu-locked');
+          document.getElementById('clModalX').focus();
+        }
+        clModalEl.querySelector('.cu-modal-box').scrollTop = 0;
+      });
+    }
+    function clRender(c) {
+      clDetailEl.textContent = '';
+      document.getElementById('clModalTitle').textContent = (c.demo ? 'Demo call' : 'Call') + ' \u00b7 ' + fmt(c.started_at);
+      var head = el('div', 'cl-head');
+      var left = el('div');
+      left.appendChild(el('h3', null, clWho(c)));
+      left.appendChild(el('div', 'cl-meta', [c.from_number ? fmtPhone(c.from_number) : 'No caller ID', c.after_hours ? 'after hours' : 'during hours',
+        c.minutes != null ? c.minutes + ' min' : '', c.persona + (c.model ? ' \u00b7 ' + c.model : '')].filter(Boolean).join(' \u00b7 ')));
+      head.appendChild(left);
+      var right = el('div', 'cust-badges');
+      right.appendChild(badge(CL_OUTCOME[c.outcome] || c.outcome, c.outcome === 'booked' ? '#4aac65' : '#8aa48d'));
+      if (c.urgency) right.appendChild(badge(c.urgency, CL_URG[c.urgency] || '#8aa48d'));
+      head.appendChild(right);
+      clDetailEl.appendChild(head);
+
+      var acts = el('div', 'cl-acts');
+      if (c.from_number) { var call = el('a', 'ct-btn', 'Call back'); call.href = 'tel:' + c.from_number; acts.appendChild(call); }
+      if (!c.demo) {
+        var done = el('button', 'ct-btn', c.callback_done_at ? 'Not called back yet' : 'Mark called back'); done.type = 'button';
+        done.addEventListener('click', function () {
+          done.disabled = true;
+          api('/admin/calls/' + c.id + '/done', { method: 'POST', body: { done: !c.callback_done_at } }).then(function (x) {
+            done.disabled = false;
+            if (!x.ok) { toast('Could not save that.'); return; }
+            c.callback_done_at = c.callback_done_at ? null : Math.floor(Date.now() / 1000);
+            clRender(c);
+            clLoad();
+          });
+        });
+        acts.appendChild(done);
+      }
+      if (c.lead_id) { var lead = el('a', 'ct-btn', 'Open the lead'); lead.href = '#l=' + c.lead_id; acts.appendChild(lead); }
+      if (c.appointment_id) { var ap = el('a', 'ct-btn', 'Open the appointment'); ap.href = '#a=' + c.appointment_id; acts.appendChild(ap); }
+      clDetailEl.appendChild(acts);
+      if (c.callback_done_at) clDetailEl.appendChild(el('div', 'cl-meta', 'Called back ' + fmt(c.callback_done_at) + (c.callback_done_by ? ' by ' + c.callback_done_by : '')));
+
+      if (c.summary) { var sb = el('div', 'cl-box'); sb.appendChild(el('h4', null, 'Summary')); sb.appendChild(el('p', 'cl-msg', c.summary)); clDetailEl.appendChild(sb); }
+      if ((c.messages || []).length) {
+        var mb = el('div', 'cl-box'); mb.appendChild(el('h4', null, c.messages.length === 1 ? 'Message' : 'Messages'));
+        c.messages.forEach(function (m) {
+          var p = el('p', 'cl-msg');
+          p.appendChild(badge(m.urgency || 'routine', CL_URG[m.urgency] || '#8aa48d'));
+          p.appendChild(document.createTextNode(' ' + (m.name || '') + (m.phone ? ', ' + fmtPhone(m.phone) : '') + ': ' + (m.reason || '') + (m.details ? '. ' + m.details : '') + (m.best_time_to_call ? ' (best time: ' + m.best_time_to_call + ')' : '')));
+          mb.appendChild(p);
+        });
+        clDetailEl.appendChild(mb);
+      }
+      if (c.booking) {
+        var bb = el('div', 'cl-box'); bb.appendChild(el('h4', null, 'Booked'));
+        bb.appendChild(el('p', 'cl-msg', (c.booking.label || 'Appointment') + ', ' + (c.booking.when || fmt(c.booking.starts_at)) + (c.booking.address ? ' at ' + c.booking.address : '')));
+        clDetailEl.appendChild(bb);
+      }
+      var tb = el('div', 'cl-box'); tb.appendChild(el('h4', null, 'Transcript'));
+      var tx = el('div', 'cl-tx');
+      String(c.transcript || '').split('\n').forEach(function (line) {
+        var m = /^(Caller|Assistant): ([\s\S]*)$/.exec(line);
+        if (!m) { if (line.trim() && tx.lastChild) tx.lastChild.appendChild(document.createTextNode('\n' + line)); return; }
+        var d = el('div', 'cl-line ' + (m[1] === 'Caller' ? 'caller' : 'assistant'));
+        d.appendChild(el('b', null, m[1] === 'Caller' ? 'Caller' : 'AI receptionist'));
+        d.appendChild(document.createTextNode(m[2]));
+        tx.appendChild(d);
+      });
+      if (!tx.childNodes.length) tx.appendChild(el('div', 'cl-meta', 'No transcript was captured.'));
+      tb.appendChild(tx);
+      clDetailEl.appendChild(tb);
+    }
+    function clClose() {
+      if (clModalEl.hidden) return;
+      clModalEl.hidden = true;
+      document.body.classList.remove('cu-locked');
+      clDetailEl.textContent = '';
+      clOpenId = null;
+      if (clModalFocus && clModalFocus.focus && document.contains(clModalFocus)) clModalFocus.focus();
+      clModalFocus = null;
+    }
+    document.getElementById('clModalX').addEventListener('click', clClose);
+    clModalEl.addEventListener('click', function (e) { if (e.target === clModalEl) clClose(); });
+    // A link inside the call (lead, appointment) leaves the overlay.
+    clDetailEl.addEventListener('click', function (e) { var a = e.target.closest && e.target.closest('a[href^="#"]'); if (a) clClose(); });
+    document.addEventListener('keydown', function (e) {
+      if (e.key !== 'Escape' || clModalEl.hidden) return;
+      if (typeof cmdk !== 'undefined' && cmdk && !cmdk.hidden) return;
+      clClose();
+    });
+    // From Home: the Calls view, then the call.
+    function openCall(id) { showView('marketing'); if (mkMode !== 'calls') mkSetMode('calls'); clOpen(id); }
 
     // ---- campaigns ---------------------------------------------------------------
     var mcVocab = null, mcId = null, mcList = [];
