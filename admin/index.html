@@ -6192,6 +6192,7 @@
       already_billed: 'This period has already been invoiced.',
       no_fee: 'No fee on this agreement. Tick "include outstanding work" to bill the hours.',
       nothing_to_bill: 'Nothing to bill for this period.', nothing_to_save: 'Nothing changed',
+      invalid_folder_url: 'The shared folder has to be a full https:// link',
     };
 
     // The hours meter: what the customer sees on their plan page, shown here too so a
@@ -6236,6 +6237,12 @@
       }
       if (a.started_at) row('Started', fmtDate(a.started_at));
       if (a.renews_on) row(a.auto_renew ? 'Renews' : 'Ends', a.renews_on + (a.term_months ? ' · ' + a.term_months + ' month term' : ''));
+      if (a.data_folder_url) {
+        // Shown to the customer on their plan and their portal dashboard.
+        var fr = el('div'); fr.appendChild(el('span', 'k', 'Shared folder'));
+        var fl = el('a', null, 'Open'); fl.href = a.data_folder_url; fl.target = '_blank'; fl.rel = 'noopener noreferrer';
+        var fb = el('b'); fb.appendChild(fl); fr.appendChild(fb); terms.appendChild(fr);
+      }
       d.appendChild(terms);
       if (usage) d.appendChild(usageMeter(usage));
 
@@ -6419,6 +6426,9 @@
       var fTerm = fld('Term in months (blank = open-ended)', 'term', 'number', a ? a.term_months : '', '12');
       fTerm.min = '1';
       var fRenew = fld('Renews / ends on', 'renews', 'date', a ? a.renews_on : '');
+      // A shared data folder (a Proton Drive share link, #key and all) the customer opens
+      // from their plan and portal dashboard. Blank = none.
+      var fFolder = fld('Shared data folder link (optional)', 'folder', 'url', a ? a.data_folder_url : '', 'https://drive.proton.me/urls/...');
       box.appendChild(grid);
       syncSchedule();
 
@@ -6446,6 +6456,7 @@
           term_months: fTerm.value.trim() === '' ? null : parseInt(fTerm.value, 10),
           renews_on: fRenew.value || null,
           auto_renew: cbAuto.checked, rollover: cbRoll.checked,
+          data_folder_url: fFolder.value.trim(),
         };
         save.disabled = true;
         var req = a

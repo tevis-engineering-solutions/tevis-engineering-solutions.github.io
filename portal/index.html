@@ -43,6 +43,9 @@
     .qbtn.primary { background:linear-gradient(135deg,#c89830,#e0b840); color:#0d1710; }
     .qbtn.ghost { border:1px solid var(--line); color:#cfe0d2; background:var(--card); }
     .qbtn.ghost:hover { border-color:var(--green); }
+    /* A card with its own buttons (a whole-card link cannot hold two). */
+    .pcard.wide { grid-column:1 / -1; border-color:rgba(200,152,48,0.45); }
+    .pcard .acts { margin-top:auto; display:flex; gap:0.6rem; flex-wrap:wrap; }
   </style>
 </head>
 <body>
@@ -90,6 +93,16 @@
     <div class="pstrip" id="pStrip" hidden></div>
 
     <div class="pgrid">
+      <div class="pcard wide" id="crashCard" hidden>
+        <div class="ic"><i class="fa-solid fa-car-burst"></i></div>
+        <h2>Crash data</h2>
+        <p>Every Ohio crash report we have collected for you. Find any crash by report number, name, street or date, see where and when the leads are, open each report, and export exactly the rows you need.</p>
+        <div class="status" hidden><span class="pill" id="crashPill"></span></div>
+        <div class="acts">
+          <a class="qbtn primary" id="crashOpen" href="/portal-api/crash/dashboard" target="_blank" rel="noopener" hidden><i class="fa-solid fa-chart-column"></i> Open the crash dashboard</a>
+          <a class="qbtn ghost" id="crashFolder" target="_blank" rel="noopener noreferrer" hidden><i class="fa-solid fa-folder-open"></i> Shared data folder</a>
+        </div>
+      </div>
       <a class="pcard" href="messages.html">
         <div class="ic"><i class="fa-solid fa-comments"></i></div>
         <h2>Messages</h2>
@@ -247,6 +260,27 @@
           .catch(function () {});
       }
 
+      // Crash data: the dashboard the weekly routine keeps here, and the shared folder on
+      // the agreement. The card stays hidden for everyone without either.
+      function loadCrash() {
+        return fetch('/portal-api/crash', { credentials: 'same-origin' })
+          .then(function (r) { return r.ok ? r.json() : null; })
+          .then(function (d) {
+            if (!d || !d.ok || (!d.crash && !d.folder_url)) return;
+            document.getElementById('crashCard').hidden = false;
+            if (d.crash) {
+              document.getElementById('crashOpen').hidden = false;
+              var when = new Date(d.crash.updated_at * 1000).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+              pill('crashPill', 'ok', d.crash.reports.toLocaleString('en-US') + ' crash reports · updated ' + when);
+            }
+            if (d.folder_url) {
+              var f = document.getElementById('crashFolder');
+              f.href = d.folder_url; f.hidden = false;
+            }
+          })
+          .catch(function () {});
+      }
+
       function loadProfile() {
         return fetch('/portal-api/profile', { credentials: 'same-origin' })
           .then(function (r) { return r.ok ? r.json() : null; })
@@ -273,6 +307,7 @@
         if (emailEl) emailEl.textContent = email;
         if (avatarEl) avatarEl.textContent = (function (s) { var w = String(s).replace(/@.*/, '').split(/[^A-Za-z]+/).filter(Boolean); return ((w[0] || '').charAt(0) + (w.length > 1 ? w[w.length - 1].charAt(0) : (w[0] || '').charAt(1))).toUpperCase() || 'TE'; })(display);
 
+        loadCrash();
         loadSoftware();
         loadProfile();
         loadEquipment();

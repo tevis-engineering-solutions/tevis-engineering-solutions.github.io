@@ -272,7 +272,17 @@
         if (sub) d.appendChild(el('div', 's', sub));
         t.appendChild(d);
       }
-      term('Included', hrs(p.included_minutes) + ' per ' + p.period_label, p.rollover ? 'Unused time carries into the next ' + p.period_label + '.' : 'Resets at the start of each ' + p.period_label + '.');
+      if (p.data_folder_url) {
+        // The customer's shared data folder (e.g. their crash data), kept current under this agreement.
+        var fd = el('div', 'term');
+        fd.appendChild(el('div', 'k', 'Shared data folder'));
+        var fa = el('a', 'v', 'Open the folder'); fa.href = p.data_folder_url; fa.target = '_blank'; fa.rel = 'noopener noreferrer';
+        fa.style.color = 'var(--gold)';
+        fd.appendChild(fa);
+        fd.appendChild(el('div', 's', 'Everything we deliver to you under this agreement, kept up to date.'));
+        t.appendChild(fd);
+      }
+      if (p.included_minutes) term('Included', hrs(p.included_minutes) + ' per ' + p.period_label, p.rollover ? 'Unused time carries into the next ' + p.period_label + '.' : 'Resets at the start of each ' + p.period_label + '.');
       term('Additional work', money(p.rate_cents) + ' per hour', 'Only what goes beyond your included time.');
       if (p.fee_cents) term('Fee', money(p.fee_cents) + ' per ' + (p.bill_label || p.period_label), p.next_invoice_on ? 'Next invoice ' + longDate(p.next_invoice_on) + '.' : null);
       if (p.sla_response_hours) term('First response', 'within ' + p.sla_response_hours + ' business hours', 'On a Medium ticket. Critical gets a quarter of that, High a half, Low double.');
