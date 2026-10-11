@@ -7148,6 +7148,22 @@
       });
     }
 
+    // Business-line calls the AI receptionist filed on a file (Worker: callsFor). A row
+    // opens the call in the Inbox reader, with its recording and transcript.
+    function callHistoryRows(host, list) {
+      if (!list.length) { host.appendChild(el('div', 'row-sub', 'No calls yet.')); return; }
+      list.forEach(function (c) {
+        var bits = [(c.person_name || clWho(c)) + (c.minutes != null ? ' · ' + c.minutes + ' min' : '') + (c.after_hours ? ' · after hours' : '')];
+        if (c.summary) bits.push(c.summary);
+        if (c.callback_done_at) bits.push('Called back ' + fmtDate(c.callback_done_at));
+        else if (c.outcome === 'message' || c.outcome === 'transferred' || (c.outcome === 'hangup' && c.from_number)) bits.push('Not called back yet');
+        var right = el('div', 'cust-badges');
+        if (c.urgency && c.urgency !== 'routine') right.appendChild(badge(c.urgency, CL_URG[c.urgency] || '#8aa48d'));
+        right.appendChild(badge(CL_OUTCOME[c.outcome] || c.outcome, c.outcome === 'booked' ? '#4aac65' : '#8aa48d'));
+        host.appendChild(row(fmt(c.started_at), bits.join(' · '), right, function () { openInboxCall(c.id); }));
+      });
+    }
+
     // ---- working hours and time off ----
     document.getElementById('calHours').addEventListener('click', function () {
       var f = document.getElementById('calHoursForm');
@@ -9883,6 +9899,9 @@
       if (t) fact('Last ticket', t.ticket_number + ' · ' + (t.subject || 'No subject'), t.status + ' · ' + ago(t.updated_at || t.created_at), function () { showView('tickets'); open(t.id); });
       var msg = (d.activity || []).filter(function (a) { return a.object_type === 'message'; })[0];
       if (msg) fact('Last message', msg.summary, ago(msg.at), function () { openObject('message', msg.object_id, msg.summary); });
+      var lc = (d.calls || [])[0];
+      if (lc) fact('Last call', (CL_OUTCOME[lc.outcome] || lc.outcome) + (lc.summary ? ' · ' + lc.summary : ''),
+        ago(lc.started_at) + (lc.callback_done_at ? ' · called back' : ''), function () { openInboxCall(lc.id); });
       var appts = d.appointments || [];
       var next = appts.filter(function (a) { return a.status === 'booked' && a.starts_at > nowS; })
         .sort(function (a, b) { return a.starts_at - b.starts_at; })[0];
@@ -10121,7 +10140,9 @@
       // The file is tabbed: what needs attention first, then the money, the work,
       // the paperwork, and what you want to remember about them.
       var allInv = c.all_invoices || c.invoices || [];
-      var tabs = paneTabs(wrap, ['Overview', 'Quotes', 'Invoices', 'Tickets', 'Appointments', 'Equipment', 'Files', 'Notes', 'Activity'], 'cust:' + c.account.id);
+      // A Calls tab once the AI receptionist has filed a call on them.
+      var custCalls = c.calls || [];
+      var tabs = paneTabs(wrap, ['Overview', 'Quotes', 'Invoices', 'Tickets', 'Appointments'].concat(custCalls.length ? ['Calls'] : [], ['Equipment', 'Files', 'Notes', 'Activity']), 'cust:' + c.account.id);
       tabs.count('Appointments', (c.appointments || []).length);
       (function () {
         var ap = sec('Appointments (' + (c.appointments || []).length + ')');
@@ -10131,9 +10152,15 @@
         apptHistoryRows(ap, c.appointments || []);
         tabs.pane('Appointments').appendChild(ap);
       })();
+      if (custCalls.length) {
+        tabs.count('Calls', custCalls.length);
+        var cc = sec('Calls to the business line (' + custCalls.length + ')');
+        callHistoryRows(cc, custCalls);
+        tabs.pane('Calls').appendChild(cc);
+      }
       tabs.count('Quotes', (c.quotes || []).length);
       var pOverview = tabs.pane('Overview');
-      pOverview.appendChild(recapCard(tabs, { tickets: c.tickets || [], invoices: allInv, quotes: c.quotes || [], appointments: c.appointments || [], activity: c.activity || [] }));
+      pOverview.appendChild(recapCard(tabs, { tickets: c.tickets || [], invoices: allInv, quotes: c.quotes || [], appointments: c.appointments || [], calls: custCalls, activity: c.activity || [] }));
       var pInv = tabs.pane('Invoices');
       var pTk = tabs.pane('Tickets');
       tabs.count('Invoices', allInv.length);
@@ -10865,7 +10892,7 @@
       // Projects, leads and appointments are kept and detached, not deleted (Worker:
       // detachWork), and equipment goes back to TES (unassignAll), so they are listed
       // apart from what goes.
-      var KEPT = { projects: 1, leads: 1, appointments: 1, inventory: 1 };
+      var KEPT = { projects: 1, leads: 1, appointments: 1, inventory: 1, calls: 1 };
       var counts = [], kept = [];
       Object.keys(pv.counts).forEach(function (k) {
         if (pv.counts[k]) (KEPT[k] ? kept : counts).push(pv.counts[k] + ' ' + k.replace(/_/g, ' '));
@@ -11129,7 +11156,9 @@
       var oInv = extra.invoices || [];
       var oTk = extra.tickets || [];
       var oDocs = extra.documents || [];
-      var otabs = paneTabs(wrap, ['Overview', 'Quotes', 'Invoices', 'Tickets', 'Appointments', 'Equipment', 'Files', 'Notes', 'Activity'], 'org:' + o.id);
+      // Calls from the office phone and from the company's people.
+      var oCalls = extra.calls || [];
+      var otabs = paneTabs(wrap, ['Overview', 'Quotes', 'Invoices', 'Tickets', 'Appointments'].concat(oCalls.length ? ['Calls'] : [], ['Equipment', 'Files', 'Notes', 'Activity']), 'org:' + o.id);
       otabs.count('Appointments', ((extra || {}).appointments || []).length);
       (function () {
         var list = (extra || {}).appointments || [];
@@ -11140,9 +11169,15 @@
         apptHistoryRows(ap, list);
         otabs.pane('Appointments').appendChild(ap);
       })();
+      if (oCalls.length) {
+        otabs.count('Calls', oCalls.length);
+        var oc = sec('Calls to the business line (' + oCalls.length + ')');
+        callHistoryRows(oc, oCalls);
+        otabs.pane('Calls').appendChild(oc);
+      }
       otabs.count('Quotes', (extra.quotes || []).length);
       var oOverview = otabs.pane('Overview');
-      oOverview.appendChild(recapCard(otabs, { tickets: oTk, invoices: oInv, quotes: extra.quotes || [], appointments: extra.appointments || [], activity: extra.activity || [] }));
+      oOverview.appendChild(recapCard(otabs, { tickets: oTk, invoices: oInv, quotes: extra.quotes || [], appointments: extra.appointments || [], calls: oCalls, activity: extra.activity || [] }));
       otabs.count('Invoices', oInv.length);
       otabs.count('Tickets', oTk.length);
       otabs.count('Files', oDocs.length);
@@ -15077,6 +15112,8 @@
       else if (type === 'catalog') { showView('inventory'); storeSetMode('catalog'); }
       else if (type === 'project') { routeHash('#p=' + id, true); }
       else if (type === 'lead') { routeHash('#l=' + id, true); }
+      // A business-line call opens in the Inbox reader; a demo-line one in the Calls view.
+      else if (type === 'call') { if (/^Demo call/.test(summary || '')) openCall(Number(id)); else openInboxCall(Number(id)); }
       else if (type === 'bid') { if (/^\d+$/.test(String(id))) routeHash('#b=' + id, true); else showView('contracting'); }
       else showView('home');
     }
