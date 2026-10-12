@@ -1,6 +1,13 @@
 {
   "_comment": "Bump 'rev' after ANY catalog edit. It cache-busts the other files, which is what makes 'edit JSON, no rebuild' actually work through a CDN. Without it a dealer edits colors.json, sees no change, and files a bug.",
   "schemaVersion": 1,
-  "rev": "2026-07-16c",
-  "files": ["styles", "colors", "options", "pricing", "dealer", "presets"]
+  "rev": "2026-10-12b",
+  "files": [
+    "styles",
+    "colors",
+    "options",
+    "pricing",
+    "dealer",
+    "presets"
+  ]
 }

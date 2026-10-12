@@ -1,14 +1,15 @@
 {
-  "_comment": "Doors, windows, and add-ons. 'requires' rules are checked against the live design and the greyed-out reason shown to the customer is GENERATED from the rule — you do not write the message. 'excludes' MUST be mutual (if A excludes B, B excludes A) or behaviour depends on click order; the validator enforces it. Omit 'styles' to offer an option on every style. Sizes are feet: a 6'8\" door is 6.667.",
+  "_comment": "Doors, windows, and add-ons. 'requires' rules are checked against the live design and the grayed-out reason shown to the customer is GENERATED from the rule — you do not write the message. 'excludes' MUST be mutual (if A excludes B, B excludes A) or behavior depends on click order; the validator enforces it. Omit 'styles' to offer an option on every style. Sizes are feet: a 6'8\" door is 6.667. Doors carry an 'operation': 'swing' (walk-in, finished from the Doors colors), 'rollup' (a steel curtain, which takes the garage door color) or 'sectional' (a garage door, which takes the garage door color and style).",
   "options": [
     {
       "id": "door-single-36",
       "name": "36\" Single Door",
       "kind": "door",
+      "operation": "swing",
       "group": "Doors",
       "blurb": "Standard walk-in door.",
       "price": 285,
-      "opening": { "w": 3, "h": 6.667 },
+      "opening": {"w": 3, "h": 6.667},
       "trim": 0.35,
       "defaultSillY": 0
     },
@@ -16,10 +17,11 @@
       "id": "door-double-60",
       "name": "5' Double Door",
       "kind": "door",
+      "operation": "swing",
       "group": "Doors",
       "blurb": "Gets a mower through.",
       "price": 465,
-      "opening": { "w": 5, "h": 6.667 },
+      "opening": {"w": 5, "h": 6.667},
       "trim": 0.35,
       "defaultSillY": 0
     },
@@ -27,25 +29,90 @@
       "id": "door-double-72",
       "name": "6' Double Door",
       "kind": "door",
+      "operation": "swing",
       "group": "Doors",
       "blurb": "Gets a tractor through.",
       "price": 545,
-      "opening": { "w": 6, "h": 6.667 },
+      "opening": {"w": 6, "h": 6.667},
       "trim": 0.35,
       "defaultSillY": 0
+    },
+    {
+      "id": "door-garage-8x7",
+      "name": "8' × 7' Garage Door",
+      "kind": "door",
+      "operation": "sectional",
+      "group": "Garage & Roll-Up Doors",
+      "blurb": "Steel sectional door on a manual track, for a narrower front. Needs 8ft walls.",
+      "price": 1295,
+      "opening": {"w": 8, "h": 7},
+      "trim": 0.3,
+      "defaultSillY": 0,
+      "requires": [{"field": "wallHeight", "op": ">=", "value": 8}]
+    },
+    {
+      "id": "door-garage-9x7",
+      "name": "9' × 7' Garage Door",
+      "kind": "door",
+      "operation": "sectional",
+      "group": "Garage & Roll-Up Doors",
+      "blurb": "Steel sectional door on a manual track. Fits one car. Needs 8ft walls.",
+      "price": 1495,
+      "opening": {"w": 9, "h": 7},
+      "trim": 0.3,
+      "defaultSillY": 0,
+      "requires": [{"field": "wallHeight", "op": ">=", "value": 8}]
+    },
+    {
+      "id": "door-garage-16x7",
+      "name": "16' × 7' Garage Door",
+      "kind": "door",
+      "operation": "sectional",
+      "group": "Garage & Roll-Up Doors",
+      "blurb": "Double-wide sectional door. Two cars side by side.",
+      "price": 2795,
+      "opening": {"w": 16, "h": 7},
+      "trim": 0.3,
+      "defaultSillY": 0,
+      "styles": ["garage", "garage-steep", "garage-barn", "garage-hip", "garage-modern"],
+      "requires": [{"field": "wallHeight", "op": ">=", "value": 8}]
+    },
+    {
+      "id": "door-garage-power",
+      "name": "8' Power Garage Door",
+      "kind": "door",
+      "operation": "sectional",
+      "group": "Garage & Roll-Up Doors",
+      "blurb": "Insulated sectional door with an opener and two remotes. Needs 8ft walls and electrical.",
+      "price": 2485,
+      "opening": {"w": 8, "h": 7},
+      "trim": 0.3,
+      "defaultSillY": 0,
+      "requires": [{"field": "wallHeight", "op": ">=", "value": 8}],
+      "excludes": ["door-rollup-8"]
     },
     {
       "id": "door-rollup-8",
       "name": "8' Roll-Up Door",
       "kind": "door",
-      "group": "Doors",
-      "blurb": "Manual overhead track. Needs 8ft walls for the drum to clear.",
+      "operation": "rollup",
+      "group": "Garage & Roll-Up Doors",
+      "blurb": "Steel roll-up curtain on a manual drum. Needs 8ft walls for the drum to clear.",
       "price": 1385,
-      "opening": { "w": 8, "h": 7 },
+      "opening": {"w": 8, "h": 7},
       "trim": 0.4,
       "defaultSillY": 0,
-      "requires": [{ "field": "wallHeight", "op": ">=", "value": 8 }],
+      "requires": [{"field": "wallHeight", "op": ">=", "value": 8}],
       "excludes": ["door-garage-power"]
+    },
+    {
+      "id": "opener",
+      "name": "Garage Door Opener",
+      "kind": "addon",
+      "group": "Garage & Roll-Up Doors",
+      "blurb": "Belt-drive opener for one garage door, with two remotes and a wall keypad. Runs off your electrical.",
+      "price": 495,
+      "styles": ["garage", "garage-steep", "garage-barn", "garage-hip", "garage-modern"]
     },
     {
       "id": "window-24x36",
@@ -54,7 +121,7 @@
       "group": "Windows",
       "blurb": "Screened, opens.",
       "price": 155,
-      "opening": { "w": 2, "h": 3 },
+      "opening": {"w": 2, "h": 3},
       "trim": 0.3,
       "_sillNote": "Sill + height + trim has to clear the eave. A 7ft wall gives you 6.75ft of budget (3in of siding is kept above the trim), so 3.0 + 3 + 0.3 = 6.3 fits. The obvious-looking 3.5 does not — it comes to 6.8 and the window then won't go on ANY 7ft wall, on any size.",
       "defaultSillY": 3.0
@@ -66,7 +133,7 @@
       "group": "Windows",
       "blurb": "Screened, opens. More light.",
       "price": 195,
-      "opening": { "w": 2.5, "h": 3.333 },
+      "opening": {"w": 2.5, "h": 3.333},
       "trim": 0.3,
       "defaultSillY": 2.9
     },
@@ -77,39 +144,35 @@
       "group": "Windows",
       "blurb": "High fixed light. Sits above the header, so it needs 8ft walls.",
       "price": 175,
-      "opening": { "w": 4, "h": 1.333 },
+      "opening": {"w": 4, "h": 1.333},
       "trim": 0.25,
       "defaultSillY": 5.75,
-      "requires": [{ "field": "wallHeight", "op": ">=", "value": 8 }]
-    },
-    {
-      "id": "door-garage-power",
-      "name": "8' Power Garage Door",
-      "kind": "door",
-      "group": "Doors",
-      "blurb": "Insulated overhead door with an opener and two remotes. Needs 8ft walls and electrical.",
-      "price": 2485,
-      "opening": { "w": 8, "h": 7 },
-      "trim": 0.4,
-      "defaultSillY": 0,
-      "requires": [{ "field": "wallHeight", "op": ">=", "value": 8 }],
-      "excludes": ["door-rollup-8"]
+      "requires": [{"field": "wallHeight", "op": ">=", "value": 8}]
     },
     {
       "id": "loft-kit",
       "name": "Loft Storage Kit",
       "kind": "addon",
       "group": "Interior",
-      "blurb": "Decked loft in the gambrel overhead. Barn only — nothing else has the headroom.",
+      "blurb": "Decked loft in the gambrel overhead. Barn roofs only — nothing else has the headroom.",
       "price": 385,
-      "styles": ["lofted-barn"]
+      "styles": ["lofted-barn", "garage-barn"]
+    },
+    {
+      "id": "attic-storage",
+      "name": "Attic Storage Trusses",
+      "kind": "addon",
+      "group": "Interior",
+      "blurb": "Storage trusses and a decked attic over the bays. The steep roof is what makes the room for it.",
+      "price": 895,
+      "styles": ["garage-steep"]
     },
     {
       "id": "electrical-basic",
       "name": "Basic Electrical",
       "kind": "addon",
       "group": "Electrical",
-      "blurb": "Two outlets, one LED light, a switch, and a 25ft cord inlet. Hook-up is on you.",
+      "blurb": "Two outlets and one LED shop light on a switch, fed from a 25ft cord inlet outside. Plug it into the house and go.",
       "price": 385,
       "excludes": ["electrical-full"]
     },
@@ -118,7 +181,7 @@
       "name": "Full Electrical Package",
       "kind": "addon",
       "group": "Electrical",
-      "blurb": "60A sub-panel, six outlets, four LED fixtures, exterior GFCI and a light. Ready for an electrician to land a feed.",
+      "blurb": "60A sub-panel, six outlets, four LED shop lights, an outdoor GFCI outlet and lights at the main door. Ready for an electrician to land a feed.",
       "price": 685,
       "excludes": ["electrical-basic"]
     },
@@ -127,16 +190,36 @@
       "name": "Insulation",
       "kind": "addon",
       "group": "Interior",
-      "blurb": "R-13 walls, R-19 ceiling. Worth it the first winter.",
+      "blurb": "R-13 batts between the studs and R-19 between the rafters, cut around every box and split around every wire.",
       "price": 545
     },
     {
-      "id": "interior-walls",
-      "name": "Interior Wall Finish",
+      "id": "interior-osb",
+      "name": "OSB Wall Lining",
       "kind": "addon",
       "group": "Interior",
-      "blurb": "Painted plywood lining over the studs. Add insulation first or it's just a nicer-looking cold box.",
-      "price": 875
+      "blurb": "7/16in OSB screwed to every stud. Hang a shelf or a tool anywhere on the wall.",
+      "price": 695,
+      "excludes": ["interior-drywall", "interior-walls"]
+    },
+    {
+      "id": "interior-drywall",
+      "name": "Drywall",
+      "kind": "addon",
+      "group": "Interior",
+      "blurb": "1/2in drywall hung and screwed on every wall. Seams and screws show, ready for tape and paint.",
+      "price": 845,
+      "excludes": ["interior-osb", "interior-walls"]
+    },
+    {
+      "id": "interior-walls",
+      "name": "Finished & Painted Walls",
+      "kind": "addon",
+      "group": "Interior",
+      "blurb": "Drywall hung, taped, mudded, sanded and painted in the color you pick. Pair it with insulation.",
+      "price": 1495,
+      "paint": "interior",
+      "excludes": ["interior-osb", "interior-drywall"]
     },
     {
       "id": "workbench",
@@ -145,7 +228,7 @@
       "group": "Interior",
       "blurb": "8ft bench, full depth.",
       "price": 245,
-      "requires": [{ "field": "wallHeight", "op": ">=", "value": 7 }]
+      "requires": [{"field": "wallHeight", "op": ">=", "value": 7}]
     },
     {
       "id": "shelving-kit",
@@ -160,8 +243,9 @@
       "name": "Wooden Ramp",
       "kind": "addon",
       "group": "Exterior",
-      "blurb": "Sized to your door.",
-      "price": 195
+      "blurb": "Sized to your door, for getting a mower in. Sheds only — a garage sits on its slab.",
+      "price": 195,
+      "styles": ["utility", "cottage", "lofted-barn", "hip-shed", "lean-to"]
     },
     {
       "id": "vent-ridge",
@@ -170,16 +254,18 @@
       "group": "Exterior",
       "blurb": "Continuous vent along the peak.",
       "price": 85,
-      "excludes": ["cupola"]
+      "excludes": ["cupola"],
+      "styles": ["utility", "cottage", "lofted-barn", "hip-shed", "garage", "garage-steep", "garage-barn", "garage-hip"]
     },
     {
       "id": "cupola",
       "name": "Cupola",
       "kind": "addon",
       "group": "Exterior",
-      "blurb": "Sits on the peak. Takes the ridge, so it can't share with a ridge vent.",
+      "blurb": "Sits on the peak. Takes the ridge, so it can’t share with a ridge vent.",
       "price": 395,
-      "excludes": ["vent-ridge"]
+      "excludes": ["vent-ridge"],
+      "styles": ["utility", "cottage", "lofted-barn", "hip-shed", "garage", "garage-steep", "garage-barn", "garage-hip"]
     },
     {
       "id": "floor-upgrade",
@@ -188,6 +274,15 @@
       "group": "Structure",
       "blurb": "Pressure-treated joists and decking.",
       "price": 365
+    },
+    {
+      "id": "heavy-floor",
+      "name": "Heavy-Duty Floor",
+      "kind": "addon",
+      "group": "Structure",
+      "blurb": "2×8 joists at 12in centers and 3/4in decking, rated for a car. Skip it if you’re building on a slab.",
+      "price": 1295,
+      "styles": ["garage", "garage-steep", "garage-barn", "garage-hip", "garage-modern"]
     },
     {
       "id": "anchor-kit",

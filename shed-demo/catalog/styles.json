@@ -1,47 +1,77 @@
 {
-  "_comment": "Building styles. 'kind' selects a geometry builder in code (gable | gambrel | leanto) — you can tune 'params' freely, but a NEW kind needs code. Pitches are rise/run: a 4/12 roof is 0.3333. Sizes are the ones you actually sell; every size here must have a row in pricing.json or the validator will tell you.",
+  "_comment": "Building styles. 'category' groups the picker (Sheds, Garages) and 'roof' names the roof shape; styles in different categories that share a 'roof' are the same shape at a different scale, and switching category keeps the roof. 'kind' selects a geometry builder in code (gable | gambrel | leanto | hip) — you can tune 'params' freely, but a NEW kind needs code. Pitches are rise/run: a 4/12 roof is 0.3333. Sizes are the ones you actually sell; every size here must have a row in pricing.json or the validator will tell you. A size may carry a 'label' (\"1-car\"), which groups the size list. 'starters' are the doors a style arrives with, per size label (\"*\" for any); 'option' may be a list, in order of preference, and the first that fits wins.",
   "styles": [
     {
       "id": "utility",
       "name": "Utility",
+      "category": "Sheds",
+      "roof": "Gable",
       "kind": "gable",
       "blurb": "The workhorse. Straight walls, simple gable roof, maximum floor for the money.",
       "wallHeights": [7, 8],
       "sizes": [
-        { "w": 8, "l": 8 },
-        { "w": 8, "l": 10 },
-        { "w": 8, "l": 12 },
-        { "w": 10, "l": 12 },
-        { "w": 10, "l": 16 },
-        { "w": 10, "l": 20 },
-        { "w": 12, "l": 16 },
-        { "w": 12, "l": 20 },
-        { "w": 12, "l": 24 }
+        {"w": 8, "l": 8},
+        {"w": 8, "l": 10},
+        {"w": 8, "l": 12},
+        {"w": 10, "l": 12},
+        {"w": 10, "l": 16},
+        {"w": 10, "l": 20},
+        {"w": 12, "l": 16},
+        {"w": 12, "l": 20},
+        {"w": 12, "l": 24}
       ],
-      "params": {
-        "pitch": 0.3333,
-        "overhangEave": 0.75,
-        "overhangRake": 0.5,
-        "roofThickness": 0.5
-      }
+      "starters": {
+        "*": [{"option": ["door-double-60", "door-single-36"], "wall": "front", "at": 0.5}]
+      },
+      "params": {"pitch": 0.3333, "overhangEave": 0.75, "overhangRake": 0.5, "roofThickness": 0.5}
+    },
+    {
+      "id": "cottage",
+      "name": "Cottage",
+      "category": "Sheds",
+      "roof": "Steep Gable",
+      "kind": "gable",
+      "blurb": "A steep 9/12 roof, like a small house. The one that looks best in a backyard.",
+      "wallHeights": [7, 8],
+      "sizes": [
+        {"w": 8, "l": 8},
+        {"w": 8, "l": 10},
+        {"w": 8, "l": 12},
+        {"w": 10, "l": 12},
+        {"w": 10, "l": 16},
+        {"w": 12, "l": 16},
+        {"w": 12, "l": 20}
+      ],
+      "starters": {
+        "*": [
+          {"option": "door-single-36", "wall": "front", "at": 0.5},
+          {"option": "window-24x36", "wall": "right", "at": 0.5}
+        ]
+      },
+      "params": {"pitch": 0.75, "overhangEave": 0.75, "overhangRake": 0.5, "roofThickness": 0.5}
     },
     {
       "id": "lofted-barn",
       "name": "Lofted Barn",
+      "category": "Sheds",
+      "roof": "Barn",
       "kind": "gambrel",
       "blurb": "The classic barn silhouette. The gambrel roof buys you real loft storage overhead.",
       "wallHeights": [7, 8],
       "sizes": [
-        { "w": 10, "l": 12 },
-        { "w": 10, "l": 16 },
-        { "w": 10, "l": 20 },
-        { "w": 12, "l": 16 },
-        { "w": 12, "l": 20 },
-        { "w": 12, "l": 24 },
-        { "w": 12, "l": 32 },
-        { "w": 14, "l": 24 },
-        { "w": 14, "l": 32 }
+        {"w": 10, "l": 12},
+        {"w": 10, "l": 16},
+        {"w": 10, "l": 20},
+        {"w": 12, "l": 16},
+        {"w": 12, "l": 20},
+        {"w": 12, "l": 24},
+        {"w": 12, "l": 32},
+        {"w": 14, "l": 24},
+        {"w": 14, "l": 32}
       ],
+      "starters": {
+        "*": [{"option": ["door-double-60", "door-single-36"], "wall": "front", "at": 0.5}]
+      },
       "params": {
         "breakFrac": 0.62,
         "lowerPitch": 1.6,
@@ -52,24 +82,205 @@
       }
     },
     {
+      "id": "hip-shed",
+      "name": "Hip Roof",
+      "category": "Sheds",
+      "roof": "Hip",
+      "kind": "hip",
+      "blurb": "Slopes down on all four sides, so it matches a hip-roof house and has no gable ends. Built with 8ft walls so the doors clear the eave.",
+      "wallHeights": [8],
+      "sizes": [
+        {"w": 8, "l": 8},
+        {"w": 8, "l": 10},
+        {"w": 8, "l": 12},
+        {"w": 10, "l": 12},
+        {"w": 10, "l": 16},
+        {"w": 12, "l": 16},
+        {"w": 12, "l": 20}
+      ],
+      "starters": {
+        "*": [{"option": ["door-double-60", "door-single-36"], "wall": "front", "at": 0.5}]
+      },
+      "params": {"pitch": 0.5, "overhangEave": 0.75, "overhangRake": 0.75, "roofThickness": 0.5}
+    },
+    {
       "id": "lean-to",
       "name": "Lean-To",
+      "category": "Sheds",
+      "roof": "Single Slope",
       "kind": "leanto",
       "blurb": "Single slope, low profile. Sits tight against a fence line or an existing building.",
       "wallHeights": [7],
+      "sizes": [{"w": 8, "l": 8}, {"w": 8, "l": 10}, {"w": 8, "l": 12}, {"w": 10, "l": 12}, {"w": 10, "l": 16}],
+      "starters": {"*": [{"option": "door-single-36", "wall": "front", "at": 0.5}]},
+      "params": {"slope": 0.25, "overhangEave": 0.75, "overhangRake": 0.5, "roofThickness": 0.5}
+    },
+    {
+      "id": "garage",
+      "name": "Garage",
+      "category": "Garages",
+      "roof": "Gable",
+      "kind": "gable",
+      "blurb": "Straight walls and a 5/12 gable roof. The everyday detached garage, in one-car and two-car sizes.",
+      "wallHeights": [8, 9, 10],
+      "defaultSize": {"w": 24, "l": 24},
       "sizes": [
-        { "w": 8, "l": 8 },
-        { "w": 8, "l": 10 },
-        { "w": 8, "l": 12 },
-        { "w": 10, "l": 12 },
-        { "w": 10, "l": 16 }
+        {"w": 12, "l": 20, "label": "1-car"},
+        {"w": 12, "l": 24, "label": "1-car"},
+        {"w": 14, "l": 24, "label": "1-car"},
+        {"w": 14, "l": 28, "label": "1-car"},
+        {"w": 20, "l": 20, "label": "2-car"},
+        {"w": 20, "l": 24, "label": "2-car"},
+        {"w": 22, "l": 24, "label": "2-car"},
+        {"w": 24, "l": 24, "label": "2-car"},
+        {"w": 24, "l": 30, "label": "2-car"}
       ],
+      "starters": {
+        "1-car": [
+          {"option": ["door-garage-9x7", "door-garage-8x7"], "wall": "front", "at": 0.5},
+          {"option": "door-single-36", "wall": "right", "at": 0.22}
+        ],
+        "2-car": [
+          {"option": "door-garage-16x7", "wall": "front", "at": 0.5},
+          {"option": "door-single-36", "wall": "right", "at": 0.2}
+        ]
+      },
+      "params": {"pitch": 0.4167, "overhangEave": 1.0, "overhangRake": 0.75, "roofThickness": 0.55}
+    },
+    {
+      "id": "garage-steep",
+      "name": "Steep Gable Garage",
+      "category": "Garages",
+      "roof": "Steep Gable",
+      "kind": "gable",
+      "blurb": "An 8/12 roof that looks like the house and leaves real attic room over the bays.",
+      "wallHeights": [8, 9, 10],
+      "defaultSize": {"w": 24, "l": 24},
+      "sizes": [
+        {"w": 12, "l": 20, "label": "1-car"},
+        {"w": 12, "l": 24, "label": "1-car"},
+        {"w": 14, "l": 24, "label": "1-car"},
+        {"w": 14, "l": 28, "label": "1-car"},
+        {"w": 20, "l": 20, "label": "2-car"},
+        {"w": 20, "l": 24, "label": "2-car"},
+        {"w": 22, "l": 24, "label": "2-car"},
+        {"w": 24, "l": 24, "label": "2-car"},
+        {"w": 24, "l": 30, "label": "2-car"}
+      ],
+      "starters": {
+        "1-car": [
+          {"option": ["door-garage-9x7", "door-garage-8x7"], "wall": "front", "at": 0.5},
+          {"option": "door-single-36", "wall": "right", "at": 0.22}
+        ],
+        "2-car": [
+          {"option": "door-garage-16x7", "wall": "front", "at": 0.5},
+          {"option": "door-single-36", "wall": "right", "at": 0.2}
+        ]
+      },
+      "params": {"pitch": 0.6667, "overhangEave": 1.0, "overhangRake": 0.75, "roofThickness": 0.55}
+    },
+    {
+      "id": "garage-barn",
+      "name": "Barn Garage",
+      "category": "Garages",
+      "roof": "Barn",
+      "kind": "gambrel",
+      "blurb": "The gambrel barn roof on a garage: a full storage loft over the cars.",
+      "wallHeights": [8, 9, 10],
+      "defaultSize": {"w": 24, "l": 24},
+      "sizes": [
+        {"w": 12, "l": 20, "label": "1-car"},
+        {"w": 12, "l": 24, "label": "1-car"},
+        {"w": 14, "l": 24, "label": "1-car"},
+        {"w": 14, "l": 28, "label": "1-car"},
+        {"w": 20, "l": 20, "label": "2-car"},
+        {"w": 20, "l": 24, "label": "2-car"},
+        {"w": 22, "l": 24, "label": "2-car"},
+        {"w": 24, "l": 24, "label": "2-car"},
+        {"w": 24, "l": 30, "label": "2-car"}
+      ],
+      "starters": {
+        "1-car": [
+          {"option": ["door-garage-9x7", "door-garage-8x7"], "wall": "front", "at": 0.5},
+          {"option": "door-single-36", "wall": "right", "at": 0.22}
+        ],
+        "2-car": [
+          {"option": "door-garage-16x7", "wall": "front", "at": 0.5},
+          {"option": "door-single-36", "wall": "right", "at": 0.2}
+        ]
+      },
       "params": {
-        "slope": 0.25,
-        "overhangEave": 0.75,
-        "overhangRake": 0.5,
-        "roofThickness": 0.5
+        "breakFrac": 0.55,
+        "lowerPitch": 1.45,
+        "upperPitch": 0.45,
+        "overhangEave": 1.0,
+        "overhangRake": 0.75,
+        "roofThickness": 0.55
       }
+    },
+    {
+      "id": "garage-hip",
+      "name": "Hip Roof Garage",
+      "category": "Garages",
+      "roof": "Hip",
+      "kind": "hip",
+      "blurb": "Slopes down on all four sides, like most houses. No gable ends, and it sits low on the lot.",
+      "wallHeights": [8, 9, 10],
+      "defaultSize": {"w": 24, "l": 24},
+      "sizes": [
+        {"w": 12, "l": 20, "label": "1-car"},
+        {"w": 12, "l": 24, "label": "1-car"},
+        {"w": 14, "l": 24, "label": "1-car"},
+        {"w": 14, "l": 28, "label": "1-car"},
+        {"w": 20, "l": 20, "label": "2-car"},
+        {"w": 20, "l": 24, "label": "2-car"},
+        {"w": 22, "l": 24, "label": "2-car"},
+        {"w": 24, "l": 24, "label": "2-car"},
+        {"w": 24, "l": 30, "label": "2-car"}
+      ],
+      "starters": {
+        "1-car": [
+          {"option": ["door-garage-9x7", "door-garage-8x7"], "wall": "front", "at": 0.5},
+          {"option": "door-single-36", "wall": "right", "at": 0.22}
+        ],
+        "2-car": [
+          {"option": "door-garage-16x7", "wall": "front", "at": 0.5},
+          {"option": "door-single-36", "wall": "right", "at": 0.2}
+        ]
+      },
+      "params": {"pitch": 0.4167, "overhangEave": 1.0, "overhangRake": 1.0, "roofThickness": 0.55}
+    },
+    {
+      "id": "garage-modern",
+      "name": "Modern Garage",
+      "category": "Garages",
+      "roof": "Single Slope",
+      "kind": "leanto",
+      "blurb": "One clean 2/12 slope, high on one side. A modern look that pairs with a newer house.",
+      "wallHeights": [8, 9, 10],
+      "defaultSize": {"w": 24, "l": 24},
+      "sizes": [
+        {"w": 12, "l": 20, "label": "1-car"},
+        {"w": 12, "l": 24, "label": "1-car"},
+        {"w": 14, "l": 24, "label": "1-car"},
+        {"w": 14, "l": 28, "label": "1-car"},
+        {"w": 20, "l": 20, "label": "2-car"},
+        {"w": 20, "l": 24, "label": "2-car"},
+        {"w": 22, "l": 24, "label": "2-car"},
+        {"w": 24, "l": 24, "label": "2-car"},
+        {"w": 24, "l": 30, "label": "2-car"}
+      ],
+      "starters": {
+        "1-car": [
+          {"option": ["door-garage-9x7", "door-garage-8x7"], "wall": "front", "at": 0.5},
+          {"option": "door-single-36", "wall": "right", "at": 0.22}
+        ],
+        "2-car": [
+          {"option": "door-garage-16x7", "wall": "front", "at": 0.5},
+          {"option": "door-single-36", "wall": "right", "at": 0.2}
+        ]
+      },
+      "params": {"slope": 0.1667, "overhangEave": 1.0, "overhangRake": 0.75, "roofThickness": 0.55}
     }
   ]
 }

@@ -12,6 +12,7 @@
       "12x20": 5295,
       "12x24": 6095
     },
+    "cottage": {"8x8": 2495, "8x10": 2795, "8x12": 3095, "10x12": 3695, "10x16": 4395, "12x16": 4995, "12x20": 5895},
     "lofted-barn": {
       "10x12": 4195,
       "10x16": 5095,
@@ -23,23 +24,87 @@
       "14x24": 8695,
       "14x32": 10995
     },
-    "lean-to": {
-      "8x8": 1895,
-      "8x10": 2150,
-      "8x12": 2395,
-      "10x12": 2850,
-      "10x16": 3450
+    "hip-shed": {"8x8": 2595, "8x10": 2895, "8x12": 3195, "10x12": 3795, "10x16": 4595, "12x16": 5195, "12x20": 6095},
+    "lean-to": {"8x8": 1895, "8x10": 2150, "8x12": 2395, "10x12": 2850, "10x16": 3450},
+    "garage": {
+      "12x20": 9995,
+      "12x24": 11495,
+      "14x24": 12995,
+      "14x28": 14495,
+      "20x20": 16495,
+      "20x24": 18995,
+      "22x24": 20495,
+      "24x24": 21995,
+      "24x30": 25995
+    },
+    "garage-steep": {
+      "12x20": 10595,
+      "12x24": 12195,
+      "14x24": 13795,
+      "14x28": 15395,
+      "20x20": 17495,
+      "20x24": 20195,
+      "22x24": 21795,
+      "24x24": 23395,
+      "24x30": 27595
+    },
+    "garage-barn": {
+      "12x20": 11195,
+      "12x24": 12895,
+      "14x24": 14595,
+      "14x28": 16295,
+      "20x20": 18495,
+      "20x24": 21295,
+      "22x24": 22995,
+      "24x24": 24695,
+      "24x30": 29195
+    },
+    "garage-hip": {
+      "12x20": 10995,
+      "12x24": 12695,
+      "14x24": 14295,
+      "14x28": 15995,
+      "20x20": 18195,
+      "20x24": 20895,
+      "22x24": 22595,
+      "24x24": 24195,
+      "24x30": 28595
+    },
+    "garage-modern": {
+      "12x20": 10395,
+      "12x24": 11995,
+      "14x24": 13595,
+      "14x28": 15095,
+      "20x20": 17195,
+      "20x24": 19795,
+      "22x24": 21395,
+      "24x24": 22895,
+      "24x30": 27095
     }
   },
   "fallbackPerSqFt": {
     "utility": 26,
+    "cottage": 30,
     "lofted-barn": 34,
-    "lean-to": 22
+    "hip-shed": 31,
+    "lean-to": 22,
+    "garage": 38,
+    "garage-steep": 40,
+    "garage-barn": 43,
+    "garage-hip": 42,
+    "garage-modern": 39
   },
   "wallHeightAdder": {
-    "utility": { "7": 0, "8": 385 },
-    "lofted-barn": { "7": 0, "8": 425 },
-    "lean-to": { "7": 0 }
+    "utility": {"7": 0, "8": 385},
+    "cottage": {"7": 0, "8": 395},
+    "lofted-barn": {"7": 0, "8": 425},
+    "hip-shed": {"8": 0},
+    "lean-to": {"7": 0},
+    "garage": {"8": 0, "9": 695, "10": 1295},
+    "garage-steep": {"8": 0, "9": 695, "10": 1295},
+    "garage-barn": {"8": 0, "9": 695, "10": 1295},
+    "garage-hip": {"8": 0, "9": 695, "10": 1295},
+    "garage-modern": {"8": 0, "9": 695, "10": 1295}
   },
   "regions": {
     "default": 1.0,
@@ -59,11 +124,55 @@
   },
   "rto": {
     "_comment": "Rent-to-own is how most of this market actually buys. 'factor' is the monthly payment as a fraction of the cash price.",
-    "terms": [
-      { "months": 24, "factor": 0.0545 },
-      { "months": 36, "factor": 0.0398 },
-      { "months": 48, "factor": 0.0327 }
+    "terms": [{"months": 24, "factor": 0.0545}, {"months": 36, "factor": 0.0398}, {"months": 48, "factor": 0.0327}]
+  },
+  "fees": {
+    "_comment": "Charges that are not the building: delivery, permits, site prep. Each is a flat dollar amount, or dollars per square foot of the footprint grown by padFt on every side (with a min). zip3 sets a different amount for a 3-digit ZIP prefix; anything not listed pays amount. charge is \"always\" (on every quote) or \"optional\" (a service the customer ticks). appliesTo limits a fee to kinds of building (\"Sheds\", \"Garages\"); leave it out for all. inRentToOwn: false means the fee is due at delivery and stays out of the monthly payment. Fees are added after the regional adjustment, because they are already priced for the place.",
+    "list": [
+      {
+        "id": "delivery",
+        "name": "Delivery and setup",
+        "blurb": "Delivered on our truck and set level on your prepared site. Free for ZIPs starting 440 and 441.",
+        "basis": "flat",
+        "amount": 250,
+        "zip3": {"440": 0, "441": 0, "442": 95, "443": 125, "444": 150, "445": 150, "446": 175, "447": 195},
+        "charge": "always",
+        "inRentToOwn": true
+      },
+      {
+        "id": "permit",
+        "name": "Permit handling",
+        "blurb": "We file the zoning permit and schedule the inspection. The city's own fee is billed at cost.",
+        "basis": "flat",
+        "amount": 175,
+        "charge": "optional",
+        "inRentToOwn": false
+      },
+      {
+        "id": "gravel-pad",
+        "name": "Gravel pad and site prep",
+        "blurb": "We level the site and lay a 4-inch compacted gravel pad, a foot wider than the building on every side.",
+        "basis": "perSqFt",
+        "amount": 4.25,
+        "padFt": 1,
+        "min": 395,
+        "charge": "optional",
+        "appliesTo": ["Sheds"],
+        "inRentToOwn": false
+      },
+      {
+        "id": "concrete-slab",
+        "name": "Concrete slab",
+        "blurb": "A 4-inch reinforced slab with a thickened edge, poured and cured before the build.",
+        "basis": "perSqFt",
+        "amount": 7.5,
+        "padFt": 0.5,
+        "min": 2500,
+        "charge": "optional",
+        "appliesTo": ["Garages"],
+        "inRentToOwn": false
+      }
     ]
   },
-  "disclaimer": "Estimate only. Final price is confirmed on your site quote and depends on delivery distance, site prep, and local permitting. Prices do not include tax."
+  "disclaimer": "Estimate only. The final price is confirmed when we visit your site. City permit fees are billed at cost. Prices do not include tax."
 }

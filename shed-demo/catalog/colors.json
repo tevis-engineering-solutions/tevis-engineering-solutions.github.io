@@ -1,5 +1,5 @@
 {
-  "_comment": "Materials and the colours each one comes in. These are PRODUCT choices a customer makes — not the site's brand colours (those live in src/brand.ts and dealer.json's 'theme'). Changing your brand green must never move a customer's siding options. Each material lists the swatch ids it's actually available in, because a vinyl range is not a painted range — the UI shows only that material's colours, and the validator checks every id resolves. 'finish' drives the 3D: metal wants metalness, asphalt does not. 'price' is a flat upgrade in dollars.",
+  "_comment": "Materials and the colors each one comes in. These are PRODUCT choices a customer makes — not the site's brand colors (those live in src/brand.ts and dealer.json's 'theme'). Changing your brand green must never move a customer's siding options. Each material lists the swatch ids it's actually available in, because a vinyl range is not a painted range — the UI shows only that material's colors, and the validator checks every id resolves. 'finish' drives the 3D: metal wants metalness, asphalt does not. 'price' is a flat upgrade in dollars — per building for siding and roof, per door for doors and garage doors.",
   "siding": {
     "materials": [
       {
@@ -7,23 +7,45 @@
         "name": "T1-11 Plywood",
         "blurb": "Grooved plywood panel. The standard, and what most sheds ship with.",
         "price": 0,
-        "finish": { "roughness": 0.88, "metalness": 0 },
-        "colors": ["barn-red", "white", "buckskin", "clay", "gray", "navajo", "hunter-green", "sagebrush", "driftwood", "black"]
+        "finish": {"roughness": 0.88, "metalness": 0},
+        "colors": [
+          "barn-red",
+          "white",
+          "buckskin",
+          "clay",
+          "gray",
+          "navajo",
+          "hunter-green",
+          "sagebrush",
+          "driftwood",
+          "black"
+        ]
       },
       {
         "id": "lp-smartside",
         "name": "LP SmartSide",
         "blurb": "Engineered wood. Holds paint longer and takes a knock better.",
         "price": 685,
-        "finish": { "roughness": 0.82, "metalness": 0 },
-        "colors": ["barn-red", "white", "buckskin", "clay", "gray", "navajo", "hunter-green", "sagebrush", "driftwood", "black"]
+        "finish": {"roughness": 0.82, "metalness": 0},
+        "colors": [
+          "barn-red",
+          "white",
+          "buckskin",
+          "clay",
+          "gray",
+          "navajo",
+          "hunter-green",
+          "sagebrush",
+          "driftwood",
+          "black"
+        ]
       },
       {
         "id": "vinyl",
         "name": "Vinyl Lap",
-        "blurb": "Never needs painting. Fewer colours, no upkeep.",
+        "blurb": "Never needs painting. Fewer colors, no upkeep.",
         "price": 945,
-        "finish": { "roughness": 0.6, "metalness": 0 },
+        "finish": {"roughness": 0.6, "metalness": 0},
         "colors": ["white", "clay", "gray", "navajo", "sagebrush"]
       },
       {
@@ -31,32 +53,32 @@
         "name": "Ribbed Metal",
         "blurb": "Ag-panel steel. Toughest option, and it reads as a barn.",
         "price": 875,
-        "finish": { "roughness": 0.42, "metalness": 0.55 },
+        "finish": {"roughness": 0.42, "metalness": 0.55},
         "colors": ["barn-red", "white", "gray", "hunter-green", "black", "galvalume"]
       }
     ],
     "swatches": [
-      { "id": "barn-red", "name": "Barn Red", "hex": "#7b2c2c" },
-      { "id": "white", "name": "White", "hex": "#eceae3" },
-      { "id": "buckskin", "name": "Buckskin", "hex": "#b99a6b" },
-      { "id": "clay", "name": "Clay", "hex": "#a8968a" },
-      { "id": "gray", "name": "Pewter Gray", "hex": "#7d8489" },
-      { "id": "navajo", "name": "Navajo White", "hex": "#dfd3b8" },
-      { "id": "hunter-green", "name": "Hunter Green", "hex": "#37503c" },
-      { "id": "sagebrush", "name": "Sagebrush", "hex": "#8b9177" },
-      { "id": "driftwood", "name": "Driftwood", "hex": "#9a9186" },
-      { "id": "black", "name": "Onyx Black", "hex": "#2f3133" },
-      { "id": "galvalume", "name": "Galvalume", "hex": "#b4b8ba" }
+      {"id": "barn-red", "name": "Barn Red", "hex": "#7b2c2c"},
+      {"id": "white", "name": "White", "hex": "#eceae3"},
+      {"id": "buckskin", "name": "Buckskin", "hex": "#b99a6b"},
+      {"id": "clay", "name": "Clay", "hex": "#a8968a"},
+      {"id": "gray", "name": "Pewter Gray", "hex": "#7d8489"},
+      {"id": "navajo", "name": "Navajo White", "hex": "#dfd3b8"},
+      {"id": "hunter-green", "name": "Hunter Green", "hex": "#37503c"},
+      {"id": "sagebrush", "name": "Sagebrush", "hex": "#8b9177"},
+      {"id": "driftwood", "name": "Driftwood", "hex": "#9a9186"},
+      {"id": "black", "name": "Onyx Black", "hex": "#2f3133"},
+      {"id": "galvalume", "name": "Galvalume", "hex": "#b4b8ba"}
     ]
   },
   "trim": {
     "swatches": [
-      { "id": "trim-white", "name": "White", "hex": "#f2f0ea" },
-      { "id": "trim-barn-red", "name": "Barn Red", "hex": "#7b2c2c" },
-      { "id": "trim-black", "name": "Black", "hex": "#2b2d2f" },
-      { "id": "trim-hunter", "name": "Hunter Green", "hex": "#2f4535" },
-      { "id": "trim-clay", "name": "Clay", "hex": "#a8968a" },
-      { "id": "trim-buckskin", "name": "Buckskin", "hex": "#b99a6b" }
+      {"id": "trim-white", "name": "White", "hex": "#f2f0ea"},
+      {"id": "trim-barn-red", "name": "Barn Red", "hex": "#7b2c2c"},
+      {"id": "trim-black", "name": "Black", "hex": "#2b2d2f"},
+      {"id": "trim-hunter", "name": "Hunter Green", "hex": "#2f4535"},
+      {"id": "trim-clay", "name": "Clay", "hex": "#a8968a"},
+      {"id": "trim-buckskin", "name": "Buckskin", "hex": "#b99a6b"}
     ]
   },
   "roof": {
@@ -66,7 +88,7 @@
         "name": "3-Tab Shingle",
         "blurb": "Standard asphalt. Included.",
         "price": 0,
-        "finish": { "roughness": 0.95, "metalness": 0 },
+        "finish": {"roughness": 0.95, "metalness": 0},
         "colors": ["roof-charcoal", "roof-weathered", "roof-brown", "roof-barn-red", "roof-green"]
       },
       {
@@ -74,7 +96,7 @@
         "name": "Architectural Shingle",
         "blurb": "Thicker, dimensional, 30-year. Looks like a house roof.",
         "price": 485,
-        "finish": { "roughness": 0.92, "metalness": 0 },
+        "finish": {"roughness": 0.92, "metalness": 0},
         "colors": ["roof-charcoal", "roof-weathered", "roof-brown", "roof-barn-red", "roof-green"]
       },
       {
@@ -82,7 +104,7 @@
         "name": "29ga Metal Panel",
         "blurb": "Exposed-fastener steel. Outlives the shed.",
         "price": 825,
-        "finish": { "roughness": 0.35, "metalness": 0.7 },
+        "finish": {"roughness": 0.35, "metalness": 0.7},
         "colors": ["roof-galvalume", "roof-charcoal", "roof-brown", "roof-green", "roof-barn-red", "roof-white"]
       },
       {
@@ -90,18 +112,199 @@
         "name": "Standing Seam",
         "blurb": "Hidden fasteners, clean lines. The upgrade people notice.",
         "price": 1650,
-        "finish": { "roughness": 0.28, "metalness": 0.8 },
+        "finish": {"roughness": 0.28, "metalness": 0.8},
         "colors": ["roof-galvalume", "roof-charcoal", "roof-brown", "roof-green", "roof-barn-red", "roof-white"]
       }
     ],
     "swatches": [
-      { "id": "roof-charcoal", "name": "Charcoal", "hex": "#3b3f42" },
-      { "id": "roof-weathered", "name": "Weathered Wood", "hex": "#6b6259" },
-      { "id": "roof-galvalume", "name": "Galvalume", "hex": "#b4b8ba" },
-      { "id": "roof-brown", "name": "Burnished Slate", "hex": "#4a3b33" },
-      { "id": "roof-green", "name": "Forest Green", "hex": "#2f4535" },
-      { "id": "roof-barn-red", "name": "Barn Red", "hex": "#6f2727" },
-      { "id": "roof-white", "name": "Polar White", "hex": "#e4e6e3" }
+      {"id": "roof-charcoal", "name": "Charcoal", "hex": "#3b3f42"},
+      {"id": "roof-weathered", "name": "Weathered Wood", "hex": "#6b6259"},
+      {"id": "roof-galvalume", "name": "Galvalume", "hex": "#b4b8ba"},
+      {"id": "roof-brown", "name": "Burnished Slate", "hex": "#4a3b33"},
+      {"id": "roof-green", "name": "Forest Green", "hex": "#2f4535"},
+      {"id": "roof-barn-red", "name": "Barn Red", "hex": "#6f2727"},
+      {"id": "roof-white", "name": "Polar White", "hex": "#e4e6e3"}
+    ]
+  },
+  "door": {
+    "_comment": "Walk-in doors. 'price' here is PER DOOR, charged only when the building has a walk-in door. A 'match' swatch has no color of its own: it follows the siding (or trim) as the customer changes it.",
+    "materials": [
+      {
+        "id": "door-built",
+        "name": "Built to match",
+        "blurb": "Framed on site and skinned in the same siding as the walls, with trim cross-bucks. Included.",
+        "price": 0,
+        "finish": {"roughness": 0.84, "metalness": 0},
+        "pattern": "siding",
+        "build": "crossbuck",
+        "colors": [
+          "door-match-siding",
+          "door-match-trim",
+          "door-white",
+          "door-barn-red",
+          "door-black",
+          "door-hunter",
+          "door-gray",
+          "door-navy",
+          "door-almond"
+        ]
+      },
+      {
+        "id": "door-steel",
+        "name": "Steel entry door",
+        "blurb": "Prehung insulated steel with a keyed lever. Per door.",
+        "price": 345,
+        "finish": {"roughness": 0.4, "metalness": 0.3},
+        "build": "panel",
+        "colors": [
+          "door-white",
+          "door-almond",
+          "door-black",
+          "door-gray",
+          "door-barn-red",
+          "door-hunter",
+          "door-navy",
+          "door-brown"
+        ]
+      },
+      {
+        "id": "door-plank",
+        "name": "Plank barn door",
+        "blurb": "Solid vertical boards on a Z-brace, stained or painted. Per door.",
+        "price": 185,
+        "finish": {"roughness": 0.9, "metalness": 0},
+        "pattern": "plank",
+        "build": "plank",
+        "colors": [
+          "door-cedar",
+          "door-walnut",
+          "door-natural",
+          "door-graywash",
+          "door-match-trim",
+          "door-barn-red",
+          "door-black",
+          "door-white"
+        ]
+      }
+    ],
+    "swatches": [
+      {"id": "door-match-siding", "name": "Match the siding", "match": "siding"},
+      {"id": "door-match-trim", "name": "Match the trim", "match": "trim"},
+      {"id": "door-white", "name": "White", "hex": "#eeece6"},
+      {"id": "door-almond", "name": "Almond", "hex": "#d9ceb6"},
+      {"id": "door-barn-red", "name": "Barn Red", "hex": "#7b2c2c"},
+      {"id": "door-black", "name": "Onyx Black", "hex": "#2b2d2f"},
+      {"id": "door-hunter", "name": "Hunter Green", "hex": "#2f4535"},
+      {"id": "door-gray", "name": "Pewter Gray", "hex": "#7d8489"},
+      {"id": "door-navy", "name": "Navy", "hex": "#2b3a52"},
+      {"id": "door-brown", "name": "Brown", "hex": "#4f3a2c"},
+      {"id": "door-cedar", "name": "Cedar Stain", "hex": "#9a5f3a"},
+      {"id": "door-walnut", "name": "Walnut Stain", "hex": "#5c3f2a"},
+      {"id": "door-natural", "name": "Natural Pine", "hex": "#c6a27a"},
+      {"id": "door-graywash", "name": "Gray Wash", "hex": "#8f8a82"}
+    ]
+  },
+  "overhead": {
+    "_comment": "Garage and roll-up doors. The material is the garage door's STYLE and its 'price' is PER GARAGE DOOR. Roll-up doors are a steel curtain with no panels to dress, so they take the color here but not the style, and are never charged for it.",
+    "materials": [
+      {
+        "id": "ovh-panel",
+        "name": "Raised panel steel",
+        "blurb": "Short raised panels in painted steel. Included.",
+        "price": 0,
+        "finish": {"roughness": 0.45, "metalness": 0.25},
+        "build": "raised",
+        "colors": [
+          "ovh-match-trim",
+          "ovh-white",
+          "ovh-almond",
+          "ovh-sandtone",
+          "ovh-gray",
+          "ovh-brown",
+          "ovh-black",
+          "ovh-barn-red",
+          "ovh-hunter",
+          "ovh-match-siding"
+        ]
+      },
+      {
+        "id": "ovh-windows",
+        "name": "Raised panel with windows",
+        "blurb": "The same door with a row of windows across the top. Per door.",
+        "price": 295,
+        "finish": {"roughness": 0.45, "metalness": 0.25},
+        "build": "raised-windows",
+        "colors": [
+          "ovh-match-trim",
+          "ovh-white",
+          "ovh-almond",
+          "ovh-sandtone",
+          "ovh-gray",
+          "ovh-brown",
+          "ovh-black",
+          "ovh-barn-red",
+          "ovh-hunter",
+          "ovh-match-siding"
+        ]
+      },
+      {
+        "id": "ovh-carriage",
+        "name": "Carriage house",
+        "blurb": "Board-look panels, strap hinges and a window row: the swing-door look on an overhead door. Per door.",
+        "price": 595,
+        "finish": {"roughness": 0.62, "metalness": 0.12},
+        "pattern": "woodgrain",
+        "build": "carriage",
+        "colors": [
+          "ovh-white",
+          "ovh-black",
+          "ovh-gray",
+          "ovh-brown",
+          "ovh-hunter",
+          "ovh-barn-red",
+          "ovh-walnut",
+          "ovh-cedar",
+          "ovh-oak"
+        ]
+      },
+      {
+        "id": "ovh-woodgrain",
+        "name": "Woodgrain steel",
+        "blurb": "Raised panels embossed and finished to look like stained wood. Per door.",
+        "price": 395,
+        "finish": {"roughness": 0.55, "metalness": 0.15},
+        "pattern": "woodgrain",
+        "build": "raised",
+        "colors": ["ovh-walnut", "ovh-cedar", "ovh-oak"]
+      }
+    ],
+    "swatches": [
+      {"id": "ovh-match-trim", "name": "Match the trim", "match": "trim"},
+      {"id": "ovh-match-siding", "name": "Match the siding", "match": "siding"},
+      {"id": "ovh-white", "name": "White", "hex": "#f1f0ec"},
+      {"id": "ovh-almond", "name": "Almond", "hex": "#ddd2bb"},
+      {"id": "ovh-sandtone", "name": "Sandtone", "hex": "#bba98c"},
+      {"id": "ovh-gray", "name": "Charcoal", "hex": "#55595d"},
+      {"id": "ovh-brown", "name": "Brown", "hex": "#4d3a2b"},
+      {"id": "ovh-black", "name": "Black", "hex": "#26282a"},
+      {"id": "ovh-barn-red", "name": "Barn Red", "hex": "#772a2a"},
+      {"id": "ovh-hunter", "name": "Hunter Green", "hex": "#2f4535"},
+      {"id": "ovh-walnut", "name": "Walnut", "hex": "#5f402b"},
+      {"id": "ovh-cedar", "name": "Cedar", "hex": "#9b6239"},
+      {"id": "ovh-oak", "name": "Golden Oak", "hex": "#b1834f"}
+    ]
+  },
+  "interior": {
+    "_comment": "Interior wall paint, offered with Finished & Painted Walls (the option that names this group in its 'paint' field). Paint only, so no materials.",
+    "swatches": [
+      {"id": "int-bright-white", "name": "Bright White", "hex": "#f2f1ec"},
+      {"id": "int-soft-white", "name": "Soft White", "hex": "#ece5d6"},
+      {"id": "int-warm-gray", "name": "Warm Gray", "hex": "#cfc8bd"},
+      {"id": "int-greige", "name": "Light Greige", "hex": "#d8cfc0"},
+      {"id": "int-sage", "name": "Sage", "hex": "#b8c2a8"},
+      {"id": "int-harbor", "name": "Harbor Blue", "hex": "#a9bccb"},
+      {"id": "int-shop-gray", "name": "Shop Gray", "hex": "#8e9397"},
+      {"id": "int-charcoal", "name": "Charcoal", "hex": "#4a4e52"}
     ]
   }
 }

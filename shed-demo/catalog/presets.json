@@ -1,5 +1,5 @@
 {
-  "_comment": "Starting points. These double as the project's sample scenes — the eyeball check that geometry, colours, and pricing all still look right after a change (the same job make_samples.py does for the report cards). Every id referenced here is checked against the other catalog files by the validator, so a preset cannot go stale silently.",
+  "_comment": "Starting points. These double as the project's sample scenes — the eyeball check that geometry, colors, and pricing all still look right after a change (the same job make_samples.py does for the report cards). Every id referenced here is checked against the other catalog files by the validator, so a preset cannot go stale silently.",
   "presets": [
     {
       "id": "classic-10x16-barn",
