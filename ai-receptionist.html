@@ -539,30 +539,6 @@
     .ar-film-cta small i { color:var(--gold); }
     .ar-film.is-started .ar-film-play { display:none; }
     .ar-film figcaption { margin-top:0.9rem; color:var(--muted); font-size:0.86rem; text-align:center; }
-    .ar-inline-tel { color:#fff; font-weight:700; text-decoration:none; border-bottom:1px dashed rgba(200,152,48,0.7); white-space:nowrap; }
-    .ar-inline-tel:hover { border-bottom-style:solid; }
-
-    /* personas */
-    .ar-pgrid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:1rem; }
-    .ar-pcard { position:relative; display:flex; flex-direction:column; gap:0.45rem; padding:1.4rem 1.3rem 1.2rem; border-radius:22px; background:linear-gradient(180deg, rgba(28,46,34,0.62), rgba(12,22,16,0.7)); border:1px solid var(--line); transition:border-color .25s, transform .25s; }
-    .ar-pcard:hover { border-color:rgba(200,152,48,0.5); transform:translateY(-3px); }
-    .ar-pcard-top { display:flex; align-items:center; justify-content:space-between; margin-bottom:0.3rem; }
-    .ar-pcard-ic { width:46px; height:46px; border-radius:14px; display:flex; align-items:center; justify-content:center; background:rgba(200,152,48,0.12); border:1px solid rgba(200,152,48,0.4); color:var(--gold); font-size:1.15rem; }
-    .ar-pcard-v { font:700 0.7rem "Montserrat",sans-serif; text-transform:uppercase; letter-spacing:0.14em; color:#cdeed6; border:1px solid rgba(74,172,101,0.4); background:rgba(74,172,101,0.1); border-radius:999px; padding:0.28rem 0.7rem; }
-    .ar-pcard h3 { font:800 1.08rem/1.25 "Montserrat",sans-serif; color:#fff; }
-    .ar-pcard p { color:var(--muted); font-size:0.92rem; }
-    .ar-pcard small { color:#7c9a80; font-size:0.82rem; margin-top:auto; }
-    .ar-pcard small a { color:var(--green); font-weight:600; }
-    .ar-pcard-you { border-style:dashed; border-color:rgba(200,152,48,0.5); }
-    .ar-greet { display:inline-flex; align-items:center; gap:0.6rem; align-self:flex-start; margin:0.5rem 0 0.4rem; padding:0.35rem 0.9rem 0.35rem 0.35rem; min-height:44px; border-radius:999px; border:1px solid rgba(200,152,48,0.45); background:rgba(200,152,48,0.08); color:#e4ede5; font:600 0.86rem "Inter",sans-serif; cursor:pointer; transition:background .2s, border-color .2s; }
-    .ar-greet:hover { background:rgba(200,152,48,0.16); border-color:rgba(224,184,64,0.8); }
-    .ar-greet:focus-visible { outline:2px solid #e0b840; outline-offset:3px; }
-    .ar-greet .ar-voice-ring { width:34px; height:34px; }
-    .ar-greet .fa-pause { display:none; }
-    .ar-greet.is-playing .fa-play { display:none; }
-    .ar-greet.is-playing .fa-pause { display:inline-block; }
-    .ar-greet.is-playing .ar-voice-ring, .ar-greet:hover .ar-voice-ring { background:linear-gradient(135deg,#c89830,#e0b840); border-color:transparent; color:#0d1710; }
-    .ar-greet.is-playing .eq { display:flex; }
 
     /* weekly review */
     .ar-steps { list-style:none; display:grid; grid-template-columns:repeat(5,minmax(0,1fr)); gap:0.8rem; counter-reset:none; }
@@ -615,12 +591,10 @@
     }
     @media (max-width:980px) {
       .ar-film-btn { width:88px; height:88px; font-size:1.85rem; }
-      .ar-pgrid { grid-template-columns:repeat(2,minmax(0,1fr)); }
       .ar-steps { grid-template-columns:repeat(2,minmax(0,1fr)); }
       .ar-steps li + li::before { display:none; }
     }
     @media (max-width:640px) {
-      .ar-pgrid { grid-template-columns:minmax(0,1fr); }
       .ar-steps { grid-template-columns:minmax(0,1fr); }
       .ar-film-edge { border-radius:18px; }
       .ar-film-frame { border-radius:16px; }
@@ -1033,62 +1007,6 @@
         </section>
       </div>
     </section>
-
-    <section class="ar-band ar-personas" id="personas">
-      <div class="container">
-        <div class="ar-head rv">
-          <span class="ar-kicker">One engine. Any business.</span>
-          <h2 class="ar-h2">Change the persona. Change the business.</h2>
-          <p class="ar-sub">Your hours, services, prices, rules and the voice you pick. It backs up your team instead of replacing it. Call <a class="ar-inline-tel" href="tel:+12162380505" data-demo-loc="personas">(216)&nbsp;238&#8209;0505</a> and ask it to play any of these.</p>
-        </div>
-        <div class="ar-pgrid rv">
-            <article class="ar-pcard">
-              <div class="ar-pcard-top"><span class="ar-pcard-ic"><i class="fa-solid fa-tooth" aria-hidden="true"></i></span><span class="ar-pcard-v">Coral</span></div>
-              <h3>Maple Ridge Family Dental</h3>
-              <p>Cleanings, new patients, toothaches</p>
-              <button class="ar-greet" type="button" data-src="assets/receptionist/greet-dental.mp3" data-name="Maple Ridge Family Dental" aria-label="Hear the Maple Ridge Family Dental greeting" aria-pressed="false"><span class="ar-voice-ring" aria-hidden="true"><i class="fa-solid fa-play"></i><i class="fa-solid fa-pause"></i></span><span>Hear its greeting</span><span class="eq" aria-hidden="true"><i></i><i></i><i></i><i></i></span></button>
-              <small>On the demo line, ask for the dental office.</small>
-            </article>
-            <article class="ar-pcard">
-              <div class="ar-pcard-top"><span class="ar-pcard-ic"><i class="fa-solid fa-fire-flame-simple" aria-hidden="true"></i></span><span class="ar-pcard-v">Cedar</span></div>
-              <h3>Lakeside Comfort</h3>
-              <p>No heat, repairs, free estimates</p>
-              <button class="ar-greet" type="button" data-src="assets/receptionist/greet-hvac.mp3" data-name="Lakeside Comfort Heating, Cooling and Plumbing" aria-label="Hear the Lakeside Comfort Heating, Cooling and Plumbing greeting" aria-pressed="false"><span class="ar-voice-ring" aria-hidden="true"><i class="fa-solid fa-play"></i><i class="fa-solid fa-pause"></i></span><span>Hear its greeting</span><span class="eq" aria-hidden="true"><i></i><i></i><i></i><i></i></span></button>
-              <small>On the demo line, ask for the heating company.</small>
-            </article>
-            <article class="ar-pcard">
-              <div class="ar-pcard-top"><span class="ar-pcard-ic"><i class="fa-solid fa-scale-balanced" aria-hidden="true"></i></span><span class="ar-pcard-v">Sage</span></div>
-              <h3>Harper and Lowe</h3>
-              <p>Free consultations, court deadlines</p>
-              <button class="ar-greet" type="button" data-src="assets/receptionist/greet-law.mp3" data-name="Harper and Lowe, Attorneys at Law" aria-label="Hear the Harper and Lowe, Attorneys at Law greeting" aria-pressed="false"><span class="ar-voice-ring" aria-hidden="true"><i class="fa-solid fa-play"></i><i class="fa-solid fa-pause"></i></span><span>Hear its greeting</span><span class="eq" aria-hidden="true"><i></i><i></i><i></i><i></i></span></button>
-              <small>On the demo line, ask for the law firm.</small>
-            </article>
-            <article class="ar-pcard">
-              <div class="ar-pcard-top"><span class="ar-pcard-ic"><i class="fa-solid fa-car" aria-hidden="true"></i></span><span class="ar-pcard-v">Ash</span></div>
-              <h3>Brookline Auto and Tire</h3>
-              <p>Tows, repairs, oil changes</p>
-              <button class="ar-greet" type="button" data-src="assets/receptionist/greet-auto.mp3" data-name="Brookline Auto and Tire" aria-label="Hear the Brookline Auto and Tire greeting" aria-pressed="false"><span class="ar-voice-ring" aria-hidden="true"><i class="fa-solid fa-play"></i><i class="fa-solid fa-pause"></i></span><span>Hear its greeting</span><span class="eq" aria-hidden="true"><i></i><i></i><i></i><i></i></span></button>
-              <small>On the demo line, ask for the auto shop.</small>
-            </article>
-            <article class="ar-pcard">
-              <div class="ar-pcard-top"><span class="ar-pcard-ic"><i class="fa-solid fa-scissors" aria-hidden="true"></i></span><span class="ar-pcard-v">Shimmer</span></div>
-              <h3>Willow and Ash Salon</h3>
-              <p>Color, cuts, consultations</p>
-              <button class="ar-greet" type="button" data-src="assets/receptionist/greet-salon.mp3" data-name="Willow and Ash Salon" aria-label="Hear the Willow and Ash Salon greeting" aria-pressed="false"><span class="ar-voice-ring" aria-hidden="true"><i class="fa-solid fa-play"></i><i class="fa-solid fa-pause"></i></span><span>Hear its greeting</span><span class="eq" aria-hidden="true"><i></i><i></i><i></i><i></i></span></button>
-              <small>On the demo line, ask for the salon.</small>
-            </article>
-            <article class="ar-pcard ar-pcard-you">
-              <div class="ar-pcard-top"><span class="ar-pcard-ic"><i class="fa-solid fa-store" aria-hidden="true"></i></span><span class="ar-pcard-v">Any of ten</span></div>
-              <h3>Your business</h3>
-              <p>Your hours, services, prices and rules</p>
-              <button class="ar-greet" type="button" data-src="assets/receptionist/greet-yours.mp3" data-name="Your business" aria-label="Hear a greeting for your business" aria-pressed="false"><span class="ar-voice-ring" aria-hidden="true"><i class="fa-solid fa-play"></i><i class="fa-solid fa-pause"></i></span><span>Hear its greeting</span><span class="eq" aria-hidden="true"><i></i><i></i><i></i><i></i></span></button>
-              <small><a href="#get-started">Tell us about your calls</a></small>
-            </article>
-        </div>
-      </div>
-    </section>
-
-    
 
     <section class="ar-band ar-voices" id="voices">
       <div class="container">
@@ -1857,24 +1775,6 @@
         });
         // At the end the frame keeps the last card, the number, with the controls; the play button does not come back over it.
         v.addEventListener('ended', function () { track('film_complete', { film: 'ai-receptionist' }); });
-      })();
-
-      // ---- persona greetings
-      (function () {
-        var audio = new Audio(), on = null;
-        audio.preload = 'none';
-        function off() { if (on) { on.classList.remove('is-playing'); on.setAttribute('aria-pressed', 'false'); } }
-        each(document.querySelectorAll('button.ar-greet'), function (b) {
-          b.addEventListener('click', function () {
-            if (on === b && !audio.paused) { audio.pause(); return; }
-            off(); on = b; audio.src = b.getAttribute('data-src'); claim(audio);
-            var go = audio.play(); if (go && go.catch) go.catch(off);
-            b.classList.add('is-playing'); b.setAttribute('aria-pressed', 'true');
-            track('persona_sample_play', { persona: b.getAttribute('data-name') });
-          });
-        });
-        audio.addEventListener('pause', off);
-        audio.addEventListener('ended', off);
       })();
 
       // ---- the sticky call bar (phones): after the hero, never over the consent bar or the closing section

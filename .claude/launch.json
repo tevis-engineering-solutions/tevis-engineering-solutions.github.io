@@ -33,6 +33,18 @@
         "C:/dev/cleveland-geo-visualizer/publish"
       ],
       "port": 5616
+    },
+    {
+      "name": "3D Shed (vite)",
+      "runtimeExecutable": "node",
+      "runtimeArgs": [
+        "C:/dev/3D Shed/node_modules/vite/bin/vite.js",
+        "C:/dev/3D Shed",
+        "--port",
+        "5173",
+        "--strictPort"
+      ],
+      "port": 5173
     }
   ]
 }
