@@ -836,6 +836,10 @@
             <label for="wwEmail">Email for alerts</label>
             <input id="wwEmail" name="email" type="email" autocomplete="email" placeholder="you@yourbusiness.com" required>
           </div>
+          <div class="ww-field">
+            <label for="wwZip">Billing ZIP code</label>
+            <input id="wwZip" name="zip" type="text" inputmode="numeric" autocomplete="postal-code" maxlength="10" placeholder="44107" required>
+          </div>
           <div class="ww-trap" aria-hidden="true">
             <label for="wwWebsite">Leave this empty</label>
             <input id="wwWebsite" name="website" type="text" tabindex="-1" autocomplete="off">
@@ -1039,6 +1043,7 @@
       rate_limited: 'Too many attempts from this connection. Please try again in a little while.',
       unavailable: 'Online signup is opening shortly. Email support@tevisengineering.com and we will set your site up today.',
       paypal_unavailable: 'PayPal did not answer. Please try again in a minute.',
+      bad_zip: 'Enter a five-digit ZIP code.', zip_not_ohio: 'That ZIP code is not in Ohio.', unknown_zip: 'We could not find that ZIP code. Check it, or call (216) 302-8486.', zip_required: 'Enter your billing ZIP code so sales tax can be worked out.',
     };
 
     form.addEventListener('submit', function (ev) {
@@ -1047,11 +1052,13 @@
       var site = $('wwSite').value.trim(), email = $('wwEmail').value.trim();
       if (!site) { fail('Enter the website address to watch.'); $('wwSite').focus(); return; }
       if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) { fail(MESSAGES.invalid_email); $('wwEmail').focus(); return; }
+      var zip = $('wwZip').value.trim();
+      if (!/^\d{5}(-?\d{4})?$/.test(zip)) { fail(MESSAGES.bad_zip); $('wwZip').focus(); return; }
       var tokenEl = form.querySelector('[name="cf-turnstile-response"]');
       go.disabled = true; go.textContent = 'Opening PayPal…';
       fetch(API + '/public/subscribe', {
         method: 'POST', headers: { 'content-type': 'application/json' }, credentials: 'same-origin',
-        body: JSON.stringify({ product: 'website-watch', plan: 'site', cadence: cadence, site: site, email: email,
+        body: JSON.stringify({ product: 'website-watch', plan: 'site', cadence: cadence, site: site, email: email, zip: zip,
           website: $('wwWebsite').value, turnstileToken: tokenEl ? tokenEl.value : '' }),
       }).then(function (r) { return r.json().catch(function () { return { ok: false }; }); }).then(function (d) {
         if (d && d.ok && d.approve_url) { location.href = d.approve_url; return; }

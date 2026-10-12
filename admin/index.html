@@ -7499,9 +7499,17 @@
     // tax line rather than adding a second. Optional add-ons are left out, because the
     // customer may not take them; labor is left out until the accountant says otherwise.
     document.getElementById('qtAddTax').addEventListener('click', function () {
-      api('/admin/finance/settings').then(function (r) {
+      // The customer's county rate when their address has a ZIP (src/sales_tax.js); otherwise
+      // the rate in Finance's tax settings, and the toast says which was used.
+      var who = qtSelected || {};
+      var look = who.org_id ? api('/admin/sales-tax?org_id=' + encodeURIComponent(who.org_id))
+        : who.account_id ? api('/admin/sales-tax?account_id=' + encodeURIComponent(who.account_id)) : Promise.resolve(null);
+      Promise.all([api('/admin/finance/settings'), look]).then(function (both) {
+        var r = both[0], t = both[1];
         if (!r.ok) return toast('Could not load the sales tax rate');
-        var rate = Number(r.settings.sales_tax_pct);
+        var rate = Number(r.settings.sales_tax_pct), where = 'your Finance rate (no address on file)';
+        if (t && t.ok && t.would_pct === 0) return toast('No sales tax: this customer is outside Ohio');
+        if (t && t.ok && t.would_pct > 0) { rate = t.would_pct; where = t.county + ' County' + (t.estimated ? ', estimated' : ''); }
         if (!(rate > 0)) return toast('Set a sales tax rate first: Finance, Set aside for tax');
         var low = 0, high = 0, taxRow = null;
         var q3 = function (v) { return Math.round(Number(v) * 1000) / 1000; };
@@ -7514,7 +7522,7 @@
           high += it.high_unit_price != null && it.high_unit_price > it.unit_price ? Math.round(q3(it.qty) * Math.round(it.high_unit_price * 100)) : l;
         });
         if (!low && !high) return toast('No required Product lines to tax');
-        var v = { kind: 'tax', description: 'Ohio sales tax (' + rate + '%) on equipment',
+        var v = { kind: 'tax', description: 'Ohio sales tax (' + rate + '%' + (where.indexOf('County') > 0 ? ', ' + where.replace(', estimated', '') : '') + ')',
           unit_cents: Math.round(low * rate / 100), high_unit_cents: qtDocType === 'estimate' ? Math.round(high * rate / 100) : null };
         if (!taxRow) {
           if (qtLinesEl.children.length === 1 && !qtLinesEl.children[0].read().description) qtLinesEl.textContent = '';
@@ -7522,7 +7530,7 @@
         }
         taxRow.set(v);
         qtRecalc();
-        toast('Sales tax ' + money(v.unit_cents) + ' at ' + rate + '%');
+        toast('Sales tax ' + money(v.unit_cents) + ' at ' + rate + '%, ' + where);
       });
     });
 
@@ -13073,10 +13081,16 @@
         var pct = mk('Set aside, % of net', 'ftsPct', r.settings.set_aside_pct, '0.5');
         var rate = mk('Mileage rate, cents a mile', 'ftsRate', r.settings.mileage_cents, '1');
         var stax = mk('Sales tax rate for quotes, %', 'ftsSales', r.settings.sales_tax_pct, '0.25');
-        var note = el('p', 'adlg-meta wide', 'The set-aside is a reminder to keep money aside, not a tax figure; your accountant decides the real amount. A week before each estimated-tax date (' + r.due_dates.map(function (d) { return d.key; }).join(', ') + ') Telegram sends the year so far. Check the per-mile rate each year; a change does not reprice trips already logged. The sales tax rate is what Add sales tax uses on a quote; it is the rate where you are, so check it each quarter on the Ohio Department of Taxation rate table.');
+        var licD = el('div'); var licL = el('label', null, "Ohio vendor's license number"); licL.htmlFor = 'ftsLic';
+        var lic = document.createElement('input'); lic.id = 'ftsLic'; lic.type = 'text'; lic.maxLength = 40; lic.value = r.settings.vendor_license || ''; lic.placeholder = 'Not yet issued';
+        licD.appendChild(licL); licD.appendChild(lic); box.appendChild(licD);
+        var colD = el('div', 'wide'); var colL = el('label', 'fts-check'); var col = document.createElement('input'); col.type = 'checkbox'; col.id = 'ftsCollect'; col.checked = !!r.settings.collect_sales_tax;
+        colL.appendChild(col); colL.appendChild(document.createTextNode(' Collect Ohio sales tax by county at checkout and on agreement invoices'));
+        colD.appendChild(colL); box.appendChild(colD);
+        var note = el('p', 'adlg-meta wide', 'The set-aside is a reminder to keep money aside, not a tax figure; your accountant decides the real amount. A week before each estimated-tax date (' + r.due_dates.map(function (d) { return d.key; }).join(', ') + ') Telegram sends the year so far. Check the per-mile rate each year; a change does not reprice trips already logged. The sales tax rate is what Add sales tax uses on a quote when the customer has no address on file; with one, it uses their county. Collecting at checkout needs the vendor’s license number, and while it is off no customer is charged tax. County rates are the Ohio Department of Taxation table for 2026 Q4: check them each quarter.');
         box.appendChild(note);
         askDialog({ title: 'Tax and mileage settings', body: box, buttons: [{ label: 'Cancel', value: null }, { label: 'Save', value: true, cls: 'prim', act: function () {
-          return api('/admin/finance/settings', { method: 'PUT', body: { set_aside_pct: Number(pct.value), mileage_cents: Number(rate.value), sales_tax_pct: Number(stax.value) } }).then(function (x) { if (!x.ok) return { error: x.message || 'Check the numbers' }; });
+          return api('/admin/finance/settings', { method: 'PUT', body: { set_aside_pct: Number(pct.value), mileage_cents: Number(rate.value), sales_tax_pct: Number(stax.value), vendor_license: lic.value.trim(), collect_sales_tax: col.checked } }).then(function (x) { if (!x.ok) return { error: x.message || 'Check the numbers' }; });
         } }] }).then(function (v) { if (v) { toast('Saved'); loadFinance(); } });
       });
     }

@@ -12,14 +12,14 @@
   <meta property="og:url" content="https://tevisengineering.com/ohio-crash-report-analysis-tool.html">
   <meta property="og:title" content="Ohio Crash Report Leads for Law Firms | Tevis Engineering">
   <meta property="og:description" content="Ohio crash report leads for personal injury law firms. Read official OH-1 reports, build a de-duplicated victim audience, and own the pipeline instead of renting a broker list.">
-  <meta property="og:image" content="https://tevisengineering.com/assets/crash/lead-dashboard.png">
+  <meta property="og:image" content="https://tevisengineering.com/assets/crash/lead-dashboard-og.png">
   <meta property="og:image:width" content="1500">
   <meta property="og:image:height" content="1167">
   <meta property="og:image:alt" content="Ohio Crash List lead dashboard — summary tiles, injury-leads-by-county chart, and an exportable lead table.">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="Ohio Crash Report Leads for Personal Injury Firms">
   <meta name="twitter:description" content="Ohio crash report leads for personal injury law firms &mdash; built from the official OH-1 reports, not rented from a broker.">
-  <meta name="twitter:image" content="https://tevisengineering.com/assets/crash/lead-dashboard.png">
+  <meta name="twitter:image" content="https://tevisengineering.com/assets/crash/lead-dashboard-og.png">
   <link rel="canonical" href="https://tevisengineering.com/ohio-crash-report-analysis-tool.html">
   <link rel="icon" type="image/png" href="assets/favicon.png">
   <link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
@@ -89,6 +89,32 @@
     .shot figcaption { margin-top:0.6rem; font-size:0.85rem; color:var(--muted); line-height:1.55; }
     .shot figcaption .tag { display:inline-block; font-size:0.66rem; letter-spacing:0.14em; text-transform:uppercase; color:var(--gold); font-weight:800; margin-right:0.5rem; }
     .shot figcaption b { color:#cfe0d2; }
+    .shots-2.even { grid-template-columns:1fr 1fr; align-items:start; }
+    @media (max-width:760px) { .shots-2.even { grid-template-columns:1fr; } }
+    #capabilities .grid { grid-template-columns:repeat(3,minmax(0,1fr)); }
+    @media (max-width:960px) { #capabilities .grid { grid-template-columns:repeat(2,minmax(0,1fr)); } }
+    @media (max-width:600px) { #capabilities .grid { grid-template-columns:1fr; } }
+    .wn-new { display:inline-flex; align-items:center; gap:0.5rem; margin:0 0 1rem; padding:0.4rem 0.85rem; border-radius:999px; border:1px solid rgba(200,152,48,0.45); background:rgba(200,152,48,0.1); color:#f1e4c2; font-size:0.85rem; font-weight:600; text-decoration:none; }
+    .wn-new b { font-family:"Montserrat",sans-serif; font-size:0.66rem; letter-spacing:0.14em; text-transform:uppercase; color:#0d1710; background:var(--gold); padding:0.18rem 0.5rem; border-radius:999px; }
+    .wn-new:hover { border-color:var(--gold); }
+    .wn-grid { display:grid; grid-template-columns:1fr 1fr; gap:1rem; margin-top:1rem; }
+    .wn-col { border:1px solid var(--line); border-radius:14px; padding:1.2rem 1.25rem; background:rgba(13,23,16,0.55); }
+    .wn-col.now { border-color:rgba(200,152,48,0.6); background:rgba(200,152,48,0.06); }
+    .wn-k { font-family:"Montserrat",sans-serif; font-size:0.7rem; font-weight:800; letter-spacing:0.14em; text-transform:uppercase; color:var(--muted); margin:0 0 0.2rem; }
+    .wn-col.now .wn-k { color:var(--gold); }
+    .wn-col h3 { font-family:"Montserrat",sans-serif; font-size:1.05rem; color:#f1f7f1; margin:0 0 0.8rem; text-transform:none; letter-spacing:0; }
+    .wn-col ul { list-style:none; margin:0; padding:0; }
+    .wn-col li { position:relative; padding:0 0 0.6rem 1.35rem; color:#cfe0d2; line-height:1.5; font-size:0.95rem; }
+    .wn-col li::before { content:''; position:absolute; left:0.2rem; top:0.55em; width:0.45rem; height:0.45rem; border-radius:50%; background:var(--muted); }
+    .wn-col.now li::before { background:var(--gold); }
+    .wn-col li b { color:#f1f7f1; }
+    .wn-nums { display:grid; grid-template-columns:repeat(3,1fr); gap:1rem; margin-top:1rem; }
+    .wn-num { border:1px solid var(--line); border-radius:14px; padding:1rem 1.1rem; background:rgba(13,23,16,0.55); }
+    .wn-num .from { color:var(--muted); font-size:0.85rem; text-decoration:line-through; text-decoration-color:rgba(138,164,141,0.6); }
+    .wn-num .to { display:block; font-family:"Montserrat",sans-serif; font-weight:800; font-size:1.45rem; color:var(--gold); line-height:1.15; margin:0.15rem 0 0.25rem; }
+    .wn-num span:last-child { color:#cfe0d2; font-size:0.88rem; }
+    @media (max-width:760px) { .wn-grid, .wn-nums { grid-template-columns:1fr; } }
+    .film video { display:block; width:100%; height:auto; aspect-ratio:16/9; border:1px solid var(--line); border-radius:12px; box-shadow:0 14px 40px rgba(0,0,0,0.4); background:#0b120d; }
     .shots-2 { display:grid; grid-template-columns:1.55fr 1fr; gap:1rem; align-items:start; margin-top:0.9rem; }
     @media (max-width:760px) { .shots-2 { grid-template-columns:1fr; } }
 
@@ -277,13 +303,26 @@
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
+    "@type": "VideoObject",
+    "name": "Ohio Crash Report Analysis Tool in 60 seconds",
+    "description": "A real scan with the Ohio Crash Report Analysis Tool: picking counties, clearing the state portal's CAPTCHA, AI reading each OH-1 report, and working the leads on the dashboard. Personal data is redacted.",
+    "thumbnailUrl": "https://tevisengineering.com/assets/crash/ohio-crash-tool-film-poster.jpg",
+    "contentUrl": "https://tevisengineering.com/assets/crash/ohio-crash-tool-film.mp4",
+    "uploadDate": "2026-10-11",
+    "duration": "PT59S",
+    "publisher": { "@type": "Organization", "name": "Tevis Engineering Solutions", "url": "https://tevisengineering.com" }
+  }
+  </script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
     "@type": "SoftwareApplication",
     "name": "Ohio Crash Report Analysis Tool",
     "applicationCategory": "BusinessApplication",
     "operatingSystem": "Windows 10, Windows 11",
     "description": "Ohio crash report leads for personal injury law firms. Reads Ohio's official OH-1 crash reports and builds a de-duplicated audience of injury-crash victims — name, mailing address, injury severity, county, agency and crash date. Available as a one-time purchase, an all-inclusive subscription, or a done-for-you data service.",
     "url": "https://tevisengineering.com/ohio-crash-report-analysis-tool.html",
-    "image": "https://tevisengineering.com/assets/crash/lead-dashboard.png",
+    "image": "https://tevisengineering.com/assets/crash/lead-dashboard-og.png",
     "provider": {"@id": "https://tevisengineering.com/#business"},
     "publisher": {"@id": "https://tevisengineering.com/#business"},
     "areaServed": {"@type": "State", "name": "Ohio"},
@@ -333,7 +372,7 @@
         "name": "How much does it cost to run?",
         "acceptedAnswer": {
           "@type": "Answer",
-          "text": "On the own-it option the only per-use cost is AI — about 1.5¢ per injury report read, roughly $10–$25/month for a weekly regional pull. The subscription includes the AI in the monthly price. A rules-only mode runs the whole pipeline for $0."
+          "text": "On the own-it option the only per-use cost is AI — about 0.2¢ per injury report read, a few dollars a month for a weekly regional pull. The subscription includes the AI in the monthly price. A rules-only mode runs the whole pipeline for $0."
         }
       },
       {
@@ -406,6 +445,7 @@
 
     <section class="hero">
       <span class="eyebrow"><i class="fa-solid fa-bolt"></i> TES Software &middot; Ohio Crash Report Analysis Tool</span>
+      <a class="wn-new" href="#whats-new"><b>New</b> Version 1.3: a map dashboard, cleaner leads, and AI at about 0.2&cent; a report</a>
       <h1>Ohio Crash Report <span class="grad">Leads for Law Firms</span></h1>
       <p>
         A purpose-built application that turns Ohio's official crash reports into a clean, de-duplicated
@@ -418,19 +458,68 @@
         <a class="btn btn-secondary" href="#pricing">See Pricing</a>
       </div>
       <div class="stats">
-        <div class="stat"><b>~1.5&cent;</b><span>AI cost per report read</span></div>
-        <div class="stat"><b>300&ndash;1,000&times;</b><span>cheaper than buying reports retail</span></div>
+        <div class="stat"><b>~0.2&cent;</b><span>AI cost per report read</span></div>
+        <div class="stat"><b>2,500&times;+</b><span>cheaper than buying reports retail</span></div>
         <div class="stat"><b>88</b><span>Ohio counties + agency search</span></div>
         <div class="stat"><b>$0</b><span>per-record data fee &mdash; you own it</span></div>
+      </div>
+    </section>
+
+    <section class="section" id="film">
+      <h2>See it run in <span class="gold">60 seconds</span></h2>
+      <p class="lead-line">A real scan from start to finish: pick counties, clear one CAPTCHA, let the AI read the reports, then work the leads on the dashboard.</p>
+      <figure class="shot film">
+        <video controls preload="none" playsinline poster="assets/crash/ohio-crash-tool-film-poster.webp" width="1920" height="1080">
+          <source src="assets/crash/ohio-crash-tool-film.mp4" type="video/mp4">
+          <track kind="captions" src="assets/crash/ohio-crash-tool-film.vtt" srclang="en" label="English">
+          Your browser does not play this video. <a href="assets/crash/ohio-crash-tool-film.mp4">Download it (MP4, 13 MB)</a>.
+        </video>
+        <figcaption><span class="tag">Real data</span>The dashboard shows a client's real crash data with <b>names, street addresses and citation numbers redacted</b> and report numbers replaced.</figcaption>
+      </figure>
+    </section>
+
+    <section class="section" id="whats-new">
+      <h2>What&rsquo;s new in <span class="gold">version 1.3</span></h2>
+      <p class="lead-line">The tool shipped in August as a fast way to turn Ohio crash reports into a lead list. Version 1.3 turns that list into a working desk: a map of where the leads are, leads you can act on without sorting, and AI that costs a fraction of what it did.</p>
+      <div class="wn-grid">
+        <div class="wn-col">
+          <p class="wn-k">Where it started &middot; August 2026</p>
+          <h3>A scanner and a lead list</h3>
+          <ul>
+            <li>Search by county or one agency, one CAPTCHA per search</li>
+            <li>AI reads each report into one record per person</li>
+            <li>A table of leads with county counts and a severity tally</li>
+            <li>Every injured person listed, including drivers who were cited</li>
+            <li>One Claude model, priced per report as it ran</li>
+          </ul>
+        </div>
+        <div class="wn-col now">
+          <p class="wn-k">Where it is now &middot; Version 1.3.3, October 2026</p>
+          <h3>A lead desk your team works from</h3>
+          <ul>
+            <li><b>A map dashboard.</b> Ohio shaded by leads; hover a county for its count, click it to filter everything, see leads per day and who the leads are.</li>
+            <li><b>Cleaner leads.</b> Drivers charged with an offense are set aside automatically, so the list starts with people you can contact.</li>
+            <li><b>Find any crash.</b> Search every report by number, name, street, city, agency or date and see everyone on it.</li>
+            <li><b>Sharper targeting.</b> Pick individual agencies inside a county, and export by crash date or by the date a report was pulled.</li>
+            <li><b>You set the AI spend.</b> Claude Haiku 5.5, trimmed report text, half-price batching, and the cost per report shown before you start.</li>
+            <li><b>Signed by TES.</b> Windows shows Tevis Engineering Solutions, LLC as the verified publisher of every installer.</li>
+          </ul>
+        </div>
+      </div>
+      <div class="wn-nums">
+        <div class="wn-num"><span class="from">~1.5&cent; per report</span><span class="to">~0.2&cent;</span><span>AI cost to read a report, with Haiku 5.5 and trimmed text</span></div>
+        <div class="wn-num"><span class="from">County bar chart</span><span class="to">Live Ohio map</span><span>Hover, click and filter the whole dashboard</span></div>
+        <div class="wn-num"><span class="from">Every injured party</span><span class="to">Contactable leads</span><span>Cited drivers set aside before the list reaches you</span></div>
       </div>
     </section>
 
     <section class="section" id="what">
       <h2>Ohio accident report leads you <span class="gold">own</span>, not a rented list</h2>
       <p class="lead-line">
-        The tool scans Ohio's official crash-report portal &mdash; by county or by law-enforcement agency &mdash; over a rolling
-        date window; uses AI to <strong>read each OH-1 report</strong> and extract every person involved; de-duplicates them into a
-        database; and presents a live dashboard plus a one-click spreadsheet export.
+        The tool scans Ohio's official crash-report portal &mdash; by county or by law-enforcement agency &mdash; over a date
+        window you choose; uses AI to <strong>read each OH-1 report</strong> and extract every person involved; leaves out
+        drivers who were charged with an offense; de-duplicates everyone into a database; and opens a live, map-based
+        dashboard with a one-click spreadsheet export.
       </p>
       <p>
         It is a self-contained desktop program with your branding &mdash; not a third-party data subscription. The output matches
@@ -438,16 +527,20 @@
         (which can be added). The one manual step &mdash; a person clearing a quick anti-bot check once per search &mdash; is a
         deliberate, defensible choice, explained below.
       </p>
-      <div class="shots-2">
+      <div class="shots-2 even">
         <figure class="shot">
-          <img src="assets/crash/control-panel.webp" alt="Ohio Crash Scanner control panel: crash date range, interactive Ohio county map, searchable county list, extraction-mode selector, and a law-enforcement-agency option." width="1500" height="1085" loading="lazy" decoding="async">
-          <figcaption><span class="tag">The app</span><b>One branded desktop app.</b> Pick counties on the interactive Ohio map (or the searchable list), or query an agency such as the State Highway Patrol; set the date window and the cost / accuracy mode.</figcaption>
+          <img src="assets/crash/app-setup.webp" alt="Ohio Crash Scanner setup screen: crash date range, extraction mode, model and token-saving options, a county list with NE Ohio, big metros and all-88 presets, and an Ohio map with seventeen Northeast Ohio counties selected." width="1222" height="892" loading="lazy" decoding="async">
+          <figcaption><span class="tag">The app</span><b>Pick your scope on a map.</b> Click counties, use a preset (NE Ohio, big metros, all 88), or switch to Agencies and search one department. Choose the AI model and mode, and see the cost per report before you press Start.</figcaption>
         </figure>
         <figure class="shot">
-          <img src="assets/crash/dps-portal.webp" alt="Ohio Department of Public Safety Crash Retrieval portal: advanced search by crash date range, county, or law-enforcement agency, gated by a CAPTCHA text box." width="1500" height="905" loading="lazy" decoding="async">
-          <figcaption><span class="tag">The source</span><b>Ohio's official crash portal.</b> The state's public Crash Retrieval site &mdash; searchable by county or agency. Every search is gated by the CAPTCHA at the bottom; that is the one step a person clears.</figcaption>
+          <img src="assets/crash/app-scan.webp" alt="Ohio Crash Scanner mid-run: extracting party information from Lorain County reports, a progress bar, a log of each county's results, and the AI cost so far." width="1202" height="732" loading="lazy" decoding="async">
+          <figcaption><span class="tag">The run</span><b>It reads every report while you watch.</b> The scan pages the results, downloads the injury reports, and reads each one, with a live log and a running AI cost. A two-county week read 26 reports for about five cents.</figcaption>
         </figure>
       </div>
+      <figure class="shot">
+        <img src="assets/crash/dps-portal.webp" alt="Ohio Department of Public Safety Crash Retrieval portal: advanced search by crash date range, county, or law-enforcement agency, gated by a CAPTCHA text box." width="1500" height="905" loading="lazy" decoding="async">
+        <figcaption><span class="tag">The source</span><b>Ohio's official crash portal.</b> The state's public Crash Retrieval site &mdash; searchable by county or agency. Every search is gated by a CAPTCHA; that is the one step a person clears.</figcaption>
+      </figure>
     </section>
 
     <section class="section" id="capabilities">
@@ -455,32 +548,36 @@
       <div class="grid">
         <article class="card">
           <h3><i class="fa-solid fa-map-location-dot"></i> County + agency search</h3>
-          <p>An interactive map and searchable list for all 88 Ohio counties, with one-click presets (NE Ohio, big metros, all 88). Or query a law-enforcement agency &mdash; one search pulls that agency's injury crashes statewide.</p>
+          <p>An interactive map and a filterable list for all 88 Ohio counties, with one-click presets (NE Ohio, big metros, all 88). Or switch to Agencies and query one department &mdash; one search pulls that agency's injury crashes statewide.</p>
         </article>
         <article class="card">
           <h3><i class="fa-solid fa-robot"></i> AI extraction, your way</h3>
-          <p>Reads each report PDF and returns <strong>one record per person</strong> (driver, passenger, pedestrian) with name, address, age, gender, and injury severity. A mode switch trades cost for accuracy: hybrid, always-AI, or rules-only ($0).</p>
+          <p>Reads each report PDF and returns <strong>one record per person</strong> (driver, passenger, pedestrian) with name, address, age, gender, and injury severity. Four modes: hybrid (rules first, AI only when needed), rules-only ($0), always-AI, or download now and read later.</p>
         </article>
         <article class="card">
-          <h3><i class="fa-solid fa-layer-group"></i> De-duplication &amp; storage</h3>
-          <p>A local database collapses the same person across multiple crashes into one audience entry, while keeping full per-crash provenance &mdash; and remembers your last scan for glance-and-go weekly refreshes.</p>
+          <h3><i class="fa-solid fa-gauge-high"></i> You set the AI spend</h3>
+          <p>Pick the Claude model, trim the boilerplate every report repeats (about 54% fewer tokens), or batch reports at half price. The estimated cost per report shows before you start, and a live meter tracks the run.</p>
         </article>
         <article class="card">
-          <h3><i class="fa-solid fa-table-list"></i> Lead dashboard</h3>
-          <p>A live, filterable list (county, severity), a &ldquo;hide No Apparent Injury&rdquo; toggle, per-lead link to the source PDF, per-county counts, and a severity breakdown &mdash; all exportable to CSV in one click.</p>
+          <h3><i class="fa-solid fa-layer-group"></i> Clean, de-duplicated leads</h3>
+          <p>A local database collapses the same person across multiple crashes into one entry, keeps full per-crash provenance, and checks every report for drivers charged with an offense &mdash; they are left out of the leads automatically.</p>
         </article>
         <article class="card">
-          <h3><i class="fa-solid fa-gauge-high"></i> Live cost meter</h3>
-          <p>A running read-out of the AI spend for the session <em>as it happens</em>. You hold the throttle &mdash; the AI runs on a key you control, capped by you, and rules-only mode runs the entire pipeline for $0.</p>
+          <h3><i class="fa-solid fa-chart-column"></i> A dashboard that filters itself</h3>
+          <p>An Ohio map shaded by leads: hover a county for its count, click it to filter the whole page. Filter by injury level, date window or the latest pull; see leads per day, injury mix, drivers vs. passengers, and minors. Export exactly what you see to CSV.</p>
         </article>
         <article class="card">
-          <h3><i class="fa-solid fa-user-shield"></i> Your data stays yours</h3>
-          <p>On the own-it option the database never leaves your office. The audience is <strong>exclusive</strong> &mdash; you generate and own it &mdash; unlike a broker list resold to every competitor in your market.</p>
+          <h3><i class="fa-solid fa-magnifying-glass"></i> Find any crash</h3>
+          <p>Search every report on file by report number, name, street, city, agency or date, and see everyone on that crash &mdash; including cited drivers and people with no apparent injury &mdash; with a link to the source PDF.</p>
         </article>
       </div>
       <figure class="shot" style="margin-top:1.2rem;">
-        <img src="assets/crash/lead-dashboard.webp" alt="Ohio Crash List lead dashboard: summary tiles (247 crashes, 689 people/leads, 14 counties), injury-leads-by-county chart, severity breakdown, and a filterable, sortable lead table with per-row PDF links and CSV export." width="1500" height="1180" loading="lazy" decoding="async">
-        <figcaption><span class="tag">The output</span><b>What the firm works from &mdash; one click from lead to source.</b> Summary tiles, injury-leads-by-county, a severity breakdown, and a filterable, exportable lead table. Every row's PDF button opens the actual crash report. <em>Names and addresses shown are synthetic samples.</em></figcaption>
+        <img src="assets/crash/lead-dashboard.webp" alt="Ohio Crash List lead dashboard: filters, summary tiles (574 contactable leads, 460 crash reports, 67 counties, 249 cited and left out), an Ohio map shaded by leads per county with a county ranking, a leads-per-day chart stacked by injury, and a breakdown of injury severity, drivers, passengers and minors." width="1500" height="1208" loading="lazy" decoding="async">
+        <figcaption><span class="tag">The output</span><b>What the firm works from.</b> Summary tiles, a lead map you can hover and click, leads per day, and who the leads are &mdash; every number follows the filters. <em>Real client data; personal details are not shown.</em></figcaption>
+      </figure>
+      <figure class="shot">
+        <img src="assets/crash/dashboard-find.webp" alt="Find a crash: a search for Akron on October 8, 2026 returns one Summit County crash with three drivers, their roles, injuries and ages; names and street addresses are redacted." width="1500" height="370" loading="lazy" decoding="async">
+        <figcaption><span class="tag">Find a crash</span><b>One search, everyone on the report.</b> <em>Names, street addresses and ZIPs redacted; report numbers replaced.</em></figcaption>
       </figure>
     </section>
 
@@ -490,8 +587,8 @@
       <div class="process">
         <div class="process-step"><strong>Pick your scope</strong><p>Choose counties on the map or query a law-enforcement agency, and set a date window.</p></div>
         <div class="process-step"><strong>Clear one check</strong><p>A staff member clears one quick anti-bot check per search &mdash; a few minutes total for a multi-county pull.</p></div>
-        <div class="process-step"><strong>Auto-fetch &amp; extract</strong><p>The tool pages the results, downloads the injury reports, and AI reads each one into structured records.</p></div>
-        <div class="process-step"><strong>Dashboard &amp; export</strong><p>De-duplicated leads land in the dashboard, ready to filter and export to CSV.</p></div>
+        <div class="process-step"><strong>Auto-fetch &amp; extract</strong><p>The tool pages the results, downloads the injury reports, reads each one into structured records, and sets aside drivers who were charged.</p></div>
+        <div class="process-step"><strong>Dashboard &amp; export</strong><p>De-duplicated leads land on the map dashboard, ready to filter, search and export to CSV.</p></div>
       </div>
       <div class="notice">
         <b>Why the one human step?</b> Ohio's portal places a CAPTCHA on every search to ensure a person &mdash; not a bot &mdash; makes each request. We <strong>deliberately do not build CAPTCHA-defeating automation</strong>: it is brittle, works against the site's controls, and is the wrong exposure for a professional practice. Free &rArr; accept a small human step each run. Fully unattended &rArr; add a paid, contracted data feed (available as an upgrade).
@@ -502,21 +599,21 @@
       <h2>What it saves vs. <span class="gold">buying Ohio crash reports</span></h2>
       <p>
         Brokers are not defeating the CAPTCHA either &mdash; they hold an authorized, contracted pipe into the same records and
-        resell it. You pay only for the AI that <strong>reads</strong> each report &mdash; about 1.5&cent; &mdash; not for gated access.
+        resell it. You pay only for the AI that <strong>reads</strong> each report &mdash; about 0.2&cent; &mdash; not for gated access.
         To assemble ~1,000 injury reports:
       </p>
       <div class="ptable-wrap">
         <table class="ptable">
           <thead><tr><th></th><th>Buying reports retail (e.g. BuyCrash)</th><th class="hl">This tool</th></tr></thead>
           <tbody>
-            <tr><td class="rowlab">Cost to obtain &amp; read them</td><td>$5,000 &ndash; $15,000</td><td class="hl">~$15 in AI</td></tr>
-            <tr><td class="rowlab">Per report</td><td>$5 &ndash; $15</td><td class="hl">~$0.015 (about 1.5&cent;)</td></tr>
+            <tr><td class="rowlab">Cost to obtain &amp; read them</td><td>$5,000 &ndash; $15,000</td><td class="hl">~$2 in AI</td></tr>
+            <tr><td class="rowlab">Per report</td><td>$5 &ndash; $15</td><td class="hl">~$0.002 (about 0.2&cent;)</td></tr>
             <tr><td class="rowlab">Exclusivity</td><td>Non-exclusive &mdash; resold to competitors</td><td class="hl">Exclusive &mdash; you generate &amp; own it</td></tr>
             <tr><td class="rowlab">Afterward</td><td>You bought copies</td><td class="hl">You own the audience &mdash; reuse it freely</td></tr>
           </tbody>
         </table>
       </div>
-      <p class="mini-note">Illustrative market ranges &mdash; same public records; the difference is you pay for the <em>reading</em>, not for access someone else gates behind a per-report fee. At the scale of a typical broker file (thousands of reports), that is tens of thousands of dollars retail versus tens of dollars here. We walk through the whole comparison in <a href="blog/ohio-crash-report-leads-for-law-firms.html" style="color:var(--gold);">buying a list vs. building your own pipeline</a>.</p>
+      <p class="mini-note">Illustrative market ranges &mdash; same public records; the difference is you pay for the <em>reading</em>, not for access someone else gates behind a per-report fee. At the scale of a typical broker file (thousands of reports), that is tens of thousands of dollars retail versus a few dollars here. We walk through the whole comparison in <a href="blog/ohio-crash-report-leads-for-law-firms.html" style="color:var(--gold);">buying a list vs. building your own pipeline</a>.</p>
     </section>
 
     <section class="section" id="pricing">
@@ -525,20 +622,20 @@
       <div class="models">
         <div class="model">
           <h3>Own It</h3>
-          <p class="mprice">$6,000 <small>one-time</small></p>
-          <p>Buy the software outright and run it in-house on <strong>your own AI key</strong>, so you pay for AI at cost with no recurring license fee. Your data never leaves your office. Includes a 60-day portal-change warranty; AI runs ~$10&ndash;$25/mo.</p>
+          <p class="mprice">$3,995 <small>one-time + tax</small></p>
+          <p>Buy the software outright and run it in-house on <strong>your own AI key</strong>, so you pay for AI at cost with no recurring license fee. Your data never leaves your office. Includes a 60-day portal-change warranty; AI typically runs a few dollars a month.</p>
           <p class="fit"><b>Best when</b> you want control and the lowest long-run cost.</p>
         </div>
         <div class="model">
           <h3>License It</h3>
-          <p class="mprice">from $199 <small>/ month</small></p>
+          <p class="mprice">from $199 <small>/ month + tax</small></p>
           <p>An all-inclusive <strong>subscription</strong> &mdash; AI, updates, support, and portal-change fixes built in. It always works and stays current, with nothing to maintain. Month-to-month, cancel anytime.</p>
           <p class="fit"><b>Best when</b> you want it to just work and keep improving.</p>
         </div>
         <div class="model">
           <h3>Data as a Service</h3>
-          <p class="mprice">from $750 <small>/ month</small></p>
-          <p>Never open the app. <strong>We</strong> run it and deliver validated, injury-tagged crashes &mdash; with the source report and every party on it &mdash; for your counties and agencies, twice weekly.</p>
+          <p class="mprice">from $495 <small>/ month + tax</small></p>
+          <p>Never open the app. <strong>We</strong> run it and deliver validated, injury-tagged crashes &mdash; with the source report and every party on it &mdash; for your counties and agencies, up to twice a week.</p>
           <p class="fit"><b>Best when</b> you just want the data &mdash; no operational lift.</p>
         </div>
       </div>
@@ -548,8 +645,8 @@
       <div class="plans">
         <div class="plan">
           <p class="pname">Starter</p>
-          <p class="price">$199<small>/mo</small></p>
-          <p class="annual">$1,910/yr &mdash; save 20%</p>
+          <p class="price">$199<small>/mo + tax</small></p>
+          <p class="annual">$1,910/yr + tax &mdash; save 20%</p>
           <ul class="spec">
             <li>1&ndash;3 counties or 1 agency</li>
             <li>Weekly refresh</li>
@@ -561,8 +658,8 @@
         <div class="plan feat">
           <span class="ribbon">Most Popular</span>
           <p class="pname">Pro</p>
-          <p class="price">$549<small>/mo</small></p>
-          <p class="annual">$5,270/yr &mdash; save 20%</p>
+          <p class="price">$549<small>/mo + tax</small></p>
+          <p class="annual">$5,270/yr + tax &mdash; save 20%</p>
           <ul class="spec">
             <li>A full region (~15 counties) + 1 agency</li>
             <li>Twice-weekly refresh</li>
@@ -574,8 +671,8 @@
         </div>
         <div class="plan">
           <p class="pname">Firm / Statewide</p>
-          <p class="price">$1,199<small>/mo</small></p>
-          <p class="annual">$11,510/yr &mdash; save 20%</p>
+          <p class="price">$1,199<small>/mo + tax</small></p>
+          <p class="annual">$11,510/yr + tax &mdash; save 20%</p>
           <ul class="spec">
             <li>Statewide or unlimited counties + agencies</li>
             <li>Twice-weekly or faster</li>
@@ -594,7 +691,7 @@
         <li>Setup fee waived on annual prepay</li>
         <li>Your validated audience, refreshed on cadence</li>
       </ul>
-      <p class="mini-note">Not sure which counties to start with? See <a href="blog/ohio-crash-reports-by-county.html" style="color:var(--gold);">how to choose your coverage area</a>. Data-as-a-service is priced by coverage: 1&ndash;3 counties $750/mo, 4&ndash;10 $1,100, a full region (11&ndash;25) $1,500, statewide from $2,500 &mdash; or pay per validated crash ($3&ndash;$8). Every plan is built to your counties, cadence, and budget &mdash; <a href="#get-started" style="color:var(--gold);">request a tailored quote</a>. A 14-day, 100-report free trial is available to evaluate the tool first.</p>
+      <p class="mini-note">Not sure which counties to start with? See <a href="blog/ohio-crash-reports-by-county.html" style="color:var(--gold);">how to choose your coverage area</a>. Data-as-a-service is priced by coverage: 1&ndash;3 counties $495/mo, 4&ndash;10 $1,100, a full region (11&ndash;25) $1,500, statewide from $2,500 &mdash; or pay per validated crash ($3&ndash;$8). All prices are plus applicable sales tax. Every plan is built to your counties, cadence, and budget &mdash; <a href="#get-started" style="color:var(--gold);">request a tailored quote</a>. A 14-day, 100-report free trial is available to evaluate the tool first.</p>
     </section>
 
     <section class="section" id="fields">
@@ -621,7 +718,7 @@
       </details>
       <details>
         <summary>How much does it cost to run?</summary>
-        <div class="faq-a">On the own-it option the only per-use cost is AI &mdash; about 1.5&cent; per injury report read, roughly $10&ndash;$25/month for a weekly regional pull. The subscription includes the AI in the monthly price. A rules-only mode runs the whole pipeline for $0.</div>
+        <div class="faq-a">On the own-it option the only per-use cost is AI &mdash; about 0.2&cent; per injury report read, a few dollars a month for a weekly regional pull. The subscription includes the AI in the monthly price. A rules-only mode runs the whole pipeline for $0.</div>
       </details>
       <details>
         <summary>How should we handle compliance?</summary>
@@ -701,9 +798,13 @@
               <option value="annual">Annually</option>
             </select>
           </div>
-          <div class="full">
+          <div>
             <label for="buyEmail">Work email</label>
             <input id="buyEmail" type="email" name="email" required autocomplete="email" placeholder="you@yourfirm.com">
+          </div>
+          <div>
+            <label for="buyZip">Billing ZIP code</label>
+            <input id="buyZip" type="text" name="zip" required inputmode="numeric" autocomplete="postal-code" maxlength="10" placeholder="44107">
           </div>
           <div class="cf-turnstile" data-sitekey="0x4AAAAAAEfjPSABvMOUzIl3" data-theme="dark" data-size="flexible"></div>
           <div class="buy-error" id="buyError" role="alert"></div>
@@ -711,9 +812,9 @@
                charges from, so the quoted figure cannot drift from the invoice. The
                markup here is only a fallback for a failed fetch. -->
           <div class="buy-total" id="buyTotal" aria-live="polite">
-            <span class="bt-label">Total today</span>
+            <span class="bt-label">Price</span>
             <span class="bt-now" id="btNow">$549.00</span>
-            <span class="bt-cycle" id="btCycle">per month</span>
+            <span class="bt-cycle" id="btCycle">per month, plus applicable sales tax</span>
           </div>
           <button type="submit" class="btn btn-primary" id="buySubmit">Continue to PayPal</button>
           <p class="buy-note">Cancel any time from PayPal. Annual plans bill once for the year.</p>
@@ -979,6 +1080,8 @@
           box.style.display = 'none';
           if (!email || email.indexOf('@') < 1) { showError(box, 'Please enter a valid work email.'); return; }
           var token = tokenFrom(bForm);
+          var zip = document.getElementById('buyZip').value.trim();
+          if (!/^\d{5}(-?\d{4})?$/.test(zip)) { showError(box, 'Enter your five-digit billing ZIP code.'); return; }
           if (!token) { showError(box, 'Still checking that you are human — give it a second and try again.'); return; }
 
           btn.disabled = true; btn.textContent = 'Taking you to PayPal…';
@@ -986,6 +1089,7 @@
             email: email, product: 'ohio-crash',
             plan: document.getElementById('buyPlan').value,
             cadence: document.getElementById('buyCadence').value,
+            zip: zip,
             website: bForm.querySelector('[name="website"]').value || '',
             turnstileToken: token
           }).then(function(r) {
@@ -1000,6 +1104,8 @@
               return;
             }
             if (r && r.error === 'invalid_email') { showError(box, 'That email address does not look right.'); return; }
+            var ZIPMSG = { bad_zip: 'Enter a five-digit ZIP code.', zip_not_ohio: 'That ZIP code is not in Ohio.', unknown_zip: 'We could not find that ZIP code. Check it, or call (216) 302-8486.', zip_required: 'Enter your billing ZIP code so sales tax can be worked out.' };
+            if (r && ZIPMSG[r.error]) { showError(box, ZIPMSG[r.error]); return; }
             showError(box, 'We could not start checkout just now. Please use the quote form below, or call (216) 302-8486 and we will set it up for you.');
           }).catch(function() {
             btn.disabled = false; btn.textContent = 'Continue to PayPal';
@@ -1039,12 +1145,26 @@
           var el = document.createElement('span');
           el.className = cls; el.textContent = text; totalEl.appendChild(el); return el;
         }
-        add('bt-label', 'Total today');
+        add('bt-label', 'Price');
         if (tier.cadence === 'annual' && tier.undiscounted_cents) add('bt-was', whole(tier.undiscounted_cents));
         add('bt-now', tier.cadence === 'annual' ? whole(tier.price_cents) : money(tier.price_cents));
-        add('bt-cycle', tier.cadence === 'annual' ? 'per year, billed once' : 'per month');
+        add('bt-cycle', (tier.cadence === 'annual' ? 'per year, billed once' : 'per month') + (TAX && TAX.collecting
+          ? ', plus ' + money(Math.round(tier.price_cents * TAX.pct / 100)) + ' sales tax (' + TAX.county + ' County, ' + TAX.pct + '%' + (TAX.estimated ? ', estimated' : '') + ')'
+          : ', plus applicable sales tax'));
         if (tier.cadence === 'annual' && tier.saving_cents) add('bt-save', 'Save ' + whole(tier.saving_cents));
       }
+
+      // The sales tax for the ZIP typed in: shown only once collection is switched on.
+      var TAX = null;
+      var zipEl = document.getElementById('buyZip');
+      if (zipEl) zipEl.addEventListener('change', function() {
+        var z = zipEl.value.trim(); TAX = null;
+        if (!/^\d{5}(-?\d{4})?$/.test(z)) { renderTotal(); return; }
+        fetch('/portal-api/public/sales-tax?zip=' + encodeURIComponent(z), { credentials: 'same-origin' })
+          .then(function(r) { return r.json(); })
+          .then(function(t) { TAX = t && t.ok ? t : null; renderTotal(); })
+          .catch(function() { renderTotal(); });
+      });
 
       fetch('/portal-api/public/plans?product=ohio-crash', { credentials: 'same-origin' })
         .then(function(r) { return r.json(); })
