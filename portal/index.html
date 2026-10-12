@@ -99,8 +99,8 @@
         <p>Every Ohio crash report we have collected for you. Find any crash by report number, name, street or date, see where and when the leads are, open each report, and export exactly the rows you need.</p>
         <div class="status" hidden><span class="pill" id="crashPill"></span></div>
         <div class="acts">
-          <a class="qbtn primary" id="crashOpen" href="/portal-api/crash/dashboard" target="_blank" rel="noopener" hidden><i class="fa-solid fa-chart-column"></i> Open the crash dashboard</a>
-          <a class="qbtn ghost" id="crashFolder" target="_blank" rel="noopener noreferrer" hidden><i class="fa-solid fa-folder-open"></i> Shared data folder</a>
+          <a class="qbtn primary" id="crashOpen" hidden><i class="fa-solid fa-chart-column"></i> Open the crash dashboard</a>
+          <a class="qbtn ghost" id="crashFolder" hidden><i class="fa-solid fa-folder-open"></i> Shared data folder</a>
         </div>
       </div>
       <a class="pcard" href="messages.html">
@@ -268,14 +268,18 @@
           .then(function (d) {
             if (!d || !d.ok || (!d.crash && !d.folder_url)) return;
             document.getElementById('crashCard').hidden = false;
+            // Both links get href, target and rel here, when shown: the dashboard is a
+            // Worker route the offline link check cannot resolve, and the folder URL is
+            // only known once the API answers.
             if (d.crash) {
-              document.getElementById('crashOpen').hidden = false;
+              var o = document.getElementById('crashOpen');
+              o.href = '/portal-api/crash/dashboard'; o.target = '_blank'; o.rel = 'noopener'; o.hidden = false;
               var when = new Date(d.crash.updated_at * 1000).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
               pill('crashPill', 'ok', d.crash.reports.toLocaleString('en-US') + ' crash reports · updated ' + when);
             }
             if (d.folder_url) {
               var f = document.getElementById('crashFolder');
-              f.href = d.folder_url; f.hidden = false;
+              f.href = d.folder_url; f.target = '_blank'; f.rel = 'noopener noreferrer'; f.hidden = false;
             }
           })
           .catch(function () {});
