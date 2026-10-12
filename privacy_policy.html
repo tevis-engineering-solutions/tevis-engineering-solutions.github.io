@@ -265,6 +265,7 @@
       <li><strong>Device &amp; Technical Information:</strong> Descriptions of hardware, software, operating systems, and network configurations you provide in support requests.</li>
       <li><strong>Payment Information:</strong> Invoice identifiers and payment confirmation records. Credit card and payment data is processed directly by PayPal — we do not store card numbers or sensitive payment credentials.</li>
       <li><strong>Communications:</strong> Email correspondence, ticket submissions, and notes from service sessions, retained for record-keeping and future reference.</li>
+      <li><strong>Phone Calls:</strong> When our AI receptionist answers a call, we keep a recording, a transcript and a short summary of it. See <a href="#phone-calls">section 1.6</a>.</li>
       <li><strong>Website Usage Data:</strong> Standard web server logs (IP address, browser type, pages visited) for security and analytics purposes.</li>
       <li><strong>Analytics and Advertising Cookies:</strong> We use Google Analytics and Google Ads to see which pages, searches and ads bring people to us, and which forms, calls and bookings follow. These tools set cookies and record pages viewed, buttons and links clicked, and that a form was submitted. They do not receive what you type into our forms. Links that carry a payment or quote token have that token removed before anything is sent to Google.</li>
     </ul>
@@ -292,14 +293,24 @@
     <p>We retain service records, communications, and invoices for a minimum of <strong>3 years</strong> for accounting and business continuity purposes. You may request deletion of your personal information by contacting us directly, subject to our legal record-keeping obligations.</p>
 
     <h3>1.5 Third-Party Services</h3>
-    <p>Our website and tools may link to or integrate with third-party services (PayPal, Formspree, Google Analytics, Google Ads, Google Fonts, Font Awesome, GitHub Pages, Cloudflare, Tawk.to live chat, Chart.js, Brave Search). These services have their own privacy policies and we are not responsible for their data practices.</p>
+    <p>Our website and tools may link to or integrate with third-party services (PayPal, Formspree, Google Analytics, Google Ads, Google Fonts, Font Awesome, GitHub Pages, Cloudflare, Tawk.to live chat, Chart.js, Brave Search, Twilio, Microsoft Azure, Anthropic, Telegram). These services have their own privacy policies and we are not responsible for their data practices.</p>
     <p>Our business-research tools use the Brave Search API to find the public websites of newly registered Ohio businesses. <a class="brave-badge" href="https://brave.com/search/api/" target="_blank" rel="noopener noreferrer"><i class="fa-brands fa-brave" aria-hidden="true"></i> POWERED BY BRAVE</a></p>
 
-    <h3 id="cookies">1.6 Cookie Choices</h3>
+    <h3 id="phone-calls">1.6 Phone Calls</h3>
+    <p>Calls to our AI Receptionist demo line, (216)&nbsp;238&#8209;0505, and to our business lines may be answered by our AI receptionist. Near the start of the call it tells you that it is an AI and that the call is recorded and transcribed.</p>
+    <ul>
+      <li><strong>What we keep:</strong> the recording, a written transcript, a short summary (such as a message you left or a time you booked) and the number you called from.</li>
+      <li><strong>Who handles it:</strong> Twilio carries and records the call. Microsoft Azure runs the AI model that answers it and writes the transcript. Cloudflare stores the recording and the call record. A short summary goes to Tyler&rsquo;s phone through Telegram so he can call you back.</li>
+      <li><strong>How we use it:</strong> to return your call, to book what you asked for, and to improve the receptionist. Each week we review the past week&rsquo;s transcripts with AI tools, including Anthropic&rsquo;s Claude, to find mistakes and test fixes before they go live. Before that review we automatically mask phone numbers, email addresses, street addresses and names in the transcripts.</li>
+      <li><strong>Calls Tyler answers himself</strong> are not recorded.</li>
+      <li><strong>Deleting a call:</strong> email <a href="mailto:tyler@tevisengineering.com">tyler@tevisengineering.com</a> with the number you called from and roughly when, and we will delete the recording, the transcript and the summary.</li>
+    </ul>
+
+    <h3 id="cookies">1.7 Cookie Choices</h3>
     <p>The first time you visit, a bar at the bottom of the page lets you accept or decline analytics and advertising cookies. Visitors in the European Economic Area, the United Kingdom and Switzerland are opted out until they accept. If you decline, Google receives only cookieless signals and no advertising profile is built from your visit. Your choice is saved in your browser. You can also use Google's <a href="https://tools.google.com/dlpage/gaoptout" target="_blank" rel="noopener noreferrer">Analytics opt-out add-on</a> and <a href="https://adssettings.google.com" target="_blank" rel="noopener noreferrer">Ad Settings</a>.</p>
     <p><button type="button" class="cookie-reset" id="cookieReset">Change my cookie choice</button> <span class="cookie-reset-note" id="cookieResetNote" role="status"></span></p>
 
-    <h3>1.7 Your Rights</h3>
+    <h3>1.8 Your Rights</h3>
     <p>You may at any time:</p>
     <ul>
       <li>Request a copy of the personal information we hold about you.</li>
@@ -309,10 +320,10 @@
     </ul>
     <p>To exercise these rights, contact us at <a href="mailto:tyler@tevisengineering.com">tyler@tevisengineering.com</a>.</p>
 
-    <h3>1.8 Children's Privacy</h3>
+    <h3>1.9 Children's Privacy</h3>
     <p>Our services are not directed to children under 13. We do not knowingly collect personal information from children. If you believe we have inadvertently collected such information, please contact us immediately.</p>
 
-    <h3>1.9 Changes to This Policy</h3>
+    <h3>1.10 Changes to This Policy</h3>
     <p>We may update this Privacy Policy from time to time. The "Last Updated" date at the top of this page reflects the most recent revision. Continued use of our services constitutes acceptance of any updated policy.</p>
   </section>
 

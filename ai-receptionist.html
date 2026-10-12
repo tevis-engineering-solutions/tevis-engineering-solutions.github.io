@@ -4,25 +4,27 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>AI Receptionist for Small Businesses | Tevis Engineering</title>
-  <meta name="description" content="An AI receptionist that answers the calls you miss, books into your calendar and flags emergencies. Plugs into your systems. Hear it handle real calls.">
+  <meta name="description" content="The AI receptionist that never misses a call: ten voices, any business, books appointments and flags emergencies. Call the live demo: (216) 238-0505.">
   <meta name="author" content="Tyler Tevis, Tevis Engineering Solutions">
   <meta property="og:type" content="website">
   <meta property="og:site_name" content="Tevis Engineering Solutions">
   <meta property="og:locale" content="en_US">
   <meta property="og:url" content="https://tevisengineering.com/ai-receptionist.html">
   <meta property="og:title" content="AI Receptionist for Small Businesses | Tevis Engineering">
-  <meta property="og:description" content="Never miss another call. It answers when you can’t, books the job, and only interrupts you for a real emergency. Hear the highlight reel.">
-  <meta property="og:image" content="https://tevisengineering.com/assets/receptionist/og.jpg">
+  <meta property="og:description" content="Ten voices. Any business. It answers every call, books the job and flags real emergencies. Watch the 60-second film, then call the live demo: (216) 238-0505.">
+  <meta property="og:image" content="https://tevisengineering.com/assets/receptionist/ai-receptionist-film-og.jpg">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="630">
-  <meta property="og:image:alt" content="A call summary from the AI receptionist: an after-hours no-heat call sorted as an emergency, with the on-call technician alerted">
+  <meta property="og:image:alt" content="The AI Receptionist by Tevis Engineering Solutions: call the live demo at (216) 238-0505">
+  <meta name="twitter:image:alt" content="The AI Receptionist by Tevis Engineering Solutions: call the live demo at (216) 238-0505">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="AI Receptionist for Small Businesses | Tevis Engineering">
-  <meta name="twitter:description" content="Never miss another call. It answers when you can’t, books the job, and only interrupts you for a real emergency. Hear the highlight reel.">
-  <meta name="twitter:image" content="https://tevisengineering.com/assets/receptionist/og.jpg">
+  <meta name="twitter:description" content="Ten voices. Any business. It answers every call, books the job and flags real emergencies. Watch the 60-second film, then call the live demo: (216) 238-0505.">
+  <meta name="twitter:image" content="https://tevisengineering.com/assets/receptionist/ai-receptionist-film-og.jpg">
   <link rel="canonical" href="https://tevisengineering.com/ai-receptionist.html">
   <link rel="icon" type="image/png" href="assets/favicon.png">
   <link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
+  <link rel="preload" as="image" href="assets/receptionist/ai-receptionist-film-poster.webp" type="image/webp" fetchpriority="high">
   <meta name="theme-color" content="#0d1710">
   <meta http-equiv="X-Content-Type-Options" content="nosniff">
   <meta name="referrer" content="strict-origin-when-cross-origin">
@@ -189,15 +191,28 @@
     .ar-js .rv.in { opacity:1; transform:none; }
 
     /* hero */
-    .ar-hero { position:relative; padding:0 0 4.5rem; overflow:hidden; }
+    .ar-hero { position:relative; padding:0 0 4.5rem; overflow:hidden; scroll-margin-top:160px; }
     .ar-orb { position:absolute; border-radius:50%; filter:blur(70px); pointer-events:none; z-index:0; }
     .ar-orb.a { width:560px; height:560px; right:-140px; top:20px; background:radial-gradient(circle, rgba(200,152,48,0.32), transparent 68%); animation:arDrift 14s ease-in-out infinite alternate; }
     .ar-orb.b { width:640px; height:640px; left:-260px; top:240px; background:radial-gradient(circle, rgba(74,172,101,0.28), transparent 68%); animation:arDrift 19s ease-in-out infinite alternate-reverse; }
     @keyframes arDrift { to { transform:translate(70px,-50px) scale(1.12); } }
-    .ar-hero-grid { display:grid; grid-template-columns:1.12fr 0.88fr; gap:3rem; align-items:center; min-height:660px; }
-    .ar-hero h1 { font-size:clamp(2.9rem,7.4vw,5.6rem); line-height:0.96; margin:0.5rem 0 1.3rem; }
+    /* a short heading and the buttons on one row, the film large under them */
+    .ar-hero-stack { display:grid; grid-template-columns:minmax(0,1fr) auto; grid-template-areas:"copy act" "film film"; column-gap:2.5rem; row-gap:1.8rem; align-items:end; padding-top:1.5rem; }
+    .ar-hero-copy { grid-area:copy; min-width:0; }
+    .ar-hero-act { grid-area:act; display:flex; flex-direction:column; }
+    .ar-hero-act .ar-cta { flex-direction:column; margin-top:0; }
+    .ar-hero-act .ar-demo { justify-content:center; margin-top:0.8rem; font-size:0.9rem; }
+    .ar-hero .eyebrow { margin-bottom:0.75rem; }
+    .ar-hero h1 { font-size:clamp(1.55rem,2.9vw,2.55rem); line-height:1.08; margin:0 0 0.75rem; text-wrap:balance; }
     .ar-hero h1 .grad { display:inline-block; }
-    .ar-lede { font-size:1.22rem; color:#cfe0d2; max-width:33rem; line-height:1.55; }
+    .ar-lede { font-size:1.08rem; color:#cfe0d2; max-width:38rem; line-height:1.55; text-wrap:pretty; }
+    @media (max-width:900px) {
+      .ar-hero-stack { grid-template-columns:minmax(0,1fr); grid-template-areas:"copy" "film" "act"; row-gap:1.5rem; padding-top:0.8rem; }
+      .ar-hero-copy { text-align:center; }
+      .ar-hero h1 .grad { display:inline; }
+      .ar-lede { margin:0 auto; }
+      .ar-hero-act .ar-cta { flex-direction:row; flex-wrap:wrap; justify-content:center; }
+    }
     .ar-cta { display:flex; gap:0.8rem; flex-wrap:wrap; margin-top:2rem; }
     .ar-cta.center { justify-content:center; }
     .ar-go { animation:arGlow 2.6s ease-out infinite; }
@@ -382,7 +397,7 @@
     .ar-clone:hover .ar-clone-go i { transform:translateX(3px); }
 
     /* capabilities */
-    .ar-cgrid { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:1rem; }
+    .ar-cgrid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:1rem; }
     .ar-cgrid div { padding:1.4rem 1.15rem; border-radius:20px; background:linear-gradient(180deg, rgba(28,46,34,0.62), rgba(12,22,16,0.62)); border:1px solid var(--line); transition:border-color .25s, transform .25s; }
     .ar-cgrid div:hover { border-color:rgba(200,152,48,0.5); transform:translateY(-3px); }
     .ar-cgrid i { display:block; color:var(--gold); font-size:1.4rem; margin-bottom:0.8rem; }
@@ -442,9 +457,6 @@
     .ar .ex-start-alt { margin:1.4rem auto 0; text-align:center; color:var(--muted); font-size:0.92rem; }
 
     @media (max-width:980px) {
-      .ar-hero-grid { grid-template-columns:1fr; min-height:0; gap:2.6rem; padding-top:0.8rem; }
-      .ar-hero-copy { text-align:center; }
-      .ar-lede { margin:0 auto; }
       .ar-cta, .ar-demo { justify-content:center; }
       .ar-phone { transform:none; animation:none; }
       .ar-split { grid-template-columns:1fr; gap:3rem; }
@@ -500,8 +512,127 @@
       .ar-voice-ring { width:32px; height:32px; }
       .eq { display:none !important; }
     }
+    /* the film in the hero */
+    @property --ar-a { syntax:'<angle>'; inherits:false; initial-value:0deg; }
+    .ar-film { grid-area:film; margin:0; min-width:0; }
+    .ar-film-edge { position:relative; border-radius:26px; padding:2px; background:linear-gradient(135deg, rgba(200,152,48,0.6), rgba(74,172,101,0.3) 45%, rgba(200,152,48,0.6)); box-shadow:0 44px 110px rgba(0,0,0,0.6), 0 0 140px rgba(200,152,48,0.16); transition:transform .35s ease, box-shadow .35s ease; }
+    .ar-film-edge::before { content:""; position:absolute; inset:0; border-radius:inherit; padding:2px; z-index:2; pointer-events:none;
+      background:conic-gradient(from var(--ar-a), transparent 0 58%, #f0c75a 74%, #6dc882 86%, transparent 100%);
+      -webkit-mask:linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0); -webkit-mask-composite:xor; mask-composite:exclude;
+      animation:arEdge 5s linear infinite; }
+    @keyframes arEdge { to { --ar-a:360deg; } }
+    .ar-film:not(.is-started) .ar-film-edge:hover { transform:translateY(-3px); box-shadow:0 52px 120px rgba(0,0,0,0.62), 0 0 160px rgba(200,152,48,0.26); }
+    .ar-film.is-started .ar-film-edge::before { animation-play-state:paused; opacity:0.45; }
+    .ar-film-frame { position:relative; border-radius:24px; overflow:hidden; background:#060e08; aspect-ratio:16/9; }
+    .ar-film-frame video { display:block; width:100%; height:100%; object-fit:cover; background:#060e08; }
+    .ar-film-play { position:absolute; inset:0; z-index:1; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:1rem; padding:0 1rem 11%; border:0; cursor:pointer; color:#fff; font:inherit; background:radial-gradient(46% 52% at 50% 42%, rgba(4,10,6,0.66), rgba(4,10,6,0.28) 62%, rgba(4,10,6,0) 100%); transition:background .3s ease; }
+    .ar-film-play:hover { background:radial-gradient(46% 52% at 50% 42%, rgba(4,10,6,0.5), rgba(4,10,6,0.16) 62%, rgba(4,10,6,0) 100%); }
+    .ar-film-play:focus-visible { outline:3px solid #fff; outline-offset:-8px; }
+    .ar-film-btn { position:relative; width:108px; height:108px; flex:0 0 auto; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:2.2rem; color:#0d1710; background:linear-gradient(135deg,#c89830,#e0b840); box-shadow:0 18px 46px rgba(0,0,0,0.55); transition:transform .25s ease; }
+    .ar-film-btn i { margin-left:7px; }
+    .ar-film-btn::before, .ar-film-btn::after { content:""; position:absolute; inset:0; border-radius:50%; border:2px solid rgba(224,184,64,0.75); animation:arRing 2.4s ease-out infinite; }
+    .ar-film-btn::after { animation-delay:1.2s; }
+    .ar-film-play:hover .ar-film-btn { transform:scale(1.08); }
+    .ar-film-cta { display:flex; flex-direction:column; align-items:center; gap:0.15rem; padding:0.6rem 1.3rem 0.65rem; border-radius:999px; background:rgba(6,14,8,0.78); border:1px solid rgba(200,152,48,0.5); }
+    .ar-film-cta b { font:800 0.98rem/1.15 "Montserrat",sans-serif; text-transform:uppercase; letter-spacing:0.1em; color:#fff; }
+    .ar-film-cta small { display:flex; align-items:center; gap:0.4rem; font:500 0.8rem/1.2 "Inter",sans-serif; color:#cfe0d2; }
+    .ar-film-cta small i { color:var(--gold); }
+    .ar-film.is-started .ar-film-play { display:none; }
+    .ar-film figcaption { margin-top:0.9rem; color:var(--muted); font-size:0.86rem; text-align:center; }
+    .ar-inline-tel { color:#fff; font-weight:700; text-decoration:none; border-bottom:1px dashed rgba(200,152,48,0.7); white-space:nowrap; }
+    .ar-inline-tel:hover { border-bottom-style:solid; }
+
+    /* personas */
+    .ar-pgrid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:1rem; }
+    .ar-pcard { position:relative; display:flex; flex-direction:column; gap:0.45rem; padding:1.4rem 1.3rem 1.2rem; border-radius:22px; background:linear-gradient(180deg, rgba(28,46,34,0.62), rgba(12,22,16,0.7)); border:1px solid var(--line); transition:border-color .25s, transform .25s; }
+    .ar-pcard:hover { border-color:rgba(200,152,48,0.5); transform:translateY(-3px); }
+    .ar-pcard-top { display:flex; align-items:center; justify-content:space-between; margin-bottom:0.3rem; }
+    .ar-pcard-ic { width:46px; height:46px; border-radius:14px; display:flex; align-items:center; justify-content:center; background:rgba(200,152,48,0.12); border:1px solid rgba(200,152,48,0.4); color:var(--gold); font-size:1.15rem; }
+    .ar-pcard-v { font:700 0.7rem "Montserrat",sans-serif; text-transform:uppercase; letter-spacing:0.14em; color:#cdeed6; border:1px solid rgba(74,172,101,0.4); background:rgba(74,172,101,0.1); border-radius:999px; padding:0.28rem 0.7rem; }
+    .ar-pcard h3 { font:800 1.08rem/1.25 "Montserrat",sans-serif; color:#fff; }
+    .ar-pcard p { color:var(--muted); font-size:0.92rem; }
+    .ar-pcard small { color:#7c9a80; font-size:0.82rem; margin-top:auto; }
+    .ar-pcard small a { color:var(--green); font-weight:600; }
+    .ar-pcard-you { border-style:dashed; border-color:rgba(200,152,48,0.5); }
+    .ar-greet { display:inline-flex; align-items:center; gap:0.6rem; align-self:flex-start; margin:0.5rem 0 0.4rem; padding:0.35rem 0.9rem 0.35rem 0.35rem; min-height:44px; border-radius:999px; border:1px solid rgba(200,152,48,0.45); background:rgba(200,152,48,0.08); color:#e4ede5; font:600 0.86rem "Inter",sans-serif; cursor:pointer; transition:background .2s, border-color .2s; }
+    .ar-greet:hover { background:rgba(200,152,48,0.16); border-color:rgba(224,184,64,0.8); }
+    .ar-greet:focus-visible { outline:2px solid #e0b840; outline-offset:3px; }
+    .ar-greet .ar-voice-ring { width:34px; height:34px; }
+    .ar-greet .fa-pause { display:none; }
+    .ar-greet.is-playing .fa-play { display:none; }
+    .ar-greet.is-playing .fa-pause { display:inline-block; }
+    .ar-greet.is-playing .ar-voice-ring, .ar-greet:hover .ar-voice-ring { background:linear-gradient(135deg,#c89830,#e0b840); border-color:transparent; color:#0d1710; }
+    .ar-greet.is-playing .eq { display:flex; }
+
+    /* weekly review */
+    .ar-steps { list-style:none; display:grid; grid-template-columns:repeat(5,minmax(0,1fr)); gap:0.8rem; counter-reset:none; }
+    .ar-steps li { position:relative; padding:1.2rem 1rem; border-radius:18px; background:rgba(20,32,25,0.72); border:1px solid var(--line); }
+    .ar-steps li + li::before { content:""; position:absolute; left:-0.8rem; top:50%; width:0.8rem; height:2px; background:linear-gradient(90deg,rgba(200,152,48,0.2),rgba(200,152,48,0.8)); }
+    .ar-steps span { font:600 0.74rem "Montserrat",sans-serif; letter-spacing:0.14em; color:var(--gold); }
+    .ar-steps b { display:block; font:800 1.15rem "Montserrat",sans-serif; color:#fff; margin:0.35rem 0 0.25rem; }
+    .ar-steps small { display:block; color:var(--muted); font-size:0.86rem; line-height:1.4; }
+    .ar-ba { max-width:760px; margin:1.6rem auto 0; display:grid; gap:0.6rem; }
+    .ar-ba p { display:flex; align-items:center; gap:0.8rem; padding:0.9rem 1.1rem; border-radius:16px; background:rgba(20,32,25,0.72); border:1px solid var(--line); color:#e4ede5; }
+    .ar-ba p > i { width:30px; height:30px; flex:0 0 auto; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:0.85rem; }
+    .ar-ba .bad > i { background:rgba(226,115,90,0.14); color:#ef8f78; }
+    .ar-ba .good > i { background:rgba(74,172,101,0.18); color:#8fe0a6; }
+    .ar-ba b { font:700 0.72rem "Montserrat",sans-serif; text-transform:uppercase; letter-spacing:0.12em; color:var(--muted); margin-right:0.5rem; }
+
+    /* try band: the phone, smaller */
+    .ar-try .ar-try-art .ar-phone { zoom:0.72; }
+
+    /* running costs */
+    .ar-costbox { max-width:860px; margin:0 auto; border-radius:24px; overflow:hidden; background:linear-gradient(180deg, rgba(28,46,34,0.62), rgba(12,22,16,0.72)); border:1px solid rgba(200,152,48,0.4); box-shadow:0 30px 70px rgba(0,0,0,0.4); }
+    .ar-ctable { width:100%; border-collapse:collapse; table-layout:fixed; }
+    .ar-ctable th, .ar-ctable td { padding:1rem 1.2rem; text-align:left; vertical-align:middle; }
+    .ar-ctable thead th { vertical-align:bottom; padding-top:1.4rem; border-bottom:1px solid rgba(74,172,101,0.22); }
+    .ar-ctable thead th:first-child { width:34%; }
+    .ar-ctable .ar-tag { position:static; display:inline-block; margin-bottom:0.6rem; }
+    .ar-ctable .ar-tag.alt { color:#cdeed6; background:rgba(74,172,101,0.16); border:1px solid rgba(74,172,101,0.45); }
+    .ar-ctable thead b { display:block; font:800 1.1rem/1.2 "Montserrat",sans-serif; color:#fff; overflow-wrap:anywhere; }
+    .ar-ctable thead small { display:block; color:var(--muted); font-size:0.82rem; margin-top:0.2rem; }
+    .ar-ctable tbody th { color:#cfe0d2; font:500 0.95rem "Inter",sans-serif; }
+    .ar-ctable tbody td { font:700 1.08rem "Montserrat",sans-serif; color:#fff; white-space:nowrap; }
+    .ar-ctable tbody tr + tr th, .ar-ctable tbody tr + tr td { border-top:1px solid rgba(74,172,101,0.14); }
+    .ar-ctable .std { background:rgba(200,152,48,0.07); }
+    .ar-ctable tbody tr:last-child td.std { box-shadow:inset 0 -3px 0 rgba(224,184,64,0.55); }
+    @media (max-width:600px) {
+      .ar-ctable th, .ar-ctable td { padding:0.8rem 0.6rem; }
+      .ar-ctable thead th:first-child { width:30%; }
+      .ar-ctable thead b { font-size:0.88rem; }
+      .ar-ctable thead small { font-size:0.72rem; }
+      .ar-ctable .ar-tag { font-size:0.58rem; padding:0.25rem 0.5rem; }
+      .ar-ctable tbody th { font-size:0.8rem; }
+      .ar-ctable tbody td { font-size:0.86rem; white-space:normal; }
+    }
+
+    /* the sticky call bar on phones */
+    .ar-sticky { display:none; }
+    @media (max-width:700px) {
+      .ar-sticky { position:fixed; left:12px; right:12px; bottom:12px; z-index:9000; display:flex; align-items:center; justify-content:center; gap:0.6rem; min-height:52px; padding:0 1rem; border-radius:999px; text-decoration:none; color:#0d1710; background:linear-gradient(135deg,#c89830,#e0b840); box-shadow:0 14px 34px rgba(0,0,0,0.5); font:700 0.92rem "Montserrat",sans-serif; transform:translateY(140%); transition:transform .3s ease; }
+      .ar-sticky span { text-transform:uppercase; letter-spacing:0.04em; font-size:0.78rem; }
+      .ar-sticky.show { transform:none; }
+    }
+    @media (max-width:980px) {
+      .ar-film-btn { width:88px; height:88px; font-size:1.85rem; }
+      .ar-pgrid { grid-template-columns:repeat(2,minmax(0,1fr)); }
+      .ar-steps { grid-template-columns:repeat(2,minmax(0,1fr)); }
+      .ar-steps li + li::before { display:none; }
+    }
+    @media (max-width:640px) {
+      .ar-pgrid { grid-template-columns:minmax(0,1fr); }
+      .ar-steps { grid-template-columns:minmax(0,1fr); }
+      .ar-film-edge { border-radius:18px; }
+      .ar-film-frame { border-radius:16px; }
+      .ar-film-play { gap:0.55rem; padding-bottom:9%; }
+      .ar-film-btn { width:62px; height:62px; font-size:1.35rem; }
+      .ar-film-btn i { margin-left:4px; }
+      .ar-film-cta { padding:0.32rem 0.8rem 0.36rem; }
+      .ar-film-cta b { font-size:0.7rem; letter-spacing:0.08em; }
+      .ar-film-cta small { display:none; }
+    }
     @media (prefers-reduced-motion: reduce) {
-      .ar-orb, .ar-phone, .ar-go, .ar-ph-av::before, .ar-ph-av::after, .ar-ph-btns .yes, .ar-flow-wire i, .eq i { animation:none !important; }
+      .ar-orb, .ar-phone, .ar-go, .ar-ph-av::before, .ar-ph-av::after, .ar-ph-btns .yes, .ar-flow-wire i, .eq i, .ar-film-edge::before, .ar-film-btn::before, .ar-film-btn::after { animation:none !important; }
       .ar-mq-track { animation-duration:180s; }
       .ar-track { transition:none; }
     }
@@ -512,7 +643,7 @@
     "@type": "Service",
     "name": "AI Receptionist",
     "alternateName": "AI phone receptionist",
-    "description": "An AI phone receptionist set up for one business. It answers missed and after-hours calls, sorts them into emergency, urgent or routine, books appointments into open calendar times, takes messages and alerts the owner to emergencies. It works alongside the business’s staff, set up standalone or connected to its website, calendar and other systems, and is quoted per business.",
+    "description": "An AI phone receptionist set up for one business, in any of ten voices. It answers missed and after-hours calls, sorts them into emergency, urgent or routine, books appointments into the calendar connected during setup, takes messages and alerts the owner to emergencies. Tevis Engineering Solutions connects it to the business’s calendar, help desk, CRM or other software with an API, reviews its recorded calls every week, and quotes it per business. A live demo answers at (216) 238-0505.",
     "serviceType": "AI phone answering service",
     "provider": {
       "@id": "https://tevisengineering.com/#business"
@@ -526,6 +657,20 @@
       "@type": "BusinessAudience",
       "audienceType": "Small businesses: home-service trades, auto repair, dental and medical offices, law firms, accountants, salons and shops"
     }
+  }
+  </script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "VideoObject",
+    "name": "AI Receptionist by Tevis Engineering Solutions",
+    "description": "A 60-second film: one sentence passed across all ten voices, three moments from sample calls, the connections TES builds, the weekly review, and the live demo number, (216) 238-0505.",
+    "thumbnailUrl": "https://tevisengineering.com/assets/receptionist/ai-receptionist-film-poster.jpg",
+    "contentUrl": "https://tevisengineering.com/assets/receptionist/ai-receptionist-film.mp4",
+    "uploadDate": "2026-10-12",
+    "duration": "PT1M2S",
+    "inLanguage": "en-US",
+    "publisher": { "@id": "https://tevisengineering.com/#business" }
   }
   </script>
   <script type="application/ld+json">
@@ -555,76 +700,68 @@
   }
   </script>
   <script type="application/ld+json">
-  {
-    "@context": "https://schema.org",
-    "@type": "FAQPage",
-    "mainEntity": [
-      {
-        "@type": "Question",
-        "name": "Will callers know they are talking to an AI?",
-        "acceptedAnswer": {
-          "@type": "Answer",
-          "text": "Yes. It tells every caller it is an AI assistant at the start of the call, and again if anyone asks."
-        }
-      },
-      {
-        "@type": "Question",
-        "name": "Does it replace my receptionist?",
-        "acceptedAnswer": {
-          "@type": "Answer",
-          "text": "No. It backs up the people you have. It answers when they are busy or gone for the day, and hands every call over with a summary so nothing slips through."
-        }
-      },
-      {
-        "@type": "Question",
-        "name": "Can it work with my calendar, booking page or CRM?",
-        "acceptedAnswer": {
-          "@type": "Answer",
-          "text": "Yes. Connecting it to the systems you already run is part of the setup we scope and quote with you. It only books into the open times your calendar offers."
-        }
-      },
-      {
-        "@type": "Question",
-        "name": "Can it answer my existing number?",
-        "acceptedAnswer": {
-          "@type": "Answer",
-          "text": "Yes. It can pick up your existing number when a call goes unanswered, or answer a new number of its own."
-        }
-      },
-      {
-        "@type": "Question",
-        "name": "Can it sound like us?",
-        "acceptedAnswer": {
-          "@type": "Answer",
-          "text": "Pick any of its ten built-in voices, or have a custom voice made with a voice cloning service such as ElevenLabs, including your own, as a custom setup."
-        }
-      },
-      {
-        "@type": "Question",
-        "name": "What does it do in an emergency?",
-        "acceptedAnswer": {
-          "@type": "Answer",
-          "text": "It gives your safety instruction first, then gets the caller’s name, number and address and either transfers the call to you or alerts you right away."
-        }
-      },
-      {
-        "@type": "Question",
-        "name": "What does it cost?",
-        "acceptedAnswer": {
-          "@type": "Answer",
-          "text": "It depends on your business, how many calls you get, and what we connect it to. We quote it after a short call, before any work starts."
-        }
-      },
-      {
-        "@type": "Question",
-        "name": "What is it built on?",
-        "acceptedAnswer": {
-          "@type": "Answer",
-          "text": "OpenAI’s realtime voice model, hosted on Microsoft Azure. The setup, call handling, safeguards and integrations are built and maintained by Tevis Engineering Solutions in Cleveland."
-        }
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "How do I try it?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Call the demo line at (216) 238-0505. It answers as the TES demo, and it can play any of the sample businesses: ask for the dental office, the heating company, the law firm, the auto shop or the salon."
       }
-    ]
-  }
+    },
+    {
+      "@type": "Question",
+      "name": "Will callers know they are talking to an AI?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Yes. It tells every caller it is an AI assistant at the start of the call, and again if anyone asks."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Can it work with my calendar, help desk or CRM?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Yes. If your software has an API, we build the connection during setup. It only books into the open times your calendar offers."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Can it answer my existing number?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Yes. It can pick up your existing number when a call goes unanswered, or answer a new number of its own."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Can it sound like us?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Pick any of its ten built-in voices, or have a custom voice made with a voice cloning service such as ElevenLabs, including your own, as a custom setup."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What does it do in an emergency?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "It gives your safety instruction first, then gets the caller’s name, number and address and either transfers the call to you or alerts you right away."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What does it cost?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Running it costs pennies a minute: about 4 to 5 cents a minute on the standard model, phone line included (see What it costs to run). Setup and support depend on your business and what we connect it to, and we quote them after a short call."
+      }
+    }
+  ]
+}
   </script>
   <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
   <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
@@ -681,45 +818,40 @@
 </div>
 
   <main class="ar">
-    <section class="ar-hero">
+    <section class="ar-hero" id="film">
       <div class="ar-orb a" aria-hidden="true"></div><div class="ar-orb b" aria-hidden="true"></div>
       <div class="container">
         <nav class="breadcrumbs" aria-label="Breadcrumb">
           <a href="index.html">Home</a> &rsaquo; <a href="software.html">TES Software</a> &rsaquo; <span>AI Receptionist</span>
         </nav>
-        <div class="ar-hero-grid">
+        <div class="ar-hero-stack">
           <div class="ar-hero-copy">
-            <span class="eyebrow"><i class="fa-solid fa-phone-volume" aria-hidden="true"></i> AI Receptionist &middot; TES Software</span>
-            <h1>Never miss <span class="grad">another call.</span></h1>
-            <p class="ar-lede">It answers when you can&rsquo;t, books the job, and only interrupts you for a real emergency. It works alongside your team and plugs into the tools you already use.</p>
-            <div class="ar-cta">
-              <button class="btn btn-primary ar-go" type="button" data-reel-play><i class="fa-solid fa-play" aria-hidden="true"></i> Play the Highlight Reel</button>
-              <a class="btn btn-secondary" href="#get-started">Get a Quote</a>
-            </div>
-            <p class="ar-demo">Or call it right now: <a href="tel:+12162380505"><i class="fa-solid fa-phone" aria-hidden="true"></i> (216)&nbsp;238&#8209;0505</a></p>
+            <span class="eyebrow"><i class="fa-solid fa-star" aria-hidden="true"></i> TES flagship &middot; AI Receptionist</span>
+            <h1>The AI receptionist that <span class="grad">never misses a call.</span></h1>
+            <p class="ar-lede">Ten voices. Any business. It answers every call, books the job, flags real emergencies and connects to the tools you already run.</p>
           </div>
-          <div class="ar-hero-art">
-            <div class="ar-phone" data-s="note" aria-label="An animated sample call: an after-hours caller with no heat, answered by the AI receptionist" role="img">
-              <div class="ar-phone-in">
-                <div class="ar-ph-bar"><span>11:05</span><span class="ar-ph-ic"><i class="fa-solid fa-signal"></i> <i class="fa-solid fa-battery-three-quarters"></i></span></div>
-                <div class="ar-ph-ring">
-                  <div class="ar-ph-av"><span>MS</span></div>
-                  <b>Mike Sullivan</b>
-                  <small>Incoming call &middot; after hours</small>
-                  <div class="ar-ph-btns"><span class="no"><i class="fa-solid fa-phone-slash"></i></span><span class="yes"><i class="fa-solid fa-phone"></i></span></div>
-                </div>
-                <div class="ar-ph-talk">
-                  <div class="ar-ph-head"><span class="ar-ph-dot"></span> AI Receptionist <small>Lakeside Comfort</small></div>
-                  <div class="ar-ph-msgs">
-                    <p class="c">My furnace stopped working and it&rsquo;s really cold in the house.</p>
-                    <p class="a">Safety first: if you smell gas or your carbon monoxide alarm is going off, leave the house now and call 911.</p>
-                    <p class="c">My 82-year-old mother lives here with me.</p>
-                    <p class="a">The on-call technician is being alerted right now.</p>
-                  </div>
-                </div>
-                <div class="ar-ph-note"><i class="fa-solid fa-bell"></i><span><b>Emergency handled</b> On-call technician alerted &middot; summary ready</span></div>
+          <figure class="ar-film" id="arFilmBox">
+            <div class="ar-film-edge">
+              <div class="ar-film-frame">
+                <video id="arFilm" controls preload="none" playsinline poster="assets/receptionist/ai-receptionist-film-poster.webp" width="1920" height="1080">
+                  <source src="assets/receptionist/ai-receptionist-film.mp4" type="video/mp4">
+                  <track kind="captions" src="assets/receptionist/ai-receptionist-film.vtt" srclang="en" label="English">
+                  Your browser does not play this video. <a href="assets/receptionist/ai-receptionist-film.mp4">Download it (MP4)</a>.
+                </video>
+                <button class="ar-film-play" type="button" aria-label="Play the 60-second film, with sound">
+                  <span class="ar-film-btn" aria-hidden="true"><i class="fa-solid fa-play"></i></span>
+                  <span class="ar-film-cta" aria-hidden="true"><b>Watch the film</b><small><i class="fa-solid fa-volume-high"></i> 60 seconds &middot; sound on</small></span>
+                </button>
               </div>
             </div>
+            <figcaption>Every voice in the film is the receptionist. The businesses are samples.</figcaption>
+          </figure>
+          <div class="ar-hero-act">
+            <div class="ar-cta">
+              <a class="btn btn-primary ar-go" href="tel:+12162380505" data-demo-loc="hero"><i class="fa-solid fa-phone" aria-hidden="true"></i> Call it now &middot; (216)&nbsp;238&#8209;0505</a>
+              <a class="btn btn-secondary" href="#get-started">Get a Quote</a>
+            </div>
+            <p class="ar-demo">It&rsquo;s answering right now. Try to stump it.</p>
           </div>
         </div>
       </div>
@@ -886,7 +1018,7 @@
                   <h3>Now picture it answering yours.</h3>
                   <div class="ar-cta center">
                     <a class="btn btn-primary" href="#get-started">Get a Quote</a>
-                    <a class="btn btn-secondary" href="tel:+12162380505"><i class="fa-solid fa-phone" aria-hidden="true"></i> Call the Demo Line</a>
+                    <a class="btn btn-secondary" href="tel:+12162380505" data-demo-loc="reel"><i class="fa-solid fa-phone" aria-hidden="true"></i> Call (216)&nbsp;238&#8209;0505</a>
                   </div>
                 </div>
               </div>
@@ -902,57 +1034,61 @@
       </div>
     </section>
 
-    <section class="ar-band ar-team">
-      <div class="container ar-split">
-        <div class="ar-split-copy rv">
-          <span class="ar-kicker">Works with your team</span>
-          <h2 class="ar-h2">It backs up your front desk. It doesn&rsquo;t replace it.</h2>
-          <p class="ar-sub">It catches the calls your people can&rsquo;t get to, answers the same way every time, and hands each one back with a clean summary. Your callers get an answer instead of voicemail. Your team keeps its focus.</p>
-          <ul class="ar-ticks">
-            <li><i class="fa-solid fa-check" aria-hidden="true"></i>Answers your number when a call goes unanswered, or a new one</li>
-            <li><i class="fa-solid fa-check" aria-hidden="true"></i>Books into your calendar or the booking page on your website</li>
-            <li><i class="fa-solid fa-check" aria-hidden="true"></i>Sends messages to your ticket queue, CRM or lead list</li>
-          </ul>
+    <section class="ar-band ar-personas" id="personas">
+      <div class="container">
+        <div class="ar-head rv">
+          <span class="ar-kicker">One engine. Any business.</span>
+          <h2 class="ar-h2">Change the persona. Change the business.</h2>
+          <p class="ar-sub">Your hours, services, prices, rules and the voice you pick. It backs up your team instead of replacing it. Call <a class="ar-inline-tel" href="tel:+12162380505" data-demo-loc="personas">(216)&nbsp;238&#8209;0505</a> and ask it to play any of these.</p>
         </div>
-        <div class="ar-flow rv" aria-label="Calls come in, the AI receptionist answers, and the result goes to your calendar, ticket queue, lead list, call log and your phone" role="img">
-          <div class="ar-flow-in"><span class="ar-node"><i class="fa-solid fa-phone-volume"></i>Your calls</span></div>
-          <div class="ar-flow-wire" aria-hidden="true"><i></i></div>
-          <div class="ar-flow-core"><span class="ar-core"><i class="fa-solid fa-headset"></i><b>AI Receptionist</b><small>answers &middot; sorts &middot; books</small></span></div>
-          <div class="ar-flow-wire" aria-hidden="true"><i></i></div>
-          <div class="ar-flow-out">
-            <span class="ar-node"><i class="fa-solid fa-calendar-check"></i>Your calendar</span>
-            <span class="ar-node"><i class="fa-solid fa-ticket"></i>Ticket or job queue</span>
-            <span class="ar-node"><i class="fa-solid fa-address-book"></i>CRM &amp; lead list</span>
-            <span class="ar-node"><i class="fa-solid fa-file-lines"></i>Call log &amp; transcripts</span>
-            <span class="ar-node hot"><i class="fa-solid fa-bell"></i>Emergency alert to you</span>
-          </div>
+        <div class="ar-pgrid rv">
+            <article class="ar-pcard">
+              <div class="ar-pcard-top"><span class="ar-pcard-ic"><i class="fa-solid fa-tooth" aria-hidden="true"></i></span><span class="ar-pcard-v">Coral</span></div>
+              <h3>Maple Ridge Family Dental</h3>
+              <p>Cleanings, new patients, toothaches</p>
+              <button class="ar-greet" type="button" data-src="assets/receptionist/greet-dental.mp3" data-name="Maple Ridge Family Dental" aria-label="Hear the Maple Ridge Family Dental greeting" aria-pressed="false"><span class="ar-voice-ring" aria-hidden="true"><i class="fa-solid fa-play"></i><i class="fa-solid fa-pause"></i></span><span>Hear its greeting</span><span class="eq" aria-hidden="true"><i></i><i></i><i></i><i></i></span></button>
+              <small>On the demo line, ask for the dental office.</small>
+            </article>
+            <article class="ar-pcard">
+              <div class="ar-pcard-top"><span class="ar-pcard-ic"><i class="fa-solid fa-fire-flame-simple" aria-hidden="true"></i></span><span class="ar-pcard-v">Cedar</span></div>
+              <h3>Lakeside Comfort</h3>
+              <p>No heat, repairs, free estimates</p>
+              <button class="ar-greet" type="button" data-src="assets/receptionist/greet-hvac.mp3" data-name="Lakeside Comfort Heating, Cooling and Plumbing" aria-label="Hear the Lakeside Comfort Heating, Cooling and Plumbing greeting" aria-pressed="false"><span class="ar-voice-ring" aria-hidden="true"><i class="fa-solid fa-play"></i><i class="fa-solid fa-pause"></i></span><span>Hear its greeting</span><span class="eq" aria-hidden="true"><i></i><i></i><i></i><i></i></span></button>
+              <small>On the demo line, ask for the heating company.</small>
+            </article>
+            <article class="ar-pcard">
+              <div class="ar-pcard-top"><span class="ar-pcard-ic"><i class="fa-solid fa-scale-balanced" aria-hidden="true"></i></span><span class="ar-pcard-v">Sage</span></div>
+              <h3>Harper and Lowe</h3>
+              <p>Free consultations, court deadlines</p>
+              <button class="ar-greet" type="button" data-src="assets/receptionist/greet-law.mp3" data-name="Harper and Lowe, Attorneys at Law" aria-label="Hear the Harper and Lowe, Attorneys at Law greeting" aria-pressed="false"><span class="ar-voice-ring" aria-hidden="true"><i class="fa-solid fa-play"></i><i class="fa-solid fa-pause"></i></span><span>Hear its greeting</span><span class="eq" aria-hidden="true"><i></i><i></i><i></i><i></i></span></button>
+              <small>On the demo line, ask for the law firm.</small>
+            </article>
+            <article class="ar-pcard">
+              <div class="ar-pcard-top"><span class="ar-pcard-ic"><i class="fa-solid fa-car" aria-hidden="true"></i></span><span class="ar-pcard-v">Ash</span></div>
+              <h3>Brookline Auto and Tire</h3>
+              <p>Tows, repairs, oil changes</p>
+              <button class="ar-greet" type="button" data-src="assets/receptionist/greet-auto.mp3" data-name="Brookline Auto and Tire" aria-label="Hear the Brookline Auto and Tire greeting" aria-pressed="false"><span class="ar-voice-ring" aria-hidden="true"><i class="fa-solid fa-play"></i><i class="fa-solid fa-pause"></i></span><span>Hear its greeting</span><span class="eq" aria-hidden="true"><i></i><i></i><i></i><i></i></span></button>
+              <small>On the demo line, ask for the auto shop.</small>
+            </article>
+            <article class="ar-pcard">
+              <div class="ar-pcard-top"><span class="ar-pcard-ic"><i class="fa-solid fa-scissors" aria-hidden="true"></i></span><span class="ar-pcard-v">Shimmer</span></div>
+              <h3>Willow and Ash Salon</h3>
+              <p>Color, cuts, consultations</p>
+              <button class="ar-greet" type="button" data-src="assets/receptionist/greet-salon.mp3" data-name="Willow and Ash Salon" aria-label="Hear the Willow and Ash Salon greeting" aria-pressed="false"><span class="ar-voice-ring" aria-hidden="true"><i class="fa-solid fa-play"></i><i class="fa-solid fa-pause"></i></span><span>Hear its greeting</span><span class="eq" aria-hidden="true"><i></i><i></i><i></i><i></i></span></button>
+              <small>On the demo line, ask for the salon.</small>
+            </article>
+            <article class="ar-pcard ar-pcard-you">
+              <div class="ar-pcard-top"><span class="ar-pcard-ic"><i class="fa-solid fa-store" aria-hidden="true"></i></span><span class="ar-pcard-v">Any of ten</span></div>
+              <h3>Your business</h3>
+              <p>Your hours, services, prices and rules</p>
+              <button class="ar-greet" type="button" data-src="assets/receptionist/greet-yours.mp3" data-name="Your business" aria-label="Hear a greeting for your business" aria-pressed="false"><span class="ar-voice-ring" aria-hidden="true"><i class="fa-solid fa-play"></i><i class="fa-solid fa-pause"></i></span><span>Hear its greeting</span><span class="eq" aria-hidden="true"><i></i><i></i><i></i><i></i></span></button>
+              <small><a href="#get-started">Tell us about your calls</a></small>
+            </article>
         </div>
       </div>
     </section>
 
-    <section class="ar-band ar-wake">
-      <div class="container ar-split rev">
-        <div class="ar-lock rv" role="img" aria-label="A phone lock screen at 7:02 AM with three call summaries from the AI receptionist: an emergency handled overnight, a new patient booked, and a consultation booked">
-          <div class="ar-lock-time">7:02</div>
-          <div class="ar-lock-date">Wednesday</div>
-          <div class="ar-notes">
-            <div class="ar-note em"><i class="fa-solid fa-bell"></i><div><b>Emergency &middot; 11:05 PM</b><span>Mike S. &middot; no heat, 82-year-old at home. On-call technician alerted.</span></div></div>
-            <div class="ar-note"><i class="fa-solid fa-calendar-check"></i><div><b>Booked &middot; new patient</b><span>Karen M. &middot; cleaning and exam, Wed 10:00 AM.</span></div></div>
-            <div class="ar-note"><i class="fa-solid fa-scale-balanced"></i><div><b>Consultation booked</b><span>Teresa M. &middot; car accident, Thu 9:30 AM.</span></div></div>
-          </div>
-        </div>
-        <div class="ar-split-copy rv">
-          <span class="ar-kicker">After every call</span>
-          <h2 class="ar-h2">Wake up to answers, not voicemail.</h2>
-          <p class="ar-sub">Every call ends as a short summary with the transcript and recording behind it. You choose where they land.</p>
-          <div class="ar-stats">
-            <div><b>3</b><span>urgency levels: emergency, urgent, routine</span></div>
-            <div><b>2</b><span>languages, English and Spanish</span></div>
-            <div><b>10</b><span>voices to choose from</span></div>
-          </div>
-        </div>
-      </div>
-    </section>
+    
 
     <section class="ar-band ar-voices" id="voices">
       <div class="container">
@@ -979,6 +1115,52 @@
             <span class="ar-clone-t"><b>Or a voice of your own</b><small>A custom voice made with a cloning service such as ElevenLabs, including your own.</small></span>
             <span class="ar-clone-go">Ask about a custom voice<i class="fa-solid fa-arrow-right" aria-hidden="true"></i></span>
           </a>
+          <p class="ar-demo center">Hear it live: <a href="tel:+12162380505" data-demo-loc="voices"><i class="fa-solid fa-phone" aria-hidden="true"></i> (216)&nbsp;238&#8209;0505</a></p>
+        </div>
+      </div>
+    </section>
+
+    <section class="ar-band ar-wake">
+      <div class="container ar-split rev">
+        <div class="ar-lock rv" role="img" aria-label="A phone lock screen at 7:02 AM with three call summaries from the AI receptionist: an emergency handled overnight, a new patient booked, and a consultation booked">
+          <div class="ar-lock-time">7:02</div>
+          <div class="ar-lock-date">Wednesday</div>
+          <div class="ar-notes">
+            <div class="ar-note em"><i class="fa-solid fa-bell"></i><div><b>Emergency &middot; 11:05 PM</b><span>Mike S. &middot; no heat, 82-year-old at home. On-call technician alerted.</span></div></div>
+            <div class="ar-note"><i class="fa-solid fa-calendar-check"></i><div><b>Booked &middot; new patient</b><span>Karen M. &middot; cleaning and exam, Wed 10:00 AM.</span></div></div>
+            <div class="ar-note"><i class="fa-solid fa-scale-balanced"></i><div><b>Consultation booked</b><span>Teresa M. &middot; car accident, Thu 9:30 AM.</span></div></div>
+          </div>
+        </div>
+        <div class="ar-split-copy rv">
+          <span class="ar-kicker">After every call</span>
+          <h2 class="ar-h2">Wake up to answers, not voicemail.</h2>
+          <p class="ar-sub">Every call ends as a short summary, with the transcript and recording behind it.</p>
+          <div class="ar-stats">
+            <div><b>3</b><span>urgency levels: emergency, urgent, routine</span></div>
+            <div><b>2</b><span>languages, English and Spanish</span></div>
+            <div><b>10</b><span>voices to choose from</span></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="ar-band ar-learns" id="learns">
+      <div class="container">
+        <div class="ar-head rv">
+          <span class="ar-kicker">It keeps learning</span>
+          <h2 class="ar-h2">Every call, reviewed every week.</h2>
+          <p class="ar-sub">Recorded calls go through our Claude-powered tuning skill. Each fix is tested against more than 40 simulated callers, and nothing goes live until a person signs off.</p>
+        </div>
+        <ol class="ar-steps rv">
+          <li><span>01</span><b>Recorded</b><small>Every call, through Twilio</small></li>
+          <li><span>02</span><b>Reviewed</b><small>By our Claude-powered tuning skill</small></li>
+          <li><span>03</span><b>Fixed</b><small>The smallest change that solves it</small></li>
+          <li><span>04</span><b>Tested</b><small>Against 40+ simulated callers</small></li>
+          <li><span>05</span><b>Live</b><small>After a person signs off</small></li>
+        </ol>
+        <div class="ar-ba rv">
+          <p class="bad"><i class="fa-solid fa-xmark" aria-hidden="true"></i><span><b>Before</b> Asked a caller for a callback number five times.</span></p>
+          <p class="good"><i class="fa-solid fa-check" aria-hidden="true"></i><span><b>After</b> Uses the caller ID and confirms it once.</span></p>
         </div>
       </div>
     </section>
@@ -987,13 +1169,11 @@
       <div class="container">
         <div class="ar-head rv"><span class="ar-kicker">On every call</span><h2 class="ar-h2">Everything a great front desk does.</h2></div>
         <div class="ar-cgrid rv">
-          <div><i class="fa-solid fa-moon" aria-hidden="true"></i><b>Day and night</b><span>After hours, weekends, busy times</span></div>
+          <div><i class="fa-solid fa-moon" aria-hidden="true"></i><b>Day and night</b><span>After hours, weekends, holidays</span></div>
           <div><i class="fa-solid fa-arrow-down-wide-short" aria-hidden="true"></i><b>Sorts every call</b><span>Emergency, urgent or routine</span></div>
           <div><i class="fa-solid fa-calendar-check" aria-hidden="true"></i><b>Books openings</b><span>Only times you really have</span></div>
-          <div><i class="fa-solid fa-clipboard-list" aria-hidden="true"></i><b>Whole messages</b><span>Number read back, every time</span></div>
           <div><i class="fa-solid fa-language" aria-hidden="true"></i><b>English &amp; Spanish</b><span>Switches when the caller does</span></div>
-          <div><i class="fa-solid fa-users" aria-hidden="true"></i><b>Many calls at once</b><span>Nobody waits for a free line</span></div>
-          <div><i class="fa-solid fa-shield-halved" aria-hidden="true"></i><b>Sticks to your rules</b><span>Approved prices, no advice</span></div>
+          <div><i class="fa-solid fa-users" aria-hidden="true"></i><b>More than one call at a time</b><span>A second caller still gets an answer</span></div>
           <div><i class="fa-solid fa-robot" aria-hidden="true"></i><b>Honest about it</b><span>Tells callers it is an AI</span></div>
         </div>
       </div>
@@ -1001,7 +1181,7 @@
 
     <section class="ar-band ar-calls" id="calls">
       <div class="container">
-        <div class="ar-head rv"><span class="ar-kicker">Full calls</span><h2 class="ar-h2">Listen start to finish.</h2><p class="ar-sub">Nothing cut. Tap any line of the transcript to jump to it.</p></div>
+        <div class="ar-head rv"><span class="ar-kicker">Full calls</span><h2 class="ar-h2">Listen start to finish.</h2><p class="ar-sub">Nothing cut. Tap any line to jump to it.</p></div>
         <div class="ar-pl rv">
           <ul class="ar-pl-list">
             <li><button class="ar-pl-item is-on" type="button" data-call="no-heat" aria-pressed="true"><i class="fa-solid fa-fire-flame-simple" aria-hidden="true"></i><span class="t"><b>No heat at 11 PM</b><small>Heating &amp; cooling</small></span><span class="d">1:28</span></button></li>
@@ -1118,6 +1298,45 @@
       </div>
     </section>
 
+    <section class="ar-band ar-try" id="try">
+      <div class="container ar-split">
+        <div class="ar-split-copy rv">
+          <span class="ar-kicker">Live demo line</span>
+          <h2 class="ar-h2">Try to stump it.</h2>
+          <p class="ar-sub">It&rsquo;s answering right now, in its own voice as the TES demo. Call it and:</p>
+          <ul class="ar-ticks">
+            <li><i class="fa-solid fa-check" aria-hidden="true"></i>Ask for the dental office and price a cleaning</li>
+            <li><i class="fa-solid fa-check" aria-hidden="true"></i>Book a time with the heating company</li>
+            <li><i class="fa-solid fa-check" aria-hidden="true"></i>Switch to Spanish halfway through</li>
+          </ul>
+          <div class="ar-cta"><a class="btn btn-primary" href="tel:+12162380505" data-demo-loc="band"><i class="fa-solid fa-phone" aria-hidden="true"></i> Call (216)&nbsp;238&#8209;0505</a></div>
+        </div>
+        <div class="ar-hero-art ar-try-art rv">
+            <div class="ar-phone" data-s="note" aria-label="An animated sample call: an after-hours caller with no heat, answered by the AI receptionist" role="img">
+              <div class="ar-phone-in">
+                <div class="ar-ph-bar"><span>11:05</span><span class="ar-ph-ic"><i class="fa-solid fa-signal"></i> <i class="fa-solid fa-battery-three-quarters"></i></span></div>
+                <div class="ar-ph-ring">
+                  <div class="ar-ph-av"><span>MS</span></div>
+                  <b>Mike Sullivan</b>
+                  <small>Incoming call &middot; after hours</small>
+                  <div class="ar-ph-btns"><span class="no"><i class="fa-solid fa-phone-slash"></i></span><span class="yes"><i class="fa-solid fa-phone"></i></span></div>
+                </div>
+                <div class="ar-ph-talk">
+                  <div class="ar-ph-head"><span class="ar-ph-dot"></span> AI Receptionist <small>Lakeside Comfort</small></div>
+                  <div class="ar-ph-msgs">
+                    <p class="c">My furnace stopped working and it&rsquo;s really cold in the house.</p>
+                    <p class="a">Safety first: if you smell gas or your carbon monoxide alarm is going off, leave the house now and call 911.</p>
+                    <p class="c">My 82-year-old mother lives here with me.</p>
+                    <p class="a">The on-call technician is being alerted right now.</p>
+                  </div>
+                </div>
+                <div class="ar-ph-note"><i class="fa-solid fa-bell"></i><span><b>Emergency handled</b> On-call technician alerted &middot; summary ready</span></div>
+              </div>
+            </div>
+          </div>
+      </div>
+    </section>
+
     <section class="ar-band ar-setup" id="setup">
       <div class="container">
         <div class="ar-head rv"><span class="ar-kicker">Set it up your way</span><h2 class="ar-h2">Standalone, plugged in, or built around you.</h2></div>
@@ -1127,6 +1346,35 @@
           <article class="ar-way"><i class="fa-solid fa-sliders" aria-hidden="true"></i><h3>Built around you</h3><p>After hours only, several locations, your intake questions, a cloned voice, hosted by us or in your own accounts.</p></article>
         </div>
         <p class="ar-note-line rv">Every setup is scoped and quoted on its own: your business, your call volume, and what we connect it to.</p>
+      </div>
+    </section>
+
+    <section class="ar-band ar-costs" id="costs">
+      <div class="container">
+        <div class="ar-head rv">
+          <span class="ar-kicker">What it costs to run</span>
+          <h2 class="ar-h2">Pennies a minute.</h2>
+          <p class="ar-sub">The ongoing cost of the conversation model and the phone line, measured on real calls. It runs on OpenAI&rsquo;s realtime models through Microsoft Azure, with the phone line on Twilio. Setup and support are quoted separately.</p>
+        </div>
+        <div class="ar-costbox rv">
+          <table class="ar-ctable">
+            <caption class="sr-only">Approximate running cost of the AI receptionist by conversation model, phone line included</caption>
+            <thead>
+              <tr>
+                <th scope="col"><span class="sr-only">Cost</span></th>
+                <th scope="col" class="std"><span class="ar-tag">Standard</span><b>gpt-realtime-mini</b><small>What the demo line runs on</small></th>
+                <th scope="col"><span class="ar-tag alt">Premium</span><b>gpt-realtime-2.1</b><small>On request</small></th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><th scope="row">Per minute</th><td class="std">$0.04&ndash;0.05</td><td>$0.11&ndash;0.13</td></tr>
+              <tr><th scope="row">Per 3-minute call</th><td class="std">$0.11&ndash;0.14</td><td>$0.37&ndash;0.39</td></tr>
+              <tr><th scope="row">Per line, a month</th><td class="std">$1.15 + calls</td><td>$1.15 + calls</td></tr>
+              <tr><th scope="row">100 three-minute calls, a month</th><td class="std">$13&ndash;15</td><td>$38&ndash;40</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="ar-note-line rv">Approximate. Each figure includes the AI model and the phone line: Twilio charges $1.15 a month for a local number and about 0.6 to 1.5 cents a minute, recording included. Rates as of October 2026.</p>
       </div>
     </section>
 
@@ -1151,16 +1399,16 @@
           <h2>AI Receptionist Questions</h2>
           <div class="faq">
           <details>
+            <summary>How do I try it?</summary>
+            <div class="faq-a">Call the demo line at <a href="tel:+12162380505" data-demo-loc="faq">(216)&nbsp;238&#8209;0505</a>. It answers as the TES demo, and it can play any of the sample businesses: ask for the dental office, the heating company, the law firm, the auto shop or the salon.</div>
+          </details>
+          <details>
             <summary>Will callers know they are talking to an AI?</summary>
             <div class="faq-a">Yes. It tells every caller it is an AI assistant at the start of the call, and again if anyone asks.</div>
           </details>
           <details>
-            <summary>Does it replace my receptionist?</summary>
-            <div class="faq-a">No. It backs up the people you have. It answers when they are busy or gone for the day, and hands every call over with a summary so nothing slips through.</div>
-          </details>
-          <details>
-            <summary>Can it work with my calendar, booking page or CRM?</summary>
-            <div class="faq-a">Yes. Connecting it to the systems you already run is part of the setup we scope and quote with you. It only books into the open times your calendar offers.</div>
+            <summary>Can it work with my calendar, help desk or CRM?</summary>
+            <div class="faq-a">Yes. If your software has an API, we build the connection during setup. It only books into the open times your calendar offers.</div>
           </details>
           <details>
             <summary>Can it answer my existing number?</summary>
@@ -1176,11 +1424,7 @@
           </details>
           <details>
             <summary>What does it cost?</summary>
-            <div class="faq-a">It depends on your business, how many calls you get, and what we connect it to. We quote it after a short call, before any work starts.</div>
-          </details>
-          <details>
-            <summary>What is it built on?</summary>
-            <div class="faq-a">OpenAI&rsquo;s realtime voice model, hosted on Microsoft Azure. The setup, call handling, safeguards and integrations are built and maintained by Tevis Engineering Solutions in Cleveland.</div>
+            <div class="faq-a">Running it costs pennies a minute: about 4 to 5 cents a minute on the standard model, phone line included (see <a href="#costs">What it costs to run</a>). Setup and support depend on your business and what we connect it to, and we quote them after a short call.</div>
           </details>
           </div>
         </div>
@@ -1194,7 +1438,7 @@
           <span class="ar-kicker">Get a quote</span>
           <h2 class="ar-h2 big">Put it on your phone line.</h2>
           <p class="ar-sub">Tell us about your calls. We reply within one business day to set up a short call and scope it with you.</p>
-          <p class="ar-demo center">Not sure yet? Call the demo line: <a href="tel:+12162380505"><i class="fa-solid fa-phone" aria-hidden="true"></i> (216)&nbsp;238&#8209;0505</a></p>
+          <p class="ar-demo center">Not sure yet? Call the demo line: <a href="tel:+12162380505" data-demo-loc="closing"><i class="fa-solid fa-phone" aria-hidden="true"></i> (216)&nbsp;238&#8209;0505</a></p>
         </div>
         <div class="req-success" id="reqSuccess" hidden>
           <strong>Thanks, your request is in.</strong> We will reply within one business day to set up a short call. For anything urgent, call <a href="tel:+12163028486" class="success-tel">(216)&nbsp;302&#8209;8486</a>.
@@ -1268,6 +1512,7 @@
         <p class="ex-start-alt">Prefer to talk first? <a href="book.html">Book a free consultation</a> or call <a href="tel:+12163028486">(216)&nbsp;302&#8209;8486</a>.</p>
       </div>
     </section>
+    <a class="ar-sticky" id="arSticky" href="tel:+12162380505" data-demo-loc="sticky"><i class="fa-solid fa-phone" aria-hidden="true"></i><span>Call the live demo</span><b>(216)&nbsp;238&#8209;0505</b></a>
   </main>
   <script>
     (function () {
@@ -1582,6 +1827,70 @@
         });
         audio.addEventListener('pause', off);
         audio.addEventListener('ended', off);
+      })();
+
+      // ---- the film: one sound at a time, room to watch it, and how far people watch
+      (function () {
+        var fig = document.getElementById('arFilmBox'), v = document.getElementById('arFilm');
+        if (!fig || !v) return;
+        var btn = fig.querySelector('.ar-film-play'), started = false, marks = { 25: false, 50: false, 75: false };
+        var calm = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        // Controls are in the markup for anyone without scripts; with them, the big button starts it and the controls come back once it plays.
+        v.removeAttribute('controls');
+        btn.addEventListener('click', function () { var go = v.play(); if (go && go.catch) go.catch(function () {}); });
+        // The first time it plays, bring the whole frame into view under the sticky bar.
+        function inView() {
+          var bar = document.querySelector('.tnav-bar'), top = bar ? bar.getBoundingClientRect().bottom : 0;
+          var r = v.getBoundingClientRect(), room = window.innerHeight - top;
+          if (r.top >= top && r.bottom <= window.innerHeight) return;
+          var want = r.height <= room ? top + (room - r.height) / 2 : top + 8;
+          window.scrollBy({ top: r.top - want, behavior: calm ? 'auto' : 'smooth' });
+        }
+        v.addEventListener('play', function () {
+          claim(v); fig.classList.add('is-started'); v.setAttribute('controls', '');
+          if (!started) { started = true; inView(); track('film_play', { film: 'ai-receptionist' }); }
+        });
+        v.addEventListener('timeupdate', function () {
+          if (!v.duration) return;
+          var p = v.currentTime / v.duration * 100;
+          [25, 50, 75].forEach(function (m) { if (!marks[m] && p >= m) { marks[m] = true; track('film_progress', { film: 'ai-receptionist', percent: m }); } });
+        });
+        // At the end the frame keeps the last card, the number, with the controls; the play button does not come back over it.
+        v.addEventListener('ended', function () { track('film_complete', { film: 'ai-receptionist' }); });
+      })();
+
+      // ---- persona greetings
+      (function () {
+        var audio = new Audio(), on = null;
+        audio.preload = 'none';
+        function off() { if (on) { on.classList.remove('is-playing'); on.setAttribute('aria-pressed', 'false'); } }
+        each(document.querySelectorAll('button.ar-greet'), function (b) {
+          b.addEventListener('click', function () {
+            if (on === b && !audio.paused) { audio.pause(); return; }
+            off(); on = b; audio.src = b.getAttribute('data-src'); claim(audio);
+            var go = audio.play(); if (go && go.catch) go.catch(off);
+            b.classList.add('is-playing'); b.setAttribute('aria-pressed', 'true');
+            track('persona_sample_play', { persona: b.getAttribute('data-name') });
+          });
+        });
+        audio.addEventListener('pause', off);
+        audio.addEventListener('ended', off);
+      })();
+
+      // ---- the sticky call bar (phones): after the hero, never over the consent bar or the closing section
+      (function () {
+        var bar = document.getElementById('arSticky'), hero = document.querySelector('.ar-hero'), close = document.getElementById('get-started');
+        if (!bar || !hero) return;
+        var tick = 0;
+        function update() {
+          tick = 0;
+          var past = hero.getBoundingClientRect().bottom < 0;
+          var atClose = close && close.getBoundingClientRect().top < window.innerHeight;
+          bar.classList.toggle('show', past && !atClose && !document.getElementById('tesConsent'));
+        }
+        window.addEventListener('scroll', function () { if (!tick) tick = requestAnimationFrame(update); }, { passive: true });
+        document.addEventListener('click', function () { setTimeout(update, 0); });
+        update();
       })();
 
       var ok = document.getElementById('reqSuccess'), rf = document.getElementById('reqForm');

@@ -122,7 +122,12 @@ var TES_TAGS = {
     var href = a.getAttribute('href');
     var text = (a.textContent || a.getAttribute('aria-label') || '').replace(/\s+/g, ' ').trim().slice(0, 60);
     // The AI receptionist's demo line is a product demo, not a call to TES: its own event, not the Ads conversion.
-    if (/^tel:/i.test(href)) track(/2162380505/.test(href) ? 'demo_line_call' : 'phone_click', { link_text: text });
+    // data-demo-loc on the link (or a parent) says which spot on the page was tapped.
+    if (/^tel:/i.test(href)) {
+      var loc = a.closest('[data-demo-loc]'), p = { link_text: text };
+      if (loc) p.link_location = loc.getAttribute('data-demo-loc');
+      track(/2162380505/.test(href) ? 'demo_line_call' : 'phone_click', p);
+    }
     else if (/^mailto:/i.test(href)) track('email_click', { link_text: text, email: href.slice(7).split('?')[0] });
     else if (/\.pdf($|\?)/i.test(href)) track('file_download', { file_name: href.split('/').pop(), link_text: text });
     else if (CTA.test(href)) track('cta_click', { link_text: text, link_url: href });
