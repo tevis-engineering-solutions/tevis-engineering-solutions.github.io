@@ -315,6 +315,79 @@
       .sb-hist { margin-left:1rem; }
       .sb-hist .ev { grid-template-columns:1fr; gap:0; }
     }
+    /* ---- Data deliveries (Subscriptions): each feed's terms, dates, links and runs ---- */
+    .dd-card { border:1px solid var(--line); border-radius:16px; background:var(--bg); padding:1rem 1.1rem; display:grid; gap:0.9rem; min-width:0; }
+    .dd-card + .dd-card { margin-top:0.9rem; }
+    .dd-card.dim { opacity:0.78; }
+    .dd-head { display:flex; align-items:center; gap:0.85rem; min-width:0; }
+    .dd-title { flex:1; min-width:0; }
+    .dd-title b { display:block; font-family:"Montserrat",sans-serif; font-size:1rem; color:#fff; }
+    .dd-title small { display:block; font-size:0.78rem; color:var(--muted); overflow-wrap:anywhere; }
+    .dd-warn { font-size:0.82rem; line-height:1.45; color:#e6c68a; background:rgba(200,152,48,0.1); border:1px solid rgba(200,152,48,0.35); border-radius:10px; padding:0.55rem 0.75rem; }
+    .dd-edit { margin:0; }
+    .dd-facts { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:0.75rem; }
+    .dd-fact { border:1px solid var(--line); border-radius:12px; padding:0.75rem 0.85rem; background:var(--card); min-width:0; }
+    .dd-fact h3.sb-k { margin:0 0 0.4rem; }
+    .dd-line { display:block; color:#fff; font-size:0.88rem; line-height:1.35; }
+    .dd-sub { font-size:0.78rem; color:var(--text); margin-top:0.25rem; overflow-wrap:anywhere; }
+    .dd-text { font-size:0.78rem; color:var(--muted); margin:0.45rem 0 0; line-height:1.45; }
+    .dd-note { color:var(--text); white-space:pre-line; }
+    .dd-muted { font-size:0.78rem; color:var(--muted); margin:0; }
+    .dd-kv { display:flex; justify-content:space-between; gap:0.6rem; font-size:0.8rem; padding:0.16rem 0; }
+    .dd-kv span { color:var(--muted); }
+    .dd-kv b { color:var(--text); font-weight:600; text-align:right; }
+    .dd-prog { height:6px; border-radius:999px; background:var(--card-2); overflow:hidden; margin:0.45rem 0 0.1rem; }
+    .dd-prog span { display:block; height:100%; background:var(--green); }
+    .dd-links { display:grid; gap:0.1rem; }
+    .dd-link { display:flex; align-items:center; gap:0.55rem; min-height:34px; font-size:0.84rem; color:#cfe9d6; text-decoration:none; min-width:0; }
+    .dd-link span { overflow-wrap:anywhere; }
+    .dd-link:hover span { color:#fff; text-decoration:underline; }
+    .dd-link i { width:1rem; flex:none; color:var(--muted); text-align:center; }
+    .dd-sched { display:grid; gap:0.45rem; }
+    .dd-chips { display:flex; flex-wrap:wrap; gap:0.35rem; }
+    .dd-chip { font-size:0.74rem; color:var(--text); white-space:normal; }
+    .dd-pc { display:flex; gap:0.5rem; align-items:baseline; font-size:0.78rem; color:var(--muted); margin:0; line-height:1.45; }
+    .dd-runs > h3 { font-family:"Montserrat",sans-serif; font-size:0.86rem; color:#fff; margin:0 0 0.5rem; }
+    .dd-list { border:1px solid var(--line); border-radius:12px; overflow:hidden; background:var(--card); }
+    .dd-run + .dd-run { border-top:1px solid var(--line); }
+    .dd-run.skipped .dd-when, .dd-run.skipped .dd-name { opacity:0.6; text-decoration:line-through; }
+    /* Named areas at every width: the Subscriptions panel's own phone rules give any .sb-acts grid-area:acts. */
+    .dd-row { display:grid; grid-template-columns:6.6rem minmax(0,1fr) auto; grid-template-areas:"when main acts"; gap:0.8rem; align-items:start; padding:0.7rem 0.85rem; }
+    .dd-when { grid-area:when; } .dd-main { grid-area:main; } .dd-row > .sb-acts { grid-area:acts; }
+    .dd-when b { display:block; font-size:0.84rem; color:#fff; font-weight:600; }
+    .dd-when span { font-size:0.8rem; color:var(--muted); font-variant-numeric:tabular-nums; }
+    .dd-main { min-width:0; }
+    .dd-name { display:flex; gap:0.45rem; align-items:baseline; font-size:0.88rem; color:var(--text); font-weight:600; }
+    .dd-name i { color:var(--muted); font-size:0.8rem; }
+    .dd-tags { display:flex; flex-wrap:wrap; gap:0.3rem; margin-top:0.35rem; }
+    .dd-tag { font-size:0.7rem; padding:0.1rem 0.5rem; border-radius:999px; border:1px solid var(--line); color:var(--muted); }
+    .dd-tag.moved { color:#9cc8ef; border-color:rgba(127,184,224,0.4); background:rgba(127,184,224,0.08); }
+    .dd-tag.ok { color:#8fd6a3; border-color:rgba(74,172,101,0.35); }
+    .dd-tag.wait { color:#e6c68a; border-color:rgba(200,152,48,0.35); }
+    .dd-tag.bad { color:#f0a58f; border-color:rgba(214,120,90,0.4); }
+    .dd-tag.note { font-style:italic; color:var(--text); }
+    .dd-alerts { list-style:none; margin:0.45rem 0 0; padding:0; display:grid; gap:0.2rem; }
+    .dd-alerts li { display:grid; grid-template-columns:4.9rem minmax(0,1fr); gap:0.5rem; font-size:0.76rem; color:var(--muted); }
+    .dd-alerts time { color:var(--text); font-variant-numeric:tabular-nums; }
+    .dd-move { margin:0 0.85rem 0.85rem; padding:0.85rem; border:1px solid var(--line); border-radius:12px; background:var(--bg); }
+    .dd-move .fnote { margin:0.6rem 0 0; }
+    .dd-more { margin-top:0.4rem; background:none; border:none; color:#cfe9d6; font-size:0.82rem; cursor:pointer; min-height:40px; padding:0; }
+    .dd-more:hover { color:#fff; text-decoration:underline; }
+    .dd-recent summary { cursor:pointer; font-size:0.82rem; color:var(--muted); min-height:36px; display:flex; align-items:center; }
+    .dd-rrow { display:grid; grid-template-columns:9.5rem minmax(0,1fr) auto; gap:0.6rem; font-size:0.78rem; padding:0.35rem 0; border-bottom:1px dashed rgba(44,66,50,0.7); color:var(--muted); }
+    .dd-rrow b { font-weight:600; color:var(--text); }
+    .dd-rrow b.ok { color:#8fd6a3; }
+    .dd-rrow b.bad { color:#f0a58f; }
+    @media (max-width:900px) { .dd-facts { grid-template-columns:1fr 1fr; } .dd-facts .dd-fact:first-child { grid-column:1 / -1; } }
+    @media (max-width:640px) {
+      .dd-card { padding:0.85rem; }
+      .dd-facts { grid-template-columns:1fr; }
+      .dd-row { grid-template-columns:minmax(0,1fr) auto; grid-template-areas:"when acts" "main main"; row-gap:0.4rem; padding:0.7rem; }
+      .dd-when { display:flex; gap:0.5rem; align-items:baseline; }
+      .dd-move { margin:0 0.6rem 0.7rem; }
+      .dd-rrow { grid-template-columns:1fr auto; }
+      .dd-rrow span:first-child { grid-column:1 / -1; }
+    }
     .lic-manage .lbl { font-size:0.68rem; text-transform:uppercase; letter-spacing:0.05em; color:var(--muted); font-weight:700; }
     .inv.archived { opacity:0.72; border-style:dashed; }
     .lic-hist { margin-top:0.6rem; padding-top:0.6rem; border-top:1px solid var(--line); }
@@ -3436,6 +3509,12 @@
       <h2 id="subHead">Subscriptions</h2>
       <p class="fnote">Recurring revenue across service agreements, Ohio Crash and memberships. A membership turns active only when PayPal confirms it.</p>
       <div id="subBody"><div class="state">Loading&hellip;</div></div>
+    </section>
+
+    <section class="newinv" id="dataPanel" aria-labelledby="dataHead">
+      <h2 id="dataHead">Data deliveries</h2>
+      <p class="fnote">Recurring data feeds for customers: their terms, links and dates, and each run with the pages it sends. Move or skip one run here when the regular time does not work; the PC picks the change up within the hour and confirms it.</p>
+      <div id="dataBody"><div class="state">Loading&hellip;</div></div>
     </section>
 
     <section class="newinv" id="watchPanel" aria-labelledby="watchHead">
@@ -9179,6 +9258,372 @@
         });
       });
       return item;
+    }
+
+    // ---- data deliveries: each recurring data feed, its terms, links, dates and runs ----
+    // From /admin/data-campaigns (tes-portal src/data_campaigns.js). A run can be moved or
+    // skipped once; the routine's PC picks the change up within the hour and confirms it.
+    // Every time here is Eastern, the routine's and the watchdog's zone.
+    var dataBody = document.getElementById('dataBody');
+    var DD_ZONE = 'America/New_York';
+    var DD_DAYS = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+    var DD_STATE = { active: ['Active', ''], not_started: ['Not started', 'warn'], paused: ['Paused', 'off'], ended: ['Ended', 'off'] };
+    var DD_CI = { awake: 'PC awake', seen: 'PC awake', snoozed: 'Snoozed', running: 'Running', done: 'Done', failed: 'Failed', skipped: 'Skipped on the PC' };
+    var ddLast = null;          // the last answer, to redraw without a reload
+    var ddShowAll = {};         // campaign key -> every upcoming run, not the first six
+    var ddDay = function (ts) { return new Date(ts * 1000).toLocaleDateString('en-US', { timeZone: DD_ZONE, weekday: 'short', month: 'short', day: 'numeric' }); };
+    var ddTime = function (ts) { return new Date(ts * 1000).toLocaleTimeString('en-US', { timeZone: DD_ZONE, hour: 'numeric', minute: '2-digit' }); };
+    var ddYmd = function (s, year) {
+      if (!s) return '';
+      var p = s.split('-');
+      return new Date(Date.UTC(+p[0], p[1] - 1, +p[2], 12)).toLocaleDateString('en-US', { timeZone: 'UTC', weekday: 'short', month: 'short', day: 'numeric', year: year === false ? undefined : 'numeric' });
+    };
+    var ddClock = function (hm) { var p = String(hm || '').split(':'), h = +p[0]; return (h % 12 || 12) + ':' + (p[1] || '00') + ' ' + (h < 12 ? 'AM' : 'PM'); };
+    var ddNum = function (n) { return Number(n || 0).toLocaleString('en-US'); };
+    var ddBtn = function (acts, ico, label) { var b = el('button', 'sb-btn'); b.type = 'button'; b.title = label; b.setAttribute('aria-label', label); b.appendChild(icon(ico)); acts.appendChild(b); return b; };
+
+    function loadCampaigns() {
+      return api('/admin/data-campaigns').then(function (r) {
+        if (!r.ok) {
+          dataBody.textContent = '';
+          dataBody.appendChild(el('div', 'sb-empty', 'Could not load data deliveries' + (r.message ? ': ' + r.message : '.')));
+          return;
+        }
+        ddLast = r;
+        ddRender();
+      });
+    }
+
+    function ddRender() {
+      var r = ddLast;
+      dataBody.textContent = '';
+      if (!r.campaigns.length) {
+        dataBody.appendChild(el('div', 'sb-empty', 'No data deliveries yet. A routine lists its campaign here when its schedule is installed on its PC (weekly_routine.py install-schedule).'));
+        return;
+      }
+      r.campaigns.forEach(function (c) { dataBody.appendChild(ddCard(c, r)); });
+    }
+
+    function ddCard(c, all) {
+      var card = el('article', 'dd-card' + (c.state === 'ended' || c.state === 'paused' ? ' dim' : ''));
+      var ag = c.agreement, to = c.deliver_to;
+
+      var head = el('div', 'dd-head');
+      var ic = el('div', 'sb-ico'); ic.appendChild(icon('fa-truck-fast'));
+      head.appendChild(ic);
+      var nm = el('div', 'dd-title');
+      nm.appendChild(el('b', null, c.name));
+      nm.appendChild(el('small', null, [ag && ag.holder && ag.holder.name, to && 'delivers to ' + to.email].filter(Boolean).join(' · ') || 'No customer linked yet'));
+      head.appendChild(nm);
+      var st = DD_STATE[c.state] || [c.state, 'off'];
+      head.appendChild(el('span', 'sb-pill ' + st[1], c.state === 'not_started' && c.starts_on ? 'Starts ' + ddYmd(c.starts_on, false).replace(/^\w+, /, '') : st[0]));
+      var acts = el('div', 'sb-acts');
+      var edit = ddBtn(acts, 'fa-pen', 'Edit the campaign');
+      edit.setAttribute('aria-expanded', 'false');
+      head.appendChild(acts);
+      card.appendChild(head);
+
+      if (to && !to.account_id) card.appendChild(el('div', 'dd-warn', 'No portal account uses ' + to.email + ', so deliveries to it fail. Add the customer, or change customer_email in the PC’s pilot.json.'));
+      else if (to && to.on_agreement === false) card.appendChild(el('div', 'dd-warn', 'Deliveries go to ' + to.email + ', which is not on ' + ((ag && ag.holder && ag.holder.name) || 'the agreement holder') + '’s account. Change customer_email in the PC’s pilot.json when their data should open.'));
+
+      var form = ddEditForm(c, all.agreements);
+      form.hidden = true;
+      card.appendChild(form);
+      edit.addEventListener('click', function () {
+        form.hidden = !form.hidden;
+        edit.setAttribute('aria-expanded', String(!form.hidden));
+        if (!form.hidden) form.querySelector('input').focus();
+      });
+
+      var facts = el('div', 'dd-facts');
+      facts.appendChild(ddTerms(c));
+      facts.appendChild(ddDates(c, all.today));
+      facts.appendChild(ddLinks(c));
+      card.appendChild(facts);
+      card.appendChild(ddSchedule(c));
+      card.appendChild(ddRuns(c, all.now));
+      if (c.recent.length) card.appendChild(ddRecent(c));
+      return card;
+    }
+
+    function ddFact(title) { var f = el('section', 'dd-fact'); f.appendChild(el('h3', 'sb-k', title)); return f; }
+
+    function ddTerms(c) {
+      var f = ddFact('Terms'), ag = c.agreement;
+      if (!ag) f.appendChild(el('p', 'dd-muted', 'No agreement linked. Edit the campaign to choose one.'));
+      else {
+        f.appendChild(el('b', 'dd-line', ag.name || 'Agreement ' + ag.id));
+        var q = ag.quote;
+        if (q) {
+          f.appendChild(el('div', 'dd-sub', [q.number, money(q.total_cents), (q.doc_type === 'estimate' ? 'estimate ' : 'quote ') + String(q.status || '').replace(/_/g, ' ')].join(' · ')));
+          if (q.next_step) f.appendChild(el('p', 'dd-text', q.next_step));
+        } else if (ag.fee_cents) f.appendChild(el('div', 'dd-sub', money(ag.fee_cents) + (ag.bill_every && ag.bill_every !== 'none' ? ' ' + ag.bill_every : '')));
+      }
+      if (c.notes) f.appendChild(el('p', 'dd-text dd-note', c.notes));
+      return f;
+    }
+
+    function ddDates(c, today) {
+      var f = ddFact('Active dates');
+      var line = function (k, v) { var d = el('div', 'dd-kv'); d.appendChild(el('span', null, k)); d.appendChild(el('b', null, v)); f.appendChild(d); };
+      line('First run', c.starts_on ? ddYmd(c.starts_on) : 'Not set');
+      line('Last day', c.ends_on ? ddYmd(c.ends_on) : 'Open-ended');
+      if (c.agreement && c.agreement.started_at) line('Agreement since', fmtDate(c.agreement.started_at));
+      if (c.starts_on && c.ends_on) {
+        var day = 86400000, d0 = Date.parse(c.starts_on + 'T12:00:00Z'), d1 = Date.parse(c.ends_on + 'T12:00:00Z'), t = Date.parse(today + 'T12:00:00Z');
+        var total = Math.max(1, Math.ceil((d1 - d0 + day) / (7 * day))), left = Math.max(0, Math.ceil((d1 - Math.max(t, d0) + day) / (7 * day)));
+        line('Weeks', t > d1 ? 'All ' + total + ' done' : left + ' of ' + total + ' to go');
+        var bar = el('div', 'dd-prog'), fill = el('span');
+        fill.style.width = Math.min(100, Math.max(0, (t - d0) / (d1 - d0 + day) * 100)).toFixed(1) + '%';
+        bar.appendChild(fill);
+        f.appendChild(bar);
+      }
+      f.appendChild(el('p', 'dd-text', c.ends_on ? 'Nothing runs or pages after the last day.' : 'Set a last day to stop the runs on their own.'));
+      return f;
+    }
+
+    function ddLinks(c) {
+      var f = ddFact('Links'), ag = c.agreement, to = c.deliver_to, list = el('div', 'dd-links');
+      var link = function (ico, text, href, ext) {
+        var a = el('a', 'dd-link');
+        a.href = href;
+        if (ext) { a.target = '_blank'; a.rel = 'noopener noreferrer'; }
+        a.appendChild(icon(ico));
+        a.appendChild(el('span', null, text));
+        list.appendChild(a);
+      };
+      if (ag && ag.data_folder_url) link('fa-folder-open', 'Shared data folder', ag.data_folder_url, true);
+      if (ag && ag.quote) link('fa-file-signature', ag.quote.number, '#q=' + ag.quote.id);
+      if (ag && ag.quote && ag.quote.has_pdf) link('fa-file-pdf', 'Estimate PDF', API + '/admin/quotes/' + ag.quote.id + '/pdf', true);
+      if (ag && ag.holder) link(ag.holder.type === 'org' ? 'fa-building' : 'fa-user', (ag.holder.name || 'Customer') + ' file', (ag.holder.type === 'org' ? '#o=' : '#c=') + ag.holder.id);
+      if (to && to.account_id && !(ag && ag.holder && ag.holder.type === 'account' && ag.holder.id === to.account_id)) link('fa-inbox', 'Delivery account (' + to.email + ')', '#c=' + to.account_id);
+      if (!list.children.length) list.appendChild(el('span', 'dd-muted', 'No links yet. Link an agreement to see its folder and estimate.'));
+      f.appendChild(list);
+      var pub = to && to.published;
+      if (pub) f.appendChild(el('p', 'dd-text', 'Portal dashboard: ' + ddNum(pub.reports) + ' reports, ' + ddNum(pub.leads) + ' leads, ' + ddNum(pub.pdfs) + ' PDFs, updated ' + fmt(pub.updated_at) + '.'));
+      return f;
+    }
+
+    function ddSchedule(c) {
+      var s = el('div', 'dd-sched');
+      var chips = el('div', 'dd-chips');
+      c.runs.forEach(function (r) {
+        var n = r.searches ? r.searches.length : 0;
+        var chip = el('span', 'sb-chip dd-chip', 'Every ' + DD_DAYS[r.dow] + ' ' + ddClock(r.at) + ': ' + r.label + (n ? ' (' + n + ' CAPTCHA' + (n === 1 ? '' : 's') + ')' : ''));
+        if (n) chip.title = r.searches.join(', ');
+        chips.appendChild(chip);
+      });
+      s.appendChild(chips);
+      var pc = el('p', 'dd-pc');
+      pc.appendChild(icon('fa-desktop'));
+      var every = (c.routine && c.routine.sync_every_min) || 60;
+      pc.appendChild(el('span', null, (c.seen_at ? 'PC last heard from ' + fmtAgo(c.seen_at) : 'PC not heard from yet') + '. ' +
+        (c.synced_at ? 'It looks for changes every ' + every + ' min, last at ' + ddTime(c.synced_at) + (ddDay(c.synced_at) !== ddDay(Date.now() / 1000) ? ' on ' + ddDay(c.synced_at) : '') + '.'
+          : 'It has not looked for changes yet: run install-schedule on the PC once to turn that on.')));
+      s.appendChild(pc);
+      return s;
+    }
+
+    function ddRuns(c, now) {
+      var box = el('div', 'dd-runs');
+      box.appendChild(el('h3', null, 'Upcoming runs and the pages they send'));
+      if (!c.upcoming.length) {
+        box.appendChild(el('div', 'sb-empty', c.state === 'paused' ? 'Paused: nothing runs or pages until it is set back to active.' : c.state === 'ended' ? 'Ended: nothing runs after the last day.' : 'Nothing in the next three weeks.'));
+        return box;
+      }
+      var all = !!ddShowAll[c.key], limit = 6, list = el('div', 'dd-list');
+      c.upcoming.forEach(function (r, i) { if (all || i < limit) list.appendChild(ddRun(c, r, now)); });
+      box.appendChild(list);
+      if (c.upcoming.length > limit) {
+        var more = el('button', 'dd-more', all ? 'Show the next six only' : 'Show all ' + c.upcoming.length + ' runs in the next three weeks');
+        more.type = 'button';
+        more.addEventListener('click', function () { ddShowAll[c.key] = !all; ddRender(); });
+        box.appendChild(more);
+      }
+      return box;
+    }
+
+    function ddRun(c, r, now) {
+      var item = el('div', 'dd-run' + (r.state === 'skipped' ? ' skipped' : ''));
+      var row = el('div', 'dd-row');
+      var when = el('div', 'dd-when');
+      when.appendChild(el('b', null, ddDay(r.ts)));
+      when.appendChild(el('span', null, ddTime(r.ts)));
+      row.appendChild(when);
+
+      var main = el('div', 'dd-main');
+      var name = el('div', 'dd-name');
+      name.appendChild(icon(r.kind === 'delivery' ? 'fa-box' : 'fa-keyboard'));
+      name.appendChild(el('span', null, r.label + (r.searches && r.searches.length ? ' · ' + r.searches.length + ' CAPTCHA' + (r.searches.length === 1 ? '' : 's') : '')));
+      main.appendChild(name);
+      var tags = el('div', 'dd-tags'), ci = r.checkin, grace = (c.grace_min || 15) * 60;
+      if (r.state === 'moved') tags.appendChild(el('span', 'dd-tag moved', 'Moved from ' + ddDay(r.regular_ts) + ', ' + ddTime(r.regular_ts)));
+      if (r.state === 'skipped') tags.appendChild(el('span', 'dd-tag off', 'Skipped'));
+      if (r.change) tags.appendChild(el('span', 'dd-tag ' + (r.change.applied_at ? 'ok' : 'wait'), r.change.applied_at ? 'On the PC' : 'Waiting for the PC'));
+      if (r.state !== 'skipped' && r.ts <= now) {
+        if (ci) tags.appendChild(el('span', 'dd-tag ' + (ci.state === 'failed' ? 'bad' : 'ok'), DD_CI[ci.state] || ci.state));
+        else tags.appendChild(el('span', 'dd-tag ' + (now > r.ts + grace ? 'bad' : 'wait'), now > r.ts + grace ? 'PC has not checked in' : 'Due now'));
+      }
+      if (r.change && r.change.note) tags.appendChild(el('span', 'dd-tag note', r.change.note));
+      if (tags.children.length) main.appendChild(tags);
+      if (r.alerts.length) {
+        var al = el('ul', 'dd-alerts');
+        al.setAttribute('aria-label', 'Pages for this run');
+        r.alerts.forEach(function (a) {
+          var li = el('li');
+          li.appendChild(el('time', null, ddTime(a.ts) + (ddDay(a.ts) !== ddDay(r.ts) ? ' ' + ddDay(a.ts) : '')));
+          li.appendChild(el('span', null, a.text));
+          al.appendChild(li);
+        });
+        main.appendChild(al);
+      }
+      row.appendChild(main);
+
+      var acts = el('div', 'sb-acts');
+      var ran = ci && (ci.state === 'running' || ci.state === 'done');
+      var mv = ran ? null : ddBtn(acts, 'fa-clock', r.state === 'moved' ? 'Change the new time' : 'Move this run');
+      var sk = ran || r.state === 'skipped' ? null : ddBtn(acts, 'fa-forward', 'Skip this run');
+      var un = r.change ? ddBtn(acts, 'fa-rotate-left', 'Back to the regular time') : null;
+      row.appendChild(acts);
+      item.appendChild(row);
+
+      var form = mv ? ddMoveForm(c, r) : null;
+      if (form) {
+        form.hidden = true;
+        item.appendChild(form);
+        mv.setAttribute('aria-expanded', 'false');
+        mv.addEventListener('click', function () {
+          form.hidden = !form.hidden;
+          mv.setAttribute('aria-expanded', String(!form.hidden));
+          if (!form.hidden) form.querySelector('input').focus();
+        });
+      }
+      if (sk) sk.addEventListener('click', function () {
+        var what = r.kind === 'delivery' ? 'The leads wait for the next delivery.' : 'The next sitting looks back far enough to cover its crash dates.';
+        if (!confirm('Skip the ' + r.label + ' on ' + ddDay(r.regular_ts) + '? Nothing runs or pages for it. ' + what)) return;
+        sk.disabled = true;
+        ddChange(c, { run_key: r.key, run_date: r.run_date, action: 'skip' }, function () { toast('Skipped. The PC picks it up within the hour.'); }, function () { sk.disabled = false; });
+      });
+      if (un) un.addEventListener('click', function () {
+        un.disabled = true;
+        api('/admin/data-campaigns/' + encodeURIComponent(c.key) + '/changes/' + r.change.id, { method: 'DELETE' }).then(function (x) {
+          un.disabled = false;
+          if (!x.ok) { toast(x.message || 'Could not undo it'); return; }
+          toast('Back to ' + ddDay(r.regular_ts) + ', ' + ddTime(r.regular_ts) + '.');
+          loadCampaigns();
+        });
+      });
+      return item;
+    }
+
+    function ddChange(c, body, done, failed) {
+      api('/admin/data-campaigns/' + encodeURIComponent(c.key) + '/changes', { method: 'POST', body: body }).then(function (x) {
+        if (!x.ok) { toast(x.message || 'Could not change it (' + (x.error || 'error') + ')'); if (failed) failed(); return; }
+        done(x);
+        loadCampaigns();
+      });
+    }
+
+    function ddMoveForm(c, r) {
+      var f = el('form', 'dd-move'), id = 'dd-' + c.key + '-' + r.key + '-' + r.run_date;
+      var at = String(r.at_local || '').split(' ');
+      var grid = el('div', 'fgrid');
+      var field = function (label, type, value, fid) {
+        var w = el('div'), l = el('label', null, label), i = el('input');
+        l.htmlFor = fid; i.id = fid; i.type = type; i.value = value || ''; i.required = type !== 'text';
+        w.appendChild(l); w.appendChild(i); grid.appendChild(w);
+        return i;
+      };
+      var d = field('New date', 'date', at[0], id + '-d');
+      var t = field('New time (Eastern)', 'time', at[1], id + '-t');
+      f.appendChild(grid);
+      var wide = el('div', 'fwide'), nl = el('label', null, 'Note (optional)'), note = el('input');
+      nl.htmlFor = id + '-n'; note.id = id + '-n'; note.type = 'text'; note.maxLength = 300; note.placeholder = 'Out of town Saturday';
+      note.value = (r.change && r.change.note) || '';
+      wide.appendChild(nl); wide.appendChild(note); f.appendChild(wide);
+      var regular = c.runs.filter(function (x) { return x.key === r.key; })[0];
+      f.appendChild(el('p', 'fnote', 'Up to a week either side of its regular time, ' + ddDay(r.regular_ts) + ' ' + ddTime(r.regular_ts) +
+        (regular ? ' (every ' + DD_DAYS[regular.dow] + ')' : '') + '. The PC makes a one-time task for it within the hour; the regular one stands down.'));
+      var actions = el('div', 'inv-actions'), save = el('button', 'prim', 'Move it'), cancel = el('button', null, 'Cancel');
+      save.type = 'submit'; cancel.type = 'button';
+      actions.appendChild(save); actions.appendChild(cancel);
+      f.appendChild(actions);
+      cancel.addEventListener('click', function () { f.hidden = true; });
+      f.addEventListener('submit', function (ev) {
+        ev.preventDefault();
+        if (!f.reportValidity()) return;
+        save.disabled = true;
+        ddChange(c, { run_key: r.key, run_date: r.run_date, action: 'move', move_to: d.value + ' ' + t.value, note: note.value.trim() }, function (x) {
+          if (x.removed) toast('Back to its regular time.');
+          else if (x.before_next_sync) toast('Moved. The PC next looks for changes around ' + ddTime(x.next_sync) + ', after the new time, so it may not run then.');
+          else toast('Moved. The PC picks it up within the hour.');
+        }, function () { save.disabled = false; });
+      });
+      return f;
+    }
+
+    function ddRecent(c) {
+      var det = el('details', 'dd-recent');
+      det.appendChild(el('summary', null, 'Recent runs (' + c.recent.length + ')'));
+      c.recent.forEach(function (r) {
+        var row = el('div', 'dd-rrow');
+        row.appendChild(el('span', null, ddDay(r.ts) + ', ' + ddTime(r.ts)));
+        row.appendChild(el('span', null, r.label + (r.state === 'moved' ? ' (moved)' : '')));
+        var ci = r.checkin;
+        var txt = r.state === 'skipped' ? 'Skipped in the console' : ci ? (DD_CI[ci.state] || ci.state) : 'No check-in';
+        row.appendChild(el('b', ci && ci.state === 'done' ? 'ok' : r.state === 'skipped' ? null : 'bad', txt));
+        det.appendChild(row);
+      });
+      return det;
+    }
+
+    function ddEditForm(c, agreements) {
+      var f = el('form', 'sb-wform dd-edit'), id = 'dd-edit-' + c.key;
+      var grid = el('div', 'fgrid');
+      var wrap = function (label, input, fid) { var w = el('div'), l = el('label', null, label); l.htmlFor = fid; input.id = fid; w.appendChild(l); w.appendChild(input); return w; };
+      var name = el('input'); name.type = 'text'; name.required = true; name.maxLength = 80; name.value = c.name;
+      grid.appendChild(wrap('Name', name, id + '-name'));
+      var ag = el('select');
+      var none = el('option', null, 'No agreement'); none.value = ''; ag.appendChild(none);
+      (agreements || []).forEach(function (a) {
+        var o = el('option', null, a.name + (a.holder ? ' · ' + a.holder : '') + (a.status !== 'active' ? ' (' + a.status + ')' : ''));
+        o.value = String(a.id);
+        ag.appendChild(o);
+      });
+      ag.value = c.agreement ? String(c.agreement.id) : '';
+      grid.appendChild(wrap('Agreement (terms, folder link)', ag, id + '-ag'));
+      var ends = el('input'); ends.type = 'date'; ends.value = c.ends_on || ''; if (c.starts_on) ends.min = c.starts_on;
+      grid.appendChild(wrap('Last day', ends, id + '-ends'));
+      var status = el('select');
+      [['active', 'Active'], ['paused', 'Paused (nothing runs or pages)']].forEach(function (s) { var o = el('option', null, s[1]); o.value = s[0]; status.appendChild(o); });
+      status.value = c.status;
+      grid.appendChild(wrap('Status', status, id + '-status'));
+      f.appendChild(grid);
+      var wide = el('div', 'fwide'), notes = el('textarea');
+      notes.rows = 3; notes.maxLength = 2000; notes.value = c.notes || '';
+      notes.placeholder = 'Terms in your words: deposit, balance date, what happens at the end';
+      var nl = el('label', null, 'Notes'); nl.htmlFor = id + '-notes'; notes.id = id + '-notes';
+      wide.appendChild(nl); wide.appendChild(notes); f.appendChild(wide);
+      f.appendChild(el('p', 'fnote', 'The PC sets the runs, the first day and who it delivers to (pilot.json, then install-schedule).'));
+      var actions = el('div', 'inv-actions'), save = el('button', 'prim', 'Save'), cancel = el('button', null, 'Cancel');
+      save.type = 'submit'; cancel.type = 'button';
+      actions.appendChild(save); actions.appendChild(cancel);
+      f.appendChild(actions);
+      cancel.addEventListener('click', function () { ddRender(); });
+      f.addEventListener('submit', function (ev) {
+        ev.preventDefault();
+        if (!f.reportValidity()) return;
+        save.disabled = true;
+        api('/admin/data-campaigns/' + encodeURIComponent(c.key), { method: 'PATCH', body: {
+          name: name.value.trim(), agreement_id: ag.value ? Number(ag.value) : null, ends_on: ends.value || null, status: status.value, notes: notes.value.trim(),
+        } }).then(function (x) {
+          save.disabled = false;
+          if (!x.ok) { toast(x.error === 'ends_before_start' ? 'The last day is before the first run.' : 'Could not save (' + (x.error || 'error') + ')'); return; }
+          toast('Saved');
+          loadCampaigns();
+        });
+      });
+      return f;
     }
 
     // ---- Website Watch -------------------------------------------------------
@@ -22640,7 +23085,7 @@
       contracting: { view: 'viewContracting', nav: 'navContracting', load: loadContracting, always: true },
       projects: { view: 'viewProjects', nav: 'navProjects', load: loadProjects, always: true },
       marketing: { view: 'viewMarketing', nav: 'navMarketing', load: function () { mkLoadMode(); }, always: true },
-      keys: { view: 'viewKeys', nav: 'navKeys', load: function () { loadSubscriptions(); loadWatches(); loadDeposits(); return loadKeys(); }, always: true }
+      keys: { view: 'viewKeys', nav: 'navKeys', load: function () { loadSubscriptions(); loadCampaigns(); loadWatches(); loadDeposits(); return loadKeys(); }, always: true }
     };
     var loaded = {};
     var suppressHashPush = false;
