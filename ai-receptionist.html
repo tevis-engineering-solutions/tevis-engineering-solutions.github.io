@@ -349,24 +349,37 @@
     .ar-stats span { display:block; color:var(--muted); font-size:0.9rem; margin-top:0.35rem; max-width:9rem; }
 
     /* voices */
-    .ar-vgrid { display:flex; flex-wrap:wrap; justify-content:center; gap:0.9rem; max-width:900px; margin:0 auto; }
-    .ar-vgrid .ar-voice { flex:0 0 132px; }
-    .ar-voice { display:flex; flex-direction:column; align-items:center; gap:0.25rem; padding:1.15rem 0.6rem 1rem; border-radius:20px; background:rgba(20,32,25,0.72); border:1px solid var(--line); color:#e4ede5; cursor:pointer; font:inherit; text-decoration:none; transition:transform .25s ease, border-color .25s ease, background .25s ease; }
-    .ar-voice:hover, .ar-voice.is-playing { transform:translateY(-4px); border-color:rgba(200,152,48,0.6); background:rgba(28,46,34,0.85); }
-    .ar-voice:focus-visible { outline:2px solid #e0b840; outline-offset:3px; }
-    .ar-voice-ring { position:relative; width:64px; height:64px; border-radius:50%; display:flex; align-items:center; justify-content:center; margin-bottom:0.45rem; background:radial-gradient(circle at 30% 30%, rgba(224,184,64,0.38), rgba(74,172,101,0.14)); border:1px solid rgba(200,152,48,0.5); color:var(--gold); font-size:1.05rem; }
-    .ar-voice-ring .fa-play { margin-left:3px; }
-    .ar-voice b { font:700 0.98rem "Montserrat",sans-serif; }
-    .ar-voice small { color:var(--muted); font-size:0.78rem; }
-    .eq { display:none; align-items:flex-end; gap:3px; height:22px; }
-    .eq i { width:4px; height:30%; border-radius:2px; background:#e0b840; animation:arEq .9s ease-in-out infinite; }
+    .ar-vpanel { max-width:1000px; margin:0 auto; }
+    .ar-vgrid { display:grid; grid-template-columns:repeat(5,minmax(0,1fr)); gap:0.65rem; }
+    .ar-voice { position:relative; overflow:hidden; display:flex; align-items:center; gap:0.75rem; min-height:66px; padding:0.7rem 0.85rem; border-radius:14px; background:rgba(20,32,25,0.72); border:1px solid var(--line); color:#e4ede5; cursor:pointer; font:inherit; text-align:left; transition:border-color .2s ease, background .2s ease; }
+    .ar-voice:hover { border-color:rgba(200,152,48,0.55); background:rgba(28,46,34,0.85); }
+    .ar-voice.is-playing { border-color:rgba(224,184,64,0.75); background:rgba(32,50,37,0.92); }
+    .ar-voice:focus-visible, .ar-clone:focus-visible { outline:2px solid #e0b840; outline-offset:3px; }
+    .ar-voice-ring { flex:0 0 auto; width:38px; height:38px; border-radius:50%; display:flex; align-items:center; justify-content:center; background:rgba(200,152,48,0.14); border:1px solid rgba(200,152,48,0.5); color:var(--gold); font-size:0.8rem; transition:background .2s, color .2s, border-color .2s; }
+    .ar-voice-ring .fa-play { margin-left:2px; }
+    .ar-voice-ring .fa-pause { display:none; }
+    .ar-voice:hover .ar-voice-ring, .ar-voice.is-playing .ar-voice-ring { background:linear-gradient(135deg,#c89830,#e0b840); border-color:transparent; color:#0d1710; }
+    .ar-voice.is-playing .fa-play { display:none; }
+    .ar-voice.is-playing .fa-pause { display:inline-block; }
+    .ar-voice-t { flex:1 1 auto; min-width:0; display:flex; flex-direction:column; line-height:1.2; }
+    .ar-voice-t b { font:700 0.95rem "Montserrat",sans-serif; color:#fff; }
+    .ar-voice-t small { color:var(--muted); font-size:0.76rem; margin-top:0.12rem; }
+    .eq { display:none; flex:0 0 auto; align-items:flex-end; gap:2px; height:16px; }
+    .eq i { width:3px; height:30%; border-radius:2px; background:#e0b840; animation:arEq .9s ease-in-out infinite; }
     .eq i:nth-child(2) { animation-delay:.15s; } .eq i:nth-child(3) { animation-delay:.3s; } .eq i:nth-child(4) { animation-delay:.45s; }
     @keyframes arEq { 50% { height:100%; } }
-    .ar-voice.is-playing .fa-play { display:none; }
     .ar-voice.is-playing .eq { display:flex; }
-    .ar-voice.is-playing .ar-voice-ring { box-shadow:0 0 0 6px rgba(224,184,64,0.12), 0 0 30px rgba(224,184,64,0.35); }
-    .ar-clone { border-style:dashed; border-color:rgba(200,152,48,0.55); background:rgba(200,152,48,0.06); }
-    .ar-clone .ar-voice-ring { background:rgba(200,152,48,0.14); }
+    .ar-voice-bar { position:absolute; left:0; bottom:0; width:100%; height:2px; background:linear-gradient(90deg,#4aac65,#e0b840); transform-origin:left center; transform:scaleX(var(--p,0)); opacity:0; transition:opacity .2s; }
+    .ar-voice.is-playing .ar-voice-bar { opacity:1; }
+    .ar-clone { display:flex; align-items:center; gap:1rem; margin-top:0.9rem; padding:1rem 1.2rem; border-radius:14px; border:1px dashed rgba(200,152,48,0.55); background:rgba(200,152,48,0.06); color:#e4ede5; text-decoration:none; transition:border-color .2s, background .2s; }
+    .ar-clone:hover { border-color:rgba(224,184,64,0.85); background:rgba(200,152,48,0.1); }
+    .ar-clone-ic { flex:0 0 auto; width:44px; height:44px; border-radius:50%; display:flex; align-items:center; justify-content:center; background:rgba(200,152,48,0.14); border:1px solid rgba(200,152,48,0.5); color:var(--gold); font-size:1.05rem; }
+    .ar-clone-t { flex:1 1 auto; min-width:0; }
+    .ar-clone-t b { display:block; font:700 1rem "Montserrat",sans-serif; color:#fff; }
+    .ar-clone-t small { display:block; color:var(--muted); font-size:0.88rem; line-height:1.45; margin-top:0.15rem; }
+    .ar-clone-go { flex:0 0 auto; color:var(--gold); font:700 0.78rem "Montserrat",sans-serif; text-transform:uppercase; letter-spacing:0.07em; white-space:nowrap; }
+    .ar-clone-go i { margin-left:0.4rem; transition:transform .2s; }
+    .ar-clone:hover .ar-clone-go i { transform:translateX(3px); }
 
     /* capabilities */
     .ar-cgrid { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:1rem; }
@@ -473,10 +486,19 @@
       .ar-cta .btn { width:100%; }
       .ar-mq span { font-size:0.82rem; }
     }
-    @media (max-width:600px) { .ar-vgrid .ar-voice { flex-basis:calc(33.33% - 0.7rem); } }
+    @media (max-width:980px) {
+      .ar-vpanel { max-width:640px; }
+      .ar-vgrid { grid-template-columns:repeat(2,minmax(0,1fr)); }
+    }
+    @media (max-width:600px) {
+      .ar-clone { display:grid; grid-template-columns:44px minmax(0,1fr); align-items:start; gap:0.55rem 0.9rem; padding:0.95rem 1rem; }
+      .ar-clone-go { grid-column:2; white-space:normal; }
+    }
     @media (max-width:380px) {
       .ar-phone { width:270px; height:560px; }
-      .ar-vgrid .ar-voice { flex-basis:calc(50% - 0.45rem); }
+      .ar-voice { gap:0.55rem; padding:0.6rem 0.65rem; }
+      .ar-voice-ring { width:32px; height:32px; }
+      .eq { display:none !important; }
     }
     @media (prefers-reduced-motion: reduce) {
       .ar-orb, .ar-phone, .ar-go, .ar-ph-av::before, .ar-ph-av::after, .ar-ph-btns .yes, .ar-flow-wire i, .eq i { animation:none !important; }
@@ -627,7 +649,7 @@
           <div class="tnav-col-head">Services</div>
           <a class="tnav-link" href="how_support_works.html"><span class="tnav-ic"><i class="fa-regular fa-circle-question"></i></span><span><span class="tnav-tt">How Support Works</span><span class="tnav-dd">Intake, scope, delivery, and billing</span></span></a>
           <a class="tnav-link" href="pricing_sheet.html"><span class="tnav-ic"><i class="fa-solid fa-tag"></i></span><span><span class="tnav-tt">Pricing</span><span class="tnav-dd">Flat rates, hourly, and retainer plans</span></span></a>
-          <a class="tnav-link" href="portfolio.html"><span class="tnav-ic"><i class="fa-solid fa-briefcase"></i></span><span><span class="tnav-tt">Portfolio</span><span class="tnav-dd">Case studies across IT and engineering</span></span></a>
+          <a class="tnav-link" href="blog/index.html"><span class="tnav-ic"><i class="fa-solid fa-newspaper"></i></span><span><span class="tnav-tt">Blog</span><span class="tnav-dd">Guides on IT, web, and engineering</span></span></a>
           <a class="tnav-link" href="assessment.html"><span class="tnav-ic"><i class="fa-solid fa-chart-simple"></i></span><span><span class="tnav-tt">IT Assessment</span><span class="tnav-dd">Free 7-question readiness quiz</span></span></a>
           <a class="tnav-link" href="website_creation.html"><span class="tnav-ic"><i class="fa-solid fa-globe"></i></span><span><span class="tnav-tt">Web &amp; App Design</span><span class="tnav-dd">Sites, tools, and digital presence</span></span></a>
           <a class="tnav-link" href="data_destruction.html"><span class="tnav-ic"><i class="fa-solid fa-shield-halved"></i></span><span><span class="tnav-tt">Data Destruction</span><span class="tnav-dd">NIST-aligned secure media sanitization</span></span></a>
@@ -937,20 +959,26 @@
         <div class="ar-head rv">
           <span class="ar-kicker">Its voice, your choice</span>
           <h2 class="ar-h2">Ten voices. Or one that sounds like you.</h2>
-          <p class="ar-sub">Tap a voice to hear it answer a sample business. Want something unmistakably yours? We can set it up with a custom voice made with a cloning service such as ElevenLabs.</p>
+          <p class="ar-sub">Tap a voice to hear it answer a sample business.</p>
         </div>
-        <div class="ar-vgrid rv">
-          <button class="ar-voice" type="button" data-src="assets/receptionist/voice-marin.mp3" aria-label="Play the Marin voice"><span class="ar-voice-ring" aria-hidden="true"><i class="fa-solid fa-play"></i><span class="eq"><i></i><i></i><i></i><i></i></span></span><b>Marin</b><small>Female</small></button>
-          <button class="ar-voice" type="button" data-src="assets/receptionist/voice-cedar.mp3" aria-label="Play the Cedar voice"><span class="ar-voice-ring" aria-hidden="true"><i class="fa-solid fa-play"></i><span class="eq"><i></i><i></i><i></i><i></i></span></span><b>Cedar</b><small>Male</small></button>
-          <button class="ar-voice" type="button" data-src="assets/receptionist/voice-coral.mp3" aria-label="Play the Coral voice"><span class="ar-voice-ring" aria-hidden="true"><i class="fa-solid fa-play"></i><span class="eq"><i></i><i></i><i></i><i></i></span></span><b>Coral</b><small>Female</small></button>
-          <button class="ar-voice" type="button" data-src="assets/receptionist/voice-sage.mp3" aria-label="Play the Sage voice"><span class="ar-voice-ring" aria-hidden="true"><i class="fa-solid fa-play"></i><span class="eq"><i></i><i></i><i></i><i></i></span></span><b>Sage</b><small>Female</small></button>
-          <button class="ar-voice" type="button" data-src="assets/receptionist/voice-shimmer.mp3" aria-label="Play the Shimmer voice"><span class="ar-voice-ring" aria-hidden="true"><i class="fa-solid fa-play"></i><span class="eq"><i></i><i></i><i></i><i></i></span></span><b>Shimmer</b><small>Female</small></button>
-          <button class="ar-voice" type="button" data-src="assets/receptionist/voice-ash.mp3" aria-label="Play the Ash voice"><span class="ar-voice-ring" aria-hidden="true"><i class="fa-solid fa-play"></i><span class="eq"><i></i><i></i><i></i><i></i></span></span><b>Ash</b><small>Male</small></button>
-          <button class="ar-voice" type="button" data-src="assets/receptionist/voice-ballad.mp3" aria-label="Play the Ballad voice"><span class="ar-voice-ring" aria-hidden="true"><i class="fa-solid fa-play"></i><span class="eq"><i></i><i></i><i></i><i></i></span></span><b>Ballad</b><small>Male</small></button>
-          <button class="ar-voice" type="button" data-src="assets/receptionist/voice-verse.mp3" aria-label="Play the Verse voice"><span class="ar-voice-ring" aria-hidden="true"><i class="fa-solid fa-play"></i><span class="eq"><i></i><i></i><i></i><i></i></span></span><b>Verse</b><small>Male</small></button>
-          <button class="ar-voice" type="button" data-src="assets/receptionist/voice-alloy.mp3" aria-label="Play the Alloy voice"><span class="ar-voice-ring" aria-hidden="true"><i class="fa-solid fa-play"></i><span class="eq"><i></i><i></i><i></i><i></i></span></span><b>Alloy</b><small>Neutral</small></button>
-          <button class="ar-voice" type="button" data-src="assets/receptionist/voice-echo.mp3" aria-label="Play the Echo voice"><span class="ar-voice-ring" aria-hidden="true"><i class="fa-solid fa-play"></i><span class="eq"><i></i><i></i><i></i><i></i></span></span><b>Echo</b><small>Male</small></button>
-          <a class="ar-voice ar-clone" href="#get-started"><span class="ar-voice-ring" aria-hidden="true"><i class="fa-solid fa-microphone-lines"></i></span><b>Your voice</b><small>Custom clone</small></a>
+        <div class="ar-vpanel rv">
+          <div class="ar-vgrid">
+            <button class="ar-voice" type="button" data-src="assets/receptionist/voice-marin.mp3" aria-label="Play the Marin voice" aria-pressed="false"><span class="ar-voice-ring" aria-hidden="true"><i class="fa-solid fa-play"></i><i class="fa-solid fa-pause"></i></span><span class="ar-voice-t"><b>Marin</b><small>Female</small></span><span class="eq" aria-hidden="true"><i></i><i></i><i></i><i></i></span><span class="ar-voice-bar" aria-hidden="true"></span></button>
+            <button class="ar-voice" type="button" data-src="assets/receptionist/voice-cedar.mp3" aria-label="Play the Cedar voice" aria-pressed="false"><span class="ar-voice-ring" aria-hidden="true"><i class="fa-solid fa-play"></i><i class="fa-solid fa-pause"></i></span><span class="ar-voice-t"><b>Cedar</b><small>Male</small></span><span class="eq" aria-hidden="true"><i></i><i></i><i></i><i></i></span><span class="ar-voice-bar" aria-hidden="true"></span></button>
+            <button class="ar-voice" type="button" data-src="assets/receptionist/voice-coral.mp3" aria-label="Play the Coral voice" aria-pressed="false"><span class="ar-voice-ring" aria-hidden="true"><i class="fa-solid fa-play"></i><i class="fa-solid fa-pause"></i></span><span class="ar-voice-t"><b>Coral</b><small>Female</small></span><span class="eq" aria-hidden="true"><i></i><i></i><i></i><i></i></span><span class="ar-voice-bar" aria-hidden="true"></span></button>
+            <button class="ar-voice" type="button" data-src="assets/receptionist/voice-sage.mp3" aria-label="Play the Sage voice" aria-pressed="false"><span class="ar-voice-ring" aria-hidden="true"><i class="fa-solid fa-play"></i><i class="fa-solid fa-pause"></i></span><span class="ar-voice-t"><b>Sage</b><small>Female</small></span><span class="eq" aria-hidden="true"><i></i><i></i><i></i><i></i></span><span class="ar-voice-bar" aria-hidden="true"></span></button>
+            <button class="ar-voice" type="button" data-src="assets/receptionist/voice-shimmer.mp3" aria-label="Play the Shimmer voice" aria-pressed="false"><span class="ar-voice-ring" aria-hidden="true"><i class="fa-solid fa-play"></i><i class="fa-solid fa-pause"></i></span><span class="ar-voice-t"><b>Shimmer</b><small>Female</small></span><span class="eq" aria-hidden="true"><i></i><i></i><i></i><i></i></span><span class="ar-voice-bar" aria-hidden="true"></span></button>
+            <button class="ar-voice" type="button" data-src="assets/receptionist/voice-ash.mp3" aria-label="Play the Ash voice" aria-pressed="false"><span class="ar-voice-ring" aria-hidden="true"><i class="fa-solid fa-play"></i><i class="fa-solid fa-pause"></i></span><span class="ar-voice-t"><b>Ash</b><small>Male</small></span><span class="eq" aria-hidden="true"><i></i><i></i><i></i><i></i></span><span class="ar-voice-bar" aria-hidden="true"></span></button>
+            <button class="ar-voice" type="button" data-src="assets/receptionist/voice-ballad.mp3" aria-label="Play the Ballad voice" aria-pressed="false"><span class="ar-voice-ring" aria-hidden="true"><i class="fa-solid fa-play"></i><i class="fa-solid fa-pause"></i></span><span class="ar-voice-t"><b>Ballad</b><small>Male</small></span><span class="eq" aria-hidden="true"><i></i><i></i><i></i><i></i></span><span class="ar-voice-bar" aria-hidden="true"></span></button>
+            <button class="ar-voice" type="button" data-src="assets/receptionist/voice-verse.mp3" aria-label="Play the Verse voice" aria-pressed="false"><span class="ar-voice-ring" aria-hidden="true"><i class="fa-solid fa-play"></i><i class="fa-solid fa-pause"></i></span><span class="ar-voice-t"><b>Verse</b><small>Male</small></span><span class="eq" aria-hidden="true"><i></i><i></i><i></i><i></i></span><span class="ar-voice-bar" aria-hidden="true"></span></button>
+            <button class="ar-voice" type="button" data-src="assets/receptionist/voice-alloy.mp3" aria-label="Play the Alloy voice" aria-pressed="false"><span class="ar-voice-ring" aria-hidden="true"><i class="fa-solid fa-play"></i><i class="fa-solid fa-pause"></i></span><span class="ar-voice-t"><b>Alloy</b><small>Neutral</small></span><span class="eq" aria-hidden="true"><i></i><i></i><i></i><i></i></span><span class="ar-voice-bar" aria-hidden="true"></span></button>
+            <button class="ar-voice" type="button" data-src="assets/receptionist/voice-echo.mp3" aria-label="Play the Echo voice" aria-pressed="false"><span class="ar-voice-ring" aria-hidden="true"><i class="fa-solid fa-play"></i><i class="fa-solid fa-pause"></i></span><span class="ar-voice-t"><b>Echo</b><small>Male</small></span><span class="eq" aria-hidden="true"><i></i><i></i><i></i><i></i></span><span class="ar-voice-bar" aria-hidden="true"></span></button>
+          </div>
+          <a class="ar-clone" href="#get-started">
+            <span class="ar-clone-ic" aria-hidden="true"><i class="fa-solid fa-microphone-lines"></i></span>
+            <span class="ar-clone-t"><b>Or a voice of your own</b><small>A custom voice made with a cloning service such as ElevenLabs, including your own.</small></span>
+            <span class="ar-clone-go">Ask about a custom voice<i class="fa-solid fa-arrow-right" aria-hidden="true"></i></span>
+          </a>
         </div>
       </div>
     </section>
@@ -1534,7 +1562,7 @@
       (function () {
         var audio = new Audio(), on = null;
         audio.preload = 'none';
-        function off() { if (on) on.classList.remove('is-playing'); }
+        function off() { if (on) { on.classList.remove('is-playing'); on.setAttribute('aria-pressed', 'false'); on.style.removeProperty('--p'); } }
         each(document.querySelectorAll('button.ar-voice'), function (b) {
           b.addEventListener('click', function () {
             if (on === b && !audio.paused) { audio.pause(); return; }
@@ -1545,8 +1573,12 @@
             var go = audio.play();
             if (go && go.catch) go.catch(off);
             b.classList.add('is-playing');
+            b.setAttribute('aria-pressed', 'true');
             track('voice_sample_play', { voice: b.querySelector('b').textContent });
           });
+        });
+        audio.addEventListener('timeupdate', function () {
+          if (on && audio.duration) on.style.setProperty('--p', Math.min(1, audio.currentTime / audio.duration).toFixed(3));
         });
         audio.addEventListener('pause', off);
         audio.addEventListener('ended', off);
