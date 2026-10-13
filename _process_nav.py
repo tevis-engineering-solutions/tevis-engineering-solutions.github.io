@@ -4,7 +4,7 @@ Process all TES website HTML files to replace old mega-nav with new TES nav.
 """
 import re, os, sys
 
-BASE = r"C:\Users\tyler\OneDrive\Desktop\TES\tevis-engineering-solutions.github.io"
+BASE = os.path.dirname(os.path.abspath(__file__))   # the repo root, wherever it is checked out
 
 # ===== SHARED REPLACEMENT STRINGS =====
 
