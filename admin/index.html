@@ -2275,6 +2275,19 @@
     .rs-diff ins { background:rgba(74,172,101,0.22); color:#b7f0c8; text-decoration:none; }
     .rs-run { display:flex; gap:0.5rem; align-items:center; flex-wrap:wrap; margin-top:0.4rem; }
     .rs-vers .row { display:block; }
+    /* The proposal writer: its progress, its draft beside the working copy, the requirements. */
+    .pw-steps { margin:0.4rem 0; padding-left:1.3rem; font-size:0.8rem; }
+    .pw-steps li { color:var(--muted); margin:0.1rem 0; }
+    .pw-steps li.done { color:var(--green); }
+    .pw-steps li.done::after { content:' \2713'; }
+    .pw-steps li.on { color:var(--text); font-weight:800; }
+    .pw-sec { border-top:1px solid var(--line); padding-top:0.45rem; margin-top:0.45rem; }
+    .pw-tags { display:flex; gap:0.3rem; flex-wrap:wrap; margin:0.3rem 0; }
+    .rq-ref { font-weight:800; font-size:0.8rem; }
+    a.rq-cite { text-decoration:none; text-transform:none; letter-spacing:0; overflow-wrap:anywhere; white-space:normal; }
+    a.rq-cite:hover { text-decoration:underline; }
+    .rq-quote { font-size:0.76rem; color:var(--muted); font-style:italic; margin:0.15rem 0 0.3rem; overflow-wrap:anywhere; }
+    .rq-row .ct-form { margin:0.3rem 0 0; }
     .rs-vers .row .reply-row { margin-top:0.35rem; }
     .ct-risk { border:1px solid var(--line); border-radius:10px; background:var(--bg); padding:0.55rem 0.65rem; margin-bottom:0.4rem; }
     .ct-risk.high { border-left:3px solid #ef4444; }
@@ -18455,7 +18468,7 @@
       panel.appendChild(econ);
       panel.appendChild(el('p', 'ct-note', e.payment_note));
 
-      var tabs = paneTabs(panel, ['Overview', 'Draft', 'Triage', 'Lines', 'Risk', 'Q&A', 'Files', 'Response', 'Tabulation', 'History'], 'bid');
+      var tabs = paneTabs(panel, ['Overview', 'Draft', 'Requirements', 'Triage', 'Lines', 'Risk', 'Q&A', 'Files', 'Response', 'Tabulation', 'History'], 'bid');
       var openRisks = d.risks.filter(function (x) { return !x.resolved && !x.acknowledged_note; }).length;
       tabs.pane('Triage').btn.textContent = 'Triage ' + d.triage.filter(function (s) { return s.done; }).length + '/' + d.triage.length;
       tabs.count('Lines', d.lines.length);
@@ -18463,7 +18476,8 @@
       tabs.count('Q&A', d.qa.length);
       tabs.count('Files', d.files.length);
       tabs.count('Tabulation', d.tabulations.length);
-      CT_BUILDERS = { Overview: ctOverview, Triage: ctTriage, Lines: ctLines, Risk: ctRisk, 'Q&A': ctQa, Files: ctFiles, Draft: ctDraft, Response: ctResponse, Tabulation: ctTabulation, History: ctHistory };
+      if (d.requirements_summary) tabs.count('Requirements', d.requirements_summary.open);
+      CT_BUILDERS = { Overview: ctOverview, Requirements: ctRequirements, Triage: ctTriage, Lines: ctLines, Risk: ctRisk, 'Q&A': ctQa, Files: ctFiles, Draft: ctDraft, Response: ctResponse, Tabulation: ctTabulation, History: ctHistory };
       ctPanes = {};
       Object.keys(CT_BUILDERS).forEach(function (n) {
         var pane = tabs.pane(n);
@@ -19353,6 +19367,8 @@
     function ctRespEditor(host, id) {
       var st = ctRespState(id);
       st.host = host;
+      ctPropResume(id);
+      ctPropLastRun(id);
       // A save in flight or waiting keeps the copy in hand; otherwise read the server's,
       // whose defaults may have moved with the fields just saved above.
       if (st.data && (st.timer || st.saving)) { ctRespRender(id); return; }
@@ -19434,8 +19450,21 @@
       vers.addEventListener('click', function () { st.showVersions = !st.showVersions; ctRespRender(id); });
       var open = el('a', 'ct-btn sm', 'Open the document');
       open.href = 'bid-response.html?id=' + id; open.target = '_blank'; open.rel = 'noopener';
-      bar.appendChild(status); bar.appendChild(keep); bar.appendChild(vers); bar.appendChild(open);
+      var ps = ctPropState(id);
+      var whole = el('button', 'ct-btn sm', 'Write the whole response'); whole.type = 'button';
+      whole.disabled = !!(ps.job || ps.starting);
+      whole.title = 'Claude finds the requirements, writes every section as a new version and reviews it. Nothing changes until you take sections.';
+      whole.addEventListener('click', function () { ctPropWhole(id); });
+      bar.appendChild(status); bar.appendChild(whole); bar.appendChild(keep); bar.appendChild(vers); bar.appendChild(open);
       host.appendChild(bar);
+      if (ps.job || ps.starting) host.appendChild(ctPropStrip(id));
+      else if (ps.result && ps.result.write) host.appendChild(ctPropReview(id));
+      var openF = (data.findings || []).filter(function (f) { return f.status === 'open'; });
+      var loose = openF.filter(function (f) { return !f.section_key || !doc.sections.some(function (x) { return x.key === f.section_key; }); });
+      if (openF.length) {
+        var fb = el('div', 'row-sub', openF.length + ' open review finding' + (openF.length === 1 ? '' : 's') + (openF.length - loose.length ? ', shown on the sections they concern' : '') + (loose.length ? '; ' + loose.length + ' not tied to a section, on the Requirements tab' : '') + '.');
+        host.appendChild(fb);
+      }
 
       if (st.conflict) {
         var cf = el('div', 'ct-why');
@@ -19523,6 +19552,21 @@
       });
       head.appendChild(menu);
       card.appendChild(head);
+
+      // The requirements this section answers, and what the evaluator found in it.
+      var tied = (st.data.requirements || []).filter(function (r) { return r.section_key === s.key; });
+      if (tied.length) {
+        var tg = el('div', 'pw-tags');
+        tied.forEach(function (r) {
+          var chipR = el('span', 'ct-chip' + (r.status === 'open' ? (r.mandatory ? ' red' : '') : ' green'), r.ref + (r.status === 'open' ? '' : ' ✓'));
+          chipR.title = r.text + (r.status === 'open' ? ' (open)' : ' (' + r.status + ')');
+          tg.appendChild(chipR);
+        });
+        card.appendChild(tg);
+      }
+      (st.data.findings || []).filter(function (f) { return f.section_key === s.key && f.status === 'open'; }).forEach(function (f) {
+        card.appendChild(ctFindingCard(id, f, function () { ctRespRender(id); }));
+      });
 
       if (s.type === 'pricing') {
         var bl = ctDetail.lines.filter(function (l) { return l.bid; });
@@ -19705,6 +19749,404 @@
         box.appendChild(out);
       });
       return box;
+    }
+
+    // ---- The proposal writer: requirements, the whole response, the evaluator's review ----
+    // One background job (kind 'proposal') reads the packet PDFs in four passes: it lists
+    // what the solicitation requires (each with its file, page and clause), analyzes the
+    // bid (saved as a BidBuilder draft), writes every section as a new version, and reviews
+    // that version as the agency's evaluator. Nothing reaches the working copy until Tyler
+    // ticks the sections to take, each shown as a difference against what it says now.
+    var CT_PW_STEPS = [['extract', 'Extracting requirements'], ['analyze', 'Analyzing the bid'], ['write', 'Writing the response'], ['review', 'Reviewing as the evaluator']];
+    var CT_REQ_KIND = { req: 'Requirements', form: 'Forms and attachments', eval: 'How it is scored', instruction: 'How to submit', oem: 'Named products', context: 'Use and context' };
+    var CT_REQ_STATUS = [['open', 'Open'], ['addressed', 'Addressed'], ['exception', 'Exception'], ['na', 'Not applicable']];
+    // ctProp[id] = {job, step, steps, at, queued} while a run is going; .result once one is back.
+    var ctProp = {};
+    function ctPropState(id) { return ctProp[id] || (ctProp[id] = {}); }
+
+    // Starts a run. steps: [] for all four, or the ones to rerun.
+    function ctPropStart(id, steps) {
+      var ps = ctPropState(id);
+      if (ps.job || ps.starting) return;
+      ps.starting = true; ps.error = null;
+      ps.steps = steps && steps.length ? steps : CT_PW_STEPS.map(function (s) { return s[0]; });
+      ps.at = Date.now(); ps.step = null;
+      var rs = ctRespState(id);
+      // The Worker writes from the saved working copy, so a pending save goes first.
+      var flush = rs.timer || rs.saving ? (rs.timer && ctRespSave(id, true), new Promise(function (r) { setTimeout(r, 900); })) : Promise.resolve();
+      ctPropPaint(id);
+      flush.then(function () {
+        return api('/admin/bids/' + id + '/proposal', { method: 'POST', body: { steps: steps || [] } });
+      }).then(function (r) {
+        ps.starting = false;
+        if (r && r.queued && r.job_id) { ps.job = r.job_id; ps.queued = true; ctPropWatch(id); ctPropPaint(id); return; }
+        if (r && r.error === 'already_running' && r.job_id) { ps.job = r.job_id; ps.queued = true; ctPropWatch(id); ctPropPaint(id); return; }
+        ctPropDone(id, r || { ok: false });
+      });
+    }
+    function ctPropWatch(id) {
+      var ps = ctPropState(id);
+      if (ps.watching || !ps.job) return;
+      ps.watching = true;
+      var jobId = ps.job;
+      var tick = function () {
+        if (ctProp[id] !== ps || ps.job !== jobId) return;
+        api('/admin/ai-jobs/' + jobId).then(function (r) {
+          if (ctProp[id] !== ps || ps.job !== jobId) return;
+          var job = r && r.job;
+          if (!r.ok || !job) { setTimeout(tick, 8000); return; }
+          if (job.status === 'queued' || job.status === 'running') {
+            if (job.step !== ps.step) { ps.step = job.step; ctPropPaint(id); }
+            setTimeout(tick, 4000);
+            return;
+          }
+          ctJobsEnded[jobId] = true;
+          if (job.status === 'done') ctPropDone(id, Object.assign({ ok: true, job_id: jobId }, job.result || {}));
+          else ctPropDone(id, { ok: false, error: job.error || job.status, message: job.status === 'canceled' ? 'The writer was canceled.' : job.message, job_id: jobId });
+        });
+      };
+      setTimeout(tick, 3000);
+    }
+    function ctPropDone(id, r) {
+      var ps = ctPropState(id);
+      ps.job = null; ps.watching = false; ps.starting = false; ps.step = null;
+      if (ctDetail && ctDetail.bid.id === id) ctDetail.active_job = null;
+      var here = ctBidId === id;
+      if (!r.ok) {
+        ps.error = r.message || ctErr(r);
+        toast((here ? '' : 'Bid ' + id + ': ') + 'The writer stopped: ' + ps.error);
+      } else {
+        if (r.write) { ps.result = r; ps.dismissed = false; }
+        var bits = [];
+        if (r.extract) bits.push(r.extract.added + ' requirement' + (r.extract.added === 1 ? '' : 's') + ' found');
+        if (r.analyze) bits.push('the analysis saved as a draft');
+        if (r.write) bits.push(r.write.sections.length + ' section' + (r.write.sections.length === 1 ? '' : 's') + ' written');
+        if (r.review) bits.push(r.review.findings + ' review finding' + (r.review.findings === 1 ? '' : 's') + (r.review.high ? ', ' + r.review.high + ' high' : ''));
+        toast((here ? 'The writer is done: ' : 'The writer finished bid ' + id + ': ') + bits.join(', ') + '.');
+      }
+      // Requirements, findings and the saved draft all moved: read the bid again.
+      if (here) openBid(id); else ctPropPaint(id);
+    }
+    // Redraws whatever shows the run: the Requirements tab and the response editor.
+    function ctPropPaint(id) {
+      if (ctBidId !== id) return;
+      var rs = ctResp[id];
+      if (rs && rs.host && rs.host.isConnected && rs.data) ctRespRender(id);
+      var p = ctPanes && ctPanes.Requirements;
+      if (p && p.isConnected && p.reqBox) ctReqRender(p);
+    }
+    // A run left going (another tab, a reload) is picked up again from the bid's active_job.
+    function ctPropResume(id) {
+      var aj = ctDetail && ctDetail.active_job;
+      var ps = ctPropState(id);
+      if (aj && aj.kind === 'proposal' && !ps.job && !ctJobsEnded[aj.id]) {
+        ps.job = aj.id; ps.queued = true; ps.step = aj.step; ps.at = (aj.started_at || aj.created_at) * 1000;
+        ps.steps = aj.steps && aj.steps.length ? aj.steps : CT_PW_STEPS.map(function (s) { return s[0]; });
+        ctPropWatch(id);
+      }
+    }
+    // The newest finished run with a written draft, when the page did not see it end.
+    function ctPropLastRun(id) {
+      var ps = ctPropState(id);
+      if (ps.checked || ps.result || ps.job) return;
+      ps.checked = true;
+      api('/admin/bids/' + id + '/jobs').then(function (r) {
+        var last = r.ok && (r.jobs || []).filter(function (j) { return j.kind === 'proposal'; })[0];
+        if (!last || last.status !== 'done') return;
+        var gone = {};
+        try { gone = JSON.parse(localStorage.getItem('ctPropSeen') || '{}') || {}; } catch (e) { gone = {}; }
+        if (gone[last.id]) return;
+        api('/admin/ai-jobs/' + last.id).then(function (j) {
+          if (!j.ok || !j.job.result || !j.job.result.write || ps.result) return;
+          ps.result = Object.assign({ ok: true, job_id: last.id }, j.job.result);
+          ctPropPaint(id);
+        });
+      });
+    }
+    function ctPropForget(id) {
+      var ps = ctPropState(id);
+      if (ps.result) {
+        try { var gone = JSON.parse(localStorage.getItem('ctPropSeen') || '{}') || {}; gone[ps.result.job_id] = 1; localStorage.setItem('ctPropSeen', JSON.stringify(gone)); } catch (e) { /* the page still hides it */ }
+      }
+      ps.result = null;
+    }
+
+    // The run's progress: one row per pass, the current one marked.
+    function ctPropStrip(id) {
+      var ps = ctPropState(id);
+      var box = el('div', 'ct-prompt pw-strip');
+      box.setAttribute('role', 'status');
+      var head = el('div', 'row-main', ps.starting ? 'Starting the writer…' : 'Claude is working on the response');
+      box.appendChild(head);
+      var cur = String(ps.step || '');
+      var at = -1;
+      CT_PW_STEPS.forEach(function (s, i) { if (cur.indexOf(s[1]) === 0) at = i; });
+      if (/^Saving the analysis/.test(cur)) at = 1;
+      if (/^Keeping the draft/.test(cur)) at = 2;
+      if (/^Saving \d+ requirement/.test(cur)) at = 0;
+      if (/^Saving \d+ finding/.test(cur)) at = 3;
+      var ol = el('ol', 'pw-steps');
+      var steps = ps.steps || [];
+      CT_PW_STEPS.forEach(function (s, i) {
+        if (steps.indexOf(s[0]) < 0) return;
+        var mine = steps.indexOf(s[0]), atIdx = at < 0 ? -1 : steps.indexOf(CT_PW_STEPS[at][0]);
+        var li = el('li', mine < atIdx ? 'done' : mine === atIdx ? 'on' : '', s[1]);
+        ol.appendChild(li);
+      });
+      box.appendChild(ol);
+      box.appendChild(el('div', 'row-sub', (cur && at < 0 ? cur + '. ' : '') + 'Several minutes for a full run. It runs on the server: leave this bid or close the page, and the results are saved on the bid.'));
+      if (ps.job) {
+        var stop = el('button', 'ct-btn sm', 'Cancel'); stop.type = 'button';
+        stop.addEventListener('click', function () {
+          if (!confirm('Cancel the writer? What it has spent so far is not refunded; the passes already finished stay saved.')) return;
+          stop.disabled = true;
+          api('/admin/ai-jobs/' + ps.job + '/cancel', { method: 'POST', body: {} });
+        });
+        box.appendChild(stop);
+      }
+      return box;
+    }
+
+    // Claude's draft against the working copy, section by section. A section Tyler has
+    // edited starts unticked, and nothing is taken without its difference on screen.
+    function ctPropReview(id) {
+      var ps = ctPropState(id), st = ctRespState(id), r = ps.result;
+      var box = el('div', 'ct-prompt pw-review');
+      box.appendChild(el('div', 'row-main', "Claude's draft of the response (kept as version " + r.write.version_n + ')'));
+      box.appendChild(el('p', 'row-sub', 'Tick the sections to take into the response. Each shows what changes against what it says now: struck words go, marked words come in. Sections you edited start unticked. Wording not yet in a version is kept as one first.'));
+      if (r.notes && r.notes.write) box.appendChild(el('p', 'row-sub', 'Claude: ' + r.notes.write));
+      var ticks = {};
+      var now = {};
+      st.doc.sections.forEach(function (s) { now[s.key] = s; });
+      r.write.sections.forEach(function (w) {
+        var cur = now[w.key];
+        if (!cur || cur.type !== 'text') return;
+        var curText = ctRespText(st, cur);
+        var card = el('div', 'pw-sec');
+        var same = curText === w.text;
+        var edited = cur.body != null;
+        var cb = ctCheck(w.title + (same ? ' (no change)' : edited ? ' (you edited this one)' : ''), !same && !edited);
+        cb.input.disabled = same;
+        ticks[w.key] = cb.input;
+        card.appendChild(cb);
+        var tags = el('div', 'pw-tags');
+        if (w.requirement_refs.length) tags.appendChild(el('span', 'ct-chip', 'Answers ' + w.requirement_refs.join(', ')));
+        if (w.placeholders) tags.appendChild(el('span', 'ct-chip gold', w.placeholders + ' to fill'));
+        if (w.stray_prices && w.stray_prices.length) tags.appendChild(el('span', 'ct-chip red', 'Not a line price: ' + w.stray_prices.join(', ')));
+        if (tags.firstChild) card.appendChild(tags);
+        if (!same) card.appendChild(ctDiffBox(curText, w.text));
+        if (w.notes) card.appendChild(el('div', 'row-sub', 'Claude: ' + w.notes));
+        box.appendChild(card);
+      });
+      var rr = el('div', 'reply-row');
+      var take = el('button', 'prim', 'Take the ticked sections'); take.type = 'button';
+      var all = el('button', null, 'Tick all'); all.type = 'button';
+      var later = el('button', null, 'Hide'); later.type = 'button';
+      var open = el('a', 'ct-btn sm', 'Open the draft'); open.href = 'bid-response.html?id=' + id + '&version=' + r.write.version_id; open.target = '_blank'; open.rel = 'noopener';
+      all.addEventListener('click', function () { Object.keys(ticks).forEach(function (k) { if (!ticks[k].disabled) ticks[k].checked = true; }); });
+      later.addEventListener('click', function () { ctPropForget(id); ctRespRender(id); toast('Hidden. The draft stays under Versions.'); });
+      take.addEventListener('click', function () {
+        var keys = Object.keys(ticks).filter(function (k) { return ticks[k].checked; });
+        if (!keys.length) { toast('Tick at least one section.'); return; }
+        var editedKeys = keys.filter(function (k) { return now[k] && now[k].body != null; });
+        if (editedKeys.length && !confirm('Replace what you wrote in ' + editedKeys.map(function (k) { return now[k].title; }).join(', ') + ' with Claude\'s draft? Your wording is kept as a version first.')) return;
+        take.disabled = true;
+        var flush = st.timer || st.saving ? (st.timer && ctRespSave(id, true), new Promise(function (res) { setTimeout(res, 900); })) : Promise.resolve();
+        flush.then(function () {
+          return api('/admin/bids/' + id + '/proposal/' + r.job_id + '/accept', { method: 'POST', body: { keys: keys, rev: st.rev } });
+        }).then(function (x) {
+          take.disabled = false;
+          if (!x.ok) {
+            toast(ctErr(x));
+            // Changed since it was compared: show the comparison again against the new copy.
+            if (x.error === 'conflict') { st.data = null; ctRespEditor(st.host, id); }
+            return;
+          }
+          st.data = x.response; st.doc = JSON.parse(JSON.stringify(x.response.working.doc)); st.rev = x.response.working.rev;
+          ctPropForget(id);
+          toast('Took ' + x.taken.length + ' section' + (x.taken.length === 1 ? '' : 's') + (x.kept ? '. Your earlier wording is version ' + x.kept.n + '.' : '.'));
+          ctRespRender(id);
+        });
+      });
+      rr.appendChild(take); rr.appendChild(all); rr.appendChild(open); rr.appendChild(later);
+      box.appendChild(rr);
+      return box;
+    }
+
+    // A finding resolved from wherever it shows.
+    function ctFindingSet(id, f, status, after) {
+      api('/admin/bids/' + id + '/findings/' + f.id, { method: 'PATCH', body: { status: status } }).then(function (r) {
+        if (!r.ok) { toast(ctErr(r)); return; }
+        f.status = status;
+        var rs = ctResp[id];
+        if (rs && rs.data && rs.data.findings) rs.data.findings = rs.data.findings.filter(function (x) { return x.id !== f.id || status === 'open'; });
+        toast(status === 'fixed' ? 'Marked fixed.' : status === 'dismissed' ? 'Dismissed.' : 'Reopened.');
+        if (after) after();
+      });
+    }
+    function ctFindingCard(id, f, after) {
+      var c = el('div', 'ct-risk ' + (f.severity === 'high' ? 'high' : f.severity === 'med' ? 'med' : '') + (f.status !== 'open' ? ' done' : ''));
+      var h = el('div', 'rs-head');
+      h.appendChild(el('span', 'ct-chip' + (f.severity === 'high' ? ' red' : f.severity === 'med' ? ' gold' : ''), f.severity === 'med' ? 'medium' : f.severity));
+      if (f.requirement_ref) h.appendChild(el('span', 'ct-chip', f.requirement_ref));
+      if (f.status !== 'open') h.appendChild(el('span', 'ct-chip green', f.status));
+      c.appendChild(h);
+      c.appendChild(el('div', 'd', f.issue));
+      if (f.suggested_fix) c.appendChild(el('div', 'row-sub', 'Fix: ' + f.suggested_fix));
+      var rr = el('div', 'reply-row');
+      (f.status === 'open' ? [['fixed', 'Fixed'], ['dismissed', 'Dismiss']] : [['open', 'Reopen']]).forEach(function (a) {
+        var b = el('button', 'ct-btn sm', a[1]); b.type = 'button';
+        b.addEventListener('click', function () { b.disabled = true; ctFindingSet(id, f, a[0], after); });
+        rr.appendChild(b);
+      });
+      c.appendChild(rr);
+      return c;
+    }
+
+    // The Requirements tab: what the solicitation asks for, each citing its page.
+    function ctRequirements(pane) {
+      var id = ctBidId;
+      ctPropResume(id);
+      pane.appendChild(el('p', 'ct-note', 'What the solicitation requires, found by Claude in the packet PDFs, each with the file, page and words it came from. Work through them: mark each addressed, an exception (say why) or not applicable, and tie it to the section that answers it. A mandatory requirement still open, or a high review finding not fixed or dismissed, keeps the bid from Draft ready unless a strategic-override note is recorded.'));
+      pane.reqBox = el('div');
+      pane.appendChild(pane.reqBox);
+      pane.reqData = null;
+      var load = function () {
+        Promise.all([api('/admin/bids/' + id + '/requirements'), ctResp[id] && ctResp[id].data ? Promise.resolve(ctResp[id].data) : api('/admin/bids/' + id + '/response')]).then(function (x) {
+          if (ctBidId !== id) return;
+          if (!x[0].ok) { pane.reqBox.textContent = ''; pane.reqBox.appendChild(el('div', 'ct-why', ctErr(x[0]))); return; }
+          pane.reqData = x[0];
+          pane.layout = x[1] && x[1].working ? x[1].working.doc.sections : [];
+          ctReqRender(pane);
+        });
+      };
+      pane.reload = load;
+      pane.reqBox.appendChild(el('div', 'row-sub', 'Loading the requirements…'));
+      load();
+    }
+
+    function ctReqRender(pane) {
+      var id = ctBidId, box = pane.reqBox, d = pane.reqData, ps = ctPropState(id);
+      if (!box || !d) return;
+      box.textContent = '';
+      var bar = el('div', 'rs-bar');
+      var s = d.summary;
+      bar.appendChild(el('span', 'row-sub', s.total ? s.total + ' in all, ' + s.open + ' open' + (s.mandatory_open.length ? ', ' + s.mandatory_open.length + ' mandatory open' : '') + '.' : 'None found yet.'));
+      var pdfs = ctPacketPdfs().length;
+      var find = el('button', 'ct-btn sm' + (s.total ? '' : ' prim'), s.total ? 'Find them again' : 'Find the requirements'); find.type = 'button';
+      find.disabled = !!(ps.job || ps.starting);
+      find.addEventListener('click', function () {
+        if (!pdfs && !confirm('No packet PDFs are on this bid, so Claude will read only the pasted packet text from the Draft tab. Go ahead?')) return;
+        if (s.total && !confirm('Read the documents again? Requirements you have changed or added are kept; the others are replaced.')) return;
+        ctPropStart(id, ['extract']);
+      });
+      var whole = el('button', 'ct-btn sm', 'Write the whole response'); whole.type = 'button';
+      whole.disabled = find.disabled;
+      whole.addEventListener('click', function () { ctPropWhole(id); });
+      var rev = el('button', 'ct-btn sm', 'Review the response'); rev.type = 'button';
+      rev.disabled = find.disabled || !s.total;
+      rev.title = 'Claude reads the response as it stands now as the agency\'s evaluator would.';
+      rev.addEventListener('click', function () { ctPropStart(id, ['review']); });
+      bar.appendChild(find); bar.appendChild(whole); bar.appendChild(rev);
+      box.appendChild(bar);
+      if (ps.job || ps.starting) box.appendChild(ctPropStrip(id));
+      else if (ps.error) box.appendChild(el('div', 'ct-why', 'The last run stopped: ' + ps.error));
+
+      var sections = (pane.layout || []).filter(function (x) { return x.type !== 'signature'; });
+      var titleOf = {}; sections.forEach(function (x) { titleOf[x.key] = x.title; });
+      Object.keys(CT_REQ_KIND).forEach(function (kind) {
+        var rows = d.requirements.filter(function (r) { return r.kind === kind; });
+        if (!rows.length) return;
+        box.appendChild(el('h4', 'addsec', CT_REQ_KIND[kind] + ' (' + rows.length + ')'));
+        rows.forEach(function (r) { box.appendChild(ctReqRow(pane, r, sections, titleOf)); });
+      });
+
+      // Adding one by hand.
+      var add = el('details', 'ct-step');
+      add.appendChild(el('summary', null, 'Add a requirement yourself'));
+      var af = el('div', 'ct-form');
+      var at = ctField(af, 'What it requires', ctInput('text', '', { maxlength: 2000 }), 'wide');
+      var ak = ctField(af, 'Kind', ctSelect(Object.keys(CT_REQ_KIND).map(function (k) { return [k, CT_REQ_KIND[k]]; }), 'req'));
+      var am = ctCheck('Mandatory', false);
+      af.appendChild(am);
+      add.appendChild(af);
+      var ab = el('button', 'prim', 'Add'); ab.type = 'button';
+      ab.addEventListener('click', function () {
+        if (!at.value.trim()) { at.focus(); return; }
+        ab.disabled = true;
+        api('/admin/bids/' + id + '/requirements', { method: 'POST', body: { text: at.value, kind: ak.value, mandatory: am.input.checked } }).then(function (r) {
+          ab.disabled = false;
+          if (!r.ok) { toast(ctErr(r)); return; }
+          toast('Added as ' + r.requirement.ref);
+          pane.reload();
+        });
+      });
+      add.appendChild(ab);
+      box.appendChild(add);
+
+      // The evaluator's findings.
+      var finds = d.findings || [];
+      box.appendChild(el('h4', 'addsec', 'Review findings' + (finds.length ? ' (' + finds.filter(function (f) { return f.status === 'open'; }).length + ' open)' : '')));
+      if (!finds.length) box.appendChild(el('p', 'row-sub', 'None yet. "Review the response" has Claude read it as the agency\'s evaluator; "Write the whole response" reviews its own draft.'));
+      finds.forEach(function (f) {
+        var c = ctFindingCard(id, f, function () { pane.reload(); });
+        if (f.section_key) c.insertBefore(el('div', 'row-sub', 'In ' + (titleOf[f.section_key] || f.section_key)), c.children[1]);
+        box.appendChild(c);
+      });
+    }
+
+    function ctReqRow(pane, r, sections, titleOf) {
+      var id = ctBidId;
+      var row = el('div', 'ct-risk rq-row' + (r.status !== 'open' ? ' done' : r.mandatory ? ' high' : ''));
+      var h = el('div', 'rs-head');
+      h.appendChild(el('span', 'rq-ref', r.ref));
+      if (r.mandatory) h.appendChild(el('span', 'ct-chip red', 'Mandatory'));
+      if (r.source === 'manual') h.appendChild(el('span', 'ct-chip', 'Added by you'));
+      var c = r.citation;
+      if (c && c.file_id) {
+        // Opens the PDF at the page; the browser's viewer reads #page=N.
+        var a = el('a', 'ct-chip gold rq-cite', c.file + (c.page ? ', p.' + c.page : ''));
+        a.href = API + '/admin/bid-files/' + c.file_id + (c.page ? '#page=' + c.page : '');
+        a.target = '_blank'; a.rel = 'noopener';
+        a.title = c.quote ? '"' + c.quote + '"' : 'Open the file';
+        h.appendChild(a);
+      } else if (c && c.file) h.appendChild(el('span', 'ct-chip', c.file + ' (not on the bid)'));
+      row.appendChild(h);
+      row.appendChild(el('div', 'd', r.text));
+      if (c && c.quote) row.appendChild(el('div', 'rq-quote', '"' + c.quote + '"'));
+      var f = el('div', 'ct-form');
+      var stSel = ctField(f, 'Status', ctSelect(CT_REQ_STATUS, r.status));
+      var secSel = ctField(f, 'Answered in', ctSelect([['', '(no section yet)']].concat(sections.map(function (x) { return [x.key, x.title]; })), r.section_key || ''));
+      var note = ctField(f, r.status === 'exception' ? 'The exception, as the agency reads it' : 'How it is met (optional)', ctInput('text', r.response_note || '', { maxlength: 2000 }), 'wide');
+      row.appendChild(f);
+      var save = function (body) {
+        api('/admin/bids/' + id + '/requirements/' + r.id, { method: 'PATCH', body: body }).then(function (x) {
+          if (!x.ok) {
+            toast(ctErr(x));
+            if (x.error === 'note_required') { stSel.value = r.status; note.focus(); }
+            return;
+          }
+          Object.assign(r, x.requirement);
+          pane.reload();
+        });
+      };
+      stSel.addEventListener('change', function () {
+        if (stSel.value === 'exception' && !note.value.trim()) { toast('Write the exception in the box first.'); stSel.value = r.status; note.focus(); return; }
+        save({ status: stSel.value, response_note: note.value });
+      });
+      secSel.addEventListener('change', function () { save({ section_key: secSel.value || null }); });
+      note.addEventListener('change', function () { if (note.value !== (r.response_note || '')) save({ response_note: note.value }); });
+      return row;
+    }
+
+    function ctPropWhole(id) {
+      var pdfs = ctPacketPdfs().length;
+      var rs = ctResp[id];
+      var edited = rs && rs.doc ? rs.doc.sections.filter(function (s) { return s.type === 'text' && s.body != null; }).length : 0;
+      var msg = 'Claude reads ' + (pdfs ? 'the ' + pdfs + ' packet PDF' + (pdfs === 1 ? '' : 's') : 'the pasted packet') + ' in four passes: it finds the requirements, analyzes the bid (saved as a draft on the Draft tab), writes every section as a new version, and reviews that version as the evaluator. It takes several minutes.\n\nNothing in the response changes until you tick the sections to take'
+        + (edited ? '; the ' + edited + ' section' + (edited === 1 ? '' : 's') + ' you edited are shown as differences and start unticked.' : '.') + '\n\nStart?';
+      if (!confirm(msg)) return;
+      ctPropStart(id, []);
     }
 
     // ---- BidBuilder: draft the workspace from the packet ----
