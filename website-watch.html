@@ -657,13 +657,21 @@
     .ww-fchip:nth-child(8) { left:21%; top:20%; }
     @keyframes wwFloat { 0%,100% { margin-top:0; } 50% { margin-top:-6px; } }
     @media (prefers-reduced-motion: reduce) { .ww-fchip { animation:none; } }
+    .ww-fchip-d, .ww-fdots { display:none; }
     @media (max-width:900px) {
-      .ww-cloud { height:auto; display:grid; gap:1.2rem; }
-      .ww-cloud::before, .ww-cloud::after { display:none; }
-      .ww-hub { position:static; transform:none; width:min(520px, 100%); margin:0 auto; }
-      .ww-hub p { min-height:0; }
-      .ww-fchips { display:flex; flex-wrap:wrap; justify-content:center; gap:0.55rem; }
-      .ww-fchip { position:static; transform:none; animation:none; font-size:0.82rem; padding:0.5rem 0.85rem; }
+      /* Phones and tablets: a swipeable row of cards instead of the orbit. */
+      .ww-cloud { height:auto; }
+      .ww-cloud::before, .ww-cloud::after, .ww-hub { display:none; }
+      .ww-fchips { display:flex; gap:0.8rem; overflow-x:auto; scroll-snap-type:x mandatory; padding:0.3rem calc(50% - min(39vw, 160px)) 0.6rem; margin:0 -4vw; scrollbar-width:none; -webkit-overflow-scrolling:touch; }
+      .ww-fchips::-webkit-scrollbar { display:none; }
+      .ww-fchip, .ww-fchip.on { position:static; transform:none; animation:none; flex:0 0 min(78vw, 320px); scroll-snap-align:center; display:grid; grid-template-columns:auto 1fr; align-items:center; gap:0.5rem 0.75rem; white-space:normal; text-align:left; padding:1.1rem 1.15rem; border-radius:20px; background:linear-gradient(170deg, rgba(74,172,101,0.12), rgba(17,27,21,0.95) 55%); border:1px solid rgba(74,172,101,0.35); color:#fff; box-shadow:none; cursor:default; }
+      .ww-fchip-ic { width:42px; height:42px; border-radius:50%; display:grid; place-items:center; background:linear-gradient(135deg,#c89830,#e0b840); }
+      .ww-fchip .ww-fchip-ic i, .ww-fchip.on .ww-fchip-ic i { color:#0d1710; font-size:1rem; }
+      .ww-fchip-t { font-size:1rem; line-height:1.3; }
+      .ww-fchip-d { display:block; grid-column:1 / -1; font-family:"Inter",system-ui,sans-serif; font-weight:400; font-size:0.9rem; line-height:1.55; color:var(--muted); }
+      .ww-fdots { display:flex; justify-content:center; gap:0.4rem; margin-top:0.4rem; }
+      .ww-fdots i { width:7px; height:7px; border-radius:50%; background:rgba(255,255,255,0.22); transition:width .2s, background .2s; }
+      .ww-fdots i.on { width:20px; border-radius:999px; background:#c89830; }
     }
 
     .ww-steps { list-style:none; display:grid; grid-template-columns:repeat(3, minmax(0,1fr)); gap:1rem; padding:0; margin:0; counter-reset:none; }
@@ -880,15 +888,16 @@
           <p id="wwHubD">Visitors never tell you; they call the next name on Google. We check every 15 minutes and email you the minute it stops, and again when it is back.</p>
         </div>
         <div class="ww-fchips" role="group" aria-label="What Website Watch checks">
-          <button type="button" class="ww-fchip on" style="--i:0" data-ic="fa-solid fa-phone-slash" data-d="Visitors never tell you; they call the next name on Google. We check every 15 minutes and email you the minute it stops, and again when it is back." aria-pressed="true"><i class="fa-solid fa-phone-slash"></i> Down? You hear first</button>
-          <button type="button" class="ww-fchip" style="--i:1" data-ic="fa-solid fa-calendar-check" data-d="A lapsed domain takes your email down with it; an expired certificate shows &ldquo;Not secure.&rdquo; We warn you 30, 14 and 7 days ahead." aria-pressed="false"><i class="fa-solid fa-calendar-check"></i> Renewals never sneak up</button>
-          <button type="button" class="ww-fchip" style="--i:2" data-ic="fa-solid fa-envelope-circle-check" data-d="We check the settings that keep your quotes and invoices out of spam folders, and tell you in plain words what is missing." aria-pressed="false"><i class="fa-solid fa-envelope-circle-check"></i> Your email lands, not spam</button>
-          <button type="button" class="ww-fchip" style="--i:3" data-ic="fa-solid fa-user-secret" data-d="If your domain's settings change, we ask &ldquo;was that you?&rdquo; If someone registers a look-alike name to fool your customers, we tell you." aria-pressed="false"><i class="fa-solid fa-user-secret"></i> Hijacks and copycats spotted</button>
-          <button type="button" class="ww-fchip" style="--i:4" data-ic="fa-solid fa-shield-halved" data-d="A hacked site gets a red warning screen in Chrome and loses its visitors overnight. We check Google's list daily and alert you at once." aria-pressed="false"><i class="fa-solid fa-shield-halved"></i> Off Google's danger list</button>
-          <button type="button" class="ww-fchip" style="--i:5" data-ic="fa-solid fa-link-slash" data-d="Broken links and missing images make a business look closed. We find them every month and list exactly where they are." aria-pressed="false"><i class="fa-solid fa-link-slash"></i> No dead ends</button>
-          <button type="button" class="ww-fchip" style="--i:6" data-ic="fa-solid fa-cart-shopping" data-d="Store stuck behind its password, a $0.00 price, an emptied catalog, a cart that stopped loading or a price that changed: you know the same day." aria-pressed="false"><i class="fa-solid fa-cart-shopping"></i> Shopify store checks</button>
-          <button type="button" class="ww-fchip" style="--i:7" data-ic="fa-solid fa-chart-line" data-d="Add one line to your site and see visitors, plus the clicks that matter: calls, emails, form sends and add-to-carts. No cookies, no banner." aria-pressed="false"><i class="fa-solid fa-chart-line"></i> See who is calling</button>
+          <button type="button" class="ww-fchip on" style="--i:0" data-ic="fa-solid fa-phone-slash" data-d="Visitors never tell you; they call the next name on Google. We check every 15 minutes and email you the minute it stops, and again when it is back." aria-pressed="true"><span class="ww-fchip-ic"><i class="fa-solid fa-phone-slash"></i></span> <span class="ww-fchip-t">Down? You hear first</span><span class="ww-fchip-d">Visitors never tell you; they call the next name on Google. We check every 15 minutes and email you the minute it stops, and again when it is back.</span></button>
+          <button type="button" class="ww-fchip" style="--i:1" data-ic="fa-solid fa-calendar-check" data-d="A lapsed domain takes your email down with it; an expired certificate shows &ldquo;Not secure.&rdquo; We warn you 30, 14 and 7 days ahead." aria-pressed="false"><span class="ww-fchip-ic"><i class="fa-solid fa-calendar-check"></i></span> <span class="ww-fchip-t">Renewals never sneak up</span><span class="ww-fchip-d">A lapsed domain takes your email down with it; an expired certificate shows &ldquo;Not secure.&rdquo; We warn you 30, 14 and 7 days ahead.</span></button>
+          <button type="button" class="ww-fchip" style="--i:2" data-ic="fa-solid fa-envelope-circle-check" data-d="We check the settings that keep your quotes and invoices out of spam folders, and tell you in plain words what is missing." aria-pressed="false"><span class="ww-fchip-ic"><i class="fa-solid fa-envelope-circle-check"></i></span> <span class="ww-fchip-t">Your email lands, not spam</span><span class="ww-fchip-d">We check the settings that keep your quotes and invoices out of spam folders, and tell you in plain words what is missing.</span></button>
+          <button type="button" class="ww-fchip" style="--i:3" data-ic="fa-solid fa-user-secret" data-d="If your domain's settings change, we ask &ldquo;was that you?&rdquo; If someone registers a look-alike name to fool your customers, we tell you." aria-pressed="false"><span class="ww-fchip-ic"><i class="fa-solid fa-user-secret"></i></span> <span class="ww-fchip-t">Hijacks and copycats spotted</span><span class="ww-fchip-d">If your domain's settings change, we ask &ldquo;was that you?&rdquo; If someone registers a look-alike name to fool your customers, we tell you.</span></button>
+          <button type="button" class="ww-fchip" style="--i:4" data-ic="fa-solid fa-shield-halved" data-d="A hacked site gets a red warning screen in Chrome and loses its visitors overnight. We check Google's list daily and alert you at once." aria-pressed="false"><span class="ww-fchip-ic"><i class="fa-solid fa-shield-halved"></i></span> <span class="ww-fchip-t">Off Google's danger list</span><span class="ww-fchip-d">A hacked site gets a red warning screen in Chrome and loses its visitors overnight. We check Google's list daily and alert you at once.</span></button>
+          <button type="button" class="ww-fchip" style="--i:5" data-ic="fa-solid fa-link-slash" data-d="Broken links and missing images make a business look closed. We find them every month and list exactly where they are." aria-pressed="false"><span class="ww-fchip-ic"><i class="fa-solid fa-link-slash"></i></span> <span class="ww-fchip-t">No dead ends</span><span class="ww-fchip-d">Broken links and missing images make a business look closed. We find them every month and list exactly where they are.</span></button>
+          <button type="button" class="ww-fchip" style="--i:6" data-ic="fa-solid fa-cart-shopping" data-d="Store stuck behind its password, a $0.00 price, an emptied catalog, a cart that stopped loading or a price that changed: you know the same day." aria-pressed="false"><span class="ww-fchip-ic"><i class="fa-solid fa-cart-shopping"></i></span> <span class="ww-fchip-t">Shopify store checks</span><span class="ww-fchip-d">Store stuck behind its password, a $0.00 price, an emptied catalog, a cart that stopped loading or a price that changed: you know the same day.</span></button>
+          <button type="button" class="ww-fchip" style="--i:7" data-ic="fa-solid fa-chart-line" data-d="Add one line to your site and see visitors, plus the clicks that matter: calls, emails, form sends and add-to-carts. No cookies, no banner." aria-pressed="false"><span class="ww-fchip-ic"><i class="fa-solid fa-chart-line"></i></span> <span class="ww-fchip-t">See who is calling</span><span class="ww-fchip-d">Add one line to your site and see visitors, plus the clicks that matter: calls, emails, form sends and add-to-carts. No cookies, no banner.</span></button>
         </div>
+        <div class="ww-fdots" aria-hidden="true"><i class="on"></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
       </div>
       <div class="ww-sample">
         <a class="ww-sample-img" href="assets/website-watch/sample-report.jpg" target="_blank" rel="noopener">
@@ -1478,22 +1487,29 @@
     var cloud = document.getElementById('wwCloud'); if (!cloud) return;
     var chips = [].slice.call(cloud.querySelectorAll('.ww-fchip'));
     var ic = document.getElementById('wwHubIc'), t = document.getElementById('wwHubT'), d = document.getElementById('wwHubD');
-    var cur = 0, timer = null;
+    var cur = 0, timer = null, wide = window.matchMedia('(min-width: 901px)');
     function show(n) {
       cur = n;
       chips.forEach(function (c, i) { c.classList.toggle('on', i === n); c.setAttribute('aria-pressed', i === n ? 'true' : 'false'); });
       var c = chips[n];
       ic.className = c.getAttribute('data-ic');
-      t.textContent = c.textContent.trim();
+      t.textContent = c.querySelector('.ww-fchip-t').textContent;
       d.textContent = c.getAttribute('data-d');
     }
     function stop() { if (timer) { clearInterval(timer); timer = null; } }
     chips.forEach(function (c, i) {
       c.addEventListener('click', function () { stop(); show(i); });
-      c.addEventListener('mouseenter', function () { stop(); show(i); });
+      c.addEventListener('mouseenter', function () { if (wide.matches) { stop(); show(i); } });
       c.addEventListener('focus', function () { stop(); show(i); });
     });
-    if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) timer = setInterval(function () { show((cur + 1) % chips.length); }, 3500);
+    if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) timer = setInterval(function () { if (wide.matches) show((cur + 1) % chips.length); }, 3500);
+    // Phones: the cards swipe; the dots show which one is centered.
+    var row = cloud.querySelector('.ww-fchips'), dots = [].slice.call(cloud.querySelectorAll('.ww-fdots i'));
+    row.addEventListener('scroll', function () {
+      var mid = row.scrollLeft + row.clientWidth / 2, best = 0, bd = Infinity;
+      chips.forEach(function (c, i) { var dd = Math.abs(c.offsetLeft + c.offsetWidth / 2 - mid); if (dd < bd) { bd = dd; best = i; } });
+      dots.forEach(function (x, i) { x.classList.toggle('on', i === best); });
+    }, { passive: true });
   })();
 
   // Store Match before/after: starts in the middle and nudges side to side until someone drags it.
