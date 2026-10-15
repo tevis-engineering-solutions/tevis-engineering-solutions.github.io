@@ -64,10 +64,13 @@
     var card = document.getElementById('card');
     // Keep the one-time token out of the address bar and the browser history, but in this
     // tab's session storage, so a refresh still works. It is gone when the tab closes.
-    var t = new URLSearchParams(location.search).get('t') || '';
+    // ?t= is an Insights connection link; ?s= is a Store Match theme-access link.
+    var q = new URLSearchParams(location.search);
+    var t = q.get('t') || '', s = q.get('s') || '';
     try {
-      if (t) sessionStorage.setItem('tes_connect_t', t);
-      else t = sessionStorage.getItem('tes_connect_t') || '';
+      if (t) { sessionStorage.setItem('tes_connect_t', t); sessionStorage.removeItem('tes_connect_s'); }
+      else if (s) { sessionStorage.setItem('tes_connect_s', s); sessionStorage.removeItem('tes_connect_t'); }
+      else { t = sessionStorage.getItem('tes_connect_t') || ''; s = sessionStorage.getItem('tes_connect_s') || ''; }
     } catch (e) { /* storage blocked: the link still works until refreshed */ }
     try { history.replaceState(null, '', location.pathname); } catch (e) { /* older browsers */ }
     function el(tag, cls, text) { var n = document.createElement(tag); if (cls) n.className = cls; if (text != null) n.textContent = text; return n; }
@@ -89,6 +92,46 @@
       d.appendChild(el('h1', null, head));
       d.appendChild(el('p', null, text));
       card.appendChild(d);
+    }
+    // Store Match: add support@ in Theme Access (Shopify emails us the password), then say so.
+    if (s) {
+      fetch('/portal-api/public/store-match/link?s=' + encodeURIComponent(s)).then(function (r) { return r.json(); }).then(function (d) {
+        if (!d || !d.ok) { fail(d && d.error === 'rate_limited' ? 'Too many tries from this connection. Please wait a little and try again.' : null); return; }
+        card.textContent = '';
+        var k = el('span', 'kicker'); k.appendChild(el('i', 'fa-solid fa-store')); k.appendChild(document.createTextNode(' Store Match for ' + d.store)); card.appendChild(k);
+        card.appendChild(el('h1', null, 'Let us into your theme'));
+        card.appendChild(el('p', null, 'To give ' + d.store + ' the look of ' + d.site + ', we need access to its theme, and nothing else. Shopify\'s own Theme Access app does exactly that.'));
+        var safe = el('div', 'safe'); safe.appendChild(el('i', 'fa-solid fa-shield-halved'));
+        safe.appendChild(el('span', null, 'Shopify emails the password straight to us, so there is nothing for you to copy or send. It only lets us edit themes, not products, orders, customers or payments, and we work on a copy: your live store does not change until you publish it.'));
+        card.appendChild(safe);
+        if (d.status === 'access_granted' || d.status === 'preview_ready' || d.status === 'published') {
+          card.appendChild(el('p', null, 'You have already done this. Thank you. We will email you when the preview is ready.'));
+          return;
+        }
+        card.appendChild(el('h2', null, 'How to add us'));
+        var ol = el('ol'); d.steps.slice(0, -1).forEach(function (x) { ol.appendChild(el('li', null, x)); }); card.appendChild(ol);
+        if (d.tag) {
+          card.appendChild(el('h2', null, 'And confirm the website is yours'));
+          card.appendChild(el('p', null, 'Your store\'s address does not share ' + d.site + '\'s domain, so please add this line to the website\'s <head> (your web person can do it in a minute; so can we):'));
+          var code = el('p', 'muted', d.tag); code.style.fontFamily = 'ui-monospace, Consolas, monospace'; code.style.wordBreak = 'break-all';
+          code.style.background = 'rgba(0,0,0,0.25)'; code.style.padding = '0.6rem 0.75rem'; code.style.borderRadius = '10px'; code.style.border = '1px solid var(--line)';
+          card.appendChild(code);
+        }
+        var msg = el('div', 'msg'); msg.hidden = true;
+        var go = el('button', 'btn', 'I have added you'); go.type = 'button';
+        go.addEventListener('click', function () {
+          go.disabled = true; msg.hidden = true;
+          fetch('/portal-api/public/store-match/link', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ s: s }) })
+            .then(function (r) { return r.json().catch(function () { return { ok: false }; }); }).then(function (r) {
+              go.disabled = false;
+              if (r.ok) { done('Thank you. We are on it.', 'We will look for the Theme Access email from Shopify, build the copy of your theme, and email you a preview.' + (d.tag && !r.verified ? ' We did not see the website line yet. We will look again before we start; reply if you need a hand adding it.' : '')); return; }
+              msg.className = 'msg bad'; msg.textContent = r.message || 'Something went wrong. Please try again, or reply to our email.'; msg.hidden = false;
+            });
+        });
+        card.appendChild(go); card.appendChild(msg);
+        card.appendChild(el('p', 'muted', 'This link expires ' + new Date(d.expires_at * 1000).toLocaleDateString(undefined, { month: 'long', day: 'numeric' }) + '.'));
+      }).catch(function () { fail('We could not load this page. Please try again in a moment.'); });
+      return;
     }
     if (!t) { fail(); return; }
     fetch('/portal-api/public/connect?t=' + encodeURIComponent(t)).then(function (r) { return r.json(); }).then(function (d) {

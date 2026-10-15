@@ -678,6 +678,16 @@
     .ww-done p { color:var(--muted); margin-bottom:1.2rem; }
     .ww-alt { text-align:center; color:var(--muted); margin-top:1.3rem; font-size:0.95rem; }
     .ww-alt a { color:#6dc882; }
+    /* Store Match add-on */
+    .ww-addon { display:grid; grid-template-columns:minmax(0,1.1fr) minmax(0,0.9fr); gap:2rem; align-items:start; }
+    .ww-addon-copy > p { color:var(--muted); line-height:1.65; margin-bottom:1rem; }
+    .ww-addon-list { list-style:none; padding:0; margin:0 0 1rem; display:grid; gap:0.6rem; }
+    .ww-addon-list li { display:flex; gap:0.6rem; align-items:baseline; color:#dfe9e1; font-size:0.95rem; }
+    .ww-addon-list i { color:#6dc882; font-size:0.85rem; }
+    .ww-addon-fine { color:var(--muted); font-size:0.84rem; line-height:1.6; }
+    .ww-addon-form { width:100%; text-align:left; padding:1.4rem; }
+    .ww-addon-form .ww-form { border-top:0; padding-top:0; }
+    @media (max-width:820px) { .ww-addon { grid-template-columns:1fr; gap:1.3rem; } }
 
     .ww-faq { width:min(780px, 100%); margin:0 auto; display:grid; gap:0.7rem; }
     .ww-faq details { border:1px solid var(--line); border-radius:14px; background:rgba(20,32,25,0.72); padding:0 1.2rem; }
@@ -920,6 +930,60 @@
         </div>
       </div>
       <p class="ww-alt">Rather have us fix what it finds? Our <a href="website_creation.html#maintenance">website care plans</a> include Website Watch.</p>
+    </section>
+
+    <section class="ww-sec" id="store-match" aria-labelledby="smHead">
+      <div class="ww-head">
+        <span class="ww-kicker">Add-on for Shopify stores</span>
+        <h2 id="smHead">Make Your Store Look Like Your Website</h2>
+      </div>
+      <div class="ww-addon">
+        <div class="ww-addon-copy">
+          <p>Store Match gives your Shopify store your website's look, so customers know they are in the right place.</p>
+          <ul class="ww-addon-list">
+            <li><i class="fa-solid fa-check"></i> Your logo, colors, fonts and button style</li>
+            <li><i class="fa-solid fa-check"></i> Your headline, phone number and announcement bar</li>
+            <li><i class="fa-solid fa-check"></i> Built on a copy of your theme: you preview it and publish when you like it</li>
+            <li><i class="fa-solid fa-check"></i> You give access in Shopify's own Theme Access app. No passwords to send us</li>
+            <li><i class="fa-solid fa-check"></i> A fixed price, quoted up front</li>
+          </ul>
+          <p class="ww-addon-fine">For Shopify's Horizon themes. Your logo and main photo are placed by hand. Menus, extra pages and fonts outside Shopify's library are not copied.</p>
+        </div>
+        <div class="ww-plan ww-addon-form">
+          <form class="ww-form" id="smForm" novalidate>
+            <div class="ww-field">
+              <label for="smSite">Your website</label>
+              <input id="smSite" name="site" type="text" inputmode="url" autocomplete="url" placeholder="yourbusiness.com" required>
+            </div>
+            <div class="ww-field">
+              <label for="smStore">Your Shopify store</label>
+              <input id="smStore" name="store" type="text" inputmode="url" autocomplete="off" placeholder="yourstore.myshopify.com" required>
+            </div>
+            <div class="ww-field">
+              <label for="smEmail">Your email</label>
+              <input id="smEmail" name="email" type="email" autocomplete="email" placeholder="you@yourbusiness.com" required>
+            </div>
+            <div class="ww-field">
+              <label for="smName">Your name <span style="text-transform:none;letter-spacing:0;font-weight:500">(optional)</span></label>
+              <input id="smName" name="name" type="text" autocomplete="name">
+            </div>
+            <div class="ww-field">
+              <label for="smNotes">Anything we should know <span style="text-transform:none;letter-spacing:0;font-weight:500">(optional)</span></label>
+              <input id="smNotes" name="notes" type="text" maxlength="500" placeholder="Opening the store next month">
+            </div>
+            <div class="ww-trap" aria-hidden="true"><label for="smHp">Leave this empty</label><input id="smHp" name="hp" type="text" tabindex="-1" autocomplete="off"></div>
+            <div class="cf-turnstile" data-sitekey="0x4AAAAAAEfjPSABvMOUzIl3" data-theme="dark"></div>
+            <p class="ww-err" id="smErr" role="alert" hidden></p>
+            <button type="submit" class="btn btn-primary ww-go" id="smGo"><i class="fa-solid fa-store"></i> Ask for a quote</button>
+            <p class="ww-fine">No charge to ask. We reply with a fixed price within one business day.</p>
+          </form>
+          <div class="ww-done" id="smDone" hidden>
+            <div class="ww-done-ic"><i class="fa-solid fa-circle-check"></i></div>
+            <h3>Thank you</h3>
+            <p>We emailed you what happens next, and we will be in touch with a fixed price within one business day.</p>
+          </div>
+        </div>
+      </div>
     </section>
 
     <section class="ww-sec" id="faq" aria-labelledby="faqHead">
@@ -1228,7 +1292,34 @@
       $('wwSite').value = preSite.toLowerCase();
       $('wwTrySite').value = preSite.toLowerCase();
       if (!qs.get('subscribed')) runPreview(preSite.toLowerCase());
+      $('smSite').value = preSite.toLowerCase();
     }
+
+    // Store Match: a quote request (tes-portal src/store_match.js).
+    (function () {
+      var f = $('smForm'), err = $('smErr'), go = $('smGo');
+      var label = go.innerHTML;
+      function bad(m) { err.textContent = m; err.hidden = false; go.disabled = false; go.innerHTML = label; }
+      f.addEventListener('submit', function (ev) {
+        ev.preventDefault();
+        err.hidden = true;
+        var b = { site: $('smSite').value.trim(), store: $('smStore').value.trim(), email: $('smEmail').value.trim(),
+          name: $('smName').value.trim(), notes: $('smNotes').value.trim(), hp: $('smHp').value };
+        if (!b.site) { $('smSite').focus(); return bad('Enter the website your store should match.'); }
+        if (!b.store) { $('smStore').focus(); return bad('Enter your Shopify store address.'); }
+        if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(b.email)) { $('smEmail').focus(); return bad('Enter an email address we can reach you at.'); }
+        var tok = f.querySelector('[name="cf-turnstile-response"]');
+        b.turnstileToken = tok ? tok.value : '';
+        go.disabled = true; go.textContent = 'Sending…';
+        fetch(API + '/public/store-match', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(b) })
+          .then(function (r) { return r.json().catch(function () { return { ok: false }; }); })
+          .then(function (d) {
+            if (d && d.ok) { f.hidden = true; $('smDone').hidden = false; return; }
+            bad((d && (d.message || MESSAGES[d.error])) || 'Something went wrong. Please try again, or call (216) 302-8486.');
+            if (window.turnstile) try { window.turnstile.reset(f.querySelector('.cf-turnstile')); } catch (e) {}
+          }).catch(function () { bad('Could not reach us. Check your connection and try again.'); });
+      });
+    })();
 
     // Back from PayPal: ?subscribed=1&subscription_id=I-... Poll until the webhook lands.
     if (qs.get('subscribed') && qs.get('subscription_id')) {

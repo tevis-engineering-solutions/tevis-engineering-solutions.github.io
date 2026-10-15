@@ -3675,6 +3675,16 @@
       <div id="watchBody"><div class="state">Loading&hellip;</div></div>
     </section>
 
+    <section class="newinv" id="smPanel" aria-labelledby="smHead">
+      <div class="sb-titlerow">
+        <h2 id="smHead">Store Match</h2>
+        <button type="button" class="sb-add" id="smAddBtn"><i class="fa-solid fa-plus" aria-hidden="true"></i> New request</button>
+      </div>
+      <p class="fnote">Make a client's Shopify store look like their website (C:\dev\shopify-store-match). A fixed fee. Requests come from the Website Watch page and the free scan report. The steps: quote, ask for theme access (they add support@ in Theme Access, and Shopify emails us the password), run the tool, send the preview, published.</p>
+      <div id="smFormHost"></div>
+      <div id="smBody"><div class="state">Loading&hellip;</div></div>
+    </section>
+
     <section class="newinv" id="depositPanel" aria-labelledby="depositHead">
       <div class="sb-titlerow">
         <h2 id="depositHead">Early-access deposits</h2>
@@ -9992,6 +10002,15 @@
       }
       d.appendChild(os);
 
+      // Store Match for this site (a Shopify store, or one they plan).
+      var sms = el('div', 'wi-sec');
+      sms.appendChild(el('h4', null, 'Store Match'));
+      sms.appendChild(el('p', 'wi-note', 'Make their Shopify store look like this site: a fixed-fee add-on.'));
+      var smb = el('button', 'sb-add', 'Start a Store Match request'); smb.type = 'button';
+      smb.addEventListener('click', function () { startStoreMatch(w); });
+      sms.appendChild(smb);
+      d.appendChild(sms);
+
       // Connected accounts.
       var conn = el('div');
       function connSection() {
@@ -10082,6 +10101,151 @@
       }
       row.appendChild(acts);
       return row;
+    }
+
+    // ---- Store Match (tes-portal src/store_match.js) ----
+    var SM_STATE = {
+      requested: ['New request', 'warn'], quoted: ['Quoted', 'warn'], access_asked: ['Waiting for access', 'warn'],
+      access_granted: ['Access granted: run the tool', ''], preview_ready: ['Preview sent', ''], published: ['Published', 'off'], declined: ['Declined', 'off'],
+    };
+    var smBody = document.getElementById('smBody');
+    function smMoney(c) { return c ? '$' + (c / 100).toFixed(c % 100 ? 2 : 0) : ''; }
+
+    function loadStoreMatches() {
+      return api('/admin/store-matches').then(function (r) {
+        smBody.textContent = '';
+        if (!r.ok) { smBody.appendChild(el('div', 'sb-empty', 'Could not load Store Match requests.')); return; }
+        if (!r.matches.length) { smBody.appendChild(el('div', 'sb-empty', 'No requests yet. They arrive from the Website Watch page and the free scan report, or start one above.')); return; }
+        var wrap = el('div', 'sb-list');
+        r.matches.forEach(function (m) { wrap.appendChild(smRow(m)); });
+        smBody.appendChild(wrap);
+      });
+    }
+
+    function smForm(o) {
+      o = o || {};
+      var f = el('form', 'sb-wform'); f.noValidate = true;
+      var mk = function (id, label, ph, val, type) {
+        var d = el('div'); var l = el('label', null, label); l.htmlFor = id;
+        var i = document.createElement('input'); i.id = id; i.type = type || 'text'; i.placeholder = ph || ''; i.value = val || '';
+        d.appendChild(l); d.appendChild(i); return [d, i];
+      };
+      var site = mk('smfSite', 'Their website', 'clientsite.com', o.site), store = mk('smfStore', 'Their Shopify store', 'store.myshopify.com', o.store);
+      var email = mk('smfEmail', 'Their email', 'owner@client.com', o.email, 'email'), name = mk('smfName', 'Their name (optional)', '', o.name);
+      var g1 = el('div', 'fgrid'); g1.appendChild(site[0]); g1.appendChild(store[0]); f.appendChild(g1);
+      var g2 = el('div', 'fgrid'); g2.appendChild(email[0]); g2.appendChild(name[0]); f.appendChild(g2);
+      var acts = el('div', 'inv-actions');
+      var go = el('button', 'prim', 'Add the request'); go.type = 'submit';
+      var cancel = el('button', null, 'Cancel'); cancel.type = 'button';
+      acts.appendChild(go); acts.appendChild(cancel); f.appendChild(acts);
+      cancel.addEventListener('click', function () { f.remove(); });
+      f.addEventListener('submit', function (ev) {
+        ev.preventDefault(); go.disabled = true;
+        api('/admin/store-matches', { method: 'POST', body: { site: site[1].value.trim(), store: store[1].value.trim(), email: email[1].value.trim(), name: name[1].value.trim(), watch_id: o.watch_id, account_id: o.account_id } })
+          .then(function (r) {
+            go.disabled = false;
+            if (!r.ok) { toast(r.message || 'Could not add it'); return; }
+            toast(r.existing ? 'That request is already open' : 'Store Match request added'); f.remove(); loadStoreMatches();
+          });
+      });
+      return f;
+    }
+    document.getElementById('smAddBtn').addEventListener('click', function () {
+      var host = document.getElementById('smFormHost');
+      if (host.firstChild) { host.textContent = ''; return; }
+      host.appendChild(smForm());
+    });
+    // From a watch's drawer: a request for that site, filled in.
+    function startStoreMatch(w) {
+      var host = document.getElementById('smFormHost');
+      host.textContent = '';
+      host.appendChild(smForm({ site: w.host, email: w.email || '', name: w.name || '', watch_id: w.id, account_id: w.account_id || undefined }));
+      document.getElementById('smPanel').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+
+    function smRow(m) {
+      var item = el('div', 'sb-item');
+      var r = el('div', 'sb-row');
+      var who = el('div', 'sb-who');
+      var ic = el('div', 'sb-ico sm' + (m.status === 'published' || m.status === 'declined' ? ' off' : '')); ic.appendChild(icon('fa-store')); who.appendChild(ic);
+      var nm = el('div', 'sb-name');
+      nm.appendChild(el('b', null, m.site_host + ' → ' + m.store_domain));
+      nm.appendChild(el('small', null, [m.contact_name, m.contact_email, 'asked ' + fmtDate(m.requested_at)].filter(Boolean).join(' · ')));
+      var tags = el('span', 'sb-tags');
+      tags.appendChild(el('span', 'sb-tag' + (m.verified_at ? '' : ' gold'), m.verified_at ? 'Website verified (' + m.verified_how + ')' : 'Website not verified'));
+      if (m.price_cents) tags.appendChild(el('span', 'sb-tag gold', 'Quoted ' + smMoney(m.price_cents)));
+      nm.appendChild(tags);
+      who.appendChild(nm); r.appendChild(who);
+      var st = SM_STATE[m.status] || [m.status, 'off'];
+      r.appendChild(el('span', 'sb-pill ' + st[1], st[0]));
+      var acts = el('div', 'sb-acts');
+      var tog = el('button', 'sb-btn'); tog.type = 'button'; tog.title = 'Steps, command and history'; tog.setAttribute('aria-label', tog.title); tog.setAttribute('aria-expanded', 'false'); tog.appendChild(icon('fa-list-check'));
+      acts.appendChild(tog); r.appendChild(acts);
+      item.appendChild(r);
+      var drawer = null;
+      tog.addEventListener('click', function () {
+        if (drawer) { drawer.remove(); drawer = null; tog.setAttribute('aria-expanded', 'false'); return; }
+        drawer = smDrawer(m); item.appendChild(drawer); tog.setAttribute('aria-expanded', 'true');
+      });
+      return item;
+    }
+
+    function smDrawer(m) {
+      var d = el('div', 'wi-drawer');
+      var act = function (b, ok) {
+        return api('/admin/store-matches/' + m.id, { method: 'POST', body: b }).then(function (x) {
+          if (!x.ok) { toast(x.message || x.error || 'Could not do it'); return; }
+          toast(typeof ok === 'function' ? ok(x) : ok); loadStoreMatches();
+        });
+      };
+      var btn = function (label, fn) { var b = el('button', 'sb-add', label); b.type = 'button'; b.addEventListener('click', fn); return b; };
+      var steps = el('div', 'wi-acts');
+      if (m.status !== 'published' && m.status !== 'declined') {
+        steps.appendChild(btn(m.price_cents ? 'Change the price' : 'Set the price', function () {
+          var v = prompt('Fixed price for Store Match on ' + m.store_domain + ' (dollars):', m.price_cents ? (m.price_cents / 100) : '');
+          if (v == null) return;
+          act({ action: 'quote', price_cents: Math.round(parseFloat(String(v).replace(/[$,]/g, '')) * 100) }, 'Price saved');
+        }));
+        steps.appendChild(btn('Ask for theme access', function () {
+          if (!confirm('Email ' + m.contact_email + ' the Theme Access steps' + (m.verified_at ? '' : ' and the website verification tag') + '?')) return;
+          act({ action: 'ask_access' }, function (x) { return 'Emailed ' + x.emailed; });
+        }));
+        if (!m.verified_at) steps.appendChild(btn('Check the website tag', function () { act({ action: 'verify' }, 'Website verified'); }));
+        steps.appendChild(btn('Access granted', function () { act({ action: 'granted', note: 'Theme Access email received' }, 'Marked'); }));
+        steps.appendChild(btn('Send the preview', function () {
+          var u = prompt('Paste the preview link the tool printed:', m.preview_url || '');
+          if (!u) return;
+          act({ action: 'preview', preview_url: u.trim() }, function (x) { return 'Preview emailed to ' + x.emailed; });
+        }));
+        steps.appendChild(btn('Published', function () { act({ action: 'published' }, 'Marked published'); }));
+        steps.appendChild(btn('Decline', function () {
+          var why = prompt('Why (kept in the history, not sent)?', '');
+          if (why == null) return;
+          act({ action: 'decline', note: why }, 'Declined');
+        }));
+      }
+      d.appendChild(steps);
+      var sec = el('div', 'wi-sec');
+      sec.appendChild(el('h4', null, 'Run the tool (PowerShell)'));
+      var ta = document.createElement('textarea'); ta.readOnly = true; ta.rows = 3; ta.className = 'wi-code'; ta.value = m.command;
+      ta.setAttribute('aria-label', 'Store Match command');
+      sec.appendChild(ta);
+      sec.appendChild(btn('Copy', function () { ta.select(); try { navigator.clipboard.writeText(ta.value).then(function () { toast('Copied'); }); } catch (e) { document.execCommand('copy'); toast('Copied'); } }));
+      sec.appendChild(el('p', 'wi-note', 'The password is in the Theme Access email Shopify sends to support@. The tool writes a copy of the live theme and prints the preview link; it never publishes. Place the logo and hero image by hand (saved in work\\' + m.site_host + '\\upload).'));
+      if (!m.verified_at) sec.appendChild(el('p', 'wi-note', 'Website check: the store does not share the site\'s domain, so the client adds ' + m.tag + ' to the site\'s head. The "I have added you" link checks it too.'));
+      if (m.preview_url) { var a = el('a', null, m.preview_url); a.href = m.preview_url; a.target = '_blank'; a.rel = 'noopener noreferrer'; var p = el('p', 'wi-note', 'Preview: '); p.appendChild(a); sec.appendChild(p); }
+      if (m.notes) sec.appendChild(el('p', 'wi-note', 'Their note: ' + m.notes));
+      d.appendChild(sec);
+      if ((m.events || []).length) {
+        var h = el('div', 'sb-hist');
+        m.events.forEach(function (e) {
+          var ev = el('div', 'ev'); ev.appendChild(el('span', null, fmtDate(e.at)));
+          ev.appendChild(el('b', null, e.action.replace(/_/g, ' ') + (e.actor ? ' by ' + e.actor : '') + (e.detail ? ' (' + e.detail + ')' : '')));
+          h.appendChild(ev);
+        });
+        d.appendChild(h);
+      }
+      return d;
     }
 
     // Why a watch is free, who hears about it, and when it stops.
@@ -26259,7 +26423,7 @@
       contracting: { view: 'viewContracting', nav: 'navContracting', load: loadContracting, always: true },
       projects: { view: 'viewProjects', nav: 'navProjects', load: loadProjects, always: true },
       marketing: { view: 'viewMarketing', nav: 'navMarketing', load: function () { mkLoadMode(); }, always: true },
-      keys: { view: 'viewKeys', nav: 'navKeys', load: function () { loadSubscriptions(); loadCampaigns(); loadWatches(); loadDeposits(); return loadKeys(); }, always: true }
+      keys: { view: 'viewKeys', nav: 'navKeys', load: function () { loadSubscriptions(); loadCampaigns(); loadWatches(); loadStoreMatches(); loadDeposits(); return loadKeys(); }, always: true }
     };
     var loaded = {};
     var suppressHashPush = false;
