@@ -1,8 +1,9 @@
 /* Free website analysis — shared client.
  *
- * Used by three pages:
+ * Used by four pages:
  *   website_creation.html        the scanner section
  *   free-website-analysis.html   the same scanner, as the whole page
+ *   shopify-store-check.html     the same scanner, pitched at Shopify stores (data-focus)
  *   website-report.html          the report the scan opens in a new tab
  *
  * Second file in assets/js/ (after invoices.js), for the same reason: three pages need
@@ -271,7 +272,7 @@
         // rotating advice is the point of the wait, not decoration over an empty one.
         var wait = Math.max(0, MIN_SCAN_MS - (Date.now() - startedAt));
         timers.push(setTimeout(function () {
-          finish({ v: 1, at: Date.now(), url: url, notes: notes, report: res.data });
+          finish({ v: 1, at: Date.now(), url: url, notes: notes, focus: form.getAttribute('data-focus') || '', report: res.data });
         }, wait));
       }).catch(function (err) {
         clearTimers();
@@ -344,6 +345,7 @@
     renderHero(report);
     renderScorecard(report);
     renderFindings(report);
+    renderShopify(payload);
 
     // Both enrichments are requested from the report itself, after it has rendered.
     // A Lighthouse run takes tens of seconds and Claude takes tens more; behind the
@@ -429,22 +431,89 @@
         lastCategory = f.category;
         wrap.appendChild(el('h3', 'tes-cathead', labels[f.category] || f.category));
       }
-      var meta = SEVERITY[f.severity] || SEVERITY.info;
-      var card = el('div', 'tes-finding');
-      card.style.borderLeftColor = meta[1];
-
-      var head = el('div', 'tes-ftitle');
-      var tag = el('span', 'tes-tag', meta[0]);
-      tag.style.background = meta[1];
-      head.appendChild(tag);
-      head.appendChild(document.createTextNode(f.title));
-      card.appendChild(head);
-
-      card.appendChild(el('p', 'tes-detail', f.detail));
-      if (f.evidence) card.appendChild(kv('What we saw', f.evidence));
-      if (f.recommendation) card.appendChild(kv('The fix', f.recommendation));
-      wrap.appendChild(card);
+      wrap.appendChild(findingCard(f));
     });
+  }
+
+  function findingCard(f) {
+    var meta = SEVERITY[f.severity] || SEVERITY.info;
+    var card = el('div', 'tes-finding');
+    card.style.borderLeftColor = meta[1];
+
+    var head = el('div', 'tes-ftitle');
+    var tag = el('span', 'tes-tag', meta[0]);
+    tag.style.background = meta[1];
+    head.appendChild(tag);
+    head.appendChild(document.createTextNode(f.title));
+    card.appendChild(head);
+
+    card.appendChild(el('p', 'tes-detail', f.detail));
+    if (f.evidence) card.appendChild(kv('What we saw', f.evidence));
+    if (f.recommendation) card.appendChild(kv('The fix', f.recommendation));
+    return card;
+  }
+
+  // ---------------------------------------------------------------- Shopify section
+
+  // The Worker reads a Shopify store's public catalog (/products.json) and grades it on
+  // its own scale, so the section only exists when the site is a Shopify store. A scan
+  // started from shopify-store-check.html that turns out not to be Shopify says so,
+  // instead of leaving the visitor wondering where the store section went.
+  function renderShopify(payload) {
+    var section = document.getElementById('tesShopify');
+    if (!section) return;
+    var shop = payload.report.shopify;
+    var body = document.getElementById('tesShopBody');
+    body.textContent = '';
+
+    if (!shop || !shop.ok) {
+      if (payload.focus !== 'shopify') return;
+      section.hidden = false;
+      body.appendChild(el('p', 'tes-none',
+        'We could not find a Shopify store at this address. If your store lives on another '
+        + 'domain, such as shop.yourbusiness.com or yourstore.myshopify.com, scan that address '
+        + 'instead. The website findings above still apply.'));
+      return;
+    }
+
+    section.hidden = false;
+    var head = el('div', 'tes-shop-head');
+    var badge = el('div', 'tes-shop-grade', shop.grade);
+    badge.style.background = GRADE_COLOR[shop.grade] || '#64748b';
+    head.appendChild(badge);
+    head.appendChild(el('p', null, shop.locked
+      ? 'Your store is still behind its password page, so shoppers and Google cannot see '
+        + 'the catalog yet. Scan it again after you open the store and we will grade every product.'
+      : 'We read your store’s public catalog, the same product data Google and shopping '
+        + 'apps read, and graded it separately from the website above.'));
+    body.appendChild(head);
+
+    if (!shop.locked) {
+      var stats = el('ul', 'tes-shop-stats');
+      var bits = [
+        (shop.more_than_checked ? 'First ' : '') + shop.products_checked + ' products read',
+        shop.variants + ' variants',
+        shop.sold_out + ' sold out'
+      ];
+      if (shop.price_low != null) {
+        bits.push(shop.price_low === shop.price_high
+          ? 'Priced at $' + shop.price_low.toFixed(2)
+          : 'Priced $' + shop.price_low.toFixed(2) + ' to $' + shop.price_high.toFixed(2));
+      }
+      if (shop.alt_sampled) bits.push('Photo alt text sampled on ' + shop.alt_sampled + ' products');
+      bits.forEach(function (b) { stats.appendChild(el('li', null, b)); });
+      body.appendChild(stats);
+    }
+
+    document.getElementById('tesShopCount').textContent = shop.findings.length
+      ? String(shop.findings.length) : 'None';
+    if (!shop.findings.length) {
+      body.appendChild(el('p', 'tes-none',
+        'Every catalog check passed: photos, descriptions, prices, stock and titles. '
+        + 'That is a well-kept store.'));
+      return;
+    }
+    shop.findings.forEach(function (f) { body.appendChild(findingCard(f)); });
   }
 
   function kv(label, value) {
