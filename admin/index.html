@@ -3680,7 +3680,7 @@
         <h2 id="smHead">Store Match</h2>
         <button type="button" class="sb-add" id="smAddBtn"><i class="fa-solid fa-plus" aria-hidden="true"></i> New request</button>
       </div>
-      <p class="fnote">Make a client's Shopify store look like their website (C:\dev\shopify-store-match). A fixed fee. Requests come from the Website Watch page and the free scan report. The steps: quote, ask for theme access (they add support@ in Theme Access, and Shopify emails us the password), run the tool, send the preview, published.</p>
+      <p class="fnote">Port a client's website look onto their Shopify store (C:\dev\shopify-store-match), $29.99, done by you. Clients order and pay on the Website Watch page; you are paged when they buy, and they get the Theme Access steps (support@ gets the password from Shopify). When they press "I have added you" you are paged again. Run the tool, then "Send the preview" emails them for final approval and publishing.</p>
       <div id="smFormHost"></div>
       <div id="smBody"><div class="state">Loading&hellip;</div></div>
     </section>
@@ -10105,8 +10105,9 @@
 
     // ---- Store Match (tes-portal src/store_match.js) ----
     var SM_STATE = {
-      requested: ['New request', 'warn'], quoted: ['Quoted', 'warn'], access_asked: ['Waiting for access', 'warn'],
-      access_granted: ['Access granted: run the tool', ''], preview_ready: ['Preview sent', ''], published: ['Published', 'off'], declined: ['Declined', 'off'],
+      pending_payment: ['Not paid (checkout left)', 'off'], requested: ['Not paid (started here)', 'warn'], paid: ['Paid', 'warn'],
+      access_asked: ['Paid: waiting for access', 'warn'], access_granted: ['Access granted: run the tool', ''],
+      preview_ready: ['Waiting for their approval', ''], published: ['Published', 'off'], declined: ['Declined', 'off'], refunded: ['Refunded', 'off'],
     };
     var smBody = document.getElementById('smBody');
     function smMoney(c) { return c ? '$' + (c / 100).toFixed(c % 100 ? 2 : 0) : ''; }
@@ -10173,7 +10174,7 @@
       nm.appendChild(el('small', null, [m.contact_name, m.contact_email, 'asked ' + fmtDate(m.requested_at)].filter(Boolean).join(' · ')));
       var tags = el('span', 'sb-tags');
       tags.appendChild(el('span', 'sb-tag' + (m.verified_at ? '' : ' gold'), m.verified_at ? 'Website verified (' + m.verified_how + ')' : 'Website not verified'));
-      if (m.price_cents) tags.appendChild(el('span', 'sb-tag gold', 'Quoted ' + smMoney(m.price_cents)));
+      if (m.paid_at) tags.appendChild(el('span', 'sb-tag gold', (m.paid_how === 'free' ? 'Free' : 'Paid ' + smMoney(m.price_cents)) + (m.paid_how === 'paypal' ? ' (PayPal)' : m.paid_how === 'other' ? ' (another way)' : '') + ' · SM-' + m.id));
       nm.appendChild(tags);
       who.appendChild(nm); r.appendChild(who);
       var st = SM_STATE[m.status] || [m.status, 'off'];
@@ -10200,20 +10201,27 @@
       };
       var btn = function (label, fn) { var b = el('button', 'sb-add', label); b.type = 'button'; b.addEventListener('click', fn); return b; };
       var steps = el('div', 'wi-acts');
-      if (m.status !== 'published' && m.status !== 'declined') {
-        steps.appendChild(btn(m.price_cents ? 'Change the price' : 'Set the price', function () {
-          var v = prompt('Fixed price for Store Match on ' + m.store_domain + ' (dollars):', m.price_cents ? (m.price_cents / 100) : '');
-          if (v == null) return;
-          act({ action: 'quote', price_cents: Math.round(parseFloat(String(v).replace(/[$,]/g, '')) * 100) }, 'Price saved');
+      var open = ['published', 'declined', 'refunded'].indexOf(m.status) < 0;
+      if (open && !m.paid_at) {
+        steps.appendChild(btn('Mark paid (another way)', function () {
+          var how = prompt('Paid $29.99 how? (kept in the history). This pages you and emails ' + m.contact_email + ' the Theme Access steps.', 'Invoice');
+          if (how == null) return;
+          act({ action: 'mark_paid', note: how }, function (x) { return 'Marked paid; steps emailed to ' + x.emailed; });
         }));
-        steps.appendChild(btn('Ask for theme access', function () {
-          if (!confirm('Email ' + m.contact_email + ' the Theme Access steps' + (m.verified_at ? '' : ' and the website verification tag') + '?')) return;
+        steps.appendChild(btn('Free (care plan)', function () {
+          if (!confirm('Do this one free and email ' + m.contact_email + ' the Theme Access steps?')) return;
+          act({ action: 'mark_paid', free: true, note: 'Free' }, function (x) { return 'Steps emailed to ' + x.emailed; });
+        }));
+      }
+      if (open && m.paid_at) {
+        steps.appendChild(btn('Send the steps again', function () {
+          if (!confirm('Email ' + m.contact_email + ' the Theme Access steps again (with a fresh link)?')) return;
           act({ action: 'ask_access' }, function (x) { return 'Emailed ' + x.emailed; });
         }));
         if (!m.verified_at) steps.appendChild(btn('Check the website tag', function () { act({ action: 'verify' }, 'Website verified'); }));
         steps.appendChild(btn('Access granted', function () { act({ action: 'granted', note: 'Theme Access email received' }, 'Marked'); }));
-        steps.appendChild(btn('Send the preview', function () {
-          var u = prompt('Paste the preview link the tool printed:', m.preview_url || '');
+        steps.appendChild(btn('Send the preview for approval', function () {
+          var u = prompt('Done? Paste the preview link the tool printed. ' + m.contact_email + ' gets it for final approval and publishing.', m.preview_url || '');
           if (!u) return;
           act({ action: 'preview', preview_url: u.trim() }, function (x) { return 'Preview emailed to ' + x.emailed; });
         }));
@@ -10222,6 +10230,12 @@
           var why = prompt('Why (kept in the history, not sent)?', '');
           if (why == null) return;
           act({ action: 'decline', note: why }, 'Declined');
+        }));
+      }
+      if (m.paid_at && m.status !== 'refunded' && m.paid_how !== 'free') {
+        steps.appendChild(btn('Refund', function () {
+          if (!confirm('Refund ' + smMoney(m.price_cents) + ' to ' + m.contact_email + (m.paid_how === 'paypal' ? ' through PayPal' : ' (paid another way: this only records it)') + '?')) return;
+          act({ action: 'refund' }, 'Refunded');
         }));
       }
       d.appendChild(steps);
