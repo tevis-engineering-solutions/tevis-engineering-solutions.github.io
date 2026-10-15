@@ -690,6 +690,8 @@
     .ww-addon-price span { color:var(--muted); font-size:0.9rem; }
     #smPay { margin-top:0.4rem; }
     .ww-addon-form { width:100%; text-align:left; padding:1.4rem; }
+    .ww-ins-head { font-family:"Montserrat",sans-serif; font-size:1.1rem; color:#fff; margin-bottom:1rem; }
+    .ww-addon-form .ww-list { display:grid; margin:0 0 1.3rem; }
     .ww-addon-form .ww-form { border-top:0; padding-top:0; }
     @media (max-width:820px) { .ww-addon { grid-template-columns:1fr; gap:1.3rem; } }
 
@@ -780,10 +782,11 @@
 <main class="ww">
     <section class="ww-hero">
       <span class="eyebrow">Website Watch</span>
-      <h1>Know the Moment Your Website Goes Down</h1>
+      <h1>Your Website Should Be Winning You Customers. We Make Sure It Is.</h1>
       <p class="ww-lede">
-        We check your site every 15 minutes, email you the minute it stops answering, warn you before your
-        domain or security certificate runs out, and send you a report card every month.
+        Every 15 minutes we check that your site is up. Every day we check your email, your domain, your
+        Google standing and your store. Every month you get a report card that says what to fix first.
+        <span class="ww-trial-on" hidden>Your first month is free.</span>
       </p>
       <div class="ww-cta">
         <a class="btn btn-primary" href="#start" id="wwHeroCta">Start Watching &middot; $12/mo</a>
@@ -826,28 +829,48 @@
     <section class="ww-sec" id="features" aria-labelledby="featHead">
       <div class="ww-head">
         <span class="ww-kicker">What you get</span>
-        <h2 id="featHead">Four Ways a Website Quietly Loses You Customers</h2>
+        <h2 id="featHead">Eight Ways a Website Quietly Loses You Customers, Caught</h2>
       </div>
       <div class="ww-grid">
         <article class="ww-card">
           <div class="ww-ic"><i class="fa-solid fa-phone-slash"></i></div>
-          <h3>A down site sends callers elsewhere</h3>
-          <p>Nobody tells you it is down. They just call the next name on Google. We check every 15 minutes, around the clock.</p>
+          <h3>Down? You hear first</h3>
+          <p>Visitors never tell you; they call the next name on Google. We check every 15 minutes and email you the minute it stops, and again when it is back.</p>
         </article>
         <article class="ww-card">
-          <div class="ww-ic"><i class="fa-solid fa-bell"></i></div>
-          <h3>You hear first, not your customers</h3>
-          <p>An email the minute it stops answering, saying why in plain words, and another when it is back with how long it was out.</p>
+          <div class="ww-ic"><i class="fa-solid fa-calendar-check"></i></div>
+          <h3>Renewals never sneak up</h3>
+          <p>A lapsed domain takes your email down with it; an expired certificate shows &ldquo;Not secure.&rdquo; We warn you 30, 14 and 7 days ahead.</p>
         </article>
         <article class="ww-card">
           <div class="ww-ic"><i class="fa-solid fa-envelope-circle-check"></i></div>
-          <h3>A lapsed domain takes your email too</h3>
-          <p>And an expired certificate puts a &ldquo;Not secure&rdquo; warning in front of visitors. We warn you 30, 14 and 7 days ahead.</p>
+          <h3>Your email lands, not spam</h3>
+          <p>We check the settings that keep your quotes and invoices out of spam folders, and tell you in plain words what is missing.</p>
         </article>
         <article class="ww-card">
-          <div class="ww-ic"><i class="fa-solid fa-list-check"></i></div>
-          <h3>Small problems that cost leads</h3>
-          <p>A monthly report card grades your site and names the three things most worth fixing, like a missing contact form.</p>
+          <div class="ww-ic"><i class="fa-solid fa-user-secret"></i></div>
+          <h3>Hijacks and copycats spotted</h3>
+          <p>If your domain's settings change, we ask &ldquo;was that you?&rdquo; If someone registers a look-alike name to fool your customers, we tell you.</p>
+        </article>
+        <article class="ww-card">
+          <div class="ww-ic"><i class="fa-solid fa-shield-halved"></i></div>
+          <h3>Off Google's danger list</h3>
+          <p>A hacked site gets a red warning screen in Chrome and loses its visitors overnight. We check Google's list daily and alert you at once.</p>
+        </article>
+        <article class="ww-card">
+          <div class="ww-ic"><i class="fa-solid fa-link-slash"></i></div>
+          <h3>No dead ends</h3>
+          <p>Broken links and missing images make a business look closed. We find them every month and list exactly where they are.</p>
+        </article>
+        <article class="ww-card">
+          <div class="ww-ic"><i class="fa-solid fa-cart-shopping"></i></div>
+          <h3>Shopify store checks</h3>
+          <p>Store stuck behind its password, a $0.00 price, an emptied catalog, a cart that stopped loading or a price that changed: you know the same day.</p>
+        </article>
+        <article class="ww-card">
+          <div class="ww-ic"><i class="fa-solid fa-chart-line"></i></div>
+          <h3>See who is calling</h3>
+          <p>Add one line to your site and see visitors, plus the clicks that matter: calls, emails, form sends and add-to-carts. No cookies, no banner.</p>
         </article>
       </div>
       <div class="ww-sample">
@@ -857,7 +880,7 @@
         <div class="ww-sample-copy">
           <span class="ww-kicker">The monthly report card</span>
           <h3>What lands in your inbox on the 1st</h3>
-          <p>Your grade and how it moved, the month's uptime and outages, the three fixes worth making first, and when your domain and certificate renew. One short email, written for the owner, not the web person.</p>
+          <p>Your grade and how it moved, uptime and outages, visitors and calls, email and security health, your store, the three fixes worth making first, and your renewal dates. One short email, written for the owner, not the web person.</p>
           <a class="btn btn-secondary" href="assets/website-watch/sample-report.jpg" target="_blank" rel="noopener">See a sample report card</a>
         </div>
       </div>
@@ -893,10 +916,13 @@
         </div>
         <p class="ww-sub" id="wwSub">Billed monthly. Cancel any time.</p>
         <ul class="ww-list">
-          <li><i class="fa-solid fa-check"></i> Uptime checks every 15 minutes</li>
-          <li><i class="fa-solid fa-check"></i> Down and back-up email alerts</li>
+          <li><i class="fa-solid fa-check"></i> Uptime checks every 15 minutes, with down and back-up alerts</li>
           <li><i class="fa-solid fa-check"></i> Domain and certificate expiry warnings</li>
-          <li><i class="fa-solid fa-check"></i> Monthly report card and status page</li>
+          <li><i class="fa-solid fa-check"></i> Email health, hijack and look-alike domain alerts</li>
+          <li><i class="fa-solid fa-check"></i> Google danger-list and broken-link checks</li>
+          <li><i class="fa-solid fa-check"></i> Shopify store checks, if you sell on Shopify</li>
+          <li><i class="fa-solid fa-check"></i> Visitor and call counts from one line of code</li>
+          <li><i class="fa-solid fa-check"></i> Monthly report card and your own status page</li>
         </ul>
 
         <form class="ww-form" id="wwForm" novalidate>
@@ -936,9 +962,37 @@
       <p class="ww-alt">Rather have us fix what it finds? Our <a href="website_creation.html#maintenance">website care plans</a> include Website Watch.</p>
     </section>
 
+    <section class="ww-sec" id="insights" aria-labelledby="insHead">
+      <div class="ww-head">
+        <span class="ww-kicker">Premium: Watch Insights</span>
+        <h2 id="insHead">From &ldquo;Is It Up?&rdquo; to &ldquo;Is It Selling?&rdquo;</h2>
+      </div>
+      <div class="ww-addon">
+        <div class="ww-addon-copy">
+          <p>Connect the accounts you already have and we turn them into one plain-English monthly report, plus alerts when something costs you money. You see where visitors come from, what they search to find you, and whether they call, book or buy.</p>
+          <ul class="ww-addon-list">
+            <li><i class="fa-brands fa-google"></i> <span><b>Google Analytics and Search Console:</b> visits, sources, top pages, and the searches that bring you customers</span></li>
+            <li><i class="fa-brands fa-shopify"></i> <span><b>Shopify:</b> orders, revenue and carts left behind</span></li>
+            <li><i class="fa-brands fa-cloudflare"></i> <span><b>Cloudflare:</b> real traffic and threats blocked, with no code on your site</span></li>
+            <li><i class="fa-solid fa-lock"></i> <span>Read-only, and only with your approval. Keys are encrypted, and you can disconnect any account in one click</span></li>
+          </ul>
+        </div>
+        <div class="ww-plan ww-addon-form">
+          <h3 class="ww-ins-head">Alerts that protect revenue</h3>
+          <ul class="ww-list">
+            <li><i class="fa-solid fa-arrow-trend-down"></i> Traffic down 40% from last week</li>
+            <li><i class="fa-solid fa-cart-arrow-down"></i> Carts filling but nobody checking out</li>
+            <li><i class="fa-solid fa-file-circle-xmark"></i> Your contact form stopped sending</li>
+          </ul>
+          <a class="btn btn-primary ww-go" href="contact.html"><i class="fa-solid fa-comments"></i> Ask About Insights</a>
+          <p class="ww-fine">Added to any Website Watch. We walk you through connecting each account, step by step.</p>
+        </div>
+      </div>
+    </section>
+
     <section class="ww-sec" id="store-match" aria-labelledby="smHead">
       <div class="ww-head">
-        <span class="ww-kicker">Add-on for Shopify stores</span>
+        <span class="ww-kicker">Premium: Store Match for Shopify</span>
         <h2 id="smHead">Make Your Store Look Like Your Website</h2>
       </div>
       <div class="ww-addon">
@@ -1013,6 +1067,14 @@
         <details>
           <summary>Where do the renewal dates come from?</summary>
           <div class="faq-a">The domain date comes from your registrar's public registration record. The certificate date comes from the public certificate logs that every certificate authority publishes to. Both are checked once a day.</div>
+        </details>
+        <details>
+          <summary>Do you need my passwords?</summary>
+          <div class="faq-a">Never. Website Watch looks only at what the public can see. For Insights you add us as a read-only user in Google, or create a read-only key in Shopify or Cloudflare; we send the steps and a secure link, store keys encrypted, and you can remove our access at any time.</div>
+        </details>
+        <details>
+          <summary>What is the visitor line, and is it private?</summary>
+          <div class="faq-a">One short script tag we give you (or add for you). It counts page views and clicks on your phone number, email, forms and buy buttons. It sets no cookies and keeps no personal data, so you do not need a cookie banner for it.</div>
         </details>
         <details>
           <summary>How do I cancel?</summary>
