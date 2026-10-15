@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Connect Your Account | Tevis Engineering</title>
+  <meta name="description" content="Send Tevis Engineering read-only access for Website Watch, securely.">
+  <meta name="robots" content="noindex, nofollow">
+  <!-- The link carries a one-time token: never send it anywhere as a referrer. -->
+  <meta name="referrer" content="no-referrer">
+  <link rel="icon" type="image/png" href="assets/favicon.png">
+  <meta name="theme-color" content="#0d1710">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Montserrat:wght@600;700;800&display=swap">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+  <style>
+    :root { --bg:#0d1710; --card:#142019; --card-2:#1c2e22; --line:#2c4232; --text:#e4ede5; --muted:#8aa48d; --green:#4aac65; --gold:#c89830; }
+    * { box-sizing:border-box; margin:0; padding:0; }
+    body { font-family:"Inter","Segoe UI",system-ui,sans-serif; color:var(--text); line-height:1.6; min-height:100vh;
+      background:radial-gradient(circle at 12% 10%, rgba(74,172,101,0.14), transparent 42%), radial-gradient(circle at 90% 4%, rgba(200,152,48,0.1), transparent 34%), linear-gradient(180deg,#0d1710,#080d09); }
+    .bar { display:flex; align-items:center; gap:0.75rem; padding:1rem 5%; border-bottom:1px solid rgba(74,172,101,0.22); background:rgba(9,18,12,0.85); }
+    .bar img { width:40px; height:40px; border-radius:10px; }
+    .bar b { font-family:"Montserrat",sans-serif; font-weight:800; text-transform:uppercase; letter-spacing:0.07em; color:#fff; font-size:0.95rem; }
+    main { width:min(620px, 92%); margin:2.5rem auto 3rem; }
+    .card { background:var(--card); border:1px solid var(--line); border-radius:20px; padding:1.7rem 1.6rem; box-shadow:0 24px 60px rgba(0,0,0,0.35); }
+    .kicker { display:inline-flex; align-items:center; gap:0.45rem; font-size:0.72rem; font-weight:700; letter-spacing:0.12em; text-transform:uppercase; color:var(--gold); margin-bottom:0.55rem; }
+    h1 { font-family:"Montserrat",sans-serif; font-size:clamp(1.35rem, 4vw, 1.75rem); color:#fff; line-height:1.25; margin-bottom:0.6rem; overflow-wrap:anywhere; }
+    p { color:#c7d6ca; margin-bottom:0.9rem; }
+    .muted { color:var(--muted); font-size:0.88rem; }
+    .safe { display:flex; gap:0.7rem; align-items:flex-start; border:1px solid rgba(74,172,101,0.35); background:rgba(74,172,101,0.08); border-radius:14px; padding:0.85rem 0.95rem; margin:1rem 0 1.2rem; font-size:0.9rem; color:#d6ecdb; }
+    .safe i { color:#6dc882; margin-top:0.2rem; }
+    h2 { font-family:"Montserrat",sans-serif; font-size:0.78rem; text-transform:uppercase; letter-spacing:0.08em; color:var(--muted); margin:1.2rem 0 0.6rem; }
+    ol { padding-left:1.25rem; color:#dfe9e1; font-size:0.95rem; }
+    ol li { margin-bottom:0.45rem; }
+    label { display:block; font-size:0.74rem; font-weight:700; letter-spacing:0.06em; text-transform:uppercase; color:var(--muted); margin:0.9rem 0 0.35rem; }
+    input { width:100%; min-height:48px; padding:0 0.9rem; border-radius:12px; border:1px solid var(--line); background:rgba(0,0,0,0.25); color:#fff; font:inherit; font-size:1rem; }
+    input:focus { outline:none; border-color:var(--green); box-shadow:0 0 0 3px rgba(74,172,101,0.2); }
+    .btn { display:inline-flex; align-items:center; justify-content:center; gap:0.55rem; width:100%; min-height:52px; margin-top:1.2rem; border:0; border-radius:999px; cursor:pointer;
+      font-family:"Montserrat",sans-serif; font-weight:700; font-size:0.98rem; color:#0d1710; background:linear-gradient(135deg,#c89830,#e0b840); box-shadow:0 10px 22px rgba(200,152,48,0.26); }
+    .btn:disabled { opacity:0.6; cursor:wait; }
+    .msg { margin-top:0.9rem; padding:0.7rem 0.85rem; border-radius:12px; font-size:0.92rem; }
+    .msg.bad { color:#f0a58f; background:rgba(214,120,90,0.12); border:1px solid rgba(214,120,90,0.35); }
+    .msg.wait { color:#e6c68a; background:rgba(200,152,48,0.1); border:1px solid rgba(200,152,48,0.35); }
+    .done { text-align:center; padding:0.5rem 0; }
+    .done i { font-size:2.6rem; color:#6dc882; margin-bottom:0.6rem; }
+    [hidden] { display:none !important; }
+    footer { text-align:center; color:var(--muted); font-size:0.82rem; margin-top:1.4rem; }
+    footer a { color:#6dc882; text-decoration:none; }
+    @media (max-width:480px) { .card { padding:1.3rem 1.1rem; } }
+  </style>
+</head>
+<body>
+  <div class="bar"><img src="assets/logo-mark-88.webp" alt=""><b>Tevis Engineering</b></div>
+  <main>
+    <div class="card" id="card">
+      <p class="muted" id="loading">Loading&hellip;</p>
+    </div>
+    <footer>Questions? Call <a href="tel:+12163028486">(216)&nbsp;302&#8209;8486</a> or <a href="contact.html">send us a message</a>.</footer>
+  </main>
+  <script>
+  (function () {
+    'use strict';
+    var card = document.getElementById('card');
+    // Keep the one-time token out of the address bar and the browser history, but in this
+    // tab's session storage, so a refresh still works. It is gone when the tab closes.
+    var t = new URLSearchParams(location.search).get('t') || '';
+    try {
+      if (t) sessionStorage.setItem('tes_connect_t', t);
+      else t = sessionStorage.getItem('tes_connect_t') || '';
+    } catch (e) { /* storage blocked: the link still works until refreshed */ }
+    try { history.replaceState(null, '', location.pathname); } catch (e) { /* older browsers */ }
+    function el(tag, cls, text) { var n = document.createElement(tag); if (cls) n.className = cls; if (text != null) n.textContent = text; return n; }
+    function fail(text) {
+      card.textContent = '';
+      card.appendChild(el('span', 'kicker', 'Link expired'));
+      card.appendChild(el('h1', null, 'This link no longer works'));
+      card.appendChild(el('p', null, text || 'It may have expired (links last 14 days) or already been used. Reply to our email or call us, and we will send a fresh one.'));
+    }
+    function post(b) {
+      b.t = t;
+      return fetch('/portal-api/public/connect', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(b) })
+        .then(function (r) { return r.json().catch(function () { return { ok: false }; }); });
+    }
+    function done(head, text) {
+      card.textContent = '';
+      var d = el('div', 'done');
+      d.appendChild(el('i', 'fa-solid fa-circle-check'));
+      d.appendChild(el('h1', null, head));
+      d.appendChild(el('p', null, text));
+      card.appendChild(d);
+    }
+    if (!t) { fail(); return; }
+    fetch('/portal-api/public/connect?t=' + encodeURIComponent(t)).then(function (r) { return r.json(); }).then(function (d) {
+      if (!d || !d.ok) { fail(d && d.error === 'rate_limited' ? 'Too many tries from this connection. Please wait a little and try again.' : null); return; }
+      card.textContent = '';
+      var google = d.kind === 'google';
+      var k = el('span', 'kicker'); k.appendChild(el('i', 'fa-solid fa-lock')); k.appendChild(document.createTextNode(' Website Watch for ' + d.host)); card.appendChild(k);
+      card.appendChild(el('h1', null, 'Connect your ' + d.name));
+      card.appendChild(el('p', null, 'With your OK, we read ' + d.reads.charAt(0).toLowerCase() + d.reads.slice(1)));
+      var safe = el('div', 'safe'); safe.appendChild(el('i', 'fa-solid fa-shield-halved'));
+      safe.appendChild(el('span', null, google ? 'Read-only. We never change anything, and you can remove our access at any time in ' + d.name + '.'
+        : 'Read-only. What you paste here goes straight to Tevis Engineering over an encrypted connection and is stored encrypted. You can turn it off at any time in your portal, or delete the token in ' + d.name + '.'));
+      card.appendChild(safe);
+      if (d.status === 'connected') {
+        card.appendChild(el('p', null, 'This is already connected. Thank you. There is nothing more to do.'));
+        return;
+      }
+      card.appendChild(el('h2', null, google ? 'How to add us' : 'How to get the token'));
+      // The last token step says where to paste it, which is right here: leave it off.
+      var ol = el('ol'); (d.steps || []).slice(0, google ? undefined : -1).forEach(function (s) { ol.appendChild(el('li', null, s)); }); card.appendChild(ol);
+      var msg = el('div', 'msg'); msg.hidden = true;
+      if (google) {
+        if (!d.google_email) card.appendChild(el('p', 'muted', 'We are finishing our side of this. Reply to our email when you have added us.'));
+        var go = el('button', 'btn', 'I have added ' + (d.google_email || 'you')); go.type = 'button';
+        go.addEventListener('click', function () {
+          go.disabled = true; msg.hidden = true;
+          post({ action: 'check' }).then(function (r) {
+            go.disabled = false;
+            if (r.ok && r.status === 'connected') { done('Connected. Thank you.', 'We can see your ' + d.name + ' now. It will be in your next monthly report.'); return; }
+            if (r.ok) { msg.className = 'msg wait'; msg.textContent = 'Thanks. We do not see it yet; Google can take a few minutes. We will keep checking every few hours and email you when it is connected, so you can close this page.'; msg.hidden = false; return; }
+            msg.className = 'msg bad'; msg.textContent = r.message || 'Something went wrong. Please try again, or reply to our email.'; msg.hidden = false;
+          });
+        });
+        card.appendChild(go);
+        card.appendChild(msg);
+        return;
+      }
+      if (d.used) { fail('A token was already sent with this link. If you need to send a different one, ask us for a new link.'); return; }
+      var form = el('form'); form.noValidate = true;
+      var shop = null;
+      if (d.service === 'shopify') {
+        var ls = el('label', null, 'Your store address'); ls.htmlFor = 'shop';
+        shop = document.createElement('input'); shop.id = 'shop'; shop.placeholder = 'yourstore.myshopify.com'; shop.autocomplete = 'off'; shop.spellcheck = false;
+        form.appendChild(ls); form.appendChild(shop);
+      }
+      var lt = el('label', null, 'The token'); lt.htmlFor = 'tok';
+      var tok = document.createElement('input'); tok.id = 'tok'; tok.type = 'password'; tok.autocomplete = 'off'; tok.spellcheck = false; tok.placeholder = 'Paste it here';
+      form.appendChild(lt); form.appendChild(tok);
+      var send = el('button', 'btn'); send.type = 'submit'; send.appendChild(el('i', 'fa-solid fa-lock')); send.appendChild(document.createTextNode(' Send it securely'));
+      form.appendChild(send);
+      form.appendChild(msg);
+      form.addEventListener('submit', function (ev) {
+        ev.preventDefault();
+        if (shop && !shop.value.trim()) { shop.focus(); return; }
+        if (!tok.value.trim()) { tok.focus(); return; }
+        send.disabled = true; msg.className = 'msg wait'; msg.textContent = 'Checking it with ' + d.name + '…'; msg.hidden = false;
+        post({ action: 'token', token: tok.value.trim(), shop: shop ? shop.value.trim() : undefined }).then(function (r) {
+          send.disabled = false;
+          if (r.ok) { tok.value = ''; done('Connected. Thank you.', 'We checked the token with ' + d.name + ' and stored it encrypted. Your next monthly report will include it. You can close this page.'); return; }
+          msg.className = 'msg bad'; msg.textContent = r.message || 'That did not work. Check the token and try again.';
+        });
+      });
+      card.appendChild(form);
+      card.appendChild(el('p', 'muted', 'This link works once and expires ' + new Date(d.expires_at * 1000).toLocaleDateString(undefined, { month: 'long', day: 'numeric' }) + '.'));
+    }).catch(function () { fail('We could not load this page. Please try again in a moment.'); });
+  })();
+  </script>
+</body>
+</html>
