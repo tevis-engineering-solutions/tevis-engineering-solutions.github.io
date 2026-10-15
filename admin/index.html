@@ -2275,6 +2275,12 @@
     .rs-diff ins { background:rgba(74,172,101,0.22); color:#b7f0c8; text-decoration:none; }
     .rs-run { display:flex; gap:0.5rem; align-items:center; flex-wrap:wrap; margin-top:0.4rem; }
     .rs-vers .row { display:block; }
+    .ct-forms .ct-form-row { flex-wrap:wrap; gap:0.4rem; align-items:flex-start; }
+    .ct-forms .ct-form-row > div:first-child { flex:1 1 14rem; min-width:0; }
+    .ct-forms .ct-form-row .reply-row { flex:1 1 100%; margin-top:0.2rem; }
+    .ct-forms .rs-menu { flex:0 1 auto; min-width:0; max-width:100%; text-overflow:ellipsis; }
+    @media (max-width:560px) { .ct-forms .rs-menu { flex:1 1 100%; width:100%; } }
+    .ct-forms .reply-row input[type=text] { flex:1 1 14rem; min-width:0; min-height:36px; padding:0.4rem 0.65rem; border-radius:999px; border:1px solid var(--line); background:var(--bg); color:var(--text); font-family:inherit; font-size:0.8rem; }
     .rs-vers .row .reply-row { margin-top:0.35rem; }
     .ct-risk { border:1px solid var(--line); border-radius:10px; background:var(--bg); padding:0.55rem 0.65rem; margin-bottom:0.4rem; }
     .ct-risk.high { border-left:3px solid #ef4444; }
@@ -3358,6 +3364,7 @@
     <div id="ctBid" hidden></div>
     <section class="ct-ref" aria-label="Reference">
       <details id="ctCompliance"><summary>Compliance &amp; credentials</summary><div class="ct-ref-body" id="ctComplianceBody"></div></details>
+      <details id="ctFormsLib"><summary>Forms library</summary><div class="ct-ref-body" id="ctFormsLibBody"></div></details>
       <details id="ctCodes"><summary>Service codes (capability statement)</summary><div class="ct-ref-body" id="ctCodesBody"></div></details>
       <details id="ctSourcing"><summary>Sourcing accounts</summary><div class="ct-ref-body" id="ctSourcingBody"></div></details>
       <details id="ctRefs"><summary>Reference material (what BidBuilder reads)</summary><div class="ct-ref-body" id="ctRefsBody"></div></details>
@@ -18891,12 +18898,187 @@
       pane.appendChild(add);
     }
 
+    // ---- required forms (bid_forms.js) ----
+    // The forms this solicitation asks for, at the top of Files. Each one goes on the bid
+    // as a copy of a forms-library form or a file uploaded here, or is set aside with a
+    // reason; one still needed holds the bid out of Draft ready. The checklist is kept per
+    // bid between redraws, so a save does not flash it empty.
+    var ctForms = {};
+    function ctFormsApply(r, msg) {
+      if (r && r.ok && r.needs) ctForms[ctBidId] = { needs: r.needs, forms: (ctForms[ctBidId] || {}).forms || [] };
+      ctApply(r, msg);
+    }
+    function ctFormsBox(pane) {
+      var id = ctBidId;
+      var box = el('div', 'ct-step ct-forms');
+      box.appendChild(el('div', 'row-main', 'Forms the solicitation asks for'));
+      box.appendChild(el('p', null, 'Each one goes on this bid, from the forms library or as a completed file you upload below, or is marked not needed with the reason. One still needed holds the bid out of Draft ready.'));
+      var list = el('div');
+      box.appendChild(list);
+      pane.appendChild(box);
+      var paint = function () {
+        var c = ctForms[id];
+        list.textContent = '';
+        if (!c) { list.appendChild(el('div', 'row-sub', 'Loading…')); return; }
+        if (!c.needs.length) list.appendChild(el('div', 'row-sub', 'None listed yet. Add each form the solicitation asks for, so none is missed.'));
+        c.needs.forEach(function (n) {
+          var r = el('div', 'row ct-form-row');
+          var left = el('div');
+          left.appendChild(el('div', 'row-main', n.title));
+          var sub = n.status === 'ready' ? 'On the bid: ' + (n.file_name || 'a file') : n.status === 'not_needed' ? 'Not needed: ' + n.note : 'Still needed';
+          left.appendChild(el('div', 'row-sub', sub + (n.source === 'extracted' ? ' · read from the solicitation (' + n.source_ref + ')' : '')));
+          r.appendChild(left);
+          r.appendChild(el('span', 'ct-chip' + (n.status === 'needed' ? ' gold' : n.status === 'ready' ? ' green' : ''), n.status === 'ready' ? 'On the bid' : n.status === 'not_needed' ? 'Not needed' : 'Needed'));
+          var acts = el('div', 'reply-row');
+          var patch = function (body, msg) {
+            return api('/admin/bids/' + id + '/forms/' + n.id, { method: 'PATCH', body: body }).then(function (res) { if (!res.ok) { toast(ctErr(res)); return; } ctFormsApply(res, msg); });
+          };
+          if (n.status === 'needed') {
+            if (n.suggest) {
+              var use = el('button', 'ct-btn sm prim', 'Use ' + n.suggest.title + (n.suggest.expired ? ' (expired!)' : '')); use.type = 'button';
+              use.addEventListener('click', function () {
+                if (n.suggest.expired && !confirm(n.suggest.title + ' expired on ' + n.suggest.expires_on + '. Attach it anyway?')) return;
+                use.disabled = true; patch({ form_id: n.suggest.id }, 'Attached from the forms library');
+              });
+              acts.appendChild(use);
+            }
+            var lib = ctSelect([['', 'From the library…']].concat(c.forms.map(function (f) { return [String(f.id), f.title + (f.expired ? ' (expired)' : '')]; })), '');
+            lib.setAttribute('aria-label', 'Attach a library form for ' + n.title);
+            lib.className = 'rs-menu';
+            lib.addEventListener('change', function () { if (lib.value) patch({ form_id: Number(lib.value) }, 'Attached from the forms library'); });
+            if (c.forms.length) acts.appendChild(lib);
+            var onBid = ctDetail.files.filter(function (f) { return ['form', 'other', 'correspondence', 'response'].indexOf(f.role) >= 0; });
+            if (onBid.length) {
+              var fsel = ctSelect([['', 'A file on this bid…']].concat(onBid.map(function (f) { return [String(f.id), f.label || f.filename]; })), '');
+              fsel.setAttribute('aria-label', 'Use a file on this bid for ' + n.title);
+              fsel.className = 'rs-menu';
+              fsel.addEventListener('change', function () { if (fsel.value) patch({ file_id: Number(fsel.value) }, 'Saved'); });
+              acts.appendChild(fsel);
+            }
+            var nn = el('button', 'ct-btn sm', 'Not needed…'); nn.type = 'button';
+            nn.addEventListener('click', function () { var why = (prompt('Why does ' + n.title + ' not apply?', '') || '').trim(); if (why) patch({ status: 'not_needed', note: why }, 'Set aside'); });
+            acts.appendChild(nn);
+          } else if (n.status === 'ready') {
+            if (n.file_id) { var a = el('a', 'ct-btn sm', 'Open'); a.href = API + '/admin/bid-files/' + n.file_id; a.target = '_blank'; a.rel = 'noopener'; acts.appendChild(a); }
+            var ch = el('button', 'ct-btn sm', 'Use a different file'); ch.type = 'button';
+            ch.addEventListener('click', function () { patch({ file_id: null }, 'Back to needed'); });
+            acts.appendChild(ch);
+          } else {
+            var back = el('button', 'ct-btn sm', 'Needed after all'); back.type = 'button';
+            back.addEventListener('click', function () { patch({ status: 'needed' }, 'Back to needed'); });
+            acts.appendChild(back);
+          }
+          if (n.source === 'manual') {
+            var rm = el('button', 'ct-btn sm', 'Remove'); rm.type = 'button';
+            rm.addEventListener('click', function () {
+              if (!confirm('Remove ' + n.title + ' from the checklist?')) return;
+              api('/admin/bids/' + id + '/forms/' + n.id, { method: 'DELETE' }).then(function (res) { if (res.ok) ctFormsApply(res, 'Removed'); else toast(ctErr(res)); });
+            });
+            acts.appendChild(rm);
+          }
+          r.appendChild(acts);
+          list.appendChild(r);
+        });
+        var add = el('div', 'reply-row');
+        var t = ctInput('text', '', { maxlength: 300, placeholder: 'W-9, insurance certificate, non-collusion affidavit…', 'aria-label': 'A form the solicitation asks for' });
+        var go = el('button', 'ct-btn sm', '+ Add'); go.type = 'button';
+        var submit = function () {
+          var v = t.value.trim(); if (!v) return;
+          go.disabled = true;
+          api('/admin/bids/' + id + '/forms', { method: 'POST', body: { title: v } }).then(function (res) { go.disabled = false; if (res.ok) ctFormsApply(res, 'Added'); else toast(ctErr(res)); });
+        };
+        go.addEventListener('click', submit);
+        t.addEventListener('keydown', function (e) { if (e.key === 'Enter') { e.preventDefault(); submit(); } });
+        add.appendChild(t); add.appendChild(go);
+        list.appendChild(add);
+      };
+      paint();
+      api('/admin/bids/' + id + '/forms').then(function (r) {
+        if (!r.ok) { list.textContent = ''; list.appendChild(el('div', 'ct-why', ctErr(r))); return; }
+        ctForms[id] = { needs: r.needs, forms: r.forms };
+        if (ctBidId === id && box.isConnected) paint();
+      });
+    }
+
+    // ---- the forms library (Reference panels) ----
+    function ctFormsLibrary(host) {
+      host.textContent = '';
+      host.appendChild(el('p', 'ct-note', 'Forms most solicitations ask for, kept once: W-9, insurance certificate, affidavits, a signed capability statement. Attaching one to a bid copies it there, so replacing a form here with next year’s never changes what a bid sent. The tags are the words solicitations use for it; they decide what is suggested. You get a warning 30 days before an expiry date.'));
+      var list = el('div');
+      host.appendChild(list);
+      var paint = function (forms) {
+        list.textContent = '';
+        if (!forms.length) list.appendChild(el('div', 'ct-empty', 'No forms yet.'));
+        forms.forEach(function (f) {
+          var r = el('div', 'row' + (f.active ? '' : ' rs-hidden'));
+          var left = el('div');
+          var a = el('a', 'row-main', f.title); a.href = API + '/admin/bid-forms/' + f.id + '/file'; a.target = '_blank'; a.rel = 'noopener'; a.style.color = 'var(--text)';
+          left.appendChild(a);
+          var days = f.expires_on ? Math.round((new Date(f.expires_on + 'T12:00:00') - new Date()) / 86400000) : null;
+          left.appendChild(el('div', 'row-sub', f.filename + ' · ' + fmtSize(f.size_bytes) + (f.tags ? ' · tags: ' + f.tags : '') + (f.expires_on ? ' · ' + (f.expired ? 'EXPIRED ' + f.expires_on : 'expires ' + f.expires_on + (days != null && days <= 30 ? ' (' + days + ' days)' : '')) : '') + (f.active ? '' : ' · retired')));
+          r.appendChild(left);
+          var acts = el('div', 'reply-row');
+          var rep = el('label', 'ct-btn sm ct-upload', 'Replace file…');
+          var fi = ctInput('file', null, { accept: '.pdf,.docx,.doc,.png,.jpg,.jpeg', 'aria-label': 'Replace ' + f.title });
+          rep.appendChild(fi);
+          fi.addEventListener('change', function () {
+            var file = fi.files && fi.files[0]; if (!file) return;
+            var exp = prompt('Expiry date of the new file (YYYY-MM-DD), or blank for none:', f.expires_on || '');
+            if (exp === null) return;
+            fileToBase64(file).then(function (b64) {
+              return api('/admin/bid-forms/' + f.id, { method: 'PATCH', body: { filename: file.name, content_type: file.type, data: b64, expires_on: exp.trim() } });
+            }).then(function (res) { if (res.ok) { paint(res.forms); toast('Replaced'); } else toast(ctErr(res)); });
+          });
+          var ed = el('button', 'ct-btn sm', 'Edit'); ed.type = 'button';
+          ed.addEventListener('click', function () {
+            var title = prompt('Title:', f.title); if (title === null) return;
+            var tags = prompt('Tags (the words solicitations use for it):', f.tags); if (tags === null) return;
+            var exp = prompt('Expiry date (YYYY-MM-DD), or blank for none:', f.expires_on || ''); if (exp === null) return;
+            api('/admin/bid-forms/' + f.id, { method: 'PATCH', body: { title: title, tags: tags, expires_on: exp.trim() } }).then(function (res) { if (res.ok) paint(res.forms); else toast(ctErr(res)); });
+          });
+          var ret = el('button', 'ct-btn sm', f.active ? 'Retire' : 'Restore'); ret.type = 'button';
+          ret.addEventListener('click', function () {
+            api('/admin/bid-forms/' + f.id, { method: 'PATCH', body: { active: !f.active } }).then(function (res) { if (res.ok) paint(res.forms); else toast(ctErr(res)); });
+          });
+          acts.appendChild(rep); acts.appendChild(ed); acts.appendChild(ret);
+          r.appendChild(acts);
+          list.appendChild(r);
+        });
+      };
+      var form = el('div', 'ct-form');
+      var title = ctField(form, 'New form: title', ctInput('text', '', { maxlength: 160, placeholder: 'W-9 (2026)' }));
+      var tags = ctField(form, 'Tags', ctInput('text', '', { maxlength: 400, placeholder: 'w9 taxpayer identification' }));
+      var exp = ctField(form, 'Expires (optional)', ctInput('date', ''));
+      var file = ctField(form, 'File', ctInput('file', null, { accept: '.pdf,.docx,.doc,.png,.jpg,.jpeg' }));
+      host.appendChild(form);
+      var rr = el('div', 'reply-row');
+      var up = el('button', 'ct-btn sm prim', 'Add to the library'); up.type = 'button';
+      up.addEventListener('click', function () {
+        var fl = file.files && file.files[0];
+        if (!title.value.trim() || !fl) { toast('A title and a file, please.'); return; }
+        up.disabled = true;
+        fileToBase64(fl).then(function (b64) {
+          return api('/admin/bid-forms', { method: 'POST', body: { title: title.value, tags: tags.value, expires_on: exp.value, filename: fl.name, content_type: fl.type, data: b64 } });
+        }).then(function (res) {
+          up.disabled = false;
+          if (!res.ok) { toast(ctErr(res)); return; }
+          title.value = tags.value = exp.value = ''; file.value = '';
+          paint(res.forms); toast('Added to the library');
+        });
+      });
+      rr.appendChild(up);
+      host.appendChild(rr);
+      list.appendChild(el('div', 'row-sub', 'Loading…'));
+      api('/admin/bid-forms?all=1').then(function (r) { if (r.ok) paint(r.forms); else { list.textContent = ''; list.appendChild(el('div', 'ct-why', ctErr(r))); } });
+    }
+
     function ctFiles(pane) {
       var have = {};
       ctDetail.files.forEach(function (f) { have[f.role] = true; });
       var need = ['solicitation', 'spec', 'terms'].filter(function (r) { return !have[r]; });
       var pre = CT_PRE.indexOf(ctDetail.bid.status) >= 0;
       pane.appendChild(el('p', 'ct-note', !pre ? 'Everything kept on this bid: the packet, addenda, the response you sent, the award and the tabulation.' : need.length ? 'Still needed before Draft ready: ' + need.map(function (r) { return CT_ROLE_LABEL[r]; }).join(', ') + '.' : 'The packet is complete. Addenda, the response you sent, the award and the tabulation belong here too.'));
+      ctFormsBox(pane);
       ctDetail.files.forEach(function (f) {
         var a = el('div', 'row');
         var left = el('div');
@@ -19435,6 +19617,12 @@
       var open = el('a', 'ct-btn sm', 'Open the document');
       open.href = 'bid-response.html?id=' + id; open.target = '_blank'; open.rel = 'noopener';
       bar.appendChild(status); bar.appendChild(keep); bar.appendChild(vers); bar.appendChild(open);
+      // The PDF the Worker prints from the same page, when Browser Run is set up.
+      if (ctRef && ctRef.vocab && ctRef.vocab.pdf) {
+        var pdfA = el('a', 'ct-btn sm', 'Download PDF');
+        pdfA.href = API + '/admin/bids/' + id + '/pdf'; pdfA.target = '_blank'; pdfA.rel = 'noopener';
+        bar.appendChild(pdfA);
+      }
       host.appendChild(bar);
 
       if (st.conflict) {
@@ -19700,6 +19888,24 @@
           api('/admin/bids/' + id + '/versions/' + v.id, { method: 'PATCH', body: { label: l } }).then(function (r2) { if (r2.ok) { v.label = l; ctRespRender(id); } else toast(ctErr(r2)); });
         });
         acts.appendChild(view); acts.appendChild(cmp); acts.appendChild(res); acts.appendChild(ren);
+        // Its PDF, kept under Files: a link once made, a button to make it while PDFs are on.
+        if (v.pdf_file_id) {
+          var vpdf = el('a', 'ct-btn sm', 'PDF'); vpdf.href = API + '/admin/bid-files/' + v.pdf_file_id; vpdf.target = '_blank'; vpdf.rel = 'noopener';
+          acts.appendChild(vpdf);
+        } else if (ctRef && ctRef.vocab && ctRef.vocab.pdf) {
+          var mk = el('button', 'ct-btn sm', 'Keep its PDF'); mk.type = 'button';
+          mk.addEventListener('click', function () {
+            mk.disabled = true; mk.textContent = 'Printing…';
+            api('/admin/bids/' + id + '/versions/' + v.id + '/pdf', { method: 'POST', body: {} }).then(function (r2) {
+              if (!r2.ok) { mk.disabled = false; mk.textContent = 'Keep its PDF'; toast(ctErr(r2)); return; }
+              st.data.versions = r2.response.versions;
+              toast('Kept under Files as Our response');
+              // Files changed: read the bid again so the Files tab shows it.
+              ctBidApi('', 'GET', undefined, null);
+            });
+          });
+          acts.appendChild(mk);
+        }
         r.appendChild(acts);
         box.appendChild(r);
         box.appendChild(out);
@@ -20273,6 +20479,13 @@
       var rb = document.getElementById('ctRefsBody');
       rb.textContent = '';
       ctRefUploader(rb);
+
+      // The forms library loads when its panel is opened, not with every redraw.
+      var flib = document.getElementById('ctFormsLib');
+      if (!flib.dataset.wired) {
+        flib.dataset.wired = '1';
+        flib.addEventListener('toggle', function () { if (flib.open) ctFormsLibrary(document.getElementById('ctFormsLibBody')); });
+      }
 
       var tb = document.getElementById('ctTabsBody');
       tb.textContent = '';
