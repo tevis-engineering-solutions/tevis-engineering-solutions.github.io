@@ -20141,6 +20141,8 @@
       pane.appendChild(econ);
       if (rep.summary) pane.appendChild(ctClaudeNote('Claude', rep.summary));
       if (rep.paused) pane.appendChild(el('p', 'ct-note', 'The search hit its limit before finishing, so some lines may be thin. Research again to fill them in.'));
+      var terr = Object.keys(rep.tool_errors || {});
+      if (terr.length) pane.appendChild(el('p', 'ct-note', 'Some searches failed (' + terr.map(function (k) { return k.replace(/_/g, ' ') + ' ×' + rep.tool_errors[k]; }).join(', ') + '), so some sellers may be missing.'));
       if (rep.not_researched && rep.not_researched.length) pane.appendChild(el('p', 'ct-note', 'Not researched (past the first 45 lines): ' + rep.not_researched.join(', ') + '.'));
       if (rep.documents && rep.documents.length) pane.appendChild(el('div', 'row-sub', 'Read: ' + rep.documents.map(function (d) { return d.filename; }).join(', ')));
 
@@ -20194,7 +20196,8 @@
             var tr = el('tr');
             var s1 = el('td');
             if (o.url) { var a = el('a', null, o.seller); a.href = o.url; a.target = '_blank'; a.rel = 'noopener noreferrer'; s1.appendChild(a); } else s1.appendChild(document.createTextNode(o.seller));
-            s1.appendChild(el('div', 'row-sub', o.kind + (o.note ? ' · ' + o.note : '')));
+            s1.appendChild(el('div', 'row-sub', o.kind + (o.whole_item ? '' : ' · part or add-on only, not counted') + (o.note ? ' · ' + o.note : '')));
+            if (!o.whole_item) tr.style.opacity = '0.6';
             tr.appendChild(s1);
             tr.appendChild(el('td', 'num', o.price_cents ? money(o.price_cents) + (o.unit ? ' ' + o.unit : '') : 'no price'));
             tr.appendChild(el('td', 'wide', [o.stock, o.lead_time].filter(Boolean).join(' · ') || '—'));
