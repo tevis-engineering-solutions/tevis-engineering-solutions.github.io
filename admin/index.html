@@ -10022,6 +10022,8 @@
           if (okMsg) toast(okMsg);
           if (x.listing !== undefined) { w.outside = w.outside || {}; w.outside.listing = x.listing; }
           drawListing(x.view || null);
+          if (x.google) { w.outside.google = x.google; drawGoogle(); }
+          if (x.message) toast(x.message);
           return x;
         });
       };
@@ -10075,6 +10077,29 @@
       }
       drawListing(null);
       d.appendChild(ls);
+
+      // The monthly Google checks (tes-portal src/watch_google.js), refreshed by "Check now" above.
+      var gs = el('div', 'wi-sec');
+      gs.appendChild(el('h4', null, 'From Google (monthly)'));
+      var gbody = el('div');
+      gs.appendChild(gbody);
+      function vt(k, v) { return v == null ? '-' : k === 'cls' ? v.toFixed(2) : v >= 1000 ? (v / 1000).toFixed(1) + ' s' : Math.round(v) + ' ms'; }
+      function drawGoogle() {
+        gbody.textContent = '';
+        var g = w.outside && w.outside.google;
+        if (!g) { gbody.appendChild(el('p', 'wi-note', 'Not run yet. It runs with the monthly report card, or press Check now above: real-visitor speed (Chrome UX Report), videos that stopped playing (YouTube), the address (Address Validation) and the Knowledge Graph.')); return; }
+        var lines = [];
+        var s = g.speed;
+        if (s && s.has_data) lines.push('Real visitors on phones: page shows ' + vt('lcp', s.lcp && s.lcp.now) + (s.lcp ? ' (' + s.lcp.rating + ')' : '') + ', taps ' + vt('inp', s.inp && s.inp.now) + (s.inp ? ' (' + s.inp.rating + ')' : '') + ', layout ' + vt('cls', s.cls && s.cls.now) + '.');
+        else if (s) lines.push('Real-visitor speed: not enough Chrome traffic for data.');
+        if (g.videos && g.videos.checked) lines.push('Videos: ' + (g.videos.broken.length ? g.videos.broken.length + ' of ' + g.videos.checked + ' broken: ' + g.videos.broken.map(function (b) { return b.url + ' (' + b.why + ')'; }).join(', ') : 'all ' + g.videos.checked + ' play') + '.');
+        if (g.address) lines.push('Address on the site (' + g.address.source + '): ' + g.address.line + (g.address.verdict ? ' - ' + g.address.verdict.replace(/_/g, ' ') : '') + '.');
+        if (g.kg) lines.push('Knowledge Graph: ' + (g.kg.found ? 'knows "' + g.kg.name + '"' + (g.kg.types && g.kg.types.length ? ' (' + g.kg.types.join(', ') + ')' : '') : 'not found as an entity') + '.');
+        if (g.checked_at) lines.push('Checked ' + fmtDate(g.checked_at) + '.');
+        lines.forEach(function (l) { gbody.appendChild(el('p', 'wi-note', l)); });
+      }
+      drawGoogle();
+      d.appendChild(gs);
 
       // Store Match for this site (a Shopify store, or one they plan).
       var sms = el('div', 'wi-sec');

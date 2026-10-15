@@ -402,6 +402,15 @@
         if (gl.rating_low) gi.push('Your rating is under 4.0');
         item('Google listing', gi.length ? gi.join('. ') + '.' : 'Matches your website: phone, hours and link agree.', gi.length ? 'warn' : '');
       } else if (gl && gl.status === 'not_found') item('Google listing', 'None links to this website. A free Google Business Profile helps people find and call you.', 'warn');
+      // The monthly Google checks (watch_google.js).
+      var gg = o.google;
+      if (gg && gg.speed && gg.speed.has_data && gg.speed.lcp) {
+        var lc = gg.speed.lcp, sec = (lc.now / 1000).toFixed(1);
+        item('Speed for real visitors', 'Pages show in ' + sec + ' s on phones' + (lc.rating === 'good' ? ', which Google rates good.' : lc.rating === 'poor' ? ', which Google rates poor.' : ', which Google says needs work.'), lc.rating === 'good' ? '' : lc.rating === 'poor' ? 'bad' : 'warn');
+      }
+      if (gg && gg.videos && gg.videos.checked) item('Videos on your site', gg.videos.broken.length ? gg.videos.broken.length + ' of ' + gg.videos.checked + ' no longer play' : 'All ' + gg.videos.checked + ' play', gg.videos.broken.length ? 'warn' : '');
+      if (gg && gg.address && gg.address.verdict) item('Your address', gg.address.verdict === 'deliverable' ? 'A real, deliverable address' : gg.address.verdict === 'missing_unit' ? 'Needs a suite or unit number' : 'Google could not confirm it as written', gg.address.verdict === 'deliverable' ? '' : 'warn');
+      if (gg && gg.kg) item('Known to Google', gg.kg.found ? 'Yes: Google knows your business as an entity' : 'Not yet: keep your name, address and phone the same everywhere', gg.kg.found ? '' : 'warn');
       if (o.links) item('Broken links', o.links.broken.length ? o.links.broken.length + ' of ' + o.links.checked + ' checked' : 'None found', o.links.broken.length ? 'warn' : '');
       if (!ul.childNodes.length) return el('div');
       box.appendChild(ul);
