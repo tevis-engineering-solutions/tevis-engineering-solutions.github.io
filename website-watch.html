@@ -581,44 +581,123 @@
     .ww-lede { max-width:640px; margin:0 auto; color:var(--muted); font-size:1.1rem; line-height:1.65; }
     .ww-cta { display:flex; justify-content:center; flex-wrap:wrap; gap:0.8rem; margin-top:1.7rem; }
     .ww-cta .btn { display:inline-flex; align-items:center; justify-content:center; min-height:48px; }
-    .ww-preview { width:min(560px, 100%); margin:2.8rem auto 0; text-align:left; border:1px solid rgba(74,172,101,0.3); border-radius:20px; padding:1.25rem 1.35rem; background:linear-gradient(160deg, rgba(74,172,101,0.12), rgba(20,32,25,0.9) 55%); box-shadow:0 24px 60px rgba(0,0,0,0.35); }
-    .ww-prev-head { display:flex; align-items:center; gap:0.6rem; }
-    .ww-prev-head b { font-family:"Montserrat",sans-serif; color:#fff; font-size:1rem; flex:1; }
-    .ww-dot { width:10px; height:10px; border-radius:50%; }
-    .ww-dot.up { background:#4aac65; box-shadow:0 0 0 0 rgba(74,172,101,0.6); animation:ww-pulse 2.2s infinite; }
-    @keyframes ww-pulse { 0% { box-shadow:0 0 0 0 rgba(74,172,101,0.55); } 70% { box-shadow:0 0 0 10px rgba(74,172,101,0); } 100% { box-shadow:0 0 0 0 rgba(74,172,101,0); } }
-    .ww-chip { font-size:0.74rem; font-weight:700; padding:0.2rem 0.65rem; border-radius:999px; }
+    /* The hero's report card: a sample until a visitor checks their own site. */
+    .ww-preview { position:relative; width:min(620px, 100%); margin:2.8rem auto 0; text-align:left; border:1px solid rgba(200,152,48,0.4); border-radius:24px; padding:1.4rem 1.4rem 1.2rem; background:linear-gradient(165deg, rgba(200,152,48,0.09), rgba(18,29,22,0.96) 40%); box-shadow:0 30px 80px rgba(0,0,0,0.45), inset 0 1px 0 rgba(255,255,255,0.04); }
+    .ww-tag { position:absolute; top:-12px; left:50%; transform:translateX(-50%); font-size:0.66rem; font-weight:800; letter-spacing:0.12em; text-transform:uppercase; padding:0.25rem 0.75rem; border-radius:999px; background:#142019; border:1px solid rgba(200,152,48,0.4); color:#e6c68a; white-space:nowrap; }
+    .ww-tag.live { color:#0d1710; background:linear-gradient(135deg,#c89830,#e0b840); border-color:transparent; }
+    .ww-prev-head { display:flex; align-items:center; gap:0.8rem; padding-bottom:1.1rem; border-bottom:1px solid var(--line); }
+    .ww-site-ic { width:42px; height:42px; flex:none; border-radius:12px; display:grid; place-items:center; color:#7fd497; background:rgba(74,172,101,0.12); border:1px solid rgba(74,172,101,0.3); }
+    .ww-prev-id { flex:1; min-width:0; display:flex; flex-direction:column; gap:0.1rem; }
+    .ww-prev-id b { font-family:"Montserrat",sans-serif; color:#fff; font-size:1.05rem; overflow-wrap:anywhere; }
+    .ww-prev-id span { font-size:0.78rem; color:var(--muted); }
+    .ww-chip { display:inline-flex; align-items:center; gap:0.45rem; font-size:0.78rem; font-weight:700; padding:0.35rem 0.75rem; border-radius:999px; white-space:nowrap; }
     .ww-chip.up { color:#8fd6a3; background:rgba(74,172,101,0.14); border:1px solid rgba(74,172,101,0.35); }
-    .ww-bars { display:grid; grid-template-columns:repeat(36, 1fr); gap:3px; height:34px; margin:1rem 0 1.1rem; }
+    .ww-chip.down { color:#f0a58f; background:rgba(214,120,90,0.14); border:1px solid rgba(214,120,90,0.4); }
+    .ww-chip.wait { color:var(--muted); background:rgba(255,255,255,0.05); border:1px solid var(--line); }
+    .ww-dot { width:8px; height:8px; border-radius:50%; }
+    .ww-dot.up { background:#4aac65; animation:ww-pulse 2.2s infinite; }
+    .ww-dot.down { background:#d6785a; }
+    .ww-dot.wait { background:#8aa48d; animation:ww-blink 1s infinite; }
+    @keyframes ww-blink { 50% { opacity:0.3; } }
+
+    .ww-prev-main { display:grid; grid-template-columns:132px 1fr; gap:1.4rem; align-items:center; padding:1.2rem 0 1rem; }
+    .ww-ring { --p:0; position:relative; width:132px; height:132px; }
+    .ww-ring svg { width:100%; height:100%; transform:rotate(-90deg); }
+    .ww-ring circle { fill:none; stroke-width:10; }
+    .ww-ring .trk { stroke:rgba(255,255,255,0.07); }
+    .ww-ring.none .val { stroke-opacity:0; }
+    .ww-ring .val { stroke:#e0b840; stroke-linecap:round; stroke-dasharray:calc(var(--p) * 1) 100; transition:stroke-dasharray 1s cubic-bezier(.2,.8,.2,1); }
+    .ww-ring.good .val { stroke:#5cc077; } .ww-ring.poor .val { stroke:#d6785a; }
+    .ww-ring-in { position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; }
+    .ww-ring-in b { font-family:"Montserrat",sans-serif; font-weight:800; font-size:2.6rem; line-height:1; color:#fff; }
+    .ww-ring-in span { font-size:0.74rem; color:var(--muted); margin-top:0.2rem; }
+    .ww-cats { list-style:none; margin:0; padding:0; display:grid; gap:0.5rem; }
+    .ww-cats li { display:grid; grid-template-columns:96px 1fr 26px; align-items:center; gap:0.6rem; font-size:0.8rem; }
+    .ww-cats span { color:#c2d5c6; white-space:nowrap; }
+    .ww-cats i { height:7px; border-radius:999px; background:rgba(255,255,255,0.07); overflow:hidden; }
+    .ww-cats s { display:block; height:100%; border-radius:999px; background:linear-gradient(90deg,#3c8f55,#5cc077); transition:width 1s cubic-bezier(.2,.8,.2,1); }
+    .ww-cats li.mid s { background:linear-gradient(90deg,#c89830,#e0b840); }
+    .ww-cats li.low s { background:linear-gradient(90deg,#b8583c,#d6785a); }
+    .ww-cats b { font-family:"Montserrat",sans-serif; font-size:0.8rem; color:#fff; text-align:right; }
+
+    .ww-checks { display:grid; grid-template-columns:repeat(5, minmax(0,1fr)); gap:0.5rem; }
+    .ww-checks div { display:flex; flex-direction:column; align-items:center; gap:0.2rem; text-align:center; padding:0.7rem 0.3rem; border-radius:14px; background:rgba(0,0,0,0.22); border:1px solid var(--line); }
+    .ww-checks i { font-size:0.95rem; margin-bottom:0.15rem; color:#5cc077; }
+    .ww-checks span { font-size:0.66rem; font-weight:700; letter-spacing:0.06em; text-transform:uppercase; color:var(--muted); }
+    .ww-checks b { font-family:"Montserrat",sans-serif; font-size:0.88rem; color:#fff; white-space:nowrap; }
+    .ww-checks .warn { border-color:rgba(200,152,48,0.45); } .ww-checks .warn i { color:#e0b840; } .ww-checks .warn b { color:#f0d58a; }
+    .ww-checks .bad { border-color:rgba(214,120,90,0.5); } .ww-checks .bad i { color:#e08a6c; } .ww-checks .bad b { color:#f0a58f; }
+    .ww-checks .wait i { color:#8aa48d; } .ww-checks .wait b { color:var(--muted); }
+
+    .ww-uptime { margin-top:1rem; }
+    .ww-uptime-head { display:flex; justify-content:space-between; font-size:0.74rem; margin-bottom:0.4rem; }
+    .ww-uptime-head span { color:var(--muted); font-weight:700; letter-spacing:0.06em; text-transform:uppercase; }
+    .ww-uptime-head b { color:#8fd6a3; }
+    .ww-bars { display:grid; grid-template-columns:repeat(36, 1fr); gap:3px; height:22px; }
     .ww-bars i { display:block; border-radius:3px; background:linear-gradient(180deg,#5cc077,#3c8f55); }
     .ww-bars i.bad { background:linear-gradient(180deg,#e0b840,#c89830); }
-    .ww-prev-stats { display:grid; grid-template-columns:repeat(4, 1fr); gap:0.6rem; }
-    .ww-prev-stats div { display:flex; flex-direction:column; gap:0.15rem; }
-    .ww-prev-stats span { font-size:0.68rem; text-transform:uppercase; letter-spacing:0.07em; color:var(--muted); font-weight:700; }
-    .ww-prev-stats b { font-family:"Montserrat",sans-serif; font-size:1.05rem; color:#fff; }
-    .ww-prev-stats b.gold { color:#e0b840; }
-    .ww-prev-stats b.warn { color:#e0b840; }
-    .ww-prev-stats b.bad, .ww-chip.down { color:#f0a58f; }
-    .ww-preview { position:relative; }
-    .ww-tag { position:absolute; top:-11px; right:16px; font-size:0.66rem; font-weight:800; letter-spacing:0.12em; text-transform:uppercase; padding:0.2rem 0.6rem; border-radius:999px; background:#142019; border:1px solid var(--line); color:var(--muted); }
-    .ww-tag.live { color:#0d1710; background:linear-gradient(135deg,#c89830,#e0b840); border-color:transparent; }
-    .ww-prev-head b { overflow-wrap:anywhere; }
-    .ww-dot.down { background:#d6785a; }
-    .ww-dot.wait { background:#8aa48d; }
-    .ww-chip.down { background:rgba(214,120,90,0.14); border:1px solid rgba(214,120,90,0.4); }
-    .ww-chip.wait { color:var(--muted); background:rgba(255,255,255,0.05); border:1px solid var(--line); }
-    .ww-prev-note { margin:0.9rem 0 1rem; font-size:0.86rem; color:#c2d5c6; }
-    .ww-fixes { margin-top:1.1rem; padding-top:0.9rem; border-top:1px solid var(--line); }
-    .ww-fixes > span { font-size:0.68rem; text-transform:uppercase; letter-spacing:0.07em; color:var(--muted); font-weight:700; }
-    .ww-fixes ol { margin:0.45rem 0 0; padding-left:1.2rem; list-style:decimal; }
-    .ww-fixes ol li { color:#dfe9e1; font-size:0.9rem; margin-bottom:0.25rem; padding-left:0.2rem; }
-    .ww-try { margin-top:1.2rem; padding-top:1rem; border-top:1px solid var(--line); }
-    .ww-try label { display:block; font-size:0.72rem; font-weight:700; letter-spacing:0.07em; text-transform:uppercase; color:var(--muted); margin-bottom:0.4rem; }
+
+    .ww-prev-note { margin:1rem 0 0; padding:0.75rem 0.9rem; border-radius:12px; background:rgba(74,172,101,0.08); border:1px solid rgba(74,172,101,0.25); font-size:0.86rem; line-height:1.55; color:#d4e3d7; }
+    .ww-prev-note.warn { background:rgba(200,152,48,0.08); border-color:rgba(200,152,48,0.35); }
+    .ww-fixes { margin-top:1rem; }
+    .ww-fixes > span { font-size:0.7rem; text-transform:uppercase; letter-spacing:0.07em; color:var(--muted); font-weight:700; }
+    .ww-fixes ol { list-style:none; margin:0.5rem 0 0; padding:0; display:grid; gap:0.4rem; }
+    .ww-fixes li { display:flex; gap:0.6rem; align-items:baseline; color:#dfe9e1; font-size:0.88rem; line-height:1.45; }
+    .ww-fixes em { flex:none; font-style:normal; font-size:0.62rem; font-weight:800; letter-spacing:0.08em; text-transform:uppercase; padding:0.15rem 0.45rem; border-radius:6px; min-width:66px; text-align:center; }
+    .ww-fixes .critical em, .ww-fixes .high em { color:#f0a58f; background:rgba(214,120,90,0.15); }
+    .ww-fixes .medium em { color:#f0d58a; background:rgba(200,152,48,0.15); }
+    .ww-fixes .low em, .ww-fixes .info em { color:#8fd6a3; background:rgba(74,172,101,0.14); }
+    .ww-prev-cta { width:100%; margin-top:1.1rem; min-height:48px; display:inline-flex; align-items:center; justify-content:center; gap:0.5rem; }
+
+    .ww-scan { padding:1.2rem 0 0.4rem; }
+    .ww-scan-bar { height:4px; border-radius:999px; background:rgba(255,255,255,0.07); overflow:hidden; margin-bottom:1rem; }
+    .ww-scan-bar i { display:block; height:100%; width:30%; border-radius:999px; background:linear-gradient(90deg,#c89830,#e0b840); animation:ww-scan 1.4s ease-in-out infinite; }
+    @keyframes ww-scan { 0% { transform:translateX(-100%); } 100% { transform:translateX(340%); } }
+    .ww-scan-steps { list-style:none; margin:0; padding:0; display:grid; gap:0.55rem; }
+    .ww-scan-steps li { display:flex; align-items:center; gap:0.6rem; font-size:0.9rem; color:var(--muted); opacity:0.5; transition:opacity .3s, color .3s; }
+    #wwScanSteps li::before { display:block; position:static; content:""; width:16px; height:16px; flex:none; border-radius:50%; border:2px solid rgba(255,255,255,0.18); }
+    .ww-scan-steps li.now { opacity:1; color:#fff; }
+    #wwScanSteps li.now::before { border-color:#e0b840; border-right-color:transparent; animation:ww-spin .8s linear infinite; }
+    .ww-scan-steps li.done { opacity:1; color:#c2d5c6; }
+    #wwScanSteps li.done::before { border-color:#5cc077; background:#5cc077 url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M4 8.5l2.5 2.5L12 5.5' fill='none' stroke='%230d1710' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center/12px no-repeat; }
+    @keyframes ww-spin { to { transform:rotate(360deg); } }
+
+    /* The free demo box: glows until someone uses it. */
+    .ww-try { margin:1.1rem 0 0.2rem; padding:1rem; border-radius:18px; background:linear-gradient(135deg, rgba(200,152,48,0.14), rgba(74,172,101,0.08)); border:1px solid rgba(224,184,64,0.55); animation:ww-glow 2.4s ease-in-out infinite; }
+    .ww-try.used { animation:none; box-shadow:none; border-color:rgba(200,152,48,0.35); }
+    @keyframes ww-glow { 0%,100% { box-shadow:0 0 0 0 rgba(224,184,64,0.0), 0 0 18px rgba(224,184,64,0.18); } 50% { box-shadow:0 0 0 4px rgba(224,184,64,0.16), 0 0 34px rgba(224,184,64,0.38); } }
+    .ww-try-head { display:flex; justify-content:space-between; align-items:center; gap:0.6rem; flex-wrap:wrap; margin-bottom:0.6rem; }
+    .ww-try label { font-family:"Montserrat",sans-serif; font-size:1rem; font-weight:800; color:#fff; }
+    .ww-free { display:inline-flex; align-items:center; gap:0.35rem; font-size:0.68rem; font-weight:800; letter-spacing:0.08em; text-transform:uppercase; padding:0.25rem 0.6rem; border-radius:999px; color:#0d1710; background:linear-gradient(135deg,#c89830,#e0b840); }
     .ww-try-row { display:flex; gap:0.5rem; }
-    .ww-try input { flex:1; min-width:0; min-height:44px; padding:0 0.85rem; border-radius:12px; border:1px solid var(--line); background:rgba(0,0,0,0.25); color:#fff; font-size:0.95rem; font-family:inherit; }
-    .ww-try input:focus { outline:none; border-color:#4aac65; box-shadow:0 0 0 3px rgba(74,172,101,0.2); }
-    .ww-try .btn { min-height:44px; padding:0 1.1rem; cursor:pointer; white-space:nowrap; }
+    .ww-try input { flex:1; min-width:0; min-height:52px; padding:0 1rem; border-radius:12px; border:1px solid rgba(224,184,64,0.6); background:rgba(0,0,0,0.4); color:#fff; font-size:1rem; font-family:inherit; }
+    .ww-try input::placeholder { color:#9fb3a3; }
+    .ww-try input:focus { outline:none; border-color:#e0b840; box-shadow:0 0 0 3px rgba(224,184,64,0.3); }
+    .ww-try-fine { margin:0.55rem 0 0; font-size:0.78rem; color:var(--muted); }
+    .ww-try .btn { min-height:52px; padding:0 1.3rem; cursor:pointer; white-space:nowrap; }
     .ww-try .btn:disabled { opacity:0.6; cursor:wait; transform:none; }
+    @media (prefers-reduced-motion: reduce) { .ww-try, .ww-scan-bar i, #wwScanSteps li.now::before, .ww-dot.wait { animation:none; } }
+    @media (max-width:560px) {
+      .ww-preview { padding:1.2rem 1rem 1rem; }
+      .ww-prev-main { grid-template-columns:92px 1fr; gap:0.9rem; padding:1rem 0 0.9rem; }
+      .ww-ring { width:92px; height:92px; }
+      .ww-ring-in b { font-size:1.9rem; }
+      .ww-ring-in span { font-size:0.66rem; }
+      .ww-cats { gap:0.35rem; }
+      .ww-cats li { grid-template-columns:78px 1fr 22px; gap:0.4rem; font-size:0.72rem; }
+      .ww-checks div { padding:0.55rem 0.2rem; }
+      .ww-checks { grid-template-columns:repeat(6, minmax(0,1fr)); }
+      .ww-checks div { grid-column:span 2; }
+      .ww-checks div:nth-child(n+4) { grid-column:span 3; }
+      .ww-chip #wwChipT { display:none; }
+      .ww-try-row { flex-direction:column; }
+      .ww-try .btn { width:100%; }
+      .ww-bars { grid-template-columns:repeat(24, 1fr); }
+      .ww-bars i:nth-child(n+25) { display:none; }
+    }
+    .ww-preview [hidden] { display:none !important; }
+    @keyframes ww-pulse { 0% { box-shadow:0 0 0 0 rgba(74,172,101,0.55); } 70% { box-shadow:0 0 0 10px rgba(74,172,101,0); } 100% { box-shadow:0 0 0 0 rgba(74,172,101,0); } }
+    .ww-prev-body.only-note > :not(.ww-prev-note) { display:none; }
 
     .ww-sample { display:grid; grid-template-columns:minmax(0,0.9fr) minmax(0,1.1fr); gap:2rem; align-items:center; margin-top:2.2rem; padding:1.6rem; border:1px solid var(--line); border-radius:20px; background:rgba(20,32,25,0.72); }
     .ww-sample-img { display:block; border-radius:12px; overflow:hidden; border:1px solid var(--line); box-shadow:0 18px 40px rgba(0,0,0,0.35); max-height:360px; }
@@ -758,9 +837,6 @@
     @media (max-width:720px) {
       .ww-hero { padding-top:3rem; }
       .ww-steps { grid-template-columns:1fr; }
-      .ww-prev-stats { grid-template-columns:repeat(2, 1fr); row-gap:0.9rem; }
-      .ww-bars { grid-template-columns:repeat(24, 1fr); }
-      .ww-bars i:nth-child(n+25) { display:none; }
     }
     @media (max-width:520px) {
       .ww-cta .btn { width:100%; }
@@ -844,35 +920,86 @@
       </div>
 
       <div class="ww-preview" id="wwPreview" aria-live="polite">
-        <span class="ww-tag" id="wwTag">Sample</span>
+        <span class="ww-tag" id="wwTag">Sample report</span>
         <div class="ww-prev-head">
-          <span class="ww-dot up" id="wwDot"></span>
-          <b id="wwHost">yourbusiness.com</b>
-          <span class="ww-chip up" id="wwChip">Up</span>
+          <span class="ww-site-ic" aria-hidden="true"><i class="fa-solid fa-globe"></i></span>
+          <div class="ww-prev-id">
+            <b id="wwHost">yourbusiness.com</b>
+            <span id="wwWhen">Watched every 15 minutes</span>
+          </div>
+          <span class="ww-chip up" id="wwChip"><span class="ww-dot up" id="wwDot"></span><span id="wwChipT">Online</span></span>
         </div>
-        <div class="ww-bars" id="wwBars" aria-hidden="true">
-          <i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i>
-          <i></i><i></i><i></i><i></i><i></i><i></i><i class="bad"></i><i></i><i></i><i></i><i></i><i></i>
-          <i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i>
-        </div>
-        <p class="ww-prev-note" id="wwNote" hidden></p>
-        <div class="ww-prev-stats">
-          <div><span>Response</span><b id="wwMs">182 ms</b></div>
-          <div><span>Domain renews</span><b id="wwDom">214 days</b></div>
-          <div><span>Certificate</span><b id="wwCert">61 days</b></div>
-          <div><span>Grade</span><b class="gold" id="wwGrade">B</b></div>
-        </div>
-        <div class="ww-fixes" id="wwFixes" hidden>
-          <span>Worth fixing first</span>
-          <ol id="wwFixList"></ol>
-        </div>
+
         <form class="ww-try" id="wwTry" novalidate>
-          <label for="wwTrySite">See your own site</label>
+          <div class="ww-try-head">
+            <label for="wwTrySite">Try it on your website</label>
+            <span class="ww-free"><i class="fa-solid fa-bolt"></i> Free demo &middot; no signup</span>
+          </div>
           <div class="ww-try-row">
             <input id="wwTrySite" type="text" inputmode="url" autocomplete="url" placeholder="yourbusiness.com">
-            <button type="submit" class="btn btn-secondary" id="wwTryGo">Check it</button>
+            <button type="submit" class="btn btn-primary" id="wwTryGo">Check it free</button>
           </div>
+          <p class="ww-try-fine">See your real grade, speed, renewals, email and Google status in about 20 seconds.</p>
         </form>
+
+        <div class="ww-scan" id="wwScan" hidden>
+          <div class="ww-scan-bar"><i></i></div>
+          <ol class="ww-scan-steps" id="wwScanSteps">
+            <li>Loading the home page</li>
+            <li>Looking up the domain renewal</li>
+            <li>Reading the security certificate</li>
+            <li>Checking email and Google's danger list</li>
+            <li>Grading 40+ things visitors notice</li>
+          </ol>
+        </div>
+
+        <div class="ww-prev-body" id="wwBody">
+          <div class="ww-prev-main">
+            <div class="ww-ring" id="wwRing" style="--p:84">
+              <svg viewBox="0 0 120 120" aria-hidden="true"><circle class="trk" cx="60" cy="60" r="52"></circle><circle class="val" cx="60" cy="60" r="52" pathLength="100"></circle></svg>
+              <div class="ww-ring-in"><b id="wwGrade">B</b><span id="wwScore">84 / 100</span></div>
+            </div>
+            <ul class="ww-cats" id="wwCats">
+              <li data-k="revenue"><span>Leads &amp; sales</span><i><s style="width:80%"></s></i><b>80</b></li>
+              <li data-k="trust"><span>Trust</span><i><s style="width:95%"></s></i><b>95</b></li>
+              <li data-k="invisibility"><span>Local search</span><i><s style="width:70%"></s></i><b>70</b></li>
+              <li data-k="staleness"><span>Freshness</span><i><s style="width:90%"></s></i><b>90</b></li>
+              <li data-k="polish"><span>Polish</span><i><s style="width:85%"></s></i><b>85</b></li>
+              <li data-k="technical"><span>Technical</span><i><s style="width:92%"></s></i><b>92</b></li>
+            </ul>
+          </div>
+
+          <div class="ww-checks">
+            <div class="ok" id="wwCkSpeed"><i class="fa-solid fa-gauge-high"></i><span>Speed</span><b>182 ms</b></div>
+            <div class="ok" id="wwCkDom"><i class="fa-solid fa-globe"></i><span>Domain</span><b>214 days</b></div>
+            <div class="ok" id="wwCkCert"><i class="fa-solid fa-lock"></i><span>Certificate</span><b>61 days</b></div>
+            <div class="warn" id="wwCkMail"><i class="fa-solid fa-envelope"></i><span>Email</span><b>Weak</b></div>
+            <div class="ok" id="wwCkSafe"><i class="fa-solid fa-shield-halved"></i><span>Google</span><b>Clean</b></div>
+          </div>
+
+          <div class="ww-uptime" id="wwUptime">
+            <div class="ww-uptime-head"><span>Last 36 checks</span><b>99.97% uptime</b></div>
+            <div class="ww-bars" id="wwBars" aria-hidden="true">
+              <i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i>
+              <i></i><i></i><i></i><i></i><i></i><i></i><i class="bad"></i><i></i><i></i><i></i><i></i><i></i>
+              <i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i>
+            </div>
+          </div>
+
+          <p class="ww-prev-note" id="wwNote" hidden></p>
+
+          <div class="ww-fixes" id="wwFixes">
+            <span>Worth fixing first</span>
+            <ol id="wwFixList">
+              <li class="high"><em>High</em> Phone-only: no form or email to capture after-hours leads</li>
+              <li class="medium"><em>Medium</em> No city or service area named anywhere</li>
+              <li class="low"><em>Low</em> Missing meta description</li>
+            </ol>
+          </div>
+
+          <a class="btn btn-primary ww-prev-cta" id="wwCta" href="#start" hidden><i class="fa-solid fa-eye"></i> <span id="wwCtaT">Watch this site</span></a>
+        </div>
+
       </div>
     </section>
 
@@ -1330,57 +1457,101 @@
 
     // The live preview: the hero card shows the visitor's own site in place of the sample.
     // Server data only ever goes in through textContent.
-    var tryGo = $('wwTryGo'), previewing = false;
-    function stat(id, text, cls) { var b = $(id); b.textContent = text; b.className = cls || ''; }
-    function daysText(d) { return d === null || d === undefined ? '–' : d < 0 ? 'Expired' : d + (d === 1 ? ' day' : ' days'); }
-    function daysCls(d) { return d === null || d === undefined ? '' : d < 0 ? 'bad' : d <= 30 ? 'warn' : ''; }
+    var tryGo = $('wwTryGo'), previewing = false, scanTimer = null;
+    function daysText(d) { return d === null || d === undefined ? '–' : d < 0 ? 'Expired' : d >= 730 ? Math.floor(d / 365) + ' years' : d + (d === 1 ? ' day' : ' days'); }
+    function daysCls(d) { return d === null || d === undefined ? 'wait' : d < 0 ? 'bad' : d <= 30 ? 'warn' : 'ok'; }
+    function tile(id, cls, text) { var e = $(id); e.className = cls; e.querySelector('b').textContent = text; }
     function head(state, chip, host) {
       $('wwDot').className = 'ww-dot ' + state; $('wwChip').className = 'ww-chip ' + state;
-      $('wwChip').textContent = chip; if (host) $('wwHost').textContent = host;
+      $('wwChipT').textContent = chip; if (host) $('wwHost').textContent = host;
     }
-    function note(text) { $('wwNote').textContent = text; $('wwNote').hidden = !text; }
+    function note(text, warn) { var n = $('wwNote'); n.textContent = text; n.hidden = !text; n.className = 'ww-prev-note' + (warn ? ' warn' : ''); }
+    function scan(on) {
+      $('wwScan').hidden = !on; $('wwBody').hidden = on;
+      clearInterval(scanTimer);
+      var steps = [].slice.call($('wwScanSteps').children), i = 0;
+      steps.forEach(function (li) { li.className = ''; });
+      if (!on) return;
+      steps[0].className = 'now';
+      scanTimer = setInterval(function () {
+        if (i >= steps.length - 1) return;   // the last step spins until the answer comes
+        steps[i].className = 'done'; i++; steps[i].className = 'now';
+      }, 2600);
+    }
+    function ring(score, grade) {
+      var r = $('wwRing');
+      r.style.setProperty('--p', score === null || score === undefined ? 0 : score);
+      r.className = 'ww-ring' + (score === null || score === undefined ? ' none' : score >= 80 ? ' good' : score < 60 ? ' poor' : '');
+      $('wwGrade').textContent = grade || '–';
+      $('wwScore').textContent = score === null || score === undefined ? 'Not graded' : score + ' / 100';
+    }
+    function cats(c) {
+      [].forEach.call($('wwCats').children, function (li) {
+        var v = c ? c[li.getAttribute('data-k')] : null, has = typeof v === 'number';
+        li.className = !has ? '' : v >= 80 ? '' : v >= 60 ? 'mid' : 'low';
+        li.querySelector('s').style.width = (has ? v : 0) + '%';
+        li.querySelector('b').textContent = has ? v : '–';
+      });
+    }
+    function fixes(list) {
+      var ol = $('wwFixList'); ol.textContent = '';
+      list.forEach(function (f) {
+        var li = document.createElement('li'), em = document.createElement('em'), sev = f.severity || 'medium';
+        li.className = sev; em.textContent = sev === 'critical' ? 'Urgent' : sev.charAt(0).toUpperCase() + sev.slice(1);
+        li.appendChild(em); li.appendChild(document.createTextNode(' ' + f.title)); ol.appendChild(li);
+      });
+      $('wwFixes').hidden = !list.length;
+    }
     function runPreview(site) {
       if (previewing) return;
-      previewing = true; tryGo.disabled = true; tryGo.textContent = 'Checking…';
+      previewing = true; tryGo.disabled = true; tryGo.textContent = 'Checking…'; $('wwTry').classList.add('used');
       $('wwTag').textContent = 'Checking'; $('wwTag').className = 'ww-tag';
-      head('wait', 'Checking', site); $('wwBars').hidden = true; $('wwFixes').hidden = true;
-      ['wwMs', 'wwDom', 'wwCert', 'wwGrade'].forEach(function (id) { stat(id, '…'); });
-      note('Loading the home page, looking up the renewal dates and grading it. This can take up to half a minute.');
+      head('wait', 'Checking', site); $('wwWhen').textContent = 'Running the checks now';
+      $('wwBody').classList.remove('only-note');
+      scan(true);
       fetch(API + '/public/watch/preview', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ site: site }) })
         .then(function (r) { return r.json().catch(function () { return { ok: false }; }); })
         .then(function (d) {
           if (!d || !d.ok) {
-            head('wait', 'Not checked');
-            ['wwMs', 'wwDom', 'wwCert', 'wwGrade'].forEach(function (id) { stat(id, '–'); });
-            $('wwTag').textContent = 'Sample';
+            head('wait', 'Not checked'); $('wwWhen').textContent = 'Not checked';
+            $('wwTag').textContent = 'Sample report';
+            $('wwBody').classList.add('only-note');
             note(d && d.error === 'bad_site' ? 'That does not look like a public website address. Try something like yourbusiness.com.'
               : d && d.error === 'rate_limited' ? 'That is a lot of checks from one connection. Try again in a little while.'
-              : 'We could not run the check just now. Please try again in a minute.');
+              : 'We could not run the check just now. Please try again in a minute.', true);
             return;
           }
-          $('wwTag').textContent = 'Live, checked just now'; $('wwTag').className = 'ww-tag live';
-          if (d.up === true) head('up', 'Up', d.host);
+          $('wwTag').textContent = 'Live report, checked just now'; $('wwTag').className = 'ww-tag live';
+          if (d.up === true) head('up', 'Online', d.host);
           else if (d.up === false) head('down', 'Down', d.host);
           else head('wait', 'Unknown', d.host);
-          stat('wwMs', d.ms === null ? '–' : d.ms + ' ms');
-          stat('wwDom', daysText(d.domain_days), daysCls(d.domain_days));
-          stat('wwCert', daysText(d.cert_days), daysCls(d.cert_days));
-          stat('wwGrade', d.grade || '–', 'gold');
-          var said = [];
-          if (d.up === false) said.push('It did not answer just now: ' + (d.error || 'no response') + '. Website Watch would have emailed you about it.');
+          $('wwWhen').textContent = 'Checked just now. Website Watch would check it every 15 minutes.';
+          ring(d.score, d.grade);
+          cats(d.categories);
+          tile('wwCkSpeed', d.ms === null ? 'wait' : d.ms < 1000 ? 'ok' : d.ms < 2500 ? 'warn' : 'bad', d.ms === null ? '–' : d.ms < 1000 ? d.ms + ' ms' : (d.ms / 1000).toFixed(1) + ' s');
+          tile('wwCkDom', daysCls(d.domain_days), daysText(d.domain_days));
+          tile('wwCkCert', daysCls(d.cert_days), daysText(d.cert_days));
+          var em = d.email ? { good: ['ok', 'Good'], weak: ['warn', 'Weak'], missing: ['bad', 'Missing'], none: ['wait', 'No email'] }[d.email.grade] : null;
+          tile('wwCkMail', em ? em[0] : 'wait', em ? em[1] : '–');
+          tile('wwCkSafe', !d.safe ? 'wait' : d.safe.flagged ? 'bad' : 'ok', !d.safe ? '–' : d.safe.flagged ? 'Flagged' : 'Clean');
+          $('wwUptime').hidden = true;
+          var said = [], warn = false;
+          if (d.up === false) { warn = true; said.push('It did not answer just now: ' + (d.error || 'no response') + '. Website Watch would have emailed you about it.'); }
+          if (d.safe && d.safe.flagged) { warn = true; said.push('Google lists it as unsafe, so Chrome shows visitors a red warning page. That needs fixing today.'); }
           [['domain name', d.domain_days], ['security certificate', d.cert_days]].forEach(function (x) {
-            if (x[1] !== null && x[1] < 0) said.push('Its ' + x[0] + ' has expired.');
-            else if (x[1] !== null && x[1] <= 30) said.push('Its ' + x[0] + ' runs out in ' + daysText(x[1]) + '. We would be warning you now.');
+            if (x[1] !== null && x[1] < 0) { warn = true; said.push('Its ' + x[0] + ' has expired.'); }
+            else if (x[1] !== null && x[1] <= 30) { warn = true; said.push('Its ' + x[0] + ' runs out in ' + daysText(x[1]) + '. We would be warning you now.'); }
           });
+          if (d.email && d.email.issue && d.email.grade !== 'good' && d.email.grade !== 'none') said.push('Email: ' + d.email.issue);
           if (!said.length) said.push('All good right now. Website Watch would check it again in 15 minutes, and every 15 minutes after that.');
-          note(said.join(' '));
-          var list = $('wwFixList'); list.textContent = '';
-          (d.top || []).forEach(function (t) { var li = document.createElement('li'); li.textContent = t; list.appendChild(li); });
-          $('wwFixes').hidden = !(d.top && d.top.length);
+          note(said.join(' '), warn);
+          fixes(d.fixes && d.fixes.length ? d.fixes : (d.top || []).map(function (t) { return { title: t }; }));
+          $('wwCtaT').textContent = 'Watch ' + d.host + ' for $12/mo';
+          $('wwCta').hidden = false;
           $('wwSite').value = d.host;
         })
-        .catch(function () { head('wait', 'Not checked'); note('Could not reach us. Check your connection and try again.'); })
-        .then(function () { previewing = false; tryGo.disabled = false; tryGo.textContent = 'Check it'; });
+        .catch(function () { head('wait', 'Not checked'); $('wwBody').classList.add('only-note'); note('Could not reach us. Check your connection and try again.', true); })
+        .then(function () { scan(false); previewing = false; tryGo.disabled = false; tryGo.textContent = 'Check another'; });
     }
     $('wwTry').addEventListener('submit', function (ev) {
       ev.preventDefault();
