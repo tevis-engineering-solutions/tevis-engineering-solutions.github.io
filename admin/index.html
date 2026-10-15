@@ -20196,7 +20196,7 @@
             var tr = el('tr');
             var s1 = el('td');
             if (o.url) { var a = el('a', null, o.seller); a.href = o.url; a.target = '_blank'; a.rel = 'noopener noreferrer'; s1.appendChild(a); } else s1.appendChild(document.createTextNode(o.seller));
-            s1.appendChild(el('div', 'row-sub', o.kind + (o.whole_item ? '' : ' · part or add-on only, not counted') + (o.note ? ' · ' + o.note : '')));
+            s1.appendChild(el('div', 'row-sub', (o.summed ? 'Claude added up the part prices' : o.kind) + (o.whole_item ? '' : ' · part or add-on only, not counted') + (o.note ? ' · ' + o.note : '')));
             if (!o.whole_item) tr.style.opacity = '0.6';
             tr.appendChild(s1);
             tr.appendChild(el('td', 'num', o.price_cents ? money(o.price_cents) + (o.unit ? ' ' + o.unit : '') : 'no price'));
