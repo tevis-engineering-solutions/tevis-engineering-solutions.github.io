@@ -2270,6 +2270,18 @@
     .rs-preview p { color:var(--text); font-size:0.82rem; margin:0 0 0.5rem; }
     .rs-preview ul, .rs-preview ol { margin:0 0 0.5rem; padding-left:1.2rem; }
     mark.todo { background:rgba(200,152,48,0.22); color:var(--text); outline:1px dashed var(--gold); border-radius:2px; padding:0 0.15em; }
+    .sb-wrap { overflow-x:auto; margin:0.25rem 0 0.75rem; }
+    .sb-table { width:100%; border-collapse:collapse; font-size:0.8rem; }
+    .sb-table th { text-align:left; font-weight:700; color:var(--muted); border-bottom:1px solid var(--border); padding:0.3rem 0.4rem; white-space:nowrap; }
+    .sb-table td { border-bottom:1px solid var(--border); padding:0.35rem 0.4rem; vertical-align:top; }
+    .sb-table td.num { text-align:right; white-space:nowrap; font-variant-numeric:tabular-nums; }
+    .sb-table tr.off td { opacity:0.55; }
+    .sb-row { display:flex; gap:0.5rem; align-items:flex-start; margin:0.3rem 0; flex-wrap:wrap; }
+    .sb-row .ln-l { min-width:4.5rem; }
+    .sb-val { flex:1; min-width:12rem; overflow-wrap:anywhere; }
+    pre.sb-val { white-space:pre-wrap; font:inherit; margin:0; }
+    .sb-file { margin:0.25rem 0; overflow-wrap:anywhere; }
+    .ct-bm-row .row-sub { flex:1; min-width:14rem; }
     .pw-tags .ct-chip { white-space:normal; overflow-wrap:anywhere; text-align:left; }
     .ct-claude-note { margin:0.35rem 0 0.5rem; padding:0.45rem 0.6rem; border-left:2px solid var(--gold); background:rgba(200,152,48,0.06); border-radius:0 8px 8px 0; }
     .ct-claude-note p, .ct-claude-note li { font-size:0.78rem; color:var(--muted); }
@@ -3278,11 +3290,12 @@
             <div class="reply-row"><button type="submit" class="prim">Add to the queue</button></div>
           </form>
         </details>
-        <details class="ct-q-add" id="ctqOhb"><summary>Capture bookmark (OhioBuys, BidNet)</summary>
+        <details class="ct-q-add" id="ctqOhb"><summary>Bookmarks: capture (OhioBuys, Cuyahoga, BidNet) and fill</summary>
           <p class="ct-note">For the sites the queue cannot read on its own: OhioBuys, which checks for a browser, and BidNet. The bookmark runs in your own signed-in tab, reads what that site is showing you, and hands it to this console.</p>
           <p class="ct-note">BidNet&rsquo;s terms bar reproducing its listings electronically; this keeps a private copy for your own evaluation, read at a person&rsquo;s pace.</p>
           <div class="ct-bm-row">
             <a class="ct-btn prim" id="ctqBookmark" href="#ohb">TES capture</a>
+            <a class="ct-btn" id="ctqFillBookmark" href="#tes-fill" title="Stages a bid into its OhioBuys or Cuyahoga draft">TES fill</a>
             <button type="button" class="ct-help-btn" id="ctqBmHelp" aria-expanded="false" aria-controls="ctqBmSteps" title="How to use the capture bookmark"><i class="fa-regular fa-circle-question" aria-hidden="true"></i><span class="sr-only">How to use the capture bookmark</span></button>
           </div>
           <div class="ct-help" id="ctqBmSteps" hidden>
@@ -16356,6 +16369,7 @@
         ctBidId = Number(m[1]); suppressHashPush = true; showView('contracting'); suppressHashPush = false;
       }
       else if (hash === '#ohb-import') { suppressHashPush = true; showView('contracting'); suppressHashPush = false; ohbReceive(); }
+      else if (hash === '#tes-fill') { suppressHashPush = true; showView('contracting'); suppressHashPush = false; tesFillServe(); }
       else if (hash === '#contracting') {
         if (ctBidId && !ctLeaveOk()) { history.replaceState(null, '', '#b=' + ctBidId); return; }
         if (ctBidId) closeBid();
@@ -18015,14 +18029,16 @@
     // result over with postMessage. The console checks that the message came from OhioBuys
     // and from the tab that opened it, shows what was read, and saves nothing until he says.
     var OHB_ORIGIN = 'https://ohiobuys.ohio.gov';
-    // Where a capture may come from: OhioBuys, and BidNet's open list read in Tyler's browser.
-    var CAPTURE_ORIGINS = [OHB_ORIGIN, 'https://www.bidnetdirect.com'];
+    var CUY_ORIGIN = 'https://ccprod-lm01.cloud.infor.com:1442';
+    // Where a capture may come from: OhioBuys, BidNet's open list read in Tyler's browser, and
+    // a Cuyahoga event page (which sends its number; the Worker reads the rest itself).
+    var CAPTURE_ORIGINS = [OHB_ORIGIN, 'https://www.bidnetdirect.com', CUY_ORIGIN];
 
     // Runs on ohiobuys.ohio.gov, never here. Kept free of anything outside itself, since it
     // is turned into a bookmark from its own source.
     function ohbCapture() {
       var TES = '__TES__';
-      if (location.hostname !== 'ohiobuys.ohio.gov' && location.hostname !== 'www.bidnetdirect.com') { alert('Open an OhioBuys solicitation or list, or the BidNet open solicitations list, first.'); return; }
+      if (location.hostname !== 'ohiobuys.ohio.gov' && location.hostname !== 'www.bidnetdirect.com' && location.hostname !== 'ccprod-lm01.cloud.infor.com') { alert('Open an OhioBuys solicitation or list, a Cuyahoga event, or the BidNet open solicitations list, first.'); return; }
       var w = window.open(TES + '/admin/#ohb-import', '_blank');
       if (!w) { alert('Allow pop-ups for ' + location.hostname + ' so the capture can open the TES console.'); return; }
       var clean = function (s) { return String(s || '').replace(/\s+/g, ' ').trim(); };
@@ -18030,7 +18046,27 @@
       var data = { v: 1, page: location.href, postings: [], docs: [] };
       var ready = Promise.resolve();
       var bidnet = location.hostname === 'www.bidnetdirect.com';
-      if (bidnet) {
+      var cuyHost = location.hostname === 'ccprod-lm01.cloud.infor.com';
+      if (cuyHost) {
+        // A Cuyahoga event (or a response to one): its number, name and close time. The Worker
+        // reads its lines and attachments itself when the bid is built or updated.
+        var cev = /SourcingEvent(?:Response|LineResponse)?\((?:CUYA,\d+,\d+,)?(\d+),(\d+)/.exec(decodeURIComponent(location.pathname + location.search));
+        if (!cev) { w.close(); alert('Open a Cuyahoga event (its Event Summary) first.'); return; }
+        var cbase = location.origin + '/lmscm/SourcingSupplier';
+        var cq = 'csk.CHP=LMPROC&csk.SupplierGroup=CUYA';
+        var curl = cbase + '/form/SourcingEvent(' + cev[1] + ',' + cev[2] + ').Summary?action=_open&' + cq;
+        data.kind = 'post'; data.site = 'cuyahoga';
+        ready = fetch(cbase + '/form/SourcingEvent(' + cev[1] + ',' + cev[2] + ').Summary?action=_open&' + cq + '&pageop=load', { credentials: 'include', headers: { accept: 'application/json', 'x-requested-with': 'XMLHttpRequest' } })
+          .then(function (r) { return r.json(); })
+          .then(function (j) {
+            var find = function (o, d) { if (!o || typeof o !== 'object' || d > 8) return null; if (o.fields && o.fields.SourcingEvent) return o.fields; for (var k in o) { var x = find(o[k], d + 1); if (x) return x; } return null; };
+            var f = find(j, 0) || {};
+            var v = function (k) { return f[k] && f[k].value != null ? f[k].value : null; };
+            var ts = /^(\d{4})(\d{2})(\d{2})(\d{2})(\d{2})/.exec(String(v('DerivedCloseDate') || ''));
+            data.postings.push({ url: curl, title: clean(v('Name')) || 'Event ' + cev[2], event_no: 'Event ' + cev[2], ref: cev[2], kind: v('SourcingEventType'), status: 'Open',
+              summary: clean(v('Description')), due_at: ts ? Date.UTC(+ts[1], +ts[2] - 1, +ts[3], +ts[4], +ts[5]) / 1000 : null });
+          }, function () { data.postings.push({ url: curl, title: 'Event ' + cev[2], event_no: 'Event ' + cev[2], ref: cev[2], status: 'Open' }); });
+      } else if (bidnet) {
         var bm = /^(\/[a-z-]+\/solicitations\/open-bids)/.exec(location.pathname);
         if (!bm) { w.close(); alert('Open the BidNet open solicitations list first (for example bidnetdirect.com/ohio/solicitations/open-bids).'); return; }
         var pg = /Page\s+\d+\s+of\s+(\d+)/i.exec(document.body.innerText);
@@ -18115,15 +18151,41 @@
         [].forEach.call(document.querySelectorAll('[data-iv-role="field"]'), function (el) {
           var l = el.querySelector('label'); if (!l) return;
           var k = clean(l.innerText); if (!k || k in f) return;
+          // A drop-down's text is every option; its value is the chosen one.
+          var sel = el.querySelector('select');
+          if (sel && sel.selectedIndex >= 0) { f[k] = clean(sel.options[sel.selectedIndex].text); return; }
           f[k] = clean(clean(el.innerText).replace(k, ''));
         });
         if (!f['Solicitation ID']) { w.close(); alert('This page is not an OhioBuys solicitation or the solicitation list.'); return; }
-        var links = [].filter.call(document.querySelectorAll('a[href*="download_public"]'), function (a) { return clean(a.innerText); });
-        data.kind = 'post';
+        // Signed in, the documents link to fil/download; on the public page, download_public.
+        var links = [].filter.call(document.querySelectorAll('a[href*="download_public"], a[href*="/fil/download/"]'), function (a) { return clean(a.innerText); });
+        data.kind = 'post'; data.site = 'ohiobuys';
+        var hk = ['Solicitation ID', 'Solicitation Name', 'RFx Type', 'Lot #', 'Round #', 'Solicitation Status', 'Begin Date', 'End Date', 'Inquiry End Date', 'Summary', 'Process', 'Ship To', 'Contracting Entity', 'Predecessor Contract'];
+        data.header = {};
+        hk.forEach(function (k) { if (f[k]) data.header[k] = f[k].slice(0, 1500); });
+        var procM = /process_manage_extranet\/(\d+)/.exec(location.pathname);
+        var zipBtn = document.getElementById('proxyActionBar_x_btnZip');
+        if (procM) data.process_id = procM[1];
         data.postings.push({ event_no: f['Solicitation ID'], title: f['Solicitation Name'], kind: f['RFx Type'], status: f['Solicitation Status'],
           end_et: (f['End Date'] || '').replace(/\(ET\)/, ''), inquiry_end_et: f['Inquiry End Date'], summary: f['Summary'], process: f['Process'],
           ship_to: f['Ship To'], docs: links.map(function (a) { return clean(a.innerText); }), url: location.href });
-        ready = links.reduce(function (p, a) {
+        // "Download all contents of this RFx": one zip of every buyer document and the
+        // Response Quotation Form, whose items become the bid's lines. Its address carries
+        // TES's proposal number, which the page gives once the button has been pressed; the
+        // capture asks for it the same way, without leaving the page.
+        var findZip = function (h) { var m = /zip_rfp_content=(\d+)/.exec(h || ''); return m ? m[1] : null; };
+        var bundle = !zipBtn || !procM ? Promise.resolve() : Promise.resolve(findZip(document.documentElement.innerHTML)).then(function (id) {
+          if (id) return id;
+          return fetch(zipBtn.form.action, { method: 'POST', body: new FormData(zipBtn.form, zipBtn), credentials: 'include' }).then(function (r) { return r.text(); }).then(findZip);
+        }).then(function (id) {
+          if (!id) return;
+          data.proposal_id = id;
+          return fetch('/bare.aspx/en/bpm/process_manage_extranet/' + procM[1] + '?zip_rfp_content=' + id, { credentials: 'include' }).then(function (r) {
+            if (!r.ok) return;
+            return r.arrayBuffer().then(function (b) { var u = new Uint8Array(b, 0, 2); if (b.byteLength > 22 && u[0] === 0x50 && u[1] === 0x4b) data.bundle = { name: 'rfx.zip', bytes: b }; });
+          });
+        }).catch(function () {});
+        ready = bundle.then(function () { return data.bundle ? [] : links; }).then(function (todo) { return todo.reduce(function (p, a) {
           return p.then(function () {
             return fetch(a.href, { credentials: 'include' }).then(function (r) {
               var ct = r.headers.get('content-type') || '';
@@ -18131,19 +18193,496 @@
               return r.arrayBuffer().then(function (b) { data.docs.push({ name: clean(a.innerText), type: ct, bytes: b }); });
             }).catch(function () {});
           });
-        }, Promise.resolve());
+        }, Promise.resolve()); });
       }
       }
       var sent = false;
       window.addEventListener('message', function (e) {
         if (sent || e.origin !== TES || e.source !== w || !e.data || e.data.type !== 'tes-ohb-ready') return;
         sent = true;
-        ready.then(function () { w.postMessage({ type: 'tes-ohb-data', payload: data }, TES, data.docs.map(function (d) { return d.bytes; })); });
+        ready.then(function () { w.postMessage({ type: 'tes-ohb-data', payload: data }, TES, data.docs.map(function (d) { return d.bytes; }).concat(data.bundle ? [data.bundle.bytes] : [])); });
       });
     }
-    function ohbBookmarkHref() {
-      var src = '(' + ohbCapture.toString().replace('__TES__', location.origin) + ')()';
+    // A bookmark from a function's own source: the console's address put in, line comments
+    // dropped, lines joined.
+    function ctBookmarkHref(fn) {
+      var src = '(' + fn.toString().replace('__TES__', location.origin) + ')()';
       return 'javascript:' + encodeURIComponent(src.replace(/\n\s*\/\/[^\n]*/g, '').replace(/\s*\n\s*/g, ' '));
+    }
+    function ohbBookmarkHref() { return ctBookmarkHref(ohbCapture); }
+
+    // ---- The fill bookmark: staging a bid into its portal as a saved draft ----
+    // Runs in Tyler's signed-in OhioBuys or Cuyahoga tab, never here. It opens this console
+    // (#tes-fill), which finds the bid for the page, builds its submission package and hands
+    // it back with the files. A panel on the portal page then fills what that page shows:
+    // OhioBuys's item grid and Info attachments, or one Cuyahoga line or attachment form, and
+    // saves the draft with the portal's own Save. It never ticks a terms box, answers an
+    // intent or clicks anything that submits; those are Tyler's, and the panel says so.
+    var FILL_ORIGINS = [OHB_ORIGIN, CUY_ORIGIN];
+
+    function tesFill() {
+      var TES = '__TES__';
+      var host = location.hostname;
+      var site = host === 'ohiobuys.ohio.gov' ? 'ohiobuys' : host === 'ccprod-lm01.cloud.infor.com' ? 'cuyahoga' : null;
+      if (!site) { alert('Open your draft response on OhioBuys or Cuyahoga first, then click TES fill.'); return; }
+      if (window.__tesFill) { window.__tesFill.again(); return; }
+      var clean = function (s) { return String(s || '').replace(/\s+/g, ' ').trim(); };
+      var ref = null;
+      if (site === 'ohiobuys') {
+        var sm = /\b(SRC\d{6,})\b/.exec(document.title + ' ' + document.body.innerText.slice(0, 30000));
+        ref = sm ? sm[1] : null;
+      } else {
+        var cm = /SourcingEvent(?:Response|LineResponse)?\((?:CUYA,\d+,\d+,)?(\d+),(\d+)/.exec(decodeURIComponent(location.pathname + location.search));
+        if (cm) ref = cm[2];
+        if (!ref) { var em = /Event #\s*(\d{3,})/.exec(document.body.innerText); ref = em ? em[1] : null; }
+      }
+      if (!ref) { alert('TES fill could not tell which solicitation this is. Open the solicitation (OhioBuys) or the event or your response to it (Cuyahoga).'); return; }
+      var w = window.open(TES + '/admin/#tes-fill', '_blank');
+      if (!w) { alert('Allow pop-ups for ' + host + ' so TES fill can reach the TES console.'); return; }
+
+      var box = document.createElement('div');
+      box.style.cssText = 'position:fixed;top:12px;right:12px;z-index:2147483647;background:#0d1710;color:#e4ede5;border:1px solid #c89830;border-radius:10px;padding:12px 14px;font:13px/1.45 system-ui,sans-serif;width:330px;max-height:80vh;overflow:auto;box-shadow:0 8px 30px rgba(0,0,0,.45)';
+      document.body.appendChild(box);
+      var st = { pkg: null, files: [], filled: 0, attached: 0, done: {}, log: [] };
+      var mk = function (tag, css, text) { var e = document.createElement(tag); if (css) e.style.cssText = css; if (text != null) e.textContent = text; return e; };
+      var btnCss = 'display:block;width:100%;margin:6px 0 0;padding:7px 10px;border-radius:7px;border:1px solid #c89830;background:#c89830;color:#0d1710;font:600 13px system-ui,sans-serif;cursor:pointer;text-align:left';
+      var btn2Css = btnCss.replace('background:#c89830;color:#0d1710', 'background:transparent;color:#e4ede5');
+      var say = function (t) { st.log.unshift(t); st.log = st.log.slice(0, 6); render(); };
+      // Typing into the portal's own fields, the way a person would: its scripts see input,
+      // change and blur, so totals recompute and the field is marked changed.
+      var setVal = function (el, v) {
+        var proto = el.tagName === 'TEXTAREA' ? HTMLTextAreaElement.prototype : HTMLInputElement.prototype;
+        var setter = Object.getOwnPropertyDescriptor(proto, 'value').set;
+        el.focus();
+        setter.call(el, String(v));
+        el.dispatchEvent(new Event('input', { bubbles: true }));
+        el.dispatchEvent(new Event('change', { bubbles: true }));
+        el.dispatchEvent(new Event('blur'));
+        el.dispatchEvent(new FocusEvent('focusout', { bubbles: true }));
+      };
+      var putFiles = function (input, list) {
+        var dt = new DataTransfer();
+        list.forEach(function (f) { dt.items.add(new File([f.bytes], f.name, { type: f.type || 'application/pdf' })); });
+        input.files = dt.files;
+        input.dispatchEvent(new Event('input', { bubbles: true }));
+        input.dispatchEvent(new Event('change', { bubbles: true }));
+      };
+      var visible = function (e) { return !!(e && (e.offsetParent || e.getClientRects().length)); };
+      // The portal's buttons by their words. Nothing that submits, validates or declines is
+      // ever pressed, whatever it is called.
+      var NEVER = /submit|validate|decline|no bid|cancel proposal|withdraw|accept/i;
+      var findBtn = function (words) {
+        var all = [].slice.call(document.querySelectorAll('button, input[type=button], input[type=submit], a[role=button]'))
+          .filter(function (b) { return visible(b) && !box.contains(b) && !NEVER.test(clean(b.innerText || b.value)); });
+        // The first word that the page has wins: Save and Close before a bare Save.
+        for (var i = 0; i < words.length; i++) {
+          var hit = all.filter(function (b) { return clean(b.innerText || b.value) === words[i]; })[0];
+          if (hit) return hit;
+        }
+        return null;
+      };
+      var wait = function (test, ms) {
+        return new Promise(function (res) { var t = 0, iv = setInterval(function () { var r = test(); if (r || (t += 250) > (ms || 15000)) { clearInterval(iv); res(r); } }, 250); });
+      };
+      var report = function (saved) { try { w.postMessage({ type: 'tes-fill-report', site: site, filled: st.filled, attached: st.attached, saved: !!saved }, TES); } catch (e) { /* the console tab was closed */ } };
+
+      // ---- OhioBuys (Ivalua): the item grid on Item, the documents on Info, Save in the bar ----
+      var ohb = {
+        priceInputs: function () { return [].slice.call(document.querySelectorAll('input[data-control_type="unit_price"]')).filter(visible); },
+        fileInput: function (slot) { return document.querySelector('input[type=file][id*="prxFile_' + slot + '_x_file"]'); },
+        tab: function (part) { var t = document.getElementById('body_x_tabc_containerTab_part' + part); if (t) t.click(); },
+        fillPrices: function () {
+          var go = ohb.priceInputs().length ? Promise.resolve(true) : (ohb.tab('item'), wait(function () { return ohb.priceInputs().length; }));
+          return go.then(function (ok) {
+            if (!ok) { say('The item grid did not open. Click Item on the left, then Fill prices again.'); return; }
+            var n = 0, skipped = [];
+            ohb.priceInputs().forEach(function (inp) {
+              var tr = inp.closest('tr'), table = inp.closest('table');
+              var head = table && table.tHead ? table.tHead.rows[table.tHead.rows.length - 1] : null;
+              var ci = -1;
+              if (head) [].forEach.call(head.cells, function (c, i) { if (ci < 0 && clean(c.innerText) === 'Code') ci = i; });
+              var code = ci >= 0 && tr.cells[ci] ? clean(tr.cells[ci].innerText) : '';
+              var line = st.pkg.lines.filter(function (l) { return l.key === code; })[0];
+              if (!line || !line.bid || !line.unit_price) { skipped.push(code || '?'); return; }
+              setVal(inp, line.unit_price);
+              var date = tr.querySelector('input[data-ftype_code="date"]');
+              if (date && line.deliver_by_mdy) setVal(date, line.deliver_by_mdy);
+              var com = tr.querySelector('textarea[id*="field_COMMENTS"]');
+              if (com && line.comment && !com.value.trim()) setVal(com, line.comment);
+              n++;
+            });
+            st.filled = n; st.done.prices = true;
+            say(n + ' item price' + (n === 1 ? '' : 's') + ' filled' + (skipped.length ? '; left blank: code ' + skipped.join(', ') + ' (not bid or no price in TES)' : '') + '.');
+          });
+        },
+        attach: function () {
+          var go = ohb.fileInput('sup_doc') ? Promise.resolve(true) : (ohb.tab('info'), wait(function () { return ohb.fileInput('sup_doc'); }));
+          return go.then(function (ok) {
+            if (!ok) { say('The Info panel did not open. Click Info on the left, then Attach again.'); return; }
+            var n = 0;
+            ['sup_fin_doc', 'sup_doc'].forEach(function (slot) {
+              var list = st.files.filter(function (f) { return f.slot === slot && !f.sent; });
+              var inp = ohb.fileInput(slot);
+              if (!list.length || !inp) return;
+              putFiles(inp, list);
+              list.forEach(function (f) { f.sent = true; });
+              n += list.length;
+            });
+            st.attached += n; st.done.files = true;
+            say(n ? n + ' file' + (n === 1 ? '' : 's') + ' handed to OhioBuys. Wait for each to show as uploaded before you save.' : 'Nothing left to attach.');
+          });
+        },
+        save: function () {
+          var b = document.getElementById('proxyActionBar_x__cmdSave');
+          if (!b) { say('No Save button on this page.'); return; }
+          report(true);
+          say('Saving the draft. Nothing is submitted.');
+          setTimeout(function () { b.click(); }, 400);
+        },
+      };
+
+      // ---- Cuyahoga (Infor): one line form or one attachment form at a time ----
+      var q = function (suffix) {
+        var sel = ['input', 'textarea'].map(function (t) { return t + '[id*="' + suffix + '"], ' + t + '[name*="' + suffix + '"], ' + t + '[data-automation-id*="' + suffix + '"]'; }).join(', ');
+        return [].slice.call(document.querySelectorAll(sel)).filter(visible)[0] || null;
+      };
+      var cuy = {
+        lineNo: function () {
+          var m = /SourcingEventLineResponse\(\d+,\d+,(\d+)/.exec(decodeURIComponent(location.pathname + location.search));
+          if (m) return m[1];
+          var t = /Line\s*#?\s*(\d+)/.exec(clean(document.body.innerText).slice(0, 4000));
+          return t ? t[1] : null;
+        },
+        onLine: function () { return !!q('UnitPrice'); },
+        onAttach: function () { return !!document.querySelector('input[type=file][id*="Attachment"], input[type=file][name*="Attachment"]'); },
+        fillLine: function () {
+          var no = cuy.lineNo();
+          var line = st.pkg.lines.filter(function (l) { return l.key === no; })[0];
+          if (!line) { say('Line ' + (no || '?') + ' is not on the TES bid.'); return; }
+          if (!line.bid) { say('TES is not bidding line ' + no + '. Mark it No Bid yourself if you mean to.'); return; }
+          if (!line.unit_price) { say('Line ' + no + ' has no price in TES yet.'); return; }
+          var put = function (suffix, v) { var e = q(suffix); if (e && v != null && v !== '') { setVal(e, v); return 1; } return 0; };
+          put('UnitPrice', line.unit_price);
+          put('Quantity', line.qty);
+          if (line.sku) put('VendorItem_', line.sku) || put('VendorItem', line.sku);
+          put('VendorItemDescription', line.description.slice(0, 120));
+          if (line.deliver_by_mdy) put('DeliveryDate', line.deliver_by_mdy);
+          var com = q('ResponseComments');
+          if (com && line.comment && !com.value.trim()) setVal(com, line.comment);
+          st.filled++; st.done['line' + no] = true;
+          say('Line ' + no + ' filled at ' + line.unit_price + ' each. Check it, then Save and Close.');
+        },
+        attachNext: function () {
+          var f = st.files.filter(function (x) { return !x.sent; })[0];
+          if (!f) { say('Every file is attached.'); return; }
+          var inp = document.querySelector('input[type=file][id*="Attachment"], input[type=file][name*="Attachment"]');
+          putFiles(inp, [f]);
+          f.sent = true; st.attached++;
+          say(f.name + ' attached. Save, then Create for the next one.');
+        },
+        save: function () {
+          var b = findBtn(['Save and Close', 'Save']);
+          if (!b) { say('No Save button found. Use the page\'s own Save.'); return; }
+          report(true);
+          b.click();
+          say('Saved. Nothing is submitted.');
+        },
+      };
+
+      function render() {
+        box.textContent = '';
+        var head = mk('div', 'display:flex;justify-content:space-between;align-items:center;gap:8px');
+        head.appendChild(mk('b', 'color:#c89830', 'TES fill' + (st.pkg ? ' · ' + st.pkg.bid.number : '')));
+        var tools = mk('span', 'white-space:nowrap');
+        // Folded, the panel is one line, so it never sits on the field Tyler needs.
+        var fold = mk('button', 'background:none;border:0;color:#e4ede5;font-size:16px;cursor:pointer;padding:0 6px', st.folded ? '▾' : '–');
+        fold.title = st.folded ? 'Open the panel' : 'Fold the panel';
+        fold.onclick = function () { st.folded = !st.folded; render(); };
+        var x = mk('button', 'background:none;border:0;color:#e4ede5;font-size:16px;cursor:pointer', '×');
+        x.title = 'Close';
+        x.onclick = function () { box.remove(); window.__tesFill = null; };
+        tools.appendChild(fold); tools.appendChild(x);
+        head.appendChild(tools);
+        box.appendChild(head);
+        box.style.width = st.folded ? 'auto' : '330px';
+        if (st.folded) return;
+        if (!st.pkg) { box.appendChild(mk('div', 'margin-top:6px', st.err || 'Asking the TES console for ' + ref + '…')); return; }
+        var p = st.pkg;
+        box.appendChild(mk('div', 'margin:4px 0 6px;color:#9fb5a3', p.bid.title));
+        var priced = p.lines.filter(function (l) { return l.bid && l.unit_price; }).length;
+        box.appendChild(mk('div', null, priced + ' of ' + p.lines.length + ' line' + (p.lines.length === 1 ? '' : 's') + ' priced · ' + st.files.length + ' file' + (st.files.length === 1 ? '' : 's') + ' to attach'));
+        var add = function (label, fn, plain) { var b = mk('button', plain ? btn2Css : btnCss, label); b.type = 'button'; b.onclick = function () { b.disabled = true; Promise.resolve(fn()).then(function () { b.disabled = false; }); }; box.appendChild(b); };
+        if (site === 'ohiobuys') {
+          add((st.done.prices ? '✓ ' : '1. ') + 'Fill prices, delivery dates and comments', ohb.fillPrices);
+          if (st.files.length) add((st.done.files ? '✓ ' : '2. ') + 'Attach ' + st.files.length + ' file' + (st.files.length === 1 ? '' : 's') + ' on Info', ohb.attach);
+          add((st.files.length ? '3. ' : '2. ') + 'Save the draft', ohb.save);
+        } else {
+          if (cuy.onLine()) add('Fill this line (line ' + (cuy.lineNo() || '?') + ')', cuy.fillLine);
+          if (cuy.onAttach()) add('Attach the next file (' + st.files.filter(function (f) { return !f.sent; }).length + ' left)', cuy.attachNext);
+          if (cuy.onLine() || cuy.onAttach()) add('Save and Close', cuy.save, true);
+          if (!cuy.onLine() && !cuy.onAttach()) box.appendChild(mk('div', 'margin-top:6px;color:#9fb5a3', 'Open a line from Line Responses (double-click it), or Create on Response Attachments. This panel follows you.'));
+        }
+        st.log.forEach(function (t, i) { box.appendChild(mk('div', 'margin-top:6px;' + (i ? 'color:#9fb5a3' : ''), t)); });
+        var mine = mk('details', 'margin-top:8px');
+        mine.appendChild(mk('summary', 'cursor:pointer;color:#c89830', 'Yours to do'));
+        p.tyler.forEach(function (t) { mine.appendChild(mk('div', 'margin-top:4px', '• ' + t)); });
+        (p.warnings || []).forEach(function (t) { mine.appendChild(mk('div', 'margin-top:4px;color:#f0b35a', '! ' + t)); });
+        box.appendChild(mine);
+        box.appendChild(mk('div', 'margin-top:8px;font-size:11px;color:#9fb5a3', 'TES fill never accepts terms or submits. You do that.'));
+      }
+      render();
+      // Infor changes forms without reloading, so the panel looks again as Tyler moves.
+      var lastSig = '';
+      setInterval(function () {
+        if (!st.pkg || site !== 'cuyahoga') return;
+        var sig = location.href + '|' + cuy.onLine() + cuy.onAttach();
+        if (sig !== lastSig) { lastSig = sig; render(); }
+      }, 1000);
+
+      var asked = false;
+      window.addEventListener('message', function (e) {
+        if (e.origin !== TES || e.source !== w || !e.data) return;
+        if (e.data.type === 'tes-fill-ready' && !asked) { asked = true; w.postMessage({ type: 'tes-fill-hello', site: site, ref: ref, page: location.href }, TES); return; }
+        if (e.data.type === 'tes-fill-error') { st.err = e.data.message || 'The TES console could not stage this.'; render(); return; }
+        if (e.data.type === 'tes-fill-package' && e.data.pkg) {
+          st.pkg = e.data.pkg;
+          st.files = (e.data.files || []).filter(function (f) { return f && f.bytes instanceof ArrayBuffer; });
+          say('Ready. Nothing is filled until you click.');
+        }
+      });
+      window.__tesFill = { again: function () { box.style.display = ''; render(); } };
+    }
+
+    // The console end: #tes-fill, opened by the bookmark. Finds the bid, builds the package,
+    // fetches the files and hands them over to the portal tab that opened it, and only to it.
+    function tesFillServe() {
+      var box = document.getElementById('ctqImport');
+      box.hidden = false; box.textContent = '';
+      var p = el('div', 'ct-prompt');
+      var msg = el('p', null, window.opener ? 'Waiting for the portal tab…' : 'Nothing to stage here. Open your draft on OhioBuys or Cuyahoga and click the TES fill bookmark.');
+      p.appendChild(msg);
+      box.appendChild(p);
+      if (!window.opener) return;
+      var src = window.opener, tries = 0, hello = false;
+      var ping = setInterval(function () {
+        if (hello || ++tries > 300 || !window.opener) { clearInterval(ping); if (!hello) msg.textContent = 'The portal tab did not answer. Click TES fill there again.'; return; }
+        try { src.postMessage({ type: 'tes-fill-ready' }, '*'); } catch (e) { /* the opener went away */ }
+      }, 400);
+      window.addEventListener('message', function (e) {
+        if (FILL_ORIGINS.indexOf(e.origin) < 0 || e.source !== src || !e.data) return;
+        var d = e.data;
+        if (d.type === 'tes-fill-report') {
+          api('/admin/bids/' + p.bidId + '/staged', { method: 'POST', body: { site: d.site, filled: d.filled, attached: d.attached, saved: d.saved } }).then(function (r) {
+            if (r.ok) p.appendChild(el('p', 'row-sub', 'Logged on the bid: ' + d.filled + ' filled, ' + d.attached + ' attached' + (d.saved ? ', draft saved' : '') + '.'));
+          });
+          return;
+        }
+        if (d.type !== 'tes-fill-hello' || hello) return;
+        hello = true; clearInterval(ping);
+        var origin = e.origin;
+        var site = origin === OHB_ORIGIN ? 'ohiobuys' : 'cuyahoga';
+        var fail = function (t) { msg.textContent = t; src.postMessage({ type: 'tes-fill-error', message: t }, origin); };
+        msg.textContent = 'Finding the bid for ' + d.ref + '…';
+        api('/admin/bids/by-portal?site=' + site + '&ref=' + encodeURIComponent(String(d.ref || ''))).then(function (r) {
+          if (!r.ok) return fail(ctErr(r));
+          if (!r.bid) return fail('No TES bid for ' + d.ref + ' yet. Click TES capture on the solicitation first, then TES fill.');
+          p.bidId = r.bid.id;
+          return api('/admin/bids/' + r.bid.id + '/submission').then(function (s) {
+            if (!s.ok) return fail(ctErr(s));
+            var pkg = s.package;
+            msg.textContent = 'Staging ' + r.bid.number + ' (' + r.bid.title + ') into ' + pkg.site_label + '. Keep this tab open until the draft is saved.';
+            var got = [], missed = [];
+            return pkg.attach.reduce(function (chain, a) {
+              return chain.then(function () {
+                var url = API + (a.file_id ? '/admin/bid-files/' + a.file_id : '/admin/bids/' + r.bid.id + '/pdf');
+                return fetch(url, { credentials: 'same-origin' }).then(function (res) {
+                  if (!res.ok) { missed.push(a.filename); return; }
+                  return res.arrayBuffer().then(function (b) { got.push({ name: a.filename, type: res.headers.get('content-type') || 'application/pdf', slot: a.slot, why: a.why, bytes: b }); });
+                }, function () { missed.push(a.filename); });
+              });
+            }, Promise.resolve()).then(function () {
+              if (missed.length) pkg.warnings = (pkg.warnings || []).concat(['Could not fetch: ' + missed.join(', ') + '.']);
+              src.postMessage({ type: 'tes-fill-package', pkg: pkg, files: got }, origin, got.map(function (f) { return f.bytes; }));
+              var ul = el('ul', 'ct-steps');
+              pkg.tyler.forEach(function (t) { ul.appendChild(el('li', null, t)); });
+              p.appendChild(ul);
+              var ob = el('button', 'ct-btn', 'Open the bid'); ob.type = 'button';
+              ob.addEventListener('click', function () { routeHash('#b=' + r.bid.id, true); box.hidden = true; });
+              p.appendChild(ob);
+            });
+          });
+        });
+      });
+    }
+
+    // ---- Submit: export and build the bid in its portal ----
+    // What goes out and where: the submission package (bid_portal.js) for this bid's portal,
+    // the fill bookmark that stages it into a saved draft, and what stays Tyler's. Cuyahoga
+    // can be read again from here; OhioBuys is read by the capture bookmark in his tab.
+    function ctSubmit(pane) {
+      var b = ctDetail.bid;
+      var head = el('div', 'ct-prompt');
+      pane.appendChild(head);
+      head.appendChild(el('p', 'row-sub', 'Reading what would go out…'));
+      api('/admin/bids/' + b.id + '/submission').then(function (r) {
+        head.textContent = '';
+        if (!r.ok) { head.appendChild(el('p', 'short', ctErr(r))); return; }
+        var k = r.package, portal = b.portal || {};
+        head.appendChild(el('h4', 'addsec', k.site_label ? 'Export to ' + k.site_label + (k.portal && k.portal.ref ? ' · ' + k.portal.ref : '') : 'Export'));
+        if (portal.captured_at) head.appendChild(el('p', 'row-sub', 'Last read from the portal ' + fmt(portal.captured_at) + (portal.captured_by ? ' by ' + portal.captured_by : '') + '.'));
+        if (k.deadline) head.appendChild(el('p', 'row-sub', 'Due ' + fmt(k.deadline) + '.'));
+        var rr = el('div', 'reply-row');
+        var link = function (label, href, prim) { var a = el('a', 'ct-btn' + (prim ? ' prim' : ''), label); a.href = href; a.target = '_blank'; a.rel = 'noopener'; rr.appendChild(a); };
+        if (k.urls.portal) link(k.site === 'cuyahoga' ? 'Open the event' : 'Open on OhioBuys', k.urls.portal, !k.urls.response);
+        if (k.urls.response) link('Open my response draft', k.urls.response, true);
+        if (k.site === 'cuyahoga') {
+          var pull = el('button', 'ct-btn', 'Read lines and attachments again'); pull.type = 'button';
+          pull.addEventListener('click', function () {
+            pull.disabled = true; pull.textContent = 'Reading Cuyahoga…';
+            api('/admin/bids/' + b.id + '/pull', { method: 'POST', body: {} }).then(function (x) {
+              pull.disabled = false; pull.textContent = 'Read lines and attachments again';
+              if (!x.ok) { toast(ctErr(x)); return; }
+              toast(ctPortalSummary(x));
+              ctApply(x);
+            });
+          });
+          rr.appendChild(pull);
+        }
+        if (rr.childNodes.length) head.appendChild(rr);
+
+        if (k.site === 'ohiobuys' || k.site === 'cuyahoga') {
+          var bm = el('div', 'ct-bm-row');
+          var fb = el('a', 'ct-btn prim', 'TES fill');
+          fb.href = ctBookmarkHref(tesFill);
+          fb.title = 'Drag to your bookmarks bar, then click it on your draft in the portal';
+          fb.addEventListener('click', function (e) { e.preventDefault(); toast('Drag TES fill to your bookmarks bar, then click it on your draft in ' + k.site_label + '.'); });
+          bm.appendChild(fb);
+          bm.appendChild(el('span', 'row-sub', 'Drag to your bookmarks bar once (again after an update). On your draft in ' + k.site_label + ', click it: it fills from this bid and stops at the portal’s Save.'));
+          head.appendChild(bm);
+        }
+        var ol = el('ol', 'ct-steps');
+        k.tyler.forEach(function (t) { ol.appendChild(el('li', null, t)); });
+        head.appendChild(ol);
+
+        if (k.warnings.length || k.readiness.length) {
+          var why = el('div', 'ct-why');
+          why.appendChild(el('h4', null, 'Before it goes out'));
+          var ul = el('ul');
+          k.warnings.concat(k.readiness).forEach(function (t) { ul.appendChild(el('li', null, t)); });
+          why.appendChild(ul);
+          pane.appendChild(why);
+        }
+
+        if (k.email) {
+          var em = el('div', 'ct-prompt');
+          em.appendChild(el('h4', 'addsec', 'The email (send it yourself)'));
+          var row = function (label, val, multi) {
+            var d = el('div', 'sb-row');
+            d.appendChild(el('span', 'ln-l', label));
+            var v = el(multi ? 'pre' : 'span', 'sb-val', val || '—');
+            d.appendChild(v);
+            var c = el('button', 'ct-btn sm', 'Copy'); c.type = 'button';
+            c.addEventListener('click', function () { navigator.clipboard.writeText(val || '').then(function () { toast(label + ' copied'); }); });
+            if (val) d.appendChild(c);
+            em.appendChild(d);
+          };
+          row('To', k.email.to); row('Subject', k.email.subject); row('Body', k.email.body, true);
+          if (k.email.to) {
+            var mt = el('a', 'ct-btn', 'Open in my mail app');
+            mt.href = 'mailto:' + encodeURIComponent(k.email.to) + '?subject=' + encodeURIComponent(k.email.subject) + '&body=' + encodeURIComponent(k.email.body);
+            em.appendChild(mt);
+            em.appendChild(el('p', 'row-sub', 'Attach the files below; a mail link cannot carry them.'));
+          }
+          pane.appendChild(em);
+        }
+
+        if (k.lines.length) {
+          pane.appendChild(el('h4', 'addsec', 'What each portal line gets'));
+          var t = el('table', 'sb-table');
+          var hr = el('tr');
+          ['Portal line', 'Item', 'Qty', 'Unit price', 'Extended', 'Delivery', 'Comment'].forEach(function (h) { hr.appendChild(el('th', null, h)); });
+          var th = el('thead'); th.appendChild(hr); t.appendChild(th);
+          var tb = el('tbody');
+          k.lines.forEach(function (l) {
+            var tr = el('tr', l.bid ? null : 'off');
+            tr.appendChild(el('td', null, l.key));
+            var it = el('td', null, l.description); if (l.need_by) it.appendChild(el('div', 'row-sub', 'Asked for by ' + l.need_by)); tr.appendChild(it);
+            tr.appendChild(el('td', 'num', String(l.qty) + (l.uom ? ' ' + l.uom : '')));
+            tr.appendChild(el('td', 'num', l.bid ? (l.unit_price ? '$' + l.unit_price : 'no price') : 'not bid'));
+            tr.appendChild(el('td', 'num', l.extended ? '$' + l.extended : ''));
+            tr.appendChild(el('td', null, l.deliver_by_mdy || ''));
+            tr.appendChild(el('td', 'row-sub', l.comment || ''));
+            tb.appendChild(tr);
+          });
+          t.appendChild(tb);
+          var wrap = el('div', 'sb-wrap'); wrap.appendChild(t);
+          pane.appendChild(wrap);
+          if (k.fees.length) pane.appendChild(el('p', 'row-sub', 'Fees: ' + k.fees.map(function (f) { return f.description + ' $' + f.amount; }).join(', ') + '. The portal adds these as their own line; see the steps.'));
+        }
+
+        pane.appendChild(el('h4', 'addsec', 'Files to attach'));
+        if (!k.attach.length) pane.appendChild(el('p', 'row-sub', 'None yet. Keep a version as a PDF on Response, and put the required forms on the bid.'));
+        var SLOT = { sup_fin_doc: 'Supplier Financial Documents', sup_doc: 'Supplier Documents', attachment: 'Response Attachments' };
+        k.attach.forEach(function (a) {
+          var d = el('div', 'sb-file');
+          var an = el('a', null, a.filename);
+          an.href = API + (a.file_id ? '/admin/bid-files/' + a.file_id : '/admin/bids/' + b.id + '/pdf');
+          an.target = '_blank'; an.rel = 'noopener';
+          d.appendChild(an);
+          d.appendChild(el('span', 'row-sub', ' → ' + (SLOT[a.slot] || a.slot) + ' · ' + a.why + (a.size ? ' · ' + fmtSize(a.size) : '')));
+          pane.appendChild(d);
+        });
+        if (k.instructions.length) {
+          pane.appendChild(el('h4', 'addsec', 'What the solicitation says about submitting'));
+          var iu = el('ul');
+          k.instructions.forEach(function (t2) { iu.appendChild(el('li', 'row-sub', t2)); });
+          pane.appendChild(iu);
+        }
+      });
+    }
+
+    // One line for what a capture or a pull brought in.
+    // Built on every redraw, read only when the tab is opened.
+    function ctSubmitPane(pane) {
+      var load = function () { if (pane.loaded) return; pane.loaded = true; ctSubmit(pane); };
+      if (!pane.hidden) load(); else pane.btn.addEventListener('click', load);
+    }
+    function ctPortalSummary(x) {
+      var m = x.merged || { added: 0, linked: 0, changed: [] };
+      var bits = [];
+      if (x.files_added && x.files_added.length) bits.push(x.files_added.length + ' document' + (x.files_added.length === 1 ? '' : 's'));
+      if (m.added) bits.push(m.added + ' new line' + (m.added === 1 ? '' : 's'));
+      if (m.linked) bits.push(m.linked + ' line' + (m.linked === 1 ? '' : 's') + ' matched');
+      if (m.changed && m.changed.length) bits.push('quantity changed on ' + m.changed.map(function (c) { return 'line ' + c.key + ' (' + c.from + ' → ' + c.to + ')'; }).join(', '));
+      var s = 'Read from the portal: ' + (bits.join(', ') || 'nothing new');
+      if (x.files_failed && x.files_failed.length) s += '. Not read: ' + x.files_failed.join(', ');
+      return s;
+    }
+
+
+    // A capture into a bid: Cuyahoga is read by the Worker; OhioBuys sends its bundle (or,
+    // without one, the documents one by one) with its header and keys.
+    function ctCaptureInto(bidId, d, docs) {
+      var x = d.postings[0] || {};
+      if (d.site === 'cuyahoga') return api('/admin/bids/' + bidId + '/pull', { method: 'POST', body: {} });
+      var body = { site: 'ohiobuys', ref: x.event_no || null, process_id: d.process_id || null, proposal_id: d.proposal_id || null, url: x.url || null, header: d.header || null };
+      var hasBundle = !!(d.bundle && d.bundle.bytes instanceof ArrayBuffer);
+      var go = hasBundle ? fileToBase64(new Blob([d.bundle.bytes], { type: 'application/zip' })).then(function (b64) { body.bundle = b64; }) : Promise.resolve();
+      return go.then(function () { return api('/admin/bids/' + bidId + '/capture', { method: 'POST', body: body }); }).then(function (r) {
+        if (!r.ok || hasBundle || !docs.length) return r;
+        var failed = [];
+        return docs.reduce(function (chain, doc) {
+          return chain.then(function () {
+            return fileToBase64(new Blob([doc.bytes], { type: doc.type || 'application/octet-stream' })).then(function (b64) {
+              return api('/admin/bids/' + bidId + '/files', { method: 'POST', body: { filename: doc.name, role: CT_DOC_ROLE(doc.name), content_type: doc.type, data: b64, label: 'From OhioBuys' } });
+            }).then(function (u) { if (!u.ok) failed.push(doc.name + ' (' + ctErr(u) + ')'); });
+          });
+        }, Promise.resolve()).then(function () {
+          r.files_added = docs.map(function (dd) { return dd.name; }).filter(function (n) { return !failed.some(function (f) { return f.indexOf(n) === 0; }); });
+          r.files_failed = failed;
+          return r;
+        });
+      });
     }
 
     var CT_DOC_ROLE = function (name) {
@@ -18182,14 +18721,18 @@
       var docs = (d.docs || []).filter(function (x) { return x && x.bytes instanceof ArrayBuffer && x.bytes.byteLength && x.bytes.byteLength <= 10 * 1024 * 1024; });
       var postings = d.postings.slice(0, 3000);
       var open = postings.filter(function (x) { return !/^(closed|cancell?ed|under evaluation|awarded)$/i.test(String(x.status || '').trim()); });
+      var hasBundle = !!(d.bundle && d.bundle.bytes instanceof ArrayBuffer && d.bundle.bytes.byteLength);
       if (d.kind === 'post') {
         var x = postings[0] || {};
-        p.appendChild(el('h4', 'addsec', 'From OhioBuys: ' + (x.event_no || '')));
+        p.appendChild(el('h4', 'addsec', (d.site === 'cuyahoga' ? 'From Cuyahoga: ' : 'From OhioBuys: ') + (x.event_no || '')));
         p.appendChild(el('p', null, x.title || '(no title)'));
-        p.appendChild(el('p', 'row-sub', [x.kind, x.status, x.end_et ? 'closes ' + x.end_et + ' ET' : null].filter(Boolean).join(' · ')));
+        p.appendChild(el('p', 'row-sub', [x.kind, x.status, x.end_et ? 'closes ' + x.end_et + ' ET' : x.due_at ? 'closes ' + fmt(x.due_at) : null].filter(Boolean).join(' · ')));
         if (x.summary) p.appendChild(el('p', 'row-sub', x.summary));
-        p.appendChild(el('p', 'row-sub', docs.length ? docs.length + ' document' + (docs.length === 1 ? '' : 's') + ' read: ' + docs.map(function (y) { return y.name + ' (' + fmtSize(y.bytes.byteLength) + ')'; }).join(', ')
+        if (d.site === 'cuyahoga') p.appendChild(el('p', 'row-sub', 'The Worker reads the event\u2019s lines and attachments from Cuyahoga when the bid is built or updated, named by their titles.'));
+        else if (hasBundle) p.appendChild(el('p', 'row-sub', 'The RFx bundle (' + fmtSize(d.bundle.bytes.byteLength) + '): every buyer document and the Response Quotation Form, whose items become the bid\u2019s lines, matched by their Code.'));
+        else p.appendChild(el('p', 'row-sub', docs.length ? docs.length + ' document' + (docs.length === 1 ? '' : 's') + ' read: ' + docs.map(function (y) { return y.name + ' (' + fmtSize(y.bytes.byteLength) + ')'; }).join(', ')
           : (x.docs && x.docs.length ? 'The documents are listed but could not be read. You can attach them to the bid by hand.' : 'No documents on the post.')));
+        if (d.header && d.header['Contracting Entity']) p.appendChild(el('p', 'row-sub', 'For ' + d.header['Contracting Entity'] + (d.header['Ship To'] ? ' · ship to ' + d.header['Ship To'] : '')));
         if (!open.length) p.appendChild(el('p', 'short', 'This post is ' + (x.status || 'not open') + ', so it is not added to the queue.'));
       } else {
         p.appendChild(el('h4', 'addsec', d.site === 'bidnet' ? 'From BidNet' : 'From the OhioBuys list'));
@@ -18228,28 +18771,51 @@
         var add = el('button', d.kind === 'post' ? null : 'prim', d.kind === 'post' ? 'Add to the queue' : 'Add ' + open.length + ' to the queue'); add.type = 'button';
         add.addEventListener('click', function () { add.disabled = true; send(false).then(function () { add.disabled = false; }); });
         if (d.kind === 'post') {
-          var build = el('button', 'prim', docs.length ? 'Build a bid with the documents' : 'Build a bid'); build.type = 'button';
+          var build = el('button', 'prim', d.site === 'cuyahoga' ? 'Build a bid with its lines and documents' : hasBundle || docs.length ? 'Build a bid with the documents' : 'Build a bid'); build.type = 'button';
+          var built = function (bidId, number, how) {
+            box.hidden = true; box.textContent = '';
+            toast((number ? 'Bid ' + number + ' ' + how + '. ' : '') + how2);
+            loadQueue(); reloadCtLists();
+            routeHash('#b=' + bidId, true);
+          };
+          var how2 = '';
           build.addEventListener('click', function () {
             build.disabled = true; build.textContent = 'Building…';
             send(true).then(function (r) {
               if (!r || !r.ids || !r.ids.length) { build.disabled = false; build.textContent = 'Build a bid'; return; }
               return api('/admin/feed/' + r.ids[0] + '/build', { method: 'POST', body: {} }).then(function (b) {
-                if (!b.ok) { build.disabled = false; build.textContent = 'Build a bid'; toast(ctErr(b)); return; }
-                var failed = [];
-                return docs.reduce(function (chain, doc) {
-                  return chain.then(function () {
-                    return fileToBase64(new Blob([doc.bytes], { type: doc.type || 'application/octet-stream' })).then(function (b64) {
-                      return api('/admin/bids/' + b.bid_id + '/files', { method: 'POST', body: { filename: doc.name, role: CT_DOC_ROLE(doc.name), content_type: doc.type, data: b64, label: 'From OhioBuys' } });
-                    }).then(function (u) { if (!u.ok) failed.push(doc.name + ' (' + ctErr(u) + ')'); });
-                  });
-                }, Promise.resolve()).then(function () {
-                  box.hidden = true; box.textContent = '';
-                  toast('Bid ' + b.number + ' created' + (docs.length ? ' with ' + (docs.length - failed.length) + ' of ' + docs.length + ' documents' : '') + (failed.length ? '. Not attached: ' + failed.join(', ') : ''));
-                  loadQueue(); reloadCtLists();
-                  routeHash('#b=' + b.bid_id, true);
+                // Built from the queue earlier: the capture goes into that bid instead.
+                if (!b.ok && !b.bid_id) { build.disabled = false; build.textContent = 'Build a bid'; toast(ctErr(b)); return; }
+                if (d.site === 'cuyahoga') {
+                  how2 = b.portal && b.portal.ok ? b.portal.lines + ' line' + (b.portal.lines === 1 ? '' : 's') + ' and ' + b.portal.files + ' document' + (b.portal.files === 1 ? '' : 's') + ' read from Cuyahoga.'
+                    : 'Cuyahoga could not be read just now' + (b.portal && b.portal.message ? ' (' + b.portal.message + ')' : '') + '; use Read again on the Submit tab.';
+                  if (!b.ok) return ctCaptureInto(b.bid_id, d, docs).then(function (x) { how2 = x.ok ? ctPortalSummary(x) : ctErr(x); built(b.bid_id, null, ''); });
+                  return built(b.bid_id, b.number, 'created');
+                }
+                return ctCaptureInto(b.bid_id, d, docs).then(function (x) {
+                  how2 = x.ok ? ctPortalSummary(x) : 'The documents were not read: ' + ctErr(x);
+                  built(b.bid_id, b.ok ? b.number : null, 'created');
                 });
               });
             });
+          });
+          // A bid already made for this solicitation is updated, not made again.
+          var ref = d.site === 'cuyahoga' ? x.ref : x.event_no;
+          if (ref) api('/admin/bids/by-portal?site=' + (d.site || 'ohiobuys') + '&ref=' + encodeURIComponent(ref)).then(function (f) {
+            if (!f.ok || !f.bid) return;
+            build.hidden = true;
+            p.insertBefore(el('p', 'short', 'Already a bid: ' + f.bid.number + ' (' + f.bid.title + ').'), rr);
+            var upd = el('button', 'prim', 'Update ' + f.bid.number + ' from this page'); upd.type = 'button';
+            upd.addEventListener('click', function () {
+              upd.disabled = true; upd.textContent = 'Reading…';
+              ctCaptureInto(f.bid.id, d, docs).then(function (x2) {
+                upd.disabled = false; upd.textContent = 'Update ' + f.bid.number + ' from this page';
+                if (!x2.ok) { toast(ctErr(x2)); return; }
+                how2 = ctPortalSummary(x2);
+                built(f.bid.id, null, '');
+              });
+            });
+            rr.insertBefore(upd, rr.firstChild);
           });
           rr.appendChild(build);
         }
@@ -18266,6 +18832,9 @@
     (function () {
       var bm = document.getElementById('ctqBookmark');
       bm.href = ohbBookmarkHref();
+      var fbm = document.getElementById('ctqFillBookmark');
+      fbm.href = ctBookmarkHref(tesFill);
+      fbm.addEventListener('click', function (e) { e.preventDefault(); toast('Drag TES fill to your bookmarks bar, then click it on your draft in OhioBuys or Cuyahoga.'); });
       bm.addEventListener('click', function (e) { e.preventDefault(); toast('Drag this button to your bookmarks bar, then click it on an OhioBuys or BidNet page.'); });
       var bmHelp = document.getElementById('ctqBmHelp'), bmSteps = document.getElementById('ctqBmSteps');
       var setBmHelp = function (open) { bmSteps.hidden = !open; bmHelp.setAttribute('aria-expanded', open ? 'true' : 'false'); bmHelp.classList.toggle('on', open); };
@@ -18454,7 +19023,13 @@
         });
         moves.appendChild(cv);
       }
-      if (d.transitions.length || b.project_id || b.status === 'funded' || b.status === 'awarded') panel.appendChild(moves);
+      // Export and build bid: the Submit tab, where the bid is staged into its portal.
+      if (CT_PRE.indexOf(b.status) >= 0) {
+        var xb = el('button', 'ct-btn prim', 'Export and build bid'); xb.type = 'button';
+        xb.addEventListener('click', function () { if (ctPanes.Submit) { ctPanes.Submit.btn.click(); ctPanes.Submit.scrollIntoView({ behavior: 'smooth', block: 'start' }); } });
+        moves.appendChild(xb);
+      }
+      if (d.transitions.length || b.project_id || b.status === 'funded' || b.status === 'awarded' || CT_PRE.indexOf(b.status) >= 0) panel.appendChild(moves);
       panel.appendChild(prompt);
 
       if (CT_PRE.indexOf(b.status) >= 0) {
@@ -18478,7 +19053,7 @@
       panel.appendChild(econ);
       panel.appendChild(el('p', 'ct-note', e.payment_note));
 
-      var tabs = paneTabs(panel, ['Overview', 'Draft', 'Requirements', 'Triage', 'Lines', 'Risk', 'Q&A', 'Files', 'Response', 'Tabulation', 'History'], 'bid');
+      var tabs = paneTabs(panel, ['Overview', 'Draft', 'Requirements', 'Triage', 'Lines', 'Risk', 'Q&A', 'Files', 'Response', 'Submit', 'Tabulation', 'History'], 'bid');
       var openRisks = d.risks.filter(function (x) { return !x.resolved && !x.acknowledged_note; }).length;
       tabs.pane('Triage').btn.textContent = 'Triage ' + d.triage.filter(function (s) { return s.done; }).length + '/' + d.triage.length;
       tabs.count('Lines', d.lines.length);
@@ -18487,7 +19062,7 @@
       tabs.count('Files', d.files.length);
       tabs.count('Tabulation', d.tabulations.length);
       if (d.requirements_summary) tabs.count('Requirements', d.requirements_summary.open);
-      CT_BUILDERS = { Overview: ctOverview, Requirements: ctRequirements, Triage: ctTriage, Lines: ctLines, Risk: ctRisk, 'Q&A': ctQa, Files: ctFiles, Draft: ctDraft, Response: ctResponse, Tabulation: ctTabulation, History: ctHistory };
+      CT_BUILDERS = { Overview: ctOverview, Requirements: ctRequirements, Triage: ctTriage, Lines: ctLines, Risk: ctRisk, 'Q&A': ctQa, Files: ctFiles, Draft: ctDraft, Response: ctResponse, Submit: ctSubmitPane, Tabulation: ctTabulation, History: ctHistory };
       ctPanes = {};
       Object.keys(CT_BUILDERS).forEach(function (n) {
         var pane = tabs.pane(n);
@@ -18761,6 +19336,17 @@
         // clears it on save, since the number is then Tyler's own.
         r.costSource = l.cost_source || null;
         r.costFrom = l.landed_cost_cents || 0;
+        // The portal's own key and what it asked for (bid_portal.js), kept through a save.
+        r.portalLine = l.portal_line || null;
+        r.portalJson = l.portal_json || null;
+        if (r.portalLine) {
+          var pm = {}; try { pm = JSON.parse(l.portal_json || '{}') || {}; } catch (e) { pm = {}; }
+          var pc = el('div', 'ln-cs');
+          var pi = el('i', 'fa-solid fa-link'); pi.setAttribute('aria-hidden', 'true');
+          pc.appendChild(pi);
+          pc.appendChild(el('span', null, 'Portal line ' + r.portalLine + (pm.type ? ' \u00b7 ' + pm.type : '') + (pm.need_by ? ' \u00b7 asked for by ' + pm.need_by : '') + (pm.label && pm.label !== l.description ? ' \u00b7 agency wording: ' + pm.label : '')));
+          card.insertBefore(pc, price);
+        }
         if (r.costSource) {
           var qfid = Number(String(r.costSource).split(':')[1]);
           var qf = ctDetail.files.filter(function (x) { return x.id === qfid; })[0];
@@ -18829,7 +19415,8 @@
             landed_cost: r.landed.value, markup_pct: r.markup.value, price_override: r.fix.checked, unit_price: r.unit.value, reference: r.ref.value,
             freight: r.freight.value, freight_cost: r.fcost.value, source_lane: r.lane.value, vendor: r.vendor.value,
             stock_confirmed: r.stock.checked, electrical: r.elec.checked, listing: r.listing.value, notes: r.notes.value,
-            cost_source: r.costSource && (ctCents(r.landed.value) || 0) === r.costFrom ? r.costSource : null };
+            cost_source: r.costSource && (ctCents(r.landed.value) || 0) === r.costFrom ? r.costSource : null,
+            portal_line: r.portalLine, portal_json: r.portalJson };
         }).filter(function (l) { return l.description.trim(); });
         save.disabled = true;
         ctBidApi('/lines', 'PUT', { lines: lines }, 'Lines saved').then(function () { save.disabled = false; reloadCtLists(); });
