@@ -620,8 +620,8 @@
     .ww-cats li.low s { background:linear-gradient(90deg,#b8583c,#d6785a); }
     .ww-cats b { font-family:"Montserrat",sans-serif; font-size:0.8rem; color:#fff; text-align:right; }
 
-    .ww-checks { display:grid; grid-template-columns:repeat(5, minmax(0,1fr)); gap:0.5rem; }
-    .ww-checks div { display:flex; flex-direction:column; align-items:center; gap:0.2rem; text-align:center; padding:0.7rem 0.3rem; border-radius:14px; background:rgba(0,0,0,0.22); border:1px solid var(--line); }
+    .ww-checks { display:flex; gap:0.5rem; }
+    .ww-checks div { flex:1 1 0; min-width:0; display:flex; flex-direction:column; align-items:center; gap:0.2rem; text-align:center; padding:0.7rem 0.3rem; border-radius:14px; background:rgba(0,0,0,0.22); border:1px solid var(--line); }
     .ww-checks i { font-size:0.95rem; margin-bottom:0.15rem; color:#5cc077; }
     .ww-checks span { font-size:0.66rem; font-weight:700; letter-spacing:0.06em; text-transform:uppercase; color:var(--muted); }
     .ww-checks b { font-family:"Montserrat",sans-serif; font-size:0.88rem; color:#fff; white-space:nowrap; }
@@ -686,9 +686,8 @@
       .ww-cats { gap:0.35rem; }
       .ww-cats li { grid-template-columns:78px 1fr 22px; gap:0.4rem; font-size:0.72rem; }
       .ww-checks div { padding:0.55rem 0.2rem; }
-      .ww-checks { grid-template-columns:repeat(6, minmax(0,1fr)); }
-      .ww-checks div { grid-column:span 2; }
-      .ww-checks div:nth-child(n+4) { grid-column:span 3; }
+      .ww-checks { flex-wrap:wrap; }
+      .ww-checks div { flex:1 1 calc(33.33% - 0.5rem); }
       .ww-chip #wwChipT { display:none; }
       .ww-try-row { flex-direction:column; }
       .ww-try .btn { width:100%; }
@@ -798,6 +797,19 @@
     .ww-done p { color:var(--muted); margin-bottom:1.2rem; }
     .ww-alt { text-align:center; color:var(--muted); margin-top:1.3rem; font-size:0.95rem; }
     .ww-alt a { color:#6dc882; }
+    /* Click-to-expand images */
+    .ww-sample-img { cursor:zoom-in; position:relative; }
+    .ww-sample-img::after { content:"\f065"; font-family:"Font Awesome 6 Free"; font-weight:900; position:absolute; right:0.6rem; bottom:0.6rem; width:36px; height:36px; display:grid; place-items:center; border-radius:50%; background:rgba(13,23,16,0.82); color:#e6c68a; font-size:0.85rem; }
+    .ww-ba-zoom { position:absolute; right:0.7rem; bottom:0.7rem; z-index:3; width:40px; height:40px; border-radius:50%; border:1px solid rgba(200,152,48,0.5); background:rgba(13,23,16,0.85); color:#e6c68a; cursor:zoom-in; display:grid; place-items:center; }
+    .ww-ba-zoom:hover, .ww-ba-zoom:focus-visible { background:#c89830; color:#0d1710; outline:none; }
+    .ww-lb { position:fixed; inset:0; z-index:9999; background:rgba(5,9,6,0.92); display:flex; align-items:flex-start; justify-content:center; overflow-y:auto; padding:4.5rem 16px 2rem; cursor:zoom-out; opacity:0; transition:opacity .2s; }
+    .ww-lb.open { opacity:1; }
+    .ww-lb img { display:block; width:min(760px, 100%); height:auto; border-radius:14px; box-shadow:0 30px 80px rgba(0,0,0,0.6); cursor:zoom-out; margin:auto; }
+    .ww-lb .ww-ba { width:min(1400px, 100%); margin:auto; cursor:default; }
+    .ww-lb .ww-ba-zoom { display:none; }
+    .ww-lb-x { position:fixed; top:14px; right:14px; width:46px; height:46px; border-radius:50%; border:1px solid rgba(255,255,255,0.25); background:rgba(13,23,16,0.9); color:#fff; font-size:1.2rem; cursor:pointer; display:grid; place-items:center; z-index:1; }
+    .ww-lb-x:hover, .ww-lb-x:focus-visible { background:#c89830; color:#0d1710; outline:none; }
+    body.ww-lb-on { overflow:hidden; }
     /* Store Match add-on */
     .ww-ba { --pos:50%; position:relative; width:min(900px, 100%); margin:0 auto 2.2rem; border-radius:18px; overflow:hidden; border:1px solid rgba(200,152,48,0.45); box-shadow:0 24px 60px rgba(0,0,0,0.4); aspect-ratio:1200/744; background:#0d1710; user-select:none; }
     .ww-ba img { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; display:block; pointer-events:none; }
@@ -1027,14 +1039,14 @@
         <div class="ww-fdots" aria-hidden="true"><i class="on"></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
       </div>
       <div class="ww-sample">
-        <a class="ww-sample-img" href="assets/website-watch/sample-report.jpg" target="_blank" rel="noopener">
+        <a class="ww-sample-img" href="assets/website-watch/sample-report.jpg" target="_blank" rel="noopener" data-zoom aria-label="Expand the sample report card">
           <img src="assets/website-watch/sample-report.jpg" width="680" height="845" loading="lazy" alt="A sample monthly report card email: grade B, 84 out of 100, up 7 points; 99.97% uptime; one outage; three fixes; domain and certificate renewal dates.">
         </a>
         <div class="ww-sample-copy">
           <span class="ww-kicker">The monthly report card</span>
           <h3>What lands in your inbox on the 1st</h3>
           <p>Your grade and how it moved, uptime and outages, visitors and calls, email and security health, your store, the three fixes worth making first, and your renewal dates. One short email, written for the owner, not the web person.</p>
-          <a class="btn btn-secondary" href="assets/website-watch/sample-report.jpg" target="_blank" rel="noopener">See a sample report card</a>
+          <a class="btn btn-secondary" href="assets/website-watch/sample-report.jpg" target="_blank" rel="noopener" data-zoom>See a sample report card</a>
         </div>
       </div>
     </section>
@@ -1157,6 +1169,7 @@
         <div class="ww-ba-line" aria-hidden="true"><span class="ww-ba-knob"><i class="fa-solid fa-left-right"></i></span></div>
         <input class="ww-ba-range" type="range" min="0" max="100" value="50" step="0.5" aria-label="Slide to compare the store before and after Store Match">
         <figcaption>Our own store, before and after. Drag to compare.</figcaption>
+        <button type="button" class="ww-ba-zoom" aria-label="Expand the before and after"><i class="fa-solid fa-expand"></i></button>
       </figure>
       <div class="ww-addon">
         <div class="ww-addon-copy">
@@ -1534,6 +1547,7 @@
           var em = d.email ? { good: ['ok', 'Good'], weak: ['warn', 'Weak'], missing: ['bad', 'Missing'], none: ['wait', 'No email'] }[d.email.grade] : null;
           tile('wwCkMail', em ? em[0] : 'wait', em ? em[1] : '–');
           tile('wwCkSafe', !d.safe ? 'wait' : d.safe.flagged ? 'bad' : 'ok', !d.safe ? '–' : d.safe.flagged ? 'Flagged' : 'Clean');
+          $('wwCkSafe').hidden = !d.safe;   // shown only when Google answered
           $('wwUptime').hidden = true;
           var said = [], warn = false;
           if (d.up === false) { warn = true; said.push('It did not answer just now: ' + (d.error || 'no response') + '. Website Watch would have emailed you about it.'); }
@@ -1712,6 +1726,49 @@
       loop = setInterval(nudge, 6000);
     }, { threshold: 0.5 });
     io.observe(ba);
+  })();
+</script>
+<script>
+  // Click to expand: the sample report card, and the before/after (which stays draggable when big).
+  (function () {
+    var lb = null, back = null;
+    function close() {
+      if (!lb) return;
+      lb.classList.remove('open'); document.body.classList.remove('ww-lb-on');
+      var gone = lb; lb = null; setTimeout(function () { gone.remove(); }, 200);
+      document.removeEventListener('keydown', onKey);
+      if (back) back.focus();
+    }
+    function onKey(e) { if (e.key === 'Escape') close(); }
+    function open(content, from) {
+      back = from;
+      lb = document.createElement('div'); lb.className = 'ww-lb'; lb.setAttribute('role', 'dialog'); lb.setAttribute('aria-modal', 'true');
+      var x = document.createElement('button'); x.type = 'button'; x.className = 'ww-lb-x'; x.setAttribute('aria-label', 'Close');
+      x.innerHTML = '<i class="fa-solid fa-xmark"></i>';
+      lb.appendChild(x); lb.appendChild(content);
+      lb.addEventListener('click', function (e) { if (!e.target.closest('.ww-ba') || e.target.closest('.ww-lb-x')) close(); });
+      document.body.appendChild(lb); document.body.classList.add('ww-lb-on');
+      requestAnimationFrame(function () { lb.classList.add('open'); });
+      document.addEventListener('keydown', onKey);
+      x.focus();
+    }
+    [].forEach.call(document.querySelectorAll('[data-zoom]'), function (a) {
+      a.addEventListener('click', function (e) {
+        e.preventDefault();
+        var img = document.createElement('img'); img.src = a.getAttribute('href');
+        var src = document.querySelector('.ww-sample-img img'); img.alt = src ? src.alt : '';
+        open(img, a);
+      });
+    });
+    var zb = document.querySelector('.ww-ba-zoom');
+    if (zb) zb.addEventListener('click', function () {
+      var fig = document.getElementById('smBa').cloneNode(true);
+      fig.removeAttribute('id'); fig.style.setProperty('--pos', '50%');
+      [].forEach.call(fig.querySelectorAll('img'), function (i) { i.loading = 'eager'; });
+      var r = fig.querySelector('.ww-ba-range'); r.value = 50;
+      r.addEventListener('input', function () { fig.style.setProperty('--pos', r.value + '%'); });
+      open(fig, zb);
+    });
   })();
 </script>
 </body>
