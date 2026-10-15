@@ -144,6 +144,23 @@
     /* --- speed --- */
     .tes-blurb { font-size: 13px; color: #33463c; margin-bottom: 14px; }
     .tes-blurb-in { font-size: 12.5px; color: var(--muted); margin: 14px 0 6px; }
+    .tes-g-card { border: 1px solid var(--line); border-radius: 12px; padding: 14px 16px; }
+    .tes-g-head { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 6px 14px; align-items: baseline; margin-bottom: 8px; }
+    .tes-g-head b { font-size: 15px; color: #1c2e22; }
+    .tes-g-rate { font-size: 13.5px; font-weight: 650; color: #b8860f; }
+    .tes-g-issue { border-left: 3px solid #d29b1f; background: #fdf7ea; border-radius: 0 8px 8px 0; padding: 8px 11px; margin: 8px 0; font-size: 13px; }
+    .tes-g-issue b { display: block; color: #6b4b07; margin-bottom: 2px; }
+    .tes-g-issue span { color: #4a4031; }
+    .tes-g-ok { font-size: 13px; color: #2f7d4a; margin: 6px 0; }
+    .tes-g-warn { font-size: 13px; color: #8a5a00; margin: 6px 0; }
+    .tes-g-bad { font-size: 13px; font-weight: 650; color: #dc2626; margin: 6px 0; }
+    .tes-g-link { margin: 8px 0 0; font-size: 13px; }
+    .tes-g-table { width: 100%; border-collapse: collapse; font-size: 13px; margin-top: 4px; }
+    .tes-g-table td { padding: 6px 8px; border-bottom: 1px solid var(--line); }
+    .tes-g-table td:nth-child(n+2) { text-align: right; white-space: nowrap; }
+    .tes-g-table tr.you td { font-weight: 700; background: #f2f8f4; }
+    .tes-g-rows { margin-top: 12px; }
+    .tes-g-cta { margin-top: 14px; font-size: 13px; color: #33463c; }
     .tes-scores { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 10px; }
     .tes-score { border: 1px solid var(--line); border-radius: 11px; padding: 12px; text-align: center; }
     .tes-score-n { font-family: "Montserrat", sans-serif; font-size: 27px; font-weight: 800; line-height: 1; }
@@ -310,6 +327,13 @@
         <h2>Speed &amp; performance, measured by Google</h2>
         <div id="tesSpeedBody">
           <p class="tes-pending">Asking Google to load your site on a phone. This part takes up to a minute.</p>
+        </div>
+      </section>
+
+      <section class="tes-sec" id="tesGoogle">
+        <h2>Your Google presence</h2>
+        <div id="tesGoogleBody">
+          <p class="tes-pending">Looking up your Google listing and comparing it with your site.</p>
         </div>
       </section>
 

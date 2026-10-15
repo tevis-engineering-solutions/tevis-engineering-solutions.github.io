@@ -357,6 +357,7 @@
     // measure speed, in a report displaying Google's speed measurements directly above
     // it. Caught on the first live run against tevisengineering.com.
     requestAdvice(payload, requestSpeed(payload));
+    requestGoogle(payload);
   }
 
   function renderHero(report) {
@@ -606,6 +607,104 @@
       table.appendChild(tr);
     });
     return table;
+  }
+
+  // ---------------------------------------------------------------- Google presence section
+
+  // What Google shows for the business, next to what its website says (tes-portal
+  // src/watch_google.js publicGoogle): the listing and how it compares nearby, the danger
+  // list, the Knowledge Graph and videos. Fills in after the report renders, alongside
+  // the speed test, and never holds anything else up.
+  function requestGoogle(payload) {
+    var section = document.getElementById('tesGoogle');
+    var body = document.getElementById('tesGoogleBody');
+    if (!section || !body) return;
+    var fail = function (msg) { body.textContent = ''; body.appendChild(el('p', 'tes-none', msg)); };
+    post('/audit/google', { url: payload.report.final_url }, 60000).then(function (res) {
+      var d = res.data || {};
+      if (!d.ok) {
+        fail(d.error === 'rate_limited' ? 'Too many checks from this connection just now. Reload the page in a little while to see this part.'
+          : 'We could not reach Google just now. Reload the page in a minute to try again.');
+        return;
+      }
+      renderGoogle(d, body);
+      section.classList.add('tes-arrived');
+    }).catch(function () { fail('We could not reach Google just now. Reload the page in a minute to try again.'); });
+  }
+
+  function nth(n) { return n + (n % 10 === 1 && n % 100 !== 11 ? 'st' : n % 10 === 2 && n % 100 !== 12 ? 'nd' : n % 10 === 3 && n % 100 !== 13 ? 'rd' : 'th'); }
+  function stars(r) { return r == null ? 'no ratings yet' : r.toFixed(1) + ' \u2605'; }
+
+  function renderGoogle(d, body) {
+    body.textContent = '';
+    body.appendChild(el('p', 'tes-blurb',
+      'Most customers meet a business on Google before they see its website: the stars, the '
+      + 'hours, the phone number. This is what Google shows for you, and whether it agrees '
+      + 'with your site.'));
+
+    var L = d.listing;
+    var card = el('div', 'tes-g-card');
+    if (L && L.found) {
+      var head = el('div', 'tes-g-head');
+      head.appendChild(el('b', null, L.name || 'Your Google listing'));
+      head.appendChild(el('span', 'tes-g-rate', stars(L.rating) + (L.rating != null ? '  ·  ' + L.count + ' review' + (L.count === 1 ? '' : 's') : '')));
+      card.appendChild(head);
+      if (L.status && L.status !== 'OPERATIONAL') card.appendChild(el('p', 'tes-g-bad', L.status === 'CLOSED_PERMANENTLY' ? 'Google shows the business as permanently closed.' : 'Google shows the business as temporarily closed.'));
+      if (L.issues && L.issues.length) {
+        L.issues.forEach(function (i) {
+          var row = el('div', 'tes-g-issue');
+          row.appendChild(el('b', null, i.title));
+          row.appendChild(el('span', null, i.detail));
+          card.appendChild(row);
+        });
+      } else {
+        card.appendChild(el('p', 'tes-g-ok', 'Your phone number, hours, address and website link on Google agree with your site.'));
+      }
+      if (L.low_reviews) card.appendChild(el('p', 'tes-g-warn', L.low_reviews + ' of the reviews Google shows first ' + (L.low_reviews === 1 ? 'is' : 'are') + ' 1 or 2 stars. A short, calm reply to each helps more than the review hurts.'));
+      if (L.maps_url) {
+        var a = el('a', null, 'See your listing on Google Maps'); a.href = L.maps_url; a.target = '_blank'; a.rel = 'noopener';
+        var p = el('p', 'tes-g-link'); p.appendChild(a); card.appendChild(p);
+      }
+    } else if (L && L.found === false) {
+      card.appendChild(el('b', null, 'No Google listing links to this website'));
+      card.appendChild(el('p', 'tes-g-warn',
+        'A free Google Business Profile is how most local customers find, call and get directions to a '
+        + 'business. Without one (or with one that does not link here), the map results go to competitors.'));
+    } else {
+      card = null;
+    }
+    if (card) body.appendChild(card);
+
+    var c = d.compare;
+    if (c && c.others && c.others.length) {
+      body.appendChild(el('p', 'tes-blurb-in',
+        'Among ' + c.of + ' ' + String(c.category).toLowerCase() + ' businesses nearby on Google, you have the '
+        + nth(c.rank_reviews) + ' most reviews and the ' + nth(c.rank_rating) + ' best rating.'
+        + (c.rank_reviews > 1 && c.avg_count ? ' The others average ' + c.avg_count + ' reviews.' : '')));
+      var t = el('table', 'tes-g-table');
+      var add = function (name, r, n, you) {
+        var tr = el('tr', you ? 'you' : null);
+        tr.appendChild(el('td', null, name));
+        tr.appendChild(el('td', null, stars(r)));
+        tr.appendChild(el('td', null, n + ' reviews'));
+        t.appendChild(tr);
+      };
+      add('You', c.you.rating, c.you.count, true);
+      c.others.forEach(function (o) { add(o.name, o.rating, o.count, false); });
+      body.appendChild(t);
+    }
+
+    var rows = el('div', 'tes-g-rows');
+    if (d.safe) rows.appendChild(kv('Google\u2019s danger list', d.safe.flagged ? 'FLAGGED: browsers warn visitors away from this site. It needs fixing today.' : 'Not flagged. Browsers show your site normally.'));
+    if (d.kg) rows.appendChild(kv('Known to Google as a business', d.kg.found ? 'Yes. That feeds the panel beside search results and what AI assistants say about you.' : 'Not yet. The same name, address and phone everywhere (site, Google listing, directories) is how Google learns.'));
+    if (d.videos && d.videos.checked) rows.appendChild(kv('Videos on your site', d.videos.broken.length ? d.videos.broken.length + ' of ' + d.videos.checked + ' no longer play (' + d.videos.broken.map(function (b) { return b.why; }).join('; ') + ').' : 'All ' + d.videos.checked + ' play.'));
+    if (rows.childNodes.length) body.appendChild(rows);
+
+    var cta = el('p', 'tes-g-cta');
+    cta.appendChild(document.createTextNode('Website Watch checks all of this every week and emails you when something changes: a new low review, a listing that stops matching your site, a video that breaks. '));
+    var w = el('a', null, 'See Website Watch'); w.href = '/website-watch.html?site=' + encodeURIComponent(d.host || '') + '#google-presence';
+    cta.appendChild(w);
+    body.appendChild(cta);
   }
 
   // ---------------------------------------------------------------- advice section
