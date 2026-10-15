@@ -10010,6 +10010,72 @@
       }
       d.appendChild(os);
 
+      // The Google listing (tes-portal src/watch_listing.js): checked weekly against the site.
+      // Only our own conclusions are stored; "Check now" reads the live listing (one Places call).
+      var ls = el('div', 'wi-sec');
+      ls.appendChild(el('h4', null, 'Google listing'));
+      var lbody = el('div');
+      ls.appendChild(lbody);
+      var listingPost = function (b, okMsg) {
+        return api('/admin/watches/' + w.id + '/listing', { method: 'POST', body: b }).then(function (x) {
+          if (!x.ok) { toast(x.message || x.error || 'Could not do it'); return x; }
+          if (okMsg) toast(okMsg);
+          if (x.listing !== undefined) { w.outside = w.outside || {}; w.outside.listing = x.listing; }
+          drawListing(x.view || null);
+          return x;
+        });
+      };
+      function drawListing(live) {
+        lbody.textContent = '';
+        var gl = w.outside && w.outside.listing;
+        var st = gl ? gl.status : null;
+        lbody.appendChild(el('p', 'wi-note',
+          !gl ? 'Not checked yet. It runs weekly with the outside checks: finds the Google listing that links to this site, then compares phone, hours and website link, and watches for 1-2 star reviews.'
+          : st === 'off' ? 'Turned off for this site.'
+          : st === 'not_found' ? 'No Google listing links to this site (searched ' + fmtDate(gl.checked_at) + '). Set the place ID by hand if they have one.'
+          : st === 'set' ? 'Place ID set; the first check is a baseline (no emails).'
+          : 'Checked ' + fmtDate(gl.checked_at) + '. ' + (gl.issues.length ? gl.issues.map(function (i) { return i.title; }).join('. ') + '.' : 'Matches the website.') + (gl.rating_low ? ' Rating under 4.0.' : '')));
+        if (gl && gl.maps_url) {
+          var a = el('a', null, 'Open on Google Maps'); a.href = gl.maps_url; a.target = '_blank'; a.rel = 'noopener';
+          var p = el('p', 'wi-note'); p.appendChild(a); lbody.appendChild(p);
+        }
+        if (live) {
+          lbody.appendChild(el('p', 'wi-note', 'Live: ' + (live.name || '?') + ', ' + (live.rating != null ? live.rating.toFixed(1) + ' from ' + live.count + ' reviews' : 'no ratings') + (live.phone ? ', ' + live.phone : '') + (live.status !== 'OPERATIONAL' ? ', ' + live.status.toLowerCase().replace(/_/g, ' ') : '') + '.'));
+          live.issues.forEach(function (i) { lbody.appendChild(el('p', 'wi-note', '• ' + i.title + ': ' + i.detail)); });
+          live.low_reviews.forEach(function (r) { lbody.appendChild(el('p', 'wi-note', '• ' + r.rating + '★ ' + r.author + (r.when ? ' (' + r.when + ')' : '') + ': ' + r.text)); });
+        }
+        var acts = el('div', 'wi-acts');
+        var now = el('button', 'sb-add', 'Check now'); now.type = 'button';
+        now.addEventListener('click', function () { now.disabled = true; listingPost({ action: 'check' }).then(function () { now.disabled = false; }); });
+        acts.appendChild(now);
+        var pid = document.createElement('input'); pid.placeholder = 'Place ID (ChIJ...)'; pid.setAttribute('aria-label', 'Google place ID'); pid.value = (gl && gl.place_id) || '';
+        acts.appendChild(pid);
+        var set = el('button', 'sb-add', 'Set'); set.type = 'button';
+        set.addEventListener('click', function () {
+          var id = pid.value.trim();
+          if (!id) { pid.focus(); return; }
+          listingPost({ action: 'set', place_id: id }, 'Place ID set').then(function (x) {
+            if (!x.ok) return;
+            w.outside = w.outside || {}; w.outside.listing = { status: 'set', place_id: id, issues: [], maps_url: 'https://www.google.com/maps/place/?q=place_id:' + encodeURIComponent(id) };
+            drawListing(null); listingPost({ action: 'check' });
+          });
+        });
+        acts.appendChild(set);
+        if (gl && st !== 'off') {
+          var again = el('button', 'sb-add', 'Search again'); again.type = 'button';
+          again.addEventListener('click', function () { listingPost({ action: 'clear' }, 'Cleared: it searches on the next check').then(function () { w.outside.listing = null; drawListing(null); }); });
+          acts.appendChild(again);
+          var off = el('button', 'sb-add', 'Turn off'); off.type = 'button';
+          off.addEventListener('click', function () { listingPost({ action: 'off' }, 'Turned off').then(function () { w.outside.listing = { status: 'off' }; drawListing(null); }); });
+          acts.appendChild(off);
+        }
+        lbody.appendChild(acts);
+        var help = el('p', 'wi-note', 'Find a place ID with Google\'s Place ID Finder (developers.google.com/maps/documentation/places/web-service/place-id).');
+        lbody.appendChild(help);
+      }
+      drawListing(null);
+      d.appendChild(ls);
+
       // Store Match for this site (a Shopify store, or one they plan).
       var sms = el('div', 'wi-sec');
       sms.appendChild(el('h4', null, 'Store Match'));

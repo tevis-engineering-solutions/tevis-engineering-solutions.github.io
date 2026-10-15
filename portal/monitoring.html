@@ -395,6 +395,13 @@
       if (o.unsafe) item('Google Safe Browsing', o.unsafe.flagged ? 'Flagged: visitors see a warning' : 'Not flagged', o.unsafe.flagged ? 'bad' : '');
       if (o.dns_changed_at) item('DNS', 'Last changed ' + day(o.dns_changed_at), '');
       if (o.lookalikes) item('Look-alike domains', o.lookalikes.found.length ? o.lookalikes.found.length + ' registered: ' + o.lookalikes.found.slice(0, 3).join(', ') : 'None of the ' + o.lookalikes.checked + ' we check', o.lookalikes_new && o.lookalikes_new.length ? 'warn' : '');
+      // The business's Google listing, compared with the website weekly (watch_listing.js).
+      var gl = o.listing;
+      if (gl && (gl.status === 'found' || gl.status === 'set')) {
+        var gi = (gl.issues || []).map(function (i) { return i.title; });
+        if (gl.rating_low) gi.push('Your rating is under 4.0');
+        item('Google listing', gi.length ? gi.join('. ') + '.' : 'Matches your website: phone, hours and link agree.', gi.length ? 'warn' : '');
+      } else if (gl && gl.status === 'not_found') item('Google listing', 'None links to this website. A free Google Business Profile helps people find and call you.', 'warn');
       if (o.links) item('Broken links', o.links.broken.length ? o.links.broken.length + ' of ' + o.links.checked + ' checked' : 'None found', o.links.broken.length ? 'warn' : '');
       if (!ul.childNodes.length) return el('div');
       box.appendChild(ul);
