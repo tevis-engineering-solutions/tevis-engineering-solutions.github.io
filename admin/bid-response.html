@@ -6,258 +6,109 @@
   <title>Bid Response | Tevis Engineering Solutions</title>
   <meta name="description" content="Bid response document, rendered from the admin console for printing to PDF.">
   <meta name="author" content="Tyler Tevis, Tevis Engineering Solutions">
-  <!-- Staff-only: behind Cloudflare Access with the rest of /admin/. The data comes from
-       /portal-api/admin/bids/:id/document, which checks Access itself. -->
+  <!-- Staff-only: behind Cloudflare Access with the rest of /admin/. The page itself comes
+       from /portal-api/admin/bids/:id/document?format=html, which checks Access itself and
+       is the same HTML the Worker prints to PDF (src/bid_html.js in tes-portal), so what
+       you see here is what the PDF says. -->
   <meta name="robots" content="noindex, nofollow">
   <link rel="icon" type="image/png" href="../assets/favicon.png">
   <meta http-equiv="X-Content-Type-Options" content="nosniff">
   <meta name="referrer" content="strict-origin-when-cross-origin">
   <style>
-    /* The house bid format (CONTRACTING.md s4): Helvetica, a navy rule over a thinner
-       gold one, white-on-navy table headers, #F2F2F2 banding, #E8EDF5 totals. Light on
-       purpose: it is a document for an agency, printed to PDF. */
-    :root { --navy:#1F3864; --gold:#C09B2A; --ink:#1b1f24; --muted:#5b6470; --band:#F2F2F2; --total:#E8EDF5; --rule:#d5d9df; }
+    /* The page around the sheet. The sheet's own look (the house format) arrives with it
+       from the Worker, so the screen, the print and the PDF share one stylesheet. */
+    :root { --navy:#1F3864; --muted:#5b6470; }
     * { box-sizing:border-box; }
-    html, body { margin:0; padding:0; background:#e9ecef; color:var(--ink); }
-    body { font-family:Helvetica, Arial, sans-serif; font-size:10.5pt; line-height:1.45; }
+    html, body { margin:0; padding:0; background:#e9ecef; color:#1b1f24; }
+    body { font-family:Helvetica, Arial, sans-serif; }
     .tools { max-width:8.5in; margin:0 auto; padding:0.6rem 1rem; display:flex; gap:0.5rem; justify-content:flex-end; align-items:center; flex-wrap:wrap; }
     .tools p { margin:0 auto 0 0; font-size:0.8rem; color:var(--muted); }
     .tools button { font:inherit; font-size:0.85rem; font-weight:700; padding:0.55rem 1rem; border-radius:6px; border:1px solid var(--navy); background:var(--navy); color:#fff; cursor:pointer; min-height:44px; }
     .tools button.alt { background:#fff; color:var(--navy); }
-    .sheet { max-width:8.5in; margin:0 auto 2rem; background:#fff; padding:0.75in; box-shadow:0 1px 4px rgba(0,0,0,0.12); }
-    .mast img { width:3in; max-width:100%; height:auto; display:block; }
-    .tag { margin:0.35rem 0 0.4rem; font-size:8.5pt; color:var(--muted); letter-spacing:0.02em; }
-    .rule-navy { height:3px; background:var(--navy); }
-    .rule-gold { height:1.5px; background:var(--gold); margin-top:2px; margin-bottom:1.1rem; }
-    h1 { font-size:14pt; color:var(--navy); margin:0 0 0.6rem; }
-    h2 { font-size:11pt; color:var(--navy); margin:1.2rem 0 0.45rem; text-transform:uppercase; letter-spacing:0.04em; }
-    .ref { width:100%; border-collapse:collapse; margin-bottom:0.9rem; font-size:10pt; }
-    .ref th { text-align:left; width:1.1in; color:var(--muted); font-weight:700; padding:0.15rem 0.5rem 0.15rem 0; vertical-align:top; }
-    .ref td { padding:0.15rem 0; vertical-align:top; }
-    p { margin:0 0 0.6rem; }
-    table.grid { width:100%; border-collapse:collapse; margin:0.3rem 0 0.4rem; font-size:9.5pt; }
-    table.grid th { background:var(--navy); color:#fff; text-align:left; font-weight:700; padding:0.35rem 0.45rem; }
-    table.grid td { padding:0.3rem 0.45rem; border-bottom:1px solid var(--rule); vertical-align:top; }
-    table.grid tbody tr:nth-child(even) td { background:var(--band); }
-    table.grid .n { text-align:right; white-space:nowrap; font-variant-numeric:tabular-nums; }
-    table.grid tr.total td { background:var(--total); font-weight:700; }
-    table.grid td small { display:block; color:var(--muted); font-size:8.5pt; }
-    .note { font-size:9pt; color:var(--muted); }
-    dl.terms { margin:0; }
-    dl.terms dt { font-weight:700; color:var(--navy); margin-top:0.45rem; }
-    dl.terms dd { margin:0.1rem 0 0; }
-    dl.terms dt { break-after:avoid; }
-    .sig { margin-top:1.4rem; display:grid; grid-template-columns:1fr 1fr; gap:1.2rem; }
-    .sig .line { border-top:1px solid var(--ink); margin-top:1.6rem; padding-top:0.2rem; font-size:9.5pt; }
-    .contact { margin-top:1.4rem; padding-top:0.5rem; border-top:1px solid var(--rule); font-size:8.5pt; color:var(--muted); display:flex; gap:0.8rem; flex-wrap:wrap; }
-    .state { max-width:8.5in; margin:3rem auto; text-align:center; color:var(--muted); font-size:1rem; padding:0 1rem; }
-    .meets { color:#1f7a3a; font-weight:700; }
-    .sec ul, .sec ol { margin:0 0 0.6rem; padding-left:1.3rem; }
-    .sec li { margin:0.15rem 0; }
-    /* A [bracketed note] left for Tyler. Loud on purpose, on screen and on paper: it must
-       be filled in before anything is sent. */
-    .todo { background:#fff3b0; outline:1px dashed #b38f00; padding:0 0.15em; color:inherit; }
+    .tools button:disabled { opacity:0.6; cursor:default; }
+    .msg { max-width:8.5in; margin:0 auto 0.6rem; padding:0.5rem 0.8rem; background:#fde8e8; border-left:3px solid #a33; font-size:0.85rem; }
     .ver { max-width:8.5in; margin:0 auto 0.6rem; padding:0.5rem 0.8rem; background:#E8EDF5; border-left:3px solid var(--navy); font-size:0.85rem; }
-    .short { color:#a33; font-weight:700; }
+    .sheet { max-width:8.5in; margin:0 auto 2rem; padding:0.75in; box-shadow:0 1px 4px rgba(0,0,0,0.12); }
+    .state { max-width:8.5in; margin:3rem auto; text-align:center; color:var(--muted); font-size:1rem; padding:0 1rem; }
     @media (max-width:640px) {
-      .sheet { padding:1.1rem 1rem; }
-      .table-wrap { overflow-x:auto; }
-      table.grid { min-width:520px; }
-      .sig { grid-template-columns:1fr; }
+      .sheet { padding:1.1rem 1rem; overflow-x:auto; }
+      .sheet .sig { grid-template-columns:1fr; }
     }
     @media print {
       html, body { background:#fff; }
-      .tools, .ver { display:none; }
+      .tools, .ver, .msg { display:none; }
       .sheet { box-shadow:none; margin:0; padding:0; max-width:none; }
-      table.grid tr, dl.terms dd, .sig { break-inside:avoid; }
-      h2 { break-after:avoid; }
       @page { size:letter; margin:0.6in 0.65in; }
     }
   </style>
+  <style id="sheetCss"></style>
 </head>
 <body>
   <div class="tools" id="tools" hidden>
-    <p>Save as PDF from the print dialog, then upload it to the bid as <b>Our response</b>.</p>
+    <p id="toolsNote">Print or download the PDF, then keep it on the bid as <b>Our response</b>.</p>
     <button type="button" class="alt" id="backBtn">Back to the bid</button>
-    <button type="button" id="printBtn">Print / Save as PDF</button>
+    <button type="button" class="alt" id="pdfBtn">Download PDF</button>
+    <button type="button" id="printBtn">Print</button>
   </div>
+  <div class="msg" id="msg" hidden></div>
   <div class="ver" id="ver" hidden></div>
   <div class="state" id="state">Loading&hellip;</div>
-  <main class="sheet" id="sheet" hidden>
-    <header class="mast">
-      <img src="../assets/TES%20LG1.png" alt="Tevis Engineering Solutions" width="742" height="180" id="logo">
-      <div class="tag" id="tagline"></div>
-      <div class="rule-navy"></div>
-      <div class="rule-gold"></div>
-    </header>
-    <h1 id="docTitle"></h1>
-    <table class="ref" aria-label="Reference">
-      <tbody id="refBody"></tbody>
-    </table>
-    <div id="sections"></div>
-    <footer class="contact" id="contact"></footer>
-  </main>
+  <main class="sheet" id="sheet" hidden></main>
   <script>
     (function () {
       var qs = new URLSearchParams(location.search);
       var id = Number(qs.get('id'));
       var ver = Number(qs.get('version')) || null;
       var stateEl = document.getElementById('state');
-      function el(tag, text, cls) { var n = document.createElement(tag); if (text != null) n.textContent = text; if (cls) n.className = cls; return n; }
-      function usd(c) { return (Number(c || 0) / 100).toLocaleString('en-US', { style: 'currency', currency: 'USD' }); }
-      function day(ts) { return ts ? new Date(ts * 1000).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }) : ''; }
-      function qty(n) { return Number(n).toLocaleString('en-US', { maximumFractionDigits: 3 }); }
-      // The sections' light markdown: paragraphs, "- " and "1. " lists, **bold**, *italic*,
-      // and [bracketed notes] marked for Tyler. Built as DOM nodes, never as HTML.
-      function inline(parent, text) {
-        var re = /\*\*([^*\n]+)\*\*|\*([^*\n]+)\*|(\[[^\]\n]{1,200}\])/g, last = 0, m;
-        while ((m = re.exec(text))) {
-          if (m.index > last) parent.appendChild(document.createTextNode(text.slice(last, m.index)));
-          parent.appendChild(m[1] ? el('b', m[1]) : m[2] ? el('i', m[2]) : el('mark', m[3], 'todo'));
-          last = re.lastIndex;
-        }
-        if (last < text.length) parent.appendChild(document.createTextNode(text.slice(last)));
-      }
-      function md(host, src) {
-        String(src || '').replace(/\r\n?/g, '\n').split(/\n\s*\n/).forEach(function (block) {
-          var lines = block.split('\n').filter(function (l) { return l.trim(); });
-          if (!lines.length) return;
-          var ul = lines.every(function (l) { return /^\s*[-*] /.test(l); });
-          var ol = !ul && lines.every(function (l) { return /^\s*\d+[.)] /.test(l); });
-          if (ul || ol) {
-            var list = el(ul ? 'ul' : 'ol');
-            lines.forEach(function (l) { var li = el('li'); inline(li, l.replace(/^\s*(?:[-*]|\d+[.)]) /, '')); list.appendChild(li); });
-            host.appendChild(list);
-            return;
-          }
-          var p = el('p');
-          lines.forEach(function (l, i) { if (i) p.appendChild(el('br')); inline(p, l); });
-          host.appendChild(p);
-        });
-      }
+      var msg = document.getElementById('msg');
       if (!id) { stateEl.textContent = 'No bid was named. Open this from a bid in the admin console.'; return; }
+      var base = '/portal-api/admin/bids/' + id;
       document.getElementById('backBtn').addEventListener('click', function () { location.href = './#b=' + id; });
       document.getElementById('printBtn').addEventListener('click', function () { window.print(); });
-      // The masthead falls back to the square mark if the lockup is missing.
-      document.getElementById('logo').addEventListener('error', function () { this.src = '../assets/logo-mark.png'; this.style.width = '0.9in'; });
+      // The PDF Cloudflare prints from this same HTML. When PDFs are not set up on the
+      // Worker, the reason shows here and Print still works.
+      var pdfBtn = document.getElementById('pdfBtn');
+      pdfBtn.addEventListener('click', function () {
+        pdfBtn.disabled = true; pdfBtn.textContent = 'Making the PDF…'; msg.hidden = true;
+        fetch(base + '/pdf' + (ver ? '?version=' + ver : ''), { credentials: 'same-origin' }).then(function (r) {
+          var type = r.headers.get('content-type') || '';
+          if (r.ok && /pdf/.test(type)) {
+            var name = (/filename="([^"]+)"/.exec(r.headers.get('content-disposition') || '') || [])[1] || 'response.pdf';
+            return r.blob().then(function (b) {
+              var a = document.createElement('a');
+              a.href = URL.createObjectURL(b); a.download = name;
+              document.body.appendChild(a); a.click(); a.remove();
+              setTimeout(function () { URL.revokeObjectURL(a.href); }, 10000);
+            });
+          }
+          return r.json().catch(function () { return {}; }).then(function (j) { throw new Error(j.message || 'The PDF could not be made. Use Print instead.'); });
+        }).catch(function (e) { msg.textContent = e.message; msg.hidden = false; })
+          .then(function () { pdfBtn.disabled = false; pdfBtn.textContent = 'Download PDF'; });
+      });
 
-      fetch('/portal-api/admin/bids/' + id + '/document' + (ver ? '?version=' + ver : ''), { credentials: 'same-origin' }).then(function (r) {
+      fetch(base + '/document?format=html' + (ver ? '&version=' + ver : ''), { credentials: 'same-origin' }).then(function (r) {
         if (r.status === 401 || r.status === 403) throw new Error('Your sign-in expired. Open the admin console and sign in, then try again.');
         if (r.status === 404) throw new Error(ver ? 'That version is not on this bid.' : 'That bid does not exist.');
         return r.json();
       }).then(function (res) {
         if (!res.ok) throw new Error(res.message || 'Could not build the document.');
-        render(res.document);
-      }).catch(function (e) { stateEl.textContent = e.message || 'Could not load the document.'; });
-
-      function render(d) {
-        var b = d.bid, c = d.company;
-        document.title = 'Response ' + (b.event_no ? 'Event ' + b.event_no : b.number) + ' | ' + c.legal;
-        document.getElementById('tagline').textContent = c.tagline;
-        document.getElementById('docTitle').textContent = 'Response to ' + b.title;
-        var ref = document.getElementById('refBody');
-        var rows = [['To', b.agency + (b.buyer_name ? ' — ' + b.buyer_name : '')],
-          ['From', c.legal + (d.identifiers.length ? ' · ' + d.identifiers.map(function (i) { var l = i.label.replace(/^Cuyahoga County /, ''); return l + (/#$/.test(l) ? '' : ' ') + i.value; }).join(' · ') : '')],
-          ['Event', (b.event_no ? b.event_no + ' · ' : '') + b.title],
-          ['Date', day(d.generated_at)]];
-        if (b.date_close) rows.push(['Due', day(b.date_close)]);
-        rows.forEach(function (r) { var tr = el('tr'); tr.appendChild(el('th', r[0])); tr.appendChild(el('td', r[1])); ref.appendChild(tr); });
-        if (d.version) {
+        document.title = res.title;
+        // The Worker escaped everything a person or a model wrote; this is its own markup.
+        document.getElementById('sheetCss').textContent = res.css;
+        var sheet = document.getElementById('sheet');
+        sheet.innerHTML = res.html;
+        // The masthead falls back to the square mark if the lockup is missing.
+        var logo = sheet.querySelector('.mast img');
+        if (logo) logo.addEventListener('error', function () { this.src = '../assets/logo-mark.png'; this.style.width = '0.9in'; });
+        if (res.version) {
           var vb = document.getElementById('ver');
-          vb.textContent = 'Version ' + d.version.n + ': ' + (d.version.label || '') + (d.version.submitted ? ' (what was submitted)' : '') + ', kept ' + day(d.version.created_at) + '. The wording and prices are as they were then.';
+          vb.textContent = 'Version ' + res.version.n + ': ' + (res.version.label || '') + (res.version.submitted ? ' (what was submitted)' : '') + '. The wording and prices are as they were then.';
           vb.hidden = false;
         }
-        var host = document.getElementById('sections');
-        (d.sections || []).forEach(function (s) {
-          var sec = el('section', null, 'sec');
-          // The opening reads as a letter under the reference block, without a heading.
-          if (s.key !== 'intro' && s.type !== 'signature') sec.appendChild(el('h2', s.type === 'pricing' && d.rate_card ? 'Rate Card' : s.title));
-          if (s.type === 'text') md(sec, s.body);
-          else if (s.type === 'pricing') pricing(sec);
-          else if (s.type === 'matrix') matrix(sec);
-          else if (s.type === 'signature') signature(sec);
-          host.appendChild(sec);
-        });
-
-        function pricing(sec) {
-          var wrap = el('div', null, 'table-wrap');
-          var t = el('table', null, 'grid');
-          var head = el('thead'), hr = el('tr');
-          var cols = d.rate_card ? ['Line', 'Description', 'UOM', 'Unit price'] : ['Line', 'Description', 'Qty', 'UOM', 'Unit price', 'Extended'];
-          cols.forEach(function (h, i) { hr.appendChild(el('th', h, i >= (d.rate_card ? 3 : 4) || h === 'Qty' ? 'n' : null)); });
-          head.appendChild(hr); t.appendChild(head);
-          var body = el('tbody');
-          d.lines.forEach(function (l) {
-            var tr = el('tr');
-            tr.appendChild(el('td', String(l.line_no)));
-            var desc = el('td', l.description);
-            if (l.sku) desc.appendChild(el('small', l.sku));
-            tr.appendChild(desc);
-            if (!d.rate_card) tr.appendChild(el('td', qty(l.qty), 'n'));
-            tr.appendChild(el('td', l.uom));
-            tr.appendChild(el('td', usd(l.unit_price_cents), 'n'));
-            if (!d.rate_card) tr.appendChild(el('td', usd(l.extended_cents), 'n'));
-            body.appendChild(tr);
-          });
-          t.appendChild(body);
-          if (!d.rate_card) {
-            var foot = el('tfoot');
-            var addTotal = function (label, cents, cls) {
-              var tr = el('tr', null, cls || null);
-              var td = el('td', label); td.colSpan = 5; tr.appendChild(td);
-              tr.appendChild(el('td', usd(cents), 'n'));
-              foot.appendChild(tr);
-            };
-            if (d.freight_cents) { addTotal('Subtotal', d.subtotal_cents); addTotal('Freight', d.freight_cents); }
-            addTotal('Total', d.total_cents, 'total');
-            t.appendChild(foot);
-          }
-          wrap.appendChild(t);
-          sec.appendChild(wrap);
-          var note = d.rate_card
-            ? 'Unit prices are held for the term of the standing order' + (b.nte_cents ? ', not to exceed ' + usd(b.nte_cents) + ' in total' : '') + '.'
-            : (b.partial ? 'This response covers the lines listed above.' : '');
-          if (note) sec.appendChild(el('p', note, 'note'));
-        }
-        function matrix(sec) {
-          var wrap = el('div', null, 'table-wrap');
-          var m = el('table', null, 'grid');
-          var mh = el('thead'), mr = el('tr');
-          ['Stated minimum', 'Offered', 'Meets'].forEach(function (h) { mr.appendChild(el('th', h)); });
-          mh.appendChild(mr); m.appendChild(mh);
-          var mb = el('tbody');
-          d.matrix.forEach(function (r) {
-            var tr = el('tr');
-            tr.appendChild(el('td', r.requirement));
-            tr.appendChild(el('td', r.offered || ''));
-            tr.appendChild(el('td', r.meets ? 'Yes' : 'See note', r.meets ? 'meets' : 'short'));
-            mb.appendChild(tr);
-          });
-          m.appendChild(mb);
-          wrap.appendChild(m);
-          sec.appendChild(wrap);
-        }
-        function signature(sec) {
-          var g = el('div', null, 'sig');
-          var a = el('div');
-          a.appendChild(el('div', 'Respectfully submitted,'));
-          var line = el('div', null, 'line');
-          line.appendChild(el('b', d.signer.name)); line.appendChild(el('br'));
-          line.appendChild(document.createTextNode(d.signer.title)); line.appendChild(el('br'));
-          line.appendChild(document.createTextNode(c.legal));
-          a.appendChild(line);
-          var dt = el('div');
-          dt.appendChild(el('div', 'Date'));
-          dt.appendChild(el('div', day(d.version ? d.version.created_at : d.generated_at), 'line'));
-          g.appendChild(a); g.appendChild(dt);
-          sec.appendChild(g);
-        }
-        var ct = document.getElementById('contact');
-        [c.legal, c.city, c.phone, c.email, c.web].forEach(function (s) { ct.appendChild(el('span', s)); });
         stateEl.hidden = true;
-        document.getElementById('sheet').hidden = false;
+        sheet.hidden = false;
         document.getElementById('tools').hidden = false;
-      }
+      }).catch(function (e) { stateEl.textContent = e.message || 'Could not load the document.'; });
     })();
   </script>
 </body>
