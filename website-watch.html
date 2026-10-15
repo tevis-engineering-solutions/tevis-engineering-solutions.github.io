@@ -597,6 +597,36 @@
     .ww-prev-stats span { font-size:0.68rem; text-transform:uppercase; letter-spacing:0.07em; color:var(--muted); font-weight:700; }
     .ww-prev-stats b { font-family:"Montserrat",sans-serif; font-size:1.05rem; color:#fff; }
     .ww-prev-stats b.gold { color:#e0b840; }
+    .ww-prev-stats b.warn { color:#e0b840; }
+    .ww-prev-stats b.bad, .ww-chip.down { color:#f0a58f; }
+    .ww-preview { position:relative; }
+    .ww-tag { position:absolute; top:-11px; right:16px; font-size:0.66rem; font-weight:800; letter-spacing:0.12em; text-transform:uppercase; padding:0.2rem 0.6rem; border-radius:999px; background:#142019; border:1px solid var(--line); color:var(--muted); }
+    .ww-tag.live { color:#0d1710; background:linear-gradient(135deg,#c89830,#e0b840); border-color:transparent; }
+    .ww-prev-head b { overflow-wrap:anywhere; }
+    .ww-dot.down { background:#d6785a; }
+    .ww-dot.wait { background:#8aa48d; }
+    .ww-chip.down { background:rgba(214,120,90,0.14); border:1px solid rgba(214,120,90,0.4); }
+    .ww-chip.wait { color:var(--muted); background:rgba(255,255,255,0.05); border:1px solid var(--line); }
+    .ww-prev-note { margin:0.9rem 0 1rem; font-size:0.86rem; color:#c2d5c6; }
+    .ww-fixes { margin-top:1.1rem; padding-top:0.9rem; border-top:1px solid var(--line); }
+    .ww-fixes > span { font-size:0.68rem; text-transform:uppercase; letter-spacing:0.07em; color:var(--muted); font-weight:700; }
+    .ww-fixes ol { margin:0.45rem 0 0; padding-left:1.2rem; list-style:decimal; }
+    .ww-fixes ol li { color:#dfe9e1; font-size:0.9rem; margin-bottom:0.25rem; padding-left:0.2rem; }
+    .ww-try { margin-top:1.2rem; padding-top:1rem; border-top:1px solid var(--line); }
+    .ww-try label { display:block; font-size:0.72rem; font-weight:700; letter-spacing:0.07em; text-transform:uppercase; color:var(--muted); margin-bottom:0.4rem; }
+    .ww-try-row { display:flex; gap:0.5rem; }
+    .ww-try input { flex:1; min-width:0; min-height:44px; padding:0 0.85rem; border-radius:12px; border:1px solid var(--line); background:rgba(0,0,0,0.25); color:#fff; font-size:0.95rem; font-family:inherit; }
+    .ww-try input:focus { outline:none; border-color:#4aac65; box-shadow:0 0 0 3px rgba(74,172,101,0.2); }
+    .ww-try .btn { min-height:44px; padding:0 1.1rem; cursor:pointer; white-space:nowrap; }
+    .ww-try .btn:disabled { opacity:0.6; cursor:wait; transform:none; }
+
+    .ww-sample { display:grid; grid-template-columns:minmax(0,0.9fr) minmax(0,1.1fr); gap:2rem; align-items:center; margin-top:2.2rem; padding:1.6rem; border:1px solid var(--line); border-radius:20px; background:rgba(20,32,25,0.72); }
+    .ww-sample-img { display:block; border-radius:12px; overflow:hidden; border:1px solid var(--line); box-shadow:0 18px 40px rgba(0,0,0,0.35); max-height:360px; }
+    .ww-sample-img img { display:block; width:100%; height:auto; }
+    .ww-sample-copy h3 { font-family:"Montserrat",sans-serif; font-size:1.3rem; color:#fff; margin-bottom:0.6rem; }
+    .ww-sample-copy p { color:var(--muted); line-height:1.65; margin-bottom:1.2rem; }
+    .ww-sample-copy .btn { display:inline-flex; align-items:center; min-height:46px; }
+    @media (max-width:820px) { .ww-sample { grid-template-columns:1fr; gap:1.3rem; padding:1.2rem; } .ww-sample-img { max-height:300px; } }
 
     .ww-sec { margin-top:4.5rem; }
     .ww-head { text-align:center; margin-bottom:2rem; }
@@ -676,7 +706,7 @@
   {"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://tevisengineering.com/"},{"@type":"ListItem","position":2,"name":"TES Software","item":"https://tevisengineering.com/software.html"},{"@type":"ListItem","position":3,"name":"Website Watch","item":"https://tevisengineering.com/website-watch.html"}]}
   </script>
   <script type="application/ld+json">
-  {"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What counts as down?","acceptedAnswer":{"@type":"Answer","text":"No answer within 15 seconds, a server error, or the home page being gone, on two checks in a row. A site that answers but turns us away, which is how some firewalls behave, counts as up."}},{"@type":"Question","name":"Does it change anything on my website?","acceptedAnswer":{"@type":"Answer","text":"No. Each check loads your home page the way a visitor's browser would and closes the connection. Nothing is installed, and we never log in or submit anything."}},{"@type":"Question","name":"Where do the renewal dates come from?","acceptedAnswer":{"@type":"Answer","text":"The domain date comes from your registrar's public registration record. The certificate date comes from the public certificate logs that every certificate authority publishes to. Both are checked once a day."}},{"@type":"Question","name":"How do I cancel?","acceptedAnswer":{"@type":"Answer","text":"In PayPal, under your automatic payments, or from the Billing page in your customer portal. Watching continues until the end of the period you paid for."}},{"@type":"Question","name":"Can you watch more than one site?","acceptedAnswer":{"@type":"Answer","text":"Yes. Each site is its own subscription, so subscribe once per site. If you have several, get in touch and we will set them up together."}}]}
+  {"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Why pay for this when free monitors exist?","acceptedAnswer":{"@type":"Answer","text":"Free monitors are good at one thing: telling you a server stopped answering. Website Watch also watches your domain and certificate renewals, grades your site every month and names the three fixes worth making, all in plain words for an owner, not a web developer. And there is a real engineer in Cleveland behind it who can fix what it finds."}},{"@type":"Question","name":"What counts as down?","acceptedAnswer":{"@type":"Answer","text":"No answer within 15 seconds, a server error, or the home page being gone, on two checks in a row. A site that answers but turns us away, which is how some firewalls behave, counts as up."}},{"@type":"Question","name":"Does it change anything on my website?","acceptedAnswer":{"@type":"Answer","text":"No. Each check loads your home page the way a visitor's browser would and closes the connection. Nothing is installed, and we never log in or submit anything."}},{"@type":"Question","name":"Where do the renewal dates come from?","acceptedAnswer":{"@type":"Answer","text":"The domain date comes from your registrar's public registration record. The certificate date comes from the public certificate logs that every certificate authority publishes to. Both are checked once a day."}},{"@type":"Question","name":"How do I cancel?","acceptedAnswer":{"@type":"Answer","text":"In PayPal, under your automatic payments, or from the Billing page in your customer portal. Watching continues until the end of the period you paid for."}},{"@type":"Question","name":"Can you watch more than one site?","acceptedAnswer":{"@type":"Answer","text":"Yes. Each site is its own subscription, so subscribe once per site. If you have several, get in touch and we will set them up together."}}]}
   </script>
   <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
 </head>
@@ -743,52 +773,76 @@
         <a class="btn btn-secondary" href="#features">What You Get</a>
       </div>
 
-      <div class="ww-preview" aria-hidden="true">
+      <div class="ww-preview" id="wwPreview" aria-live="polite">
+        <span class="ww-tag" id="wwTag">Sample</span>
         <div class="ww-prev-head">
-          <span class="ww-dot up"></span>
-          <b>yourbusiness.com</b>
-          <span class="ww-chip up">Up</span>
+          <span class="ww-dot up" id="wwDot"></span>
+          <b id="wwHost">yourbusiness.com</b>
+          <span class="ww-chip up" id="wwChip">Up</span>
         </div>
-        <div class="ww-bars">
+        <div class="ww-bars" id="wwBars" aria-hidden="true">
           <i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i>
           <i></i><i></i><i></i><i></i><i></i><i></i><i class="bad"></i><i></i><i></i><i></i><i></i><i></i>
           <i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i>
         </div>
+        <p class="ww-prev-note" id="wwNote" hidden></p>
         <div class="ww-prev-stats">
-          <div><span>Uptime, 30 days</span><b>99.98%</b></div>
-          <div><span>Response</span><b>182 ms</b></div>
-          <div><span>Domain renews</span><b>214 days</b></div>
-          <div><span>Grade</span><b class="gold">B</b></div>
+          <div><span>Response</span><b id="wwMs">182 ms</b></div>
+          <div><span>Domain renews</span><b id="wwDom">214 days</b></div>
+          <div><span>Certificate</span><b id="wwCert">61 days</b></div>
+          <div><span>Grade</span><b class="gold" id="wwGrade">B</b></div>
         </div>
+        <div class="ww-fixes" id="wwFixes" hidden>
+          <span>Worth fixing first</span>
+          <ol id="wwFixList"></ol>
+        </div>
+        <form class="ww-try" id="wwTry" novalidate>
+          <label for="wwTrySite">See your own site</label>
+          <div class="ww-try-row">
+            <input id="wwTrySite" type="text" inputmode="url" autocomplete="url" placeholder="yourbusiness.com">
+            <button type="submit" class="btn btn-secondary" id="wwTryGo">Check it</button>
+          </div>
+        </form>
       </div>
     </section>
 
     <section class="ww-sec" id="features" aria-labelledby="featHead">
       <div class="ww-head">
         <span class="ww-kicker">What you get</span>
-        <h2 id="featHead">Four Things That Quietly Cost Small Businesses Customers</h2>
+        <h2 id="featHead">Four Ways a Website Quietly Loses You Customers</h2>
       </div>
       <div class="ww-grid">
         <article class="ww-card">
-          <div class="ww-ic"><i class="fa-solid fa-heart-pulse"></i></div>
-          <h3>Uptime every 15 minutes</h3>
-          <p>Around the clock. Two missed checks in a row and we call it down, so a single hiccup never wakes you up.</p>
+          <div class="ww-ic"><i class="fa-solid fa-phone-slash"></i></div>
+          <h3>A down site sends callers elsewhere</h3>
+          <p>Nobody tells you it is down. They just call the next name on Google. We check every 15 minutes, around the clock.</p>
         </article>
         <article class="ww-card">
           <div class="ww-ic"><i class="fa-solid fa-bell"></i></div>
-          <h3>Down and back-up alerts</h3>
-          <p>An email the minute your site stops answering, in plain words about why, and another when it is back with how long it was out.</p>
+          <h3>You hear first, not your customers</h3>
+          <p>An email the minute it stops answering, saying why in plain words, and another when it is back with how long it was out.</p>
         </article>
         <article class="ww-card">
-          <div class="ww-ic"><i class="fa-solid fa-calendar-check"></i></div>
-          <h3>Renewal warnings</h3>
-          <p>Your domain name and security certificate, warned 30, 14 and 7 days before they expire. A lapsed domain takes your email down with it.</p>
+          <div class="ww-ic"><i class="fa-solid fa-envelope-circle-check"></i></div>
+          <h3>A lapsed domain takes your email too</h3>
+          <p>And an expired certificate puts a &ldquo;Not secure&rdquo; warning in front of visitors. We warn you 30, 14 and 7 days ahead.</p>
         </article>
         <article class="ww-card">
-          <div class="ww-ic"><i class="fa-solid fa-chart-line"></i></div>
-          <h3>A monthly report card</h3>
-          <p>Your grade and how it moved, the month's uptime and outages, and the three things most worth fixing next.</p>
+          <div class="ww-ic"><i class="fa-solid fa-list-check"></i></div>
+          <h3>Small problems that cost leads</h3>
+          <p>A monthly report card grades your site and names the three things most worth fixing, like a missing contact form.</p>
         </article>
+      </div>
+      <div class="ww-sample">
+        <a class="ww-sample-img" href="assets/website-watch/sample-report.jpg" target="_blank" rel="noopener">
+          <img src="assets/website-watch/sample-report.jpg" width="680" height="845" loading="lazy" alt="A sample monthly report card email: grade B, 84 out of 100, up 7 points; 99.97% uptime; one outage; three fixes; domain and certificate renewal dates.">
+        </a>
+        <div class="ww-sample-copy">
+          <span class="ww-kicker">The monthly report card</span>
+          <h3>What lands in your inbox on the 1st</h3>
+          <p>Your grade and how it moved, the month's uptime and outages, the three fixes worth making first, and when your domain and certificate renew. One short email, written for the owner, not the web person.</p>
+          <a class="btn btn-secondary" href="assets/website-watch/sample-report.jpg" target="_blank" rel="noopener">See a sample report card</a>
+        </div>
       </div>
     </section>
 
@@ -866,6 +920,10 @@
         <h2 id="faqHead">Frequently Asked Questions</h2>
       </div>
       <div class="ww-faq">
+        <details>
+          <summary>Why pay for this when free monitors exist?</summary>
+          <div class="faq-a">Free monitors are good at one thing: telling you a server stopped answering. Website Watch also watches your domain and certificate renewals, grades your site every month and names the three fixes worth making, all in plain words for an owner, not a web developer. And there is a real engineer in Cleveland behind it who can fix what it finds.</div>
+        </details>
         <details>
           <summary>What counts as down?</summary>
           <div class="faq-a">No answer within 15 seconds, a server error, or the home page being gone, on two checks in a row. A site that answers but turns us away, which is how some firewalls behave, counts as up.</div>
@@ -1067,10 +1125,75 @@
       }).catch(function () { fail('Could not reach us. Check your connection and try again.'); });
     });
 
-    // Arriving from a report card: ?site=example.com fills the form in.
+    // The live preview: the hero card shows the visitor's own site in place of the sample.
+    // Server data only ever goes in through textContent.
+    var tryGo = $('wwTryGo'), previewing = false;
+    function stat(id, text, cls) { var b = $(id); b.textContent = text; b.className = cls || ''; }
+    function daysText(d) { return d === null || d === undefined ? '–' : d < 0 ? 'Expired' : d + (d === 1 ? ' day' : ' days'); }
+    function daysCls(d) { return d === null || d === undefined ? '' : d < 0 ? 'bad' : d <= 30 ? 'warn' : ''; }
+    function head(state, chip, host) {
+      $('wwDot').className = 'ww-dot ' + state; $('wwChip').className = 'ww-chip ' + state;
+      $('wwChip').textContent = chip; if (host) $('wwHost').textContent = host;
+    }
+    function note(text) { $('wwNote').textContent = text; $('wwNote').hidden = !text; }
+    function runPreview(site) {
+      if (previewing) return;
+      previewing = true; tryGo.disabled = true; tryGo.textContent = 'Checking…';
+      $('wwTag').textContent = 'Checking'; $('wwTag').className = 'ww-tag';
+      head('wait', 'Checking', site); $('wwBars').hidden = true; $('wwFixes').hidden = true;
+      ['wwMs', 'wwDom', 'wwCert', 'wwGrade'].forEach(function (id) { stat(id, '…'); });
+      note('Loading the home page, looking up the renewal dates and grading it. This can take up to half a minute.');
+      fetch(API + '/public/watch/preview', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ site: site }) })
+        .then(function (r) { return r.json().catch(function () { return { ok: false }; }); })
+        .then(function (d) {
+          if (!d || !d.ok) {
+            head('wait', 'Not checked');
+            ['wwMs', 'wwDom', 'wwCert', 'wwGrade'].forEach(function (id) { stat(id, '–'); });
+            $('wwTag').textContent = 'Sample';
+            note(d && d.error === 'bad_site' ? 'That does not look like a public website address. Try something like yourbusiness.com.'
+              : d && d.error === 'rate_limited' ? 'That is a lot of checks from one connection. Try again in a little while.'
+              : 'We could not run the check just now. Please try again in a minute.');
+            return;
+          }
+          $('wwTag').textContent = 'Live, checked just now'; $('wwTag').className = 'ww-tag live';
+          if (d.up === true) head('up', 'Up', d.host);
+          else if (d.up === false) head('down', 'Down', d.host);
+          else head('wait', 'Unknown', d.host);
+          stat('wwMs', d.ms === null ? '–' : d.ms + ' ms');
+          stat('wwDom', daysText(d.domain_days), daysCls(d.domain_days));
+          stat('wwCert', daysText(d.cert_days), daysCls(d.cert_days));
+          stat('wwGrade', d.grade || '–', 'gold');
+          var said = [];
+          if (d.up === false) said.push('It did not answer just now: ' + (d.error || 'no response') + '. Website Watch would have emailed you about it.');
+          [['domain name', d.domain_days], ['security certificate', d.cert_days]].forEach(function (x) {
+            if (x[1] !== null && x[1] < 0) said.push('Its ' + x[0] + ' has expired.');
+            else if (x[1] !== null && x[1] <= 30) said.push('Its ' + x[0] + ' runs out in ' + daysText(x[1]) + '. We would be warning you now.');
+          });
+          if (!said.length) said.push('All good right now. Website Watch would check it again in 15 minutes, and every 15 minutes after that.');
+          note(said.join(' '));
+          var list = $('wwFixList'); list.textContent = '';
+          (d.top || []).forEach(function (t) { var li = document.createElement('li'); li.textContent = t; list.appendChild(li); });
+          $('wwFixes').hidden = !(d.top && d.top.length);
+          $('wwSite').value = d.host;
+        })
+        .catch(function () { head('wait', 'Not checked'); note('Could not reach us. Check your connection and try again.'); })
+        .then(function () { previewing = false; tryGo.disabled = false; tryGo.textContent = 'Check it'; });
+    }
+    $('wwTry').addEventListener('submit', function (ev) {
+      ev.preventDefault();
+      var s = $('wwTrySite').value.trim().slice(0, 200);
+      if (!s) { $('wwTrySite').focus(); return; }
+      runPreview(s);
+    });
+
+    // Arriving from a report card: ?site=example.com fills the form in and checks the site.
     var qs = new URLSearchParams(location.search);
     var preSite = String(qs.get('site') || '').trim().slice(0, 200);
-    if (preSite && /^[a-z0-9.-]+\.[a-z]{2,}$/i.test(preSite)) $('wwSite').value = preSite.toLowerCase();
+    if (preSite && /^[a-z0-9.-]+\.[a-z]{2,}$/i.test(preSite)) {
+      $('wwSite').value = preSite.toLowerCase();
+      $('wwTrySite').value = preSite.toLowerCase();
+      if (!qs.get('subscribed')) runPreview(preSite.toLowerCase());
+    }
 
     // Back from PayPal: ?subscribed=1&subscription_id=I-... Poll until the webhook lands.
     if (qs.get('subscribed') && qs.get('subscription_id')) {
