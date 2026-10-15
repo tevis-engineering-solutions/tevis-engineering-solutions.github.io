@@ -1919,6 +1919,7 @@
        between the tab and the bid (a full screen on a phone). ‹ All bids brings them back. */
     #viewContracting:has(#ctBid:not([hidden])) .ct-sites,
     #viewContracting:has(#ctBid:not([hidden])) #ctTiles,
+    #viewContracting:has(#ctBid:not([hidden])) #ctHome,
     #viewContracting:has(#ctBid:not([hidden])) #ctBidsH,
     #viewContracting:has(#ctBid:not([hidden])) #ctBidsH + .ct-bar { display:none; }
     /* On a phone the lead filters are an even grid, not four selects ragged against the right edge. */
@@ -2300,6 +2301,20 @@
     .rs-preview p { color:var(--text); font-size:0.82rem; margin:0 0 0.5rem; }
     .rs-preview ul, .rs-preview ol { margin:0 0 0.5rem; padding-left:1.2rem; }
     mark.todo { background:rgba(200,152,48,0.22); color:var(--text); outline:1px dashed var(--gold); border-radius:2px; padding:0 0.15em; }
+    .ct-part-h { font-size:0.82rem; letter-spacing:0.06em; text-transform:uppercase; color:var(--gold); margin:1.6rem 0 0.5rem; padding-top:0.9rem; border-top:1px solid var(--border); }
+    .ct-whylink { background:none; border:0; padding:0; color:inherit; font:inherit; text-align:left; cursor:pointer; text-decoration:underline; text-decoration-color:rgba(200,152,48,0.5); text-underline-offset:2px; }
+    .ct-whylink:hover, .ct-whylink:focus-visible { color:var(--gold); }
+    .ct-home { margin:0.5rem 0 1rem; display:grid; gap:0.35rem; }
+    .ct-home .ct-sec-h { margin:0 0 0.2rem; }
+    .ct-home-row { display:flex; flex-wrap:wrap; gap:0.25rem 0.75rem; align-items:baseline; text-align:left; background:var(--panel); border:1px solid var(--border); border-radius:10px; padding:0.5rem 0.75rem; color:inherit; font:inherit; cursor:pointer; }
+    .ct-home-row .r { font-weight:700; }
+    .ct-home-row.urgent { border-color:rgba(220,80,60,0.6); }
+    .ct-block { font-size:0.74rem; color:var(--muted); margin-top:0.3rem; }
+    .ct-q-ai { display:flex; flex-wrap:wrap; gap:0.25rem; align-items:center; margin:0.35rem 0; }
+    .ct-q-ai p { flex-basis:100%; margin:0.15rem 0 0; }
+    .ct-add { padding:0.5rem 0; border-bottom:1px solid var(--border); }
+    .ct-add.done .row-main { opacity:0.7; }
+    .ct-advice { margin-bottom:0.75rem; }
     .sb-wrap { overflow-x:auto; margin:0.25rem 0 0.75rem; }
     .sb-table { width:100%; border-collapse:collapse; font-size:0.8rem; }
     .sb-table th { text-align:left; font-weight:700; color:var(--muted); border-bottom:1px solid var(--border); padding:0.3rem 0.4rem; white-space:nowrap; }
@@ -3301,6 +3316,7 @@
       <div class="ct-site-list" id="ctSites"></div>
     </section>
     <div class="tiles ct-tiles" id="ctTiles"></div>
+    <section class="ct-home" id="ctHome" hidden aria-label="What needs doing"></section>
     <section class="ct-queue" id="ctQueue" aria-labelledby="ctqTitle">
       <div class="ct-q-head">
         <div><h2 id="ctqTitle">Queue: posts to evaluate <span class="ct-chip gold" id="ctqCount" hidden></span></h2><div class="row-sub" id="ctqStatus">Loading&hellip;</div></div>
@@ -3373,6 +3389,8 @@
           <button type="button" class="fpill on" data-sort="best" aria-pressed="true">Best match</button>
           <button type="button" class="fpill" data-sort="due_asc" aria-pressed="false"><i class="fa-solid fa-arrow-up-short-wide" aria-hidden="true"></i> Closing soonest</button>
           <button type="button" class="fpill" data-sort="due_desc" aria-pressed="false"><i class="fa-solid fa-arrow-down-wide-short" aria-hidden="true"></i> Closing latest</button>
+          <button type="button" class="fpill" data-sort="ai_fit" aria-pressed="false"><i class="fa-solid fa-wand-magic-sparkles" aria-hidden="true"></i> Best AI fit</button>
+          <button type="button" class="ct-btn sm" id="ctqTriage" title="Claude reads the next untriaged matches (fit, summary, red flags)">Triage with AI</button>
         </div>
       </div>
       <div id="ctqList"><div class="state">Loading&hellip;</div></div>
@@ -3428,6 +3446,8 @@
       <details id="ctSourcing"><summary>Sourcing accounts</summary><div class="ct-ref-body" id="ctSourcingBody"></div></details>
       <details id="ctRefs"><summary>Reference material (what BidBuilder reads)</summary><div class="ct-ref-body" id="ctRefsBody"></div></details>
       <details id="ctTabs"><summary>Tabulation log</summary><div class="ct-ref-body" id="ctTabsBody"></div></details>
+      <details id="ctLibrary"><summary>Answer library</summary><div class="ct-ref-body" id="ctLibraryBody"></div></details>
+      <details id="ctResults"><summary>Results by agency and source</summary><div class="ct-ref-body" id="ctResultsBody"></div></details>
     </section>
   </main>
   <main class="wrap" id="viewProjects" aria-label="Projects" hidden>
@@ -17592,6 +17612,7 @@
           if (res[0].ok && !res[0].cached) ctRef = res[0];
           if (ctRef) { renderCtSites(); renderCtRef(); fillCtNewSelects(); }
           if (res[1].ok) renderCtTiles(res[1].pipeline);
+          renderCtHome();
           if (res[2].ok) { ctBidsCache = res[2].bids || []; renderCtBoard(); }
           else document.getElementById('ctBoard').innerHTML = '<div class="state">Could not load bids.</div>';
           if (ctBidId) openBid(ctBidId, true);
@@ -17640,6 +17661,27 @@
       });
     }
 
+    // What needs doing across every bid: deadlines, addenda, Q&A, the next step after an
+    // award, a late payment (bids.js bidsNeedingAttention). Each line opens its bid.
+    function renderCtHome() {
+      var w = document.getElementById('ctHome');
+      if (!w) return;
+      api('/admin/contracting/home').then(function (r) {
+        w.textContent = '';
+        if (!r.ok || !r.attention.length) { w.hidden = true; return; }
+        w.hidden = false;
+        w.appendChild(el('h3', 'ct-sec-h', 'What needs doing'));
+        r.attention.slice(0, 12).forEach(function (a) {
+          var b = el('button', 'ct-home-row' + (a.urgent ? ' urgent' : ''));
+          b.type = 'button';
+          b.appendChild(el('span', 'r', a.reason));
+          b.appendChild(el('span', 'row-sub', a.number + ' \u00b7 ' + a.title));
+          b.addEventListener('click', function () { openBid(a.id); });
+          w.appendChild(b);
+        });
+        if (r.attention.length > 12) w.appendChild(el('p', 'row-sub', 'And ' + (r.attention.length - 12) + ' more on the board below.'));
+      });
+    }
     function renderCtTiles(p) {
       var w = document.getElementById('ctTiles');
       w.textContent = '';
@@ -17705,6 +17747,7 @@
       if (b.high_risks) chips.appendChild(el('span', 'ct-chip red', b.high_risks + ' high risk'));
       if (CT_PRE.indexOf(b.status) >= 0 && b.not_ready) chips.appendChild(el('span', 'ct-chip', b.not_ready + ' to fix'));
       c.appendChild(chips);
+      if (CT_PRE.indexOf(b.status) >= 0 && b.blockers && b.blockers.length) c.appendChild(el('div', 'ct-block', b.blockers[0].length > 90 ? b.blockers[0].slice(0, 90) + '\u2026' : b.blockers[0]));
       var v = el('div', 'v');
       v.appendChild(el('span', null, b.lines ? ctMoney(b.total_bid_cents) : 'No lines yet'));
       if (b.lines && b.gross_pct != null) v.appendChild(el('span', b.gross_cents < 0 ? 'bad' : null, b.gross_pct + '% gross'));
@@ -17944,6 +17987,16 @@
       if (p.status === 'passed') chips.appendChild(el('span', 'ct-chip', 'Passed' + (p.note ? ': ' + p.note : '')));
       if (p.gone_at) chips.appendChild(el('span', 'ct-chip', 'No longer listed'));
       c.appendChild(chips);
+      // Claude's read of it (feed_triage.js): fit, a summary, red flags.
+      if (p.ai) {
+        var ai = el('div', 'ct-q-ai');
+        var fit = el('span', 'ct-chip ' + (p.ai.fit >= 80 ? 'green' : p.ai.fit >= 40 ? 'gold' : 'red'), 'Fit ' + p.ai.fit + (p.ai.effort ? ' \u00b7 ' + ({ S: 'quick', M: 'a day or two', L: 'full proposal' }[p.ai.effort] || p.ai.effort) : ''));
+        fit.title = 'Claude\u2019s read of the title and description against the capability statement';
+        ai.appendChild(fit);
+        (p.ai.flags || []).forEach(function (fl) { ai.appendChild(el('span', 'ct-chip red', fl)); });
+        if (p.ai.summary) ai.appendChild(el('p', 'row-sub', p.ai.summary));
+        c.appendChild(ai);
+      }
       var det = el('details', 'ct-q-det');
       det.appendChild(el('summary', null, 'Details'));
       if (p.description) det.appendChild(el('p', null, p.description));
@@ -18014,6 +18067,15 @@
       ctqSource = ctqSrcSel.value; ctqShowAll = false;
       try { localStorage.setItem('tes_ctq_source', ctqSource); } catch (e) {}
       loadQueue();
+    });
+    document.getElementById('ctqTriage').addEventListener('click', function (e) {
+      var b = e.currentTarget;
+      b.disabled = true; b.textContent = 'Reading\u2026';
+      api('/admin/feed/triage', { method: 'POST', body: {} }).then(function (r) {
+        b.disabled = false; b.textContent = 'Triage with AI';
+        toast(r.ok ? (r.triaged ? r.triaged + ' posting' + (r.triaged === 1 ? '' : 's') + ' read' : 'Nothing left to triage') : (r.message || ctErr(r)));
+        if (r.ok) loadQueue();
+      });
     });
     var ctqSortPills = document.querySelectorAll('#ctqSort .fpill');
     var markSort = function () {
@@ -18681,8 +18743,9 @@
     // One line for what a capture or a pull brought in.
     // Built on every redraw, read only when the tab is opened.
     function ctSubmitPane(pane) {
+      var host = pane.isPart && pane.parentNode ? pane.parentNode : pane;
       var load = function () { if (pane.loaded) return; pane.loaded = true; ctSubmit(pane); };
-      if (!pane.hidden) load(); else pane.btn.addEventListener('click', load);
+      if (!host.hidden) load(); else pane.btn.addEventListener('click', load);
     }
     function ctPortalSummary(x) {
       var m = x.merged || { added: 0, linked: 0, changed: [] };
@@ -19025,6 +19088,31 @@
       if (ctUnsaved().length || ctDraftPending() || ctRespPending()) { e.preventDefault(); e.returnValue = ''; }
     });
 
+    // The bid's tabs and the parts each one holds (renderBid).
+    var CT_TABS = [
+      ['Overview', ['Overview', 'Triage', 'History']],
+      ['Solicitation', ['Files', 'Draft', 'Requirements', 'Q&A']],
+      ['Pricing', ['Lines', 'Sourcing']],
+      ['Risk', ['Risk']],
+      ['Response', ['Response']],
+      ['Submit', ['Submit']],
+      ['After award', ['After award', 'Tabulation']],
+    ];
+    // Which part fixes each kind of readiness reason, so the list links to it.
+    function ctWhyPart(t) {
+      return /unit price|Stock not confirmed|Markup|Negative margin|lead time|Lead time|electrical/i.test(t) ? 'Lines'
+        : /High risk/.test(t) ? 'Risk' : /Triage steps/.test(t) ? 'Triage'
+          : /Missing from the packet|Required form|Addendum/.test(t) ? 'Files'
+            : /Mandatory requirement|review finding/.test(t) ? 'Requirements'
+              : /Bracketed|delivery time|response/i.test(t) ? 'Response'
+                : /deadline|No lines/.test(t) ? 'Overview' : null;
+    }
+    function ctGoPart(n) {
+      var p = ctPanes[n];
+      if (!p) return;
+      p.btn.click();
+      setTimeout(function () { p.scrollIntoView({ behavior: 'smooth', block: 'start' }); }, 30);
+    }
     function renderBid() {
       var d = ctDetail, b = d.bid;
       var p = document.getElementById('ctBid');
@@ -19096,7 +19184,17 @@
         why.appendChild(el('h4', null, d.readiness.length ? 'Why this isn’t ready' : 'Ready to mark draft ready'));
         if (d.readiness.length) {
           var ul = el('ul');
-          d.readiness.forEach(function (s) { ul.appendChild(el('li', null, s)); });
+          d.readiness.forEach(function (s) {
+            var li = el('li');
+            var part = ctWhyPart(s);
+            if (part) {
+              var a = el('a', 'ct-whylink', s); a.href = '#b=' + b.id;
+              a.title = 'Go to ' + part;
+              a.addEventListener('click', function (e) { e.preventDefault(); ctGoPart(part); });
+              li.appendChild(a);
+            } else li.textContent = s;
+            ul.appendChild(li);
+          });
           why.appendChild(ul);
         } else why.appendChild(el('div', 'row-sub', 'Every guardrail in CONTRACTING.md s6.5 is satisfied.'));
         panel.appendChild(why);
@@ -19112,27 +19210,38 @@
       panel.appendChild(econ);
       panel.appendChild(el('p', 'ct-note', e.payment_note));
 
-      var tabs = paneTabs(panel, ['Overview', 'Draft', 'Requirements', 'Triage', 'Lines', 'Sourcing', 'Risk', 'Q&A', 'Files', 'Response', 'Submit', 'Tabulation', 'History'], 'bid');
+      var tabs = paneTabs(panel, CT_TABS.map(function (t) { return t[0]; }), 'bid');
       var openRisks = d.risks.filter(function (x) { return !x.resolved && !x.acknowledged_note; }).length;
-      tabs.pane('Triage').btn.textContent = 'Triage ' + d.triage.filter(function (s) { return s.done; }).length + '/' + d.triage.length;
-      tabs.count('Lines', d.lines.length);
+      tabs.count('Pricing', d.lines.length);
       tabs.count('Risk', openRisks);
-      tabs.count('Q&A', d.qa.length);
-      tabs.count('Files', d.files.length);
-      tabs.count('Tabulation', d.tabulations.length);
-      if (d.requirements_summary) tabs.count('Requirements', d.requirements_summary.open);
-      CT_BUILDERS = { Overview: ctOverview, Requirements: ctRequirements, Triage: ctTriage, Lines: ctLines, Sourcing: ctSourcing, Risk: ctRisk, 'Q&A': ctQa, Files: ctFiles, Draft: ctDraft, Response: ctResponse, Submit: ctSubmitPane, Tabulation: ctTabulation, History: ctHistory };
+      var unacked = (d.addenda || []).filter(function (a) { return !a.acknowledged_at; }).length;
+      tabs.count('Solicitation', (d.requirements_summary ? d.requirements_summary.open : 0) + unacked);
+      tabs.count('After award', d.tabulations.length);
+      var partTitle = {
+        Triage: 'Triage ' + d.triage.filter(function (s) { return s.done; }).length + '/' + d.triage.length, History: 'History',
+        Draft: d.saved_draft ? 'BidBuilder (a draft is saved)' : 'BidBuilder', Requirements: 'Requirements' + (d.requirements_summary && d.requirements_summary.open ? ' (' + d.requirements_summary.open + ' open)' : ''),
+        'Q&A': 'Questions to the agency' + (d.qa.length ? ' (' + d.qa.length + ')' : ''), Sourcing: 'Sourcing research', Tabulation: 'Tabulation' + (d.tabulations.length ? ' (' + d.tabulations.length + ')' : ''),
+      };
+      CT_BUILDERS = { Overview: ctOverview, Requirements: ctRequirements, Triage: ctTriage, Lines: ctLinesPart, Risk: ctRisk, 'Q&A': ctQa, Files: ctFilesPart, Draft: ctDraft, Sourcing: ctSourcing, Response: ctResponse, Submit: ctSubmitPane, Tabulation: ctTabulation, History: ctHistory, 'After award': ctAfterAward };
       ctPanes = {};
-      Object.keys(CT_BUILDERS).forEach(function (n) {
-        var pane = tabs.pane(n);
-        ctPanes[n] = pane;
-        if (keep[n]) {
-          keep[n].forEach(function (node) { pane.appendChild(node); });
-          pane.btn.classList.add('dirty');
-          if (n === 'Overview' || n === 'Lines' || n === 'Response') ctTrack(pane, n);
-        } else CT_BUILDERS[n](pane);
+      // Each tab holds one or more parts. A part keeps its old name, so unsaved-edit
+      // tracking and the repaint helpers work on it as they did on a whole tab.
+      CT_TABS.forEach(function (t) {
+        var pane = tabs.pane(t[0]);
+        t[1].forEach(function (n, i) {
+          if (i > 0) pane.appendChild(el('h3', 'ct-part-h', partTitle[n] || n));
+          var part = el('div', 'ct-part');
+          part.btn = pane.btn; part.isPart = true;
+          if (n === 'Triage') part.setAttribute('data-nodirty', '');
+          pane.appendChild(part);
+          ctPanes[n] = part;
+          if (keep[n]) {
+            keep[n].forEach(function (node) { part.appendChild(node); });
+            pane.btn.classList.add('dirty');
+            if (n === 'Overview' || n === 'Lines' || n === 'Response') ctTrack(part, n);
+          } else CT_BUILDERS[n](part);
+        });
       });
-      if (d.saved_draft) tabs.pane('Draft').btn.textContent = 'Draft (saved)';
       p.appendChild(panel);
       Array.prototype.forEach.call(document.querySelectorAll('.ct-card'), function (c) { c.classList.remove('sel'); });
     }
@@ -19150,8 +19259,13 @@
       var ta = el('textarea');
       ta.rows = 2;
       ta.setAttribute('aria-label', 'Note');
-      ta.placeholder = to === 'submitted' ? 'Submitted through the Infor portal at 1:40pm, confirmation #...' : to === 'no_bid' ? 'Why we are passing' : 'Note';
+      ta.placeholder = to === 'submitted' ? 'Submitted through the Infor portal at 1:40pm' : to === 'no_bid' ? 'Why we are passing' : 'Note';
       box.appendChild(ta);
+      var conf = null;
+      if (to === 'submitted') {
+        conf = ctInput('text', '', { maxlength: 300, placeholder: 'Confirmation number or receipt (from the portal or the email)', 'aria-label': 'Confirmation number' });
+        box.appendChild(conf);
+      }
       var rr = el('div', 'reply-row');
       var go = el('button', 'prim', 'Confirm');
       go.type = 'button';
@@ -19162,7 +19276,7 @@
         if (!ta.value.trim()) { ta.focus(); toast('Add a note first.'); return; }
         if (reason && !reason.value) { reason.focus(); toast('Pick why it closed.'); return; }
         go.disabled = true;
-        api('/admin/bids/' + ctBidId + '/transition', { method: 'POST', body: { to: to, note: ta.value, closed_reason: reason ? reason.value : undefined } }).then(function (r) {
+        api('/admin/bids/' + ctBidId + '/transition', { method: 'POST', body: { to: to, note: ta.value, closed_reason: reason ? reason.value : undefined, confirmation: conf ? conf.value : undefined } }).then(function (r) {
           go.disabled = false;
           if (r.ok) { ctDetail = r; renderBid(); toast('Now ' + r.bid.status_label); reloadCtLists(); return; }
           if (r.error === 'not_ready' && r.reasons) {
@@ -19747,6 +19861,194 @@
       api('/admin/bid-forms?all=1').then(function (r) { if (r.ok) paint(r.forms); else { list.textContent = ''; list.appendChild(el('div', 'ct-why', ctErr(r))); } });
     }
 
+    // ---- addenda (bid_lifecycle.js), at the top of the files ----
+    function ctFilesPart(pane) { ctAddenda(pane); ctFiles(pane); }
+    function ctAddenda(pane) {
+      var d = ctDetail, list = d.addenda || [];
+      if (!list.length) return;
+      var box = el('div', 'ct-prompt ct-addenda');
+      box.appendChild(el('h4', 'addsec', 'Addenda'));
+      list.forEach(function (a) {
+        var row = el('div', 'ct-add' + (a.acknowledged_at ? ' done' : ''));
+        var head = el('div', 'row-main', 'Addendum ' + a.n + ': ' + (a.title || a.filename || 'untitled'));
+        row.appendChild(head);
+        row.appendChild(el('div', 'row-sub', 'Received ' + fmtDate(a.received_at) + (a.acknowledged_at ? ' · acknowledged ' + fmtDate(a.acknowledged_at) + (a.ack_note ? ': ' + a.ack_note : '') : ' · not acknowledged yet')));
+        var im = a.impact;
+        if (im) {
+          var ib = el('div', 'ct-claude-note');
+          ib.appendChild(el('p', null, im.summary || ''));
+          if (im.deadline) ib.appendChild(el('p', 'short', 'Deadline now: ' + im.deadline + '. Check the bid\u2019s deadline on Overview.'));
+          if (im.acknowledgment) ib.appendChild(el('p', 'row-sub', 'To acknowledge: ' + im.acknowledgment));
+          var ch = (im.changes || []);
+          if (ch.length) {
+            var ul = el('ul');
+            ch.forEach(function (c) { ul.appendChild(el('li', 'row-sub', c.change.charAt(0).toUpperCase() + c.change.slice(1) + (c.ref ? ' ' + c.ref : '') + ': ' + c.text)); });
+            ib.appendChild(ul);
+          }
+          if (im.added && im.added.length) ib.appendChild(el('p', 'row-sub', 'Added to Requirements: ' + im.added.join(', ') + '.'));
+          if (im.sections_to_revise && im.sections_to_revise.length) ib.appendChild(el('p', 'row-sub', 'Revise on Response: ' + im.sections_to_revise.join(', ') + '.'));
+          row.appendChild(ib);
+        }
+        var rr = el('div', 'reply-row');
+        if (!a.acknowledged_at) {
+          var ack = el('button', 'prim', 'Acknowledge'); ack.type = 'button';
+          ack.addEventListener('click', function () {
+            var n = prompt('How was addendum ' + a.n + ' acknowledged? (signed form attached, checkbox in the portal...)', (im && im.acknowledgment) || '');
+            if (n == null) return;
+            ctSend(ack, '/addenda/' + a.id, 'PATCH', { acknowledged: true, note: n }, 'Addendum ' + a.n + ' acknowledged');
+          });
+          rr.appendChild(ack);
+        }
+        var rd = el('button', null, im ? 'Read it again' : 'Read its impact'); rd.type = 'button';
+        rd.title = 'Claude reads the addendum against the requirements: new ones are added, the rest listed here.';
+        rd.addEventListener('click', function () {
+          rd.disabled = true; rd.textContent = 'Reading\u2026';
+          ctRunJob('/admin/bids/' + d.bid.id + '/addenda/' + a.id + '/impact', {}).then(function (r) {
+            rd.disabled = false; rd.textContent = 'Read it again';
+            if (!r.ok) { toast(r.message || ctErr(r)); return; }
+            toast('Addendum ' + a.n + ' read' + (r.added && r.added.length ? ': ' + r.added.length + ' requirement' + (r.added.length === 1 ? '' : 's') + ' added' : ''));
+            openBid(d.bid.id, true);
+          });
+        });
+        rr.appendChild(rd);
+        row.appendChild(rr);
+        box.appendChild(row);
+      });
+      pane.appendChild(box);
+    }
+
+    // ---- markup advice from past tabulations (bid_tabulation.js), above the lines ----
+    function ctLinesPart(pane) { ctAdvice(pane); ctLines(pane); }
+    function ctAdvice(pane) {
+      var a = ctDetail.markup_advice;
+      if (!a || !a.note) return;
+      var box = el('div', 'ct-claude-note ct-advice');
+      box.setAttribute('data-nodirty', '');
+      box.appendChild(el('p', null, a.note));
+      if (a.suggested_max_markup_pct != null) {
+        var over = ctDetail.lines.filter(function (l) { return l.bid && l.markup_bp != null && l.markup_bp / 100 > a.suggested_max_markup_pct; });
+        box.appendChild(el('p', over.length ? 'short' : 'row-sub', 'Suggested ceiling: about ' + a.suggested_max_markup_pct + '% over landed cost (from ' + a.n + ' past result' + (a.n === 1 ? '' : 's') + ').'
+          + (over.length ? ' Over it now: line ' + over.map(function (l) { return l.line_no; }).join(', ') + '.' : '')));
+      }
+      pane.appendChild(box);
+    }
+
+    // ---- after the award (bid_lifecycle.js) ----
+    function ctDateIn(ts) { var i = ctInput('date', ts ? new Date(ts * 1000).toISOString().slice(0, 10) : ''); return i; }
+    function ctDateOut(v) { if (!v) return null; var m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(v); return m ? Math.floor(Date.UTC(+m[1], +m[2] - 1, +m[3], 17) / 1000) : null; }
+    function ctAfterAward(pane) {
+      var d = ctDetail, b = d.bid, pa = d.post_award || {};
+      var won = ['awarded', 'funded', 'closed'].indexOf(b.status) >= 0;
+      if (b.submit_confirmation || b.submitted_at) pane.appendChild(el('p', 'row-sub', 'Responded ' + (b.submitted_at ? fmt(b.submitted_at) : '') + (b.submit_confirmation ? ' \u00b7 confirmation ' + b.submit_confirmation : '')));
+      if (won) {
+        if (pa.next) pane.appendChild(el('div', 'ct-why' + (pa.overdue_days ? '' : ' ok'), 'Next: ' + pa.next));
+        var f = el('div', 'ct-form');
+        f.setAttribute('data-nodirty', '');
+        var poN = ctField(f, 'PO number', ctInput('text', b.po_number || '', { maxlength: 80 }));
+        var poD = ctField(f, 'PO date', ctDateIn(b.po_date));
+        var poA = ctField(f, 'PO amount $', ctInput('text', ctDollars(b.po_cents), { inputmode: 'decimal' }));
+        var dl = ctField(f, 'Delivered', ctDateIn(b.delivered_at));
+        var ac = ctField(f, 'Accepted', ctDateIn(b.accepted_at));
+        var inN = ctField(f, 'Invoice number', ctInput('text', b.invoice_number || '', { maxlength: 80 }));
+        var inD = ctField(f, 'Invoiced', ctDateIn(b.invoiced_at));
+        var inA = ctField(f, 'Invoice amount $', ctInput('text', ctDollars(b.invoice_cents), { inputmode: 'decimal' }));
+        var terms = ctField(f, 'Pay terms (days)', ctInput('number', b.pay_terms_days == null ? 30 : b.pay_terms_days, { min: 0, max: 365 }));
+        var pdD = ctField(f, 'Paid', ctDateIn(b.paid_at));
+        var pdA = ctField(f, 'Paid amount $', ctInput('text', ctDollars(b.paid_cents), { inputmode: 'decimal' }));
+        pane.appendChild(f);
+        if (pa.payment_due_at) pane.appendChild(el('p', 'row-sub', 'Payment due ' + fmtDate(pa.payment_due_at) + (pa.days_to_pay != null ? ' \u00b7 paid in ' + ctDays(pa.days_to_pay) : '')));
+        var sv = el('button', 'ct-btn prim', 'Save'); sv.type = 'button';
+        sv.addEventListener('click', function () {
+          ctSend(sv, '', 'PATCH', { po_number: poN.value, po_date: ctDateOut(poD.value), po: poA.value, delivered_at: ctDateOut(dl.value), accepted_at: ctDateOut(ac.value),
+            invoice_number: inN.value, invoiced_at: ctDateOut(inD.value), invoice: inA.value, pay_terms_days: terms.value, paid_at: ctDateOut(pdD.value), paid: pdA.value }, 'Saved');
+        });
+        pane.appendChild(sv);
+      } else pane.appendChild(el('p', 'ct-note', 'The PO, delivery, invoice and payment are recorded here once the bid is awarded.'));
+      var h = d.agency_history;
+      if (h && h.bids && h.bids.length) {
+        var hb = el('div', 'ct-prompt');
+        hb.appendChild(el('h4', 'addsec', 'With ' + b.agency.replace(/\s*\(.*\)\s*$/, '') + ' before'));
+        hb.appendChild(el('p', 'row-sub', h.won + ' won, ' + h.lost + ' lost' + (h.avg_days_to_decision != null ? ' \u00b7 decides in about ' + ctDays(h.avg_days_to_decision) : '') + (h.avg_days_to_pay != null ? ' \u00b7 pays in about ' + ctDays(h.avg_days_to_pay) : '')
+          + (h.competitors && h.competitors.length ? ' \u00b7 lost to ' + h.competitors.join(', ') : '')));
+        h.bids.forEach(function (x) {
+          var r = el('button', 'ct-whylink', x.number + ' \u00b7 ' + x.title + ' \u00b7 ' + ((ctRef && ctRef.vocab.status_label[x.status]) || x.status)
+            + (x.winning_cents != null ? ' \u00b7 ours ' + ctMoney(x.our_cents) + ', winning ' + ctMoney(x.winning_cents) + (x.winner ? ' (' + x.winner + ')' : '') : ''));
+          r.type = 'button';
+          r.addEventListener('click', function () { if (ctLeaveOk()) routeHash('#b=' + x.id, true); });
+          hb.appendChild(r);
+        });
+        pane.appendChild(hb);
+      }
+    }
+
+    // ---- reading a tabulation sheet (bid_tabulation.js) ----
+    var ctTabIn = {};
+    function ctTabImport(pane) {
+      var d = ctDetail, id = d.bid.id;
+      var pdfs = d.files.filter(function (f) { return f.content_type === 'application/pdf' && (f.role === 'tabulation' || f.role === 'award'); });
+      var st = ctTabIn[id];
+      if (!pdfs.length && !st) {
+        pane.appendChild(el('p', 'row-sub', 'Attach the agency\u2019s tabulation sheet under Solicitation \u2192 Files (as Tabulation) and Claude can read every bidder\u2019s prices into it.'));
+        return;
+      }
+      var box = el('div', 'ct-prompt');
+      box.setAttribute('data-nodirty', '');
+      if (st && st.preview) {
+        var pv = st.preview;
+        box.appendChild(el('h4', 'addsec', 'From ' + pv.filename));
+        var t = el('table', 'sb-table');
+        var hr = el('tr'); ['Bidder', 'Total', ''].forEach(function (x) { hr.appendChild(el('th', null, x)); }); t.appendChild(hr);
+        pv.bidders.forEach(function (bd) {
+          var tr = el('tr', bd.responsive ? null : 'off');
+          tr.appendChild(el('td', null, bd.name + (bd.is_tes ? ' (TES)' : '')));
+          tr.appendChild(el('td', 'num', bd.total_cents != null ? money(bd.total_cents) : '\u2014'));
+          tr.appendChild(el('td', 'row-sub', bd.responsive ? (bd.name === pv.winner ? 'winner' : '') : 'rejected'));
+          t.appendChild(tr);
+        });
+        var w = el('div', 'sb-wrap'); w.appendChild(t); box.appendChild(w);
+        if (pv.notes) box.appendChild(el('p', 'row-sub', pv.notes));
+        var win = ctSelect(pv.bidders.map(function (bd) { return [bd.name, bd.name + (bd.is_tes ? ' (TES)' : '')]; }), pv.winner || '');
+        win.setAttribute('aria-label', 'Winner');
+        var lr = el('div', 'reply-row'); lr.appendChild(el('span', 'row-sub', 'Award went to')); lr.appendChild(win);
+        var log = el('button', 'prim', 'Log it'); log.type = 'button';
+        log.addEventListener('click', function () {
+          log.disabled = true;
+          api('/admin/bids/' + id + '/tabimport/' + st.job, { method: 'POST', body: { winner: win.value } }).then(function (r) {
+            log.disabled = false;
+            if (!r.ok) { toast(ctErr(r)); return; }
+            delete ctTabIn[id]; ctApply(r, 'Tabulation logged'); reloadCtRef();
+          });
+        });
+        var drop = el('button', null, 'Discard'); drop.type = 'button';
+        drop.addEventListener('click', function () { delete ctTabIn[id]; ctRebuildPart('Tabulation'); });
+        lr.appendChild(log); lr.appendChild(drop);
+        box.appendChild(lr);
+      } else {
+        box.appendChild(el('p', 'row-sub', st && st.busy ? 'Reading ' + st.filename + '\u2026' : st && st.error ? st.error : 'Read a tabulation sheet into every bidder\u2019s prices:'));
+        pdfs.forEach(function (f) {
+          var b2 = el('button', 'ct-btn sm', 'Read ' + f.filename); b2.type = 'button';
+          b2.disabled = !!(st && st.busy);
+          b2.addEventListener('click', function () {
+            ctTabIn[id] = { busy: true, filename: f.filename };
+            ctRebuildPart('Tabulation');
+            ctRunJob('/admin/bids/' + id + '/tabimport', { file_id: f.id }).then(function (r) {
+              var prev = r.preview || (r.ok && r.bidders ? r : null);
+              ctTabIn[id] = r.ok && prev ? { preview: prev, job: r.job_id } : { error: r.message || ctErr(r) };
+              if (ctBidId === id) ctRebuildPart('Tabulation');
+            });
+          });
+          box.appendChild(b2);
+        });
+      }
+      pane.appendChild(box);
+    }
+    function ctRebuildPart(n) {
+      var p = ctPanes[n];
+      if (!p || !ctDetail) return;
+      p.textContent = '';
+      CT_BUILDERS[n](p);
+    }
+
     function ctFiles(pane) {
       var have = {};
       ctDetail.files.forEach(function (f) { have[f.role] = true; });
@@ -19844,7 +20146,7 @@
       var p = ctPanes.Files;
       var keepScroll = window.scrollY;
       p.textContent = '';
-      ctFiles(p);
+      ctFilesPart(p);
       window.scrollTo(0, keepScroll);
     }
     function ctQuoteStart(id, f) {
@@ -20468,7 +20770,7 @@
           var tick = function () {
             api('/admin/ai-jobs/' + r.job_id).then(function (j) {
               var job = j && j.job;
-              if (!j.ok || !job) { setTimeout(tick, 6000); return; }
+              if (!j.ok || !job) { if (ctJobGone(j)) { resolve(j); return; } setTimeout(tick, 6000); return; }
               if (job.status === 'queued' || job.status === 'running') { if (onStep) onStep(job.step, r.job_id); setTimeout(tick, 3000); return; }
               if (job.status === 'done') resolve(Object.assign({ ok: true, job_id: r.job_id }, job.result || {}));
               else resolve({ ok: false, error: job.error || job.status, message: job.status === 'canceled' ? 'Canceled.' : job.message, job_id: r.job_id });
@@ -20764,6 +21066,22 @@
       var ed = el('button', 'ct-btn sm', editing ? 'Done' : (text.trim() ? 'Edit' : 'Write it myself')); ed.type = 'button';
       ed.addEventListener('click', function () { st.open[s.key] = !editing; if (!editing) st.focus = s.key; ctRespRender(id); });
       rr.appendChild(ed);
+      if (text.trim()) {
+        var lib = el('button', 'ct-btn sm', 'Save to library'); lib.type = 'button';
+        lib.title = 'Keep this section as precedent: the writer reuses its wording on related bids.';
+        lib.addEventListener('click', function () {
+          lib.disabled = true;
+          var go = function () {
+            api('/admin/bids/' + id + '/snippets', { method: 'POST', body: { section_key: s.key } }).then(function (r) {
+              lib.disabled = false;
+              toast(r.ok ? s.title + ' saved to the answer library' : (r.message || ctErr(r)));
+              if (r.ok) renderCtLibrary();
+            });
+          };
+          if (st.timer) { ctRespSave(id, true); setTimeout(go, 1200); } else go();
+        });
+        rr.appendChild(lib);
+      }
       var ai = ctSelect([['', text.trim() ? 'Ask Claude…' : 'Ask Claude to write it…']].concat(CT_RS_ACTIONS.filter(function (a) { return text.trim() || a[0] === 'write' || a[0] === 'custom'; })), '');
       ai.setAttribute('aria-label', 'Ask Claude about ' + s.title);
       ai.className = 'rs-menu';
@@ -20906,10 +21224,10 @@
     function ctPropState(id) { return ctProp[id] || (ctProp[id] = {}); }
 
     // Starts a run. steps: [] for all four, or the ones to rerun.
-    function ctPropStart(id, steps) {
+    function ctPropStart(id, steps, resume) {
       var ps = ctPropState(id);
       if (ps.job || ps.starting) return;
-      ps.starting = true; ps.error = null;
+      ps.starting = true; ps.error = null; ps.failedJob = null;
       ps.steps = steps && steps.length ? steps : CT_PW_STEPS.map(function (s) { return s[0]; });
       ps.at = Date.now(); ps.step = null;
       var rs = ctRespState(id);
@@ -20917,7 +21235,7 @@
       var flush = rs.timer || rs.saving ? (rs.timer && ctRespSave(id, true), new Promise(function (r) { setTimeout(r, 900); })) : Promise.resolve();
       ctPropPaint(id);
       flush.then(function () {
-        return api('/admin/bids/' + id + '/proposal', { method: 'POST', body: { steps: steps || [] } });
+        return api('/admin/bids/' + id + '/proposal', { method: 'POST', body: resume ? { resume: resume } : { steps: steps || [] } });
       }).then(function (r) {
         ps.starting = false;
         if (r && r.queued && r.job_id) { ps.job = r.job_id; ps.queued = true; ctPropWatch(id); ctPropPaint(id); return; }
@@ -20955,6 +21273,8 @@
       var here = ctBidId === id;
       if (!r.ok) {
         ps.error = r.message || ctErr(r);
+        // A run that stopped part way keeps what it did; Continue picks up from there.
+        ps.failedJob = r.job_id || null;
         toast((here ? '' : ctBidNo(id) + ': ') + 'The writer stopped: ' + ps.error);
       } else {
         if (r.write) { ps.result = r; ps.dismissed = false; }
@@ -21191,7 +21511,16 @@
       bar.appendChild(find); bar.appendChild(whole); bar.appendChild(rev);
       box.appendChild(bar);
       if (ps.job || ps.starting) box.appendChild(ctPropStrip(id));
-      else if (ps.error) box.appendChild(el('div', 'ct-why', 'The last run stopped: ' + ps.error));
+      else if (ps.error) {
+        var stop = el('div', 'ct-why', 'The last run stopped: ' + ps.error);
+        if (ps.failedJob) {
+          var cont = el('button', 'ct-btn sm prim', 'Continue from where it stopped'); cont.type = 'button';
+          cont.title = 'Runs only the passes that had not finished; what the earlier ones saved is kept.';
+          cont.addEventListener('click', function () { ctPropStart(id, null, ps.failedJob); });
+          stop.appendChild(cont);
+        }
+        box.appendChild(stop);
+      }
 
       var sections = (pane.layout || []).filter(function (x) { return x.type !== 'signature'; });
       var titleOf = {}; sections.forEach(function (x) { titleOf[x.key] = x.title; });
@@ -21411,7 +21740,7 @@
       if (!p || !ctDetail) return;
       p.textContent = '';
       ctDraft(p);
-      p.btn.textContent = ctDetail.saved_draft ? 'Draft (saved)' : 'Draft';
+      if (!p.isPart) p.btn.textContent = ctDetail.saved_draft ? 'Draft (saved)' : 'Draft';
     }
     // The packet PDFs on the open bid, which the Worker can send to Claude whole.
     function ctPacketPdfs() {
@@ -21686,6 +22015,7 @@
 
     function ctTabulation(pane) {
       pane.appendChild(el('p', 'ct-note', 'Win or lose, request the public bid tabulation after every award. Competitor pricing is free calibration data.'));
+      if (['submitted', 'pending', 'awarded', 'lost', 'funded', 'closed'].indexOf(ctDetail.bid.status) >= 0) ctTabImport(pane);
       ctDetail.tabulations.forEach(function (t) {
         var right = el('b', 'num', t.winning_cents != null ? money(t.winning_cents) : '');
         var r = row((t.won ? 'Won' : 'Lost') + (t.competitor_name ? ' to ' + t.competitor_name : ''), 'Ours ' + ctMoney(t.our_cents) + ' · winning ' + ctMoney(t.winning_cents) + (t.lessons ? ' · ' + t.lessons : ''), right);
@@ -21733,6 +22063,55 @@
     }
 
     // ---- reference panels ----
+    function renderCtLibrary() {
+      var w = document.getElementById('ctLibraryBody');
+      if (!w) return;
+      api('/admin/bid-snippets?all=1').then(function (r) {
+        w.textContent = '';
+        w.appendChild(el('p', 'ct-note', 'Sections saved from past responses ("Save to library" on a section). The writer reuses their wording on related bids, winners first; it never carries a fact over.'));
+        if (!r.ok) { w.appendChild(el('div', 'ct-why', ctErr(r))); return; }
+        if (!r.snippets.length) { w.appendChild(el('div', 'ct-empty', 'Nothing saved yet.')); return; }
+        r.snippets.forEach(function (sn) {
+          var row = el('div', 'row' + (sn.retired ? ' off' : ''));
+          var left = el('div');
+          left.appendChild(el('div', 'row-main', sn.title + (sn.won ? ' \u00b7 won' : '') + (sn.retired ? ' \u00b7 retired' : '')));
+          left.appendChild(el('div', 'row-sub', (sn.body.length > 160 ? sn.body.slice(0, 160) + '\u2026' : sn.body) + ' \u00b7 used ' + sn.uses + '\u00d7'));
+          row.appendChild(left);
+          var t = el('button', 'ct-btn sm', sn.retired ? 'Bring back' : 'Retire'); t.type = 'button';
+          t.addEventListener('click', function () { t.disabled = true; api('/admin/bid-snippets/' + sn.id, { method: 'PATCH', body: { retired: !sn.retired } }).then(function () { renderCtLibrary(); }); });
+          row.appendChild(t);
+          w.appendChild(row);
+        });
+      });
+    }
+    function renderCtResults() {
+      var w = document.getElementById('ctResultsBody');
+      if (!w) return;
+      api('/admin/contracting/stats').then(function (r) {
+        w.textContent = '';
+        if (!r.ok) { w.appendChild(el('div', 'ct-why', ctErr(r))); return; }
+        var table = function (title, rows) {
+          if (!rows.length) return;
+          w.appendChild(el('h4', 'addsec', title));
+          var t = el('table', 'sb-table');
+          var hr = el('tr'); ['', 'Responded', 'Won', 'Lost', 'Win rate', 'Days to decide', 'Days to pay', 'Awarded'].forEach(function (x) { hr.appendChild(el('th', null, x)); }); t.appendChild(hr);
+          rows.slice(0, 20).forEach(function (g) {
+            var tr = el('tr');
+            [g.key, g.responded, g.won, g.lost, g.win_rate == null ? '\u2014' : g.win_rate + '%', g.avg_days_to_decision == null ? '\u2014' : g.avg_days_to_decision, g.avg_days_to_pay == null ? '\u2014' : g.avg_days_to_pay, g.awarded_cents ? money(g.awarded_cents) : '\u2014']
+              .forEach(function (v, i) { tr.appendChild(el('td', i ? 'num' : null, String(v))); });
+            t.appendChild(tr);
+          });
+          var wrap = el('div', 'sb-wrap'); wrap.appendChild(t); w.appendChild(wrap);
+        };
+        table('By agency', r.stats.by_agency); table('By source', r.stats.by_source); table('By NAICS', r.stats.by_naics);
+        if (!r.stats.by_agency.length) w.appendChild(el('div', 'ct-empty', 'No responses decided yet.'));
+      });
+    }
+    (function () {
+      var lib = document.getElementById('ctLibrary'), res = document.getElementById('ctResults');
+      if (lib) lib.addEventListener('toggle', function () { if (lib.open) renderCtLibrary(); });
+      if (res) res.addEventListener('toggle', function () { if (res.open) renderCtResults(); });
+    })();
     function renderCtRef() {
       // Compliance. Values are never shown anywhere but here; the EIN is not public.
       var cb = document.getElementById('ctComplianceBody');
