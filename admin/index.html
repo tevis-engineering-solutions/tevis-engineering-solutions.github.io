@@ -2270,6 +2270,9 @@
     .rs-preview p { color:var(--text); font-size:0.82rem; margin:0 0 0.5rem; }
     .rs-preview ul, .rs-preview ol { margin:0 0 0.5rem; padding-left:1.2rem; }
     mark.todo { background:rgba(200,152,48,0.22); color:var(--text); outline:1px dashed var(--gold); border-radius:2px; padding:0 0.15em; }
+    .pw-tags .ct-chip { white-space:normal; overflow-wrap:anywhere; text-align:left; }
+    .ct-claude-note { margin:0.35rem 0 0.5rem; padding:0.45rem 0.6rem; border-left:2px solid var(--gold); background:rgba(200,152,48,0.06); border-radius:0 8px 8px 0; }
+    .ct-claude-note p, .ct-claude-note li { font-size:0.78rem; color:var(--muted); }
     .rs-diff { font-size:0.8rem; line-height:1.55; white-space:pre-wrap; overflow-wrap:anywhere; border:1px solid var(--line); border-radius:8px; padding:0.5rem 0.6rem; background:var(--card); margin:0.35rem 0; }
     .rs-diff del { background:rgba(239,68,68,0.18); color:#fca5a5; }
     .rs-diff ins { background:rgba(74,172,101,0.22); color:#b7f0c8; text-decoration:none; }
@@ -19497,6 +19500,16 @@
         host.appendChild(p);
       });
     }
+    // Claude's notes to Tyler come back in the same light markdown as the sections
+    // (bold, bullets, numbered lists): drawn, not shown as asterisks.
+    function ctClaudeNote(label, text) {
+      var d = el('div', 'rs-preview ct-claude-note');
+      var first = el('div', 'row-sub', label + ':');
+      first.style.fontWeight = '800';
+      d.appendChild(first);
+      ctMd(d, text);
+      return d;
+    }
     function ctTodos(text) { return (String(text || '').match(/\[[^\]\n]{1,200}\]/g) || []).length; }
 
     // Word-level difference, for a rewrite and for comparing versions. Whitespace is kept
@@ -19792,7 +19805,8 @@
         card.appendChild(w);
       } else if (prop) {
         var pb = el('div', 'ct-prompt rs-prop');
-        pb.appendChild(el('p', 'row-sub', CT_RS_ACTION_LABEL[prop.action] + ': deleted words are struck through, new ones are marked.' + (prop.notes ? ' Claude: ' + prop.notes : '')));
+        pb.appendChild(el('p', 'row-sub', CT_RS_ACTION_LABEL[prop.action] + ': deleted words are struck through, new ones are marked.'));
+        if (prop.notes) pb.appendChild(ctClaudeNote('Claude', prop.notes));
         pb.appendChild(ctDiffBox(prop.before, prop.text));
         if (prop.stale) pb.appendChild(el('p', 'short', 'This section changed after the rewrite started. Accepting replaces what is there now.'));
         var pr = el('div', 'reply-row');
@@ -20120,7 +20134,7 @@
       var box = el('div', 'ct-prompt pw-review');
       box.appendChild(el('div', 'row-main', "Claude's draft of the response (kept as version " + r.write.version_n + ')'));
       box.appendChild(el('p', 'row-sub', 'Tick the sections to take into the response. Each shows what changes against what it says now: struck words go, marked words come in. Sections you edited start unticked. Wording not yet in a version is kept as one first.'));
-      if (r.notes && r.notes.write) box.appendChild(el('p', 'row-sub', 'Claude: ' + r.notes.write));
+      if (r.notes && r.notes.write) box.appendChild(ctClaudeNote('Claude', r.notes.write));
       var ticks = {};
       var now = {};
       st.doc.sections.forEach(function (s) { now[s.key] = s; });
@@ -20141,7 +20155,7 @@
         if (w.stray_prices && w.stray_prices.length) tags.appendChild(el('span', 'ct-chip red', 'Not a line price: ' + w.stray_prices.join(', ')));
         if (tags.firstChild) card.appendChild(tags);
         if (!same) card.appendChild(ctDiffBox(curText, w.text));
-        if (w.notes) card.appendChild(el('div', 'row-sub', 'Claude: ' + w.notes));
+        if (w.notes) card.appendChild(ctClaudeNote('Claude', w.notes));
         box.appendChild(card);
       });
       var rr = el('div', 'reply-row');
@@ -20697,7 +20711,7 @@
       box.appendChild(el('p', null, 'Recommendation: ' + (gn === 'go' ? 'Go' : gn === 'no_go' ? 'No-go' : 'Needs more information') + (d.go_no_go.reasons.length ? '. ' + d.go_no_go.reasons.join(' ') : '')));
       box.appendChild(el('p', 'row-sub', 'Fit: NAICS ' + (d.fit.naics || '?') + (d.fit.tier ? ' (tier ' + d.fit.tier + ')' : d.fit.on_statement ? '' : ' (not on the capability statement)') + '. ' + d.fit.reason));
       if (d.federal) box.appendChild(el('p', 'short', 'Federal solicitation: blocked under FAR 3.601.'));
-      if (d.notes_for_tyler) box.appendChild(el('p', 'row-sub', 'For you: ' + d.notes_for_tyler));
+      if (d.notes_for_tyler) box.appendChild(ctClaudeNote('For you', d.notes_for_tyler));
       var sec = function (title, items, fn) {
         if (!items || !items.length) return;
         box.appendChild(el('h4', 'addsec', title + ' (' + items.length + ')'));
