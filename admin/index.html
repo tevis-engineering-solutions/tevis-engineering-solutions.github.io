@@ -17661,11 +17661,15 @@
       } else t('Next deadline', '—', 'nothing open');
     }
 
+    var ctListTok = 0, ctOpenTok = 0;
     function ctSetView(v) {
+      if (ctBidId && !ctLeaveOk()) return;
       ctView = v;
       Array.prototype.forEach.call(document.querySelectorAll('#ctFilters .fpill'), function (b) { b.classList.toggle('on', b.getAttribute('data-view') === v); });
       closeBid();
+      var tok = ++ctListTok;
       api('/admin/bids?view=' + ctView + (ctSearch ? '&q=' + encodeURIComponent(ctSearch) : '')).then(function (r) {
+        if (tok !== ctListTok) return;
         if (r.ok) { ctBidsCache = r.bids || []; renderCtBoard(); }
       });
     }
@@ -17970,7 +17974,10 @@
         rr.appendChild(build);
       }
       var setStatus = function (status, note) {
+        var btns = Array.prototype.slice.call(rr.querySelectorAll('button'));
+        btns.forEach(function (x) { x.disabled = true; });
         api('/admin/feed/' + p.id, { method: 'PATCH', body: note === undefined ? { status: status } : { status: status, note: note } }).then(function (r) {
+          btns.forEach(function (x) { x.disabled = false; });
           if (!r.ok) { toast(ctErr(r)); return; }
           toast(status === 'passed' ? 'Passed' : status === 'watching' ? 'Watching' : 'Back in the queue');
           loadQueue();
@@ -18895,7 +18902,10 @@
       if (ctBidId && Number(id) !== ctBidId && !ctLeaveOk()) return Promise.resolve();
       ctBidId = Number(id);
       if (!replace && location.hash !== '#b=' + ctBidId) history.replaceState(null, '', '#b=' + ctBidId);
+      // Two quick clicks: only the bid asked for last is drawn.
+      var tok = ++ctOpenTok, want = ctBidId;
       return api('/admin/bids/' + ctBidId).then(function (r) {
+        if (tok !== ctOpenTok || want !== ctBidId) return;
         if (!r.ok) { toast(ctErr(r)); closeBid(); return; }
         ctDetail = r;
         renderBid();
@@ -18918,6 +18928,25 @@
       if (msg) toast(msg);
       return true;
     }
+    var ctTyped = {};
+    function ctKeep(input, key) {
+      var k = ctBidId + ':' + key;
+      if (ctTyped[k] != null) input.value = ctTyped[k];
+      input.addEventListener('input', function () { ctTyped[k] = input.value; });
+      return input;
+    }
+    function ctForget(key) { delete ctTyped[ctBidId + ':' + key]; }
+    // A button that sends: disabled until the answer comes, so a double click sends once.
+    function ctSend(btn, path, method, body, msg) {
+      if (btn) btn.disabled = true;
+      return ctBidApi(path, method, body, msg).then(function (r) { if (btn) btn.disabled = false; return r; });
+    }
+    function ctBidNo(id) {
+      var b = (ctBidsCache || []).filter(function (x) { return x.id === id; })[0];
+      return b ? b.number : (ctDetail && ctDetail.bid.id === id ? ctDetail.bid.number : 'bid ' + id);
+    }
+    // A job poller stops on an expired sign-in or a job that is gone, instead of asking forever.
+    function ctJobGone(r) { return !!r && (r.error === 'session_expired' || r.error === 'not_found'); }
     function ctBidApi(path, method, body, msg) {
       return api('/admin/bids/' + ctBidId + path, { method: method, body: body }).then(function (r) {
         // A failed save leaves its pane's unsaved changes marked as unsaved.
@@ -19257,7 +19286,8 @@
         del.type = 'button';
         del.addEventListener('click', function () {
           if (!confirm('Delete ' + b.number + ' and its files? This cannot be undone.')) return;
-          api('/admin/bids/' + b.id, { method: 'DELETE' }).then(function (r) { if (r.ok) { toast('Deleted'); closeBid(); loadContracting(); } else toast(ctErr(r)); });
+          del.disabled = true;
+          api('/admin/bids/' + b.id, { method: 'DELETE' }).then(function (r) { del.disabled = false; if (r.ok) { toast('Deleted'); closeBid(); loadContracting(); } else toast(ctErr(r)); });
         });
         rr.appendChild(del);
       }
@@ -19270,12 +19300,13 @@
       note.rows = 2;
       note.setAttribute('aria-label', 'Add a note to the history');
       note.placeholder = 'A call with the buyer, a decision, anything worth keeping on the record.';
+      ctKeep(note, 'note');
       nrow.appendChild(note);
       var nbtn = el('button', 'ct-btn', 'Add note');
       nbtn.type = 'button';
       nbtn.addEventListener('click', function () {
         if (!note.value.trim()) return;
-        ctBidApi('/note', 'POST', { note: note.value }, 'Noted').then(function (r) { if (r.ok) note.value = ''; });
+        ctSend(nbtn, '/note', 'POST', { note: note.value }, 'Noted').then(function (r) { if (r.ok) { note.value = ''; ctForget('note'); } });
       });
       nrow.appendChild(nbtn);
       nb.appendChild(nrow);
@@ -19295,7 +19326,13 @@
         ta.setAttribute('aria-label', 'What step ' + s.step + ' found');
         box.appendChild(ta);
         c.input.addEventListener('change', function () { ctBidApi('/triage/' + s.step, 'PUT', { done: c.input.checked, output: ta.value }); });
-        ta.addEventListener('blur', function () { if (ta.value !== (s.output || '')) { s.output = ta.value; api('/admin/bids/' + ctBidId + '/triage/' + s.step, { method: 'PUT', body: { output: ta.value } }); } });
+        ta.addEventListener('blur', function () {
+          if (ta.value === (s.output || '')) return;
+          var was = s.output; s.output = ta.value;
+          api('/admin/bids/' + ctBidId + '/triage/' + s.step, { method: 'PUT', body: { output: ta.value } }).then(function (r) {
+            if (!r.ok) { s.output = was; toast('Step ' + s.step + ' was not saved: ' + ctErr(r)); }
+          });
+        });
         pane.appendChild(box);
       });
     }
@@ -19471,12 +19508,14 @@
         if (rk.acknowledged_note) box.appendChild(el('div', 'ack', 'Acknowledged: ' + rk.acknowledged_note));
         var rr = el('div', 'reply-row');
         var res = el('button', null, rk.resolved ? 'Reopen' : 'Resolved'); res.type = 'button';
-        res.addEventListener('click', function () { ctBidApi('/risks/' + rk.id, 'PATCH', { resolved: !rk.resolved }); });
+        res.addEventListener('click', function () { ctSend(res, '/risks/' + rk.id, 'PATCH', { resolved: !rk.resolved }); });
         var ack = el('button', null, rk.acknowledged_note ? 'Edit acknowledgment' : 'Acknowledge'); ack.type = 'button';
         ack.addEventListener('click', function () {
           var n = prompt('Acknowledge this risk. Say why it is survivable:', rk.acknowledged_note || '');
           if (n == null) return;
-          ctBidApi('/risks/' + rk.id, 'PATCH', { acknowledged_note: n });
+          // The server only counts a note of 15 characters or more as a reason.
+          if (n.trim() && n.trim().length < 15) { toast('Say why in a sentence: a short note does not count as acknowledging it.'); return; }
+          ctSend(ack, '/risks/' + rk.id, 'PATCH', { acknowledged_note: n });
         });
         rr.appendChild(res); rr.appendChild(ack);
         if (!rk.auto) {
@@ -19490,12 +19529,12 @@
       var f = el('div', 'ct-form');
       var type = ctField(f, 'Type', ctSelect(((ctRef && ctRef.vocab.flag_types) || Object.keys(CT_FLAG_LABEL)).filter(function (k) { return k !== 'federal' && k !== 'fit'; }).map(function (k) { return [k, CT_FLAG_LABEL[k] || k]; }), 'indemnity'));
       var sev = ctField(f, 'Severity', ctSelect([['high', 'High'], ['med', 'Medium'], ['low', 'Low']], 'med'));
-      var det = ctField(f, 'Detail (quote the clause)', ctInput('text', '', { maxlength: 2000 }), 'wide');
+      var det = ctKeep(ctField(f, 'Detail (quote the clause)', ctInput('text', '', { maxlength: 2000 }), 'wide'), 'risk:new');
       pane.appendChild(f);
       var add = el('button', 'ct-btn', 'Add risk'); add.type = 'button';
       add.addEventListener('click', function () {
         if (!det.value.trim()) { det.focus(); return; }
-        ctBidApi('/risks', 'POST', { flag_type: type.value, severity: sev.value, detail: det.value }, 'Risk added');
+        ctSend(add, '/risks', 'POST', { flag_type: type.value, severity: sev.value, detail: det.value }, 'Risk added').then(function (r) { if (r.ok) ctForget('risk:new'); });
       });
       pane.appendChild(add);
     }
@@ -19507,14 +19546,15 @@
         box.appendChild(el('div', 'row-main', q.question));
         box.appendChild(el('p', null, (q.date_posted ? 'Posted ' + fmtDate(q.date_posted) : 'Not posted yet') + (q.date_answered ? ' · answered ' + fmtDate(q.date_answered) : '')));
         var ta = el('textarea'); ta.rows = 2; ta.value = q.answer || ''; ta.placeholder = 'Their answer'; ta.setAttribute('aria-label', 'Answer');
+        ctKeep(ta, 'qa:' + q.id);
         box.appendChild(ta);
         var rr = el('div', 'reply-row');
         var sv = el('button', null, 'Save answer'); sv.type = 'button';
-        sv.addEventListener('click', function () { ctBidApi('/qa/' + q.id, 'PATCH', { answer: ta.value }, 'Saved'); });
+        sv.addEventListener('click', function () { ctSend(sv, '/qa/' + q.id, 'PATCH', { answer: ta.value }, 'Saved').then(function (r) { if (r.ok) ctForget('qa:' + q.id); }); });
         rr.appendChild(sv);
         if (!q.date_posted) {
           var po = el('button', null, 'Mark posted'); po.type = 'button';
-          po.addEventListener('click', function () { ctBidApi('/qa/' + q.id, 'PATCH', { date_posted: Math.floor(Date.now() / 1000) }); });
+          po.addEventListener('click', function () { ctSend(po, '/qa/' + q.id, 'PATCH', { date_posted: Math.floor(Date.now() / 1000) }); });
           rr.appendChild(po);
         }
         var del = el('button', null, 'Delete'); del.type = 'button';
@@ -19526,9 +19566,10 @@
       var f = el('div', 'ct-form');
       var qi = el('textarea'); qi.rows = 2;
       ctField(f, 'New question', qi, 'wide');
+      ctKeep(qi, 'qa:new');
       pane.appendChild(f);
       var add = el('button', 'ct-btn', 'Add question'); add.type = 'button';
-      add.addEventListener('click', function () { if (qi.value.trim()) ctBidApi('/qa', 'POST', { question: qi.value }, 'Question added'); });
+      add.addEventListener('click', function () { if (qi.value.trim()) ctSend(add, '/qa', 'POST', { question: qi.value }, 'Question added').then(function (r) { if (r.ok) ctForget('qa:new'); }); });
       pane.appendChild(add);
     }
 
@@ -19837,7 +19878,7 @@
         api('/admin/ai-jobs/' + jobId).then(function (r) {
           if (!alive()) return;
           var job = r && r.job;
-          if (!r.ok || !job) { setTimeout(tick, 8000); return; }
+          if (!r.ok || !job) { if (ctJobGone(r)) return; setTimeout(tick, document.hidden ? 20000 : 8000); return; }
           if (job.status === 'queued' || job.status === 'running') {
             if (job.step !== ctQuoteIn[id].step) {
               ctQuoteIn[id].step = job.step;
@@ -20069,7 +20110,7 @@
         api('/admin/ai-jobs/' + jobId).then(function (r) {
           if (!alive()) return;
           var job = r && r.job;
-          if (!r.ok || !job) { setTimeout(tick, 8000); return; }
+          if (!r.ok || !job) { if (ctJobGone(r)) return; setTimeout(tick, document.hidden ? 20000 : 8000); return; }
           if (job.status === 'queued' || job.status === 'running') {
             if (job.step !== st.step) {
               st.step = job.step;
@@ -20894,7 +20935,7 @@
         api('/admin/ai-jobs/' + jobId).then(function (r) {
           if (ctProp[id] !== ps || ps.job !== jobId) return;
           var job = r && r.job;
-          if (!r.ok || !job) { setTimeout(tick, 8000); return; }
+          if (!r.ok || !job) { if (ctJobGone(r)) return; setTimeout(tick, document.hidden ? 20000 : 8000); return; }
           if (job.status === 'queued' || job.status === 'running') {
             if (job.step !== ps.step) { ps.step = job.step; ctPropPaint(id); }
             setTimeout(tick, 4000);
@@ -20914,7 +20955,7 @@
       var here = ctBidId === id;
       if (!r.ok) {
         ps.error = r.message || ctErr(r);
-        toast((here ? '' : 'Bid ' + id + ': ') + 'The writer stopped: ' + ps.error);
+        toast((here ? '' : ctBidNo(id) + ': ') + 'The writer stopped: ' + ps.error);
       } else {
         if (r.write) { ps.result = r; ps.dismissed = false; }
         var bits = [];
@@ -20922,7 +20963,7 @@
         if (r.analyze) bits.push('the analysis saved as a draft');
         if (r.write) bits.push(r.write.sections.length + ' section' + (r.write.sections.length === 1 ? '' : 's') + ' written');
         if (r.review) bits.push(r.review.findings + ' review finding' + (r.review.findings === 1 ? '' : 's') + (r.review.high ? ', ' + r.review.high + ' high' : ''));
-        toast((here ? 'The writer is done: ' : 'The writer finished bid ' + id + ': ') + bits.join(', ') + '.');
+        toast((here ? 'The writer is done: ' : 'The writer finished ' + ctBidNo(id) + ': ') + bits.join(', ') + '.');
       }
       // Requirements, findings and the saved draft all moved: read the bid again.
       if (here) openBid(id); else ctPropPaint(id);
@@ -21409,7 +21450,7 @@
         api('/admin/ai-jobs/' + jobId).then(function (r) {
           if (!ctDrafting[id] || ctDrafting[id].job !== jobId) return;
           var job = r && r.job;
-          if (!r.ok || !job) { setTimeout(tick, 8000); return; }
+          if (!r.ok || !job) { if (ctJobGone(r)) return; setTimeout(tick, document.hidden ? 20000 : 8000); return; }
           if (job.status === 'queued' || job.status === 'running') {
             if (job.step !== ctDrafting[id].step) {
               ctDrafting[id].step = job.step;
@@ -21661,13 +21702,17 @@
       var won = ctCheck('We won', ctDetail.bid.status === 'awarded' || ctDetail.bid.status === 'funded');
       var wd = el('div', 'wide'); wd.appendChild(won); f.appendChild(wd);
       var our = ctField(f, 'Our total ($)', ctInput('text', ctDollars(ctDetail.economics.total_bid_cents), { inputmode: 'decimal' }));
-      var win = ctField(f, 'Winning total ($)', ctInput('text', '', { inputmode: 'decimal' }));
-      var comp = ctField(f, 'Winning vendor', ctInput('text', '', { maxlength: 200 }));
-      var les = ctField(f, 'Lessons', ctInput('text', '', { maxlength: 4000 }), 'wide');
+      var win = ctKeep(ctField(f, 'Winning total ($)', ctInput('text', '', { inputmode: 'decimal' })), 'tab:win');
+      var comp = ctKeep(ctField(f, 'Winning vendor', ctInput('text', '', { maxlength: 200 })), 'tab:comp');
+      var les = ctKeep(ctField(f, 'Lessons', ctInput('text', '', { maxlength: 4000 }), 'wide'), 'tab:les');
       pane.appendChild(f);
       var add = el('button', 'ct-btn', 'Log tabulation'); add.type = 'button';
       add.addEventListener('click', function () {
-        ctBidApi('/tabulations', 'POST', { won: won.input.checked, our: our.value, winning: win.value, competitor_name: comp.value, lessons: les.value }, 'Logged').then(function (r) { if (r.ok) reloadCtRef(); });
+        ctSend(add, '/tabulations', 'POST', { won: won.input.checked, our: our.value, winning: win.value, competitor_name: comp.value, lessons: les.value }, 'Logged').then(function (r) {
+          if (!r.ok) return;
+          ['tab:win', 'tab:comp', 'tab:les'].forEach(ctForget);
+          reloadCtRef();
+        });
       });
       pane.appendChild(add);
     }

@@ -89,7 +89,8 @@
       fetch(base + '/document?format=html' + (ver ? '&version=' + ver : ''), { credentials: 'same-origin' }).then(function (r) {
         if (r.status === 401 || r.status === 403) throw new Error('Your sign-in expired. Open the admin console and sign in, then try again.');
         if (r.status === 404) throw new Error(ver ? 'That version is not on this bid.' : 'That bid does not exist.');
-        return r.json();
+        // A server error can come back as a page, not JSON: say so in words.
+        return r.json().catch(function () { throw new Error('The server had a problem (' + r.status + '). Reload in a moment.'); });
       }).then(function (res) {
         if (!res.ok) throw new Error(res.message || 'Could not build the document.');
         document.title = res.title;
