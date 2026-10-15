@@ -2203,6 +2203,36 @@
     .ct-lines tr.be td.m { color:#ef4444; font-weight:700; }
     .ct-lines tr.tot td { font-weight:700; background:var(--bg); }
     .ct-econ { display:grid; grid-template-columns:repeat(auto-fit,minmax(130px,1fr)); gap:0.45rem; margin:0.6rem 0; }
+    /* Sourcing research: a card per product, its price spread, offers and capital. */
+    .sr-list { display:flex; flex-direction:column; gap:0.6rem; margin:0.6rem 0; }
+    .sr-card { border:1px solid var(--line); border-left:3px solid var(--line); border-radius:10px; background:var(--bg); padding:0.65rem 0.8rem; min-width:0; }
+    .sr-card.good { border-left-color:#4aac65; }
+    .sr-card.warn { border-left-color:#c89830; }
+    .sr-card.bad { border-left-color:#ef4444; }
+    .sr-head { display:flex; align-items:baseline; gap:0.5rem; flex-wrap:wrap; }
+    .sr-title { font-weight:700; overflow-wrap:anywhere; flex:1 1 16rem; min-width:0; }
+    .sr-chips { display:flex; flex-wrap:wrap; gap:0.25rem; margin:0.3rem 0; }
+    .sr-chips .ct-chip { white-space:normal; overflow-wrap:anywhere; text-align:left; }
+    .sr-spread { display:grid; grid-template-columns:repeat(auto-fit,minmax(118px,1fr)); gap:0.4rem; margin:0.45rem 0; }
+    .sr-spread > div { border:1px solid var(--line); border-radius:8px; padding:0.35rem 0.5rem; min-width:0; }
+    .sr-spread .ln-v { font-family:"Montserrat",sans-serif; font-weight:700; font-variant-numeric:tabular-nums; font-size:0.9rem; overflow-wrap:anywhere; }
+    .sr-spread .sub { font-size:0.68rem; color:var(--muted); overflow-wrap:anywhere; }
+    .sr-spread .bad .ln-v { color:#ef4444; }
+    .sr-offers { width:100%; border-collapse:collapse; font-size:0.76rem; margin-top:0.35rem; }
+    .sr-offers th { font-family:"Montserrat",sans-serif; font-size:0.56rem; text-transform:uppercase; letter-spacing:0.05em; color:var(--muted); text-align:left; padding:0.25rem 0.3rem; border-bottom:1px solid var(--line); }
+    .sr-offers td { padding:0.3rem; border-bottom:1px solid rgba(44,66,50,0.6); vertical-align:top; overflow-wrap:anywhere; }
+    .sr-offers td.num { text-align:right; white-space:nowrap; font-variant-numeric:tabular-nums; }
+    .sr-offers a { color:var(--gold); }
+    .sr-take { display:flex; flex-wrap:wrap; align-items:center; gap:0.45rem; margin-top:0.5rem; padding-top:0.45rem; border-top:1px dashed rgba(138,164,141,0.22); font-size:0.8rem; }
+    .sr-take select { min-height:34px; border-radius:7px; border:1px solid var(--line); background:var(--card); color:var(--text); padding:0.25rem 0.4rem; max-width:100%; }
+    .sr-memo summary { cursor:pointer; font-size:0.8rem; color:var(--gold); margin:0.4rem 0; }
+    .sr-memo .rs-preview { max-height:28rem; overflow:auto; }
+    @media (max-width:760px) {
+      .sr-offers thead { display:none; }
+      .sr-offers tr { display:grid; grid-template-columns:1fr auto; border-bottom:1px solid rgba(44,66,50,0.6); padding:0.25rem 0; }
+      .sr-offers td { border:0; padding:0.1rem 0.2rem; }
+      .sr-offers td.wide { grid-column:1 / -1; color:var(--muted); }
+    }
     /* Bid Overview: titled sections on a fixed four-column grid. */
     .ov-sec { border:1px solid var(--line); border-radius:10px; background:var(--bg); padding:0.75rem 0.85rem 0.85rem; margin-top:0.7rem; color-scheme:dark; }
     .ov-h { display:flex; align-items:baseline; gap:0.6rem; margin-bottom:0.55rem; }
@@ -18478,7 +18508,7 @@
       panel.appendChild(econ);
       panel.appendChild(el('p', 'ct-note', e.payment_note));
 
-      var tabs = paneTabs(panel, ['Overview', 'Draft', 'Requirements', 'Triage', 'Lines', 'Risk', 'Q&A', 'Files', 'Response', 'Tabulation', 'History'], 'bid');
+      var tabs = paneTabs(panel, ['Overview', 'Draft', 'Requirements', 'Triage', 'Lines', 'Sourcing', 'Risk', 'Q&A', 'Files', 'Response', 'Tabulation', 'History'], 'bid');
       var openRisks = d.risks.filter(function (x) { return !x.resolved && !x.acknowledged_note; }).length;
       tabs.pane('Triage').btn.textContent = 'Triage ' + d.triage.filter(function (s) { return s.done; }).length + '/' + d.triage.length;
       tabs.count('Lines', d.lines.length);
@@ -18487,7 +18517,7 @@
       tabs.count('Files', d.files.length);
       tabs.count('Tabulation', d.tabulations.length);
       if (d.requirements_summary) tabs.count('Requirements', d.requirements_summary.open);
-      CT_BUILDERS = { Overview: ctOverview, Requirements: ctRequirements, Triage: ctTriage, Lines: ctLines, Risk: ctRisk, 'Q&A': ctQa, Files: ctFiles, Draft: ctDraft, Response: ctResponse, Tabulation: ctTabulation, History: ctHistory };
+      CT_BUILDERS = { Overview: ctOverview, Requirements: ctRequirements, Triage: ctTriage, Lines: ctLines, Sourcing: ctSourcing, Risk: ctRisk, 'Q&A': ctQa, Files: ctFiles, Draft: ctDraft, Response: ctResponse, Tabulation: ctTabulation, History: ctHistory };
       ctPanes = {};
       Object.keys(CT_BUILDERS).forEach(function (n) {
         var pane = tabs.pane(n);
@@ -19391,6 +19421,266 @@
       box.appendChild(rr);
       paintCount();
       pane.appendChild(box);
+    }
+
+    // ---- Sourcing: who sells the named products, for how much, and the cash to front ----
+    // Claude reads the lines and the solicitation, works out which products are named, and
+    // searches the web for distributor, retail and public contract prices (bid_sourcing.js).
+    // It runs on the Worker as a job. The report is advice: taking a row sets only the line's
+    // reference price and a dated "unconfirmed" note. Landed cost still comes from you or a
+    // supplier quote, and stock is never confirmed by research.
+    // ctSrc[bidId] = {job, at, step, report, error, loaded, take}
+    var ctSrc = {};
+    var AIW_SOURCING_STEPS = ['Reading the lines and documents', 'Working out which products are named', 'Searching distributors and retailers', 'Looking for contract prices', 'Checking stock and lead times', 'Writing it up'];
+    var CT_SRC_OUTLOOK = { strong: ['green', 'Room to compete'], possible: ['gold', 'Possible, watch the margin'], thin: ['red', 'Thin or unbiddable'], unknown: ['', 'Not enough found'] };
+    var CT_SRC_NAMED = { line: 'named on the line', spec: 'named in the documents', inferred: 'inferred, no part named', none: 'product not identified' };
+    function ctSrcRepaint(id) {
+      if (ctBidId !== id || !ctPanes.Sourcing || !ctDetail) return;
+      var p = ctPanes.Sourcing, keepScroll = window.scrollY;
+      p.textContent = '';
+      ctSourcing(p);
+      window.scrollTo(0, keepScroll);
+    }
+    function ctSrcLoad(id) {
+      var st = ctSrc[id] || (ctSrc[id] = {});
+      return api('/admin/bids/' + id + '/sourcing').then(function (r) {
+        st.loaded = true;
+        if (!r.ok) { st.error = ctErr(r); ctSrcRepaint(id); return; }
+        st.report = r.report;
+        st.take = null;
+        if (r.running) { st.job = r.running.id; st.step = r.running.step; st.at = (r.running.started_at || r.running.created_at) * 1000; ctSrcWatch(id, r.running.id); }
+        else st.job = null;
+        ctSrcRepaint(id);
+      });
+    }
+    function ctSrcStart(id) {
+      var st = ctSrc[id] || (ctSrc[id] = {});
+      if (ctUnsaved().indexOf('Lines') >= 0) { toast('Save your changes on the Lines tab first: research reads the lines as saved.'); return; }
+      st.error = null; st.at = Date.now(); st.step = null; st.job = -1;
+      ctSrcRepaint(id);
+      api('/admin/bids/' + id + '/sourcing', { method: 'POST', body: {} }).then(function (r) {
+        if (r && (r.queued || r.error === 'already_running') && r.job_id) {
+          st.job = r.job_id;
+          if (r.job && r.error === 'already_running') st.at = (r.job.started_at || r.job.created_at) * 1000;
+          ctSrcRepaint(id);
+          ctSrcWatch(id, r.job_id);
+          return;
+        }
+        st.job = null;
+        if (r && r.ok) { ctSrcLoad(id); return; }
+        st.error = ctErr(r);
+        ctSrcRepaint(id);
+      });
+    }
+    function ctSrcWatch(id, jobId) {
+      var st = ctSrc[id];
+      if (!st || st.watching === jobId) return;
+      st.watching = jobId;
+      var alive = function () { return ctSrc[id] && ctSrc[id].job === jobId; };
+      var tick = function () {
+        if (!alive()) return;
+        api('/admin/ai-jobs/' + jobId).then(function (r) {
+          if (!alive()) return;
+          var job = r && r.job;
+          if (!r.ok || !job) { setTimeout(tick, 8000); return; }
+          if (job.status === 'queued' || job.status === 'running') {
+            if (job.step !== st.step) {
+              st.step = job.step;
+              var sl = document.getElementById('ctSrcStep' + id);
+              if (sl) sl.textContent = job.step ? 'On the Worker: ' + job.step + '.' : 'Queued on the Worker.';
+            }
+            setTimeout(tick, 4000);
+            return;
+          }
+          st.watching = null; st.job = null;
+          if (job.status === 'done') {
+            if (ctBidId !== id) toast('Sourcing research finished. Open that bid’s Sourcing tab to read it.');
+            ctSrcLoad(id);
+            return;
+          }
+          st.error = job.status === 'canceled' ? 'The research was canceled.' : (job.message || 'The research did not finish.');
+          if (ctBidId === id) ctSrcRepaint(id); else toast('Sourcing research failed: ' + st.error);
+        });
+      };
+      setTimeout(tick, 3000);
+    }
+    function ctSourcing(pane) {
+      var id = ctBidId, st = ctSrc[id] || (ctSrc[id] = {});
+      pane.appendChild(el('p', 'ct-note', 'Claude reads the lines and the solicitation PDFs, works out which products are actually named, and searches distributors, retailers and public contract prices (GSA Advantage, state and cooperative contracts) for each. Use it to see how much cash you would front and whether there is room to win. It is research, not a quote: taking a price sets only the line’s reference price and a dated note. Landed cost still comes from you or a supplier quote, and stock stays unconfirmed.'));
+      var aj = ctDetail.active_job;
+      if (!st.job && aj && aj.kind === 'sourcing') { st.job = aj.id; st.step = aj.step; st.at = (aj.started_at || aj.created_at) * 1000; ctSrcWatch(id, aj.id); }
+      if (!st.loaded) { st.loaded = true; pane.appendChild(el('div', 'row-sub', 'Loading the last research…')); ctSrcLoad(id); return; }
+      if (st.error) {
+        var eb = el('div', 'ct-why', st.error);
+        pane.appendChild(eb);
+      }
+      if (st.job) {
+        pane.appendChild(aiWorking({ title: 'Researching sourcing and prices', icon: 'fa-magnifying-glass-dollar', startedAt: st.at || Date.now(), steps: AIW_SOURCING_STEPS, every: 40,
+          foot: 'Usually 3 to 8 minutes, longer for many lines. It runs on the server: leave this bid and the report waits here. Nothing changes on the bid.' }));
+        var jr = el('div', 'reply-row');
+        var sl = el('span', 'row-sub', st.step ? 'On the Worker: ' + st.step + '.' : 'Queued on the Worker.'); sl.id = 'ctSrcStep' + id;
+        jr.appendChild(sl);
+        if (st.job > 0) {
+          var stop = el('button', null, 'Cancel'); stop.type = 'button';
+          stop.addEventListener('click', function () {
+            stop.disabled = true;
+            api('/admin/ai-jobs/' + st.job + '/cancel', { method: 'POST', body: {} }).then(function (r) { if (r.ok) { st.job = null; st.watching = null; } ctSrcLoad(id); });
+          });
+          jr.appendChild(stop);
+        }
+        pane.appendChild(jr);
+      }
+      var rep = st.report;
+      var lineCount = ctDetail.lines.filter(function (l) { return l.bid; }).length;
+      var run = el('button', rep ? null : 'prim', rep ? 'Research again' : 'Research sourcing and prices'); run.type = 'button';
+      run.disabled = !!st.job;
+      run.addEventListener('click', function () {
+        if (rep && !confirm('Run the research again? It searches the web afresh (a few dollars of API use) and the new report replaces this one here.')) return;
+        ctSrcStart(id);
+      });
+      var top = el('div', 'reply-row');
+      top.appendChild(el('span', 'row-sub', lineCount ? lineCount + ' line' + (lineCount === 1 ? '' : 's') + ' to research' + (lineCount > 45 ? ' (the first 45 are researched)' : '') + '.' : 'No lines yet: the research will look for the products the PDFs name.'));
+      top.appendChild(run);
+      if (!rep) { pane.appendChild(top); return; }
+
+      // The money, worked out on the server from the prices found.
+      var econ = el('div', 'ct-econ');
+      var tile = function (label, val, sub, cls) { var t = el('div', 'tile'); t.appendChild(el('s', null, label)); t.appendChild(el('b', cls || null, val)); if (sub) t.appendChild(el('div', 'sub', sub)); econ.appendChild(t); };
+      var ol = CT_SRC_OUTLOOK[rep.outlook] || CT_SRC_OUTLOOK.unknown;
+      tile('Capital to front', ctMoney(rep.capital_low_cents), 'at the lowest prices found', rep.capital_low_cents > rep.cash_ceiling_cents ? 'warn' : null);
+      tile('At typical prices', ctMoney(rep.capital_typical_cents), rep.over_ceiling ? 'over your ' + money(rep.cash_ceiling_cents) + ' cash ceiling' : 'under your ' + money(rep.cash_ceiling_cents) + ' ceiling', rep.over_ceiling ? 'bad' : null);
+      tile('Priced', rep.priced + ' of ' + (rep.priced + rep.unpriced), rep.unpriced ? rep.unpriced + ' with no price found' : 'every product has a price');
+      tile('Outlook', ol[1], rep.searches + ' searches · ' + fmtDate(rep.researched_at), ol[0] === 'red' ? 'bad' : ol[0] === 'gold' ? 'warn' : null);
+      pane.appendChild(econ);
+      if (rep.summary) pane.appendChild(ctClaudeNote('Claude', rep.summary));
+      if (rep.paused) pane.appendChild(el('p', 'ct-note', 'The search hit its limit before finishing, so some lines may be thin. Research again to fill them in.'));
+      if (rep.not_researched && rep.not_researched.length) pane.appendChild(el('p', 'ct-note', 'Not researched (past the first 45 lines): ' + rep.not_researched.join(', ') + '.'));
+      if (rep.documents && rep.documents.length) pane.appendChild(el('div', 'row-sub', 'Read: ' + rep.documents.map(function (d) { return d.filename; }).join(', ')));
+
+      // What Tyler ticks: per line, which price becomes the reference; per extra product, add it.
+      if (!st.take) st.take = rep.rows.map(function () { return { on: false, use: 'typical' }; });
+      var list = el('div', 'sr-list');
+      var applyBtn;
+      var paintCount = function () {
+        var n = st.take.filter(function (t) { return t.on; }).length;
+        applyBtn.textContent = n ? 'Take ' + n + ' row' + (n === 1 ? '' : 's') : 'Take ticked rows';
+        applyBtn.disabled = !n;
+      };
+      rep.rows.forEach(function (row, i) {
+        var t = st.take[i];
+        var tone = !row.priced ? 'warn' : row.priced_under_market ? 'bad' : (row.headroom_pct != null && row.headroom_pct < 8) ? 'warn' : 'good';
+        var card = el('div', 'sr-card ' + tone);
+        var head = el('div', 'sr-head');
+        var product = [row.manufacturer, row.model].filter(Boolean).join(' ');
+        head.appendChild(el('span', 'sr-title', (row.line_no != null ? 'Line ' + row.line_no + ' · ' : 'Not on a line · ') + (product || row.description || 'Unidentified product') + (row.part_number ? ' (' + row.part_number + ')' : '')));
+        head.appendChild(el('span', 'row-sub', 'qty ' + (row.qty || 0)));
+        card.appendChild(head);
+        var chips = el('div', 'sr-chips');
+        chips.appendChild(el('span', 'ct-chip' + (row.named_in === 'line' || row.named_in === 'spec' ? ' green' : ' gold'), CT_SRC_NAMED[row.named_in] || row.named_in));
+        chips.appendChild(el('span', 'ct-chip', row.confidence + ' confidence'));
+        if (row.or_equal === true) chips.appendChild(el('span', 'ct-chip', 'or equal allowed'));
+        if (row.or_equal === false) chips.appendChild(el('span', 'ct-chip gold', 'no substitutes'));
+        if (row.priced_under_market) chips.appendChild(el('span', 'ct-chip red', 'your price is under the cheapest buy price'));
+        if (row.over_contract) chips.appendChild(el('span', 'ct-chip gold', 'your price is over the contract price'));
+        if (row.on_bid === false) chips.appendChild(el('span', 'ct-chip', 'not bidding this line'));
+        (row.flags || []).forEach(function (f) { chips.appendChild(el('span', 'ct-chip red', f)); });
+        card.appendChild(chips);
+
+        var sp = el('div', 'sr-spread');
+        var cell = function (label, val, sub, cls) { var d = el('div', cls || null); d.appendChild(el('span', 'ln-l', label)); d.appendChild(el('div', 'ln-v', val)); if (sub) d.appendChild(el('div', 'sub', sub)); sp.appendChild(d); };
+        cell('Lowest buy', ctMoney(row.low_cents), row.cheapest_seller || null);
+        cell('Typical', ctMoney(row.typical_cents), row.high_cents && row.high_cents !== row.low_cents ? 'up to ' + money(row.high_cents) : null);
+        cell('Contract price', ctMoney(row.contract_low_cents), row.contract_name || (row.contract_low_cents ? null : 'none found'));
+        if (row.msrp_cents) cell('List / MSRP', money(row.msrp_cents));
+        cell('Capital', ctMoney(row.capital_low_cents), row.capital_typical_cents && row.capital_typical_cents !== row.capital_low_cents ? money(row.capital_typical_cents) + ' typical' : null);
+        cell('Headroom', row.headroom_pct == null ? '—' : row.headroom_pct + '%', 'ceiling over best buy', row.headroom_pct != null && row.headroom_pct < 8 ? 'bad' : null);
+        if (row.line_id) cell('Your line now', row.unit_price_cents ? money(row.unit_price_cents) : 'not priced', row.landed_cents ? 'landed ' + money(row.landed_cents) : 'no landed cost yet');
+        card.appendChild(sp);
+
+        if (row.offers.length) {
+          var tb = el('table', 'sr-offers');
+          var th = el('thead'), hr = el('tr');
+          ['Seller', 'Price', 'Stock / lead', 'Seen'].forEach(function (h) { hr.appendChild(el('th', null, h)); });
+          th.appendChild(hr); tb.appendChild(th);
+          var body = el('tbody');
+          row.offers.forEach(function (o) {
+            var tr = el('tr');
+            var s1 = el('td');
+            if (o.url) { var a = el('a', null, o.seller); a.href = o.url; a.target = '_blank'; a.rel = 'noopener noreferrer'; s1.appendChild(a); } else s1.appendChild(document.createTextNode(o.seller));
+            s1.appendChild(el('div', 'row-sub', o.kind + (o.note ? ' · ' + o.note : '')));
+            tr.appendChild(s1);
+            tr.appendChild(el('td', 'num', o.price_cents ? money(o.price_cents) + (o.unit ? ' ' + o.unit : '') : 'no price'));
+            tr.appendChild(el('td', 'wide', [o.stock, o.lead_time].filter(Boolean).join(' · ') || '—'));
+            tr.appendChild(el('td', 'wide', o.as_of || ''));
+            body.appendChild(tr);
+          });
+          tb.appendChild(body);
+          card.appendChild(tb);
+        }
+        if (row.availability) card.appendChild(el('p', 'row-sub', 'Availability: ' + row.availability));
+        if (row.notes) card.appendChild(ctClaudeNote('Notes', row.notes));
+
+        var take = el('label', 'sr-take');
+        var chk = ctInput('checkbox'); chk.checked = t.on;
+        var canTake = row.line_id ? !!(row.typical_cents || row.low_cents || row.contract_low_cents) : !row.added_as && (!!row.description || !!product);
+        chk.disabled = !canTake;
+        take.appendChild(chk);
+        if (row.line_id) {
+          take.appendChild(el('span', null, 'Set the reference price to'));
+          var opts = [];
+          if (row.typical_cents) opts.push(['typical', 'typical ' + money(row.typical_cents)]);
+          if (row.low_cents) opts.push(['low', 'lowest ' + money(row.low_cents)]);
+          if (row.contract_low_cents) opts.push(['contract', 'contract ' + money(row.contract_low_cents)]);
+          if (!opts.length) opts.push(['typical', 'no price found']);
+          if (!opts.some(function (o) { return o[0] === t.use; })) t.use = opts[0][0];
+          var sel = ctSelect(opts, t.use);
+          sel.setAttribute('aria-label', 'Which price for line ' + row.line_no);
+          sel.addEventListener('change', function () { t.use = sel.value; t.on = chk.checked = true; paintCount(); });
+          take.appendChild(sel);
+          if (row.reference_cents) take.appendChild(el('span', 'row-sub', 'now ' + money(row.reference_cents)));
+        } else if (row.added_as) {
+          chk.hidden = true;
+          take.appendChild(el('span', 'ct-chip green', 'Added as line ' + row.added_as));
+        } else {
+          take.appendChild(el('span', null, 'Add as a new line, with no cost' + (row.typical_cents || row.low_cents ? ' and reference ' + money(row.typical_cents || row.low_cents) : '')));
+        }
+        chk.addEventListener('change', function () { t.on = chk.checked; paintCount(); });
+        card.appendChild(take);
+        list.appendChild(card);
+      });
+      pane.appendChild(list);
+
+      var rr = el('div', 'reply-row');
+      applyBtn = el('button', 'prim', 'Take ticked rows'); applyBtn.type = 'button';
+      applyBtn.addEventListener('click', function () {
+        if (ctUnsaved().indexOf('Lines') >= 0) { toast('Save or undo your changes on the Lines tab first, so they do not overwrite these.'); return; }
+        var rows = [];
+        rep.rows.forEach(function (row, i) {
+          var t = st.take[i];
+          if (!t.on) return;
+          rows.push(row.line_id ? { line_no: row.line_no, use: t.use } : { idx: i, add: true });
+        });
+        applyBtn.disabled = true; applyBtn.textContent = 'Taking…';
+        ctBidApi('/sourcing/' + rep.job_id, 'POST', { rows: rows }).then(function (r) {
+          if (!r.ok) { paintCount(); return; }
+          st.take = null;
+          toast((r.updated ? r.updated + ' reference price' + (r.updated === 1 ? '' : 's') + ' set' : '') + (r.updated && r.added ? ', ' : '') + (r.added ? r.added + ' line' + (r.added === 1 ? '' : 's') + ' added' : '') + '. Landed cost is unchanged.');
+          ctSrcLoad(id);
+        });
+      });
+      rr.appendChild(applyBtn);
+      pane.appendChild(rr);
+      paintCount();
+      pane.appendChild(top);
+
+      if (rep.memos && rep.memos.length) {
+        var det = el('details', 'sr-memo');
+        det.appendChild(el('summary', null, 'Claude’s research notes, as written'));
+        var mp = el('div', 'rs-preview');
+        rep.memos.forEach(function (m) { ctMd(mp, m); });
+        det.appendChild(mp);
+        pane.appendChild(det);
+      }
     }
 
     // ---- Response: who it is addressed to, and the response itself, section by section ----
