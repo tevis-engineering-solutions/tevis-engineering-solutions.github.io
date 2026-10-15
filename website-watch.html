@@ -695,6 +695,15 @@
       .ww-bars i:nth-child(n+25) { display:none; }
     }
     .ww-preview [hidden] { display:none !important; }
+    /* Build-in: the ring fills, the bars grow, the tiles and fixes rise in, staggered by --d. */
+    .ww-cats s { transition-delay:calc(var(--d, 0) * 90ms + 150ms); }
+    .ww-checks div, .ww-fixes li { transition:opacity .5s ease, transform .5s cubic-bezier(.2,.8,.2,1), border-color .2s; transition-delay:calc(var(--d, 0) * 80ms + 350ms); }
+    .ww-bars i { transform-origin:bottom; transition:transform .4s cubic-bezier(.2,.8,.2,1); transition-delay:calc(var(--d, 0) * 18ms + 500ms); }
+    .ww-preview.pre .ww-ring .val { stroke-dasharray:0 100; transition:none; }
+    .ww-preview.pre .ww-cats s { width:0 !important; transition:none; }
+    .ww-preview.pre .ww-checks div, .ww-preview.pre .ww-fixes li { opacity:0; transform:translateY(10px); transition:none; }
+    .ww-preview.pre .ww-bars i { transform:scaleY(0); transition:none; }
+    @media (prefers-reduced-motion: reduce) { .ww-preview.pre .ww-ring .val, .ww-preview.pre .ww-cats s { stroke-dasharray:calc(var(--p) * 1) 100; } }
     @keyframes ww-pulse { 0% { box-shadow:0 0 0 0 rgba(74,172,101,0.55); } 70% { box-shadow:0 0 0 10px rgba(74,172,101,0); } 100% { box-shadow:0 0 0 0 rgba(74,172,101,0); } }
     .ww-prev-body.only-note > :not(.ww-prev-note) { display:none; }
 
@@ -1470,7 +1479,7 @@
 
     // The live preview: the hero card shows the visitor's own site in place of the sample.
     // Server data only ever goes in through textContent.
-    var tryGo = $('wwTryGo'), previewing = false, scanTimer = null;
+    var tryGo = $('wwTryGo'), previewing = false, scanTimer = null, pendingBuild = false;
     function daysText(d) { return d === null || d === undefined ? '–' : d < 0 ? 'Expired' : d >= 730 ? Math.floor(d / 365) + ' years' : d + (d === 1 ? ' day' : ' days'); }
     function daysCls(d) { return d === null || d === undefined ? 'wait' : d < 0 ? 'bad' : d <= 30 ? 'warn' : 'ok'; }
     function tile(id, cls, text) { var e = $(id); e.className = cls; e.querySelector('b').textContent = text; }
@@ -1560,12 +1569,16 @@
           if (!said.length) said.push('All good right now. Website Watch would check it again in 15 minutes, and every 15 minutes after that.');
           note(said.join(' '), warn);
           fixes(d.fixes && d.fixes.length ? d.fixes : (d.top || []).map(function (t) { return { title: t }; }));
+          pendingBuild = true;
           $('wwCtaT').textContent = 'Watch ' + d.host + ' for $12/mo';
           $('wwCta').hidden = false;
           $('wwSite').value = d.host;
         })
         .catch(function () { head('wait', 'Not checked'); $('wwBody').classList.add('only-note'); note('Could not reach us. Check your connection and try again.', true); })
-        .then(function () { scan(false); previewing = false; tryGo.disabled = false; tryGo.textContent = 'Check another'; });
+        .then(function () {
+          scan(false); previewing = false; tryGo.disabled = false; tryGo.textContent = 'Check another';
+          if (pendingBuild && window.wwBuildIn) { pendingBuild = false; window.wwBuildIn(); }
+        });
     }
     $('wwTry').addEventListener('submit', function (ev) {
       ev.preventDefault();
@@ -1769,6 +1782,51 @@
       r.addEventListener('input', function () { fig.style.setProperty('--pos', r.value + '%'); });
       open(fig, zb);
     });
+  })();
+</script>
+<script>
+  // The hero report card builds in when it scrolls into view, and again for each live result:
+  // the ring fills, the numbers count up, the bars grow and the tiles and fixes rise in.
+  (function () {
+    var card = document.getElementById('wwPreview'); if (!card) return;
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    function stagger() {
+      ['.ww-cats li s', '.ww-checks div', '.ww-fixes li', '.ww-bars i'].forEach(function (sel) {
+        [].forEach.call(card.querySelectorAll(sel), function (e, i) { e.style.setProperty('--d', i); });
+      });
+    }
+    function count(el, to, fmt, ms) {
+      if (typeof to !== 'number' || isNaN(to)) return;
+      var t0 = null;
+      function step(t) {
+        if (t0 === null) t0 = t;
+        var k = Math.min((t - t0) / ms, 1), e = 1 - Math.pow(1 - k, 3);
+        el.textContent = fmt(Math.round(to * e));
+        if (k < 1) requestAnimationFrame(step);
+      }
+      requestAnimationFrame(step);
+    }
+    function play() {
+      stagger();
+      card.classList.add('pre');
+      void card.offsetWidth;   // apply the start state before letting it go
+      requestAnimationFrame(function () {
+        card.classList.remove('pre');
+        var sc = document.getElementById('wwScore'), m = /^(\d+) \/ 100$/.exec(sc.textContent);
+        if (m) count(sc, +m[1], function (n) { return n + ' / 100'; }, 1000);
+        [].forEach.call(card.querySelectorAll('.ww-cats b'), function (b) {
+          var v = parseInt(b.textContent, 10); if (!isNaN(v)) count(b, v, String, 1100);
+        });
+      });
+    }
+    window.wwBuildIn = play;
+    if (!('IntersectionObserver' in window)) return;
+    stagger(); card.classList.add('pre');
+    var io = new IntersectionObserver(function (es) {
+      if (!es[0].isIntersecting) return;
+      io.disconnect(); card.classList.remove('pre'); play();
+    }, { threshold: 0.15 });
+    io.observe(card);
   })();
 </script>
 </body>
