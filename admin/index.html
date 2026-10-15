@@ -3680,7 +3680,7 @@
         <h2 id="smHead">Store Match</h2>
         <button type="button" class="sb-add" id="smAddBtn"><i class="fa-solid fa-plus" aria-hidden="true"></i> New request</button>
       </div>
-      <p class="fnote">Port a client's website look onto their Shopify store (C:\dev\shopify-store-match), $29.99, done by you. Clients order and pay on the Website Watch page; you are paged when they buy, and they get the Theme Access steps (support@ gets the password from Shopify). When they press "I have added you" you are paged again. Run the tool, then "Send the preview" emails them for final approval and publishing.</p>
+      <p class="fnote">Port a client's website look onto their Shopify store (C:\dev\shopify-store-match), $29.99, done by you. Clients order and pay on the Website Watch page; you are paged when they buy, and they are asked for their collaborator request code. When they send it you are paged with it: send the collaborator request from your Shopify Partner Dashboard (Stores > Add store > Request access; Themes and Files only), then press "Request sent" (they are asked to approve). Once approved, upload the images and run the tool; "Send the preview for approval" emails them to approve and publish.</p>
       <div id="smFormHost"></div>
       <div id="smBody"><div class="state">Loading&hellip;</div></div>
     </section>
@@ -10106,7 +10106,8 @@
     // ---- Store Match (tes-portal src/store_match.js) ----
     var SM_STATE = {
       pending_payment: ['Not paid (checkout left)', 'off'], requested: ['Not paid (started here)', 'warn'], paid: ['Paid', 'warn'],
-      access_asked: ['Paid: waiting for access', 'warn'], access_granted: ['Access granted: run the tool', ''],
+      access_asked: ['Paid: waiting for their code', 'warn'], code_received: ['Code in: send the collaborator request', 'warn'], request_sent: ['Waiting for them to approve', 'warn'],
+      access_granted: ['Approved: upload images, run the tool', ''],
       preview_ready: ['Waiting for their approval', ''], published: ['Published', 'off'], declined: ['Declined', 'off'], refunded: ['Refunded', 'off'],
     };
     var smBody = document.getElementById('smBody');
@@ -10204,22 +10205,26 @@
       var open = ['published', 'declined', 'refunded'].indexOf(m.status) < 0;
       if (open && !m.paid_at) {
         steps.appendChild(btn('Mark paid (another way)', function () {
-          var how = prompt('Paid $29.99 how? (kept in the history). This pages you and emails ' + m.contact_email + ' the Theme Access steps.', 'Invoice');
+          var how = prompt('Paid $29.99 how? (kept in the history). This pages you and asks ' + m.contact_email + ' for their collaborator request code.', 'Invoice');
           if (how == null) return;
           act({ action: 'mark_paid', note: how }, function (x) { return 'Marked paid; steps emailed to ' + x.emailed; });
         }));
         steps.appendChild(btn('Free (care plan)', function () {
-          if (!confirm('Do this one free and email ' + m.contact_email + ' the Theme Access steps?')) return;
+          if (!confirm('Do this one free and ask ' + m.contact_email + ' for their collaborator request code?')) return;
           act({ action: 'mark_paid', free: true, note: 'Free' }, function (x) { return 'Steps emailed to ' + x.emailed; });
         }));
       }
       if (open && m.paid_at) {
         steps.appendChild(btn('Send the steps again', function () {
-          if (!confirm('Email ' + m.contact_email + ' the Theme Access steps again (with a fresh link)?')) return;
+          if (!confirm('Ask ' + m.contact_email + ' for their collaborator request code again (with a fresh link)?')) return;
           act({ action: 'ask_access' }, function (x) { return 'Emailed ' + x.emailed; });
         }));
         if (!m.verified_at) steps.appendChild(btn('Check the website tag', function () { act({ action: 'verify' }, 'Website verified'); }));
-        steps.appendChild(btn('Access granted', function () { act({ action: 'granted', note: 'Theme Access email received' }, 'Marked'); }));
+        steps.appendChild(btn('Request sent', function () {
+          if (!confirm('Did you send the collaborator request for ' + m.store_domain + ' from the Partner Dashboard? This emails ' + m.contact_email + ' to approve it.')) return;
+          act({ action: 'request_sent' }, function (x) { return 'Asked ' + x.emailed + ' to approve it'; });
+        }));
+        steps.appendChild(btn('Approved', function () { act({ action: 'granted', note: 'Collaborator request approved' }, 'Marked approved'); }));
         steps.appendChild(btn('Send the preview for approval', function () {
           var u = prompt('Done? Paste the preview link the tool printed. ' + m.contact_email + ' gets it for final approval and publishing.', m.preview_url || '');
           if (!u) return;
@@ -10241,12 +10246,13 @@
       d.appendChild(steps);
       var sec = el('div', 'wi-sec');
       sec.appendChild(el('h4', null, 'Run the tool (PowerShell)'));
-      var ta = document.createElement('textarea'); ta.readOnly = true; ta.rows = 3; ta.className = 'wi-code'; ta.value = m.command;
+      if (m.code) sec.appendChild(el('p', 'wi-note', 'Their collaborator request code: ' + m.code + '. Send the request from your Shopify Partner Dashboard: Stores > Add store > Request access, for ' + m.store_domain + ', with Themes and Files only.'));
+      var ta = document.createElement('textarea'); ta.readOnly = true; ta.rows = 4; ta.className = 'wi-code'; ta.value = m.command;
       ta.setAttribute('aria-label', 'Store Match command');
       sec.appendChild(ta);
       sec.appendChild(btn('Copy', function () { ta.select(); try { navigator.clipboard.writeText(ta.value).then(function () { toast('Copied'); }); } catch (e) { document.execCommand('copy'); toast('Copied'); } }));
-      sec.appendChild(el('p', 'wi-note', 'The password is in the Theme Access email Shopify sends to support@. The tool writes a copy of the live theme and prints the preview link; it never publishes. Place the logo and hero image by hand (saved in work\\' + m.site_host + '\\upload).'));
-      if (!m.verified_at) sec.appendChild(el('p', 'wi-note', 'Website check: the store does not share the site\'s domain, so the client adds ' + m.tag + ' to the site\'s head. The "I have added you" link checks it too.'));
+      sec.appendChild(el('p', 'wi-note', 'After they approve: the extract step saves the logo, icon and hero image in work\\' + m.site_host + '\\upload. Upload those to the store under Content > Files without renaming them, then run the theme step. The CLI signs in with your own Shopify login. The tool writes a copy of the live theme and prints the preview link; it never publishes.'));
+      if (!m.verified_at) sec.appendChild(el('p', 'wi-note', 'Website check: the store does not share the site\'s domain, so the client adds ' + m.tag + ' to the site\'s head. The link they use to send the code checks it too.'));
       if (m.preview_url) { var a = el('a', null, m.preview_url); a.href = m.preview_url; a.target = '_blank'; a.rel = 'noopener noreferrer'; var p = el('p', 'wi-note', 'Preview: '); p.appendChild(a); sec.appendChild(p); }
       if (m.notes) sec.appendChild(el('p', 'wi-note', 'Their note: ' + m.notes));
       d.appendChild(sec);
