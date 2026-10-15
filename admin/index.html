@@ -2114,6 +2114,20 @@
     .ct-head h2 { font-family:"Montserrat",sans-serif; font-size:1.05rem; margin:0.1rem 0; }
     .ct-head .sub { font-size:0.78rem; color:var(--muted); }
     .ct-moves { display:flex; flex-wrap:wrap; gap:0.35rem; margin:0.7rem 0; }
+    .ln-cs { display:flex; align-items:center; gap:0.4rem; font-size:0.72rem; color:var(--green); margin:0.1rem 0 0.35rem; }
+    .ln-cs.gone { color:var(--muted); text-decoration:line-through; }
+    .qi-box { border:1px solid var(--line); border-radius:12px; padding:0.75rem; margin:0.75rem 0; }
+    .qi-box h4.addsec { margin-top:0; }
+    .qi-list { display:flex; flex-direction:column; gap:0.5rem; margin:0.5rem 0; }
+    .qi-card { border:1px solid var(--line); border-radius:10px; padding:0.55rem 0.65rem; opacity:0.72; }
+    .qi-card.on { opacity:1; border-color:rgba(200,152,48,0.55); }
+    .qi-head { display:flex; align-items:baseline; gap:0.5rem; cursor:pointer; }
+    .qi-head input { flex:0 0 auto; }
+    .qi-desc { flex:1 1 auto; min-width:0; font-weight:600; overflow-wrap:anywhere; }
+    .qi-cost { flex:0 0 auto; font-family:"Montserrat",sans-serif; font-weight:700; font-variant-numeric:tabular-nums; }
+    .qi-to { display:flex; flex-wrap:wrap; align-items:center; gap:0.4rem; margin-top:0.4rem; }
+    .qi-to select { max-width:100%; min-width:0; flex:1 1 14rem; }
+    .qi-warn { font-size:0.72rem; color:var(--muted); margin-top:0.3rem; }
     .ct-why { border:1px solid rgba(239,68,68,0.45); background:rgba(239,68,68,0.06); border-radius:10px; padding:0.6rem 0.75rem; margin:0.6rem 0; }
     .ct-why.ok { border-color:rgba(74,172,101,0.45); background:rgba(74,172,101,0.07); }
     /* A bid tab with unsaved edits, and the bar at the top of it. */
@@ -2161,6 +2175,7 @@
     .ln-res .ln-v { font-variant-numeric:tabular-nums; font-weight:700; font-size:0.86rem; white-space:nowrap; }
     .ln-src { display:grid; grid-template-columns:9rem minmax(0,1fr) 8rem auto; gap:0.5rem; align-items:end; }
     .ln-togs { display:flex; gap:0.4rem; }
+    .ln-src .ln-notes { grid-column:1 / -1; }
     @media (max-width:1100px) {
       .ln-grid { grid-template-columns:repeat(3,minmax(0,1fr)); }
     }
@@ -18698,6 +18713,19 @@
         card.appendChild(price);
 
         var src = el('div', 'ln-src');
+        // Where the landed cost came from. A quote import sets it; typing a different cost
+        // clears it on save, since the number is then Tyler's own.
+        r.costSource = l.cost_source || null;
+        r.costFrom = l.landed_cost_cents || 0;
+        if (r.costSource) {
+          var qfid = Number(String(r.costSource).split(':')[1]);
+          var qf = ctDetail.files.filter(function (x) { return x.id === qfid; })[0];
+          r.srcChip = el('div', 'ln-cs');
+          var ci = el('i', 'fa-solid fa-file-invoice-dollar'); ci.setAttribute('aria-hidden', 'true');
+          r.srcChip.appendChild(ci);
+          r.srcChip.appendChild(el('span', null, 'Cost from ' + (qf ? qf.filename : 'a vendor quote no longer on this bid')));
+          card.insertBefore(r.srcChip, price);
+        }
         r.lane = fld(src, 'Lane', ctSelect([['', '\u2014'], ['retail', 'Retail'], ['distributor', 'Distributor'], ['direct', 'Direct']], l.source_lane || ''));
         r.vendor = fld(src, 'Vendor', ctInput('text', l.vendor || '', { maxlength: 120 }), 'ln-vendor');
         r.listing = fld(src, 'Listing', ctSelect([['', '\u2014'], ['ul', 'UL'], ['etl', 'ETL'], ['none', 'None'], ['unknown', 'Unknown']], l.listing || ''));
@@ -18705,6 +18733,8 @@
         r.stock = tog(tg, 'Stock confirmed', l.stock_confirmed, 'Stock confirmed at quantity');
         r.elec = tog(tg, 'Electrical', l.electrical, 'Electrical');
         src.appendChild(tg);
+        // Notes travel with the line (a quote import puts the stock and lead-time words here).
+        r.notes = fld(src, 'Notes', ctInput('text', l.notes || '', { maxlength: 1000, placeholder: 'Stock, lead time, who you spoke to' }), 'ln-notes');
         card.appendChild(src);
 
         r.tr = card;
@@ -18718,6 +18748,7 @@
         var tot = { bid: 0, landed: 0, net: 0, n: 0 };
         rows.forEach(function (r) {
           var qty = Number(r.qty.value) || 0, landed = ctCents(r.landed.value) || 0;
+          if (r.srcChip) r.srcChip.classList.toggle('gone', landed !== r.costFrom);
           var mk = r.markup.value === '' ? null : Number(r.markup.value);
           r.unit.disabled = !r.fix.checked && mk != null;
           if (!r.fix.checked && mk != null && !isNaN(mk)) r.unit.value = ctDollars(Math.round(landed * (1 + mk / 100)));
@@ -18753,7 +18784,8 @@
           return { bid: r.bid.checked, line_no: r.line_no.value, description: r.description.value, sku: r.sku.value, qty: r.qty.value, uom: r.uom.value,
             landed_cost: r.landed.value, markup_pct: r.markup.value, price_override: r.fix.checked, unit_price: r.unit.value, reference: r.ref.value,
             freight: r.freight.value, freight_cost: r.fcost.value, source_lane: r.lane.value, vendor: r.vendor.value,
-            stock_confirmed: r.stock.checked, electrical: r.elec.checked, listing: r.listing.value };
+            stock_confirmed: r.stock.checked, electrical: r.elec.checked, listing: r.listing.value, notes: r.notes.value,
+            cost_source: r.costSource && (ctCents(r.landed.value) || 0) === r.costFrom ? r.costSource : null };
         }).filter(function (l) { return l.description.trim(); });
         save.disabled = true;
         ctBidApi('/lines', 'PUT', { lines: lines }, 'Lines saved').then(function () { save.disabled = false; reloadCtLists(); });
@@ -18856,6 +18888,7 @@
         a.appendChild(left);
         var right = el('div', 'reply-row');
         right.style.marginTop = '0';
+        if (f.role === 'vendor_quote' && f.content_type === 'application/pdf') right.appendChild(ctQuoteButton(f));
         var role = ctSelect(Object.keys(CT_ROLE_LABEL).map(function (k) { return [k, CT_ROLE_LABEL[k]]; }), f.role);
         role.setAttribute('aria-label', 'What ' + f.filename + ' is');
         role.addEventListener('change', function () { ctBidApi('/files/' + f.id, 'PATCH', { role: role.value }, 'Updated'); });
@@ -18865,6 +18898,7 @@
         a.appendChild(right);
         pane.appendChild(a);
       });
+      ctQuoteBox(pane);
       // One card: a drop zone for the file, then what it is, a label and Upload on a line.
       var card = el('div', 'ct-attach');
       card.appendChild(el('div', 'ct-attach-h', 'Attach a file'));
@@ -18908,6 +18942,236 @@
           return ctBidApi('/files', 'POST', { filename: fl.name, role: role.value, label: label.value, content_type: fl.type, data: b64 }, 'Attached ' + fl.name);
         }).then(function () { up.disabled = false; up.textContent = 'Upload'; }, function () { up.disabled = false; up.textContent = 'Upload'; toast('Could not read that file.'); });
       });
+    }
+
+    // ---- supplier quote import ----
+    // A vendor_quote PDF read into the bid's line costs (src/quote_import.js). Claude reads
+    // the quote as a background job, the Worker matches each item to a line by SKU and then
+    // by description, and the preview here is where Tyler ticks what to take. Nothing
+    // changes on the bid until Apply, and then the costs come from the job's stored reading
+    // of the quote, never from this page. Stock is never confirmed by an import.
+    // ctQuoteIn[bidId] = {file, job, at, step, preview, error, checked} while one is open.
+    var ctQuoteIn = {};
+    var ctQuoteLooked = {};
+    var AIW_QUOTEREAD_STEPS = ['Reading the quote', 'Copying out each item and price', 'Matching items to your lines', 'Finishing up'];
+    function ctQuoteButton(f) {
+      var id = ctBidId, st = ctQuoteIn[id];
+      var busy = st && !st.preview && !st.error;
+      var b = el('button', null, busy && st.file === f.id ? 'Reading this quote…' : 'Import costs from this quote'); b.type = 'button';
+      b.disabled = !!busy;
+      b.addEventListener('click', function () { ctQuoteStart(id, f); });
+      return b;
+    }
+    function ctQuoteRepaint(id) {
+      if (ctBidId !== id || !ctPanes.Files || !ctDetail) return;
+      var p = ctPanes.Files;
+      var keepScroll = window.scrollY;
+      p.textContent = '';
+      ctFiles(p);
+      window.scrollTo(0, keepScroll);
+    }
+    function ctQuoteStart(id, f) {
+      var st = ctQuoteIn[id];
+      if (st && st.preview && !st.applied && !confirm('Read ' + f.filename + '? The preview showing now is set aside (it stays in the bid history).')) return;
+      ctQuoteIn[id] = { file: f.id, filename: f.filename, job: null, at: Date.now() };
+      ctQuoteRepaint(id);
+      api('/admin/bids/' + id + '/quotes/' + f.id, { method: 'POST', body: {} }).then(function (r) {
+        var s = ctQuoteIn[id];
+        if (!s || s.file !== f.id) return;
+        if (r && (r.queued || r.error === 'already_running') && r.job_id) {
+          s.job = r.job_id; s.step = r.job && r.job.step;
+          if (r.job && r.error === 'already_running') s.at = (r.job.started_at || r.job.created_at) * 1000;
+          ctQuoteRepaint(id);
+          ctQuoteWatch(id, r.job_id);
+          return;
+        }
+        if (r && r.ok && r.preview) { s.job = r.job_id; ctQuoteShow(id, r.preview); return; }
+        s.error = (r && r.message) || ctErr(r);
+        ctQuoteRepaint(id);
+      });
+    }
+    // The same polling as ctWatchJob on the Draft tab: one poller per bid, until the job ends.
+    function ctQuoteWatch(id, jobId) {
+      var st = ctQuoteIn[id];
+      if (!st || st.watching) return;
+      st.watching = true;
+      var alive = function () { return ctQuoteIn[id] && ctQuoteIn[id].job === jobId; };
+      var tick = function () {
+        if (!alive()) return;
+        api('/admin/ai-jobs/' + jobId).then(function (r) {
+          if (!alive()) return;
+          var job = r && r.job;
+          if (!r.ok || !job) { setTimeout(tick, 8000); return; }
+          if (job.status === 'queued' || job.status === 'running') {
+            if (job.step !== ctQuoteIn[id].step) {
+              ctQuoteIn[id].step = job.step;
+              var sl = document.getElementById('ctQuoteStep' + id);
+              if (sl) sl.textContent = job.step ? 'On the Worker: ' + job.step + '.' : 'Queued on the Worker.';
+            }
+            setTimeout(tick, 3000);
+            return;
+          }
+          ctQuoteIn[id].watching = false;
+          if (job.status === 'done') { ctQuoteLoad(id, jobId); return; }
+          ctQuoteIn[id].error = job.status === 'canceled' ? 'The quote import was canceled.' : (job.message || 'The quote could not be read.');
+          if (ctBidId === id) ctQuoteRepaint(id); else toast('Quote import failed: ' + ctQuoteIn[id].error);
+        });
+      };
+      setTimeout(tick, 2500);
+    }
+    // The preview, matched against the lines as they are now (they may have changed while
+    // the quote was being read).
+    function ctQuoteLoad(id, jobId) {
+      return api('/admin/bids/' + id + '/quoteimport/' + jobId).then(function (r) {
+        var st = ctQuoteIn[id] || (ctQuoteIn[id] = { job: jobId });
+        st.job = jobId;
+        if (!r.ok) { st.error = (r && r.message) || ctErr(r); ctQuoteRepaint(id); return; }
+        if (r.applied_at) { delete ctQuoteIn[id]; ctQuoteRepaint(id); return; }
+        ctQuoteShow(id, r.preview);
+      });
+    }
+    function ctQuoteShow(id, preview) {
+      var st = ctQuoteIn[id];
+      st.preview = preview; st.file = preview.file_id; st.filename = preview.filename;
+      // Ticked to begin with: a matched row with a price. An unmatched one waits for Tyler.
+      st.choice = preview.rows.map(function (row) {
+        return { on: !!(row.match && !row.no_cost), target: row.match ? String(row.match.line_id) : 'add' };
+      });
+      if (ctBidId === id) { ctQuoteRepaint(id); toast('Read ' + preview.rows.length + ' item' + (preview.rows.length === 1 ? '' : 's') + ' from ' + preview.filename + '. Review them on the Files tab.'); }
+      else toast('A supplier quote finished reading. Open that bid’s Files tab to review it.');
+    }
+    function ctQuoteBox(pane) {
+      var id = ctBidId, st = ctQuoteIn[id];
+      // Reopened while a quote is being read on the Worker: pick it back up.
+      var aj = ctDetail.active_job;
+      if (!st && aj && aj.kind === 'quote_import') {
+        st = ctQuoteIn[id] = { job: aj.id, at: (aj.started_at || aj.created_at) * 1000, step: aj.step };
+        ctQuoteWatch(id, aj.id);
+      }
+      // A quote read earlier and never applied (it finished while you were elsewhere).
+      if (!st && !ctQuoteLooked[id] && ctDetail.files.some(function (f) { return f.role === 'vendor_quote'; })) {
+        ctQuoteLooked[id] = true;
+        api('/admin/bids/' + id + '/jobs').then(function (r) {
+          var j = r.ok && r.jobs.filter(function (x) { return x.kind === 'quote_import' && x.status === 'done' && !x.applied_at && x.finished_at > Date.now() / 1000 - 7 * 86400; })[0];
+          if (j && !ctQuoteIn[id]) { ctQuoteIn[id] = { job: j.id, earlier: true }; ctQuoteLoad(id, j.id); }
+        });
+      }
+      if (!st) return;
+      var box = el('div', 'qi-box');
+      box.id = 'ctQuoteBox';
+      if (st.error) {
+        box.appendChild(el('div', 'ct-why', st.error));
+        var x = el('button', null, 'Dismiss'); x.type = 'button';
+        x.addEventListener('click', function () { delete ctQuoteIn[id]; ctQuoteRepaint(id); });
+        box.appendChild(x);
+        pane.appendChild(box);
+        return;
+      }
+      if (!st.preview) {
+        box.appendChild(aiWorking({ title: 'Reading ' + (st.filename || 'the supplier quote'), icon: 'fa-file-invoice-dollar', startedAt: st.at || Date.now(), steps: AIW_QUOTEREAD_STEPS, every: 15,
+          foot: 'Usually under a minute. It runs on the server: leave this bid and the preview waits here for you. Nothing changes on the bid until you apply it.' }));
+        if (st.job) {
+          var jr = el('div', 'reply-row');
+          var sl = el('span', 'row-sub', st.step ? 'On the Worker: ' + st.step + '.' : 'Queued on the Worker.'); sl.id = 'ctQuoteStep' + id;
+          var stop = el('button', null, 'Cancel'); stop.type = 'button';
+          stop.addEventListener('click', function () {
+            stop.disabled = true;
+            api('/admin/ai-jobs/' + st.job + '/cancel', { method: 'POST', body: {} }).then(function (r) {
+              if (r.ok) { delete ctQuoteIn[id]; ctQuoteRepaint(id); } else { ctQuoteLoad(id, st.job); }
+            });
+          });
+          jr.appendChild(sl); jr.appendChild(stop);
+          box.appendChild(jr);
+        }
+        pane.appendChild(box);
+        return;
+      }
+      var pv = st.preview;
+      box.appendChild(el('h4', 'addsec', 'Costs from ' + pv.filename));
+      var meta = [pv.vendor || 'Vendor not printed', pv.quote_number ? 'quote ' + pv.quote_number : '', pv.quote_date ? 'dated ' + pv.quote_date : '',
+        pv.expires ? 'good through ' + pv.expires : 'no expiry printed', 'lane: ' + pv.lane].filter(Boolean).join(' · ');
+      box.appendChild(el('div', 'row-sub', meta + (pv.freight_total_cents ? ' · shipping ' + money(pv.freight_total_cents) + ', shared across the items by value' : '')));
+      if (pv.notes) box.appendChild(el('div', 'row-sub', 'On the quote: ' + pv.notes));
+      if (st.earlier) box.appendChild(el('p', 'ct-note', 'This quote was read earlier and has not been applied.'));
+      box.appendChild(el('p', 'ct-note', 'Tick the rows to take. Each sets the line’s landed cost, vendor, lane and freight cost, and records this quote as the source. The quote’s stock words go into the line’s notes; stock stays unconfirmed until you confirm it yourself. Quantities on the bid are not changed.'));
+      var lineOpts = [['add', '+ Add as a new line']].concat(pv.lines.map(function (l) { return [String(l.id), '#' + l.line_no + ' ' + l.description.slice(0, 60)]; }));
+      var list = el('div', 'qi-list');
+      var countBtn;
+      var paintCount = function () {
+        var n = st.choice.filter(function (c) { return c.on; }).length;
+        countBtn.textContent = n ? 'Apply ' + n + ' row' + (n === 1 ? '' : 's') : 'Apply';
+        countBtn.disabled = !n;
+      };
+      pv.rows.forEach(function (row, i) {
+        var c = st.choice[i], it = row.item;
+        var card = el('div', 'qi-card' + (c.on ? ' on' : ''));
+        var head = el('label', 'qi-head');
+        var chk = ctInput('checkbox'); chk.checked = c.on; chk.disabled = row.no_cost;
+        chk.setAttribute('aria-label', 'Take ' + (it.description || it.sku));
+        head.appendChild(chk);
+        var ht = el('span', 'qi-desc', it.description || it.sku);
+        head.appendChild(ht);
+        head.appendChild(el('span', 'qi-cost', row.no_cost ? 'no price' : money(it.unit_cost_cents) + (it.uom ? ' / ' + it.uom.toLowerCase() : '')));
+        card.appendChild(head);
+        var sub = [it.sku ? 'SKU ' + it.sku : '', it.qty != null ? 'qty ' + it.qty : '', row.proposed.freight_cost_cents ? 'freight ' + money(row.proposed.freight_cost_cents) : '',
+          it.lead_time ? 'lead ' + it.lead_time : '', it.stock ? 'stock: “' + it.stock + '” (not confirmed)' : ''].filter(Boolean).join(' · ');
+        if (sub) card.appendChild(el('div', 'row-sub', sub));
+        var to = el('div', 'qi-to');
+        to.appendChild(el('span', 'ln-l', 'Goes on'));
+        var sel = ctSelect(lineOpts, c.target);
+        sel.disabled = row.no_cost;
+        sel.setAttribute('aria-label', 'Which line ' + (it.description || it.sku) + ' goes on');
+        to.appendChild(sel);
+        if (row.match) to.appendChild(el('span', 'ct-chip ' + (row.match.by === 'sku' ? 'green' : 'gold'), row.match.by === 'sku' ? 'matched by SKU' : 'matched by description ' + Math.round(row.match.score * 100) + '%'));
+        else to.appendChild(el('span', 'ct-chip', 'no match'));
+        card.appendChild(to);
+        var warn = el('div', 'qi-warn');
+        var paintWarn = function () {
+          warn.textContent = '';
+          var line = c.target === 'add' ? null : pv.lines.filter(function (l) { return String(l.id) === c.target; })[0];
+          var bits = [];
+          if (line) {
+            bits.push('Now: ' + (line.landed_cost_cents ? money(line.landed_cost_cents) : 'no cost') + (line.vendor ? ' from ' + line.vendor : '') + (line.cost_source ? ' (from a quote)' : ''));
+            if (it.qty != null && Number(line.qty) !== Number(it.qty)) bits.push('the quote is for ' + it.qty + ', the bid needs ' + line.qty);
+            if (line.vendor && pv.vendor && line.vendor.toLowerCase() !== pv.vendor.toLowerCase() && line.stock_confirmed) bits.push('the stock confirmation with ' + line.vendor + ' will be cleared');
+          } else bits.push('Adds line ' + (pv.lines.reduce(function (n, l) { return Math.max(n, l.line_no); }, 0) + 1) + (it.qty != null ? ' at qty ' + it.qty : ''));
+          warn.textContent = bits.join(' · ') + '.';
+        };
+        paintWarn();
+        card.appendChild(warn);
+        chk.addEventListener('change', function () { c.on = chk.checked; card.classList.toggle('on', c.on); paintCount(); });
+        sel.addEventListener('change', function () { c.target = sel.value; if (!row.no_cost) { c.on = chk.checked = true; card.classList.add('on'); } paintWarn(); paintCount(); });
+        list.appendChild(card);
+      });
+      box.appendChild(list);
+      var rr = el('div', 'reply-row');
+      var drop = el('button', null, 'Set aside'); drop.type = 'button';
+      drop.addEventListener('click', function () { delete ctQuoteIn[id]; ctQuoteRepaint(id); });
+      countBtn = el('button', 'prim', 'Apply'); countBtn.type = 'button';
+      countBtn.addEventListener('click', function () {
+        if (ctUnsaved().indexOf('Lines') >= 0) { toast('Save or undo your changes on the Lines tab first, so they do not overwrite the imported costs.'); return; }
+        var rows = [], seen = {};
+        for (var i = 0; i < st.choice.length; i++) {
+          var c = st.choice[i];
+          if (!c.on) continue;
+          if (c.target !== 'add') {
+            if (seen[c.target]) { toast('Two rows are set to go on the same line. Pick another line for one of them.'); return; }
+            seen[c.target] = true;
+          }
+          rows.push(c.target === 'add' ? { idx: i, add: true } : { idx: i, line_id: Number(c.target) });
+        }
+        countBtn.disabled = true; countBtn.textContent = 'Applying…';
+        ctBidApi('/quoteimport/' + st.job, 'POST', { rows: rows }).then(function (r) {
+          if (!r.ok) { paintCount(); if (r.error === 'already_applied') { delete ctQuoteIn[id]; ctQuoteRepaint(id); } return; }
+          delete ctQuoteIn[id];
+          ctQuoteRepaint(id);
+          toast('Costs from ' + pv.filename + ': ' + r.applied.updated + ' line' + (r.applied.updated === 1 ? '' : 's') + ' updated' + (r.applied.added ? ', ' + r.applied.added + ' added' : '') + '. Stock is still unconfirmed.');
+        });
+      });
+      rr.appendChild(drop); rr.appendChild(countBtn);
+      box.appendChild(rr);
+      paintCount();
+      pane.appendChild(box);
     }
 
     // The response document's own copy: who it is addressed to, delivery and warranty
