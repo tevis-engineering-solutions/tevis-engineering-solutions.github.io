@@ -10039,7 +10039,13 @@
           : 'Checked ' + fmtDate(gl.checked_at) + '. ' + (gl.issues.length ? gl.issues.map(function (i) { return i.title; }).join('. ') + '.' : 'Matches the website.') + (gl.rating_low ? ' Rating under 4.0.' : '')));
         if (gl && gl.maps_url) {
           var a = el('a', null, 'Open on Google Maps'); a.href = gl.maps_url; a.target = '_blank'; a.rel = 'noopener';
-          var p = el('p', 'wi-note'); p.appendChild(a); lbody.appendChild(p);
+          var p = el('p', 'wi-note'); p.appendChild(a);
+          if (gl.review_url) {
+            p.appendChild(document.createTextNode(' · '));
+            var rv = el('a', null, 'Review link'); rv.href = gl.review_url; rv.target = '_blank'; rv.rel = 'noopener'; p.appendChild(rv);
+            p.appendChild(document.createTextNode(' (the client can send it to customers; it is on their portal with a QR code)'));
+          }
+          lbody.appendChild(p);
         }
         if (live) {
           lbody.appendChild(el('p', 'wi-note', 'Live: ' + (live.name || '?') + ', ' + (live.rating != null ? live.rating.toFixed(1) + ' from ' + live.count + ' reviews' : 'no ratings') + (live.phone ? ', ' + live.phone : '') + (live.status !== 'OPERATIONAL' ? ', ' + live.status.toLowerCase().replace(/_/g, ' ') : '') + '.'));
@@ -10083,6 +10089,7 @@
       gs.appendChild(el('h4', null, 'From Google (monthly)'));
       var gbody = el('div');
       gs.appendChild(gbody);
+      function ordinalW(n) { return n + (n % 10 === 1 && n % 100 !== 11 ? 'st' : n % 10 === 2 && n % 100 !== 12 ? 'nd' : n % 10 === 3 && n % 100 !== 13 ? 'rd' : 'th'); }
       function vt(k, v) { return v == null ? '-' : k === 'cls' ? v.toFixed(2) : v >= 1000 ? (v / 1000).toFixed(1) + ' s' : Math.round(v) + ' ms'; }
       function drawGoogle() {
         gbody.textContent = '';
@@ -10094,6 +10101,8 @@
         else if (s) lines.push('Real-visitor speed: not enough Chrome traffic for data.');
         if (g.videos && g.videos.checked) lines.push('Videos: ' + (g.videos.broken.length ? g.videos.broken.length + ' of ' + g.videos.checked + ' broken: ' + g.videos.broken.map(function (b) { return b.url + ' (' + b.why + ')'; }).join(', ') : 'all ' + g.videos.checked + ' play') + '.');
         if (g.address) lines.push('Address on the site (' + g.address.source + '): ' + g.address.line + (g.address.verdict ? ' - ' + g.address.verdict.replace(/_/g, ' ') : '') + '.');
+        if (g.compare) lines.push('Nearby ' + String(g.compare.category).toLowerCase() + ' businesses: ' + ordinalW(g.compare.rank_reviews) + ' most reviews and ' + ordinalW(g.compare.rank_rating) + ' best rating of ' + g.compare.of + '.');
+        if (g.channel && g.channel.found) lines.push('YouTube: ' + g.channel.title + ', ' + (g.channel.subscribers != null ? g.channel.subscribers + ' subscribers, ' : '') + g.channel.videos + ' videos' + (g.channel.last_upload ? ', last ' + g.channel.last_upload : '') + '.');
         if (g.kg) lines.push('Knowledge Graph: ' + (g.kg.found ? 'knows "' + g.kg.name + '"' + (g.kg.types && g.kg.types.length ? ' (' + g.kg.types.join(', ') + ')' : '') : 'not found as an entity') + '.');
         if (g.checked_at) lines.push('Checked ' + fmtDate(g.checked_at) + '.');
         lines.forEach(function (l) { gbody.appendChild(el('p', 'wi-note', l)); });

@@ -154,6 +154,12 @@
     .mon-checks li { display:grid; grid-template-columns:minmax(0,9.5rem) minmax(0,1fr); gap:0.6rem; font-size:0.86rem; color:#dfe9e1; }
     .mon-checks li b { font-weight:600; color:var(--muted); }
     .mon-checks li.warn span { color:#e6c68a; }
+    .mon-rv { display:inline-flex; flex-wrap:wrap; gap:0.4rem; align-items:center; margin-top:0.35rem; }
+    .mon-rv a { color:#6dc882; }
+    .mon-mini { font:inherit; font-size:0.78rem; font-weight:600; padding:0.25rem 0.65rem; min-height:32px; border-radius:8px; border:1px solid var(--line); background:rgba(0,0,0,0.25); color:#dfe9e1; cursor:pointer; }
+    .mon-mini:hover, .mon-mini:focus-visible { border-color:#4aac65; outline:none; }
+    .mon-qr { margin-top:0.6rem; background:#fff; padding:10px; border-radius:10px; width:max-content; }
+    .mon-qr img, .mon-qr canvas { display:block; }
     .mon-checks li.bad span { color:#f0a58f; }
     .mon-conn { margin-top:0.85rem; }
     .mon-conn-row { border-top:1px solid var(--line); padding:0.8rem 0; }
@@ -381,6 +387,45 @@
       return box;
     }
 
+    // The Google review link: copy it, or show a QR code for the counter, a receipt or a
+    // truck. The QR library loads only when somebody asks for the code.
+    var qrLoading = null;
+    function loadQr(cb) {
+      if (window.QRCode) return cb();
+      if (!qrLoading) {
+        qrLoading = new Promise(function (res, rej) {
+          var sc = document.createElement('script');
+          sc.src = 'https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js';
+          sc.onload = res; sc.onerror = rej; document.head.appendChild(sc);
+        });
+      }
+      qrLoading.then(cb, function () { qrLoading = null; });
+    }
+    function reviewLinkItem(url) {
+      var li = el('li');
+      li.appendChild(el('b', null, 'Your review link'));
+      var span = el('span');
+      span.appendChild(document.createTextNode('Send it to happy customers: it opens Google\u2019s review box for your business. '));
+      var acts = el('span', 'mon-rv');
+      var open = el('a', null, 'Open'); open.href = url; open.target = '_blank'; open.rel = 'noopener';
+      var copy = el('button', 'mon-mini', 'Copy link'); copy.type = 'button';
+      copy.addEventListener('click', function () {
+        var done = function () { copy.textContent = 'Copied'; setTimeout(function () { copy.textContent = 'Copy link'; }, 2000); };
+        if (navigator.clipboard) navigator.clipboard.writeText(url).then(done, function () { window.prompt('Copy your review link:', url); });
+        else window.prompt('Copy your review link:', url);
+      });
+      var qrb = el('button', 'mon-mini', 'QR code'); qrb.type = 'button'; qrb.setAttribute('aria-expanded', 'false');
+      var qr = el('div', 'mon-qr'); qr.hidden = true;
+      qrb.addEventListener('click', function () {
+        qr.hidden = !qr.hidden; qrb.setAttribute('aria-expanded', qr.hidden ? 'false' : 'true');
+        if (!qr.hidden && !qr.firstChild) loadQr(function () { new window.QRCode(qr, { text: url, width: 168, height: 168, correctLevel: window.QRCode.CorrectLevel.M }); });
+      });
+      acts.appendChild(open); acts.appendChild(copy); acts.appendChild(qrb);
+      span.appendChild(acts); span.appendChild(qr);
+      li.appendChild(span);
+      return li;
+    }
+
     // What the outside checks found (tes-portal src/watch_outside.js).
     var EMAIL_GRADE = { good: ['Set up properly', ''], weak: ['Set up, with gaps', 'warn'], missing: ['Missing protection', 'bad'], none: ['No email on this domain', ''] };
     function outsideBox(o) {
@@ -401,6 +446,7 @@
         var gi = (gl.issues || []).map(function (i) { return i.title; });
         if (gl.rating_low) gi.push('Your rating is under 4.0');
         item('Google listing', gi.length ? gi.join('. ') + '.' : 'Matches your website: phone, hours and link agree.', gi.length ? 'warn' : '');
+        if (gl.review_url) ul.appendChild(reviewLinkItem(gl.review_url));
       } else if (gl && gl.status === 'not_found') item('Google listing', 'None links to this website. A free Google Business Profile helps people find and call you.', 'warn');
       // The monthly Google checks (watch_google.js).
       var gg = o.google;
@@ -410,6 +456,14 @@
       }
       if (gg && gg.videos && gg.videos.checked) item('Videos on your site', gg.videos.broken.length ? gg.videos.broken.length + ' of ' + gg.videos.checked + ' no longer play' : 'All ' + gg.videos.checked + ' play', gg.videos.broken.length ? 'warn' : '');
       if (gg && gg.address && gg.address.verdict) item('Your address', gg.address.verdict === 'deliverable' ? 'A real, deliverable address' : gg.address.verdict === 'missing_unit' ? 'Needs a suite or unit number' : 'Google could not confirm it as written', gg.address.verdict === 'deliverable' ? '' : 'warn');
+      if (gg && gg.compare) {
+        var nth = function (n) { return n + (n % 10 === 1 && n % 100 !== 11 ? 'st' : n % 10 === 2 && n % 100 !== 12 ? 'nd' : n % 10 === 3 && n % 100 !== 13 ? 'rd' : 'th'); };
+        item('Among nearby ' + String(gg.compare.category).toLowerCase() + ' businesses', 'You have the ' + nth(gg.compare.rank_reviews) + ' most Google reviews and the ' + nth(gg.compare.rank_rating) + ' best rating of ' + gg.compare.of + '.', gg.compare.rank_reviews > 1 ? 'warn' : '');
+      }
+      if (gg && gg.channel && gg.channel.found) {
+        var age = gg.channel.last_upload ? Math.floor((Date.now() - Date.parse(gg.channel.last_upload)) / 86400000) : null;
+        item('YouTube channel', (gg.channel.subscribers != null ? gg.channel.subscribers.toLocaleString() + ' subscribers, ' : '') + gg.channel.videos + ' videos' + (age != null ? ', last posted ' + (age < 45 ? age + ' days ago' : Math.round(age / 30) + ' months ago') : ''), age != null && age > 180 ? 'warn' : '');
+      }
       if (gg && gg.kg) item('Known to Google', gg.kg.found ? 'Yes: Google knows your business as an entity' : 'Not yet: keep your name, address and phone the same everywhere', gg.kg.found ? '' : 'warn');
       if (o.links) item('Broken links', o.links.broken.length ? o.links.broken.length + ' of ' + o.links.checked + ' checked' : 'None found', o.links.broken.length ? 'warn' : '');
       if (!ul.childNodes.length) return el('div');

@@ -628,6 +628,16 @@
     .ww-checks .warn { border-color:rgba(200,152,48,0.45); } .ww-checks .warn i { color:#e0b840; } .ww-checks .warn b { color:#f0d58a; }
     .ww-checks .bad { border-color:rgba(214,120,90,0.5); } .ww-checks .bad i { color:#e08a6c; } .ww-checks .bad b { color:#f0a58f; }
     .ww-checks .wait i { color:#8aa48d; } .ww-checks .wait b { color:var(--muted); }
+    .ww-more { list-style:none; margin:0.8rem 0 0; padding:0; display:grid; gap:0.4rem; }
+    .ww-more li { display:grid; grid-template-columns:22px 1fr auto; align-items:center; gap:0.55rem; padding:0.5rem 0.75rem; border-radius:12px; background:rgba(0,0,0,0.22); border:1px solid var(--line); font-size:0.84rem; transition:opacity .5s ease, transform .5s cubic-bezier(.2,.8,.2,1); transition-delay:calc(var(--d, 0) * 80ms + 550ms); }
+    .ww-more i { text-align:center; color:#5cc077; }
+    .ww-more span { color:#c2d5c6; }
+    .ww-more b { font-family:"Montserrat",sans-serif; font-size:0.82rem; color:#fff; text-align:right; }
+    .ww-more .warn i { color:#e0b840; } .ww-more .warn b { color:#f0d58a; }
+    .ww-more .bad i { color:#e08a6c; } .ww-more .bad b { color:#f0a58f; }
+    .ww-more .wait i { color:#8aa48d; } .ww-more .wait b { color:var(--muted); font-weight:600; }
+    .ww-preview.pre .ww-more li { opacity:0; transform:translateY(10px); transition:none; }
+    @media (max-width:560px) { .ww-more li { grid-template-columns:20px 1fr; } .ww-more b { grid-column:2; text-align:left; } }
 
     .ww-uptime { margin-top:1rem; }
     .ww-uptime-head { display:flex; justify-content:space-between; font-size:0.74rem; margin-bottom:0.4rem; }
@@ -806,6 +816,28 @@
     .ww-done p { color:var(--muted); margin-bottom:1.2rem; }
     .ww-alt { text-align:center; color:var(--muted); margin-top:1.3rem; font-size:0.95rem; }
     .ww-alt a { color:#6dc882; }
+    /* Your Google presence: the copy and a sample listing card */
+    .ww-gp { display:grid; grid-template-columns:minmax(0,1.05fr) minmax(0,0.95fr); gap:2.2rem; align-items:center; }
+    .ww-gp-copy > p { color:var(--muted); line-height:1.65; margin-bottom:1.1rem; font-size:1.02rem; }
+    .ww-gcard { background:#f7faf8; color:#1c2e22; border-radius:22px; padding:1.3rem 1.3rem 1.2rem; box-shadow:0 30px 70px rgba(0,0,0,0.45); border:1px solid rgba(255,255,255,0.6); transform:rotate(-1.2deg); }
+    .ww-gc-top { display:flex; gap:0.75rem; align-items:center; margin-bottom:0.6rem; }
+    .ww-gc-av { width:44px; height:44px; border-radius:50%; display:grid; place-items:center; font-family:"Montserrat",sans-serif; font-weight:800; color:#fff; background:linear-gradient(135deg,#3c8f55,#1f5c34); }
+    .ww-gc-top b { display:block; font-family:"Montserrat",sans-serif; font-size:1.05rem; }
+    .ww-gc-top span { font-size:0.8rem; color:#5a6f5e; }
+    .ww-gc-stars { display:flex; align-items:baseline; gap:0.4rem; margin-bottom:0.8rem; }
+    .ww-gc-stars b { font-size:1.1rem; } .ww-gc-stars .st { color:#e0a800; letter-spacing:1px; } .ww-gc-stars .ct { font-size:0.82rem; color:#5a6f5e; }
+    .ww-gc-rows { list-style:none; margin:0 0 0.8rem; padding:0; display:grid; gap:0.35rem; font-size:0.86rem; }
+    .ww-gc-rows i { width:18px; } .ww-gc-rows .ok i { color:#2f8a4c; } .ww-gc-rows .warn i { color:#c48a12; } .ww-gc-rows .warn { font-weight:600; }
+    .ww-gc-alert { display:flex; gap:0.55rem; align-items:flex-start; padding:0.65rem 0.75rem; border-radius:12px; background:#fff3e6; border:1px solid #f0c89a; font-size:0.84rem; margin-bottom:0.8rem; animation:wwGcPulse 3s ease-in-out infinite; }
+    .ww-gc-alert i { color:#c4581f; margin-top:0.15rem; }
+    @keyframes wwGcPulse { 0%,100% { box-shadow:0 0 0 0 rgba(196,88,31,0); } 50% { box-shadow:0 0 0 5px rgba(196,88,31,0.12); } }
+    .ww-gc-rank span { display:block; font-size:0.74rem; font-weight:700; letter-spacing:0.05em; text-transform:uppercase; color:#5a6f5e; margin-bottom:0.4rem; }
+    .ww-gc-bars { display:grid; gap:4px; margin-bottom:0.45rem; }
+    .ww-gc-bars i { display:block; height:8px; width:var(--w); border-radius:999px; background:#c9d6cc; }
+    .ww-gc-bars i.you { background:linear-gradient(90deg,#c89830,#e0b840); }
+    .ww-gc-rank b { font-size:0.84rem; }
+    @media (max-width:860px) { .ww-gp { grid-template-columns:1fr; } .ww-gcard { transform:none; max-width:440px; margin:0 auto; width:100%; } }
+    @media (prefers-reduced-motion: reduce) { .ww-gc-alert { animation:none; } }
     /* Click-to-expand images */
     .ww-sample-img { cursor:zoom-in; position:relative; }
     .ww-sample-img::after { content:"\f065"; font-family:"Font Awesome 6 Free"; font-weight:900; position:absolute; right:0.6rem; bottom:0.6rem; width:36px; height:36px; display:grid; place-items:center; border-radius:50%; background:rgba(13,23,16,0.82); color:#e6c68a; font-size:0.85rem; }
@@ -998,6 +1030,12 @@
             <div class="ok" id="wwCkSafe"><i class="fa-solid fa-shield-halved"></i><span>Google</span><b>Clean</b></div>
           </div>
 
+          <ul class="ww-more" id="wwMore">
+            <li class="ok" id="wwMoreSpeed"><i class="fa-solid fa-person-running"></i><span>Real visitors on phones</span><b>Pages show in 2.1 s, good</b></li>
+            <li class="warn" id="wwMoreVid"><i class="fa-brands fa-youtube"></i><span>Videos on the site</span><b>1 of 3 no longer plays</b></li>
+            <li class="ok" id="wwMoreKg"><i class="fa-solid fa-diagram-project"></i><span>Known to Google</span><b>Yes, as a business</b></li>
+          </ul>
+
           <div class="ww-uptime" id="wwUptime">
             <div class="ww-uptime-head"><span>Last 36 checks</span><b>99.97% uptime</b></div>
             <div class="ww-bars" id="wwBars" aria-hidden="true">
@@ -1060,6 +1098,43 @@
       </div>
     </section>
 
+    <section class="ww-sec" id="google-presence" aria-labelledby="gpHead">
+      <div class="ww-head">
+        <span class="ww-kicker">Your Google presence, watched</span>
+        <h2 id="gpHead">Most Customers Meet You on Google First</h2>
+      </div>
+      <div class="ww-gp">
+        <div class="ww-gp-copy">
+          <p>Before anyone sees your website, they see your Google listing: your stars, your hours, your phone number. Every week we check it against your website and tell you the moment something is off.</p>
+          <ul class="ww-addon-list">
+            <li><i class="fa-solid fa-star-half-stroke"></i> <span><b>New 1 and 2 star reviews</b>, as soon as we see them, so you can answer before the next customer reads it</span></li>
+            <li><i class="fa-solid fa-phone"></i> <span><b>Phone, hours, address and website link</b> compared with your site. Customers trust Google, so a wrong number there is a lost call</span></li>
+            <li><i class="fa-solid fa-ranking-star"></i> <span><b>How you compare nearby</b>: your reviews and rating against the businesses you compete with, every month</span></li>
+            <li><i class="fa-solid fa-qrcode"></i> <span><b>Your review link and QR code</b>, ready to text, print on receipts or put on the counter</span></li>
+            <li><i class="fa-solid fa-gauge-high"></i> <span><b>Real-visitor speed</b> from Chrome, videos that stopped playing, and whether Google knows you as a business</span></li>
+          </ul>
+        </div>
+        <div class="ww-gcard" aria-hidden="true">
+          <div class="ww-gc-top">
+            <div class="ww-gc-av">Y</div>
+            <div><b>Your Business</b><span>Plumber in Cleveland, Ohio</span></div>
+          </div>
+          <div class="ww-gc-stars"><b>4.6</b> <span class="st">★★★★★</span> <span class="ct">88 reviews</span></div>
+          <ul class="ww-gc-rows">
+            <li class="ok"><i class="fa-solid fa-circle-check"></i> Phone matches your website</li>
+            <li class="warn"><i class="fa-solid fa-triangle-exclamation"></i> Saturday hours differ: Google says closed</li>
+            <li class="ok"><i class="fa-solid fa-circle-check"></i> Address and website link match</li>
+          </ul>
+          <div class="ww-gc-alert"><i class="fa-solid fa-bell"></i> <span><b>New 1-star review</b> &ldquo;Never called me back.&rdquo; Answer it today.</span></div>
+          <div class="ww-gc-rank">
+            <span>Reviews, you vs. nearby plumbers</span>
+            <div class="ww-gc-bars"><i style="--w:100%"></i><i style="--w:62%"></i><i class="you" style="--w:21%"></i><i style="--w:14%"></i></div>
+            <b>3rd of 6: 30 more reviews would put you 2nd</b>
+          </div>
+        </div>
+      </div>
+    </section>
+
     <section class="ww-sec" aria-labelledby="howHead">
       <div class="ww-head">
         <span class="ww-kicker">How it works</span>
@@ -1094,6 +1169,7 @@
           <li><i class="fa-solid fa-check"></i> Every 15 minutes, with instant alerts</li>
           <li><i class="fa-solid fa-check"></i> Domain, certificate and email health</li>
           <li><i class="fa-solid fa-check"></i> Hijack, danger-list and broken-link checks</li>
+          <li><i class="fa-solid fa-check"></i> Google listing, review alerts and competitor snapshot</li>
           <li><i class="fa-solid fa-check"></i> Store checks, visitors and a monthly report</li>
         </ul>
         </div>
@@ -1260,6 +1336,10 @@
         <details>
           <summary>What is the visitor line, and is it private?</summary>
           <div class="faq-a">One short script tag we give you (or add for you). It counts page views and clicks on your phone number, email, forms and buy buttons. It sets no cookies and keeps no personal data, so you do not need a cookie banner for it.</div>
+        </details>
+        <details>
+          <summary>What do you check on my Google listing?</summary>
+          <div class="faq-a">Every week: new 1 and 2 star reviews, whether your rating fell under 4.0, and whether the phone number, hours, address and website link on Google match your website, or Google shows you as closed. Every month: how your reviews and rating compare with businesses like yours nearby. Your portal also has your review link and a QR code to send customers. We only read your public listing; we never post or change anything on it.</div>
         </details>
         <details>
           <summary>How do I cancel?</summary>
@@ -1557,6 +1637,16 @@
           tile('wwCkMail', em ? em[0] : 'wait', em ? em[1] : '–');
           tile('wwCkSafe', !d.safe ? 'wait' : d.safe.flagged ? 'bad' : 'ok', !d.safe ? '–' : d.safe.flagged ? 'Flagged' : 'Clean');
           $('wwCkSafe').hidden = !d.safe;   // shown only when Google answered
+          // From Google's free APIs: real Chrome visitors, videos on the site, the Knowledge Graph.
+          var more = function (id, cls, text) { var e = $(id); e.hidden = !text; if (text) { e.className = cls; e.querySelector('b').textContent = text; } };
+          var sp = d.speed, lc = sp && sp.has_data && sp.lcp;
+          more('wwMoreSpeed', lc ? (lc.rating === 'good' ? 'ok' : lc.rating === 'poor' ? 'bad' : 'warn') : 'wait',
+            lc ? 'Pages show in ' + (lc.now / 1000).toFixed(1) + ' s, ' + (lc.rating === 'good' ? 'good' : lc.rating === 'poor' ? 'poor' : 'needs work')
+              : sp && sp.has_data === false ? 'Too few Chrome visitors to measure yet' : '');
+          more('wwMoreVid', d.videos && d.videos.broken ? 'bad' : 'ok',
+            d.videos && d.videos.checked ? (d.videos.broken ? d.videos.broken + ' of ' + d.videos.checked + ' no longer play' : 'All ' + d.videos.checked + ' play') : '');
+          more('wwMoreKg', d.known && d.known.found ? 'ok' : 'warn', d.known ? (d.known.found ? 'Yes, as a business' : 'Not yet') : '');
+          $('wwMore').hidden = $('wwMoreSpeed').hidden && $('wwMoreVid').hidden && $('wwMoreKg').hidden;
           $('wwUptime').hidden = true;
           var said = [], warn = false;
           if (d.up === false) { warn = true; said.push('It did not answer just now: ' + (d.error || 'no response') + '. Website Watch would have emailed you about it.'); }
@@ -1566,6 +1656,8 @@
             else if (x[1] !== null && x[1] <= 30) { warn = true; said.push('Its ' + x[0] + ' runs out in ' + daysText(x[1]) + '. We would be warning you now.'); }
           });
           if (d.email && d.email.issue && d.email.grade !== 'good' && d.email.grade !== 'none') said.push('Email: ' + d.email.issue);
+          if (d.videos && d.videos.broken) { warn = true; said.push(d.videos.broken === 1 ? 'A video on the site no longer plays: visitors see an error box where it was.' : d.videos.broken + ' videos on the site no longer play: visitors see error boxes where they were.'); }
+          if (lc && lc.rating === 'poor') { warn = true; said.push('Real visitors on phones wait ' + (lc.now / 1000).toFixed(1) + ' seconds for the page, and Google counts that against you in search.'); }
           if (!said.length) said.push('All good right now. Website Watch would check it again in 15 minutes, and every 15 minutes after that.');
           note(said.join(' '), warn);
           fixes(d.fixes && d.fixes.length ? d.fixes : (d.top || []).map(function (t) { return { title: t }; }));
@@ -1791,7 +1883,7 @@
     var card = document.getElementById('wwPreview'); if (!card) return;
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
     function stagger() {
-      ['.ww-cats li s', '.ww-checks div', '.ww-fixes li', '.ww-bars i'].forEach(function (sel) {
+      ['.ww-cats li s', '.ww-checks div', '.ww-more li', '.ww-fixes li', '.ww-bars i'].forEach(function (sel) {
         [].forEach.call(card.querySelectorAll(sel), function (e, i) { e.style.setProperty('--d', i); });
       });
     }
