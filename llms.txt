@@ -15,7 +15,7 @@
   - AI Receptionist (TES flagship): answers missed and after-hours calls in any of ten voices (or a custom cloned voice), books appointments, flags emergencies, works alongside staff; TES connects it to the business calendar, help desk, CRM or other software with an API, and reviews its recorded calls every week; running cost about 4 to 5 cents a minute on the standard model, phone line included; setup quoted per business; a 60-second film on the page; live demo line (216) 238-0505: https://tevisengineering.com/ai-receptionist.html
   - Ohio crash report leads for law firms: https://tevisengineering.com/ohio-crash-report-analysis-tool.html
   - ShingleAI roof estimate tool for roofers: https://tevisengineering.com/shingleai-roof-estimate-tool.html
-  - 3D Shed Builder for shed dealers: https://tevisengineering.com/3d-shed-builder-tool.html
+  - 3D Shed Builder, a 3D building configurator tailored to each dealer (sheds and garages built in; gazebos, pavilions, carports and other structures built to order): https://tevisengineering.com/3d-shed-builder-tool.html
   - Website Watch uptime monitoring: https://tevisengineering.com/website-watch.html
   - Bid Management Software for Ohio public bids (early access, free waitlist, optional refundable deposit): https://tevisengineering.com/bid-management-software.html
     - Guide: how to find government bids in Ohio: https://tevisengineering.com/blog/how-to-find-government-bids-in-ohio.html

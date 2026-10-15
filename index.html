@@ -259,23 +259,13 @@
   .hx-sub { color:var(--text-body); font-size:0.98rem; line-height:1.7; margin:0.85rem 0 0; max-width:620px; }
   .hx-head-cta { flex-shrink:0; }
 
-  /* Product rail: a horizontally scrolling row of tiles */
-  .hx-rail-wrap { position:relative; }
-  .hx-rail-head { display:flex; align-items:center; justify-content:space-between; gap:1rem; margin:0.4rem 0 0.9rem; }
-  .hx-rail-k { font-family:var(--font-display); font-size:0.72rem; font-weight:800; text-transform:uppercase; letter-spacing:0.16em; color:var(--brand-accent); margin:0; }
-  .hx-rail-nav { display:flex; gap:0.5rem; }
-  .hx-rail-btn { width:42px; height:42px; border-radius:50%; cursor:pointer; color:#cdeed6; background:rgba(74,172,101,0.08); border:1px solid rgba(74,172,101,0.4);
-    transition:background var(--dur-base),border-color var(--dur-base),opacity var(--dur-base); }
-  .hx-rail-btn:hover { background:rgba(200,152,48,0.15); border-color:var(--wash-gold-border); }
-  .hx-rail-btn:disabled { opacity:0.3; cursor:default; }
-  .hx-rail { display:flex; gap:1rem; overflow-x:auto; scroll-snap-type:x mandatory; scroll-padding:0 2px; padding:0.4rem 2px 1.1rem; scrollbar-width:none;
-    -webkit-mask-image:linear-gradient(90deg,#000 0,#000 calc(100% - 70px),transparent); mask-image:linear-gradient(90deg,#000 0,#000 calc(100% - 70px),transparent); }
-  .hx-rail.at-end { -webkit-mask-image:none; mask-image:none; }
-  .hx-rail::-webkit-scrollbar { display:none; }
-  .hx-rail:focus-visible { outline:2px solid var(--tes-gold-300); outline-offset:4px; border-radius:18px; }
-  .hx-tile { position:relative; flex:0 0 272px; height:360px; scroll-snap-align:start; border-radius:20px; overflow:hidden; text-decoration:none; isolation:isolate;
+  /* Product grid: every product visible at once, no scrolling */
+  .hx-rail-k { font-family:var(--font-display); font-size:0.72rem; font-weight:800; text-transform:uppercase; letter-spacing:0.16em; color:var(--brand-accent); margin:0.4rem 0 0.9rem; }
+  .hx-grid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:1rem; }
+  .hx-tile { position:relative; display:block; min-height:300px; border-radius:20px; overflow:hidden; text-decoration:none; isolation:isolate;
     background:var(--surface-well); border:1px solid var(--border-default); box-shadow:0 14px 34px rgba(0,0,0,0.35);
     transition:transform var(--dur-base) var(--ease-out),border-color var(--dur-base),box-shadow var(--dur-base); }
+  .hx-tile--wide { grid-column:span 2; }
   .hx-tile:hover, .hx-tile:focus-visible { transform:translateY(-6px); border-color:var(--wash-gold-border); box-shadow:0 22px 46px rgba(0,0,0,0.5),0 0 40px rgba(200,152,48,0.14); }
   .hx-tile img { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; object-position:top center; z-index:-2; transition:transform 0.6s var(--ease-out); }
   .hx-tile:hover img { transform:scale(1.07); }
@@ -287,16 +277,32 @@
   .hx-tile-body { position:absolute; left:0; right:0; bottom:0; padding:1.15rem 1.2rem 1.2rem; display:flex; flex-direction:column; gap:0.35rem; }
   .hx-tile-who { font-size:0.7rem; font-weight:700; text-transform:uppercase; letter-spacing:0.08em; color:var(--brand-primary); }
   .hx-tile strong { font-family:var(--font-display); font-size:1.12rem; font-weight:800; line-height:1.2; color:#fff; }
-  .hx-tile-line { font-size:0.84rem; line-height:1.5; color:#cfe0d2; }
+  .hx-tile--wide strong { font-size:1.4rem; }
+  .hx-tile-line { font-size:0.84rem; line-height:1.5; color:#cfe0d2; max-width:30rem; }
   .hx-tile-go { display:inline-flex; align-items:center; gap:0.4rem; margin-top:0.35rem; font-family:var(--font-display); font-size:0.7rem; font-weight:800;
     text-transform:uppercase; letter-spacing:0.06em; color:var(--brand-accent); }
   .hx-tile-go i { transition:transform var(--dur-base) var(--ease-out); }
   .hx-tile:hover .hx-tile-go i { transform:translateX(4px); }
-  .hx-tile-all { display:flex; flex-direction:column; justify-content:center; gap:0.5rem; padding:1.4rem; border-style:dashed; border-color:var(--wash-gold-border);
-    background:radial-gradient(120% 80% at 50% 0%,rgba(200,152,48,0.18),transparent 70%),rgba(8,16,11,0.7); }
-  .hx-tile-all::after { display:none; }
-  .hx-tile-all-ic { width:54px; height:54px; border-radius:16px; display:flex; align-items:center; justify-content:center; font-size:1.3rem; color:var(--brand-accent);
-    background:var(--wash-gold); border:1px solid var(--wash-gold-border); margin-bottom:0.4rem; }
+
+  /* Coming soon: the bid management software */
+  .hx-soon { display:flex; align-items:center; gap:1.25rem; margin-top:1rem; padding:0.9rem 1.4rem 0.9rem 0.9rem; text-decoration:none; border-radius:18px;
+    border:1px dashed var(--wash-gold-border); background:linear-gradient(100deg,rgba(200,152,48,0.1),rgba(8,16,11,0.55) 60%);
+    transition:background var(--dur-base),border-color var(--dur-base); }
+  .hx-soon:hover { border-color:var(--tes-gold-500); background:linear-gradient(100deg,rgba(200,152,48,0.17),rgba(8,16,11,0.55) 60%); }
+  .hx-soon-img { flex:0 0 150px; height:94px; border-radius:12px; overflow:hidden; border:1px solid var(--border-default); }
+  .hx-soon-img img { display:block; width:100%; height:100%; object-fit:cover; object-position:top left; filter:saturate(0.6) brightness(0.85); transition:filter var(--dur-base); }
+  .hx-soon:hover .hx-soon-img img { filter:none; }
+  .hx-soon-t { flex:1; min-width:0; display:flex; flex-direction:column; gap:0.3rem; }
+  .hx-soon-badge { align-self:flex-start; display:inline-flex; align-items:center; gap:0.4rem; font-family:var(--font-display); font-size:0.6rem; font-weight:800;
+    text-transform:uppercase; letter-spacing:0.12em; color:var(--brand-accent); border:1px solid var(--wash-gold-border); background:rgba(200,152,48,0.08); padding:4px 10px; border-radius:999px; }
+  .hx-soon-badge i { animation:hxSoon 2.4s ease-in-out infinite; }
+  @keyframes hxSoon { 0%,100% { opacity:0.55; } 50% { opacity:1; } }
+  .hx-soon-t strong { font-family:var(--font-display); font-size:1.05rem; font-weight:800; color:var(--text-strong); }
+  .hx-soon-t > span:last-child { font-size:0.86rem; color:var(--text-muted); line-height:1.5; }
+  .hx-soon-go { flex-shrink:0; display:inline-flex; align-items:center; gap:0.45rem; font-family:var(--font-display); font-size:0.74rem;
+    font-weight:700; text-transform:uppercase; letter-spacing:0.05em; color:var(--brand-accent); white-space:nowrap; }
+  .hx-soon-go i { transition:transform var(--dur-base) var(--ease-out); }
+  .hx-soon:hover .hx-soon-go i { transform:translateX(4px); }
 
   /* Flagship spotlight: the AI Receptionist */
   .hx-spot { display:grid; grid-template-columns:1.05fr 1fr; gap:2rem; align-items:center; margin-bottom:1.4rem; padding:1.7rem;
@@ -394,8 +400,25 @@
     .hx-spot { grid-template-columns:minmax(0,1fr); }
     .hx-core { grid-template-columns:1fr 1fr; }
     .hx-core > :nth-child(3) { grid-column:1 / -1; }
+    .hx-grid { grid-template-columns:repeat(2,minmax(0,1fr)); }
   }
   @media (max-width:720px) {
+    /* Phones: the products become a compact list, thumbnail on the left */
+    .hx-grid { grid-template-columns:minmax(0,1fr); gap:0.7rem; }
+    .hx-tile, .hx-tile--wide { grid-column:auto; display:grid; grid-template-columns:96px minmax(0,1fr); gap:0.9rem; align-items:center;
+      min-height:0; padding:0.7rem; border-radius:16px; box-shadow:none; background:rgba(8,16,11,0.7); }
+    .hx-tile:hover, .hx-tile:focus-visible { transform:none; }
+    .hx-tile img { position:static; z-index:auto; width:96px; height:96px; border-radius:11px; object-position:top left; }
+    .hx-tile:hover img { transform:none; }
+    .hx-tile::after, .hx-tile-tag { display:none; }
+    .hx-tile-body { position:static; padding:0; gap:0.2rem; }
+    .hx-tile-who { font-size:0.62rem; }
+    .hx-tile strong, .hx-tile--wide strong { font-size:1rem; }
+    .hx-tile-line { font-size:0.8rem; line-height:1.45; }
+    .hx-tile-go { display:none; }
+    .hx-soon { flex-wrap:wrap; padding:0.9rem; gap:0.9rem; }
+    .hx-soon-img { flex-basis:100%; height:120px; }
+    .hx-soon-go { width:100%; justify-content:center; padding-top:0.2rem; }
     .hx-soft { padding:1.6rem; border-radius:20px; }
     .hx-spot { padding:1.1rem; gap:1.4rem; }
     .hx-spot h4 { font-size:1.55rem; }
@@ -406,8 +429,6 @@
     .hx-core-head .hx-h { font-size:1.45rem; }
     .hx-core-head { margin-top:2.75rem; }
     .hx-core { grid-template-columns:1fr; }
-    .hx-tile { flex-basis:78%; height:340px; }
-    .hx-rail-nav { display:none; }
     .hx-core > :nth-child(3) { grid-column:auto; }
     .hx-head-cta { width:100%; }
     .hx-build { flex-wrap:wrap; gap:0.9rem; }
@@ -612,6 +633,7 @@
     .rv, .rv.is-in { opacity:1; transform:none; animation:none; }
     .mh-cl-trace, .mh-cl-node { animation:none; }
     .hx-tile, .hx-tile img, .hx-svc, .hx-cat-link { transition:none; }
+    .hx-soon-badge i { animation:none; }
     html { scroll-behavior:auto; }
   }
   </style>
@@ -752,22 +774,36 @@
         </div>
       </article>
 
-      <div class="hx-rail-wrap rv">
-        <div class="hx-rail-head">
-          <p class="hx-rail-k">More from TES Software</p>
-          <div class="hx-rail-nav">
-            <button class="hx-rail-btn" type="button" data-dir="-1" aria-label="Scroll the software list back"><i class="fa-solid fa-arrow-left" aria-hidden="true"></i></button>
-            <button class="hx-rail-btn" type="button" data-dir="1" aria-label="Scroll the software list forward"><i class="fa-solid fa-arrow-right" aria-hidden="true"></i></button>
-          </div>
-        </div>
-        <div class="hx-rail" role="region" aria-label="TES Software products" tabindex="0">
-          <a class="hx-tile" href="ohio-crash-report-analysis-tool.html">
+      <div class="hx-grid-wrap rv">
+        <p class="hx-rail-k">More from TES Software</p>
+        <div class="hx-grid">
+          <a class="hx-tile hx-tile--wide" href="ohio-crash-report-analysis-tool.html">
             <img src="assets/crash/lead-dashboard-640.webp" alt="The Ohio Crash List lead dashboard, showing de-duplicated injury-crash records" loading="lazy" decoding="async" width="1500" height="1208">
             <span class="hx-tile-tag"><i class="fa-solid fa-circle-check" aria-hidden="true"></i> Free trial</span>
             <span class="hx-tile-body">
               <span class="hx-tile-who">Personal-injury firms</span>
               <strong>Ohio Crash Report Analysis Tool</strong>
               <span class="hx-tile-line">Injury-crash leads from Ohio crash reports, yours to keep.</span>
+              <span class="hx-tile-go">See it <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></span>
+            </span>
+          </a>
+          <a class="hx-tile" href="3d-shed-builder-tool.html">
+            <img src="assets/shed/card-thumb-v2-640.webp" alt="The 3D Shed Builder: a barn-red lofted barn with a charcoal gambrel roof and a wooden ramp, rendered live in 3D" loading="lazy" decoding="async" width="1200" height="750">
+            <span class="hx-tile-tag"><i class="fa-solid fa-cube" aria-hidden="true"></i> Build one now</span>
+            <span class="hx-tile-body">
+              <span class="hx-tile-who">Shed, garage &amp; outbuilding dealers</span>
+              <strong>3D Shed Builder</strong>
+              <span class="hx-tile-line">A 3D builder for sheds, garages, gazebos and more, set up for your line. Customers send you the priced lead.</span>
+              <span class="hx-tile-go">See it <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></span>
+            </span>
+          </a>
+          <a class="hx-tile" href="cleveland-geo-visualizer.html">
+            <img src="assets/geo-map/card-thumb-640.webp" alt="The Cleveland Geo Visualizer: Cleveland Heights police reports as colored clusters with license-plate camera locations over them" loading="lazy" decoding="async" width="1200" height="750">
+            <span class="hx-tile-tag"><i class="fa-solid fa-map-location-dot" aria-hidden="true"></i> Free to use</span>
+            <span class="hx-tile-body">
+              <span class="hx-tile-who">Everyone, plus custom builds</span>
+              <strong>Cleveland Geo Visualizer</strong>
+              <span class="hx-tile-line">Cleveland open data, stacked on one map.</span>
               <span class="hx-tile-go">See it <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></span>
             </span>
           </a>
@@ -791,43 +827,17 @@
               <span class="hx-tile-go">See it <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></span>
             </span>
           </a>
-          <a class="hx-tile" href="3d-shed-builder-tool.html">
-            <img src="assets/shed/card-thumb-v2-640.webp" alt="The 3D Shed Builder: a barn-red lofted barn with a charcoal gambrel roof and a wooden ramp, rendered live in 3D" loading="lazy" decoding="async" width="1200" height="750">
-            <span class="hx-tile-tag"><i class="fa-solid fa-cube" aria-hidden="true"></i> Build one now</span>
-            <span class="hx-tile-body">
-              <span class="hx-tile-who">Shed builders &amp; barn dealers</span>
-              <strong>3D Shed Builder</strong>
-              <span class="hx-tile-line">Customers design their shed in 3D and send you the priced lead.</span>
-              <span class="hx-tile-go">See it <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></span>
-            </span>
-          </a>
-          <a class="hx-tile" href="bid-management-software.html">
-            <img src="assets/contracting/card-thumb-640.webp" alt="Bid board with bids in finding, triage and pricing, each showing the agency, closing date and margin" loading="lazy" decoding="async" width="1200" height="750">
-            <span class="hx-tile-tag"><i class="fa-solid fa-hourglass-half" aria-hidden="true"></i> Early access</span>
-            <span class="hx-tile-body">
-              <span class="hx-tile-who">Vendors bidding on Ohio public work</span>
-              <strong>Bid Management Software</strong>
-              <span class="hx-tile-line">Find, price and track Ohio public bids in one place.</span>
-              <span class="hx-tile-go">See it <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></span>
-            </span>
-          </a>
-          <a class="hx-tile" href="cleveland-geo-visualizer.html">
-            <img src="assets/geo-map/card-thumb-640.webp" alt="The Cleveland Geo Visualizer: Cleveland Heights police reports as colored clusters with license-plate camera locations over them" loading="lazy" decoding="async" width="1200" height="750">
-            <span class="hx-tile-tag"><i class="fa-solid fa-map-location-dot" aria-hidden="true"></i> Free to use</span>
-            <span class="hx-tile-body">
-              <span class="hx-tile-who">Everyone, plus custom builds</span>
-              <strong>Cleveland Geo Visualizer</strong>
-              <span class="hx-tile-line">Cleveland open data, stacked on one map.</span>
-              <span class="hx-tile-go">See it <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></span>
-            </span>
-          </a>
-          <a class="hx-tile hx-tile-all" href="software.html">
-            <span class="hx-tile-all-ic" aria-hidden="true"><i class="fa-solid fa-boxes-stacked"></i></span>
-            <strong>Explore all software</strong>
-            <span class="hx-tile-line">Trials, demos, subscriptions and early access.</span>
-            <span class="hx-tile-go">See them all <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></span>
-          </a>
         </div>
+
+        <a class="hx-soon" href="bid-management-software.html">
+          <span class="hx-soon-img"><img src="assets/contracting/card-thumb-640.webp" alt="Bid board with bids in finding, triage and pricing, each showing the agency, closing date and margin" loading="lazy" decoding="async" width="1200" height="750"></span>
+          <span class="hx-soon-t">
+            <span class="hx-soon-badge"><i class="fa-solid fa-hourglass-half" aria-hidden="true"></i> Coming soon</span>
+            <strong>Bid Management Software</strong>
+            <span>Find, price and track Ohio public bids in one place. Built for vendors bidding on Cleveland, Cuyahoga and state work.</span>
+          </span>
+          <span class="hx-soon-go">Join the waitlist <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></span>
+        </a>
       </div>
 
       <a class="hx-build" href="contact.html">
@@ -1412,27 +1422,6 @@ window.addEventListener('load', function(){ setTimeout(tesLoadChat, 4000); });
       t.textContent = fmt(a.currentTime) + ' / ' + fmt(d);
     });
     a.addEventListener('ended', function () { a.currentTime = 0; bar.style.width = '0%'; t.textContent = fmt(total); });
-  })();
-  </script>
-  <script>
-  (function () {
-    var rail = document.querySelector('.hx-rail');
-    if (!rail) return;
-    var btns = document.querySelectorAll('.hx-rail-btn');
-    var smooth = !(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
-    function step() { var t = rail.querySelector('.hx-tile'); return t ? t.getBoundingClientRect().width + 16 : 280; }
-    function state() {
-      var max = rail.scrollWidth - rail.clientWidth - 2;
-      btns[0].disabled = rail.scrollLeft <= 2;
-      btns[1].disabled = rail.scrollLeft >= max;
-      rail.classList.toggle('at-end', rail.scrollLeft >= max);
-    }
-    btns.forEach(function (b) {
-      b.addEventListener('click', function () { rail.scrollBy({ left: Number(b.getAttribute('data-dir')) * step(), behavior: smooth ? 'smooth' : 'auto' }); });
-    });
-    rail.addEventListener('scroll', state, { passive: true });
-    window.addEventListener('resize', state);
-    state();
   })();
   </script>
 <script src="assets/js/tes-analytics.js" defer></script>
