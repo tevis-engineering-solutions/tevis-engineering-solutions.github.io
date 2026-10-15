@@ -143,6 +143,32 @@
     .mon-grade div { font-size:0.88rem; color:#dfe9e1; line-height:1.5; }
     .mon-grade small { color:var(--muted); }
     .mon-fixes { margin:0.75rem 0 0; padding-left:1.15rem; color:#dfe9e1; font-size:0.88rem; line-height:1.6; }
+    /* Visitors, outside checks and Insights connections (tes-portal traffic.js, watch_outside.js, connections.js) */
+    .mon-kv { display:grid; grid-template-columns:repeat(auto-fit, minmax(90px, 1fr)); gap:0.6rem; }
+    .mon-kv div { text-align:center; }
+    .mon-kv b { display:block; font-family:"Montserrat",sans-serif; font-weight:800; font-size:1.15rem; color:#fff; font-variant-numeric:tabular-nums; }
+    .mon-kv span { font-size:0.72rem; color:var(--muted); }
+    .mon-line { color:var(--muted); font-size:0.84rem; margin:0.6rem 0 0; line-height:1.55; overflow-wrap:anywhere; }
+    .mon-line.bad { color:#f0a58f; }
+    .mon-checks { list-style:none; margin:0; padding:0; display:grid; gap:0.55rem; }
+    .mon-checks li { display:grid; grid-template-columns:minmax(0,9.5rem) minmax(0,1fr); gap:0.6rem; font-size:0.86rem; color:#dfe9e1; }
+    .mon-checks li b { font-weight:600; color:var(--muted); }
+    .mon-checks li.warn span { color:#e6c68a; }
+    .mon-checks li.bad span { color:#f0a58f; }
+    .mon-conn { margin-top:0.85rem; }
+    .mon-conn-row { border-top:1px solid var(--line); padding:0.8rem 0; }
+    .mon-conn-head { display:flex; justify-content:space-between; align-items:flex-start; gap:0.75rem; }
+    .mon-conn-head b { color:#fff; font-size:0.92rem; }
+    .mon-conn-head small { display:block; color:var(--muted); font-size:0.8rem; margin-top:0.15rem; line-height:1.45; }
+    .mon-how summary, .mon-hist summary { cursor:pointer; color:#6dc882; font-size:0.86rem; font-weight:600; margin-top:0.55rem; }
+    .mon-conn-acts { margin-top:0.55rem; }
+    .mon-btn { display:inline-flex; align-items:center; min-height:38px; padding:0 0.9rem; border-radius:10px; border:1px solid rgba(74,172,101,0.4); background:rgba(74,172,101,0.1); color:#cfe9d6; font-weight:600; font-size:0.84rem; cursor:pointer; margin-top:0.55rem; }
+    .mon-btn:hover { background:rgba(74,172,101,0.18); color:#fff; }
+    .mon-btn:disabled { opacity:0.55; cursor:wait; }
+    .mon-token { display:flex; flex-wrap:wrap; gap:0.5rem; margin-top:0.6rem; }
+    .mon-token input { flex:1 1 200px; min-width:0; min-height:38px; padding:0 0.75rem; border-radius:10px; border:1px solid var(--line); background:rgba(0,0,0,0.25); color:#fff; font:inherit; font-size:0.88rem; }
+    .mon-token .mon-btn { margin-top:0; }
+    @media (max-width:480px) { .mon-checks li { grid-template-columns:1fr; gap:0.1rem; } }
     .mon-inc { list-style:none; margin:0; padding:0; display:grid; gap:0.5rem; }
     .mon-inc li { display:flex; justify-content:space-between; gap:0.75rem; font-size:0.86rem; color:#dfe9e1; }
     .mon-inc li span { color:var(--muted); text-align:right; }
@@ -333,7 +359,153 @@
       }
       sub.appendChild(inc);
       c.appendChild(sub);
+      var more = el('div', 'mon-sub');
+      if (w.traffic_30d) more.appendChild(trafficBox(w.traffic_30d));
+      if (w.outside) more.appendChild(outsideBox(w.outside));
+      if (more.childNodes.length) c.appendChild(more);
+      if (w.insights) c.appendChild(connBox(w));
       return c;
+    }
+
+    // Visitors, from the TES traffic line on the site (tes-portal src/traffic.js).
+    function trafficBox(t) {
+      var box = el('div', 'mon-box');
+      box.appendChild(el('h3', null, 'Visitors, last 30 days'));
+      var row = el('div', 'mon-kv');
+      [['Visitors', t.visitors], ['Page views', t.views], ['Calls and emails', t.events.phone + t.events.email], ['Forms sent', t.events.form]]
+        .concat(t.events.cart ? [['Added to cart', t.events.cart]] : [])
+        .forEach(function (p) { var d = el('div'); d.appendChild(el('b', null, String(p[1]))); d.appendChild(el('span', null, p[0])); row.appendChild(d); });
+      box.appendChild(row);
+      if (t.sources.length) box.appendChild(el('p', 'mon-line', 'From: ' + t.sources.slice(0, 4).map(function (s) { return s.source + ' ' + s.n; }).join(' · ')));
+      if (t.pages.length) box.appendChild(el('p', 'mon-line', 'Most visited: ' + t.pages.slice(0, 3).map(function (p) { return p.path; }).join(', ')));
+      return box;
+    }
+
+    // What the outside checks found (tes-portal src/watch_outside.js).
+    var EMAIL_GRADE = { good: ['Set up properly', ''], weak: ['Set up, with gaps', 'warn'], missing: ['Missing protection', 'bad'], none: ['No email on this domain', ''] };
+    function outsideBox(o) {
+      var box = el('div', 'mon-box');
+      box.appendChild(el('h3', null, 'From the outside'));
+      var ul = el('ul', 'mon-checks');
+      var item = function (label, text, tone) { var li = el('li', tone || null); li.appendChild(el('b', null, label)); li.appendChild(el('span', null, text)); ul.appendChild(li); };
+      if (o.email) {
+        var g = EMAIL_GRADE[o.email.grade] || [o.email.grade, ''];
+        item('Email security', g[0] + (o.email.issues && o.email.issues.length && o.email.grade !== 'none' ? '. ' + o.email.issues[0].text : ''), g[1]);
+      }
+      if (o.unsafe) item('Google Safe Browsing', o.unsafe.flagged ? 'Flagged: visitors see a warning' : 'Not flagged', o.unsafe.flagged ? 'bad' : '');
+      if (o.dns_changed_at) item('DNS', 'Last changed ' + day(o.dns_changed_at), '');
+      if (o.lookalikes) item('Look-alike domains', o.lookalikes.found.length ? o.lookalikes.found.length + ' registered: ' + o.lookalikes.found.slice(0, 3).join(', ') : 'None of the ' + o.lookalikes.checked + ' we check', o.lookalikes_new && o.lookalikes_new.length ? 'warn' : '');
+      if (o.links) item('Broken links', o.links.broken.length ? o.links.broken.length + ' of ' + o.links.checked + ' checked' : 'None found', o.links.broken.length ? 'warn' : '');
+      if (!ul.childNodes.length) return el('div');
+      box.appendChild(ul);
+      return box;
+    }
+
+    // Insights: the accounts this site's owner has connected, how to connect the rest,
+    // and the record of every approval. Read-only, and each one can be turned off here.
+    var CONN_TONE = { connected: ['Connected', 'up'], requested: ['Waiting for you', 'wait'], broken: ['Access lost', 'down'], revoked: ['Off', ''], off: ['Not connected', ''] };
+    function connBox(w) {
+      var box = el('div', 'mon-box mon-conn');
+      box.appendChild(el('h3', null, 'Connected accounts (Insights)'));
+      box.appendChild(el('p', 'mon-line', 'With your OK, we read these to add visitors, search, store and traffic figures to your report. Read-only: we never change anything, and you can turn each one off here.'));
+      var body = el('div', null, '');
+      body.appendChild(el('p', 'mon-none', 'Loading…'));
+      box.appendChild(body);
+      var load = function () {
+        fetch('/portal-api/watches/' + w.id + '/connections', { credentials: 'same-origin' }).then(function (r) { return r.json(); }).then(function (d) {
+          body.textContent = '';
+          if (!d || !d.ok) { body.appendChild(el('p', 'mon-none', 'Could not load your connections.')); return; }
+          d.connections.forEach(function (cn) { body.appendChild(connRow(w, cn, d.google, load)); });
+          if ((d.events || []).length) {
+            var det = el('details', 'mon-hist');
+            det.appendChild(el('summary', null, 'History of approvals'));
+            var ul = el('ul', 'mon-inc');
+            d.events.slice(0, 12).forEach(function (e) {
+              var li = el('li');
+              li.appendChild(el('b', null, ({ ga4: 'Google Analytics', gsc: 'Search Console', shopify: 'Shopify', cloudflare: 'Cloudflare' })[e.service] + ': ' + e.action));
+              li.appendChild(el('span', null, when(e.at) + (e.actor && /^customer/.test(e.actor) ? ' · you' : e.actor === 'system' ? '' : ' · TES')));
+              ul.appendChild(li);
+            });
+            det.appendChild(ul);
+            body.appendChild(det);
+          }
+        }).catch(function () { body.textContent = ''; body.appendChild(el('p', 'mon-none', 'Could not load your connections.')); });
+      };
+      load();
+      return box;
+    }
+    function connPost(w, service, b) {
+      return fetch('/portal-api/watches/' + w.id + '/connections/' + service, {
+        method: 'POST', credentials: 'same-origin', headers: { 'content-type': 'application/json' }, body: JSON.stringify(b),
+      }).then(function (r) { return r.json(); });
+    }
+    function connRow(w, cn, google, reload) {
+      var row = el('div', 'mon-conn-row');
+      var head = el('div', 'mon-conn-head');
+      var nm = el('div');
+      nm.appendChild(el('b', null, cn.name + (cn.status === 'connected' && cn.label ? ': ' + cn.label : '')));
+      nm.appendChild(el('small', null, cn.reads));
+      head.appendChild(nm);
+      var tone = CONN_TONE[cn.status] || [cn.status, ''];
+      head.appendChild(el('span', 'mon-chip ' + tone[1], tone[0]));
+      row.appendChild(head);
+      var acts = el('div', 'mon-conn-acts');
+      if (cn.status === 'connected' || cn.status === 'broken' || cn.status === 'requested') {
+        var off = el('button', 'mon-btn', 'Turn off'); off.type = 'button';
+        off.addEventListener('click', function () {
+          var extra = cn.kind === 'google' && google && google.email ? '\n\nTo fully take back access, also remove ' + google.email + ' in ' + cn.name + '.' : '';
+          if (!confirm('Stop sharing ' + cn.name + ' with Tevis Engineering? We delete what we read from it.' + extra)) return;
+          off.disabled = true;
+          connPost(w, cn.service, { action: 'revoke' }).then(reload);
+        });
+        acts.appendChild(off);
+      }
+      if (cn.status !== 'connected') {
+        var how = el('details', 'mon-how');
+        how.appendChild(el('summary', null, cn.status === 'broken' ? 'How to reconnect' : 'How to connect'));
+        var ol = el('ol', 'mon-fixes');
+        (cn.steps || []).forEach(function (s) { ol.appendChild(el('li', null, s)); });
+        how.appendChild(ol);
+        if (cn.kind === 'google') {
+          if (!google || !google.email) how.appendChild(el('p', 'mon-line', 'We are finishing our side of this. Check back soon.'));
+          else {
+            var chk = el('button', 'mon-btn', 'I have shared it: check now'); chk.type = 'button';
+            var msg = el('p', 'mon-line', '');
+            chk.addEventListener('click', function () {
+              chk.disabled = true; msg.textContent = 'Checking…';
+              connPost(w, cn.service, { action: 'check' }).then(function (r) {
+                chk.disabled = false;
+                if (r.connection && r.connection.status === 'connected') { reload(); return; }
+                msg.textContent = 'Not shared with ' + google.email + ' yet. It can take a few minutes after you add us; we also look every few hours.';
+              });
+            });
+            how.appendChild(chk); how.appendChild(msg);
+          }
+        } else {
+          var f = el('div', 'mon-token');
+          var shop = null;
+          if (cn.service === 'shopify') { shop = document.createElement('input'); shop.placeholder = 'yourstore.myshopify.com'; shop.setAttribute('aria-label', 'Store address'); f.appendChild(shop); }
+          var tok = document.createElement('input'); tok.type = 'password'; tok.placeholder = 'Paste the token'; tok.setAttribute('aria-label', 'Token'); tok.autocomplete = 'off';
+          f.appendChild(tok);
+          var save = el('button', 'mon-btn', 'Connect'); save.type = 'button';
+          var tmsg = el('p', 'mon-line', '');
+          save.addEventListener('click', function () {
+            if (!tok.value.trim()) { tok.focus(); return; }
+            save.disabled = true; tmsg.textContent = 'Checking the token…';
+            connPost(w, cn.service, { action: 'token', token: tok.value.trim(), shop: shop ? shop.value.trim() : undefined }).then(function (r) {
+              save.disabled = false; tok.value = '';
+              if (r.ok) { reload(); return; }
+              tmsg.textContent = r.message || 'That did not work. Check the token and try again.';
+            });
+          });
+          f.appendChild(save);
+          how.appendChild(f); how.appendChild(tmsg);
+        }
+        row.appendChild(how);
+      }
+      if (cn.status === 'broken' && cn.last_error) row.appendChild(el('p', 'mon-line bad', 'We lost access: ' + cn.last_error));
+      if (acts.childNodes.length) row.appendChild(acts);
+      return row;
     }
 
     function render(watches) {

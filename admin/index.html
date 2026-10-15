@@ -297,6 +297,20 @@
     .sb-wcheck { display:flex; align-items:center; gap:0.55rem; padding-top:1.4rem; }
     .sb-wcheck input { width:18px; height:18px; accent-color:var(--gold); }
     .sb-wcheck label { margin:0; text-transform:none; letter-spacing:0; font-size:0.86rem; color:var(--text); font-weight:500; }
+    /* Website Watch Insights: the Google line and a watch's drawer */
+    .wi-google { display:flex; align-items:center; gap:0.6rem; flex-wrap:wrap; margin:0.2rem 0 0.9rem; padding:0.6rem 0.8rem; border:1px solid var(--line); border-radius:12px; font-size:0.84rem; color:var(--muted); }
+    .wi-google span { flex:1; min-width:12rem; }
+    .wi-drawer { margin:0 1rem 0.9rem 3.15rem; padding:0.8rem 0.95rem; border-left:2px solid rgba(74,172,101,0.4); display:grid; gap:0.8rem; }
+    .wi-switch { display:flex; align-items:center; gap:0.5rem; font-size:0.86rem; color:var(--text); cursor:pointer; }
+    .wi-switch input { width:18px; height:18px; accent-color:var(--gold); }
+    .wi-sec h4 { font-size:0.68rem; text-transform:uppercase; letter-spacing:0.06em; color:var(--muted); font-weight:700; margin:0 0 0.4rem; }
+    .wi-note { font-size:0.8rem; color:var(--muted); margin:0.25rem 0; line-height:1.5; overflow-wrap:anywhere; }
+    .wi-code { width:100%; padding:0.5rem 0.6rem; border-radius:8px; border:1px solid var(--line); background:var(--bg); color:var(--text); font-family:ui-monospace, Consolas, monospace; font-size:0.78rem; resize:none; }
+    .wi-acts { display:flex; flex-wrap:wrap; gap:0.45rem; align-items:center; margin-top:0.45rem; }
+    .wi-acts input { flex:1 1 170px; min-width:0; min-height:38px; padding:0 0.65rem; border-radius:8px; border:1px solid var(--line); background:var(--bg); color:var(--text); font:inherit; font-size:0.84rem; }
+    .wi-conn { border-top:1px solid var(--line); padding:0.6rem 0; }
+    .wi-conn-head { display:flex; align-items:center; justify-content:space-between; gap:0.6rem; font-size:0.86rem; }
+    @media (max-width:640px) { .wi-drawer { margin-left:0.5rem; } }
     .sb-wform select { width:100%; padding:0.55rem 0.7rem; border-radius:8px; border:1px solid var(--line); background:var(--bg); color:var(--text); font-family:inherit; font-size:0.88rem; }
     .sb-wform select:focus { outline:none; border-color:var(--green); }
     .sb-wform .fgrid + .fgrid { margin-top:0.9rem; }
@@ -3657,6 +3671,7 @@
       </div>
       <p class="fnote">Website Watch: uptime every 15 minutes, domain and certificate renewals, and a monthly report card. Sites you add here are free. Give one to a customer as a favor or with a care plan, or to a lead as a demo, from here or from their customer file or lead. Choose whether the emails go to them or only to you.</p>
       <div id="watchFormHost"></div>
+      <div id="googleLine"></div>
       <div id="watchBody"><div class="state">Loading&hellip;</div></div>
     </section>
 
@@ -9866,6 +9881,209 @@
       return sec;
     }
 
+    // ---- Insights: TES's Google sign-in, and a watch's drawer ----
+    var CONN_NAME = { ga4: 'Google Analytics', gsc: 'Search Console', shopify: 'Shopify', cloudflare: 'Cloudflare' };
+    var CONN_STATE = { connected: ['Connected', ''], requested: ['Waiting for the client', 'warn'], broken: ['Access lost', 'off'], revoked: ['Off', 'off'], off: ['Not connected', 'off'] };
+
+    // The one Google account Insights reads clients' Analytics and Search Console with.
+    function loadGoogleLine() {
+      var host = document.getElementById('googleLine');
+      if (!host) return;
+      api('/admin/google').then(function (g) {
+        host.textContent = '';
+        if (!g || !g.ok) return;
+        var row = el('div', 'wi-google');
+        row.appendChild(icon('fa-google', 'fa-brands'));
+        if (!g.ready) {
+          row.appendChild(el('span', null, 'Insights: Google is not set up yet. Missing: ' + (g.missing || []).join(', ') + ' (see the to-do list).'));
+        } else if (!g.connected) {
+          row.appendChild(el('span', null, 'Insights: connect TES\'s Google account so clients can share Analytics and Search Console with it.'));
+          var a = el('a', 'sb-add', 'Connect Google'); a.href = '/portal-api/admin/google/connect';
+          row.appendChild(a);
+        } else {
+          row.appendChild(el('span', null, 'Insights reads Google as ' + g.email + (g.last_error ? '. Problem: ' + g.last_error : '') + '. Clients share with this address.'));
+          var x = el('button', 'sb-add', 'Disconnect'); x.type = 'button';
+          x.addEventListener('click', function () {
+            if (!confirm('Disconnect ' + g.email + '? Insights stops reading every client\'s Google Analytics and Search Console until you connect again.')) return;
+            api('/admin/google/disconnect', { method: 'POST', body: {} }).then(loadGoogleLine);
+          });
+          row.appendChild(x);
+        }
+        host.appendChild(row);
+      });
+    }
+    (function () {
+      var q = new URLSearchParams(location.search).get('google');
+      if (!q) return;
+      setTimeout(function () { toast(q === 'ok' ? 'Google connected for Insights' : 'Google was not connected (' + q + ')'); }, 600);
+      history.replaceState(null, '', location.pathname + location.hash);
+    })();
+
+    var EMAIL_GRADE_TXT = { good: 'Set up properly', weak: 'Set up, with gaps', missing: 'Missing protection', none: 'No email on this domain' };
+    function watchInsights(w) {
+      var d = el('div', 'wi-drawer');
+
+      // Insights on or off for this site.
+      var sw = el('label', 'wi-switch');
+      var cb = document.createElement('input'); cb.type = 'checkbox'; cb.checked = !!w.insights;
+      sw.appendChild(cb);
+      sw.appendChild(document.createTextNode(' Insights for this site: connected accounts in the report, and business alerts'));
+      cb.addEventListener('change', function () {
+        api('/admin/watches/' + w.id, { method: 'PATCH', body: { insights: cb.checked } }).then(function (x) {
+          if (!x.ok) { cb.checked = !cb.checked; toast('Could not change it'); return; }
+          w.insights = cb.checked;
+          toast(cb.checked ? 'Insights on for ' + w.host : 'Insights off for ' + w.host);
+          conn.textContent = ''; conn.appendChild(connSection());
+        });
+      });
+      d.appendChild(sw);
+
+      // The TES traffic line.
+      var tr = el('div', 'wi-sec');
+      var drawTraffic = function () {
+        tr.textContent = '';
+        tr.appendChild(el('h4', null, 'Traffic line'));
+        if (!w.snippet_key) {
+          tr.appendChild(el('p', 'wi-note', 'One line in the site\'s head counts visits, and clicks on the phone number, email, forms and add-to-cart. No cookies. Works on any site: WordPress, Wix, Squarespace, Shopify, GitHub Pages.'));
+          var on = el('button', 'sb-add', 'Make the line'); on.type = 'button';
+          on.addEventListener('click', function () {
+            api('/admin/watches/' + w.id, { method: 'PATCH', body: { snippet: true } }).then(function (x) {
+              if (!x.ok) { toast('Could not make it'); return; }
+              w.snippet_key = x.snippet_key; w.snippet = x.snippet; drawTraffic();
+            });
+          });
+          tr.appendChild(on);
+          return;
+        }
+        var ta = document.createElement('textarea'); ta.readOnly = true; ta.rows = 2; ta.value = w.snippet; ta.className = 'wi-code';
+        ta.setAttribute('aria-label', 'Traffic line for ' + w.host);
+        tr.appendChild(ta);
+        var row = el('div', 'wi-acts');
+        var copy = el('button', 'sb-add', 'Copy'); copy.type = 'button';
+        copy.addEventListener('click', function () { ta.select(); try { navigator.clipboard.writeText(ta.value).then(function () { toast('Copied'); }); } catch (e) { document.execCommand('copy'); toast('Copied'); } });
+        var off = el('button', 'sb-add', 'Turn off'); off.type = 'button';
+        off.addEventListener('click', function () {
+          if (!confirm('Turn off the traffic line for ' + w.host + '? The line on the site stops counting. What was counted is kept.')) return;
+          api('/admin/watches/' + w.id, { method: 'PATCH', body: { snippet: false } }).then(function () { w.snippet_key = null; drawTraffic(); });
+        });
+        row.appendChild(copy); row.appendChild(off);
+        tr.appendChild(row);
+        tr.appendChild(el('p', 'wi-note', w.snippet_seen_at ? 'Working since ' + fmtDate(w.snippet_seen_at) + '.' : 'Not seen yet. Paste it just before </head> on every page (in WordPress, a header-scripts plugin; Wix, Settings > Custom code; Squarespace, Code injection; Shopify, theme.liquid).'));
+        var t = w.traffic_30d;
+        if (t) tr.appendChild(el('p', 'wi-note', 'Last 30 days: ' + t.visitors + ' visitors, ' + t.views + ' views, ' + (t.events.phone + t.events.email) + ' calls/emails tapped, ' + t.events.form + ' forms' + (t.events.cart ? ', ' + t.events.cart + ' added to cart' : '') + (t.sources.length ? '. From ' + t.sources.slice(0, 3).map(function (s) { return s.source + ' ' + s.n; }).join(', ') : '') + '.'));
+      };
+      drawTraffic();
+      d.appendChild(tr);
+
+      // What the outside checks found.
+      var o = w.outside;
+      var os = el('div', 'wi-sec');
+      os.appendChild(el('h4', null, 'From the outside'));
+      if (!o) os.appendChild(el('p', 'wi-note', 'Not checked yet. Email, DNS, Safe Browsing and look-alikes run once a day; broken links with the monthly report.'));
+      else {
+        var lines = [];
+        if (o.email) lines.push('Email security: ' + EMAIL_GRADE_TXT[o.email.grade] + (o.email.issues.length ? ' (' + o.email.issues.map(function (i) { return i.key.replace(/_/g, ' '); }).join(', ') + ')' : '') + (o.email.dkim.length ? '. DKIM: ' + o.email.dkim.join(', ') : ''));
+        if (o.dns) lines.push('Name servers: ' + o.dns.ns.join(', ') + '. Mail: ' + (o.dns.mx.join(', ') || 'none') + (o.dns_changed_at ? '. Changed ' + fmtDate(o.dns_changed_at) : ''));
+        if (o.unsafe) lines.push('Safe Browsing: ' + (o.unsafe.flagged ? 'FLAGGED (' + o.unsafe.threats.join(', ') + ')' : 'not flagged'));
+        else lines.push('Safe Browsing: not checked (enable the Safe Browsing API on the Google key)');
+        if (o.lookalikes) lines.push('Look-alikes: ' + (o.lookalikes.found.length ? o.lookalikes.found.join(', ') : 'none of ' + o.lookalikes.checked));
+        if (o.links) lines.push('Broken links: ' + (o.links.broken.length ? o.links.broken.map(function (b) { return b.url; }).join(', ') : 'none of ' + o.links.checked));
+        lines.forEach(function (l) { os.appendChild(el('p', 'wi-note', l)); });
+      }
+      d.appendChild(os);
+
+      // Connected accounts.
+      var conn = el('div');
+      function connSection() {
+        var s = el('div', 'wi-sec');
+        s.appendChild(el('h4', null, 'Connected accounts'));
+        if (!w.insights) { s.appendChild(el('p', 'wi-note', 'Turn Insights on above to connect the client\'s accounts.')); return s; }
+        var body = el('div', null);
+        body.appendChild(el('p', 'wi-note', 'Loading…'));
+        s.appendChild(body);
+        var reload = function () {
+          api('/admin/watches/' + w.id + '/connections').then(function (r) {
+            body.textContent = '';
+            if (!r.ok) { body.appendChild(el('p', 'wi-note', 'Could not load connections.')); return; }
+            r.connections.forEach(function (c) { body.appendChild(connAdminRow(w, c, r.google, reload)); });
+            if ((r.events || []).length) {
+              var h = el('div', 'sb-hist');
+              r.events.slice(0, 10).forEach(function (e) {
+                var ev = el('div', 'ev');
+                ev.appendChild(el('span', null, fmtDate(e.at)));
+                ev.appendChild(el('b', null, CONN_NAME[e.service] + ': ' + e.action + (e.actor ? ' by ' + e.actor : '') + (e.detail ? ' (' + e.detail + ')' : '')));
+                h.appendChild(ev);
+              });
+              body.appendChild(el('p', 'wi-note', 'Approval history'));
+              body.appendChild(h);
+            }
+          });
+        };
+        reload();
+        return s;
+      }
+      conn.appendChild(connSection());
+      d.appendChild(conn);
+      return d;
+    }
+
+    function connAdminRow(w, c, g, reload) {
+      var row = el('div', 'wi-conn');
+      var st = CONN_STATE[c.status] || [c.status, 'off'];
+      var head = el('div', 'wi-conn-head');
+      head.appendChild(el('b', null, c.name + (c.status === 'connected' && c.label ? ': ' + c.label : '')));
+      head.appendChild(el('span', 'sb-pill ' + st[1], st[0]));
+      row.appendChild(head);
+      if (c.last_error && c.status !== 'connected') row.appendChild(el('p', 'wi-note', c.last_error));
+      var acts = el('div', 'wi-acts');
+      var post = function (b, okMsg) {
+        return api('/admin/watches/' + w.id + '/connections/' + c.service, { method: 'POST', body: b }).then(function (x) {
+          if (!x.ok) { toast(x.message || x.error || 'Could not do it'); return x; }
+          if (okMsg) toast(typeof okMsg === 'function' ? okMsg(x) : okMsg);
+          reload(); return x;
+        });
+      };
+      if (c.status !== 'connected') {
+        if (c.kind === 'google') {
+          if (!g || !g.connected) acts.appendChild(el('span', 'wi-note', 'Connect Google above first.'));
+          else {
+            var ask = el('button', 'sb-add', 'Ask the client'); ask.type = 'button';
+            ask.addEventListener('click', function () {
+              if (!confirm('Email ' + (w.notify === 'staff' ? 'yourself (this watch is set to "me only")' : (w.email || 'the owner')) + ' the steps to share ' + c.name + ' with ' + g.email + '?')) return;
+              post({ action: 'request', ask_client: true }, function (x) { return x.found && x.found.connected ? 'Already shared: connected' : 'Asked. It connects by itself once they share it.'; });
+            });
+            var look = el('button', 'sb-add', 'Look now'); look.type = 'button';
+            look.addEventListener('click', function () { post({ action: 'check' }, function (x) { return x.found && x.found.connected ? 'Connected: ' + x.found.connected.label : 'Not shared with ' + g.email + ' yet'; }); });
+            acts.appendChild(ask); acts.appendChild(look);
+          }
+        } else {
+          var shop = null;
+          if (c.service === 'shopify') { shop = document.createElement('input'); shop.placeholder = 'store.myshopify.com'; shop.setAttribute('aria-label', 'Store address'); acts.appendChild(shop); }
+          var tok = document.createElement('input'); tok.type = 'password'; tok.autocomplete = 'off'; tok.placeholder = 'Token from the client'; tok.setAttribute('aria-label', c.name + ' token');
+          acts.appendChild(tok);
+          var save = el('button', 'sb-add', 'Connect'); save.type = 'button';
+          save.addEventListener('click', function () {
+            if (!tok.value.trim()) { tok.focus(); return; }
+            post({ action: 'token', token: tok.value.trim(), shop: shop ? shop.value.trim() : undefined }, 'Connected ' + c.name);
+          });
+          acts.appendChild(save);
+          var req = el('button', 'sb-add', 'Ask the client'); req.type = 'button';
+          req.addEventListener('click', function () { post({ action: 'request', ask_client: true }, 'Asked: they get the steps by email'); });
+          acts.appendChild(req);
+        }
+      }
+      if (c.status === 'connected' || c.status === 'broken' || c.status === 'requested') {
+        var off = el('button', 'sb-add', 'Turn off'); off.type = 'button';
+        off.addEventListener('click', function () {
+          if (!confirm('Stop reading ' + c.name + ' for ' + w.host + '? What was read is deleted.')) return;
+          post({ action: 'revoke' }, 'Turned off');
+        });
+        acts.appendChild(off);
+      }
+      row.appendChild(acts);
+      return row;
+    }
+
     // Why a watch is free, who hears about it, and when it stops.
     function watchTags(w) {
       var t = el('span', 'sb-tags');
@@ -9941,6 +10159,7 @@
     }
 
     function loadWatches() {
+      loadGoogleLine();
       return api('/admin/watches').then(function (r) {
         watchBody.textContent = '';
         if (!r.ok) { watchBody.appendChild(el('div', 'sb-empty', 'Could not load watched sites.')); return; }
@@ -10008,11 +10227,20 @@
           });
         });
       }
+      var insBtn = btn('fa-chart-line', 'Insights: traffic line, connected accounts, outside checks');
+      insBtn.setAttribute('aria-expanded', 'false');
       var chk = btn('fa-rotate-right', 'Check now');
       var pause = btn(paused ? 'fa-play' : 'fa-pause', paused ? 'Resume' : 'Pause');
       var rm = btn('fa-xmark', 'Stop watching');
       r.appendChild(acts);
       item.appendChild(r);
+      var drawer = null;
+      insBtn.addEventListener('click', function () {
+        if (drawer) { drawer.remove(); drawer = null; insBtn.setAttribute('aria-expanded', 'false'); return; }
+        drawer = watchInsights(w);
+        item.appendChild(drawer);
+        insBtn.setAttribute('aria-expanded', 'true');
+      });
 
       chk.addEventListener('click', function () {
         chk.disabled = true;
