@@ -655,6 +655,9 @@
     .ww-amt { font-family:"Montserrat",sans-serif; font-weight:800; font-size:3.2rem; line-height:1; color:#fff; }
     .ww-per { color:var(--muted); font-size:0.95rem; }
     .ww-sub { color:var(--muted); font-size:0.88rem; margin-bottom:1.2rem; }
+    .ww-trial-badge { display:inline-flex; align-items:center; gap:0.45rem; margin:1.1rem 0 -0.3rem; font-family:"Montserrat",sans-serif; font-weight:800; font-size:0.8rem; letter-spacing:0.08em; text-transform:uppercase; color:#0d1710; background:linear-gradient(135deg,#c89830,#e0b840); padding:0.35rem 0.85rem; border-radius:999px; }
+    .ww-notice { border:1px solid rgba(200,152,48,0.45); background:rgba(200,152,48,0.08); border-radius:12px; padding:0.9rem; text-align:center; }
+    .ww-notice p { color:#e7dcc2; font-size:0.92rem; margin-bottom:0.8rem; }
     .ww-list { list-style:none; padding:0; margin:0 auto 1.5rem; display:inline-grid; gap:0.55rem; text-align:left; }
     .ww-list li { color:#dfe9e1; font-size:0.95rem; display:flex; gap:0.6rem; align-items:baseline; }
     .ww-list i { color:#6dc882; font-size:0.85rem; }
@@ -706,7 +709,7 @@
   {"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://tevisengineering.com/"},{"@type":"ListItem","position":2,"name":"TES Software","item":"https://tevisengineering.com/software.html"},{"@type":"ListItem","position":3,"name":"Website Watch","item":"https://tevisengineering.com/website-watch.html"}]}
   </script>
   <script type="application/ld+json">
-  {"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Why pay for this when free monitors exist?","acceptedAnswer":{"@type":"Answer","text":"Free monitors are good at one thing: telling you a server stopped answering. Website Watch also watches your domain and certificate renewals, grades your site every month and names the three fixes worth making, all in plain words for an owner, not a web developer. And there is a real engineer in Cleveland behind it who can fix what it finds."}},{"@type":"Question","name":"What counts as down?","acceptedAnswer":{"@type":"Answer","text":"No answer within 15 seconds, a server error, or the home page being gone, on two checks in a row. A site that answers but turns us away, which is how some firewalls behave, counts as up."}},{"@type":"Question","name":"Does it change anything on my website?","acceptedAnswer":{"@type":"Answer","text":"No. Each check loads your home page the way a visitor's browser would and closes the connection. Nothing is installed, and we never log in or submit anything."}},{"@type":"Question","name":"Where do the renewal dates come from?","acceptedAnswer":{"@type":"Answer","text":"The domain date comes from your registrar's public registration record. The certificate date comes from the public certificate logs that every certificate authority publishes to. Both are checked once a day."}},{"@type":"Question","name":"How do I cancel?","acceptedAnswer":{"@type":"Answer","text":"In PayPal, under your automatic payments, or from the Billing page in your customer portal. Watching continues until the end of the period you paid for."}},{"@type":"Question","name":"Can you watch more than one site?","acceptedAnswer":{"@type":"Answer","text":"Yes. Each site is its own subscription, so subscribe once per site. If you have several, get in touch and we will set them up together."}}]}
+  {"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What counts as down?","acceptedAnswer":{"@type":"Answer","text":"No answer within 15 seconds, a server error, or the home page being gone, on two checks in a row. A site that answers but turns us away, which is how some firewalls behave, counts as up."}},{"@type":"Question","name":"Does it change anything on my website?","acceptedAnswer":{"@type":"Answer","text":"No. Each check loads your home page the way a visitor's browser would and closes the connection. Nothing is installed, and we never log in or submit anything."}},{"@type":"Question","name":"Where do the renewal dates come from?","acceptedAnswer":{"@type":"Answer","text":"The domain date comes from your registrar's public registration record. The certificate date comes from the public certificate logs that every certificate authority publishes to. Both are checked once a day."}},{"@type":"Question","name":"How do I cancel?","acceptedAnswer":{"@type":"Answer","text":"In PayPal, under your automatic payments, or from the Billing page in your customer portal. Watching continues until the end of the period you paid for."}},{"@type":"Question","name":"Can you watch more than one site?","acceptedAnswer":{"@type":"Answer","text":"Yes. Each site is its own subscription, so subscribe once per site. If you have several, get in touch and we will set them up together."}}]}
   </script>
   <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
 </head>
@@ -769,7 +772,7 @@
         domain or security certificate runs out, and send you a report card every month.
       </p>
       <div class="ww-cta">
-        <a class="btn btn-primary" href="#start">Start Watching &middot; $12/mo</a>
+        <a class="btn btn-primary" href="#start" id="wwHeroCta">Start Watching &middot; $12/mo</a>
         <a class="btn btn-secondary" href="#features">What You Get</a>
       </div>
 
@@ -853,7 +856,7 @@
       </div>
       <ol class="ww-steps">
         <li><span class="ww-num">1</span><h3>Enter your site</h3><p>Your website address and the email that should get the alerts.</p></li>
-        <li><span class="ww-num">2</span><h3>Subscribe with PayPal</h3><p>Monthly or yearly, card or PayPal balance. Cancel any time in PayPal.</p></li>
+        <li><span class="ww-num">2</span><h3>Subscribe with PayPal</h3><p>Monthly or yearly, card or PayPal balance. Cancel any time in PayPal.<span class="ww-trial-on" hidden> Your first month is free.</span></p></li>
         <li><span class="ww-num">3</span><h3>We start watching</h3><p>The first check runs within minutes and your welcome email says how the site is doing.</p></li>
       </ol>
     </section>
@@ -869,6 +872,7 @@
           <button type="button" class="on" data-cadence="monthly" aria-pressed="true">Monthly</button>
           <button type="button" data-cadence="annual" aria-pressed="false">Yearly <span class="ww-save" id="wwSave">Save 17%</span></button>
         </div>
+        <p class="ww-trial-badge ww-trial-on" hidden><i class="fa-solid fa-gift"></i> First month free</p>
         <div class="ww-price">
           <span class="ww-amt" id="wwAmt">$12</span>
           <span class="ww-per" id="wwPer">per month</span>
@@ -901,7 +905,11 @@
           <div class="cf-turnstile" data-sitekey="0x4AAAAAAEfjPSABvMOUzIl3" data-theme="dark"></div>
           <p class="ww-err" id="wwErr" role="alert" hidden></p>
           <button type="submit" class="btn btn-primary ww-go" id="wwGo"><i class="fa-brands fa-paypal"></i> Continue to PayPal</button>
-          <p class="ww-fine">You approve the subscription on PayPal. Nothing is charged until you do.</p>
+          <p class="ww-fine" id="wwFine">You approve the subscription on PayPal. Nothing is charged until you do.</p>
+          <div class="ww-notice" id="wwNotice" hidden>
+            <p id="wwNoticeText"></p>
+            <a class="btn btn-primary ww-go" id="wwNoticeGo" href="#"><i class="fa-brands fa-paypal"></i> Continue to PayPal</a>
+          </div>
         </form>
 
         <div class="ww-done" id="wwDone" hidden>
@@ -920,9 +928,9 @@
         <h2 id="faqHead">Frequently Asked Questions</h2>
       </div>
       <div class="ww-faq">
-        <details>
-          <summary>Why pay for this when free monitors exist?</summary>
-          <div class="faq-a">Free monitors are good at one thing: telling you a server stopped answering. Website Watch also watches your domain and certificate renewals, grades your site every month and names the three fixes worth making, all in plain words for an owner, not a web developer. And there is a real engineer in Cleveland behind it who can fix what it finds.</div>
+        <details class="ww-trial-on" hidden>
+          <summary>Is the first month really free?</summary>
+          <div class="faq-a">Yes. PayPal shows the free month on its approval page, and the first charge comes a month after you sign up. Cancel before then and you pay nothing. The free month is for a business's first time with Website Watch, so signing up again for the same site or email starts at the regular price.</div>
         </details>
         <details>
           <summary>What counts as down?</summary>
@@ -1059,16 +1067,29 @@
     var API = '/portal-api';
     var cadence = 'monthly';
     var prices = { monthly: 1200, annual: 12000 };
+    // The free first month shows only when the server has a trial plan mapped for it.
+    var trialOn = false;
     var $ = function (id) { return document.getElementById(id); };
     var fmt = function (c) { return '$' + (c % 100 ? (c / 100).toFixed(2) : String(c / 100)); };
+    var form = $('wwForm'), err = $('wwErr'), go = $('wwGo');
 
     function paint() {
       var p = prices[cadence];
       $('wwAmt').textContent = fmt(p);
       $('wwPer').textContent = cadence === 'annual' ? 'per year' : 'per month';
-      $('wwSub').textContent = cadence === 'annual'
-        ? 'Billed yearly, which works out to ' + fmt(Math.round(p / 12)) + ' a month. Cancel any time.'
-        : 'Billed monthly. Cancel any time.';
+      $('wwSub').textContent = trialOn
+        ? (cadence === 'annual'
+          ? 'Free for your first month, then billed yearly, which works out to ' + fmt(Math.round(p / 12)) + ' a month. Cancel any time.'
+          : 'Free for your first month, then billed monthly. Cancel any time.')
+        : (cadence === 'annual'
+          ? 'Billed yearly, which works out to ' + fmt(Math.round(p / 12)) + ' a month. Cancel any time.'
+          : 'Billed monthly. Cancel any time.');
+      document.querySelectorAll('.ww-trial-on').forEach(function (n) { n.hidden = !trialOn; });
+      if (trialOn) {
+        $('wwHeroCta').textContent = 'Try It Free for a Month';
+        $('wwFine').textContent = 'PayPal shows the free month before you approve. Cancel before it ends and you pay nothing.';
+        if (!go.disabled) go.innerHTML = GO_LABEL();
+      }
       var save = Math.round((1 - prices.annual / (prices.monthly * 12)) * 100);
       $('wwSave').textContent = save > 0 ? 'Save ' + save + '%' : '';
       $('wwSave').hidden = !(save > 0);
@@ -1077,7 +1098,10 @@
     // The price list comes from the server catalog, so the page and the charge cannot drift.
     fetch(API + '/public/plans?product=website-watch').then(function (r) { return r.ok ? r.json() : null; }).then(function (d) {
       if (!d || !d.ok) return;
-      (d.plans || []).forEach(function (p) { if (prices[p.cadence] !== undefined) prices[p.cadence] = p.price_cents; });
+      (d.plans || []).forEach(function (p) {
+        if (prices[p.cadence] !== undefined) prices[p.cadence] = p.price_cents;
+        if (p.trial_first_month) trialOn = true;
+      });
       paint();
     }).catch(function () {});
     paint();
@@ -1092,8 +1116,8 @@
       });
     });
 
-    var form = $('wwForm'), err = $('wwErr'), go = $('wwGo');
-    function fail(msg) { err.textContent = msg; err.hidden = false; go.disabled = false; go.innerHTML = '<i class="fa-brands fa-paypal"></i> Continue to PayPal'; }
+    function GO_LABEL() { return '<i class="fa-brands fa-paypal"></i> ' + (trialOn ? 'Start Your Free Month' : 'Continue to PayPal'); }
+    function fail(msg) { err.textContent = msg; err.hidden = false; go.disabled = false; go.innerHTML = GO_LABEL(); }
     var MESSAGES = {
       bad_site: 'That does not look like a public website address. Try something like yourbusiness.com.',
       invalid_email: 'Please enter a valid email address for the alerts.',
@@ -1119,7 +1143,18 @@
         body: JSON.stringify({ product: 'website-watch', plan: 'site', cadence: cadence, site: site, email: email, zip: zip,
           website: $('wwWebsite').value, turnstileToken: tokenEl ? tokenEl.value : '' }),
       }).then(function (r) { return r.json().catch(function () { return { ok: false }; }); }).then(function (d) {
-        if (d && d.ok && d.approve_url) { location.href = d.approve_url; return; }
+        if (d && d.ok && d.approve_url) {
+          // Offered a free month but not given one (this site or email has had Website
+          // Watch before): say so before PayPal shows a charge.
+          if (trialOn && d.trial === false) {
+            $('wwNoticeText').textContent = 'This site or email has had Website Watch before, so the free month does not apply. It starts at the regular price, ' +
+              fmt(prices[cadence]) + (cadence === 'annual' ? ' a year.' : ' a month.');
+            $('wwNoticeGo').href = d.approve_url;
+            $('wwNotice').hidden = false; go.hidden = true; $('wwFine').hidden = true;
+            return;
+          }
+          location.href = d.approve_url; return;
+        }
         fail((d && (MESSAGES[d.error] || d.message)) || 'Something went wrong. Please try again.');
         if (window.turnstile) try { window.turnstile.reset(); } catch (e) {}
       }).catch(function () { fail('Could not reach us. Check your connection and try again.'); });
