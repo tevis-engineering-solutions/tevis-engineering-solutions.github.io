@@ -297,6 +297,16 @@
     .sb-wcheck { display:flex; align-items:center; gap:0.55rem; padding-top:1.4rem; }
     .sb-wcheck input { width:18px; height:18px; accent-color:var(--gold); }
     .sb-wcheck label { margin:0; text-transform:none; letter-spacing:0; font-size:0.86rem; color:var(--text); font-weight:500; }
+    .sb-wform select { width:100%; padding:0.55rem 0.7rem; border-radius:8px; border:1px solid var(--line); background:var(--bg); color:var(--text); font-family:inherit; font-size:0.88rem; }
+    .sb-wform select:focus { outline:none; border-color:var(--green); }
+    .sb-wform .fgrid + .fgrid { margin-top:0.9rem; }
+    .sb-wform .wf-note { font-size:0.78rem; color:var(--muted); margin-top:0.7rem; line-height:1.5; }
+    .sb-tags { display:flex; flex-wrap:wrap; gap:0.3rem; margin-top:0.3rem; }
+    .sb-tag { font-size:0.68rem; font-weight:700; letter-spacing:0.03em; padding:0.1rem 0.5rem; border-radius:999px; border:1px solid var(--line); color:var(--muted); white-space:nowrap; }
+    .sb-tag.gold { color:#e6c68a; border-color:rgba(200,152,48,0.4); }
+    .ww-mini { display:grid; gap:0.45rem; margin:0.4rem 0 0.6rem; }
+    .ww-mini-row { display:flex; align-items:center; gap:0.6rem; flex-wrap:wrap; font-size:0.84rem; }
+    .ww-mini-row b { color:var(--text); font-weight:600; }
     .sb-ico.sm { width:34px; height:34px; border-radius:10px; font-size:0.85rem; }
     .sb-ico.down { color:#f0a58f; background:rgba(214,120,90,0.14); border-color:rgba(214,120,90,0.4); }
     .sb-ico.off { color:var(--muted); background:var(--card-2); border-color:var(--line); }
@@ -3643,35 +3653,10 @@
     <section class="newinv" id="watchPanel" aria-labelledby="watchHead">
       <div class="sb-titlerow">
         <h2 id="watchHead">Watched sites</h2>
-        <button type="button" class="sb-add" id="watchAddBtn"><i class="fa-solid fa-plus" aria-hidden="true"></i> Watch a client site</button>
+        <button type="button" class="sb-add" id="watchAddBtn"><i class="fa-solid fa-plus" aria-hidden="true"></i> Watch a site free</button>
       </div>
-      <p class="fnote">Website Watch: uptime every 15 minutes, domain and certificate renewals, and a monthly report card. Sites you add here are free for the client and page you on Telegram when they go down.</p>
-      <form id="watchForm" class="sb-wform" hidden>
-        <div class="fgrid">
-          <div>
-            <label for="watchEmail">Customer email</label>
-            <input id="watchEmail" type="email" required placeholder="owner@client.com">
-          </div>
-          <div>
-            <label for="watchUrl">Website</label>
-            <input id="watchUrl" type="text" required placeholder="clientsite.com">
-          </div>
-        </div>
-        <div class="fgrid">
-          <div>
-            <label for="watchLabel">Label (optional)</label>
-            <input id="watchLabel" type="text" maxlength="80" placeholder="Main site">
-          </div>
-          <div class="sb-wcheck">
-            <input type="checkbox" id="watchPage" checked>
-            <label for="watchPage">Page me on Telegram when it goes down</label>
-          </div>
-        </div>
-        <div class="inv-actions">
-          <button type="submit" class="prim" id="watchSave">Start watching</button>
-          <button type="button" id="watchCancel">Cancel</button>
-        </div>
-      </form>
+      <p class="fnote">Website Watch: uptime every 15 minutes, domain and certificate renewals, and a monthly report card. Sites you add here are free. Give one to a customer as a favor or with a care plan, or to a lead as a demo, from here or from their customer file or lead. Choose whether the emails go to them or only to you.</p>
+      <div id="watchFormHost"></div>
       <div id="watchBody"><div class="state">Loading&hellip;</div></div>
     </section>
 
@@ -9751,32 +9736,151 @@
 
     // ---- Website Watch -------------------------------------------------------
     var watchBody = document.getElementById('watchBody');
-    var watchForm = document.getElementById('watchForm');
     var WSTATE = { up: ['Up', ''], down: ['Down', 'bad'], unknown: ['First check pending', 'warn'] };
     var renewCls = function (d) { return d == null ? null : d <= 7 ? 'bad' : d <= 30 ? 'warn' : null; };
 
-    document.getElementById('watchAddBtn').addEventListener('click', function () {
-      watchForm.hidden = !watchForm.hidden;
-      if (!watchForm.hidden) document.getElementById('watchEmail').focus();
-    });
-    document.getElementById('watchCancel').addEventListener('click', function () { watchForm.hidden = true; watchForm.reset(); });
-    watchForm.addEventListener('submit', function (ev) {
-      ev.preventDefault();
-      if (!watchForm.reportValidity()) return;
-      var btn = document.getElementById('watchSave');
-      btn.disabled = true;
-      api('/admin/watches', { method: 'POST', body: {
-        email: document.getElementById('watchEmail').value.trim(),
-        url: document.getElementById('watchUrl').value.trim(),
-        label: document.getElementById('watchLabel').value.trim(),
-        page_staff: document.getElementById('watchPage').checked,
-      } }).then(function (r) {
-        btn.disabled = false;
-        if (!r.ok) { toast(r.message || 'Could not add the site'); return; }
-        toast('Watching ' + r.host + '. The first check runs within two minutes.');
-        watchForm.reset(); watchForm.hidden = true;
-        loadWatches();
+    var FREE_LABEL = { care: 'Care plan', marketing: 'Marketing', demo: 'Demo', favor: 'Favor' };
+    var wfSeq = 0;
+
+    // The one form for a free watch. o: { account_id | lead_id | askEmail, site, hasEmail,
+    // isLead, onDone, onCancel }. A lead defaults to a 30-day demo with the emails coming to
+    // you only, so a prospect never gets mail they did not ask for; a customer defaults to
+    // a favor, no end, emails to them.
+    function freeWatchForm(o) {
+      var id = 'wf' + (++wfSeq);
+      var f = el('form', 'sb-wform');
+      f.noValidate = true;
+      var field = function (label, input) {
+        var d = el('div');
+        var l = el('label', null, label); l.htmlFor = input.id;
+        d.appendChild(l); d.appendChild(input);
+        return d;
+      };
+      var inp = function (suffix, type, ph, val) {
+        var i = document.createElement('input'); i.id = id + suffix; i.type = type; i.placeholder = ph || ''; i.value = val || ''; return i;
+      };
+      var sel = function (suffix, opts, val) {
+        var s2 = document.createElement('select'); s2.id = id + suffix;
+        opts.forEach(function (x) { var op = document.createElement('option'); op.value = x[0]; op.textContent = x[1]; if (x[2]) op.disabled = true; s2.appendChild(op); });
+        s2.value = val; return s2;
+      };
+      var email = o.askEmail ? inp('e', 'email', 'owner@client.com') : null;
+      var url = inp('u', 'text', 'clientsite.com', String(o.site || '').replace(/^https?:\/\//i, '').replace(/\/$/, ''));
+      var why = sel('w', [['favor', 'A favor'], ['demo', 'A demo for a prospect'], ['marketing', 'Marketing'], ['care', 'Care plan']], o.isLead ? 'demo' : 'favor');
+      var noEmail = !o.askEmail && !o.hasEmail;
+      var to = sel('t', [['customer', o.isLead ? 'The lead' + (noEmail ? ' (no email on file)' : '') : 'The customer' + (noEmail ? ' (no email on file)' : ''), noEmail],
+        ['staff', 'Me only']], o.isLead || noEmail ? 'staff' : 'customer');
+      var ends = sel('n', [['0', 'Never'], ['30', 'After 30 days'], ['60', 'After 60 days'], ['90', 'After 90 days']], o.isLead ? '30' : '0');
+      var label = inp('l', 'text', 'Main site'); label.maxLength = 80;
+
+      var g1 = el('div', 'fgrid');
+      if (email) g1.appendChild(field('Customer email', email));
+      g1.appendChild(field('Website', url));
+      if (!email) g1.appendChild(field('Why it is free', why));
+      f.appendChild(g1);
+      var g2 = el('div', 'fgrid');
+      if (email) g2.appendChild(field('Why it is free', why));
+      g2.appendChild(field('Alerts and reports go to', to));
+      g2.appendChild(field('Stop watching', ends));
+      if (!email) g2.appendChild(field('Label (optional)', label));
+      f.appendChild(g2);
+      var g3 = el('div', 'fgrid');
+      if (email) g3.appendChild(field('Label (optional)', label));
+      var ck = el('div', 'sb-wcheck');
+      var page = document.createElement('input'); page.type = 'checkbox'; page.id = id + 'p'; page.checked = true;
+      var pl = el('label', null, 'Page me on Telegram when it goes down'); pl.htmlFor = page.id;
+      ck.appendChild(page); ck.appendChild(pl);
+      g3.appendChild(ck);
+      f.appendChild(g3);
+      var note = el('div', 'wf-note');
+      var sayNote = function () {
+        note.textContent = to.value === 'staff'
+          ? 'Every email (the welcome, down and back-up alerts, renewal warnings, the monthly report card) comes to you, written as the owner would see it, ready to forward.' + (o.isLead ? '' : ' It does not appear in their portal.')
+          : 'They get a welcome email after the first check saying it is free, then the alerts and the monthly report card.' + (o.isLead ? ' A lead cannot sign in, so their emails carry no portal link.' : '');
+      };
+      to.addEventListener('change', sayNote); sayNote();
+      f.appendChild(note);
+      var acts = el('div', 'inv-actions');
+      var go = el('button', 'prim', 'Start watching free'); go.type = 'submit';
+      var cancel = el('button', null, 'Cancel'); cancel.type = 'button';
+      acts.appendChild(go); acts.appendChild(cancel);
+      f.appendChild(acts);
+      cancel.addEventListener('click', function () { if (o.onCancel) o.onCancel(); f.remove(); });
+      f.addEventListener('submit', function (ev) {
+        ev.preventDefault();
+        if (email && !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email.value.trim())) { toast('Enter the customer\'s email'); email.focus(); return; }
+        if (!url.value.trim()) { toast('Enter the website to watch'); url.focus(); return; }
+        go.disabled = true;
+        var b = { url: url.value.trim(), label: label.value.trim(), page_staff: page.checked, free_reason: why.value, notify: to.value, ends_days: Number(ends.value) || 0 };
+        if (email) b.email = email.value.trim();
+        if (o.account_id) b.account_id = o.account_id;
+        if (o.lead_id) b.lead_id = o.lead_id;
+        api('/admin/watches', { method: 'POST', body: b }).then(function (r) {
+          go.disabled = false;
+          if (!r.ok) { toast(r.message || 'Could not add the site'); return; }
+          toast('Watching ' + r.host + ' free. The first check is running now.');
+          f.remove();
+          if (o.onDone) o.onDone(r);
+          loadWatches();
+        });
       });
+      setTimeout(function () { (email || url).focus(); }, 0);
+      return f;
+    }
+
+    // A customer file's or a lead's Website Watch: what is watched, and the button.
+    function watchSection(o) {
+      var sec = el('section', 'cust-sec');
+      sec.appendChild(el('h3', null, 'Website Watch'));
+      var list = el('div', 'ww-mini');
+      sec.appendChild(list);
+      var row = el('div', 'reply-row');
+      var add = el('button', null, 'Watch their site free'); add.type = 'button';
+      row.appendChild(add);
+      sec.appendChild(row);
+      var formHost = el('div');
+      sec.appendChild(formHost);
+      var load = function () {
+        list.textContent = '';
+        api('/admin/watches').then(function (r) {
+          var mine = ((r && r.watches) || []).filter(function (w) {
+            return (o.lead_id && w.lead_id === o.lead_id) || (o.account_id && w.account_id === o.account_id);
+          });
+          if (!mine.length) { list.appendChild(el('div', 'row-sub', o.site ? 'Not watched. ' + String(o.site).replace(/^https?:\/\//i, '') + ' is on file.' : 'Not watched, and no website on file.')); return; }
+          mine.forEach(function (w) {
+            var d = el('div', 'ww-mini-row');
+            d.appendChild(el('b', null, w.host));
+            var st = w.status === 'paused' ? ['Paused', 'off'] : (WSTATE[w.state] || [w.state, 'off']);
+            d.appendChild(el('span', 'sb-pill ' + st[1], st[0]));
+            d.appendChild(watchTags(w));
+            list.appendChild(d);
+          });
+        });
+      };
+      add.addEventListener('click', function () {
+        if (formHost.firstChild) { formHost.textContent = ''; return; }
+        formHost.appendChild(freeWatchForm({ account_id: o.account_id, lead_id: o.lead_id, site: o.site, hasEmail: o.hasEmail, isLead: !!o.lead_id && !o.account_id,
+          onDone: load, onCancel: function () {} }));
+      });
+      load();
+      return sec;
+    }
+
+    // Why a watch is free, who hears about it, and when it stops.
+    function watchTags(w) {
+      var t = el('span', 'sb-tags');
+      if (w.source === 'staff') {
+        t.appendChild(el('span', 'sb-tag gold', 'Free · ' + (FREE_LABEL[w.free_reason] || 'Care plan')));
+        t.appendChild(el('span', 'sb-tag', w.notify === 'staff' ? 'Emails: you only' : 'Emails: ' + (w.lead_id ? 'the lead' : 'the customer')));
+        if (w.ends_at) t.appendChild(el('span', 'sb-tag', 'Ends ' + fmtDate(w.ends_at)));
+      } else t.appendChild(el('span', 'sb-tag', 'Paid'));
+      return t;
+    }
+
+    document.getElementById('watchAddBtn').addEventListener('click', function () {
+      var host = document.getElementById('watchFormHost');
+      if (host.firstChild) { host.textContent = ''; return; }
+      host.appendChild(freeWatchForm({ askEmail: true }));
     });
 
     var depositBody = document.getElementById('depositBody');
@@ -9867,7 +9971,8 @@
       who.appendChild(ic);
       var nm = el('div', 'sb-name');
       nm.appendChild(el('b', null, w.label ? w.label + ' · ' + w.host : w.host));
-      nm.appendChild(el('small', null, [w.company || w.name, w.email, w.source === 'staff' ? 'care plan' : 'self-serve'].filter(Boolean).join(' · ')));
+      nm.appendChild(el('small', null, [w.company || w.name, w.email, w.lead_number ? 'lead ' + w.lead_number : null].filter(Boolean).join(' · ')));
+      nm.appendChild(watchTags(w));
       who.appendChild(nm);
       r.appendChild(who);
 
@@ -9889,6 +9994,20 @@
 
       var acts = el('div', 'sb-acts');
       var btn = function (ico, label) { var b = el('button', 'sb-btn'); b.type = 'button'; b.title = label; b.setAttribute('aria-label', label); b.appendChild(icon(ico)); acts.appendChild(b); return b; };
+      if (w.lead_id) btn('fa-user', 'Open the lead').addEventListener('click', function () { location.hash = '#l=' + w.lead_id; });
+      else if (w.account_id) btn('fa-address-card', 'Open the customer file').addEventListener('click', function () { openCustomer(w.account_id); });
+      if (w.source === 'staff') {
+        var mailTo = btn(w.notify === 'staff' ? 'fa-user-lock' : 'fa-envelope', w.notify === 'staff' ? 'Emails go to you only. Send them to the owner instead' : 'Emails go to the owner. Send them to you only instead');
+        mailTo.addEventListener('click', function () {
+          var next = w.notify === 'staff' ? 'customer' : 'staff';
+          if (next === 'customer' && !confirm('Send ' + w.host + '\'s alerts and report cards to ' + (w.email || 'the owner') + ' from now on?')) return;
+          api('/admin/watches/' + w.id, { method: 'PATCH', body: { notify: next } }).then(function (x) {
+            toast(x.ok ? (next === 'staff' ? 'Emails now come to you only' : 'Emails now go to ' + (w.email || 'the owner'))
+              : x.error === 'no_email' ? 'There is no email on file for them' : 'Could not change it');
+            loadWatches();
+          });
+        });
+      }
       var chk = btn('fa-rotate-right', 'Check now');
       var pause = btn(paused ? 'fa-play' : 'fa-pause', paused ? 'Resume' : 'Pause');
       var rm = btn('fa-xmark', 'Stop watching');
@@ -10692,6 +10811,9 @@
       // it changes who gets billed for everything below it.
       var coBox = companySection(c);
       if (coBox) wrap.appendChild(coBox);
+
+      // Website Watch, free: the site on file (theirs, else a guess from their email).
+      wrap.appendChild(watchSection({ account_id: c.account.id, site: c.profile.website || cuSite(c.account.email), hasEmail: !!c.account.email }));
 
       // ---- the numbers ----
       var tiles = el('div', 'tiles');
@@ -23496,6 +23618,8 @@
     function mkAudits(p, d) {
       var l = d.lead;
       var sec = el('section', 'cust-sec');
+      // A free watch as a demo: once converted, it lives on their customer account.
+      p.appendChild(watchSection({ lead_id: l.id, account_id: l.account_id || null, site: l.domain || '', hasEmail: !!l.email }));
       sec.appendChild(el('h3', null, 'Report cards'));
       if (l.domain) {
         var row1 = el('div', 'mk-actions');
