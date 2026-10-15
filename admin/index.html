@@ -3688,7 +3688,7 @@
         <h2 id="smHead">Store Match</h2>
         <button type="button" class="sb-add" id="smAddBtn"><i class="fa-solid fa-plus" aria-hidden="true"></i> New request</button>
       </div>
-      <p class="fnote">Port a client's website look onto their Shopify store (C:\dev\shopify-store-match), $29.99, done by you. Clients order and pay on the Website Watch page; you are paged when they buy, and they are asked for their collaborator request code. When they send it you are paged with it: send the collaborator request from your Shopify Partner Dashboard (Stores > Add store > Request access; Themes and Files only), then press "Request sent" (they are asked to approve). Once approved, upload the images and run the tool; "Send the preview for approval" emails them to approve and publish.</p>
+      <p class="fnote">Port a client's website look onto their Shopify store (C:\dev\shopify-store-match), $49.99, done by you. Clients order and pay on the Website Watch page; you are paged when they buy, and they are asked for their collaborator request code. When they send it you are paged with it: send the collaborator request from your Shopify Partner Dashboard (Stores > Add store > Request access; Themes and Files only), then press "Request sent" (they are asked to approve). Once approved, upload the images and run the tool; "Send the preview for approval" emails them to approve and publish.</p>
       <div id="smFormHost"></div>
       <div id="smBody"><div class="state">Loading&hellip;</div></div>
     </section>
@@ -10226,7 +10226,7 @@
       var open = ['published', 'declined', 'refunded'].indexOf(m.status) < 0;
       if (open && !m.paid_at) {
         steps.appendChild(btn('Mark paid (another way)', function () {
-          var how = prompt('Paid $29.99 how? (kept in the history). This pages you and asks ' + m.contact_email + ' for their collaborator request code.', 'Invoice');
+          var how = prompt('Paid $49.99 how? (kept in the history). This pages you and asks ' + m.contact_email + ' for their collaborator request code.', 'Invoice');
           if (how == null) return;
           act({ action: 'mark_paid', note: how }, function (x) { return 'Marked paid; steps emailed to ' + x.emailed; });
         }));

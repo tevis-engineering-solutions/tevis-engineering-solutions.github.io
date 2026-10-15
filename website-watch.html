@@ -944,7 +944,7 @@
       <div class="ww-addon">
         <div class="ww-addon-copy">
           <p>Store Match ports the look of your website onto your Shopify store, so customers know they are in the right place. It is not a custom Shopify design: it is your existing website's look, carried over to Shopify, which Shopify's own buttons and settings do not do for you.</p>
-          <div class="ww-addon-price"><b>$29.99</b> <span>one time, per store</span></div>
+          <div class="ww-addon-price"><b>$49.99</b> <span>one time, per store</span></div>
           <ul class="ww-addon-list">
             <li><i class="fa-solid fa-check"></i> Your logo, colors, fonts and button style</li>
             <li><i class="fa-solid fa-check"></i> Your headline, phone number and announcement bar</li>
@@ -979,7 +979,7 @@
             <div class="ww-trap" aria-hidden="true"><label for="smHp">Leave this empty</label><input id="smHp" name="hp" type="text" tabindex="-1" autocomplete="off"></div>
             <div class="cf-turnstile" data-sitekey="0x4AAAAAAEfjPSABvMOUzIl3" data-theme="dark"></div>
             <p class="ww-err" id="smErr" role="alert" hidden></p>
-            <button type="submit" class="btn btn-primary ww-go" id="smGo"><i class="fa-solid fa-store"></i> Order &middot; $29.99</button>
+            <button type="submit" class="btn btn-primary ww-go" id="smGo"><i class="fa-solid fa-store"></i> Order &middot; $49.99</button>
             <div id="smPay" hidden></div>
             <p class="ww-fine">Paid through PayPal (card or PayPal balance). Then we email you the one step we need from you.</p>
           </form>
@@ -1302,7 +1302,7 @@
     }
 
     // Store Match: an order (tes-portal src/store_match.js). The details are checked, then
-    // PayPal's buttons appear; the Worker creates the $29.99 order and captures it.
+    // PayPal's buttons appear; the Worker creates the $49.99 order and captures it.
     (function () {
       var PAYPAL_CLIENT = 'Ab_dnVs8tumZ0eMkFfSuR9eR5ut5xYKPmEbgCRODAyopaxWByLowbaOpY9pgZJKAa_nliulcrbPBQ9IC';
       var f = $('smForm'), err = $('smErr'), go = $('smGo');
@@ -1346,7 +1346,7 @@
               return post('/public/store-match/capture', { match_id: matchId, order_id: data.orderID }).then(function (d) {
                 if (!d.ok) { err.textContent = 'PayPal did not complete the payment. Nothing was charged. Please try again.'; err.hidden = false; return; }
                 f.hidden = true; $('smDone').hidden = false;
-                if (window.tesTrack) window.tesTrack('purchase', { value: 29.99, currency: 'USD', transaction_id: d.reference, product: 'store_match' });
+                if (window.tesTrack) window.tesTrack('purchase', { value: 49.99, currency: 'USD', transaction_id: d.reference, product: 'store_match' });
               });
             },
             onError: function () { err.textContent = 'PayPal reported a problem. Nothing was charged. Please try again.'; err.hidden = false; },
