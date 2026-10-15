@@ -310,6 +310,14 @@
     .wi-acts input { flex:1 1 170px; min-width:0; min-height:38px; padding:0 0.65rem; border-radius:8px; border:1px solid var(--line); background:var(--bg); color:var(--text); font:inherit; font-size:0.84rem; }
     .wi-conn { border-top:1px solid var(--line); padding:0.6rem 0; }
     .wi-conn-head { display:flex; align-items:center; justify-content:space-between; gap:0.6rem; font-size:0.86rem; }
+    /* Store Match: your next step for a request */
+    .sm-next { display:block; margin-top:0.3rem; font-size:0.78rem; font-weight:700; color:#e6c68a; }
+    .sm-next.wait { color:var(--muted); font-weight:500; }
+    .sm-steps { border:1px solid rgba(200,152,48,0.45); background:rgba(200,152,48,0.07); border-radius:12px; padding:0.75rem 0.9rem; }
+    .sm-steps.wait { border-color:var(--line); background:transparent; }
+    .sm-steps h4 { font-size:0.82rem; color:var(--text); margin:0 0 0.4rem; }
+    .sm-steps ol { margin:0; padding-left:1.2rem; display:grid; gap:0.3rem; }
+    .sm-steps li { font-size:0.82rem; color:var(--text); line-height:1.5; overflow-wrap:anywhere; }
     @media (max-width:640px) { .wi-drawer { margin-left:0.5rem; } }
     .sb-wform select { width:100%; padding:0.55rem 0.7rem; border-radius:8px; border:1px solid var(--line); background:var(--bg); color:var(--text); font-family:inherit; font-size:0.88rem; }
     .sb-wform select:focus { outline:none; border-color:var(--green); }
@@ -10177,6 +10185,8 @@
       tags.appendChild(el('span', 'sb-tag' + (m.verified_at ? '' : ' gold'), m.verified_at ? 'Website verified (' + m.verified_how + ')' : 'Website not verified'));
       if (m.paid_at) tags.appendChild(el('span', 'sb-tag gold', (m.paid_how === 'free' ? 'Free' : 'Paid ' + smMoney(m.price_cents)) + (m.paid_how === 'paypal' ? ' (PayPal)' : m.paid_how === 'other' ? ' (another way)' : '') + ' · SM-' + m.id));
       nm.appendChild(tags);
+      // Your next step, in a line: the drawer has it spelled out.
+      if (m.next) nm.appendChild(el('small', 'sm-next' + (m.next.waiting ? ' wait' : ''), 'Next: ' + m.next.title));
       who.appendChild(nm); r.appendChild(who);
       var st = SM_STATE[m.status] || [m.status, 'off'];
       r.appendChild(el('span', 'sb-pill ' + st[1], st[0]));
@@ -10189,11 +10199,22 @@
         if (drawer) { drawer.remove(); drawer = null; tog.setAttribute('aria-expanded', 'false'); return; }
         drawer = smDrawer(m); item.appendChild(drawer); tog.setAttribute('aria-expanded', 'true');
       });
+      // A request waiting on you opens with its steps showing.
+      if (m.next && !m.next.waiting) tog.click();
       return item;
     }
 
     function smDrawer(m) {
       var d = el('div', 'wi-drawer');
+      // Your next step, spelled out with this client's details (tes-portal nextStep()).
+      if (m.next) {
+        var nx = el('div', 'sm-steps' + (m.next.waiting ? ' wait' : ''));
+        nx.appendChild(el('h4', null, 'Your next step: ' + m.next.title));
+        var ol = el('ol');
+        m.next.steps.forEach(function (x) { ol.appendChild(el('li', null, x)); });
+        nx.appendChild(ol);
+        d.appendChild(nx);
+      }
       var act = function (b, ok) {
         return api('/admin/store-matches/' + m.id, { method: 'POST', body: b }).then(function (x) {
           if (!x.ok) { toast(x.message || x.error || 'Could not do it'); return; }
