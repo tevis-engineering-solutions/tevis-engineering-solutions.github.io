@@ -633,12 +633,38 @@
     .ww-kicker { display:inline-block; font-size:0.74rem; font-weight:700; letter-spacing:0.14em; text-transform:uppercase; color:#c89830; margin-bottom:0.6rem; }
     .ww-head h2 { font-family:"Montserrat",sans-serif; font-size:clamp(1.5rem, 3.6vw, 2.15rem); line-height:1.2; color:#fff; max-width:22ch; margin:0 auto; }
 
-    .ww-grid { display:grid; grid-template-columns:repeat(4, minmax(0,1fr)); gap:1rem; }
-    .ww-card { border:1px solid var(--line); border-radius:18px; padding:1.4rem 1.3rem; background:rgba(20,32,25,0.72); text-align:center; transition:border-color .2s, transform .2s; }
-    .ww-card:hover { border-color:rgba(74,172,101,0.45); transform:translateY(-3px); }
-    .ww-ic { width:52px; height:52px; margin:0 auto 1rem; border-radius:15px; display:grid; place-items:center; font-size:1.25rem; color:#7fd497; background:rgba(74,172,101,0.12); border:1px solid rgba(74,172,101,0.3); }
-    .ww-card h3 { font-family:"Montserrat",sans-serif; font-size:1.02rem; color:#fff; margin-bottom:0.5rem; }
-    .ww-card p { color:var(--muted); font-size:0.93rem; line-height:1.6; }
+
+    /* Feature cloud: eight chips orbit a hub that explains the chosen one. */
+    .ww-cloud { position:relative; width:min(900px, 100%); height:540px; margin:0 auto; }
+    .ww-cloud::before { content:""; position:absolute; inset:9% 7%; border-radius:50%; border:1px dashed rgba(74,172,101,0.28); }
+    .ww-cloud::after { content:""; position:absolute; left:50%; top:50%; width:520px; height:360px; transform:translate(-50%,-50%); background:radial-gradient(closest-side, rgba(74,172,101,0.16), transparent); pointer-events:none; }
+    .ww-hub { position:absolute; left:50%; top:50%; transform:translate(-50%,-50%); width:340px; z-index:1; text-align:center; padding:1.6rem 1.5rem; border-radius:28px; border:1px solid rgba(200,152,48,0.45); background:linear-gradient(170deg, rgba(200,152,48,0.1), rgba(20,32,25,0.95) 50%); box-shadow:0 24px 60px rgba(0,0,0,0.4); }
+    .ww-hub-ic { width:56px; height:56px; margin:0 auto 0.8rem; border-radius:50%; display:grid; place-items:center; font-size:1.35rem; color:#0d1710; background:linear-gradient(135deg,#c89830,#e0b840); }
+    .ww-hub h3 { font-family:"Montserrat",sans-serif; font-size:1.12rem; color:#fff; margin-bottom:0.45rem; }
+    .ww-hub p { color:var(--muted); font-size:0.92rem; line-height:1.6; min-height:6.4em; }
+    .ww-fchip { position:absolute; z-index:2; transform:translate(-50%,-50%); display:inline-flex; align-items:center; gap:0.5rem; white-space:nowrap; padding:0.6rem 1rem; min-height:44px; border-radius:999px; border:1px solid rgba(74,172,101,0.35); background:rgba(17,27,21,0.92); color:#dfe9e1; font-family:"Montserrat",sans-serif; font-weight:700; font-size:0.86rem; cursor:pointer; transition:border-color .2s, background .2s, box-shadow .2s, color .2s; animation:wwFloat 6s ease-in-out infinite; animation-delay:calc(var(--i) * -0.75s); }
+    .ww-fchip i { color:#7fd497; }
+    .ww-fchip:hover, .ww-fchip:focus-visible { border-color:#4aac65; outline:none; box-shadow:0 0 0 3px rgba(74,172,101,0.2); }
+    .ww-fchip.on { background:linear-gradient(135deg,#c89830,#e0b840); border-color:transparent; color:#0d1710; box-shadow:0 10px 30px rgba(200,152,48,0.3); }
+    .ww-fchip.on i { color:#0d1710; }
+    .ww-fchip:nth-child(1) { left:50%; top:7%; }
+    .ww-fchip:nth-child(2) { left:79%; top:20%; }
+    .ww-fchip:nth-child(3) { left:84%; top:50%; }
+    .ww-fchip:nth-child(4) { left:79%; top:80%; }
+    .ww-fchip:nth-child(5) { left:50%; top:93%; }
+    .ww-fchip:nth-child(6) { left:21%; top:80%; }
+    .ww-fchip:nth-child(7) { left:16%; top:50%; }
+    .ww-fchip:nth-child(8) { left:21%; top:20%; }
+    @keyframes wwFloat { 0%,100% { margin-top:0; } 50% { margin-top:-6px; } }
+    @media (prefers-reduced-motion: reduce) { .ww-fchip { animation:none; } }
+    @media (max-width:900px) {
+      .ww-cloud { height:auto; display:grid; gap:1.2rem; }
+      .ww-cloud::before, .ww-cloud::after { display:none; }
+      .ww-hub { position:static; transform:none; width:min(520px, 100%); margin:0 auto; }
+      .ww-hub p { min-height:0; }
+      .ww-fchips { display:flex; flex-wrap:wrap; justify-content:center; gap:0.55rem; }
+      .ww-fchip { position:static; transform:none; animation:none; font-size:0.82rem; padding:0.5rem 0.85rem; }
+    }
 
     .ww-steps { list-style:none; display:grid; grid-template-columns:repeat(3, minmax(0,1fr)); gap:1rem; padding:0; margin:0; counter-reset:none; }
     .ww-steps li { text-align:center; padding:1.4rem 1.2rem; border-radius:18px; border:1px solid var(--line); background:rgba(17,27,21,0.7); }
@@ -661,6 +687,13 @@
     .ww-list { list-style:none; padding:0; margin:0 auto 1.5rem; display:inline-grid; gap:0.55rem; text-align:left; }
     .ww-list li { color:#dfe9e1; font-size:0.95rem; display:flex; gap:0.6rem; align-items:baseline; }
     .ww-list i { color:#6dc882; font-size:0.85rem; }
+    .ww-plan-wide { width:min(880px, 100%); display:grid; grid-template-columns:minmax(0,0.9fr) minmax(0,1.1fr); gap:2rem; align-items:center; text-align:center; }
+    .ww-plan-wide .ww-list { font-size:0.92rem; margin-bottom:0; }
+    .ww-plan-wide .ww-list li { font-size:0.9rem; }
+    .ww-plan-wide .ww-sub { margin-bottom:1rem; }
+    .ww-plan-wide .ww-form { border-top:0; padding-top:0; gap:0.75rem; }
+    .ww-plan-main .ww-field input { min-height:44px; }
+    @media (max-width:820px) { .ww-plan-wide { grid-template-columns:1fr; width:min(460px, 100%); gap:1.3rem; } .ww-plan-main .ww-form { border-top:1px solid var(--line); padding-top:1.3rem; } }
     .ww-form { display:grid; gap:0.9rem; text-align:left; border-top:1px solid var(--line); padding-top:1.4rem; }
     .ww-field { display:grid; gap:0.35rem; }
     .ww-field label { font-size:0.78rem; font-weight:700; letter-spacing:0.05em; text-transform:uppercase; color:var(--muted); }
@@ -679,6 +712,17 @@
     .ww-alt { text-align:center; color:var(--muted); margin-top:1.3rem; font-size:0.95rem; }
     .ww-alt a { color:#6dc882; }
     /* Store Match add-on */
+    .ww-ba { --pos:50%; position:relative; width:min(900px, 100%); margin:0 auto 2.2rem; border-radius:18px; overflow:hidden; border:1px solid rgba(200,152,48,0.45); box-shadow:0 24px 60px rgba(0,0,0,0.4); aspect-ratio:1200/744; background:#0d1710; user-select:none; }
+    .ww-ba img { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; display:block; pointer-events:none; }
+    .ww-ba-before { position:absolute; inset:0; clip-path:inset(0 calc(100% - var(--pos)) 0 0); }
+    .ww-ba-line { position:absolute; top:0; bottom:0; left:var(--pos); width:3px; margin-left:-1.5px; background:linear-gradient(#c89830,#e0b840); box-shadow:0 0 12px rgba(0,0,0,0.5); pointer-events:none; }
+    .ww-ba-knob { position:absolute; top:50%; left:50%; width:48px; height:48px; transform:translate(-50%,-50%); border-radius:50%; display:grid; place-items:center; color:#0d1710; background:linear-gradient(135deg,#c89830,#e0b840); box-shadow:0 6px 20px rgba(0,0,0,0.45); font-size:1.05rem; }
+    .ww-ba-range { position:absolute; inset:0; width:100%; height:100%; margin:0; opacity:0; cursor:ew-resize; -webkit-appearance:none; appearance:none; touch-action:pan-y; }
+    .ww-ba:has(.ww-ba-range:focus-visible) .ww-ba-knob { box-shadow:0 0 0 4px rgba(255,255,255,0.6); }
+    .ww-ba-tag { position:absolute; top:0.8rem; padding:0.3rem 0.7rem; border-radius:999px; font-family:"Montserrat",sans-serif; font-weight:700; font-size:0.72rem; letter-spacing:0.06em; text-transform:uppercase; background:rgba(13,23,16,0.82); color:#fff; pointer-events:none; }
+    .ww-ba-tag.l { left:0.8rem; } .ww-ba-tag.r { right:0.8rem; color:#e6c68a; }
+    .ww-ba figcaption { position:absolute; left:50%; bottom:0.8rem; transform:translateX(-50%); padding:0.3rem 0.8rem; border-radius:999px; background:rgba(13,23,16,0.82); color:#dfe9e1; font-size:0.8rem; white-space:nowrap; pointer-events:none; }
+    @media (max-width:520px) { .ww-ba-tag { font-size:0.62rem; top:0.5rem; } .ww-ba-tag.l { left:0.5rem; } .ww-ba-tag.r { right:0.5rem; } .ww-ba figcaption { display:none; } .ww-ba-knob { width:40px; height:40px; } }
     .ww-addon { display:grid; grid-template-columns:minmax(0,1.1fr) minmax(0,0.9fr); gap:2rem; align-items:start; }
     .ww-addon-copy > p { color:var(--muted); line-height:1.65; margin-bottom:1rem; }
     .ww-addon-list { list-style:none; padding:0; margin:0 0 1rem; display:grid; gap:0.6rem; }
@@ -703,7 +747,6 @@
     .ww-faq details[open] summary::after { transform:rotate(45deg); }
     .ww-faq .faq-a { color:var(--muted); line-height:1.65; padding:0 0 1.1rem; }
 
-    @media (max-width:980px) { .ww-grid { grid-template-columns:repeat(2, minmax(0,1fr)); } }
     @media (max-width:720px) {
       .ww-hero { padding-top:3rem; }
       .ww-steps { grid-template-columns:1fr; }
@@ -712,7 +755,6 @@
       .ww-bars i:nth-child(n+25) { display:none; }
     }
     @media (max-width:520px) {
-      .ww-grid { grid-template-columns:1fr; }
       .ww-cta .btn { width:100%; }
       .ww-plan { padding:1.5rem 1.15rem; }
       .ww-amt { font-size:2.7rem; }
@@ -831,47 +873,22 @@
         <span class="ww-kicker">What you get</span>
         <h2 id="featHead">Eight Ways a Website Quietly Loses You Customers, Caught</h2>
       </div>
-      <div class="ww-grid">
-        <article class="ww-card">
-          <div class="ww-ic"><i class="fa-solid fa-phone-slash"></i></div>
-          <h3>Down? You hear first</h3>
-          <p>Visitors never tell you; they call the next name on Google. We check every 15 minutes and email you the minute it stops, and again when it is back.</p>
-        </article>
-        <article class="ww-card">
-          <div class="ww-ic"><i class="fa-solid fa-calendar-check"></i></div>
-          <h3>Renewals never sneak up</h3>
-          <p>A lapsed domain takes your email down with it; an expired certificate shows &ldquo;Not secure.&rdquo; We warn you 30, 14 and 7 days ahead.</p>
-        </article>
-        <article class="ww-card">
-          <div class="ww-ic"><i class="fa-solid fa-envelope-circle-check"></i></div>
-          <h3>Your email lands, not spam</h3>
-          <p>We check the settings that keep your quotes and invoices out of spam folders, and tell you in plain words what is missing.</p>
-        </article>
-        <article class="ww-card">
-          <div class="ww-ic"><i class="fa-solid fa-user-secret"></i></div>
-          <h3>Hijacks and copycats spotted</h3>
-          <p>If your domain's settings change, we ask &ldquo;was that you?&rdquo; If someone registers a look-alike name to fool your customers, we tell you.</p>
-        </article>
-        <article class="ww-card">
-          <div class="ww-ic"><i class="fa-solid fa-shield-halved"></i></div>
-          <h3>Off Google's danger list</h3>
-          <p>A hacked site gets a red warning screen in Chrome and loses its visitors overnight. We check Google's list daily and alert you at once.</p>
-        </article>
-        <article class="ww-card">
-          <div class="ww-ic"><i class="fa-solid fa-link-slash"></i></div>
-          <h3>No dead ends</h3>
-          <p>Broken links and missing images make a business look closed. We find them every month and list exactly where they are.</p>
-        </article>
-        <article class="ww-card">
-          <div class="ww-ic"><i class="fa-solid fa-cart-shopping"></i></div>
-          <h3>Shopify store checks</h3>
-          <p>Store stuck behind its password, a $0.00 price, an emptied catalog, a cart that stopped loading or a price that changed: you know the same day.</p>
-        </article>
-        <article class="ww-card">
-          <div class="ww-ic"><i class="fa-solid fa-chart-line"></i></div>
-          <h3>See who is calling</h3>
-          <p>Add one line to your site and see visitors, plus the clicks that matter: calls, emails, form sends and add-to-carts. No cookies, no banner.</p>
-        </article>
+      <div class="ww-cloud" id="wwCloud">
+        <div class="ww-hub" aria-live="polite">
+          <div class="ww-hub-ic"><i class="fa-solid fa-phone-slash" id="wwHubIc"></i></div>
+          <h3 id="wwHubT">Down? You hear first</h3>
+          <p id="wwHubD">Visitors never tell you; they call the next name on Google. We check every 15 minutes and email you the minute it stops, and again when it is back.</p>
+        </div>
+        <div class="ww-fchips" role="group" aria-label="What Website Watch checks">
+          <button type="button" class="ww-fchip on" style="--i:0" data-ic="fa-solid fa-phone-slash" data-d="Visitors never tell you; they call the next name on Google. We check every 15 minutes and email you the minute it stops, and again when it is back." aria-pressed="true"><i class="fa-solid fa-phone-slash"></i> Down? You hear first</button>
+          <button type="button" class="ww-fchip" style="--i:1" data-ic="fa-solid fa-calendar-check" data-d="A lapsed domain takes your email down with it; an expired certificate shows &ldquo;Not secure.&rdquo; We warn you 30, 14 and 7 days ahead." aria-pressed="false"><i class="fa-solid fa-calendar-check"></i> Renewals never sneak up</button>
+          <button type="button" class="ww-fchip" style="--i:2" data-ic="fa-solid fa-envelope-circle-check" data-d="We check the settings that keep your quotes and invoices out of spam folders, and tell you in plain words what is missing." aria-pressed="false"><i class="fa-solid fa-envelope-circle-check"></i> Your email lands, not spam</button>
+          <button type="button" class="ww-fchip" style="--i:3" data-ic="fa-solid fa-user-secret" data-d="If your domain's settings change, we ask &ldquo;was that you?&rdquo; If someone registers a look-alike name to fool your customers, we tell you." aria-pressed="false"><i class="fa-solid fa-user-secret"></i> Hijacks and copycats spotted</button>
+          <button type="button" class="ww-fchip" style="--i:4" data-ic="fa-solid fa-shield-halved" data-d="A hacked site gets a red warning screen in Chrome and loses its visitors overnight. We check Google's list daily and alert you at once." aria-pressed="false"><i class="fa-solid fa-shield-halved"></i> Off Google's danger list</button>
+          <button type="button" class="ww-fchip" style="--i:5" data-ic="fa-solid fa-link-slash" data-d="Broken links and missing images make a business look closed. We find them every month and list exactly where they are." aria-pressed="false"><i class="fa-solid fa-link-slash"></i> No dead ends</button>
+          <button type="button" class="ww-fchip" style="--i:6" data-ic="fa-solid fa-cart-shopping" data-d="Store stuck behind its password, a $0.00 price, an emptied catalog, a cart that stopped loading or a price that changed: you know the same day." aria-pressed="false"><i class="fa-solid fa-cart-shopping"></i> Shopify store checks</button>
+          <button type="button" class="ww-fchip" style="--i:7" data-ic="fa-solid fa-chart-line" data-d="Add one line to your site and see visitors, plus the clicks that matter: calls, emails, form sends and add-to-carts. No cookies, no banner." aria-pressed="false"><i class="fa-solid fa-chart-line"></i> See who is calling</button>
+        </div>
       </div>
       <div class="ww-sample">
         <a class="ww-sample-img" href="assets/website-watch/sample-report.jpg" target="_blank" rel="noopener">
@@ -904,7 +921,8 @@
         <h2 id="buyHead">One Site, One Simple Price</h2>
       </div>
 
-      <div class="ww-plan" id="wwPlan">
+      <div class="ww-plan ww-plan-wide" id="wwPlan">
+        <div class="ww-plan-side">
         <div class="ww-toggle" role="group" aria-label="Billing">
           <button type="button" class="on" data-cadence="monthly" aria-pressed="true">Monthly</button>
           <button type="button" data-cadence="annual" aria-pressed="false">Yearly <span class="ww-save" id="wwSave">Save 17%</span></button>
@@ -916,14 +934,13 @@
         </div>
         <p class="ww-sub" id="wwSub">Billed monthly. Cancel any time.</p>
         <ul class="ww-list">
-          <li><i class="fa-solid fa-check"></i> Uptime checks every 15 minutes, with down and back-up alerts</li>
-          <li><i class="fa-solid fa-check"></i> Domain and certificate expiry warnings</li>
-          <li><i class="fa-solid fa-check"></i> Email health, hijack and look-alike domain alerts</li>
-          <li><i class="fa-solid fa-check"></i> Google danger-list and broken-link checks</li>
-          <li><i class="fa-solid fa-check"></i> Shopify store checks, if you sell on Shopify</li>
-          <li><i class="fa-solid fa-check"></i> Visitor and call counts from one line of code</li>
-          <li><i class="fa-solid fa-check"></i> Monthly report card and your own status page</li>
+          <li><i class="fa-solid fa-check"></i> Every 15 minutes, with instant alerts</li>
+          <li><i class="fa-solid fa-check"></i> Domain, certificate and email health</li>
+          <li><i class="fa-solid fa-check"></i> Hijack, danger-list and broken-link checks</li>
+          <li><i class="fa-solid fa-check"></i> Store checks, visitors and a monthly report</li>
         </ul>
+        </div>
+        <div class="ww-plan-main">
 
         <form class="ww-form" id="wwForm" novalidate>
           <div class="ww-field">
@@ -957,6 +974,7 @@
           <h3 id="wwDoneHead">Confirming your subscription&hellip;</h3>
           <p id="wwDoneText">This usually takes a few seconds.</p>
           <a class="btn btn-secondary" href="portal/monitoring.html">Open your status page</a>
+        </div>
         </div>
       </div>
       <p class="ww-alt">Rather have us fix what it finds? Our <a href="website_creation.html#maintenance">website care plans</a> include Website Watch.</p>
@@ -995,6 +1013,15 @@
         <span class="ww-kicker">Premium: Store Match for Shopify</span>
         <h2 id="smHead">Make Your Store Look Like Your Website</h2>
       </div>
+      <figure class="ww-ba" id="smBa">
+        <img src="assets/website-watch/store-match-after.jpg" width="1200" height="744" loading="lazy" alt="After Store Match: the Tevis Engineering Shopify store in the website's dark green and gold, with its logo, office photo hero and headline.">
+        <div class="ww-ba-before"><img src="assets/website-watch/store-match-before.jpg" width="1200" height="744" loading="lazy" alt="Before: the same store on Shopify's default Horizon theme, white with a stock illustration and generic text."></div>
+        <span class="ww-ba-tag l">Shopify default</span>
+        <span class="ww-ba-tag r">After Store Match</span>
+        <div class="ww-ba-line" aria-hidden="true"><span class="ww-ba-knob"><i class="fa-solid fa-left-right"></i></span></div>
+        <input class="ww-ba-range" type="range" min="0" max="100" value="50" step="0.5" aria-label="Slide to compare the store before and after Store Match">
+        <figcaption>Our own store, before and after. Drag to compare.</figcaption>
+      </figure>
       <div class="ww-addon">
         <div class="ww-addon-copy">
           <p>Store Match ports the look of your website onto your Shopify store, so customers know they are in the right place. It is not a custom Shopify design: it is your existing website's look, carried over to Shopify, which Shopify's own buttons and settings do not do for you.</p>
@@ -1445,5 +1472,60 @@
 </script>
 
 <script src="assets/js/tes-analytics.js" defer></script>
+<script>
+  // Feature cloud: a chip shows its explanation in the hub; it cycles on its own until someone picks one.
+  (function () {
+    var cloud = document.getElementById('wwCloud'); if (!cloud) return;
+    var chips = [].slice.call(cloud.querySelectorAll('.ww-fchip'));
+    var ic = document.getElementById('wwHubIc'), t = document.getElementById('wwHubT'), d = document.getElementById('wwHubD');
+    var cur = 0, timer = null;
+    function show(n) {
+      cur = n;
+      chips.forEach(function (c, i) { c.classList.toggle('on', i === n); c.setAttribute('aria-pressed', i === n ? 'true' : 'false'); });
+      var c = chips[n];
+      ic.className = c.getAttribute('data-ic');
+      t.textContent = c.textContent.trim();
+      d.textContent = c.getAttribute('data-d');
+    }
+    function stop() { if (timer) { clearInterval(timer); timer = null; } }
+    chips.forEach(function (c, i) {
+      c.addEventListener('click', function () { stop(); show(i); });
+      c.addEventListener('mouseenter', function () { stop(); show(i); });
+      c.addEventListener('focus', function () { stop(); show(i); });
+    });
+    if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) timer = setInterval(function () { show((cur + 1) % chips.length); }, 3500);
+  })();
+
+  // Store Match before/after: starts in the middle and nudges side to side until someone drags it.
+  (function () {
+    var ba = document.getElementById('smBa'); if (!ba) return;
+    var range = ba.querySelector('.ww-ba-range'), touched = false, raf = null, loop = null;
+    function set(v) { ba.style.setProperty('--pos', v + '%'); range.value = v; }
+    function grab() { touched = true; if (raf) cancelAnimationFrame(raf); if (loop) clearInterval(loop); }
+    range.addEventListener('input', function () { grab(); ba.style.setProperty('--pos', range.value + '%'); });
+    range.addEventListener('pointerdown', grab);
+    range.addEventListener('keydown', grab);
+    function nudge() {
+      if (touched) return;
+      var start = null, dur = 1800;
+      function step(ts) {
+        if (touched) return;
+        if (start === null) start = ts;
+        var k = Math.min((ts - start) / dur, 1);
+        set(50 + 14 * Math.sin(k * Math.PI * 2) * (1 - k * 0.3));
+        if (k < 1) raf = requestAnimationFrame(step); else set(50);
+      }
+      raf = requestAnimationFrame(step);
+    }
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches || !('IntersectionObserver' in window)) return;
+    var io = new IntersectionObserver(function (es) {
+      if (!es[0].isIntersecting) return;
+      io.disconnect();
+      setTimeout(nudge, 400);
+      loop = setInterval(nudge, 6000);
+    }, { threshold: 0.5 });
+    io.observe(ba);
+  })();
+</script>
 </body>
 </html>
