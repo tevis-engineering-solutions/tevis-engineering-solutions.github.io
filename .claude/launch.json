@@ -35,6 +35,14 @@
       "port": 5616
     },
     {
+      "name": "Admin console (dev Worker)",
+      "runtimeExecutable": "node",
+      "runtimeArgs": [
+        "C:/dev/tes-portal/scripts/dev-console.mjs"
+      ],
+      "port": 5590
+    },
+    {
       "name": "3D Shed (vite)",
       "runtimeExecutable": "node",
       "runtimeArgs": [

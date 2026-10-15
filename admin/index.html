@@ -3303,6 +3303,8 @@
           <div><label for="ctnEvent">Event / solicitation number</label><input type="text" id="ctnEvent" maxlength="80"></div>
           <div><label for="ctnSource">Found on</label><select id="ctnSource"></select></div>
           <div><label for="ctnNaics">NAICS (capability statement)</label><select id="ctnNaics"></select></div>
+          <div><label for="ctnKind">Kind of response</label>
+            <select id="ctnKind"><option value="itb_goods">Goods bid (ITB): priced lines</option><option value="rfp_services">Services proposal (RFP): a written proposal</option><option value="rfq">Quick quote (RFQ)</option></select></div>
           <div><label for="ctnStructure">Structure</label>
             <select id="ctnStructure"><option value="one_time">One-time fixed quantity</option><option value="nte_rate_card">NTE standing PO (rate card)</option></select></div>
           <div><label for="ctnClose">Submission deadline</label><input id="ctnClose" type="datetime-local"></div>
@@ -17414,7 +17416,10 @@
       no_bid: 'Pass (no bid)', closed: 'Close' };
     var CT_ROLE_LABEL = { solicitation: 'Solicitation', spec: 'Spec / min. requirements', terms: 'Terms & Conditions', line_schedule: 'Line schedule',
       addendum: 'Addendum', response: 'Our response', pricing: 'Pricing model', correspondence: 'Correspondence', award: 'Award / PO',
-      tabulation: 'Tabulation', screenshot: 'Screenshot', other: 'Other' };
+      tabulation: 'Tabulation', screenshot: 'Screenshot', vendor_quote: 'Supplier quote (my costs)', own_quote: 'My earlier quote', prior_bid: 'An earlier bid of ours',
+      research: 'Research', form: 'Completed form', other: 'Other' };
+    // What sort of response the bid needs; the writer's section template follows it.
+    var CT_KIND_LABEL = { itb_goods: 'Goods bid (ITB)', rfp_services: 'Services proposal (RFP)', rfq: 'Quick quote (RFQ)' };
     var CT_FLAG_LABEL = { indemnity: 'Indemnity', insurance: 'Insurance', uncertified: 'Uncertified product', time_penalty: 'Time penalty',
       cash_float: 'Cash float', spec_conflict: 'Spec conflict', substitution: 'Substitution', federal: 'Federal', fit: 'Fit', other: 'Other' };
 
@@ -17575,6 +17580,8 @@
       else if (b.naics) chips.appendChild(el('span', 'ct-chip red', 'Off-statement'));
       if (b.federal) chips.appendChild(el('span', 'ct-chip red', 'Federal'));
       if (b.structure === 'nte_rate_card') chips.appendChild(el('span', 'ct-chip', 'Rate card'));
+      if (b.kind === 'rfp_services') chips.appendChild(el('span', 'ct-chip', 'RFP'));
+      else if (b.kind === 'rfq') chips.appendChild(el('span', 'ct-chip', 'RFQ'));
       if (CT_PRE.indexOf(b.status) >= 0 && b.days_to_close != null) {
         chips.appendChild(el('span', 'ct-chip ' + (b.days_to_close <= 2 ? 'red' : b.days_to_close <= 7 ? 'gold' : ''),
           b.days_to_close < 0 ? 'Deadline passed' : 'Closes ' + (b.days_to_close === 0 ? 'today' : 'in ' + ctDays(b.days_to_close))));
@@ -17704,7 +17711,7 @@
       var body = {
         agency: document.getElementById('ctnAgency').value, title: document.getElementById('ctnTitle').value,
         event_no: document.getElementById('ctnEvent').value, source: document.getElementById('ctnSource').value || undefined,
-        naics: naics || undefined, structure: document.getElementById('ctnStructure').value,
+        naics: naics || undefined, structure: document.getElementById('ctnStructure').value, kind: document.getElementById('ctnKind').value,
         date_close: ctFromDt(document.getElementById('ctnClose').value), end_date: dayToTs(document.getElementById('ctnEnd').value), posting_url: document.getElementById('ctnUrl').value,
       };
       var btn = e.target.querySelector('button[type="submit"]');
@@ -18508,6 +18515,7 @@
       inp.event_no = ctField(g1, 'Event / solicitation #', ctInput('text', b.event_no || '', { maxlength: 80 }));
       inp.agency = ctField(g1, 'Agency', ctInput('text', b.agency, { maxlength: 200 }), 's2');
       inp.source = ctField(g1, 'Found on', ctSelect([['', 'Direct / other']].concat(((ctRef && ctRef.sources) || []).map(function (s) { return [s.key, s.label]; })), b.source || ''));
+      inp.kind = ctField(g1, 'Kind of response', ctSelect(Object.keys(CT_KIND_LABEL).map(function (k) { return [k, CT_KIND_LABEL[k]]; }), b.kind || 'itb_goods'));
       inp.submit_method = ctField(g1, 'Submit by', ctSelect([['', '\u2014'], ['portal', 'Portal'], ['email', 'Email'], ['paper', 'Paper']], b.submit_method || ''));
       var codeOpts = [['', 'Not set']].concat(((ctRef && ctRef.codes) || []).map(function (c) { return [c.code, 'T' + c.tier + ' ' + c.code + ' ' + c.description]; }));
       if (b.naics && !codeOpts.some(function (o) { return o[0] === b.naics; })) codeOpts.push([b.naics, b.naics + ' (off-statement)']);
@@ -18560,7 +18568,7 @@
       var collect = function () {
         return {
           agency: inp.agency.value, title: inp.title.value, event_no: inp.event_no.value, source: inp.source.value, naics: inp.naics.value,
-          commodity_codes: inp.commodity_codes.value, structure: inp.structure.value, submit_method: inp.submit_method.value,
+          commodity_codes: inp.commodity_codes.value, structure: inp.structure.value, kind: inp.kind.value, submit_method: inp.submit_method.value,
           date_open: dayToTs(inp.date_open.value), date_close: ctFromDt(inp.date_close.value), qa_close: ctFromDt(inp.qa_close.value), end_date: dayToTs(inp.end_date.value),
           expected_po_date: dayToTs(inp.expected_po_date.value), need_by_date: dayToTs(inp.need_by_date.value),
           lead_time_days: inp.lead_time_days.value, nte: inp.nte.value, freight_threshold: inp.freight_threshold.value,
@@ -19054,14 +19062,23 @@
     }
 
     // The packet and notes as last typed, per bid, saved to the bid as you type. A draft
-    // that is running is remembered per bid too, so moving between tabs or bids while it
-    // runs does not lose it; it is saved on the bid when it comes back either way.
+    // runs as a background job on the Worker (src/ai_jobs.js): with the queue bound, the
+    // request answers at once and this page polls the job, so a reload, another bid or a
+    // closed laptop loses nothing; reopening the bid picks the job back up from
+    // active_job. Without the queue the request itself runs the draft, as it always did.
+    // ctDrafting[id] = {at, job, queued} while one runs.
     var ctDraftIn = {};
     var ctDrafting = {};
+    // Jobs this page has seen end, so a bid detail read before they ended (its active_job
+    // is a snapshot) does not start watching them again.
+    var ctJobsEnded = {};
+    var CT_PACKET_ROLES = ['solicitation', 'spec', 'terms', 'line_schedule', 'addendum', 'vendor_quote'];
     function ctDraftPending() {
-      return Object.keys(ctDrafting).length > 0 || Object.keys(ctDraftIn).some(function (k) { return ctDraftIn[k].timer || ctDraftIn[k].saving; });
+      // Only an inline draft dies with the page; a queued one carries on without it.
+      return Object.keys(ctDrafting).some(function (k) { return !ctDrafting[k].queued; })
+        || Object.keys(ctDraftIn).some(function (k) { return ctDraftIn[k].timer || ctDraftIn[k].saving; });
     }
-    function ctDraftState(id) { return ctDraftIn[id] || (ctDraftIn[id] = { packet: '', notes: '', loaded: false }); }
+    function ctDraftState(id) { return ctDraftIn[id] || (ctDraftIn[id] = { packet: '', notes: '', loaded: false, readPdfs: true }); }
     function ctSaveInput(id, now) {
       var st = ctDraftState(id);
       clearTimeout(st.timer); st.timer = null;
@@ -19083,26 +19100,122 @@
       ctDraft(p);
       p.btn.textContent = ctDetail.saved_draft ? 'Draft (saved)' : 'Draft';
     }
+    // The packet PDFs on the open bid, which the Worker can send to Claude whole.
+    function ctPacketPdfs() {
+      return ((ctDetail && ctDetail.files) || []).filter(function (x) { return CT_PACKET_ROLES.indexOf(x.role) >= 0 && x.content_type === 'application/pdf'; });
+    }
+
+    // A draft came back, inline or from a finished job. r is the route's shape: {ok, draft,
+    // draft_id, saved_at, model, usage, documents} or {ok:false, message}.
+    function ctDraftDone(id, bidNo, r, notesUsed) {
+      if (ctDrafting[id] && ctDrafting[id].job) ctJobsEnded[ctDrafting[id].job] = true;
+      delete ctDrafting[id];
+      if (ctDetail && ctDetail.bid.id === id) ctDetail.active_job = null;
+      var st = ctDraftState(id);
+      var here = ctBidId === id && ctDetail && ctDetail.bid.id === id;
+      if (!r.ok) {
+        st.lastError = r.message || ctErr(r);
+        if (here) ctRefreshDraftPane(); else toast('BidBuilder could not draft ' + bidNo + ': ' + st.lastError);
+        return;
+      }
+      if (r.draft_id) {
+        if (here) ctDetail.saved_draft = { id: r.draft_id, created_at: r.saved_at, draft: r.draft, notes: notesUsed, model: r.model, usage: r.usage, applied_at: null };
+      } else st.unsaved = r.draft;
+      var read = r.documents && r.documents.length ? ' Read ' + r.documents.length + ' PDF' + (r.documents.length === 1 ? '' : 's') + '.' : '';
+      var left = r.skipped && r.skipped.length ? ' Left out: ' + r.skipped.map(function (k) { return k.filename; }).join(', ') + ' (over the size limit).' : '';
+      if (here) { ctRefreshDraftPane(); toast((r.draft_id ? 'Draft ready, and saved on this bid.' : 'Draft ready, but it could not be saved. Apply it before you leave.') + read + left); }
+      else toast('BidBuilder finished ' + bidNo + (r.draft_id ? '. The draft is saved on that bid.' : ', but the draft could not be saved.'));
+    }
+
+    // Polls a queued job until it ends. One poller per bid, however often the pane redraws.
+    function ctWatchJob(id, jobId, bidNo, notesUsed) {
+      var d = ctDrafting[id];
+      if (!d || d.watching) return;
+      d.watching = true;
+      var tick = function () {
+        if (!ctDrafting[id] || ctDrafting[id].job !== jobId) return;
+        api('/admin/ai-jobs/' + jobId).then(function (r) {
+          if (!ctDrafting[id] || ctDrafting[id].job !== jobId) return;
+          var job = r && r.job;
+          if (!r.ok || !job) { setTimeout(tick, 8000); return; }
+          if (job.status === 'queued' || job.status === 'running') {
+            if (job.step !== ctDrafting[id].step) {
+              ctDrafting[id].step = job.step;
+              var sl = document.getElementById('ctJobStep' + id);
+              if (sl) sl.textContent = job.step ? 'On the Worker: ' + job.step + '.' : 'Queued on the Worker.';
+            }
+            setTimeout(tick, 4000);
+            return;
+          }
+          if (job.status === 'done') ctDraftDone(id, bidNo, Object.assign({ ok: true }, job.result || {}), notesUsed);
+          else ctDraftDone(id, bidNo, { ok: false, error: job.error || job.status, message: job.status === 'canceled' ? 'The draft was canceled.' : job.message }, notesUsed);
+        });
+      };
+      setTimeout(tick, 3000);
+    }
 
     function ctDraft(pane) {
       var id = ctBidId, st = ctDraftState(id);
-      pane.appendChild(el('p', 'ct-note', 'BidBuilder reads the packet against the contracting playbook and the capability statement, then drafts triage notes, risk flags with the clauses quoted, Q&A questions, the lines to price and a go / no-go. Every draft is saved on this bid as soon as it comes back, so you can leave and come back to it. Nothing it proposes changes the bid until you apply it. Your packet and notes save as you type. It never fills in stock, lead time or a landed cost you did not give it.'));
+      // Reopened while a job runs on the Worker: pick it back up rather than offer a second.
+      var aj = ctDetail.active_job;
+      if (aj && aj.kind === 'draft' && !ctDrafting[id] && !ctJobsEnded[aj.id]) {
+        ctDrafting[id] = { at: (aj.started_at || aj.created_at) * 1000, job: aj.id, queued: true, step: aj.step };
+        ctWatchJob(id, aj.id, ctDetail.bid.number, st.notes);
+      }
+      var pdfs = ctPacketPdfs();
+      var usePdfs = function () { return pdfs.length > 0 && st.readPdfs; };
+      pane.appendChild(el('p', 'ct-note', 'BidBuilder reads the packet against the contracting playbook and the capability statement, then drafts triage notes, risk flags with the clauses quoted, Q&A questions, the lines to price and a go / no-go. It runs on the server, so you can leave this bid or close the page; the draft is saved on the bid when it comes back. Nothing it proposes changes the bid until you apply it. Your packet and notes save as you type. It never fills in stock, lead time or a landed cost you did not give it.'));
 
       var out = el('div');
       pane.appendChild(out);
-      if (pane.btn) pane.btn.classList.toggle('ai-busy', !!ctDrafting[id]);
-      if (ctDrafting[id]) out.appendChild(aiWorking({
-        title: 'BidBuilder is drafting',
-        startedAt: ctDrafting[id], steps: AIW_BID_STEPS, every: 18,
-        foot: 'Usually two to three minutes. You can leave this bid; the draft is saved on it when it comes back.',
-      }));
+      var dr = ctDrafting[id];
+      if (pane.btn) pane.btn.classList.toggle('ai-busy', !!dr);
+      if (dr) {
+        out.appendChild(aiWorking({
+          title: 'BidBuilder is drafting',
+          startedAt: dr.at, steps: AIW_BID_STEPS, every: 18,
+          foot: dr.queued ? 'Usually two to three minutes. It runs on the server: leave this bid or close the page, and the draft is saved on it when it comes back.'
+            : 'Usually two to three minutes. Keep this page open until it comes back; the draft is saved on the bid when it does.',
+        }));
+        if (dr.queued) {
+          var jr = el('div', 'reply-row');
+          var stepLine = el('span', 'row-sub', dr.step ? 'On the Worker: ' + dr.step + '.' : 'Queued on the Worker.');
+          stepLine.id = 'ctJobStep' + id;
+          var stop = el('button', null, 'Cancel this draft'); stop.type = 'button';
+          stop.addEventListener('click', function () {
+            if (!confirm('Cancel the draft? What it has spent so far is not refunded.')) return;
+            stop.disabled = true;
+            api('/admin/ai-jobs/' + dr.job + '/cancel', { method: 'POST', body: {} }).then(function (r) {
+              if (r.ok) ctDraftDone(id, ctDetail.bid.number, { ok: false, error: 'canceled', message: 'The draft was canceled.' }, st.notes);
+              else { stop.disabled = false; toast('It had already finished. Reloading.'); openBid(id); }
+            });
+          });
+          jr.appendChild(stepLine); jr.appendChild(stop);
+          out.appendChild(jr);
+        }
+      }
       if (st.lastError) out.appendChild(el('div', 'ct-why', st.lastError));
-      if (ctDetail.saved_draft) ctDraftPreview(out, ctDetail.saved_draft.draft, ctDetail.saved_draft);
-      else if (st.unsaved) ctDraftPreview(out, st.unsaved, null);
+      // Its own box: the preview empties its host, which took the progress panel with it
+      // whenever a bid that already had a saved draft was drafted again.
+      var prev = el('div');
+      out.appendChild(prev);
+      if (ctDetail.saved_draft) ctDraftPreview(prev, ctDetail.saved_draft.draft, ctDetail.saved_draft);
+      else if (st.unsaved) ctDraftPreview(prev, st.unsaved, null);
 
       var f = el('div', 'ct-form');
-      var packet = el('textarea'); packet.rows = 8; packet.placeholder = 'The solicitation text. Load it from the files on this bid, or paste it.';
-      ctField(f, 'Solicitation packet', packet, 'wide');
+      // The PDFs go to Claude whole: tables, scanned pages and page numbers survive, which
+      // the text pdf.js pulls out here does not keep.
+      var pdfChk = null;
+      if (pdfs.length) {
+        pdfChk = ctCheck('Read the ' + (pdfs.length === 1 ? 'PDF' : pdfs.length + ' PDFs') + ' on this bid directly', st.readPdfs);
+        pdfChk.className = 'chk wide';
+        pdfChk.input.addEventListener('change', function () { st.readPdfs = pdfChk.input.checked; st.paint(); });
+        f.appendChild(pdfChk);
+        f.appendChild(el('div', 'row-sub wide', pdfs.map(function (x) { return x.filename + ' (' + (CT_ROLE_LABEL[x.role] || x.role) + ')'; }).join(' · ')
+          + '. Tables, scanned pages and page numbers come through, and risks can cite the page. With this on, the box below is only for what is not a PDF: Word or Excel text, or anything you paste.'));
+      }
+      var packet = el('textarea'); packet.rows = 8;
+      ctField(f, pdfs.length ? 'More of the packet (optional with the PDFs)' : 'Solicitation packet', packet, 'wide');
       var count = el('div', 'row-sub wide', '');
       f.appendChild(count);
       var notes = el('textarea'); notes.rows = 3;
@@ -19112,6 +19225,7 @@
       f.appendChild(status);
       pane.appendChild(f);
       st.paint = function () {
+        packet.placeholder = usePdfs() ? 'Text from the Word or Excel files, or anything else to read alongside the PDFs.' : 'The solicitation text. Load it from the files on this bid, or paste it.';
         count.textContent = packet.value.length.toLocaleString('en-US') + ' characters' + (packet.value.length > 150000 ? ' (only the first 150,000 are read)' : '');
         status.textContent = st.error ? 'Not saved: ' + st.error
           : st.saving ? 'Saving to this bid…'
@@ -19134,10 +19248,12 @@
       notes.addEventListener('input', function () { st.notes = notes.value; ctSaveInput(id); });
 
       var rr = el('div', 'reply-row');
-      var load = el('button', null, 'Load text from the packet files'); load.type = 'button';
+      var loadLabel = function () { return usePdfs() ? 'Load text from the Word and Excel files' : 'Load text from the packet files'; };
+      var load = el('button', null, loadLabel()); load.type = 'button';
       load.addEventListener('click', function () {
-        var files = ctDetail.files.filter(function (x) { return ['solicitation', 'spec', 'terms', 'line_schedule', 'addendum'].indexOf(x.role) >= 0; });
-        if (!files.length) { toast('Attach the solicitation, spec and terms under Files first.'); return; }
+        // With the PDFs going whole, only what is not a PDF needs reading here.
+        var files = ctDetail.files.filter(function (x) { return CT_PACKET_ROLES.indexOf(x.role) >= 0 && !(usePdfs() && x.content_type === 'application/pdf'); });
+        if (!files.length) { toast(usePdfs() ? 'Every packet file is a PDF, and those are read directly. Nothing to load.' : 'Attach the solicitation, spec and terms under Files first.'); return; }
         load.disabled = true; load.textContent = 'Reading ' + files.length + ' file' + (files.length === 1 ? '' : 's') + '…';
         var parts = [];
         files.reduce(function (p, x) {
@@ -19147,40 +19263,43 @@
               .then(function (t) { if (t) parts.push('===== ' + (CT_ROLE_LABEL[x.role] || x.role).toUpperCase() + ': ' + x.filename + ' =====\n' + t); }, function () { parts.push('===== ' + x.filename + ': could not be read ====='); });
           });
         }, Promise.resolve()).then(function () {
-          load.disabled = false; load.textContent = 'Load text from the packet files';
+          load.disabled = false; load.textContent = loadLabel();
           packet.value = st.packet = parts.join('\n\n');
           ctSaveInput(id, true);
           if (!packet.value.trim()) toast('None of those files had readable text. A scanned PDF has none; paste the text instead.');
         });
       });
+      if (pdfChk) pdfChk.input.addEventListener('change', function () { load.textContent = loadLabel(); });
       var go = el('button', 'prim', ctDetail.saved_draft ? 'Draft again' : 'Draft the workspace'); go.type = 'button';
-      var running = function () {
+      if (ctDrafting[id]) {
         go.disabled = true;
-        go.textContent = 'Drafting since ' + new Date(ctDrafting[id]).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' }) + '… (a minute or two)';
-      };
-      if (ctDrafting[id]) running();
+        go.textContent = 'Drafting since ' + new Date(ctDrafting[id].at).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' }) + '… (a minute or two)';
+      }
       go.addEventListener('click', function () {
-        if (packet.value.trim().length < 200) { toast('Load or paste the packet first.'); return; }
+        if (!usePdfs() && packet.value.trim().length < 200) { toast(pdfs.length ? 'Load or paste the packet, or tick Read the PDFs.' : 'Load or paste the packet first, or attach the solicitation PDFs under Files.'); return; }
         if (ctDetail.saved_draft && !ctDetail.saved_draft.applied_at && !confirm('Draft again? The new draft replaces the saved one on this tab. The old one stays in the bid history.')) return;
-        var bidNo = ctDetail.bid.number;
+        var bidNo = ctDetail.bid.number, notesUsed = notes.value;
         ctSaveInput(id, true);
         st.lastError = null; st.unsaved = null;
-        ctDrafting[id] = Date.now();
-        var req = api('/admin/bids/' + id + '/draft', { method: 'POST', body: { packet: packet.value, notes: notes.value } });
+        ctDrafting[id] = { at: Date.now(), job: null, queued: false };
+        var req = api('/admin/bids/' + id + '/draft', { method: 'POST', body: { packet: packet.value, notes: notesUsed, read_pdfs: usePdfs() } });
         ctRefreshDraftPane();
         req.then(function (r) {
-          delete ctDrafting[id];
-          var here = ctBidId === id && ctDetail && ctDetail.bid.id === id;
-          if (!r.ok) {
-            st.lastError = r.message || ctErr(r);
-            if (here) ctRefreshDraftPane(); else toast('BidBuilder could not draft ' + bidNo + ': ' + st.lastError);
+          if (r && r.queued && r.job_id) {
+            // The Worker has it. From here the page only watches.
+            ctDrafting[id] = { at: ctDrafting[id] ? ctDrafting[id].at : Date.now(), job: r.job_id, queued: true, step: r.job && r.job.step };
+            if (ctBidId === id) ctRefreshDraftPane();
+            ctWatchJob(id, r.job_id, bidNo, notesUsed);
             return;
           }
-          if (r.draft_id) {
-            if (here) ctDetail.saved_draft = { id: r.draft_id, created_at: r.saved_at, draft: r.draft, notes: notes.value, model: r.model, usage: r.usage, applied_at: null };
-          } else st.unsaved = r.draft;
-          if (here) { ctRefreshDraftPane(); toast(r.draft_id ? 'Draft ready, and saved on this bid.' : 'Draft ready, but it could not be saved. Apply it before you leave.'); }
-          else toast('BidBuilder finished ' + bidNo + (r.draft_id ? '. The draft is saved on that bid.' : ', but the draft could not be saved.'));
+          if (r && r.error === 'already_running' && r.job_id) {
+            ctDrafting[id] = { at: (r.job.started_at || r.job.created_at) * 1000, job: r.job_id, queued: true, step: r.job.step };
+            if (ctBidId === id) ctRefreshDraftPane();
+            ctWatchJob(id, r.job_id, bidNo, notesUsed);
+            toast('A draft was already running on this bid. Showing that one.');
+            return;
+          }
+          ctDraftDone(id, bidNo, r, notesUsed);
         });
       });
       rr.appendChild(load); rr.appendChild(go);
