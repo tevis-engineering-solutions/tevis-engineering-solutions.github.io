@@ -2241,6 +2241,26 @@
     .ct-step label.chk input { width:18px; height:18px; }
     .ct-step p { font-size:0.74rem; color:var(--muted); margin:0.1rem 0 0.35rem; }
     .ct-step textarea { min-height:52px; font-size:0.82rem; }
+    /* The response writer: one card per section, a preview in the page's light markdown,
+       and a word-level difference for rewrites and version comparisons. */
+    .rs { margin-top:1rem; }
+    .rs-bar { display:flex; gap:0.45rem; align-items:center; flex-wrap:wrap; margin:0.3rem 0 0.6rem; }
+    .rs-bar .row-sub { flex:1 1 12rem; }
+    .rs-head { display:flex; gap:0.5rem; align-items:center; flex-wrap:wrap; }
+    .rs-title { font-weight:800; font-size:0.86rem; flex:1 1 10rem; min-width:0; }
+    .rs-hidden { opacity:0.55; }
+    .rs-menu { width:auto; flex:0 0 auto; min-height:36px; padding:0.3rem 0.5rem; border-radius:999px; border:1px solid var(--line); background:var(--bg); color:var(--text); font-family:inherit; font-size:0.76rem; max-width:100%; }
+    .rs-ta { width:100%; margin-top:0.4rem; font-family:inherit; line-height:1.5; }
+    .rs-preview { font-size:0.82rem; line-height:1.55; margin-top:0.35rem; overflow-wrap:anywhere; }
+    .rs-preview p { color:var(--text); font-size:0.82rem; margin:0 0 0.5rem; }
+    .rs-preview ul, .rs-preview ol { margin:0 0 0.5rem; padding-left:1.2rem; }
+    mark.todo { background:rgba(200,152,48,0.22); color:var(--text); outline:1px dashed var(--gold); border-radius:2px; padding:0 0.15em; }
+    .rs-diff { font-size:0.8rem; line-height:1.55; white-space:pre-wrap; overflow-wrap:anywhere; border:1px solid var(--line); border-radius:8px; padding:0.5rem 0.6rem; background:var(--card); margin:0.35rem 0; }
+    .rs-diff del { background:rgba(239,68,68,0.18); color:#fca5a5; }
+    .rs-diff ins { background:rgba(74,172,101,0.22); color:#b7f0c8; text-decoration:none; }
+    .rs-run { display:flex; gap:0.5rem; align-items:center; flex-wrap:wrap; margin-top:0.4rem; }
+    .rs-vers .row { display:block; }
+    .rs-vers .row .reply-row { margin-top:0.35rem; }
     .ct-risk { border:1px solid var(--line); border-radius:10px; background:var(--bg); padding:0.55rem 0.65rem; margin-bottom:0.4rem; }
     .ct-risk.high { border-left:3px solid #ef4444; }
     .ct-risk.med { border-left:3px solid var(--gold); }
@@ -18336,7 +18356,7 @@
       if (b) ctSavingPane = b.getAttribute('data-save');
     }, true);
     window.addEventListener('beforeunload', function (e) {
-      if (ctUnsaved().length || ctDraftPending()) { e.preventDefault(); e.returnValue = ''; }
+      if (ctUnsaved().length || ctDraftPending() || ctRespPending()) { e.preventDefault(); e.returnValue = ''; }
     });
 
     function renderBid() {
@@ -18910,23 +18930,23 @@
       });
     }
 
-    // The response document's own copy: who it is addressed to, delivery and warranty
-    // terms, the requirements matrix. The document is built on the server from these
-    // and the lines, so the agency never sees a cost or a margin.
+    // ---- Response: who it is addressed to, and the response itself, section by section ----
+    // The top form holds the fields the document reads (buyer, F.O.B., warranty, the
+    // requirements matrix) and saves like any other tab. Below it is the writer: one card
+    // per section. A section nobody has edited says its default, built from the bid's
+    // fields, so it follows the bid; an edited one stays as written. The writer autosaves
+    // (rev-checked on the server), keeps named versions, and asks Claude for rewrites that
+    // come back as a marked-up difference to accept or discard.
     function ctResponse(pane) {
       var b = ctDetail.bid;
       ctTrack(pane, 'Response');
-      pane.appendChild(el('p', 'ct-note', 'The response prints in the house format: masthead, reference block, pricing table, requirements matrix, substitution notes, terms, About TES and signature. The compliance clause is built from the Compliance panel, present tense, active and public rows only. Lines you are not bidding are left off.'));
+      pane.appendChild(el('p', 'ct-note', 'The response prints in the house format, in the order of the sections below. The compliance clause is built from the Compliance panel (present tense, active and public rows only), and lines you are not bidding are left off.'));
       var f = el('div', 'ct-form');
       var inp = {};
       inp.buyer_name = ctField(f, 'To (buyer or contracting officer)', ctInput('text', b.buyer_name || '', { maxlength: 200 }));
       inp.buyer_email = ctField(f, 'Buyer email', ctInput('email', b.buyer_email || '', { maxlength: 200 }));
       inp.fob_terms = ctField(f, 'F.O.B. terms', ctInput('text', b.fob_terms || '', { maxlength: 1000, placeholder: 'F.O.B. Destination, freight prepaid and add' }), 'wide');
       inp.warranty_terms = ctField(f, 'Warranty (blank uses the standard pass-through and advance-replacement wording)', ctInput('text', b.warranty_terms || '', { maxlength: 1000 }), 'wide');
-      var ta = function (label, key, ph) { var t = el('textarea'); t.rows = 3; t.value = b[key] || ''; t.placeholder = ph || ''; inp[key] = ctField(f, label, t, 'wide'); };
-      ta('Intro (blank uses a standard opening naming the agency and event)', 'intro');
-      ta('Substitution notes', 'substitution_notes', 'The specified unit is discontinued. The substitute meets or exceeds each stated minimum: ...');
-      ta('Additional terms', 'terms_notes');
       pane.appendChild(f);
 
       pane.appendChild(el('h4', 'addsec', 'Meets minimum requirements'));
@@ -18954,7 +18974,7 @@
       var rr = el('div', 'reply-row');
       var add = el('button', null, '+ Requirement'); add.type = 'button';
       add.addEventListener('click', function () { addRow(); ctMarkDirty('Response'); });
-      var save = el('button', 'prim', 'Save'); save.type = 'button';
+      var save = el('button', 'prim', 'Save these details'); save.type = 'button';
       save.setAttribute('data-save', 'Response');
       // Only what was changed here is sent, for the same reason as Overview.
       var collect = function () {
@@ -18970,11 +18990,457 @@
         save.disabled = true;
         ctBidApi('', 'PATCH', body, 'Saved').then(function () { save.disabled = false; });
       });
-      var open = el('a', 'ct-btn', 'Open the response document');
-      open.href = 'bid-response.html?id=' + b.id; open.target = '_blank'; open.rel = 'noopener';
-      rr.appendChild(add); rr.appendChild(save); rr.appendChild(open);
+      rr.appendChild(add); rr.appendChild(save);
       pane.appendChild(rr);
-      pane.appendChild(el('p', 'ct-note', 'Save first, then open the document and print it to PDF. Upload the PDF under Files as Our response, so the bid keeps exactly what was sent.'));
+
+      // The writer saves on its own, so typing in it does not mark the tab unsaved.
+      var host = el('div', 'rs');
+      host.setAttribute('data-nodirty', '');
+      pane.appendChild(host);
+      ctRespEditor(host, ctBidId);
+    }
+
+    var ctResp = {};
+    var CT_RS_ACTIONS = [
+      ['tighten', 'Tighten'], ['formal', 'More formal'], ['expand', 'Expand'], ['plain', 'Plain English'],
+      ['write', 'Write it from the solicitation'], ['custom', 'Your own instruction…'],
+    ];
+    var CT_RS_ACTION_LABEL = {};
+    CT_RS_ACTIONS.forEach(function (a) { CT_RS_ACTION_LABEL[a[0]] = a[1].replace('…', ''); });
+
+    function ctRespState(id) { return ctResp[id] || (ctResp[id] = { open: {}, props: {}, running: {} }); }
+
+    // Light markdown for the preview: the same rules the printed page uses.
+    function ctMdInline(parent, text) {
+      var re = /\*\*([^*\n]+)\*\*|\*([^*\n]+)\*|(\[[^\]\n]{1,200}\])/g, last = 0, m;
+      while ((m = re.exec(text))) {
+        if (m.index > last) parent.appendChild(document.createTextNode(text.slice(last, m.index)));
+        parent.appendChild(m[1] ? el('b', null, m[1]) : m[2] ? el('i', null, m[2]) : el('mark', 'todo', m[3]));
+        last = re.lastIndex;
+      }
+      if (last < text.length) parent.appendChild(document.createTextNode(text.slice(last)));
+    }
+    function ctMd(host, src) {
+      String(src || '').replace(/\r\n?/g, '\n').split(/\n\s*\n/).forEach(function (block) {
+        var lines = block.split('\n').filter(function (l) { return l.trim(); });
+        if (!lines.length) return;
+        var ul = lines.every(function (l) { return /^\s*[-*] /.test(l); });
+        var ol = !ul && lines.every(function (l) { return /^\s*\d+[.)] /.test(l); });
+        if (ul || ol) {
+          var lst = el(ul ? 'ul' : 'ol');
+          lines.forEach(function (l) { var li = el('li'); ctMdInline(li, l.replace(/^\s*(?:[-*]|\d+[.)]) /, '')); lst.appendChild(li); });
+          host.appendChild(lst);
+          return;
+        }
+        var p = el('p');
+        lines.forEach(function (l, i) { if (i) p.appendChild(el('br')); ctMdInline(p, l); });
+        host.appendChild(p);
+      });
+    }
+    function ctTodos(text) { return (String(text || '').match(/\[[^\]\n]{1,200}\]/g) || []).length; }
+
+    // Word-level difference, for a rewrite and for comparing versions. Whitespace is kept
+    // as its own token so the result reads back exactly.
+    function ctWordDiff(a, b) {
+      var A = String(a || '').split(/(\s+)/).filter(function (t) { return t !== ''; });
+      var B = String(b || '').split(/(\s+)/).filter(function (t) { return t !== ''; });
+      if (A.length * B.length > 4000000) return [{ t: '-', s: a }, { t: '+', s: b }];
+      var n = A.length, m = B.length, w = m + 1;
+      var L = new Uint32Array((n + 1) * w);
+      for (var i = n - 1; i >= 0; i--) for (var j = m - 1; j >= 0; j--) L[i * w + j] = A[i] === B[j] ? L[(i + 1) * w + j + 1] + 1 : Math.max(L[(i + 1) * w + j], L[i * w + j + 1]);
+      var out = [], push = function (t, s) { if (out.length && out[out.length - 1].t === t) out[out.length - 1].s += s; else out.push({ t: t, s: s }); };
+      i = 0; j = 0;
+      while (i < n && j < m) {
+        if (A[i] === B[j]) { push('=', A[i]); i++; j++; }
+        else if (L[(i + 1) * w + j] >= L[i * w + j + 1]) push('-', A[i++]);
+        else push('+', B[j++]);
+      }
+      while (i < n) push('-', A[i++]);
+      while (j < m) push('+', B[j++]);
+      return out;
+    }
+    function ctDiffBox(a, b) {
+      var box = el('div', 'rs-diff');
+      ctWordDiff(a, b).forEach(function (p) { box.appendChild(p.t === '=' ? document.createTextNode(p.s) : el(p.t === '+' ? 'ins' : 'del', null, p.s)); });
+      return box;
+    }
+
+    // A job that may be queued on the Worker: resolves with the route's own shape once it
+    // has finished, however it ran. onStep hears the Worker's progress.
+    function ctRunJob(path, body, onStep) {
+      return api(path, { method: 'POST', body: body }).then(function (r) {
+        if (!r || !r.queued || !r.job_id) return r;
+        return new Promise(function (resolve) {
+          var tick = function () {
+            api('/admin/ai-jobs/' + r.job_id).then(function (j) {
+              var job = j && j.job;
+              if (!j.ok || !job) { setTimeout(tick, 6000); return; }
+              if (job.status === 'queued' || job.status === 'running') { if (onStep) onStep(job.step, r.job_id); setTimeout(tick, 3000); return; }
+              if (job.status === 'done') resolve(Object.assign({ ok: true, job_id: r.job_id }, job.result || {}));
+              else resolve({ ok: false, error: job.error || job.status, message: job.status === 'canceled' ? 'Canceled.' : job.message, job_id: r.job_id });
+            });
+          };
+          if (onStep) onStep(null, r.job_id);
+          setTimeout(tick, 2500);
+        });
+      });
+    }
+
+    function ctRespEditor(host, id) {
+      var st = ctRespState(id);
+      st.host = host;
+      // A save in flight or waiting keeps the copy in hand; otherwise read the server's,
+      // whose defaults may have moved with the fields just saved above.
+      if (st.data && (st.timer || st.saving)) { ctRespRender(id); return; }
+      if (!st.data) host.appendChild(el('div', 'row-sub', 'Loading the response…'));
+      api('/admin/bids/' + id + '/response').then(function (r) {
+        if (!r.ok) { host.textContent = ''; host.appendChild(el('div', 'ct-why', ctErr(r))); return; }
+        if (st.timer || st.saving) return;
+        st.data = r;
+        st.doc = JSON.parse(JSON.stringify(r.working.doc));
+        st.rev = r.working.rev;
+        st.conflict = null;
+        if (st.host === host) ctRespRender(id);
+      });
+    }
+
+    function ctRespSave(id, now) {
+      var st = ctRespState(id);
+      clearTimeout(st.timer); st.timer = null;
+      var go = function () {
+        st.timer = null;
+        if (st.saving) { st.again = true; return; }
+        st.saving = true; st.status && st.status();
+        var sentDoc = JSON.parse(JSON.stringify(st.doc));
+        api('/admin/bids/' + id + '/response', { method: 'PUT', body: { doc: sentDoc, rev: st.rev } }).then(function (r) {
+          st.saving = false;
+          if (r.ok) { st.rev = r.rev; st.savedAt = r.updated_at; st.error = null; st.data.changed_since_version = true; }
+          else if (r.error === 'conflict') { st.conflict = r.working; st.error = r.message; }
+          else st.error = ctErr(r);
+          if (st.again) { st.again = false; ctRespSave(id, true); return; }
+          st.status && st.status();
+          if (st.conflict && st.host) ctRespRender(id);
+        });
+      };
+      if (now) go(); else { st.timer = setTimeout(go, 1200); st.status && st.status(); }
+    }
+    function ctRespPending() {
+      return Object.keys(ctResp).some(function (k) { return ctResp[k].timer || ctResp[k].saving; });
+    }
+
+    // The text a section shows now: what is typed, else its default.
+    function ctRespText(st, s) {
+      if (s.type !== 'text') return '';
+      return s.body != null ? s.body : ((st.data.defaults || {})[s.key] || '');
+    }
+
+    function ctRespRender(id) {
+      var st = ctRespState(id), host = st.host;
+      if (!host || !st.data) return;
+      host.textContent = '';
+      var data = st.data, doc = st.doc;
+      host.appendChild(el('h4', 'addsec', 'The response'));
+
+      var bar = el('div', 'rs-bar');
+      var status = el('span', 'row-sub', '');
+      st.status = function () {
+        status.textContent = st.error ? 'Not saved: ' + st.error
+          : st.saving ? 'Saving…' : st.timer ? 'Unsaved typing, saving in a moment…'
+          : st.savedAt ? 'Saved ' + fmt(st.savedAt) + '.' : data.working.saved ? 'Saved.' : 'Every section is at its default.';
+      };
+      st.status();
+      var keep = el('button', 'ct-btn sm', 'Keep a version'); keep.type = 'button';
+      keep.addEventListener('click', function () {
+        var label = prompt('Name this version (optional):', '');
+        if (label === null) return;
+        keep.disabled = true;
+        var post = function () {
+          return api('/admin/bids/' + id + '/versions', { method: 'POST', body: { label: label } }).then(function (r) {
+            keep.disabled = false;
+            if (!r.ok) { toast(ctErr(r)); return; }
+            st.data = r.response; st.doc = JSON.parse(JSON.stringify(r.response.working.doc)); st.rev = r.response.working.rev;
+            toast('Kept as version ' + r.version.n);
+            ctRespRender(id);
+          });
+        };
+        if (st.timer) { ctRespSave(id, true); setTimeout(post, 800); } else post();
+      });
+      var vers = el('button', 'ct-btn sm', 'Versions (' + data.versions.length + ')'); vers.type = 'button';
+      vers.setAttribute('aria-expanded', st.showVersions ? 'true' : 'false');
+      vers.addEventListener('click', function () { st.showVersions = !st.showVersions; ctRespRender(id); });
+      var open = el('a', 'ct-btn sm', 'Open the document');
+      open.href = 'bid-response.html?id=' + id; open.target = '_blank'; open.rel = 'noopener';
+      bar.appendChild(status); bar.appendChild(keep); bar.appendChild(vers); bar.appendChild(open);
+      host.appendChild(bar);
+
+      if (st.conflict) {
+        var cf = el('div', 'ct-why');
+        cf.appendChild(el('div', null, 'This response was changed in another window since you opened it. Your last edit was not saved.'));
+        var take = el('button', 'ct-btn sm', 'Load the other copy'); take.type = 'button';
+        take.addEventListener('click', function () { st.data = null; st.conflict = null; st.error = null; host.textContent = ''; ctRespEditor(host, id); });
+        cf.appendChild(take);
+        host.appendChild(cf);
+      }
+
+      var kind = ctDetail.bid.kind || 'itb_goods';
+      if (doc.kind !== kind) {
+        var lay = el('div', 'ct-prompt');
+        lay.appendChild(el('p', null, 'This response is laid out as a ' + (CT_KIND_LABEL[doc.kind] || doc.kind) + ', and the bid is now a ' + (CT_KIND_LABEL[kind] || kind) + '. Switch the layout? What you wrote in sections both have is kept.'));
+        var sw = el('button', 'ct-btn sm', 'Switch to the ' + (CT_KIND_LABEL[kind] || kind) + ' layout'); sw.type = 'button';
+        sw.addEventListener('click', function () {
+          sw.disabled = true;
+          var run = function () {
+            api('/admin/bids/' + id + '/response/layout', { method: 'POST', body: { kind: kind } }).then(function (r) {
+              if (!r.ok) { sw.disabled = false; toast(ctErr(r)); return; }
+              st.data = r.response; st.doc = JSON.parse(JSON.stringify(r.response.working.doc)); st.rev = r.response.working.rev;
+              ctRespRender(id);
+            });
+          };
+          if (st.timer) { ctRespSave(id, true); setTimeout(run, 800); } else run();
+        });
+        lay.appendChild(sw);
+        host.appendChild(lay);
+      }
+
+      var todos = doc.sections.reduce(function (n, s) { return n + (s.hidden ? 0 : ctTodos(ctRespText(st, s))); }, 0);
+      if (todos) host.appendChild(el('div', 'ct-why', todos + ' [bracketed note' + (todos === 1 ? '' : 's') + '] still to fill in. They print highlighted, so fill each one before the response goes out.'));
+
+      if (st.showVersions) host.appendChild(ctRespVersions(id));
+
+      doc.sections.forEach(function (s, idx) { host.appendChild(ctRespSection(id, s, idx)); });
+
+      var addRow = el('div', 'reply-row');
+      var addBtn = el('button', null, '+ Add a section'); addBtn.type = 'button';
+      addBtn.addEventListener('click', function () {
+        var title = (prompt('Title of the new section:', '') || '').trim();
+        if (!title) return;
+        var base = title.toLowerCase().replace(/[^a-z0-9]+/g, '_').replace(/^_+|_+$/g, '').slice(0, 30) || 'section';
+        if (!/^[a-z]/.test(base)) base = 's_' + base;
+        var key = base, n = 2;
+        while (doc.sections.some(function (x) { return x.key === key; })) key = base.slice(0, 26) + '_' + (n++);
+        var at = doc.sections.findIndex(function (x) { return x.type === 'signature'; });
+        doc.sections.splice(at < 0 ? doc.sections.length : at, 0, { key: key, title: title.slice(0, 120), type: 'text', body: '', hidden: false });
+        st.open[key] = true;
+        ctRespSave(id, true);
+        ctRespRender(id);
+      });
+      addRow.appendChild(addBtn);
+      host.appendChild(addRow);
+    }
+
+    function ctRespSection(id, s, idx) {
+      var st = ctRespState(id), doc = st.doc;
+      var templateKeys = (st.data.layouts[doc.kind] || []);
+      var card = el('div', 'ct-step rs-sec' + (s.hidden ? ' rs-hidden' : ''));
+      var head = el('div', 'rs-head');
+      head.appendChild(el('div', 'rs-title', s.title));
+      var text = ctRespText(st, s);
+      var chip = s.hidden ? 'Left out' : s.type === 'pricing' ? 'From the lines' : s.type === 'matrix' ? 'From the rows above' : s.type === 'signature' ? 'Signature'
+        : s.body != null ? (text.trim() ? 'Edited' : 'Empty') : (text.trim() ? 'Default' : 'Empty');
+      head.appendChild(el('span', 'ct-chip', chip));
+
+      // Everything that is not writing goes in one menu, so the card stays one line.
+      var menu = ctSelect([['', 'More…'], ['up', 'Move up'], ['down', 'Move down'], ['rename', 'Rename'], ['hide', s.hidden ? 'Put back in the response' : 'Leave out of the response']]
+        .concat(s.type === 'text' && s.body != null && (st.data.defaults || {})[s.key] != null ? [['reset', 'Back to the default wording']] : [])
+        .concat(templateKeys.indexOf(s.key) < 0 && s.type === 'text' ? [['remove', 'Remove this section']] : []), '');
+      menu.setAttribute('aria-label', 'More for ' + s.title);
+      menu.className = 'rs-menu';
+      menu.addEventListener('change', function () {
+        var v = menu.value; menu.value = '';
+        if (v === 'up' && idx > 0) { doc.sections.splice(idx - 1, 0, doc.sections.splice(idx, 1)[0]); }
+        else if (v === 'down' && idx < doc.sections.length - 1) { doc.sections.splice(idx + 1, 0, doc.sections.splice(idx, 1)[0]); }
+        else if (v === 'rename') { var t = (prompt('Section title:', s.title) || '').trim(); if (!t) return; s.title = t.slice(0, 120); }
+        else if (v === 'hide') { s.hidden = !s.hidden; }
+        else if (v === 'reset') { if (!confirm('Go back to the default wording for ' + s.title + '? What you wrote here is replaced.')) return; s.body = null; }
+        else if (v === 'remove') { if (!confirm('Remove the ' + s.title + ' section?')) return; doc.sections.splice(idx, 1); }
+        else return;
+        ctRespSave(id, true);
+        ctRespRender(id);
+      });
+      head.appendChild(menu);
+      card.appendChild(head);
+
+      if (s.type === 'pricing') {
+        var bl = ctDetail.lines.filter(function (l) { return l.bid; });
+        card.appendChild(el('p', null, 'The pricing table, built from the Lines tab: ' + bl.length + ' line' + (bl.length === 1 ? '' : 's') + ' bid, ' + ctMoney(ctDetail.economics.total_bid_cents) + '. Prices only; no cost or margin is ever on the document.'));
+        return card;
+      }
+      if (s.type === 'matrix') { card.appendChild(el('p', null, 'The requirement rows above, as a table. Left off the document while there are none.')); return card; }
+      if (s.type === 'signature') { card.appendChild(el('p', null, 'Signed by Tyler Tevis, Owner & Principal Engineer, with the date.')); return card; }
+
+      var editing = !!st.open[s.key];
+      if (!text.trim() && !editing) card.appendChild(el('p', null, (st.data.briefs || {})[s.key] || 'Empty: left off the document until something is written here.'));
+      if (editing) {
+        var ta = el('textarea', 'rs-ta');
+        ta.value = text;
+        ta.rows = Math.min(24, Math.max(5, Math.ceil(text.length / 90) + text.split('\n').length));
+        ta.setAttribute('aria-label', s.title);
+        ta.addEventListener('input', function () { s.body = ta.value; ctRespSave(id); });
+        card.appendChild(ta);
+        card.appendChild(el('div', 'row-sub', 'Blank line between paragraphs. **bold**, - bullets, 1. numbered. A [bracketed note] prints highlighted until it is filled in.' + (s.body == null ? ' Typing here replaces the default wording.' : '')));
+        setTimeout(function () { if (st.focus === s.key) { ta.focus(); st.focus = null; } }, 0);
+      } else if (text.trim()) {
+        var pv = el('div', 'rs-preview'); ctMd(pv, text); card.appendChild(pv);
+      }
+
+      // A rewrite in flight, or one back and waiting for a decision.
+      var run = st.running[s.key], prop = st.props[s.key];
+      if (run) {
+        var w = el('div', 'rs-run');
+        w.appendChild(el('span', 'row-sub', (run.action === 'write' ? 'Claude is writing this section' : 'Claude is rewriting this section') + (run.step ? ': ' + run.step : '') + '…'));
+        if (run.job) {
+          var stop = el('button', 'ct-btn sm', 'Cancel'); stop.type = 'button';
+          stop.addEventListener('click', function () { api('/admin/ai-jobs/' + run.job + '/cancel', { method: 'POST', body: {} }); });
+          w.appendChild(stop);
+        }
+        card.appendChild(w);
+      } else if (prop) {
+        var pb = el('div', 'ct-prompt rs-prop');
+        pb.appendChild(el('p', 'row-sub', CT_RS_ACTION_LABEL[prop.action] + ': deleted words are struck through, new ones are marked.' + (prop.notes ? ' Claude: ' + prop.notes : '')));
+        pb.appendChild(ctDiffBox(prop.before, prop.text));
+        if (prop.stale) pb.appendChild(el('p', 'short', 'This section changed after the rewrite started. Accepting replaces what is there now.'));
+        var pr = el('div', 'reply-row');
+        var acc = el('button', 'prim', 'Accept'); acc.type = 'button';
+        var accEdit = el('button', null, 'Accept and keep editing'); accEdit.type = 'button';
+        var dis = el('button', null, 'Discard'); dis.type = 'button';
+        var accept = function (thenEdit) {
+          acc.disabled = accEdit.disabled = true;
+          // Wording that is not in any version yet is kept as one first, so an accepted
+          // rewrite can always be undone from Versions.
+          var flush = st.timer || st.saving ? (st.timer && ctRespSave(id, true), new Promise(function (r) { setTimeout(r, 900); })) : Promise.resolve();
+          flush.then(function () {
+            return st.data.changed_since_version
+              ? api('/admin/bids/' + id + '/versions', { method: 'POST', body: { label: 'Before: ' + CT_RS_ACTION_LABEL[prop.action] + ', ' + s.title, source: 'auto' } })
+              : null;
+          }).then(function (v) {
+            if (v && v.ok) { st.data.versions = v.response.versions; st.rev = v.response.working.rev; }
+            s.body = prop.text;
+            delete st.props[s.key];
+            if (thenEdit) { st.open[s.key] = true; st.focus = s.key; }
+            ctRespSave(id, true);
+            ctRespRender(id);
+          });
+        };
+        acc.addEventListener('click', function () { accept(false); });
+        accEdit.addEventListener('click', function () { accept(true); });
+        dis.addEventListener('click', function () { delete st.props[s.key]; ctRespRender(id); });
+        pr.appendChild(acc); pr.appendChild(accEdit); pr.appendChild(dis);
+        pb.appendChild(pr);
+        card.appendChild(pb);
+      }
+
+      var rr = el('div', 'reply-row');
+      var ed = el('button', 'ct-btn sm', editing ? 'Done' : (text.trim() ? 'Edit' : 'Write it myself')); ed.type = 'button';
+      ed.addEventListener('click', function () { st.open[s.key] = !editing; if (!editing) st.focus = s.key; ctRespRender(id); });
+      rr.appendChild(ed);
+      var ai = ctSelect([['', text.trim() ? 'Ask Claude…' : 'Ask Claude to write it…']].concat(CT_RS_ACTIONS.filter(function (a) { return text.trim() || a[0] === 'write' || a[0] === 'custom'; })), '');
+      ai.setAttribute('aria-label', 'Ask Claude about ' + s.title);
+      ai.className = 'rs-menu';
+      ai.disabled = !!run;
+      ai.addEventListener('change', function () {
+        var action = ai.value; ai.value = '';
+        if (!action) return;
+        var instruction = '';
+        if (action === 'custom') { instruction = (prompt('What should Claude change in ' + s.title + '?', '') || '').trim(); if (!instruction) return; }
+        if (action === 'write' && text.trim() && !confirm('Write ' + s.title + ' from the solicitation? You will see the difference before anything changes.')) return;
+        var startText = text;
+        st.running[s.key] = { action: action };
+        if (st.timer) ctRespSave(id, true);
+        ctRespRender(id);
+        var go = function () {
+          ctRunJob('/admin/bids/' + id + '/rewrite', { section_key: s.key, action: action, instruction: instruction }, function (step, job) {
+            if (!st.running[s.key]) return;
+            var changed = st.running[s.key].job !== job || st.running[s.key].step !== step;
+            st.running[s.key].job = job; st.running[s.key].step = step;
+            if (changed && ctBidId === id) ctRespRender(id);
+          }).then(function (r) {
+            delete st.running[s.key];
+            if (!r.ok) { toast(s.title + ': ' + (r.message || ctErr(r))); }
+            else {
+              var cur = st.doc.sections.filter(function (x) { return x.key === s.key; })[0];
+              st.props[s.key] = { action: action, before: r.before, text: r.text, notes: r.notes, stale: !!cur && ctRespText(st, cur) !== startText };
+              if (ctBidId !== id) toast('Claude finished ' + s.title + ' on bid ' + id + '. Open its Response tab to review it.');
+            }
+            if (ctBidId === id && st.host && st.host.isConnected) ctRespRender(id);
+          });
+        };
+        // The Worker rewrites what it has saved, so wait for a pending save to land.
+        if (st.saving || st.timer) setTimeout(go, 1500); else go();
+      });
+      rr.appendChild(ai);
+      card.appendChild(rr);
+      return card;
+    }
+
+    function ctRespVersions(id) {
+      var st = ctRespState(id);
+      var box = el('div', 'ct-prompt rs-vers');
+      var vs = st.data.versions;
+      box.appendChild(el('p', 'row-sub', vs.length ? 'Each version keeps the wording, the prices and the details exactly as they were. Restoring brings the wording back; prices stay as they are on the Lines tab. Nothing here is ever deleted.'
+        : 'No versions yet. Keep a version before big changes; one is kept automatically when the bid is marked responded, and before a Claude rewrite replaces wording that is in no version.'));
+      vs.forEach(function (v) {
+        var r = el('div', 'row');
+        var left = el('div');
+        left.appendChild(el('div', 'row-main', 'Version ' + v.n + ': ' + (v.label || '')));
+        left.appendChild(el('div', 'row-sub', fmt(v.created_at) + (v.created_by ? ' · ' + v.created_by : '') + (v.submitted ? ' · what was submitted (locked)' : v.source === 'auto' ? ' · kept automatically' : '')));
+        r.appendChild(left);
+        var acts = el('div', 'reply-row');
+        var view = el('a', 'ct-btn sm', 'Open'); view.href = 'bid-response.html?id=' + id + '&version=' + v.id; view.target = '_blank'; view.rel = 'noopener';
+        var cmp = el('button', 'ct-btn sm', 'Compare with now'); cmp.type = 'button';
+        var res = el('button', 'ct-btn sm', 'Restore'); res.type = 'button';
+        var ren = el('button', 'ct-btn sm', 'Rename'); ren.type = 'button';
+        var out = el('div');
+        cmp.addEventListener('click', function () {
+          if (out.firstChild) { out.textContent = ''; return; }
+          api('/admin/bids/' + id + '/versions/' + v.id).then(function (x) {
+            if (!x.ok) { toast(ctErr(x)); return; }
+            out.textContent = '';
+            var now = {}; st.doc.sections.forEach(function (s) { now[s.key] = s; });
+            var then = {}; x.version.sections.forEach(function (s) { then[s.key] = s; });
+            var keys = x.version.sections.map(function (s) { return s.key; });
+            st.doc.sections.forEach(function (s) { if (keys.indexOf(s.key) < 0) keys.push(s.key); });
+            var diffs = 0;
+            keys.forEach(function (k) {
+              var a = then[k], b2 = now[k];
+              var ta = a && !a.hidden && a.type === 'text' ? (a.body || '') : '';
+              var tb = b2 && !b2.hidden && b2.type === 'text' ? ctRespText(st, b2) : '';
+              if (ta === tb) return;
+              diffs++;
+              out.appendChild(el('div', 'row-main', (b2 || a).title + (!a ? ' (new since)' : !b2 ? ' (removed since)' : '')));
+              out.appendChild(ctDiffBox(ta, tb));
+            });
+            var priceNow = {}; ctDetail.lines.forEach(function (l) { if (l.bid) priceNow[l.line_no] = l.unit_price_cents; });
+            x.version.lines.forEach(function (l) {
+              if (priceNow[l.line_no] !== l.unit_price_cents) { diffs++; out.appendChild(el('div', 'row-sub', 'Line ' + l.line_no + ': ' + money(l.unit_price_cents) + ' then, ' + (priceNow[l.line_no] == null ? 'not bid now' : money(priceNow[l.line_no]) + ' now') + '.')); }
+            });
+            if (!diffs) out.appendChild(el('div', 'row-sub', 'The wording and prices are the same as now.'));
+          });
+        });
+        res.addEventListener('click', function () {
+          if (!confirm('Restore the wording of version ' + v.n + '? What the response says now is kept as a version first if it is not in one.')) return;
+          res.disabled = true;
+          var go = function () {
+            api('/admin/bids/' + id + '/versions/' + v.id + '/restore', { method: 'POST', body: {} }).then(function (r2) {
+              res.disabled = false;
+              if (!r2.ok) { toast(ctErr(r2)); return; }
+              st.data = r2.response; st.doc = JSON.parse(JSON.stringify(r2.response.working.doc)); st.rev = r2.response.working.rev;
+              toast('Restored version ' + r2.restored + (r2.kept ? '. The wording before it is version ' + r2.kept.n + '.' : '.'));
+              ctRespRender(id);
+            });
+          };
+          if (st.timer) { ctRespSave(id, true); setTimeout(go, 800); } else go();
+        });
+        ren.addEventListener('click', function () {
+          var l = (prompt('Version name:', v.label || '') || '').trim();
+          if (!l) return;
+          api('/admin/bids/' + id + '/versions/' + v.id, { method: 'PATCH', body: { label: l } }).then(function (r2) { if (r2.ok) { v.label = l; ctRespRender(id); } else toast(ctErr(r2)); });
+        });
+        acts.appendChild(view); acts.appendChild(cmp); acts.appendChild(res); acts.appendChild(ren);
+        r.appendChild(acts);
+        box.appendChild(r);
+        box.appendChild(out);
+      });
+      return box;
     }
 
     // ---- BidBuilder: draft the workspace from the packet ----
