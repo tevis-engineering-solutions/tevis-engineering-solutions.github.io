@@ -465,6 +465,18 @@
         item('YouTube channel', (gg.channel.subscribers != null ? gg.channel.subscribers.toLocaleString() + ' subscribers, ' : '') + gg.channel.videos + ' videos' + (age != null ? ', last posted ' + (age < 45 ? age + ' days ago' : Math.round(age / 30) + ' months ago') : ''), age != null && age > 180 ? 'warn' : '');
       }
       if (gg && gg.kg) item('Known to Google', gg.kg.found ? 'Yes: Google knows your business as an entity' : 'Not yet: keep your name, address and phone the same everywhere', gg.kg.found ? '' : 'warn');
+      // Accessibility trend, contact form, WordPress (watch_extras.js), monthly.
+      var ex = o.extras;
+      if (ex && ex.scores && ex.scores.accessibility != null) {
+        var a11 = ex.scores.accessibility, was = ex.scores_prev && ex.scores_prev.accessibility != null ? ex.scores_prev.accessibility : null;
+        var top = (ex.scores.issues || [])[0];
+        item('Accessibility', a11 + ' / 100' + (was != null ? (a11 > was ? ', up ' + (a11 - was) : a11 < was ? ', down ' + (was - a11) : ', no change') + ' from last month' : '') + (top ? '. Top fix: ' + top.text + '.' : '.'), a11 < 80 ? 'warn' : '');
+      }
+      if (ex && ex.form_check && ex.form_text) item('Contact form', ex.form_text, ['missing', 'page_gone', 'endpoint_down', 'closed'].indexOf(ex.form && ex.form.status) >= 0 ? 'bad' : '');
+      if (ex && ex.wp && ex.wp_text) {
+        var po = ex.wp.plugins_outdated || [];
+        item('WordPress', ex.wp_text + (po.length ? ' ' + po.length + ' plugin' + (po.length === 1 ? '' : 's') + ' out of date: ' + po.slice(0, 3).map(function (p) { return p.name; }).join(', ') + '.' : ''), ex.wp.insecure ? 'bad' : ex.wp.update || po.length ? 'warn' : '');
+      }
       if (o.links) item('Broken links', o.links.broken.length ? o.links.broken.length + ' of ' + o.links.checked + ' checked' : 'None found', o.links.broken.length ? 'warn' : '');
       if (!ul.childNodes.length) return el('div');
       box.appendChild(ul);
