@@ -633,6 +633,18 @@
       ((h && h.lines) || []).forEach(function (l) { item(l.label, l.text, l.tone || ''); });
     }
 
+    // Holiday hours (tes-portal src/watch_holiday.js): about six days before a major holiday we
+    // check the Google listing and email the owner if it has no holiday hours for it.
+    function holidayItem(hd, item) {
+      if (!hd) return;
+      var md = function (iso) { return new Date(iso + 'T12:00:00Z').toLocaleDateString('en-US', { month: 'short', day: 'numeric', timeZone: 'UTC' }); };
+      var l = hd.last;
+      var recent = l && (Date.now() - Date.parse(l.date + 'T12:00:00Z')) < 10 * 86400000;
+      if (recent && l.status === 'sent') item('Holiday hours', 'We emailed you on ' + day(l.sent_at) + ': Google had no holiday hours for ' + l.name + '.', '');
+      else if (recent && l.status === 'set') item('Holiday hours', 'Set on Google for ' + l.name + '.', '');
+      else if (hd.next) item('Holiday hours', 'About six days before ' + hd.next.name + ' (' + md(hd.next.date) + ') we check your Google listing and email you if it has no holiday hours.', '');
+    }
+
     function outsideBox(o) {
       var box = el('div', 'mon-box');
       box.appendChild(el('h3', null, 'From the outside'));
@@ -656,6 +668,7 @@
         item('Google listing', gi.length ? gi.join('. ') + '.' : 'Matches your website: phone, hours and link agree.', gi.length ? 'warn' : '');
         if (gl.review_url) ul.appendChild(reviewLinkItem(gl.review_url));
       } else if (gl && gl.status === 'not_found') item('Google listing', 'None links to this website. A free Google Business Profile helps people find and call you.', 'warn');
+      if (gl && (gl.status === 'found' || gl.status === 'set')) holidayItem(o.holiday, item);
       // The monthly Google checks (watch_google.js).
       var gg = o.google;
       if (gg && gg.speed && gg.speed.has_data && gg.speed.lcp) {

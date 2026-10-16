@@ -10229,6 +10229,27 @@
       return s;
     }
 
+    // Holiday hours reminders (tes-portal src/watch_holiday.js): the last check and the next one.
+    function watchHolidayNote(w) {
+      var hd = w.outside && w.outside.holiday;
+      var md = function (iso) { return new Date(iso + 'T12:00:00Z').toLocaleDateString(undefined, { month: 'short', day: 'numeric', timeZone: 'UTC' }); };
+      var mdTs = function (ts) { return new Date(ts * 1000).toLocaleDateString(undefined, { month: 'short', day: 'numeric' }); };
+      var l = hd && hd.last, t = [];
+      if (l) {
+        var when = mdTs(l.sent_at || l.checked_at);
+        t.push(l.status === 'sent' ? 'Holiday reminder: sent ' + when + ' for ' + l.name + (l.site_mentions === false ? ' (the site does not mention it either)' : '') + '.'
+          : l.status === 'set' ? 'Holiday hours: already on Google for ' + l.name + ' (checked ' + when + '), so no reminder.'
+          : l.status === 'closed_days' ? 'Holiday reminder: not needed for ' + l.name + ', closed that weekday anyway (checked ' + when + ').'
+          : l.status === 'no_hours' ? 'Holiday reminder: skipped for ' + l.name + ', the listing shows no hours (checked ' + when + ').'
+          : l.status === 'not_open' ? 'Holiday reminder: skipped for ' + l.name + ', Google shows the business closed (checked ' + when + ').'
+          : l.status === 'error' ? 'Holiday reminder: the check for ' + l.name + ' failed ' + when + '; it tries again the next day.'
+          : 'Holiday reminder: sending for ' + l.name + '.');
+      }
+      if (hd && hd.next) t.push('Next: ' + hd.next.name + ' (' + md(hd.next.date) + '), checked from ' + md(hd.next.from) + '.');
+      if (w.lead_id || w.notify === 'staff') t.push('Not sent for lead or "me only" watches.');
+      return el('p', 'wi-note', t.length ? t.join(' ') : 'Holiday reminder: about six days before each major holiday, if the Google listing has no holiday hours for it.');
+    }
+
     function watchInsights(w) {
       var d = el('div', 'wi-drawer');
 
@@ -10373,6 +10394,7 @@
         var help = el('p', 'wi-note', 'Find a place ID with Google\'s Place ID Finder (developers.google.com/maps/documentation/places/web-service/place-id).');
         lbody.appendChild(help);
       }
+      ls.appendChild(watchHolidayNote(w));
       drawListing(null);
       // Review requests the client emailed from the portal (tes-portal src/review_booster.js).
       var rbLine = el('p', 'wi-note', '');
