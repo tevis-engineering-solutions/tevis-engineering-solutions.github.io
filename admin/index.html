@@ -10229,6 +10229,67 @@
       return s;
     }
 
+    // Tags, outside scripts and accessibility widgets (tes-portal src/watch_tags.js), weekly.
+    // A gone tag or a broken widget is shown here, in the portal and the report card only:
+    // no email or Telegram (Tyler, 2026-10-15).
+    function watchTagsSection(w) {
+      var s = el('div', 'wi-sec');
+      s.appendChild(el('h4', null, 'Tags, outside scripts, widgets (weekly)'));
+      var body = el('div');
+      s.appendChild(body);
+      var CONSENT = {
+        v2: 'Consent Mode v2, set before the Google tag',
+        v1: 'Consent Mode v1 only (no ad_user_data / ad_personalization)',
+        late: 'consent default set after the Google tag',
+        cmp: 'no inline default; probably set by the cookie banner',
+        gtm: 'no inline default; may be set inside Tag Manager',
+        none: 'not set up'
+      };
+      var kbOf = function (b) { return b ? Math.max(1, Math.round(b / 1024)) + ' KB' : 'size unknown'; };
+      function draw() {
+        body.textContent = '';
+        var t = w.outside && w.outside.tags;
+        if (!t) body.appendChild(el('p', 'wi-note', 'Not checked yet. It runs weekly with the outside checks, or press Check now.'));
+        else {
+          t.lines.forEach(function (l) { body.appendChild(el('p', 'wi-note', (l.tone === 'bad' || l.tone === 'warn' ? '⚠ ' : '') + l.label + ': ' + l.text)); });
+          var r = t.read;
+          if (r) {
+            var ids = [];
+            Object.keys(r.tags || {}).forEach(function (k) {
+              Object.keys(r.tags[k]).forEach(function (id) { ids.push(k + (id ? ' ' + id : ' (no ID shown)') + ' on ' + r.tags[k][id].join(', ')); });
+            });
+            if (ids.length) body.appendChild(el('p', 'wi-note', 'Tags: ' + ids.join('; ') + '.'));
+            if (r.consent) body.appendChild(el('p', 'wi-note', 'Consent: ' + (CONSENT[r.consent.status] || r.consent.status) + (r.consent.update ? ', with an update call or a banner' : ', no update call') + '.'));
+            body.appendChild(el('p', 'wi-note', 'Cookie banner: ' + (r.cmp || 'none seen') + (r.early && r.early.length ? '. Before it: ' + r.early.join(', ') : '') + '.'));
+            var sc = (r.scripts || []).map(function (x) {
+              return x.name + ' (' + x.domain + ', ' + x.kind + (x.outside ? '' : ', own site') + ', ' + kbOf(x.bytes) +
+                (x.status && x.status !== 200 ? ', HTTP ' + x.status : '') + (x.partial ? ', loader only' : '') + ')';
+            });
+            if (sc.length) body.appendChild(el('p', 'wi-note', 'Scripts: ' + sc.join('; ') + '.'));
+          }
+          if (t.pending && t.pending.length) body.appendChild(el('p', 'wi-note', 'Waiting for tomorrow\'s read to confirm: ' + t.pending.map(function (p) { return p.replace(/^(tag|script):/, ''); }).join(', ') + '.'));
+          body.appendChild(el('p', 'wi-note', 'Pages read: ' + (t.pages.join(', ') || 'none') + '. Checked ' + fmtDate(t.checked_at) + (t.last_error ? ' (' + t.last_error + ')' : '') + '.'));
+        }
+        var acts = el('div', 'wi-acts');
+        var now = el('button', 'sb-add', 'Check now'); now.type = 'button';
+        now.addEventListener('click', function () {
+          now.disabled = true;
+          api('/admin/watches/' + w.id + '/tags', { method: 'POST', body: { action: 'check' } }).then(function (x) {
+            now.disabled = false;
+            if (!x.ok) { toast(x.message || x.error || 'Could not do it'); return; }
+            toast(x.message || 'Checked');
+            w.outside = w.outside || {};
+            w.outside.tags = x.tags;
+            draw();
+          });
+        });
+        acts.appendChild(now);
+        body.appendChild(acts);
+      }
+      draw();
+      return s;
+    }
+
     // Holiday hours reminders (tes-portal src/watch_holiday.js): the last check and the next one.
     function watchHolidayNote(w) {
       var hd = w.outside && w.outside.holiday;
@@ -10518,6 +10579,7 @@
       d.appendChild(watchRankSection(w));
       d.appendChild(watchIndexSection(w));
       d.appendChild(watchHackSection(w));
+      d.appendChild(watchTagsSection(w));
 
       // Accessibility trend, contact form, WordPress (tes-portal src/watch_extras.js), monthly with the report.
       var xs = el('div', 'wi-sec');

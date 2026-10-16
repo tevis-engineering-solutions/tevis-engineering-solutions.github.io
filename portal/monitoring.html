@@ -633,6 +633,12 @@
       ((h && h.lines) || []).forEach(function (l) { item(l.label, l.text, l.tone || ''); });
     }
 
+    // Tags, outside scripts and accessibility widgets (tes-portal src/watch_tags.js), read
+    // weekly. The Worker writes the lines.
+    function tagsItems(t, item) {
+      ((t && t.lines) || []).forEach(function (l) { item(l.label, l.text, l.tone || ''); });
+    }
+
     // Holiday hours (tes-portal src/watch_holiday.js): about six days before a major holiday we
     // check the Google listing and email the owner if it has no holiday hours for it.
     function holidayItem(hd, item) {
@@ -661,6 +667,7 @@
         item('Email security', g[0] + (o.email.issues && o.email.issues.length && o.email.grade !== 'none' ? '. ' + o.email.issues[0].text : ''), g[1]);
       }
       hackItems(o.hack, item);
+      tagsItems(o.tags, item);
       if (o.unsafe) item('Google Safe Browsing', o.unsafe.flagged ? 'Flagged: visitors see a warning' : 'Not flagged', o.unsafe.flagged ? 'bad' : '');
       if (o.dns_changed_at) item('DNS', 'Last changed ' + day(o.dns_changed_at), '');
       if (o.lookalikes) item('Look-alike domains', o.lookalikes.found.length ? o.lookalikes.found.length + ' registered: ' + o.lookalikes.found.slice(0, 3).join(', ') : 'None of the ' + o.lookalikes.checked + ' we check', o.lookalikes_new && o.lookalikes_new.length ? 'warn' : '');
