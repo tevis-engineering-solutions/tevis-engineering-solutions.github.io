@@ -10106,6 +10106,49 @@
         if (g.kg) lines.push('Knowledge Graph: ' + (g.kg.found ? 'knows "' + g.kg.name + '"' + (g.kg.types && g.kg.types.length ? ' (' + g.kg.types.join(', ') + ')' : '') : 'not found as an entity') + '.');
         if (g.checked_at) lines.push('Checked ' + fmtDate(g.checked_at) + '.');
         lines.forEach(function (l) { gbody.appendChild(el('p', 'wi-note', l)); });
+        drawMoves();
+        drawAiAnswer();
+      }
+      // Competitor movement since last month (tes-portal src/watch_movement.js). Only place
+      // IDs are kept (Maps terms), so the businesses are Maps links, not names.
+      function drawMoves() {
+        var mv = w.outside && w.outside.movement;
+        if (!mv) return;
+        var m = mv.moves;
+        var p = el('p', 'wi-note', 'Competitors (' + mv.month + '): ');
+        if (!m) { p.appendChild(document.createTextNode('the baseline month, nothing to compare yet.')); gbody.appendChild(p); return; }
+        var parts = [];
+        var links = function (label, list) {
+          if (!list || !list.length) return;
+          parts.push(function () {
+            p.appendChild(document.createTextNode(label + ' '));
+            list.forEach(function (x, i) {
+              var a = el('a', null, 'business ' + (i + 1)); a.href = x.url; a.target = '_blank'; a.rel = 'noopener';
+              if (i) p.appendChild(document.createTextNode(', '));
+              p.appendChild(a);
+            });
+          });
+        };
+        links('passed them:', m.passed_you);
+        links('new in the top 5:', m.entered);
+        links('climbed 2+ places:', m.climbed);
+        links('they passed:', m.you_passed);
+        if (m.left) parts.push(function () { p.appendChild(document.createTextNode(m.left + ' dropped out')); });
+        if (m.rank_reviews) parts.push(function () { p.appendChild(document.createTextNode('reviews rank ' + ordinalW(m.rank_reviews.from) + ' to ' + ordinalW(m.rank_reviews.to))); });
+        if (m.rank_rating) parts.push(function () { p.appendChild(document.createTextNode('rating rank ' + ordinalW(m.rank_rating.from) + ' to ' + ordinalW(m.rank_rating.to))); });
+        if (!parts.length) p.appendChild(document.createTextNode('no change since last month'));
+        parts.forEach(function (f, i) { if (i) p.appendChild(document.createTextNode('; ')); f(); });
+        p.appendChild(document.createTextNode(mv.alerted_at ? '. Alert emailed ' + fmtDate(mv.alerted_at) + '.' : '.'));
+        gbody.appendChild(p);
+      }
+      // What an AI assistant said (tes-portal src/watch_ai_answer.js), monthly with the report.
+      function drawAiAnswer() {
+        var a = w.outside && w.outside.ai_answer;
+        if (!a) return;
+        gbody.appendChild(el('p', 'wi-note', 'AI answer (' + a.month + ', "' + a.question + '"): ' +
+          (a.named ? 'named ' + ordinalW(a.position) + ' of ' + a.total : 'not named') +
+          (a.others.length ? '. ' + (a.named ? 'Also' : 'Instead') + ': ' + a.others.join(', ') : '') +
+          (!a.named && a.why.length ? '. Likely why: ' + a.why.join('; ') : '') + '.'));
       }
       drawGoogle();
       d.appendChild(gs);
@@ -17571,6 +17614,7 @@
       ['bid', 'BidBuilder', 'var(--text)'],
       ['marketing', 'Lead emails', '#6dc882'],
       ['crash', 'Crash tool', '#2d6a3f'],
+      ['watch', 'Website Watch', '#a8741a'],
       ['other', 'Other apps', 'var(--muted)'],
     ];
     var AI_DASHBOARD = 'https://platform.claude.com/dashboard';
