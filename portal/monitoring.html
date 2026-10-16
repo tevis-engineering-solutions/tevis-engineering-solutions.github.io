@@ -594,6 +594,20 @@
 
     // What the outside checks found (tes-portal src/watch_outside.js).
     var EMAIL_GRADE = { good: ['Set up properly', ''], weak: ['Set up, with gaps', 'warn'], missing: ['Missing protection', 'bad'], none: ['No email on this domain', ''] };
+    // Where the site shows up on search, one line per phrase (tes-portal src/watch_rank.js).
+    var RANK_MON = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+    function rankItems(rk, item) {
+      ((rk && rk.items) || []).forEach(function (i) {
+        if (!i.checked) return;
+        var m = i.move || {}, since = i.prev_month ? ' since ' + RANK_MON[Number(i.prev_month.split('-')[1]) - 1] : '';
+        var pos = i.position == null ? 'Not in the first 20 results' : 'Number ' + i.position + ' in the results';
+        var mv = m.kind === 'up' ? ', up ' + m.by + since : m.kind === 'down' ? ', down ' + m.by + since : m.kind === 'same' ? ', the same' + since
+          : m.kind === 'new' ? ', new in the first 20' : '';
+        if (m.kind === 'dropped') pos = 'Dropped out of the first 20 results' + since;
+        item('Search: "' + i.phrase + '"', pos + mv + '.', m.kind === 'down' || m.kind === 'dropped' ? 'warn' : '');
+      });
+    }
+
     function outsideBox(o) {
       var box = el('div', 'mon-box');
       box.appendChild(el('h3', null, 'From the outside'));
@@ -664,6 +678,7 @@
         var po = ex.wp.plugins_outdated || [];
         item('WordPress', ex.wp_text + (po.length ? ' ' + po.length + ' plugin' + (po.length === 1 ? '' : 's') + ' out of date: ' + po.slice(0, 3).map(function (p) { return p.name; }).join(', ') + '.' : ''), ex.wp.insecure ? 'bad' : ex.wp.update || po.length ? 'warn' : '');
       }
+      rankItems(o.rank, item);
       if (o.links) item('Broken links', o.links.broken.length ? o.links.broken.length + ' of ' + o.links.checked + ' checked' : 'None found', o.links.broken.length ? 'warn' : '');
       if (!ul.childNodes.length) return el('div');
       box.appendChild(ul);
