@@ -628,6 +628,11 @@
         : (pg.length === 1 ? pg[0].path + ' loads' : 'All ' + pg.length + ' load (' + pg.map(function (p) { return p.path; }).join(', ') + ')') + ', checked every hour.', down.length ? 'bad' : '');
     }
 
+    // The daily hacked-site check (tes-portal src/watch_hack.js): lines already in plain words.
+    function hackItems(h, item) {
+      ((h && h.lines) || []).forEach(function (l) { item(l.label, l.text, l.tone || ''); });
+    }
+
     function outsideBox(o) {
       var box = el('div', 'mon-box');
       box.appendChild(el('h3', null, 'From the outside'));
@@ -637,6 +642,7 @@
         var g = EMAIL_GRADE[o.email.grade] || [o.email.grade, ''];
         item('Email security', g[0] + (o.email.issues && o.email.issues.length && o.email.grade !== 'none' ? '. ' + o.email.issues[0].text : ''), g[1]);
       }
+      hackItems(o.hack, item);
       if (o.unsafe) item('Google Safe Browsing', o.unsafe.flagged ? 'Flagged: visitors see a warning' : 'Not flagged', o.unsafe.flagged ? 'bad' : '');
       if (o.dns_changed_at) item('DNS', 'Last changed ' + day(o.dns_changed_at), '');
       if (o.lookalikes) item('Look-alike domains', o.lookalikes.found.length ? o.lookalikes.found.length + ' registered: ' + o.lookalikes.found.slice(0, 3).join(', ') : 'None of the ' + o.lookalikes.checked + ' we check', o.lookalikes_new && o.lookalikes_new.length ? 'warn' : '');

@@ -10175,6 +10175,60 @@
       return s;
     }
 
+    // Hacked-site check (tes-portal src/watch_hack.js): spam, hidden links, cloaking, defacement, daily.
+    function watchHackSection(w) {
+      var s = el('div', 'wi-sec');
+      s.appendChild(el('h4', null, 'Hacked-site check (daily)'));
+      var body = el('div');
+      s.appendChild(body);
+      var CLOAK = {
+        same: 'the same page visitors see',
+        differs: 'mostly different text from what visitors see (a finding if it holds at the next check)',
+        cloaked: 'something visitors are not shown',
+        blocked: 'no verdict: the site turns away a fake Googlebot'
+      };
+      function post(b, okMsg) {
+        return api('/admin/watches/' + w.id + '/hack', { method: 'POST', body: b }).then(function (x) {
+          if (!x.ok) { toast(x.message || x.error || 'Could not do it'); return x; }
+          if (okMsg) toast(okMsg);
+          if (x.message) toast(x.message);
+          w.outside = w.outside || {};
+          w.outside.hack = x.hack;
+          draw();
+          return x;
+        });
+      }
+      function draw() {
+        body.textContent = '';
+        var h = w.outside && w.outside.hack;
+        if (!h) body.appendChild(el('p', 'wi-note', 'Not checked yet. It runs with the daily outside checks, or press Check now.'));
+        else {
+          h.lines.forEach(function (l) { body.appendChild(el('p', 'wi-note', (l.tone === 'bad' ? '⚠ ' : '') + l.label + ': ' + l.text)); });
+          if (h.first_check) body.appendChild(el('p', 'wi-note', 'Found on the first check, so the owner was not emailed. If it is a hack, tell them; if the site is meant to say this, press That\'s expected.'));
+          if (h.cloak) body.appendChild(el('p', 'wi-note', 'What Google sees: ' + (CLOAK[h.cloak.status] || h.cloak.status) +
+            (h.cloak.status === 'blocked' && h.cloak.http ? ' (HTTP ' + h.cloak.http + ')' : '') +
+            (h.cloak.similarity != null ? ' (text similarity ' + h.cloak.similarity.toFixed(2) + ')' : '') + '.'));
+          body.appendChild(el('p', 'wi-note', 'Pages read: ' + (h.pages.join(', ') || 'none') + '. Checked ' + fmtDate(h.checked_at) +
+            (h.last_error ? ' (' + h.last_error + ')' : '') + '.' + (h.baseline_at ? ' Baseline from ' + fmtDate(h.baseline_at) + '.' : '') +
+            (h.reset_at ? ' Marked expected by ' + (h.reset_by || 'staff') + ' ' + fmtDate(h.reset_at) + '.' : '')));
+        }
+        var acts = el('div', 'wi-acts');
+        var now = el('button', 'sb-add', 'Check now'); now.type = 'button';
+        now.addEventListener('click', function () { now.disabled = true; post({ action: 'check' }, 'Checked').then(function () { now.disabled = false; }); });
+        acts.appendChild(now);
+        var ok = el('button', 'sb-add', 'That\'s expected'); ok.type = 'button'; ok.disabled = !h;
+        ok.addEventListener('click', function () {
+          if (!confirm('Make ' + w.host + ' as it is now the baseline?\n\nWhat was found is accepted and will not alert again, and the "home page changed" note is cleared. Anything new still alerts.')) return;
+          ok.disabled = true;
+          post({ action: 'expected' }, 'Baseline reset').then(function () { ok.disabled = false; });
+        });
+        acts.appendChild(ok);
+        body.appendChild(acts);
+      }
+      draw();
+      return s;
+    }
+
     function watchInsights(w) {
       var d = el('div', 'wi-drawer');
 
@@ -10414,6 +10468,7 @@
       d.appendChild(gs);
       d.appendChild(watchRankSection(w));
       d.appendChild(watchIndexSection(w));
+      d.appendChild(watchHackSection(w));
 
       // Accessibility trend, contact form, WordPress (tes-portal src/watch_extras.js), monthly with the report.
       var xs = el('div', 'wi-sec');
