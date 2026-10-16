@@ -645,6 +645,12 @@
       else if (hd.next) item('Holiday hours', 'About six days before ' + hd.next.name + ' (' + md(hd.next.date) + ') we check your Google listing and email you if it has no holiday hours.', '');
     }
 
+    // Security basics (tes-portal src/watch_hardening.js): HTTPS, security headers, the
+    // transfer lock, DNSSEC and abandoned subdomains. The Worker writes the lines.
+    function securityItems(hd, item) {
+      ((hd && hd.items) || []).forEach(function (i) { item(i.label, i.text, i.tone || ''); });
+    }
+
     function outsideBox(o) {
       var box = el('div', 'mon-box');
       box.appendChild(el('h3', null, 'From the outside'));
@@ -720,6 +726,7 @@
         item('WordPress', ex.wp_text + (po.length ? ' ' + po.length + ' plugin' + (po.length === 1 ? '' : 's') + ' out of date: ' + po.slice(0, 3).map(function (p) { return p.name; }).join(', ') + '.' : ''), ex.wp.insecure ? 'bad' : ex.wp.update || po.length ? 'warn' : '');
       }
       rankItems(o.rank, item);
+      securityItems(o.hardening, item);
       if (o.links) item('Broken links', o.links.broken.length ? o.links.broken.length + ' of ' + o.links.checked + ' checked' : 'None found', o.links.broken.length ? 'warn' : '');
       if (!ul.childNodes.length) return el('div');
       box.appendChild(ul);
