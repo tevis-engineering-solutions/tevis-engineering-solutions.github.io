@@ -357,6 +357,10 @@
     .dd-title b { display:block; font-family:"Montserrat",sans-serif; font-size:1rem; color:#fff; }
     .dd-title small { display:block; font-size:0.78rem; color:var(--muted); overflow-wrap:anywhere; }
     .dd-warn { font-size:0.82rem; line-height:1.45; color:#e6c68a; background:rgba(200,152,48,0.1); border:1px solid rgba(200,152,48,0.35); border-radius:10px; padding:0.55rem 0.75rem; }
+    .dd-welcome { display:flex; flex-wrap:wrap; align-items:center; gap:0.5rem 0.75rem; font-size:0.82rem; line-height:1.45; color:var(--text); border:1px solid var(--line); border-radius:10px; padding:0.55rem 0.75rem; background:var(--card); }
+    .dd-welcome.due { color:#e6c68a; background:rgba(200,152,48,0.1); border-color:rgba(200,152,48,0.35); }
+    .dd-welcome > span { flex:1 1 16rem; min-width:0; overflow-wrap:anywhere; }
+    .dd-welcome .inv-actions { margin:0; }
     .dd-edit { margin:0; }
     .dd-facts { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:0.75rem; }
     .dd-fact { border:1px solid var(--line); border-radius:12px; padding:0.75rem 0.85rem; background:var(--card); min-width:0; }
@@ -9468,6 +9472,9 @@
       if (to && !to.account_id) card.appendChild(el('div', 'dd-warn', 'No portal account uses ' + to.email + ', so deliveries to it fail. Add the customer, or change customer_email in the PC’s pilot.json.'));
       else if (to && to.on_agreement === false) card.appendChild(el('div', 'dd-warn', 'Deliveries go to ' + to.email + ', which is not on ' + ((ag && ag.holder && ag.holder.name) || 'the agreement holder') + '’s account. Change customer_email in the PC’s pilot.json when their data should open.'));
 
+      var wel = ddWelcome(c);
+      if (wel) card.appendChild(wel);
+
       var form = ddEditForm(c, all.agreements);
       form.hidden = true;
       card.appendChild(form);
@@ -9486,6 +9493,39 @@
       card.appendChild(ddRuns(c, all.now));
       if (c.recent.length) card.appendChild(ddRecent(c));
       return card;
+    }
+
+    // The welcome email (Resend, tes-portal welcomeCampaign): the shared folder and when deliveries
+    // arrive, once per recipient. A test copy goes to your Access email and is not the send.
+    var DD_WELCOME_ERR = { no_folder: 'Add a shared data folder to the agreement first', no_account: 'No portal account to send it to',
+      already_sent: 'Already sent to this address', send_failed: 'Resend refused it' };
+    function ddWelcome(c) {
+      var ag = c.agreement, to = c.deliver_to;
+      if (!to || !to.account_id || !ag || !ag.data_folder_url) return null;
+      var sent = c.welcomed_to && c.welcomed_to === String(to.email).toLowerCase();
+      var row = el('div', 'dd-welcome' + (sent ? '' : ' due'));
+      row.appendChild(icon(sent ? 'fa-envelope-circle-check' : 'fa-envelope'));
+      row.appendChild(el('span', null, sent ? 'Welcome email sent to ' + to.email + ' ' + fmt(c.welcomed_at) + '.'
+        : to.email + ' has not had the welcome email yet: the shared folder, and when deliveries arrive.'));
+      var acts = el('div', 'inv-actions'), test = el('button', null, 'Send me a test'), send = el('button', sent ? null : 'prim', sent ? 'Send again' : 'Email the welcome');
+      test.type = send.type = 'button';
+      var post = function (b, body) {
+        b.disabled = true;
+        api('/admin/data-campaigns/' + encodeURIComponent(c.key) + '/welcome', { method: 'POST', body: body }).then(function (x) {
+          b.disabled = false;
+          toast(x.ok ? (x.test ? 'Test copy sent to ' + x.to : 'Welcome emailed to ' + x.to) : (DD_WELCOME_ERR[x.error] || x.message || x.error || 'Could not send'));
+          if (x.ok && !x.test) loadCampaigns();
+        });
+      };
+      test.addEventListener('click', function () { post(test, { test: true }); });
+      send.addEventListener('click', function () {
+        if (!confirm('Email the welcome to ' + to.email + (sent ? ' again' : '') + '?\n\nIt gives them the shared data folder link.')) return;
+        post(send, { again: !!sent });
+      });
+      acts.appendChild(test);
+      acts.appendChild(send);
+      row.appendChild(acts);
+      return row;
     }
 
     function ddFact(title) { var f = el('section', 'dd-fact'); f.appendChild(el('h3', 'sb-k', title)); return f; }
