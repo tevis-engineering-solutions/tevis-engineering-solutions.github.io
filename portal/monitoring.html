@@ -460,6 +460,27 @@
         var nth = function (n) { return n + (n % 10 === 1 && n % 100 !== 11 ? 'st' : n % 10 === 2 && n % 100 !== 12 ? 'nd' : n % 10 === 3 && n % 100 !== 13 ? 'rd' : 'th'); };
         item('Among nearby ' + String(gg.compare.category).toLowerCase() + ' businesses', 'You have the ' + nth(gg.compare.rank_reviews) + ' most Google reviews and the ' + nth(gg.compare.rank_rating) + ' best rating of ' + gg.compare.of + '.', gg.compare.rank_reviews > 1 ? 'warn' : '');
       }
+      // Competitor movement since last month (watch_movement.js): counts only, because
+      // Google's terms keep the other businesses' names out of storage.
+      var mv = o.movement && o.movement.moves;
+      if (mv && mv.any) {
+        var cnt = function (n, one, many) { return n + ' ' + (n === 1 ? one : many); };
+        var said = [];
+        if (mv.passed_you.length) said.push(cnt(mv.passed_you.length, 'business', 'businesses') + ' passed you in Google reviews');
+        var newAbove = mv.entered.filter(function (e) { return e.above_you; }).length;
+        if (newAbove) said.push(cnt(newAbove, 'newcomer has', 'newcomers have') + ' more reviews than you');
+        if (mv.climbed.length) said.push(cnt(mv.climbed.length, 'business', 'businesses') + ' climbed fast');
+        if (mv.you_passed.length) said.push('you passed ' + cnt(mv.you_passed.length, 'business', 'businesses'));
+        if (mv.rank_reviews && !said.length) said.push('your place by reviews went from ' + nth(mv.rank_reviews.from) + ' to ' + nth(mv.rank_reviews.to));
+        if (mv.rank_rating) said.push('your place by rating went from ' + nth(mv.rank_rating.from) + ' to ' + nth(mv.rank_rating.to));
+        if (said.length) { var s0 = said.join('; '); item('Since last month', s0.charAt(0).toUpperCase() + s0.slice(1) + '. Your report card names them.', mv.notable ? 'warn' : ''); }
+      }
+      // What an AI assistant said when asked for the best businesses like yours (watch_ai_answer.js).
+      var ai = o.ai_answer;
+      if (ai) {
+        var nthA = function (n) { return n + (n % 10 === 1 && n % 100 !== 11 ? 'st' : n % 10 === 2 && n % 100 !== 12 ? 'nd' : n % 10 === 3 && n % 100 !== 13 ? 'rd' : 'th'); };
+        item('Asked an AI assistant', '"' + ai.question + '" ' + (ai.named ? 'You were named ' + nthA(ai.position) + ' of ' + ai.total + '.' : 'You were not named' + (ai.others.length ? '; it named ' + ai.others.slice(0, 3).join(', ') : '') + '. Usually that is because of ' + ai.why.join('; ') + '.'), ai.named ? '' : 'warn');
+      }
       if (gg && gg.channel && gg.channel.found) {
         var age = gg.channel.last_upload ? Math.floor((Date.now() - Date.parse(gg.channel.last_upload)) / 86400000) : null;
         item('YouTube channel', (gg.channel.subscribers != null ? gg.channel.subscribers.toLocaleString() + ' subscribers, ' : '') + gg.channel.videos + ' videos' + (age != null ? ', last posted ' + (age < 45 ? age + ' days ago' : Math.round(age / 30) + ' months ago') : ''), age != null && age > 180 ? 'warn' : '');
