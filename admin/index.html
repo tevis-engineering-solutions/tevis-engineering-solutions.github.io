@@ -10173,6 +10173,20 @@
         rbLine.textContent = 'Review requests: ' + x.sent + ' sent this month' + (x.queued ? ', ' + x.queued + ' waiting' : '') + ', ' +
           x.optouts + ' opted out' + (x.last_at ? '. Last sent ' + fmtDate(x.last_at) : '') + '.';
       });
+      // A test copy of this site's review request to any address: what its customers would get.
+      var rbActs = el('div', 'wi-acts');
+      var rbTo = document.createElement('input'); rbTo.type = 'email'; rbTo.placeholder = 'Send a test review request to...'; rbTo.setAttribute('aria-label', 'Test review request address');
+      var rbGo = el('button', 'sb-add', 'Send test'); rbGo.type = 'button';
+      rbGo.addEventListener('click', function () {
+        if (!rbTo.value.trim()) { rbTo.focus(); return; }
+        rbGo.disabled = true;
+        api('/admin/watches/' + w.id + '/reviews', { method: 'POST', body: { to: rbTo.value.trim() } }).then(function (x) {
+          rbGo.disabled = false;
+          toast(x && x.ok ? 'Test sent to ' + x.to + (x.address_missing ? '. Their Account page has no address yet, so a placeholder shows at the bottom.' : '') : (x && (x.message || x.error)) || 'Could not send');
+        });
+      });
+      rbActs.appendChild(rbTo); rbActs.appendChild(rbGo);
+      ls.appendChild(rbActs);
       d.appendChild(ls);
 
       // The monthly Google checks (tes-portal src/watch_google.js), refreshed by "Check now" above.
