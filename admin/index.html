@@ -10276,6 +10276,26 @@
       return s;
     }
 
+    function watchEmailListsSection(w) {
+      var s = el('div', 'wi-sec');
+      s.appendChild(el('h4', null, 'Email blacklists'));
+      var bl = w.outside && w.outside.email_lists;
+      if (!bl) { s.appendChild(el('p', 'wi-note', 'Not checked yet. Runs with the daily outside checks: blacklists daily; BIMI, MTA-STS and TLS-RPT monthly (report card only).')); return s; }
+      var note = function (t) { s.appendChild(el('p', 'wi-note', t)); };
+      (bl.items || []).forEach(function (i) { note((i.tone === 'bad' ? '!! ' : i.tone === 'warn' ? '! ' : '') + i.label + ': ' + i.text); });
+      (bl.listed || []).forEach(function (x) {
+        var p = el('p', 'wi-note', (x.alert ? 'Listed: ' : 'Listed (no alert): ') + x.list + ', ' + x.target + ' since ' + fmtDate(x.since) + (x.told ? ', told ' + x.told + '. ' : '. '));
+        var a = el('a', null, 'Removal page'); a.href = x.link; a.target = '_blank'; a.rel = 'noopener';
+        p.appendChild(a); s.appendChild(p);
+      });
+      if (bl.servers && bl.servers.length) note('Checked: ' + bl.servers.map(function (x) { return x.ip + ' (' + x.from + ')'; }).join(', ') + (bl.capped ? ', capped at 6' : '') + '.');
+      if (bl.providers && bl.providers.length) note('Provider servers, not checked: ' + bl.providers.join(', ') + '.');
+      if (bl.ranges || bl.ipv6) note('Not checked: ' + [bl.ranges ? bl.ranges + ' SPF IP range' + (bl.ranges === 1 ? '' : 's') : '', bl.ipv6 ? bl.ipv6 + ' IPv6 entr' + (bl.ipv6 === 1 ? 'y' : 'ies') : ''].filter(Boolean).join(', ') + ' (the lists take one IPv4 address at a time).');
+      (bl.extra_items || []).forEach(function (i) { note((i.tone === 'bad' ? '!! ' : i.tone === 'warn' ? '! ' : '') + i.label + ': ' + i.text); });
+      if (bl.checked_at) note('Blacklists ' + fmtDate(bl.checked_at) + ': SpamCop, Barracuda, Mailspike, PSBL, NordSpam, UCEPROTECT (shown, never emails); domain on NordSpam DBL. Spamhaus, URIBL and SURBL refuse our resolver or need a paid feed.');
+      return s;
+    }
+
     function watchInsights(w) {
       var d = el('div', 'wi-drawer');
 
@@ -10349,6 +10369,7 @@
       d.appendChild(os);
       d.appendChild(watchCopycatSection(w));
       d.appendChild(watchSecuritySection(w));
+      d.appendChild(watchEmailListsSection(w));
 
       // The Google listing (tes-portal src/watch_listing.js): checked weekly against the site.
       // Only our own conclusions are stored; "Check now" reads the live listing (one Places call).
