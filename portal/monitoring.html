@@ -653,6 +653,11 @@
 
     // Security basics (tes-portal src/watch_hardening.js): HTTPS, security headers, the
     // transfer lock, DNSSEC and abandoned subdomains. The Worker writes the lines.
+    // Email blacklists (watch_blacklist.js): the server-written line, so all three places agree.
+    function emailListsItems(bl, item) {
+      ((bl && bl.items) || []).forEach(function (i) { item(i.label, i.text, i.tone || ''); });
+    }
+
     function securityItems(hd, item) {
       ((hd && hd.items) || []).forEach(function (i) { item(i.label, i.text, i.tone || ''); });
     }
@@ -686,6 +691,7 @@
         var g = EMAIL_GRADE[o.email.grade] || [o.email.grade, ''];
         item('Email security', g[0] + (o.email.issues && o.email.issues.length && o.email.grade !== 'none' ? '. ' + o.email.issues[0].text : ''), g[1]);
       }
+      emailListsItems(o.email_lists, item);
       hackItems(o.hack, item);
       tagsItems(o.tags, item);
       if (o.unsafe) item('Google Safe Browsing', o.unsafe.flagged ? 'Flagged: visitors see a warning' : 'Not flagged', o.unsafe.flagged ? 'bad' : '');
