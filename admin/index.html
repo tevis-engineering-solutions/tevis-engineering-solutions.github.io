@@ -10276,6 +10276,63 @@
       return s;
     }
 
+    // Known security holes in the site's software (tes-portal src/watch_vulns.js): plugins
+    // and themes against the Wordfence feed, script libraries against retire.js, daily. The
+    // owner is emailed at most once a week, and never about what the first check found
+    // (Telegram tells you instead).
+    var VULN_SRC = { readme: 'readme.txt', style: 'style.css', ver: '?ver=', 'wp-ver': 'wp-includes ?ver=', url: 'address', content: 'file' };
+    function watchVulnSection(w) {
+      var s = el('div', 'wi-sec');
+      s.appendChild(el('h4', null, 'Software security (daily)'));
+      var body = el('div');
+      s.appendChild(body);
+      function post(b, okMsg) {
+        return api('/admin/watches/' + w.id + '/vulns', { method: 'POST', body: b }).then(function (x) {
+          if (!x.ok) { toast(x.message || x.error || 'Could not do it'); return x; }
+          if (okMsg) toast(okMsg);
+          w.outside = w.outside || {};
+          w.outside.vulns = x.vulns;
+          draw();
+          return x;
+        });
+      }
+      function draw() {
+        body.textContent = '';
+        var v = w.outside && w.outside.vulns;
+        var note = function (t) { body.appendChild(el('p', 'wi-note', t)); };
+        if (!v) note('Not checked yet. It runs with the daily outside checks, or press Check now.');
+        else {
+          (v.items || []).forEach(function (i) { note((i.tone === 'bad' ? '!! ' : i.tone === 'warn' ? '! ' : '') + i.label + ': ' + i.text); });
+          (v.open || []).forEach(function (r) {
+            var p = el('p', 'wi-note', r.name + ' ' + r.version + ' (' + r.kind + ', ' + (r.severity || 'unrated') + (r.cvss != null ? ' ' + r.cvss : '') + '): ' + r.title +
+              (r.fixed_in ? '. Fixed in ' + r.fixed_in : '. No fix') + (r.cve ? '. ' + r.cve : '') +
+              (r.alerted_at ? '. Told ' + fmtDate(r.alerted_at) : r.fixed_in || r.severity === 'high' || r.severity === 'critical' ? '. Waiting for the weekly email' : '. Report card only') + '. ');
+            if (r.url) { var a = document.createElement('a'); a.href = r.url; a.target = '_blank'; a.rel = 'noopener'; a.textContent = 'Record'; p.appendChild(a); }
+            body.appendChild(p);
+          });
+          var sw = v.software || [];
+          var line = function (k, label) {
+            var xs = sw.filter(function (x) { return x.kind === k; });
+            if (xs.length) note(label + ': ' + xs.map(function (x) { return (x.name || x.slug) + ' ' + (x.version ? x.version + ' (' + (VULN_SRC[x.source] || x.source) + ')' : 'version hidden'); }).join(', '));
+          };
+          line('plugin', 'Plugins'); line('theme', 'Themes'); line('js', 'Libraries');
+          var f = v.feed || {};
+          note('Checked ' + fmtDate(v.scanned_at) + '. Wordfence ' + (f.wordfence_key ? (f.wordfence_at ? 'downloaded ' + fmtDate(f.wordfence_at) : 'not downloaded yet') : 'key not set (WORDFENCE_API_KEY), so plugins and themes are not checked') +
+            (f.wordfence_error ? ' (last try failed: ' + f.wordfence_error + ')' : '') + '; retire.js ' + (f.retire_at ? 'downloaded ' + fmtDate(f.retire_at) : 'not downloaded yet') + '.');
+        }
+        var acts = el('div', 'wi-acts');
+        var now = el('button', 'sb-add', 'Check now'); now.type = 'button';
+        now.addEventListener('click', function () { now.disabled = true; post({ action: 'check' }, 'Checked').then(function () { now.disabled = false; }); });
+        acts.appendChild(now);
+        var feeds = el('button', 'sb-add', 'Download feeds now'); feeds.type = 'button';
+        feeds.addEventListener('click', function () { feeds.disabled = true; post({ action: 'feeds' }, 'Feeds downloaded').then(function () { feeds.disabled = false; }); });
+        acts.appendChild(feeds);
+        body.appendChild(acts);
+      }
+      draw();
+      return s;
+    }
+
     function watchInsights(w) {
       var d = el('div', 'wi-drawer');
 
@@ -10349,6 +10406,7 @@
       d.appendChild(os);
       d.appendChild(watchCopycatSection(w));
       d.appendChild(watchSecuritySection(w));
+      d.appendChild(watchVulnSection(w));
 
       // The Google listing (tes-portal src/watch_listing.js): checked weekly against the site.
       // Only our own conclusions are stored; "Check now" reads the live listing (one Places call).

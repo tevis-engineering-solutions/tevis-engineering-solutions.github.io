@@ -651,6 +651,26 @@
       ((hd && hd.items) || []).forEach(function (i) { item(i.label, i.text, i.tone || ''); });
     }
 
+    // Known security holes in plugins, themes and script libraries (tes-portal src/watch_vulns.js).
+    // Wordfence's license asks for a link to each of its records shown, and its notice.
+    function vulnItems(v, item, ul) {
+      ((v && v.items) || []).forEach(function (i) { item(i.label, i.text, i.tone || ''); });
+      var recs = ((v && v.open) || []).filter(function (r) { return r.kind !== 'js' && r.url; });
+      if (!recs.length) return;
+      var li = el('li', null);
+      li.appendChild(el('b', null, 'Details'));
+      var sp = el('span', null);
+      recs.slice(0, 8).forEach(function (r, n) {
+        if (n) sp.appendChild(document.createTextNode(', '));
+        var a = el('a', null, r.name + ': ' + r.title); a.href = r.url; a.target = '_blank'; a.rel = 'noopener';
+        sp.appendChild(a);
+      });
+      var nt = v.feed && v.feed.notice && v.feed.notice.defiant;
+      sp.appendChild(document.createTextNode('. Data from Wordfence Intelligence' + (nt ? ', ' + nt.notice : '') + '.'));
+      li.appendChild(sp);
+      ul.appendChild(li);
+    }
+
     function outsideBox(o) {
       var box = el('div', 'mon-box');
       box.appendChild(el('h3', null, 'From the outside'));
@@ -727,6 +747,7 @@
       }
       rankItems(o.rank, item);
       securityItems(o.hardening, item);
+      vulnItems(o.vulns, item, ul);
       if (o.links) item('Broken links', o.links.broken.length ? o.links.broken.length + ' of ' + o.links.checked + ' checked' : 'None found', o.links.broken.length ? 'warn' : '');
       if (!ul.childNodes.length) return el('div');
       box.appendChild(ul);
