@@ -24273,6 +24273,37 @@
       return w;
     }
 
+    // What Google shows that the site does not back up (the Worker's src/lead_google.js),
+    // looked up when an email is drafted: what the draft opens with. Kept as our own titles
+    // only, so the specifics (Google's phone, hours) are in the draft, not here.
+    function mkGoogleKept(l) {
+      try { return l.google_json ? JSON.parse(l.google_json) : null; } catch (e) { return null; }
+    }
+    var MK_GOOGLE_LISTING = { found: 'listing found', not_found: 'no listing links to the site',
+      budget: 'listing not checked: this month\'s Places budget is down to the watches\' share', off: 'listing not checked: no Places key' };
+    function mkGoogleBlock(g) {
+      var w = el('div', 'mk-speed');
+      w.appendChild(el('div', 'mk-speed-h', 'Google findings'));
+      if (!g) {
+        w.appendChild(el('div', 'row-sub', 'Looked up when the email is drafted: the Google listing against the site (status, phone, hours, address, website link), the danger list, videos that no longer play, and reviews against others nearby.'));
+        return w;
+      }
+      (g.findings || []).forEach(function (f) {
+        var v = f.verify === 'A' ? 'A' : 'B';
+        w.appendChild(row(f.title, null, el('span', 'ct-chip' + (v === 'A' ? ' green' : ' gold'), v + ' · ' + MK_VERIFY[v])));
+      });
+      if (!(g.findings || []).length) w.appendChild(el('div', 'row-sub', 'Nothing found on Google: the draft is written from the report card alone.'));
+      var m = el('div', 'mk-speed-m', 'Checked ' + fmtDate(g.checked_at) + (MK_GOOGLE_LISTING[g.listing] ? ' · ' + MK_GOOGLE_LISTING[g.listing] : '') + ' · re-drafts use these for 30 days');
+      if (g.place_id) {
+        m.appendChild(document.createTextNode(' · '));
+        var a = el('a', null, 'Open the listing');
+        a.href = 'https://www.google.com/maps/place/?q=place_id:' + encodeURIComponent(g.place_id); a.target = '_blank'; a.rel = 'noopener';
+        m.appendChild(a);
+      }
+      w.appendChild(m);
+      return w;
+    }
+
     // The draft as it stands: Tyler's edits if he made any, the model's words otherwise.
     function mkCurrent(dr) {
       var e = dr.edited || {};
@@ -24310,6 +24341,14 @@
       else if (newBiz) sec.appendChild(el('div', 'row-sub', l.domain
         ? 'New business with a website and an email: the draft congratulates them and offers to help them get the most from the site early' + (d.audits.length ? ', using the report card where it helps.' : '.')
         : 'New business with an email and no website: the draft congratulates them and offers to build the website and set up their online presence.'));
+      var gKept = l.domain ? mkGoogleKept(l) : null;
+      if (l.domain) sec.appendChild(mkGoogleBlock(gKept));
+      var again = null;
+      if (gKept) {
+        again = document.createElement('input'); again.type = 'checkbox'; again.id = 'mkGAgain' + l.id;
+        var al = el('label', 'mk-check'); al.htmlFor = again.id; al.appendChild(again); al.appendChild(document.createTextNode(' Check Google again on this draft'));
+        sec.appendChild(al);
+      }
       var wait = el('div');
       var showWait = function () {
         wait.textContent = '';
@@ -24321,7 +24360,7 @@
         mkRunning['draft' + l.id] = Date.now();
         go.disabled = true; go.textContent = 'Drafting… (about a minute)';
         showWait();
-        api('/admin/leads/' + l.id + '/draft', { method: 'POST', body: { notes: notes.value.trim() } }).then(function (r) {
+        api('/admin/leads/' + l.id + '/draft', { method: 'POST', body: { notes: notes.value.trim(), refresh_google: !!(again && again.checked) } }).then(function (r) {
           delete mkRunning['draft' + l.id];
           if (!r.ok) { toast(r.message || mkErr(r)); if (mkId === l.id) mkOpen(l.id, true); return; }
           toast(mkId === l.id ? 'Draft ready' : 'The draft for ' + mkName(l) + ' is ready');
