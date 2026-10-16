@@ -10110,6 +10110,55 @@
       drawGoogle();
       d.appendChild(gs);
 
+      // Accessibility trend, contact form, WordPress (tes-portal src/watch_extras.js), monthly with the report.
+      var xs = el('div', 'wi-sec');
+      xs.appendChild(el('h4', null, 'Accessibility, contact form, WordPress (monthly)'));
+      var xsw = el('label', 'wi-switch');
+      var xcb = document.createElement('input'); xcb.type = 'checkbox'; xcb.checked = !!(w.extras && w.extras.form_check);
+      xsw.appendChild(xcb);
+      xsw.appendChild(document.createTextNode(' Check the contact form each month (reads it, never submits it)'));
+      xs.appendChild(xsw);
+      var xbody = el('div');
+      xs.appendChild(xbody);
+      var extrasPost = function (b) {
+        return api('/admin/watches/' + w.id + '/extras', { method: 'POST', body: b }).then(function (x) {
+          if (!x.ok) { toast(x.message || x.error || 'Could not do it'); return x; }
+          w.extras = x.extras; drawExtras();
+          return x;
+        });
+      };
+      xcb.addEventListener('change', function () {
+        extrasPost({ form_check: xcb.checked }).then(function (x) {
+          if (!x.ok) { xcb.checked = !xcb.checked; return; }
+          toast(xcb.checked ? 'Contact form check on for ' + w.host : 'Contact form check off for ' + w.host);
+        });
+      });
+      function drawExtras() {
+        xbody.textContent = '';
+        var x = w.extras;
+        var lines = [];
+        var sc = x && x.scores, pv = x && x.scores_prev;
+        if (sc && sc.accessibility != null) {
+          var ch = function (k) { return pv && pv[k] != null && sc[k] != null && sc[k] !== pv[k] ? ' (' + (sc[k] - pv[k] > 0 ? '+' : '') + (sc[k] - pv[k]) + ')' : ''; };
+          lines.push(sc.period + ' Lighthouse: accessibility ' + sc.accessibility + ch('accessibility') + ', SEO ' + sc.seo + ch('seo') + ', best practices ' + sc.best_practices + ch('best_practices') + ', performance ' + sc.performance + ch('performance') + '.');
+          (sc.issues || []).forEach(function (i) { lines.push('• ' + i.text + (i.n ? ' (' + i.n + ')' : '')); });
+          if (sc.accessibility < 80) lines.push('Under 80: the range where ADA demand letters land, so it is worth raising with the client.');
+        } else lines.push('Lighthouse scores: not run yet. They come with the monthly report card (one PageSpeed run a month).');
+        if (x && x.form_check) lines.push('Contact form: ' + (x.form_text || 'not checked yet. It runs with the report card, or press Check now.') + (x.form_checked_at ? ' Checked ' + fmtDate(x.form_checked_at) + '.' : ''));
+        if (x && x.wp) {
+          lines.push((x.wp_text || 'WordPress.') + (x.wp_checked_at ? ' Checked ' + fmtDate(x.wp_checked_at) + '.' : ''));
+          (x.wp.plugins_outdated || []).forEach(function (p) { lines.push('• ' + p.name + ' ' + p.have + ' (current ' + p.latest + ')'); });
+        } else if (x && x.wp_checked_at) lines.push('Not a WordPress site.');
+        lines.forEach(function (l) { xbody.appendChild(el('p', 'wi-note', l)); });
+        var acts = el('div', 'wi-acts');
+        var now = el('button', 'sb-add', 'Check now'); now.type = 'button';
+        now.addEventListener('click', function () { now.disabled = true; extrasPost({ action: 'check' }).then(function () { now.disabled = false; }); });
+        acts.appendChild(now);
+        xbody.appendChild(acts);
+      }
+      drawExtras();
+      d.appendChild(xs);
+
       // Store Match for this site (a Shopify store, or one they plan).
       var sms = el('div', 'wi-sec');
       sms.appendChild(el('h4', null, 'Store Match'));
