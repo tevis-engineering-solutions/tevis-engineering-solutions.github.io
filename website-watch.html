@@ -732,7 +732,7 @@
 
 
     /* Feature cloud: eight chips orbit a hub that explains the chosen one. */
-    .ww-cloud { position:relative; width:min(900px, 100%); height:540px; margin:0 auto; }
+    .ww-cloud { position:relative; width:min(900px, 100%); height:600px; margin:0 auto; }
     .ww-cloud::before { content:""; position:absolute; inset:9% 7%; border-radius:50%; border:1px dashed rgba(74,172,101,0.28); }
     .ww-cloud::after { content:""; position:absolute; left:50%; top:50%; width:520px; height:360px; transform:translate(-50%,-50%); background:radial-gradient(closest-side, rgba(74,172,101,0.16), transparent); pointer-events:none; }
     .ww-hub { position:absolute; left:50%; top:50%; transform:translate(-50%,-50%); width:340px; z-index:1; text-align:center; padding:1.6rem 1.5rem; border-radius:28px; border:1px solid rgba(200,152,48,0.45); background:linear-gradient(170deg, rgba(200,152,48,0.1), rgba(20,32,25,0.95) 50%); box-shadow:0 24px 60px rgba(0,0,0,0.4); }
@@ -745,14 +745,22 @@
     .ww-fchip.on { background:linear-gradient(135deg,#c89830,#e0b840); border-color:transparent; color:#0d1710; box-shadow:0 10px 30px rgba(200,152,48,0.3); }
     .ww-fchip.on i { color:#0d1710; }
     .ww-fchip:nth-child(1) { left:50%; top:7%; }
-    .ww-fchip:nth-child(2) { left:79%; top:20%; }
-    .ww-fchip:nth-child(3) { left:84%; top:50%; }
-    .ww-fchip:nth-child(4) { left:79%; top:80%; }
-    .ww-fchip:nth-child(5) { left:50%; top:93%; }
-    .ww-fchip:nth-child(6) { left:21%; top:80%; }
-    .ww-fchip:nth-child(7) { left:16%; top:50%; }
-    .ww-fchip:nth-child(8) { left:21%; top:20%; }
+    .ww-fchip:nth-child(2) { left:70%; top:15.2%; }
+    .ww-fchip:nth-child(3) { left:85%; top:36.7%; }
+    .ww-fchip:nth-child(4) { left:85%; top:63.3%; }
+    .ww-fchip:nth-child(5) { left:70%; top:84.8%; }
+    .ww-fchip:nth-child(6) { left:50%; top:93%; }
+    .ww-fchip:nth-child(7) { left:30%; top:84.8%; }
+    .ww-fchip:nth-child(8) { left:15%; top:63.3%; }
+    .ww-fchip:nth-child(9) { left:15%; top:36.7%; }
+    .ww-fchip:nth-child(10) { left:30%; top:15.2%; }
     @keyframes wwFloat { 0%,100% { margin-top:0; } 50% { margin-top:-6px; } }
+    @media (min-width: 901px) and (max-width: 1100px) {
+      .ww-hub { width:300px; }
+      .ww-fchip { font-size:0.8rem; padding:0.55rem 0.85rem; }
+      .ww-fchip:nth-child(3), .ww-fchip:nth-child(4) { left:84%; }
+      .ww-fchip:nth-child(8), .ww-fchip:nth-child(9) { left:16%; }
+    }
     @media (prefers-reduced-motion: reduce) { .ww-fchip { animation:none; } }
     .ww-fchip-d, .ww-fdots { display:none; }
     @media (max-width:900px) {
@@ -1065,34 +1073,36 @@
     <section class="ww-sec" id="features" aria-labelledby="featHead">
       <div class="ww-head">
         <span class="ww-kicker">What you get</span>
-        <h2 id="featHead">Eight Ways a Website Quietly Loses You Customers, Caught</h2>
+        <h2 id="featHead">Ten Ways a Website Quietly Loses You Customers, Caught</h2>
       </div>
       <div class="ww-cloud" id="wwCloud">
         <div class="ww-hub" aria-live="polite">
           <div class="ww-hub-ic"><i class="fa-solid fa-phone-slash" id="wwHubIc"></i></div>
           <h3 id="wwHubT">Down? You hear first</h3>
-          <p id="wwHubD">Visitors never tell you; they call the next name on Google. We check every 15 minutes and email you the minute it stops, and again when it is back.</p>
+          <p id="wwHubD">Visitors never tell you; they call the next name on Google. We check your site every 15 minutes and your contact and booking pages every hour, and email you the minute one stops.</p>
         </div>
         <div class="ww-fchips" role="group" aria-label="What Website Watch checks">
-          <button type="button" class="ww-fchip on" style="--i:0" data-ic="fa-solid fa-phone-slash" data-d="Visitors never tell you; they call the next name on Google. We check every 15 minutes and email you the minute it stops, and again when it is back." aria-pressed="true"><span class="ww-fchip-ic"><i class="fa-solid fa-phone-slash"></i></span> <span class="ww-fchip-t">Down? You hear first</span><span class="ww-fchip-d">Visitors never tell you; they call the next name on Google. We check every 15 minutes and email you the minute it stops, and again when it is back.</span></button>
+          <button type="button" class="ww-fchip on" style="--i:0" data-ic="fa-solid fa-phone-slash" data-d="Visitors never tell you; they call the next name on Google. We check your site every 15 minutes and your contact and booking pages every hour, and email you the minute one stops." aria-pressed="true"><span class="ww-fchip-ic"><i class="fa-solid fa-phone-slash"></i></span> <span class="ww-fchip-t">Down? You hear first</span><span class="ww-fchip-d">Visitors never tell you; they call the next name on Google. We check your site every 15 minutes and your contact and booking pages every hour, and email you the minute one stops.</span></button>
           <button type="button" class="ww-fchip" style="--i:1" data-ic="fa-solid fa-calendar-check" data-d="A lapsed domain takes your email down with it; an expired certificate shows &ldquo;Not secure.&rdquo; We warn you 30, 14 and 7 days ahead." aria-pressed="false"><span class="ww-fchip-ic"><i class="fa-solid fa-calendar-check"></i></span> <span class="ww-fchip-t">Renewals never sneak up</span><span class="ww-fchip-d">A lapsed domain takes your email down with it; an expired certificate shows &ldquo;Not secure.&rdquo; We warn you 30, 14 and 7 days ahead.</span></button>
           <button type="button" class="ww-fchip" style="--i:2" data-ic="fa-solid fa-envelope-circle-check" data-d="We check the settings that keep your quotes and invoices out of spam folders, and tell you in plain words what is missing." aria-pressed="false"><span class="ww-fchip-ic"><i class="fa-solid fa-envelope-circle-check"></i></span> <span class="ww-fchip-t">Your email lands, not spam</span><span class="ww-fchip-d">We check the settings that keep your quotes and invoices out of spam folders, and tell you in plain words what is missing.</span></button>
-          <button type="button" class="ww-fchip" style="--i:3" data-ic="fa-solid fa-user-secret" data-d="If your domain's settings change, we ask &ldquo;was that you?&rdquo; If someone registers a look-alike name to fool your customers, we tell you." aria-pressed="false"><span class="ww-fchip-ic"><i class="fa-solid fa-user-secret"></i></span> <span class="ww-fchip-t">Hijacks and copycats spotted</span><span class="ww-fchip-d">If your domain's settings change, we ask &ldquo;was that you?&rdquo; If someone registers a look-alike name to fool your customers, we tell you.</span></button>
-          <button type="button" class="ww-fchip" style="--i:4" data-ic="fa-solid fa-shield-halved" data-d="A hacked site gets a red warning screen in Chrome and loses its visitors overnight. We check Google's list daily and alert you at once." aria-pressed="false"><span class="ww-fchip-ic"><i class="fa-solid fa-shield-halved"></i></span> <span class="ww-fchip-t">Off Google's danger list</span><span class="ww-fchip-d">A hacked site gets a red warning screen in Chrome and loses its visitors overnight. We check Google's list daily and alert you at once.</span></button>
+          <button type="button" class="ww-fchip" style="--i:3" data-ic="fa-solid fa-user-secret" data-d="If your domain's settings change, we ask &ldquo;was that you?&rdquo; If a look-alike site copies yours to fool your customers, we tell you and report it to Google." aria-pressed="false"><span class="ww-fchip-ic"><i class="fa-solid fa-user-secret"></i></span> <span class="ww-fchip-t">Hijacks and copycats spotted</span><span class="ww-fchip-d">If your domain's settings change, we ask &ldquo;was that you?&rdquo; If a look-alike site copies yours to fool your customers, we tell you and report it to Google.</span></button>
+          <button type="button" class="ww-fchip" style="--i:4" data-ic="fa-solid fa-bug" data-d="Hackers plant spam links you can't see and show Google a different page. We read your pages every day, check Google's danger list, and alert you at once." aria-pressed="false"><span class="ww-fchip-ic"><i class="fa-solid fa-bug"></i></span> <span class="ww-fchip-t">Hacked? Caught early</span><span class="ww-fchip-d">Hackers plant spam links you can't see and show Google a different page. We read your pages every day, check Google's danger list, and alert you at once.</span></button>
           <button type="button" class="ww-fchip" style="--i:5" data-ic="fa-solid fa-link-slash" data-d="Broken links and missing images make a business look closed. We find them every month and list exactly where they are." aria-pressed="false"><span class="ww-fchip-ic"><i class="fa-solid fa-link-slash"></i></span> <span class="ww-fchip-t">No dead ends</span><span class="ww-fchip-d">Broken links and missing images make a business look closed. We find them every month and list exactly where they are.</span></button>
           <button type="button" class="ww-fchip" style="--i:6" data-ic="fa-solid fa-cart-shopping" data-d="Store stuck behind its password, a $0.00 price, an emptied catalog, a cart that stopped loading or a price that changed: you know the same day." aria-pressed="false"><span class="ww-fchip-ic"><i class="fa-solid fa-cart-shopping"></i></span> <span class="ww-fchip-t">Shopify store checks</span><span class="ww-fchip-d">Store stuck behind its password, a $0.00 price, an emptied catalog, a cart that stopped loading or a price that changed: you know the same day.</span></button>
           <button type="button" class="ww-fchip" style="--i:7" data-ic="fa-solid fa-chart-line" data-d="Add one line to your site and see visitors, plus the clicks that matter: calls, emails, form sends and add-to-carts. No cookies, no banner." aria-pressed="false"><span class="ww-fchip-ic"><i class="fa-solid fa-chart-line"></i></span> <span class="ww-fchip-t">See who is calling</span><span class="ww-fchip-d">Add one line to your site and see visitors, plus the clicks that matter: calls, emails, form sends and add-to-carts. No cookies, no banner.</span></button>
+          <button type="button" class="ww-fchip" style="--i:8" data-ic="fa-solid fa-eye" data-d="A redesign that tells search engines to stay away can quietly empty your phone. We check every day that Google can still find and list your site." aria-pressed="false"><span class="ww-fchip-ic"><i class="fa-solid fa-eye"></i></span> <span class="ww-fchip-t">Still on Google</span><span class="ww-fchip-d">A redesign that tells search engines to stay away can quietly empty your phone. We check every day that Google can still find and list your site.</span></button>
+          <button type="button" class="ww-fchip" style="--i:9" data-ic="fa-solid fa-lock" data-d="The padlock, the security settings browsers look for, your domain's transfer lock and forgotten subdomains someone could take over, in plain words." aria-pressed="false"><span class="ww-fchip-ic"><i class="fa-solid fa-lock"></i></span> <span class="ww-fchip-t">Security basics, checked</span><span class="ww-fchip-d">The padlock, the security settings browsers look for, your domain's transfer lock and forgotten subdomains someone could take over, in plain words.</span></button>
         </div>
-        <div class="ww-fdots" aria-hidden="true"><i class="on"></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+        <div class="ww-fdots" aria-hidden="true"><i class="on"></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
       </div>
       <div class="ww-sample">
         <a class="ww-sample-img" href="assets/website-watch/sample-report.jpg" target="_blank" rel="noopener" data-zoom aria-label="Expand the sample report card">
-          <img src="assets/website-watch/sample-report.jpg" width="680" height="2540" loading="lazy" alt="A sample monthly report card email: grade B, 84 out of 100, up 7 points; 99.97% uptime; one outage; three fixes; renewal dates; outside checks; the Google listing with an hours mismatch and a review link; how the business compares with 5 nearby plumbers and what changed; an AI assistant naming it 4th of 6; real-visitor speed, a broken video, the address and the Knowledge Graph; the accessibility trend; and its search positions for three phrases.">
+          <img src="assets/website-watch/sample-report.jpg" width="680" height="3155" loading="lazy" alt="A sample monthly report card email: grade B, 84 out of 100, up 7 points; 99.97% uptime; one outage; three fixes; renewal dates; outside checks; the Google listing with an hours mismatch and a review link; how the business compares with 5 nearby plumbers and what changed; an AI assistant naming it 4th of 6; real-visitor speed, a broken video, the address and the Knowledge Graph; the accessibility trend; a clean hacked-site check; search engines and key pages, with one booking-page outage; security basics with one setting worth adding; its search positions for three phrases; and a copycat site reported to Google.">
         </a>
         <div class="ww-sample-copy">
           <span class="ww-kicker">The monthly report card</span>
           <h3>What lands in your inbox on the 1st</h3>
-          <p>Your grade and how it moved, uptime and outages, visitors and calls, email and security health, your store, the three fixes worth making first, and your renewal dates. One short email, written for the owner, not the web person.</p>
+          <p>Your grade and how it moved, uptime and outages, visitors and calls, email and security health, hacked-site and search-engine checks, your store, the three fixes worth making first, and your renewal dates. One short email, written for the owner, not the web person.</p>
           <a class="btn btn-secondary" href="assets/website-watch/sample-report.jpg" target="_blank" rel="noopener" data-zoom>See a sample report card</a>
         </div>
       </div>
@@ -1110,6 +1120,7 @@
             <li><i class="fa-solid fa-star-half-stroke"></i> <span><b>New 1 and 2 star reviews</b>, as soon as we see them, so you can answer before the next customer reads it</span></li>
             <li><i class="fa-solid fa-phone"></i> <span><b>Phone, hours, address and website link</b> compared with your site. Customers trust Google, so a wrong number there is a lost call</span></li>
             <li><i class="fa-solid fa-ranking-star"></i> <span><b>How you compare nearby</b>: your reviews and rating against the businesses you compete with, every month</span></li>
+            <li><i class="fa-solid fa-calendar-day"></i> <span><b>Holiday hours</b>: the week before Thanksgiving, Christmas and other holidays, we check whether Google shows your holiday hours and remind you if not</span></li>
             <li><i class="fa-solid fa-qrcode"></i> <span><b>Your review link and QR code</b>, ready to text, print on receipts or put on the counter</span></li>
             <li><i class="fa-solid fa-gauge-high"></i> <span><b>Real-visitor speed</b> from Chrome, videos that stopped playing, and whether Google knows you as a business</span></li>
           </ul>
@@ -1339,7 +1350,15 @@
         </details>
         <details>
           <summary>What do you check on my Google listing?</summary>
-          <div class="faq-a">Every week: new 1 and 2 star reviews, whether your rating fell under 4.0, and whether the phone number, hours, address and website link on Google match your website, or Google shows you as closed. Every month: how your reviews and rating compare with businesses like yours nearby. Your portal also has your review link and a QR code to send customers. We only read your public listing; we never post or change anything on it.</div>
+          <div class="faq-a">Every week: new 1 and 2 star reviews, whether your rating fell under 4.0, and whether the phone number, hours, address and website link on Google match your website, or Google shows you as closed. Every month: how your reviews and rating compare with businesses like yours nearby. The week before major holidays, we check whether your holiday hours are set on Google and remind you if they are not. Your portal also has your review link and a QR code to send customers. We only read your public listing; we never post or change anything on it.</div>
+        </details>
+        <details>
+          <summary>How would you know if my site was hacked?</summary>
+          <div class="faq-a">Every day we read your home page and a couple of your key pages the way a visitor does, and once more the way Google's crawler does. We look for planted spam links and text (pills, casinos, loans), links hidden from visitors, a page that shows Google something different, and Google's own danger list. If we find something, you hear the same day, in plain words, with what to do next.</div>
+        </details>
+        <details>
+          <summary>What if someone copies my website?</summary>
+          <div class="faq-a">We watch the public certificate logs for new web addresses that look like yours. When one shows a page imitating your business (your name, phone number or wording), we report it to Google and email you when we do. Parked and unrelated pages are left alone.</div>
         </details>
         <details>
           <summary>How do I cancel?</summary>
