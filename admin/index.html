@@ -10123,6 +10123,58 @@
       return s;
     }
 
+    // Hidden from Google (daily) and key-page uptime (hourly): tes-portal src/watch_index.js.
+    function watchIndexSection(w) {
+      var s = el('div', 'wi-sec');
+      s.appendChild(el('h4', null, 'Search engines and key pages'));
+      var body = el('div');
+      s.appendChild(body);
+      function post(b, okMsg) {
+        return api('/admin/watches/' + w.id + '/index', { method: 'POST', body: b }).then(function (x) {
+          if (!x.ok) { toast(x.message || x.error || 'Could not do it'); return x; }
+          if (okMsg) toast(okMsg);
+          w.outside = w.outside || {};
+          w.outside.index = x.index;
+          draw();
+          return x;
+        });
+      }
+      function draw() {
+        body.textContent = '';
+        var ix = (w.outside && w.outside.index) || { pages: [], issues: [], max_pages: 5 };
+        if (!ix.checked_at) body.appendChild(el('p', 'wi-note', 'Search engines: not checked yet. It runs once a day with the outside checks, or press Check now.'));
+        else if (!ix.issues.length) body.appendChild(el('p', 'wi-note', 'Search engines can see the site (no noindex, robots.txt allows Google, canonical is ours). Checked ' + fmtDate(ix.checked_at) + '.'));
+        else ix.issues.forEach(function (i) { body.appendChild(el('p', 'wi-note', '⚠ ' + i.text)); });
+        if (ix.sitemap) body.appendChild(el('p', 'wi-note', 'Sitemap: ' + ix.sitemap.url + (ix.sitemap.gone ? ' (missing ' + ix.sitemap.misses + ' day' + (ix.sitemap.misses === 1 ? '' : 's') + ')' : ix.sitemap.locs ? ' (' + ix.sitemap.locs + ' entries)' : '')));
+        else if (ix.checked_at) body.appendChild(el('p', 'wi-note', 'Sitemap: none found, so "sitemap gone" cannot fire.'));
+        if (!ix.pages.length) body.appendChild(el('p', 'wi-note', 'No key pages yet. They are found from the links on the home page (contact, booking, quote, cart, checkout) on the first daily check, or add one below.'));
+        ix.pages.forEach(function (p) {
+          var row = el('div', 'wi-acts');
+          var st = !p.last_checked_at ? 'not checked yet' : p.state === 'down' ? 'DOWN: ' + (p.last_error || 'HTTP ' + p.last_status) : 'up' + (p.last_status ? ' (' + p.last_status + ')' : '');
+          row.appendChild(el('span', 'wi-note', p.path + ' · ' + (p.kind || 'page') + (p.source === 'staff' ? ', added by staff' : '') + ' · ' + st));
+          var rm = el('button', 'sb-add', 'Remove'); rm.type = 'button'; rm.setAttribute('aria-label', 'Stop checking ' + p.path);
+          rm.addEventListener('click', function () { post({ action: 'remove', id: p.id }, 'Removed'); });
+          row.appendChild(rm);
+          body.appendChild(row);
+        });
+        var add = el('div', 'wi-acts');
+        var inp = document.createElement('input'); inp.maxLength = 300; inp.placeholder = '/contact'; inp.setAttribute('aria-label', 'Key page to check hourly');
+        add.appendChild(inp);
+        var ab = el('button', 'sb-add', 'Add'); ab.type = 'button'; ab.disabled = ix.pages.length >= (ix.max_pages || 5);
+        ab.addEventListener('click', function () { if (!inp.value.trim()) { inp.focus(); return; } post({ action: 'add', url: inp.value.trim() }, 'Added: checked every hour'); });
+        add.appendChild(ab);
+        body.appendChild(add);
+        var acts = el('div', 'wi-acts');
+        var now = el('button', 'sb-add', 'Check now'); now.type = 'button';
+        now.addEventListener('click', function () { now.disabled = true; post({ action: 'check' }).then(function () { now.disabled = false; }); });
+        acts.appendChild(now);
+        body.appendChild(acts);
+        body.appendChild(el('p', 'wi-note', 'Key pages: ' + ix.pages.length + ' of ' + (ix.max_pages || 5) + ', checked hourly. Two failures in a row emails the owner, and so does the recovery; a noindex, robots.txt block, outside canonical or lost sitemap is emailed once when it appears and once when fixed. Check now can send those emails too.'));
+      }
+      draw();
+      return s;
+    }
+
     function watchInsights(w) {
       var d = el('div', 'wi-drawer');
 
@@ -10361,6 +10413,7 @@
       drawGoogle();
       d.appendChild(gs);
       d.appendChild(watchRankSection(w));
+      d.appendChild(watchIndexSection(w));
 
       // Accessibility trend, contact form, WordPress (tes-portal src/watch_extras.js), monthly with the report.
       var xs = el('div', 'wi-sec');

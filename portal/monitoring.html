@@ -616,6 +616,18 @@
       });
     }
 
+    // Can Google see the site (daily), and the key pages checked hourly (tes-portal src/watch_index.js).
+    function indexItems(ix, item) {
+      if (!ix) return;
+      if (ix.checked_at) item('Search engines', ix.issues.length ? ix.issues.map(function (i) { return i.text; }).join(' ') : 'Search engines can see your site.', ix.issues.length ? 'bad' : '');
+      var pg = ix.pages || [];
+      if (!pg.length) return;
+      var down = pg.filter(function (p) { return p.state === 'down'; });
+      item('Key pages', down.length
+        ? down.map(function (p) { return p.path + ' is not loading' + (p.last_error ? ': ' + p.last_error.charAt(0).toLowerCase() + p.last_error.slice(1) : ''); }).join('; ') + '.'
+        : (pg.length === 1 ? pg[0].path + ' loads' : 'All ' + pg.length + ' load (' + pg.map(function (p) { return p.path; }).join(', ') + ')') + ', checked every hour.', down.length ? 'bad' : '');
+    }
+
     function outsideBox(o) {
       var box = el('div', 'mon-box');
       box.appendChild(el('h3', null, 'From the outside'));
@@ -629,6 +641,7 @@
       if (o.dns_changed_at) item('DNS', 'Last changed ' + day(o.dns_changed_at), '');
       if (o.lookalikes) item('Look-alike domains', o.lookalikes.found.length ? o.lookalikes.found.length + ' registered: ' + o.lookalikes.found.slice(0, 3).join(', ') : 'None of the ' + o.lookalikes.checked + ' we check', o.lookalikes_new && o.lookalikes_new.length ? 'warn' : '');
       copycatItems(o.copycats, item);
+      indexItems(o.index, item);
       // The business's Google listing, compared with the website weekly (watch_listing.js).
       var gl = o.listing;
       if (gl && (gl.status === 'found' || gl.status === 'set')) {
