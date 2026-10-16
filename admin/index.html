@@ -10082,6 +10082,14 @@
         lbody.appendChild(help);
       }
       drawListing(null);
+      // Review requests the client emailed from the portal (tes-portal src/review_booster.js).
+      var rbLine = el('p', 'wi-note', '');
+      ls.appendChild(rbLine);
+      api('/admin/watches/' + w.id + '/reviews').then(function (x) {
+        if (!x || !x.ok) return;
+        rbLine.textContent = 'Review requests: ' + x.sent + ' sent this month' + (x.queued ? ', ' + x.queued + ' waiting' : '') + ', ' +
+          x.optouts + ' opted out' + (x.last_at ? '. Last sent ' + fmtDate(x.last_at) : '') + '.';
+      });
       d.appendChild(ls);
 
       // The monthly Google checks (tes-portal src/watch_google.js), refreshed by "Check now" above.
