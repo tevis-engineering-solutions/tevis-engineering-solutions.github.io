@@ -10015,7 +10015,7 @@
         acts.appendChild(sg);
         body.appendChild(acts);
         body.appendChild(el('p', 'wi-note', (rk.checked_at ? 'Checked ' + fmtDate(rk.checked_at) + '. ' : '') + (rk.last_error ? rk.last_error + '. ' : '') +
-          'One Brave search per phrase (' + active.length + ' of 5). Rank checks share the Brave budget with the lead finder and stop before the leads\' reserve.'));
+          'One Brave search per phrase (' + active.length + ' of 5). Rank checks have their own 400 searches a month on top of the lead finder\'s.'));
       }
       draw();
       return s;
