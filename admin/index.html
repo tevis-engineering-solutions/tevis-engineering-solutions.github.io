@@ -10021,6 +10021,32 @@
       return s;
     }
 
+    // Security basics for one watch (tes-portal src/watch_hardening.js): HTTPS and the
+    // security headers, transfer lock and DNSSEC monthly; subdomains from the certificate
+    // logs weekly. A dangling subdomain pages Telegram once and is not emailed to the
+    // owner: you decide whether to tell them (they see it in the portal and report card).
+    var HDR_NAMES = { hsts: 'HSTS', frame: 'Frame protection', nosniff: 'X-Content-Type-Options', csp: 'CSP', referrer: 'Referrer-Policy' };
+    function watchSecuritySection(w) {
+      var s = el('div', 'wi-sec');
+      s.appendChild(el('h4', null, 'Security basics'));
+      var hd = w.outside && w.outside.hardening;
+      if (!hd) { s.appendChild(el('p', 'wi-note', 'Not checked yet. Runs with the daily outside checks: HTTPS, headers, transfer lock and DNSSEC monthly; subdomains weekly.')); return s; }
+      var note = function (t) { s.appendChild(el('p', 'wi-note', t)); };
+      var dm = hd.domain, sub = hd.subs, hh = hd.headers, tl = hd.tls;
+      (hd.items || []).forEach(function (i) { note((i.tone === 'bad' ? '!! ' : i.tone === 'warn' ? '! ' : '') + i.label + ': ' + i.text); });
+      if (hh) note('Headers: ' + Object.keys(HDR_NAMES).map(function (k) { var c = hh.checks[k]; return HDR_NAMES[k] + (c.ok ? ' ok' : c.present ? ' weak' : ' missing'); }).join(', ') + (hh.hosted ? ' (hosted on ' + hh.hosted + ')' : ''));
+      if (tl && tl.mixed && (tl.mixed.active_n || tl.mixed.passive_n)) note('Insecure loads: ' + tl.mixed.active.concat(tl.mixed.passive).slice(0, 5).join(', '));
+      if (dm) note('Domain ' + dm.domain + ': ' + (dm.registrar || 'registrar unknown') + (dm.status && dm.status.length ? '. RDAP status: ' + dm.status.join(', ') : '. RDAP gave no status (lock unknown)'));
+      if (sub) {
+        note('Subdomains: ' + sub.checked + ' checked of ' + sub.found + ' in the certificate logs' + (hd.subs_checked_at ? ', ' + fmtDate(hd.subs_checked_at) : '') + '.');
+        (sub.dangling || []).forEach(function (x) {
+          note((x.kind === 'dead' ? 'Dead record: ' : 'TAKEOVER RISK: ') + x.name + ' -> ' + x.target + (x.service ? ' (' + x.service + ')' : x.kind === 'expired_domain' ? ' (unregistered domain)' : ''));
+        });
+      }
+      if (hd.checked_at) note('Monthly checks ' + fmtDate(hd.checked_at) + '. Our own checks, not SSL Labs (Qualys needs written permission for commercial use). Old TLS versions are not tested.');
+      return s;
+    }
+
     function watchInsights(w) {
       var d = el('div', 'wi-drawer');
 
@@ -10092,6 +10118,7 @@
         lines.forEach(function (l) { os.appendChild(el('p', 'wi-note', l)); });
       }
       d.appendChild(os);
+      d.appendChild(watchSecuritySection(w));
 
       // The Google listing (tes-portal src/watch_listing.js): checked weekly against the site.
       // Only our own conclusions are stored; "Check now" reads the live listing (one Places call).
