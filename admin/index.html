@@ -9938,6 +9938,89 @@
     })();
 
     var EMAIL_GRADE_TXT = { good: 'Set up properly', weak: 'Set up, with gaps', missing: 'Missing protection', none: 'No email on this domain' };
+    // Search phrases for one watch (tes-portal src/watch_rank.js): where the site shows up
+    // on search, checked monthly with the report card (Brave Search, top 20). Up to 5 phrases.
+    // Suggestions come from the site and are never searched until confirmed here.
+    function watchRankSection(w) {
+      var s = el('div', 'wi-sec');
+      s.appendChild(el('h4', null, 'Search phrases'));
+      var body = el('div');
+      s.appendChild(body);
+      var top = {};
+      var MON = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+      function moveText(i) {
+        var m = i.move || {}, since = i.prev_month ? ' since ' + MON[Number(i.prev_month.split('-')[1]) - 1] : '';
+        return m.kind === 'up' ? '▲ ' + m.by + since : m.kind === 'down' ? '▼ ' + m.by + since : m.kind === 'same' ? 'same' + since
+          : m.kind === 'new' ? 'new in the top 20' : m.kind === 'dropped' ? 'dropped out of the top 20' : m.kind === 'out' ? 'still not in the top 20' : 'first check';
+      }
+      function post(b, okMsg) {
+        return api('/admin/watches/' + w.id + '/rank', { method: 'POST', body: b }).then(function (x) {
+          if (!x.ok) { toast(x.message || x.error || 'Could not do it'); return x; }
+          if (okMsg) toast(okMsg);
+          if (x.message) toast(x.message);
+          w.outside = w.outside || {};
+          if (x.rank !== undefined) w.outside.rank = x.rank;
+          if (x.top) top = x.top;
+          draw();
+          return x;
+        });
+      }
+      function draw() {
+        body.textContent = '';
+        var rk = (w.outside && w.outside.rank) || { phrases: [], items: [] };
+        var active = rk.phrases.filter(function (p) { return p.status === 'active'; });
+        var suggested = rk.phrases.filter(function (p) { return p.status === 'suggested'; });
+        if (!rk.phrases.length) body.appendChild(el('p', 'wi-note', 'No phrases yet. The monthly report suggests 3 from the site (business type and city), or press Suggest from the site. Nothing is searched until a phrase is confirmed.'));
+        rk.items.forEach(function (i) {
+          var row = el('div', 'wi-acts');
+          var t = i.phrase + ': ' + (!i.checked ? 'not checked yet' : (i.position == null ? 'not in the top 20' : '#' + i.position) + ' (' + moveText(i) + ')');
+          if (top[i.phrase] && top[i.phrase].length) t += '. Top: ' + top[i.phrase].join(', ');
+          row.appendChild(el('span', 'wi-note', t));
+          var rm = el('button', 'sb-add', 'Remove'); rm.type = 'button'; rm.setAttribute('aria-label', 'Remove ' + i.phrase);
+          rm.addEventListener('click', function () { post({ action: 'remove', phrase: i.phrase }, 'Removed'); });
+          row.appendChild(rm);
+          body.appendChild(row);
+        });
+        suggested.forEach(function (p) {
+          var row = el('div', 'wi-acts');
+          row.appendChild(el('span', 'wi-note', 'Suggested: ' + p.phrase));
+          var ok = el('button', 'sb-add', 'Confirm'); ok.type = 'button'; ok.disabled = active.length >= 5;
+          ok.addEventListener('click', function () { post({ action: 'confirm', phrase: p.phrase }, 'Confirmed: checked from the next report'); });
+          row.appendChild(ok);
+          var no = el('button', 'sb-add', 'Dismiss'); no.type = 'button';
+          no.addEventListener('click', function () { post({ action: 'remove', phrase: p.phrase }); });
+          row.appendChild(no);
+          body.appendChild(row);
+        });
+        var add = el('div', 'wi-acts');
+        var inp = document.createElement('input'); inp.maxLength = 80; inp.placeholder = 'plumber lakewood oh'; inp.setAttribute('aria-label', 'New search phrase');
+        add.appendChild(inp);
+        var ab = el('button', 'sb-add', 'Add'); ab.type = 'button'; ab.disabled = active.length >= 5;
+        ab.addEventListener('click', function () { if (!inp.value.trim()) { inp.focus(); return; } post({ action: 'add', phrase: inp.value }, 'Added'); });
+        add.appendChild(ab);
+        body.appendChild(add);
+        var loc = el('div', 'wi-acts');
+        var li = document.createElement('input'); li.maxLength = 60; li.placeholder = 'City, ST (location hint)'; li.setAttribute('aria-label', 'Search location, city and state'); li.value = rk.location || '';
+        loc.appendChild(li);
+        var lb = el('button', 'sb-add', 'Save location'); lb.type = 'button';
+        lb.addEventListener('click', function () { post({ action: 'location', location: li.value }, 'Location saved'); });
+        loc.appendChild(lb);
+        body.appendChild(loc);
+        var acts = el('div', 'wi-acts');
+        var now = el('button', 'sb-add', 'Check now'); now.type = 'button'; now.disabled = !active.length;
+        now.addEventListener('click', function () { now.disabled = true; post({ action: 'check' }).then(function () { now.disabled = false; }); });
+        acts.appendChild(now);
+        var sg = el('button', 'sb-add', 'Suggest from the site'); sg.type = 'button';
+        sg.addEventListener('click', function () { sg.disabled = true; post({ action: 'suggest' }).then(function (x) { sg.disabled = false; if (x.ok && x.suggested && x.suggested.length) toast(x.suggested.length + ' suggested'); }); });
+        acts.appendChild(sg);
+        body.appendChild(acts);
+        body.appendChild(el('p', 'wi-note', (rk.checked_at ? 'Checked ' + fmtDate(rk.checked_at) + '. ' : '') + (rk.last_error ? rk.last_error + '. ' : '') +
+          'One Brave search per phrase (' + active.length + ' of 5). Rank checks share the Brave budget with the lead finder and stop before the leads\' reserve.'));
+      }
+      draw();
+      return s;
+    }
+
     function watchInsights(w) {
       var d = el('div', 'wi-drawer');
 
@@ -10109,6 +10192,7 @@
       }
       drawGoogle();
       d.appendChild(gs);
+      d.appendChild(watchRankSection(w));
 
       // Store Match for this site (a Shopify store, or one they plan).
       var sms = el('div', 'wi-sec');

@@ -428,6 +428,20 @@
 
     // What the outside checks found (tes-portal src/watch_outside.js).
     var EMAIL_GRADE = { good: ['Set up properly', ''], weak: ['Set up, with gaps', 'warn'], missing: ['Missing protection', 'bad'], none: ['No email on this domain', ''] };
+    // Where the site shows up on search, one line per phrase (tes-portal src/watch_rank.js).
+    var RANK_MON = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+    function rankItems(rk, item) {
+      ((rk && rk.items) || []).forEach(function (i) {
+        if (!i.checked) return;
+        var m = i.move || {}, since = i.prev_month ? ' since ' + RANK_MON[Number(i.prev_month.split('-')[1]) - 1] : '';
+        var pos = i.position == null ? 'Not in the first 20 results' : 'Number ' + i.position + ' in the results';
+        var mv = m.kind === 'up' ? ', up ' + m.by + since : m.kind === 'down' ? ', down ' + m.by + since : m.kind === 'same' ? ', the same' + since
+          : m.kind === 'new' ? ', new in the first 20' : '';
+        if (m.kind === 'dropped') pos = 'Dropped out of the first 20 results' + since;
+        item('Search: "' + i.phrase + '"', pos + mv + '.', m.kind === 'down' || m.kind === 'dropped' ? 'warn' : '');
+      });
+    }
+
     function outsideBox(o) {
       var box = el('div', 'mon-box');
       box.appendChild(el('h3', null, 'From the outside'));
@@ -465,6 +479,7 @@
         item('YouTube channel', (gg.channel.subscribers != null ? gg.channel.subscribers.toLocaleString() + ' subscribers, ' : '') + gg.channel.videos + ' videos' + (age != null ? ', last posted ' + (age < 45 ? age + ' days ago' : Math.round(age / 30) + ' months ago') : ''), age != null && age > 180 ? 'warn' : '');
       }
       if (gg && gg.kg) item('Known to Google', gg.kg.found ? 'Yes: Google knows your business as an entity' : 'Not yet: keep your name, address and phone the same everywhere', gg.kg.found ? '' : 'warn');
+      rankItems(o.rank, item);
       if (o.links) item('Broken links', o.links.broken.length ? o.links.broken.length + ' of ' + o.links.checked + ' checked' : 'None found', o.links.broken.length ? 'warn' : '');
       if (!ul.childNodes.length) return el('div');
       box.appendChild(ul);
