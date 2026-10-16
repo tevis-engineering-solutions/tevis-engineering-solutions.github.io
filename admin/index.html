@@ -10138,7 +10138,7 @@
         if (m.rank_rating) parts.push(function () { p.appendChild(document.createTextNode('rating rank ' + ordinalW(m.rank_rating.from) + ' to ' + ordinalW(m.rank_rating.to))); });
         if (!parts.length) p.appendChild(document.createTextNode('no change since last month'));
         parts.forEach(function (f, i) { if (i) p.appendChild(document.createTextNode('; ')); f(); });
-        p.appendChild(document.createTextNode(mv.alerted_at ? '. Alert emailed ' + fmtDate(mv.alerted_at) + '.' : '.'));
+        p.appendChild(document.createTextNode('.'));
         gbody.appendChild(p);
       }
       // What an AI assistant said (tes-portal src/watch_ai_answer.js), monthly with the report.
