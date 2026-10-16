@@ -175,6 +175,29 @@
     .mon-token input { flex:1 1 200px; min-width:0; min-height:38px; padding:0 0.75rem; border-radius:10px; border:1px solid var(--line); background:rgba(0,0,0,0.25); color:#fff; font:inherit; font-size:0.88rem; }
     .mon-token .mon-btn { margin-top:0; }
     @media (max-width:480px) { .mon-checks li { grid-template-columns:1fr; gap:0.1rem; } }
+    /* Review requests by email (tes-portal review_booster.js) */
+    .mon-rb { margin-top:1.15rem; }
+    .mon-rb > summary { cursor:pointer; list-style:none; display:flex; align-items:center; gap:0.5rem; font-size:0.7rem; font-weight:700; letter-spacing:0.08em; text-transform:uppercase; color:var(--muted); }
+    .mon-rb > summary::-webkit-details-marker { display:none; }
+    .mon-rb > summary::after { content:"\f078"; font-family:"Font Awesome 6 Free"; font-weight:900; font-size:0.7rem; margin-left:auto; transition:transform .2s; }
+    .mon-rb[open] > summary::after { transform:rotate(180deg); }
+    .mon-rb > summary small { text-transform:none; letter-spacing:0; font-weight:600; color:#6dc882; }
+    .mon-rb-form { display:grid; gap:0.75rem; margin-top:0.85rem; }
+    .mon-rb-form label { display:grid; gap:0.3rem; font-size:0.8rem; font-weight:600; color:#cfe0d2; }
+    .mon-rb-form label small { font-weight:400; color:var(--muted); }
+    .mon-rb-form input, .mon-rb-form textarea { width:100%; min-height:38px; padding:0.55rem 0.75rem; border-radius:10px; border:1px solid var(--line); background:rgba(0,0,0,0.25); color:#fff; font:inherit; font-size:0.88rem; line-height:1.5; resize:vertical; box-sizing:border-box; }
+    .mon-rb-form input:focus, .mon-rb-form textarea:focus { border-color:#4aac65; outline:none; }
+    .mon-rb-acts { display:flex; flex-wrap:wrap; gap:0.5rem; align-items:center; }
+    .mon-rb-acts .mon-btn { margin-top:0; }
+    .mon-btn.go { border-color:rgba(200,152,48,0.55); background:rgba(200,152,48,0.14); color:#f0d48a; }
+    .mon-btn.go:hover { background:rgba(200,152,48,0.24); color:#fff; }
+    .mon-rb-preview { border:1px solid var(--line); border-radius:12px; overflow:hidden; background:#f4f6f4; }
+    .mon-rb-preview p { margin:0; padding:0.5rem 0.8rem; font-size:0.78rem; color:#1c2e22; background:#e4ece5; overflow-wrap:anywhere; }
+    .mon-rb-preview iframe { display:block; width:100%; height:440px; border:0; background:#f4f6f4; }
+    .mon-rb-out { font-size:0.86rem; color:#dfe9e1; line-height:1.55; margin:0; }
+    .mon-rb-out.bad { color:#f0a58f; }
+    .mon-rb-who { list-style:none; margin:0.4rem 0 0; padding:0; display:grid; gap:0.25rem; font-size:0.82rem; color:var(--muted); }
+    .mon-rb-who li { overflow-wrap:anywhere; }
     .mon-inc { list-style:none; margin:0; padding:0; display:grid; gap:0.5rem; }
     .mon-inc li { display:flex; justify-content:space-between; gap:0.75rem; font-size:0.86rem; color:#dfe9e1; }
     .mon-inc li span { color:var(--muted); text-align:right; }
@@ -370,6 +393,8 @@
       if (w.outside) more.appendChild(outsideBox(w.outside));
       if (more.childNodes.length) c.appendChild(more);
       if (w.insights) c.appendChild(connBox(w));
+      if (w.entitled && w.status === 'active' && w.outside && w.outside.listing && w.outside.listing.review_url) c.appendChild(boosterBox(w));
+      else Array.prototype.forEach.call(c.querySelectorAll('.mon-rb-ask'), function (b) { b.remove(); });
       return c;
     }
 
@@ -405,7 +430,7 @@
       var li = el('li');
       li.appendChild(el('b', null, 'Your review link'));
       var span = el('span');
-      span.appendChild(document.createTextNode('Send it to happy customers: it opens Google\u2019s review box for your business. '));
+      span.appendChild(document.createTextNode('Send it to your customers: it opens Google\u2019s review box for your business. '));
       var acts = el('span', 'mon-rv');
       var open = el('a', null, 'Open'); open.href = url; open.target = '_blank'; open.rel = 'noopener';
       var copy = el('button', 'mon-mini', 'Copy link'); copy.type = 'button';
@@ -420,10 +445,151 @@
         qr.hidden = !qr.hidden; qrb.setAttribute('aria-expanded', qr.hidden ? 'false' : 'true');
         if (!qr.hidden && !qr.firstChild) loadQr(function () { new window.QRCode(qr, { text: url, width: 168, height: 168, correctLevel: window.QRCode.CorrectLevel.M }); });
       });
-      acts.appendChild(open); acts.appendChild(copy); acts.appendChild(qrb);
+      var ask = el('button', 'mon-mini mon-rb-ask', 'Ask customers by email'); ask.type = 'button';
+      ask.addEventListener('click', function () {
+        var box = ask.closest('.mon-card') && ask.closest('.mon-card').querySelector('.mon-rb');
+        if (!box) return;
+        box.open = true; box.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      });
+      acts.appendChild(open); acts.appendChild(copy); acts.appendChild(qrb); acts.appendChild(ask);
       span.appendChild(acts); span.appendChild(qr);
       li.appendChild(span);
       return li;
+    }
+
+    // Ask customers for a Google review by email (tes-portal src/review_booster.js). TES
+    // sends each one under the business's name, with replies going to the client. The form
+    // loads when the box is first opened.
+    var RB_SKIP = { opted_out: 'unsubscribed', recent: 'asked in the last 90 days', month_limit: 'past this month’s limit' };
+    var RB_STATUS = { sent: 'sent', queued: 'waiting to send', failed: 'could not send', skipped: 'not sent' };
+    var RB_EMAIL = /[^\s<>(),;:"']+@[^\s<>(),;:"']+/g;
+    function boosterBox(w) {
+      var box = el('details', 'mon-box mon-rb');
+      var sum = el('summary', null, 'Ask customers for a review');
+      sum.appendChild(el('small', null, 'by email'));
+      box.appendChild(sum);
+      var body = el('div');
+      box.appendChild(body);
+      var loaded = false;
+      box.addEventListener('toggle', function () { if (box.open && !loaded) { loaded = true; load(); } });
+      var api = function (b) {
+        return fetch('/portal-api/watches/' + w.id + '/reviews', !b ? { credentials: 'same-origin' } : {
+          method: 'POST', credentials: 'same-origin', headers: { 'content-type': 'application/json' }, body: JSON.stringify(b),
+        }).then(function (r) { return r.json(); });
+      };
+      function load(note) {
+        api().then(function (d) {
+          if (!d || !d.ok) throw new Error('unavailable');
+          body.textContent = '';
+          form(d, note);
+        }).catch(function () { body.textContent = ''; body.appendChild(el('p', 'mon-none', 'Could not load this. Please refresh in a moment.')); });
+      }
+      body.appendChild(el('p', 'mon-none', 'Loading…'));
+
+      function form(d, note) {
+        var L = d.limits;
+        body.appendChild(el('p', 'mon-line', 'Paste your customers’ email addresses. We email each one a short note from you with a button to your Google review box. ' +
+          'It comes from “' + d.business + ' via Tevis Engineering”, replies go to you, and every email has a one-click unsubscribe.'));
+        body.appendChild(el('p', 'mon-line', 'Up to ' + L.per_send + ' at a time and ' + L.month_limit + ' a month (' + L.month_used + ' used this month). Nobody is asked twice in ' +
+          L.repeat_days + ' days. Google does not allow offering anything for a review, or asking only the customers you expect to be happy, so ask everyone you served.'));
+        if (!d.address) {
+          var na = el('p', 'mon-line bad', 'First add your business mailing address on the ');
+          var acc = el('a', null, 'Account page'); acc.href = 'account.html'; acc.style.color = '#6dc882';
+          na.appendChild(acc); na.appendChild(document.createTextNode('. The law requires one in these emails, and we put it at the bottom.'));
+          body.appendChild(na);
+        }
+        var f = el('div', 'mon-rb-form');
+        var field = function (label, hint, input) { var l = el('label', null, label); if (hint) l.appendChild(el('small', null, hint)); l.appendChild(input); f.appendChild(l); return input; };
+        var biz = document.createElement('input'); biz.maxLength = 80; biz.value = d.business;
+        field('Business name', null, biz);
+        var msg = document.createElement('textarea'); msg.rows = 4; msg.maxLength = 1000; msg.value = d.message;
+        field('Your message', 'We add “Hi {first name},” above it and the review button below it. No links, please.', msg);
+        var who = document.createElement('textarea'); who.rows = 5; who.placeholder = 'Jane Smith <jane@example.com>\nbob@example.com';
+        who.autocomplete = 'off'; who.spellcheck = false;
+        field('Customers', 'One per line, or separated by commas. A name is optional.', who);
+        var count = el('p', 'mon-line', '');
+        f.appendChild(count);
+        var acts = el('div', 'mon-rb-acts');
+        var pv = el('button', 'mon-btn', 'Preview'); pv.type = 'button';
+        var go = el('button', 'mon-btn go', 'Send'); go.type = 'button';
+        acts.appendChild(pv); acts.appendChild(go);
+        f.appendChild(acts);
+        var out = el('div');
+        f.appendChild(out);
+        body.appendChild(f);
+        var say = function (text, bad) { out.textContent = ''; out.appendChild(el('p', 'mon-rb-out' + (bad ? ' bad' : ''), text)); };
+        if (note) say(note);
+
+        var addrs = function () { return (who.value.match(RB_EMAIL) || []).length; };
+        var recount = function () {
+          var n = addrs();
+          count.textContent = n ? n + ' address' + (n === 1 ? '' : 'es') + (n > L.per_send ? ': ' + L.per_send + ' at most per send' : '') : '';
+          count.className = 'mon-line' + (n > L.per_send ? ' bad' : '');
+          go.disabled = !d.address || !n || n > L.per_send;
+        };
+        who.addEventListener('input', recount);
+        recount();
+        var words = function (action) { return { action: action, business: biz.value.trim(), message: msg.value, recipients: who.value }; };
+
+        pv.addEventListener('click', function () {
+          pv.disabled = true;
+          api(words('preview')).then(function (r) {
+            pv.disabled = false;
+            if (!r.ok) { say(r.message || 'Could not build the preview.', true); return; }
+            out.textContent = '';
+            var wrap = el('div', 'mon-rb-preview');
+            wrap.appendChild(el('p', null, 'From: ' + r.from + ' · Subject: ' + r.subject));
+            var fr = document.createElement('iframe');
+            fr.setAttribute('sandbox', ''); fr.title = 'Email preview'; fr.srcdoc = r.html;
+            wrap.appendChild(fr);
+            out.appendChild(wrap);
+          }, function () { pv.disabled = false; say('Could not build the preview.', true); });
+        });
+        go.addEventListener('click', function () {
+          var n = addrs();
+          if (!confirm('Email ' + n + ' customer' + (n === 1 ? '' : 's') + ' asking for a Google review?')) return;
+          go.disabled = true; pv.disabled = true; say('Sending…');
+          api(words('send')).then(function (r) {
+            if (!r.ok) { go.disabled = false; pv.disabled = false; say(r.message || 'That did not send. Please try again.', true); return; }
+            var parts = [r.sent ? 'Sent ' + r.sent + '.' : r.accepted ? '' : 'Nothing was sent.'];
+            if (r.queued) parts.push(r.queued + ' will go out tomorrow: we send a limited number each day.');
+            var sk = (r.skipped || []).map(function (x) { return x.email + ' (' + (RB_SKIP[x.reason] || x.reason) + ')'; });
+            if (sk.length) parts.push('Skipped: ' + sk.join(', ') + '.');
+            if ((r.bad || []).length) parts.push('Not an email address: ' + r.bad.join(', ') + '.');
+            if (r.dupes) parts.push(r.dupes + ' listed twice, sent once.');
+            body.textContent = '';
+            body.appendChild(el('p', 'mon-none', 'Loading…'));
+            load(parts.filter(Boolean).join(' '));
+          }, function () { go.disabled = false; pv.disabled = false; say('That did not send. Please try again.', true); });
+        });
+
+        if (d.history.length) {
+          var hd = el('details', 'mon-hist');
+          hd.appendChild(el('summary', null, 'Sent in the last 90 days (' + d.history.length + ')'));
+          var ul = el('ul', 'mon-inc');
+          d.history.forEach(function (h) {
+            var li = el('li'); li.style.display = 'block';
+            var n = h.recipients.length, ok = h.recipients.filter(function (x) { return x.status === 'sent'; }).length;
+            li.appendChild(el('b', null, when(h.created_at) + ': ' + n + ' customer' + (n === 1 ? '' : 's') + (ok === n ? '' : ', ' + ok + ' sent')));
+            var rl = el('ul', 'mon-rb-who');
+            h.recipients.forEach(function (x) { rl.appendChild(el('li', null, (x.name ? x.name + ' · ' : '') + (x.email || '') + ' · ' + (RB_STATUS[x.status] || x.status))); });
+            li.appendChild(rl);
+            ul.appendChild(li);
+          });
+          hd.appendChild(ul);
+          body.appendChild(hd);
+        }
+        if (d.optouts.length) {
+          var od = el('details', 'mon-hist');
+          od.appendChild(el('summary', null, 'Unsubscribed (' + d.optouts.length + ')'));
+          od.appendChild(el('p', 'mon-line', 'These customers asked not to get review requests from you, so we will not email them again.'));
+          var ol = el('ul', 'mon-rb-who');
+          d.optouts.forEach(function (o) { ol.appendChild(el('li', null, (o.masked || 'An address') + ' · ' + day(o.created_at))); });
+          od.appendChild(ol);
+          body.appendChild(od);
+        }
+      }
+      return box;
     }
 
     // What the outside checks found (tes-portal src/watch_outside.js).
