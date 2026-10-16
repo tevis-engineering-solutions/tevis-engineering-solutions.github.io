@@ -608,6 +608,14 @@
       });
     }
 
+    // Copycat sites staff reported to Google (tes-portal src/watch_copycat.js). Unreviewed ones never reach this page.
+    function copycatItems(list, item) {
+      (list || []).forEach(function (c) {
+        item('Site imitating yours', 'We found a site imitating yours: ' + c.domain + '. We reported it to Google on ' + day(c.reported_at) + '.' +
+          (c.google_warns ? ' Google now warns visitors away from it.' : ''), c.google_warns ? '' : 'warn');
+      });
+    }
+
     function outsideBox(o) {
       var box = el('div', 'mon-box');
       box.appendChild(el('h3', null, 'From the outside'));
@@ -620,6 +628,7 @@
       if (o.unsafe) item('Google Safe Browsing', o.unsafe.flagged ? 'Flagged: visitors see a warning' : 'Not flagged', o.unsafe.flagged ? 'bad' : '');
       if (o.dns_changed_at) item('DNS', 'Last changed ' + day(o.dns_changed_at), '');
       if (o.lookalikes) item('Look-alike domains', o.lookalikes.found.length ? o.lookalikes.found.length + ' registered: ' + o.lookalikes.found.slice(0, 3).join(', ') : 'None of the ' + o.lookalikes.checked + ' we check', o.lookalikes_new && o.lookalikes_new.length ? 'warn' : '');
+      copycatItems(o.copycats, item);
       // The business's Google listing, compared with the website weekly (watch_listing.js).
       var gl = o.listing;
       if (gl && (gl.status === 'found' || gl.status === 'set')) {

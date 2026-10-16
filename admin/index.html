@@ -10021,6 +10021,108 @@
       return s;
     }
 
+    // Copycat sites (tes-portal src/watch_copycat.js): look-alikes whose page imitates this
+    // site, with the evidence. Staff report them to Google by hand; nothing goes out on its own.
+    function watchCopycatSection(w) {
+      var s = el('div', 'wi-sec');
+      s.appendChild(el('h4', null, 'Copycat sites'));
+      var body = el('div');
+      s.appendChild(body);
+      body.appendChild(el('p', 'wi-note', 'Loading...'));
+      var VERDICT = { parked: 'parked or for sale', unrelated: 'not imitating this site', no_site: 'no website', yours: 'forwards to this site' };
+      function post(b, okMsg) {
+        return api('/admin/watches/' + w.id + '/copycats', { method: 'POST', body: b }).then(function (x) {
+          if (!x.ok) return x;
+          if (okMsg) toast(okMsg);
+          draw(x.copycats);
+          return x;
+        });
+      }
+      function btn(label, fn) { var b = el('button', 'sb-add', label); b.type = 'button'; b.addEventListener('click', fn); return b; }
+      function reportedBtn(c) {
+        return btn('I reported it', function () {
+          if (!confirm('Mark ' + c.domain + ' as reported to Google today? The client gets one email saying we found it and reported it.')) return;
+          post({ action: 'reported', domain: c.domain }, 'Marked reported').then(function (x) { if (!x.ok) toast(x.message || x.error || 'Could not do it'); });
+        });
+      }
+      function formLink(c, label) {
+        var a = el('a', 'sb-add', label || 'Open Google\'s report form'); a.href = c.form_url; a.target = '_blank'; a.rel = 'noopener noreferrer'; a.style.textDecoration = 'none';
+        return a;
+      }
+      function copycat(c, apiOn) {
+        var box = el('div');
+        box.style.marginBottom = '0.9rem';
+        var head = el('p', 'wi-note');
+        var link = el('a', null, c.domain); link.href = c.final_url || ('https://' + c.domain + '/'); link.target = '_blank'; link.rel = 'noopener noreferrer nofollow';
+        head.appendChild(el('b', null, 'Copycat: '));
+        head.appendChild(link);
+        head.appendChild(document.createTextNode(' (suspected phishing, open with care). Score ' + c.score + ' of 100' + (c.strong ? ', strong match' : '') + '. Found ' + fmtDate(c.found_at) + '.'));
+        box.appendChild(head);
+        if (c.title) box.appendChild(el('p', 'wi-note', 'Its title: "' + c.title + '"'));
+        c.evidence.forEach(function (e) { box.appendChild(el('p', 'wi-note', '• ' + e.text)); });
+        var st = [];
+        if (c.dismissed_at) st.push('Dismissed as not a copycat by ' + c.dismissed_by + ' on ' + fmtDate(c.dismissed_at) + '. The client never sees it.');
+        if (c.reported_at) st.push('Reported to Google ' + fmtDate(c.reported_at) + ' by ' + c.reported_by + (c.report_via === 'api' ? ' through the Submission API' +
+          (c.op_state ? ' (' + c.op_state.toLowerCase() + (c.op_closed_reason ? ': ' + c.op_closed_reason.toLowerCase().replace(/_/g, ' ') : '') + ')' : '') : ' with the form') + '.' +
+          (c.mailed_at ? ' Client emailed ' + fmtDate(c.mailed_at) + '.' : ''));
+        if (!c.dismissed_at) st.push(c.google_flagged_at ? 'Google warns visitors away from it since ' + fmtDate(c.google_flagged_at) + '.'
+          : c.google_checked_at ? 'Google does not warn about it yet (checked ' + fmtDate(c.google_checked_at) + ').' : 'Google\'s lookup has not run on it yet.');
+        st.forEach(function (t) { box.appendChild(el('p', 'wi-note', t)); });
+        var msg = el('p', 'wi-note');
+        var acts = el('div', 'wi-acts');
+        if (!c.dismissed_at && !c.reported_at) {
+          if (apiOn) {
+            acts.appendChild(btn('Report to Google', function () {
+              if (!confirm('Submit ' + c.domain + ' to Google as a site imitating ' + w.host + '? The client gets one email saying it was reported.')) return;
+              post({ action: 'report', domain: c.domain }, 'Reported to Google').then(function (x) {
+                if (x.ok) return;
+                // Not allow-listed (or another refusal): say so plainly and offer the form.
+                msg.textContent = (x.error === 'not_allowed' ? 'Google refused: ' : '') + (x.message || x.error || 'Could not report it') + ' Use the form instead, then press I reported it.';
+                acts.textContent = '';
+                acts.appendChild(formLink(c)); acts.appendChild(reportedBtn(c));
+              });
+            }));
+          } else {
+            acts.appendChild(formLink(c, 'Report to Google'));
+            acts.appendChild(reportedBtn(c));
+            msg.textContent = 'Report to Google opens Google\'s phishing report form with the address filled in. Send it, then press I reported it.';
+          }
+          acts.appendChild(btn('Not a copycat', function () { post({ action: 'dismiss', domain: c.domain }, 'Dismissed'); }));
+        }
+        if (c.dismissed_at) acts.appendChild(btn('Restore', function () { post({ action: 'restore', domain: c.domain }); }));
+        if (apiOn && c.report_via === 'api' && (!c.op_state || c.op_state === 'RUNNING')) acts.appendChild(btn('Ask Google now', function () { post({ action: 'poll', domain: c.domain }); }));
+        acts.appendChild(btn('Open it again', function () { post({ action: 'recheck', domain: c.domain }, 'Checked again'); }));
+        box.appendChild(acts);
+        box.appendChild(msg);
+        return box;
+      }
+      function draw(r) {
+        body.textContent = '';
+        var items = (r && r.items) || [];
+        var cats = items.filter(function (c) { return c.verdict === 'copycat'; });
+        var rest = items.filter(function (c) { return c.verdict !== 'copycat'; });
+        if (!cats.length) body.appendChild(el('p', 'wi-note', items.length ? 'None of the look-alikes imitates this site.'
+          : 'No look-alike opened yet. Each one found is opened once and compared with the home page (phone, business name, wording, logo); parked and unrelated pages do not count.'));
+        cats.forEach(function (c) { body.appendChild(copycat(c, r.api)); });
+        if (rest.length) {
+          var det = el('details');
+          det.appendChild(el('summary', 'wi-note', 'Also opened (' + rest.length + ')'));
+          rest.forEach(function (c) {
+            var row = el('div', 'wi-acts');
+            row.appendChild(el('span', 'wi-note', c.domain + ': ' + (VERDICT[c.verdict] || c.verdict) + (c.verdict === 'unrelated' && c.score ? ' (score ' + c.score + ')' : '') + ', ' + fmtDate(c.checked_at) + '.'));
+            if (c.verdict === 'unrelated' || c.verdict === 'parked') row.appendChild(btn('It is a copycat', function () { post({ action: 'confirm', domain: c.domain }, 'Marked as a copycat'); }));
+            det.appendChild(row);
+          });
+          body.appendChild(det);
+        }
+      }
+      api('/admin/watches/' + w.id + '/copycats').then(function (x) {
+        if (!x || !x.ok) { body.textContent = ''; body.appendChild(el('p', 'wi-note', 'Could not load the copycat list.')); return; }
+        draw(x);
+      });
+      return s;
+    }
+
     function watchInsights(w) {
       var d = el('div', 'wi-drawer');
 
@@ -10092,6 +10194,7 @@
         lines.forEach(function (l) { os.appendChild(el('p', 'wi-note', l)); });
       }
       d.appendChild(os);
+      d.appendChild(watchCopycatSection(w));
 
       // The Google listing (tes-portal src/watch_listing.js): checked weekly against the site.
       // Only our own conclusions are stored; "Check now" reads the live listing (one Places call).
