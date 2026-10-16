@@ -326,6 +326,7 @@
     .sb-tags { display:flex; flex-wrap:wrap; gap:0.3rem; margin-top:0.3rem; }
     .sb-tag { font-size:0.68rem; font-weight:700; letter-spacing:0.03em; padding:0.1rem 0.5rem; border-radius:999px; border:1px solid var(--line); color:var(--muted); white-space:nowrap; }
     .sb-tag.gold { color:#e6c68a; border-color:rgba(200,152,48,0.4); }
+    .sb-tag.warn { color:#f0a58f; border-color:rgba(214,120,90,0.4); }
     .ww-mini { display:grid; gap:0.45rem; margin:0.4rem 0 0.6rem; }
     .ww-mini-row { display:flex; align-items:center; gap:0.6rem; flex-wrap:wrap; font-size:0.84rem; }
     .ww-mini-row b { color:var(--text); font-weight:600; }
@@ -10996,6 +10997,9 @@
         t.appendChild(el('span', 'sb-tag', w.notify === 'staff' ? 'Emails: you only' : 'Emails: ' + (w.lead_id ? 'the lead' : 'the customer')));
         if (w.ends_at) t.appendChild(el('span', 'sb-tag', 'Ends ' + fmtDate(w.ends_at)));
       } else t.appendChild(el('span', 'sb-tag', 'Paid'));
+      // Shopify stores: the daily store check's grade (tes-portal src/watch_store.js).
+      if (w.shop) t.appendChild(el('span', 'sb-tag' + (w.shop.locked || !w.shop.cart_ok ? ' warn' : ''),
+        'Shopify ' + w.shop.grade + (w.shop.locked ? ' · locked' : !w.shop.cart_ok ? ' · cart down' : w.shop.issues ? ' · ' + w.shop.issues + ' issues' : '')));
       return t;
     }
 

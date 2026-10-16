@@ -1,9 +1,8 @@
 /* Free website analysis — shared client.
  *
- * Used by four pages:
+ * Used by three pages:
  *   website_creation.html        the scanner section
  *   free-website-analysis.html   the same scanner, as the whole page
- *   shopify-store-check.html     the same scanner, pitched at Shopify stores (data-focus)
  *   website-report.html          the report the scan opens in a new tab
  *
  * Second file in assets/js/ (after invoices.js), for the same reason: three pages need
@@ -272,7 +271,7 @@
         // rotating advice is the point of the wait, not decoration over an empty one.
         var wait = Math.max(0, MIN_SCAN_MS - (Date.now() - startedAt));
         timers.push(setTimeout(function () {
-          finish({ v: 1, at: Date.now(), url: url, notes: notes, focus: form.getAttribute('data-focus') || '', report: res.data });
+          finish({ v: 1, at: Date.now(), url: url, notes: notes, report: res.data });
         }, wait));
       }).catch(function (err) {
         clearTimers();
@@ -457,9 +456,7 @@
   // ---------------------------------------------------------------- Shopify section
 
   // The Worker reads a Shopify store's public catalog (/products.json) and grades it on
-  // its own scale, so the section only exists when the site is a Shopify store. A scan
-  // started from shopify-store-check.html that turns out not to be Shopify says so,
-  // instead of leaving the visitor wondering where the store section went.
+  // its own scale, so the section only exists when the site is a Shopify store.
   function renderShopify(payload) {
     var section = document.getElementById('tesShopify');
     if (!section) return;
@@ -467,15 +464,7 @@
     var body = document.getElementById('tesShopBody');
     body.textContent = '';
 
-    if (!shop || !shop.ok) {
-      if (payload.focus !== 'shopify') return;
-      section.hidden = false;
-      body.appendChild(el('p', 'tes-none',
-        'We could not find a Shopify store at this address. If your store lives on another '
-        + 'domain, such as shop.yourbusiness.com or yourstore.myshopify.com, scan that address '
-        + 'instead. The website findings above still apply.'));
-      return;
-    }
+    if (!shop || !shop.ok) return;
 
     section.hidden = false;
     var head = el('div', 'tes-shop-head');

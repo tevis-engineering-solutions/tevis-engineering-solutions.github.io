@@ -1686,6 +1686,13 @@
           if (d.videos && d.videos.broken) { warn = true; said.push(d.videos.broken === 1 ? 'A video on the site no longer plays: visitors see an error box where it was.' : d.videos.broken + ' videos on the site no longer play: visitors see error boxes where they were.'); }
           if (lc && lc.rating === 'poor') { warn = true; said.push('Real visitors on phones wait ' + (lc.now / 1000).toFixed(1) + ' seconds for the page, and Google counts that against you in search.'); }
           if (!said.length) said.push('All good right now. Website Watch would check it again in 15 minutes, and every 15 minutes after that.');
+          // Shopify stores: the catalog grade from the same scan, and what Watch adds for a store.
+          if (d.shop && d.shop.store) {
+            said.push(d.shop.locked
+              ? 'It is a Shopify store still behind its password page, so shoppers cannot see it yet.'
+              : 'It is a Shopify store: its catalog grades ' + d.shop.grade + (d.shop.findings.length ? ', starting with "' + d.shop.findings[0].title + '"' : ', with nothing to fix') + '.');
+            said.push('We would also check its cart and product pages daily, and email you when one stops loading, a price changes or the catalog empties.');
+          }
           note(said.join(' '), warn);
           fixes(d.fixes && d.fixes.length ? d.fixes : (d.top || []).map(function (t) { return { title: t }; }));
           pendingBuild = true;

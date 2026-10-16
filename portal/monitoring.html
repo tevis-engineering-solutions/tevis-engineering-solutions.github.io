@@ -142,6 +142,11 @@
     .mon-grade b.d { background:linear-gradient(135deg,#ec9a7b,#c86a4c); }
     .mon-grade div { font-size:0.88rem; color:#dfe9e1; line-height:1.5; }
     .mon-grade small { color:var(--muted); }
+    /* Shopify stores only: the daily store check (tes-portal src/watch_store.js) */
+    .mon-shop { margin-top:0.85rem; }
+    .mon-shop-meta { display:flex; flex-wrap:wrap; gap:0.35rem 0.5rem; margin-top:0.75rem; }
+    .mon-shop-meta span { font-size:0.78rem; color:#cfdcd2; background:var(--card-2); border:1px solid var(--line); border-radius:999px; padding:0.15rem 0.6rem; }
+    .mon-shop-meta span.bad { color:#f0a58f; border-color:rgba(214,120,90,0.4); background:rgba(214,120,90,0.1); }
     .mon-fixes { margin:0.75rem 0 0; padding-left:1.15rem; color:#dfe9e1; font-size:0.88rem; line-height:1.6; }
     /* Visitors, outside checks and Insights connections (tes-portal traffic.js, watch_outside.js, connections.js) */
     .mon-kv { display:grid; grid-template-columns:repeat(auto-fit, minmax(90px, 1fr)); gap:0.6rem; }
@@ -388,6 +393,7 @@
       }
       sub.appendChild(inc);
       c.appendChild(sub);
+      if (w.outside && w.outside.shop) c.appendChild(shopBox(w.outside.shop, w.outside.shop_checked_at));
       var more = el('div', 'mon-sub');
       if (w.traffic_30d) more.appendChild(trafficBox(w.traffic_30d));
       if (w.outside) more.appendChild(outsideBox(w.outside));
@@ -872,6 +878,37 @@
       if (cn.status === 'broken' && cn.last_error) row.appendChild(el('p', 'mon-line bad', 'We lost access: ' + cn.last_error));
       if (acts.childNodes.length) row.appendChild(acts);
       return row;
+    }
+
+    // A Shopify store gets a daily check of its catalog, cart and product pages, from the
+    // store's public pages. Sites that are not stores never get this box.
+    function shopBox(s, at) {
+      var box = el('div', 'mon-box mon-shop');
+      box.appendChild(el('h3', null, 'Your Shopify store'));
+      var g = el('div', 'mon-grade');
+      g.appendChild(el('b', /[CD]/.test(s.grade) ? 'c' : /F/.test(s.grade) ? 'd' : null, s.grade));
+      var gd = el('div');
+      gd.appendChild(document.createTextNode(s.locked ? 'Behind its password page' : 'Catalog ' + s.score + ' / 100'));
+      gd.appendChild(el('br'));
+      gd.appendChild(el('small', null, 'Checked daily' + (at ? ', last ' + ago(at) : '')));
+      g.appendChild(gd);
+      box.appendChild(g);
+      var meta = el('div', 'mon-shop-meta');
+      if (!s.locked) {
+        meta.appendChild(el('span', null, (s.more ? 'First ' : '') + s.products + ' products'));
+        meta.appendChild(el('span', s.sold_out ? 'bad' : null, s.sold_out + ' sold out'));
+      }
+      if (s.cart_ok != null) meta.appendChild(el('span', s.cart_ok ? null : 'bad', s.cart_ok ? 'Cart loading' : 'Cart not loading'));
+      if ((s.price_changes || []).length) meta.appendChild(el('span', null, s.price_changes.length + ' price change' + (s.price_changes.length === 1 ? '' : 's') + ' this month'));
+      box.appendChild(meta);
+      if ((s.findings || []).length) {
+        var ol = el('ol', 'mon-fixes');
+        s.findings.slice(0, 5).forEach(function (f) { ol.appendChild(el('li', null, f.title)); });
+        box.appendChild(ol);
+      } else {
+        box.appendChild(el('p', 'mon-none', 'Photos, descriptions, prices, stock and cart all check out.'));
+      }
+      return box;
     }
 
     function render(watches) {
