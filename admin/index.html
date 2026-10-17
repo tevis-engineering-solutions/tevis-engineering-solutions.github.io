@@ -1019,6 +1019,7 @@
     .worklog-add input[type="text"], .worklog-add input[type="date"] { flex:1 1 8rem; min-width:0; padding:0.5rem 0.6rem; border-radius:8px; border:1px solid var(--line); background:var(--bg); color:var(--text); font-family:inherit; font-size:0.85rem; }
     .worklog-add input[type="file"] { flex:1 1 12rem; min-width:0; font-size:0.78rem; color:var(--muted); }
     .worklog-add button { font-family:"Montserrat",sans-serif; font-size:0.68rem; font-weight:700; text-transform:uppercase; letter-spacing:0.03em; padding:0.5rem 0.8rem; border-radius:999px; border:1px solid var(--line); background:var(--bg); color:var(--text); cursor:pointer; min-height:40px; }
+    .worklog-add .share-now { display:flex; align-items:center; gap:0.3rem; font-size:0.8rem; color:var(--text); cursor:pointer; min-height:40px; white-space:nowrap; }
     .worklog-add button.prim { background:linear-gradient(135deg,var(--gold),#e0b840); color:#0d1710; border-color:transparent; }
     .worklog-bill { display:inline-flex; align-items:center; gap:0.3rem; font-size:0.76rem; color:var(--muted); white-space:nowrap; }
     .worklog .row button, .worklog .row .doclink { font-family:"Montserrat",sans-serif; font-size:0.66rem; font-weight:700; text-transform:uppercase; letter-spacing:0.03em; padding:0.35rem 0.6rem; border-radius:999px; border:1px solid var(--line); background:var(--bg); color:var(--text); cursor:pointer; text-decoration:none; display:inline-flex; align-items:center; min-height:34px; }
@@ -1519,7 +1520,7 @@
     .reply-tools .picked { font-size:0.72rem; color:#9fd3ae; }
     .m-rating { color:var(--gold); letter-spacing:0.1em; }
     .m-closed { font-size:0.76rem; color:#9fd3ae; margin-bottom:0.5rem; }
-    .vis-toggle { font-family:"Montserrat",sans-serif; font-size:0.62rem; font-weight:700; text-transform:uppercase; letter-spacing:0.03em; padding:0.25rem 0.55rem; border-radius:999px; border:1px solid var(--line); background:var(--bg); color:var(--muted); cursor:pointer; }
+    .vis-toggle { font-family:"Montserrat",sans-serif; font-size:0.62rem; font-weight:700; text-transform:uppercase; letter-spacing:0.03em; padding:0.25rem 0.55rem; border-radius:999px; border:1px solid var(--line); background:var(--bg); color:var(--text); cursor:pointer; }
     .vis-toggle.on { color:#0d1710; background:linear-gradient(135deg,var(--gold),#e0b840); border-color:transparent; }
     .newtk { margin-bottom:0.8rem; }
     .newtk .fgrid { margin-top:0.5rem; }
@@ -11877,13 +11878,30 @@
                     label: label.value, note: note.value },
           });
         }).then(function (r) {
-          up.disabled = false;
-          if (!r || !r.ok) return toast((r && r.message) || 'Could not upload (' + ((r && r.error) || 'unknown') + ')');
-          toast('Uploaded ' + f.name);
-          h.reload();
+          if (!r || !r.ok) {
+            up.disabled = false;
+            return toast((r && r.message) || 'Could not upload (' + ((r && r.error) || 'unknown') + ')');
+          }
+          if (!share.checked) {
+            up.disabled = false;
+            toast('Uploaded ' + f.name);
+            return h.reload();
+          }
+          // Same PATCH as the row's share button, so the customer gets the one email.
+          return api('/admin/customer-documents/' + r.id, { method: 'PATCH', body: { customer_visible: true } }).then(function (s) {
+            up.disabled = false;
+            toast(s && s.ok ? 'Uploaded and shared · they get an email' : 'Uploaded, but could not share it. Use Share with customer on the row.');
+            h.reload();
+          });
         }, function () { up.disabled = false; toast('Could not read that file'); });
       });
-      form.appendChild(file); form.appendChild(label); form.appendChild(note); form.appendChild(up);
+      var shareL = el('label', 'share-now');
+      var share = document.createElement('input');
+      share.type = 'checkbox';
+      shareL.appendChild(share);
+      shareL.appendChild(document.createTextNode(' Share with customer now'));
+      shareL.title = 'Puts it in their portal Documents page and emails them once.';
+      form.appendChild(file); form.appendChild(label); form.appendChild(note); form.appendChild(shareL); form.appendChild(up);
       s.appendChild(form);
       return s;
     }
@@ -18188,7 +18206,7 @@
 
     // ---- share toggles on document rows ---------------------------------------
     function visToggle(doc, path, reload) {
-      var b = el('button', 'vis-toggle' + (doc.customer_visible ? ' on' : ''), doc.customer_visible ? 'Visible to customer' : 'Staff only');
+      var b = el('button', 'vis-toggle' + (doc.customer_visible ? ' on' : ''), doc.customer_visible ? 'Shared · Unshare' : 'Share with customer');
       b.type = 'button';
       b.title = doc.customer_visible ? 'The customer can open this from their portal. Click to hide it.' : 'Click to share this into their portal (they get one email).';
       b.addEventListener('click', function () {
