@@ -361,6 +361,18 @@
     .dd-welcome.due { color:#e6c68a; background:rgba(200,152,48,0.1); border-color:rgba(200,152,48,0.35); }
     .dd-welcome > span { flex:1 1 16rem; min-width:0; overflow-wrap:anywhere; }
     .dd-welcome .inv-actions { margin:0; }
+    .dd-deliv { border:1px solid var(--line); border-radius:12px; padding:0.65rem 0.85rem; background:var(--card); }
+    .dd-deliv h3.sb-k { margin:0 0 0.35rem; }
+    .dd-drow { display:flex; flex-wrap:wrap; align-items:center; gap:0.35rem 0.75rem; padding:0.45rem 0; border-top:1px dashed rgba(44,66,50,0.7); font-size:0.82rem; line-height:1.45; }
+    .dd-drow:first-of-type { border-top:0; }
+    .dd-drow > .fa-solid { color:#8fd6a3; }
+    .dd-drow.bad > .fa-solid { color:#f0a58f; }
+    .dd-drow .dd-dtext { flex:1 1 18rem; min-width:0; overflow-wrap:anywhere; }
+    .dd-drow .dd-dtext b { display:block; color:#fff; font-weight:600; }
+    .dd-drow .dd-dtext small { display:block; color:var(--muted); font-size:0.78rem; }
+    .dd-drow .dd-dtext small.ok { color:#8fd6a3; }
+    .dd-drow .dd-dtext small.bad { color:#f0a58f; }
+    .dd-drow .inv-actions { margin:0; }
     .dd-edit { margin:0; }
     .dd-facts { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:0.75rem; }
     .dd-fact { border:1px solid var(--line); border-radius:12px; padding:0.75rem 0.85rem; background:var(--card); min-width:0; }
@@ -9475,6 +9487,8 @@
 
       var wel = ddWelcome(c);
       if (wel) card.appendChild(wel);
+      var dlv = ddDeliveries(c);
+      if (dlv) card.appendChild(dlv);
 
       var form = ddEditForm(c, all.agreements);
       form.hidden = true;
@@ -9527,6 +9541,55 @@
       acts.appendChild(send);
       row.appendChild(acts);
       return row;
+    }
+
+    // The weekly files the routine delivered (tes-portal deliveriesFor): when each was emailed and
+    // to whom, every "Send again" after it, and a button to send it once more.
+    function ddDeliveries(c) {
+      var list = c.deliveries || [], to = c.deliver_to;
+      if (!to || !to.account_id) return null;
+      var box = el('section', 'dd-deliv');
+      box.appendChild(el('h3', 'sb-k', 'Weekly lead reports sent'));
+      if (!list.length) {
+        box.appendChild(el('p', 'dd-muted', 'Nothing delivered to ' + to.email + ' yet. Each week’s file goes out as soon as the last sitting finishes.'));
+        return box;
+      }
+      var when = function (ts) { return ddDay(ts) + ', ' + ddTime(ts); };
+      list.forEach(function (d) {
+        var sends = d.sends || [], first = sends[0], last = sends[sends.length - 1];
+        var emailed = sends.some(function (s) { return s.sent_to; }) || (!sends.length && d.shared_at);
+        var row = el('div', 'dd-drow' + (emailed ? '' : ' bad'));
+        row.appendChild(icon(emailed ? 'fa-circle-check' : 'fa-triangle-exclamation'));
+        var txt = el('div', 'dd-dtext');
+        txt.appendChild(el('b', null, d.label || d.filename));
+        if (d.label) txt.appendChild(el('small', null, d.filename));
+        if (!sends.length) txt.appendChild(el('small', d.shared_at ? 'ok' : 'bad', d.shared_at ? 'Sent ' + when(d.shared_at) : 'Filed ' + when(d.uploaded_at) + ', not emailed'));
+        else {
+          txt.appendChild(el('small', first.sent_to ? 'ok' : 'bad', first.sent_to ? 'Sent ' + when(first.sent_at) + ' to ' + first.sent_to
+            : 'Filed ' + when(first.sent_at) + ', NOT emailed' + (first.not_sent ? ' (' + first.not_sent + ')' : '')));
+          sends.slice(1).forEach(function (s) {
+            txt.appendChild(el('small', s.sent_to ? 'ok' : 'bad', (s.sent_to ? 'Sent again ' + when(s.sent_at) + ' to ' + s.sent_to : 'Send again ' + when(s.sent_at) + ' did NOT go out' + (s.not_sent ? ' (' + s.not_sent + ')' : ''))
+              + (s.actor ? ' by ' + s.actor : '')));
+          });
+        }
+        row.appendChild(txt);
+        var acts = el('div', 'inv-actions'), again = el('button', null, 'Send again');
+        again.type = 'button';
+        again.title = 'Email ' + to.email + ' that this file is in their Documents' + (last ? ' (last sent ' + when(last.sent_at) + ')' : '');
+        again.addEventListener('click', function () {
+          if (!confirm('Email ' + to.email + ' about "' + (d.label || d.filename) + '" again?')) return;
+          again.disabled = true;
+          api('/admin/data-campaigns/' + encodeURIComponent(c.key) + '/deliveries/' + d.id + '/send', { method: 'POST', body: {} }).then(function (x) {
+            again.disabled = false;
+            toast(x.ok ? (x.sent.length ? 'Sent again to ' + x.sent.join(', ') : 'Not sent: ' + (x.not_sent.join(', ') || 'no recipient')) : (x.message || x.error || 'Could not send'));
+            if (x.ok) loadCampaigns();
+          });
+        });
+        acts.appendChild(again);
+        row.appendChild(acts);
+        box.appendChild(row);
+      });
+      return box;
     }
 
     function ddFact(title) { var f = el('section', 'dd-fact'); f.appendChild(el('h3', 'sb-k', title)); return f; }
