@@ -23,6 +23,16 @@
       "autoPort": true
     },
     {
+      "name": "TES Site (python)",
+      "runtimeExecutable": "python",
+      "runtimeArgs": [
+        "-m",
+        "http.server",
+        "5618"
+      ],
+      "port": 5618
+    },
+    {
       "name": "Geo map (static publish)",
       "runtimeExecutable": "python",
       "runtimeArgs": [
@@ -41,6 +51,52 @@
         "C:/dev/tes-portal/scripts/dev-console.mjs"
       ],
       "port": 5590
+    },
+    {
+      "name": "Site + dev Worker (5594)",
+      "runtimeExecutable": "node",
+      "runtimeArgs": [
+        "C:/dev/tes-portal/scripts/dev-console.mjs",
+        "--port",
+        "5594"
+      ],
+      "port": 5594
+    },
+    {
+      "name": "Site + dev Worker, trial plans (5595)",
+      "runtimeExecutable": "node",
+      "runtimeArgs": [
+        "C:/dev/tes-portal/scripts/dev-console.mjs",
+        "--port",
+        "5595",
+        "--plan-ids",
+        "{\"website-watch:site:monthly\":\"P-DEV-M\",\"website-watch:site:annual\":\"P-DEV-A\",\"website-watch:site:monthly:trial\":\"P-DEV-MT\",\"website-watch:site:annual:trial\":\"P-DEV-AT\"}"
+      ],
+      "port": 5595
+    },
+    {
+      "name": "Admin console (slice 6)",
+      "runtimeExecutable": "node",
+      "runtimeArgs": [
+        "C:/dev/worktrees/tes-portal-slice6/scripts/dev-console.mjs",
+        "--port",
+        "5593",
+        "--site",
+        "C:/dev/worktrees/website-slice6"
+      ],
+      "port": 5593
+    },
+    {
+      "name": "Admin console (sourcing branch)",
+      "runtimeExecutable": "node",
+      "runtimeArgs": [
+        "C:/dev/worktrees/tes-portal-sourcing/scripts/dev-console.mjs",
+        "--port",
+        "5592",
+        "--site",
+        "C:/dev/worktrees/website-sourcing"
+      ],
+      "port": 5592
     },
     {
       "name": "3D Shed (vite)",
