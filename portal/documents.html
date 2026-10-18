@@ -100,6 +100,14 @@
     table.hist td.id a.hist-pdf { margin-left:0.4rem; font-family:"Montserrat",sans-serif; font-size:0.62rem; font-weight:700; text-transform:uppercase; letter-spacing:0.05em; color:var(--gold); text-decoration:none; border:1px solid rgba(200,152,48,0.45); border-radius:999px; padding:0.1rem 0.45rem; }
     table.hist td.id a.hist-pdf:hover { background:rgba(200,152,48,0.14); }
     .hist-foot { color:var(--muted); font-size:0.78rem; margin-top:0.6rem; }
+
+    /* --- shared data folder banner (the agreement's folder, while it is active) --- */
+    .dfolder { display:flex; flex-wrap:wrap; gap:1rem 1.2rem; align-items:center; background:linear-gradient(180deg,rgba(200,152,48,0.08),rgba(20,32,25,0.9)); border:1px solid rgba(200,152,48,0.4); border-radius:14px; padding:1.15rem 1.35rem; margin-bottom:1rem; }
+    .dfolder .ic { width:42px; height:42px; border-radius:11px; background:rgba(200,152,48,0.12); border:1px solid rgba(200,152,48,0.3); color:var(--gold); display:grid; place-items:center; font-size:1.1rem; flex-shrink:0; }
+    .dfolder .txt { flex:1 1 16rem; min-width:0; }
+    .dfolder b { display:block; font-family:"Montserrat",sans-serif; color:#fff; font-size:1rem; margin-bottom:0.2rem; }
+    .dfolder p { color:var(--muted); font-size:0.88rem; margin:0; }
+    .dfolder .btn { margin-top:0; }
   </style>
 </head>
 <body>
@@ -139,6 +147,15 @@
     <div class="phead">
       <h1>Documents</h1>
       <p>Files we have shared with you: agreements, quotes, reports, and anything attached to your tickets that we marked for you.</p>
+    </div>
+
+    <div class="dfolder" id="dataFolder" hidden>
+      <div class="ic"><i class="fa-solid fa-folder-tree"></i></div>
+      <div class="txt">
+        <b>Your shared data folder</b>
+        <p>Every crash report PDF by county, each Sunday&rsquo;s lead file, the crash dashboard and the database behind it, in Proton Drive. Updated after each weekend&rsquo;s collection.</p>
+      </div>
+      <a class="btn btn-primary" id="dataFolderOpen"><i class="fa-solid fa-arrow-up-right-from-square"></i> Open folder</a>
     </div>
 
     <div class="state" id="stateBox"><span class="spin"></span><div><b>Loading your documents&hellip;</b>One moment.</div></div>
@@ -201,12 +218,26 @@
       tdocs.forEach(function (f) { tl.appendChild(card(f, API + '/documents/ticket/' + f.id)); });
       document.getElementById('docFoot').hidden = false;
     }
+    // The shared data folder on the customer's active agreement. It goes when the agreement
+    // ends, and a failure here never touches the document list below it.
+    function loadFolder() {
+      fetch(API + '/crash', { credentials: 'same-origin' })
+        .then(function (r) { return r.ok ? r.json() : null; })
+        .then(function (d) {
+          if (!d || !d.ok || !/^https:\/\//.test(d.folder_url || '')) return;
+          var o = document.getElementById('dataFolderOpen');
+          o.href = d.folder_url; o.target = '_blank'; o.rel = 'noopener noreferrer';
+          document.getElementById('dataFolder').hidden = false;
+        })
+        .catch(function () {});
+    }
     TESInvoices.getIdentity().then(function (id) {
       if (!requireSession(id)) return null;
       var display = id.name || id.email.split('@')[0];
       var n = document.getElementById('acctName'), e = document.getElementById('acctEmail'), a = document.getElementById('acctAvatar');
       if (n) n.textContent = display; if (e) e.textContent = id.email;
       if (a) a.textContent = (function (s) { var w = String(s).replace(/@.*/, '').split(/[^A-Za-z]+/).filter(Boolean); return ((w[0] || '').charAt(0) + (w.length > 1 ? w[w.length - 1].charAt(0) : (w[0] || '').charAt(1))).toUpperCase() || 'TE'; })(display);
+      loadFolder();
       return fetch(API + '/documents', { credentials: 'same-origin' }).then(function (r) { return r.ok ? r.json() : null; }).then(function (d) { if (!d || !d.ok) throw new Error('unavailable'); render(d); });
     }).catch(function () { showState('bad', 'fa-solid fa-triangle-exclamation', 'Could not load your documents.', ' Please refresh in a moment.'); });
   })();

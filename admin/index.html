@@ -357,6 +357,22 @@
     .dd-title b { display:block; font-family:"Montserrat",sans-serif; font-size:1rem; color:#fff; }
     .dd-title small { display:block; font-size:0.78rem; color:var(--muted); overflow-wrap:anywhere; }
     .dd-warn { font-size:0.82rem; line-height:1.45; color:#e6c68a; background:rgba(200,152,48,0.1); border:1px solid rgba(200,152,48,0.35); border-radius:10px; padding:0.55rem 0.75rem; }
+    .dd-welcome { display:flex; flex-wrap:wrap; align-items:center; gap:0.5rem 0.75rem; font-size:0.82rem; line-height:1.45; color:var(--text); border:1px solid var(--line); border-radius:10px; padding:0.55rem 0.75rem; background:var(--card); }
+    .dd-welcome.due { color:#e6c68a; background:rgba(200,152,48,0.1); border-color:rgba(200,152,48,0.35); }
+    .dd-welcome > span { flex:1 1 16rem; min-width:0; overflow-wrap:anywhere; }
+    .dd-welcome .inv-actions { margin:0; }
+    .dd-deliv { border:1px solid var(--line); border-radius:12px; padding:0.65rem 0.85rem; background:var(--card); }
+    .dd-deliv h3.sb-k { margin:0 0 0.35rem; }
+    .dd-drow { display:flex; flex-wrap:wrap; align-items:center; gap:0.35rem 0.75rem; padding:0.45rem 0; border-top:1px dashed rgba(44,66,50,0.7); font-size:0.82rem; line-height:1.45; }
+    .dd-drow:first-of-type { border-top:0; }
+    .dd-drow > .fa-solid { color:#8fd6a3; }
+    .dd-drow.bad > .fa-solid { color:#f0a58f; }
+    .dd-drow .dd-dtext { flex:1 1 18rem; min-width:0; overflow-wrap:anywhere; }
+    .dd-drow .dd-dtext b { display:block; color:#fff; font-weight:600; }
+    .dd-drow .dd-dtext small { display:block; color:var(--muted); font-size:0.78rem; }
+    .dd-drow .dd-dtext small.ok { color:#8fd6a3; }
+    .dd-drow .dd-dtext small.bad { color:#f0a58f; }
+    .dd-drow .inv-actions { margin:0; }
     .dd-edit { margin:0; }
     .dd-facts { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:0.75rem; }
     .dd-fact { border:1px solid var(--line); border-radius:12px; padding:0.75rem 0.85rem; background:var(--card); min-width:0; }
@@ -1015,6 +1031,7 @@
     .worklog-add input[type="text"], .worklog-add input[type="date"] { flex:1 1 8rem; min-width:0; padding:0.5rem 0.6rem; border-radius:8px; border:1px solid var(--line); background:var(--bg); color:var(--text); font-family:inherit; font-size:0.85rem; }
     .worklog-add input[type="file"] { flex:1 1 12rem; min-width:0; font-size:0.78rem; color:var(--muted); }
     .worklog-add button { font-family:"Montserrat",sans-serif; font-size:0.68rem; font-weight:700; text-transform:uppercase; letter-spacing:0.03em; padding:0.5rem 0.8rem; border-radius:999px; border:1px solid var(--line); background:var(--bg); color:var(--text); cursor:pointer; min-height:40px; }
+    .worklog-add .share-now { display:flex; align-items:center; gap:0.3rem; font-size:0.8rem; color:var(--text); cursor:pointer; min-height:40px; white-space:nowrap; }
     .worklog-add button.prim { background:linear-gradient(135deg,var(--gold),#e0b840); color:#0d1710; border-color:transparent; }
     .worklog-bill { display:inline-flex; align-items:center; gap:0.3rem; font-size:0.76rem; color:var(--muted); white-space:nowrap; }
     .worklog .row button, .worklog .row .doclink { font-family:"Montserrat",sans-serif; font-size:0.66rem; font-weight:700; text-transform:uppercase; letter-spacing:0.03em; padding:0.35rem 0.6rem; border-radius:999px; border:1px solid var(--line); background:var(--bg); color:var(--text); cursor:pointer; text-decoration:none; display:inline-flex; align-items:center; min-height:34px; }
@@ -1515,7 +1532,7 @@
     .reply-tools .picked { font-size:0.72rem; color:#9fd3ae; }
     .m-rating { color:var(--gold); letter-spacing:0.1em; }
     .m-closed { font-size:0.76rem; color:#9fd3ae; margin-bottom:0.5rem; }
-    .vis-toggle { font-family:"Montserrat",sans-serif; font-size:0.62rem; font-weight:700; text-transform:uppercase; letter-spacing:0.03em; padding:0.25rem 0.55rem; border-radius:999px; border:1px solid var(--line); background:var(--bg); color:var(--muted); cursor:pointer; }
+    .vis-toggle { font-family:"Montserrat",sans-serif; font-size:0.62rem; font-weight:700; text-transform:uppercase; letter-spacing:0.03em; padding:0.25rem 0.55rem; border-radius:999px; border:1px solid var(--line); background:var(--bg); color:var(--text); cursor:pointer; }
     .vis-toggle.on { color:#0d1710; background:linear-gradient(135deg,var(--gold),#e0b840); border-color:transparent; }
     .newtk { margin-bottom:0.8rem; }
     .newtk .fgrid { margin-top:0.5rem; }
@@ -9468,6 +9485,11 @@
       if (to && !to.account_id) card.appendChild(el('div', 'dd-warn', 'No portal account uses ' + to.email + ', so deliveries to it fail. Add the customer, or change customer_email in the PC’s pilot.json.'));
       else if (to && to.on_agreement === false) card.appendChild(el('div', 'dd-warn', 'Deliveries go to ' + to.email + ', which is not on ' + ((ag && ag.holder && ag.holder.name) || 'the agreement holder') + '’s account. Change customer_email in the PC’s pilot.json when their data should open.'));
 
+      var wel = ddWelcome(c);
+      if (wel) card.appendChild(wel);
+      var dlv = ddDeliveries(c);
+      if (dlv) card.appendChild(dlv);
+
       var form = ddEditForm(c, all.agreements);
       form.hidden = true;
       card.appendChild(form);
@@ -9486,6 +9508,88 @@
       card.appendChild(ddRuns(c, all.now));
       if (c.recent.length) card.appendChild(ddRecent(c));
       return card;
+    }
+
+    // The welcome email (Resend, tes-portal welcomeCampaign): the shared folder and when deliveries
+    // arrive, once per recipient. A test copy goes to your Access email and is not the send.
+    var DD_WELCOME_ERR = { no_folder: 'Add a shared data folder to the agreement first', no_account: 'No portal account to send it to',
+      already_sent: 'Already sent to this address', send_failed: 'Resend refused it' };
+    function ddWelcome(c) {
+      var ag = c.agreement, to = c.deliver_to;
+      if (!to || !to.account_id || !ag || !ag.data_folder_url) return null;
+      var sent = c.welcomed_to && c.welcomed_to === String(to.email).toLowerCase();
+      var row = el('div', 'dd-welcome' + (sent ? '' : ' due'));
+      row.appendChild(icon(sent ? 'fa-envelope-circle-check' : 'fa-envelope'));
+      row.appendChild(el('span', null, sent ? 'Welcome email sent to ' + to.email + ' ' + fmt(c.welcomed_at) + '.'
+        : to.email + ' has not had the welcome email yet: the shared folder, and when deliveries arrive.'));
+      var acts = el('div', 'inv-actions'), test = el('button', null, 'Send me a test'), send = el('button', sent ? null : 'prim', sent ? 'Send again' : 'Email the welcome');
+      test.type = send.type = 'button';
+      var post = function (b, body) {
+        b.disabled = true;
+        api('/admin/data-campaigns/' + encodeURIComponent(c.key) + '/welcome', { method: 'POST', body: body }).then(function (x) {
+          b.disabled = false;
+          toast(x.ok ? (x.test ? 'Test copy sent to ' + x.to : 'Welcome emailed to ' + x.to) : (DD_WELCOME_ERR[x.error] || x.message || x.error || 'Could not send'));
+          if (x.ok && !x.test) loadCampaigns();
+        });
+      };
+      test.addEventListener('click', function () { post(test, { test: true }); });
+      send.addEventListener('click', function () {
+        if (!confirm('Email the welcome to ' + to.email + (sent ? ' again' : '') + '?\n\nIt gives them the shared data folder link.')) return;
+        post(send, { again: !!sent });
+      });
+      acts.appendChild(test);
+      acts.appendChild(send);
+      row.appendChild(acts);
+      return row;
+    }
+
+    // The weekly files the routine delivered (tes-portal deliveriesFor): when each was emailed and
+    // to whom, every "Send again" after it, and a button to send it once more.
+    function ddDeliveries(c) {
+      var list = c.deliveries || [], to = c.deliver_to;
+      if (!to || !to.account_id) return null;
+      var box = el('section', 'dd-deliv');
+      box.appendChild(el('h3', 'sb-k', 'Weekly lead reports sent'));
+      if (!list.length) {
+        box.appendChild(el('p', 'dd-muted', 'Nothing delivered to ' + to.email + ' yet. Each week’s file goes out as soon as the last sitting finishes.'));
+        return box;
+      }
+      var when = function (ts) { return ddDay(ts) + ', ' + ddTime(ts); };
+      list.forEach(function (d) {
+        var sends = d.sends || [], first = sends[0], last = sends[sends.length - 1];
+        var emailed = sends.some(function (s) { return s.sent_to; }) || (!sends.length && d.shared_at);
+        var row = el('div', 'dd-drow' + (emailed ? '' : ' bad'));
+        row.appendChild(icon(emailed ? 'fa-circle-check' : 'fa-triangle-exclamation'));
+        var txt = el('div', 'dd-dtext');
+        txt.appendChild(el('b', null, d.label || d.filename));
+        if (d.label) txt.appendChild(el('small', null, d.filename));
+        if (!sends.length) txt.appendChild(el('small', d.shared_at ? 'ok' : 'bad', d.shared_at ? 'Sent ' + when(d.shared_at) : 'Filed ' + when(d.uploaded_at) + ', not emailed'));
+        else {
+          txt.appendChild(el('small', first.sent_to ? 'ok' : 'bad', first.sent_to ? 'Sent ' + when(first.sent_at) + ' to ' + first.sent_to
+            : 'Filed ' + when(first.sent_at) + ', NOT emailed' + (first.not_sent ? ' (' + first.not_sent + ')' : '')));
+          sends.slice(1).forEach(function (s) {
+            txt.appendChild(el('small', s.sent_to ? 'ok' : 'bad', (s.sent_to ? 'Sent again ' + when(s.sent_at) + ' to ' + s.sent_to : 'Send again ' + when(s.sent_at) + ' did NOT go out' + (s.not_sent ? ' (' + s.not_sent + ')' : ''))
+              + (s.actor ? ' by ' + s.actor : '')));
+          });
+        }
+        row.appendChild(txt);
+        var acts = el('div', 'inv-actions'), again = el('button', null, 'Send again');
+        again.type = 'button';
+        again.title = 'Email ' + to.email + ' that this file is in their Documents' + (last ? ' (last sent ' + when(last.sent_at) + ')' : '');
+        again.addEventListener('click', function () {
+          if (!confirm('Email ' + to.email + ' about "' + (d.label || d.filename) + '" again?')) return;
+          again.disabled = true;
+          api('/admin/data-campaigns/' + encodeURIComponent(c.key) + '/deliveries/' + d.id + '/send', { method: 'POST', body: {} }).then(function (x) {
+            again.disabled = false;
+            toast(x.ok ? (x.sent.length ? 'Sent again to ' + x.sent.join(', ') : 'Not sent: ' + (x.not_sent.join(', ') || 'no recipient')) : (x.message || x.error || 'Could not send'));
+            if (x.ok) loadCampaigns();
+          });
+        });
+        acts.appendChild(again);
+        row.appendChild(acts);
+        box.appendChild(row);
+      });
+      return box;
     }
 
     function ddFact(title) { var f = el('section', 'dd-fact'); f.appendChild(el('h3', 'sb-k', title)); return f; }
@@ -11837,13 +11941,30 @@
                     label: label.value, note: note.value },
           });
         }).then(function (r) {
-          up.disabled = false;
-          if (!r || !r.ok) return toast((r && r.message) || 'Could not upload (' + ((r && r.error) || 'unknown') + ')');
-          toast('Uploaded ' + f.name);
-          h.reload();
+          if (!r || !r.ok) {
+            up.disabled = false;
+            return toast((r && r.message) || 'Could not upload (' + ((r && r.error) || 'unknown') + ')');
+          }
+          if (!share.checked) {
+            up.disabled = false;
+            toast('Uploaded ' + f.name);
+            return h.reload();
+          }
+          // Same PATCH as the row's share button, so the customer gets the one email.
+          return api('/admin/customer-documents/' + r.id, { method: 'PATCH', body: { customer_visible: true } }).then(function (s) {
+            up.disabled = false;
+            toast(s && s.ok ? 'Uploaded and shared · they get an email' : 'Uploaded, but could not share it. Use Share with customer on the row.');
+            h.reload();
+          });
         }, function () { up.disabled = false; toast('Could not read that file'); });
       });
-      form.appendChild(file); form.appendChild(label); form.appendChild(note); form.appendChild(up);
+      var shareL = el('label', 'share-now');
+      var share = document.createElement('input');
+      share.type = 'checkbox';
+      shareL.appendChild(share);
+      shareL.appendChild(document.createTextNode(' Share with customer now'));
+      shareL.title = 'Puts it in their portal Documents page and emails them once.';
+      form.appendChild(file); form.appendChild(label); form.appendChild(note); form.appendChild(shareL); form.appendChild(up);
       s.appendChild(form);
       return s;
     }
@@ -18148,7 +18269,7 @@
 
     // ---- share toggles on document rows ---------------------------------------
     function visToggle(doc, path, reload) {
-      var b = el('button', 'vis-toggle' + (doc.customer_visible ? ' on' : ''), doc.customer_visible ? 'Visible to customer' : 'Staff only');
+      var b = el('button', 'vis-toggle' + (doc.customer_visible ? ' on' : ''), doc.customer_visible ? 'Shared · Unshare' : 'Share with customer');
       b.type = 'button';
       b.title = doc.customer_visible ? 'The customer can open this from their portal. Click to hide it.' : 'Click to share this into their portal (they get one email).';
       b.addEventListener('click', function () {
