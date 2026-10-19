@@ -34,7 +34,11 @@ var TES_TAGS = {
   var queue = [];
   // Pages call tesTrack() whether or not tags are configured; without IDs it does nothing.
   window.tesTrack = function (name, params) { queue.push([name, params || {}]); };
-  if (!ids.length) { window.tesTrack = function () {}; return; }
+  // Local copies of the site (dev servers, previews, test runners) must not report to GA4 or Ads:
+  // 712 of 847 GA4 sessions from Oct 1 to 18, 2026 came from localhost.
+  var local = location.protocol === 'file:' ||
+    /^(localhost|127\.\d+\.\d+\.\d+|0\.0\.0\.0|\[::1\])$|\.(localhost|local|test)$/.test(location.hostname);
+  if (!ids.length || local) { window.tesTrack = function () {}; return; }
 
   window.dataLayer = window.dataLayer || [];
   function gtag() { window.dataLayer.push(arguments); }
