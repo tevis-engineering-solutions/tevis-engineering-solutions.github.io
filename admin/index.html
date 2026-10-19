@@ -1196,7 +1196,8 @@
     .fin-table tr.pick { cursor:pointer; }
     .fin-ex-wrap { max-height:26rem; overflow:auto; }
     .fin-ex-wrap thead th { position:sticky; top:0; z-index:1; background:var(--card); cursor:default; }
-    .fin-table.fin-ex { min-width:440px; }
+    .fin-table.fin-ex { min-width:0; }
+    @media (max-width:520px) { .fin-ex th:nth-child(3), .fin-ex td.fin-ex-type { display:none; } }
     .fin-ex tr.fin-ex-group td { padding-top:0.75rem; border-bottom-color:var(--line); font-variant-numeric:tabular-nums; }
     .fin-ex tbody:first-of-type tr.fin-ex-group td { padding-top:0.5rem; }
     .fin-ex tr.fin-ex-group b { font-family:"Montserrat",sans-serif; font-size:0.78rem; font-weight:700; color:var(--text); }
@@ -15072,6 +15073,8 @@
 
       // ---- hours ----
       var hs = finPanel('Hours', hoursOf(st.hours.total_minutes) + ' logged across ' + st.hours.entries + (st.hours.entries === 1 ? ' entry' : ' entries'));
+      // Full width: Expenses below it is full width now, so it has no partner to share a row with.
+      hs.classList.add('wide');
       var ht = el('div', 'tiles');
       finTile(ht, 'Billable', hoursOf(st.hours.billable_minutes), hoursOf(st.hours.total_minutes - st.hours.billable_minutes) + ' non-billable');
       finTile(ht, 'Covered by agreements', hoursOf(st.hours.covered_minutes), 'inside a plan allowance');
@@ -15091,6 +15094,7 @@
         if (st.expenses[p[0]]) exParts.push(money(st.expenses[p[0]]) + ' ' + p[1]);
       });
       var ex = finPanel('Expenses', exParts.join(' · '));
+      ex.classList.add('wide');
       var exWrap = el('div', 'fin-clients');
       var exDonut = el('div', 'fin-donut');
       svgDonut(exDonut, st.expenses.by_category.map(function (c) { return { label: cap(c.category), value: c.cents }; }), { fmt: money, label: 'Expenses by category', empty: 'No expenses this period.' });
@@ -15161,6 +15165,7 @@
             var tr = el('tr');
             var label = expenseLabel(x).replace(/ · [^·]+$/, function (m) { return vre.test(m.slice(3)) ? '' : m; });
             var shortL = label.replace(vre, '') || label;
+            shortL = shortL.charAt(0).toUpperCase() + shortL.slice(1);
             var m = /^(.*?)\s*\(([^()]+)\)\s*$/.exec(shortL);
             var td = el('td', 'fin-ex-name');
             td.appendChild(document.createTextNode(m ? m[1] : shortL));
