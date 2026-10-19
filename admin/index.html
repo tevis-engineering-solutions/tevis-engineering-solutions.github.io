@@ -1425,6 +1425,18 @@
        own; on a phone the panes stack and an open thread replaces the list. */
     .mbx { display:grid; grid-template-columns:minmax(0,340px) minmax(0,1fr); border:1px solid var(--line); border-radius:10px; background:var(--card); overflow:hidden;
       height:calc(100vh - var(--abar-h, 58px) - 56px - 2.6rem); min-height:520px; }
+    .bl-guide { margin-top:1.1rem; border:1px solid var(--line); border-radius:10px; background:var(--card); padding:1rem 1.15rem 1.1rem; }
+    .bl-guide h2 { font-family:"Montserrat",sans-serif; font-size:0.95rem; font-weight:700; letter-spacing:0.02em; display:flex; align-items:center; gap:0.5rem; }
+    .bl-guide h2 i { color:var(--green); }
+    .bl-bottom { margin:0.5rem 0 0.9rem; font-size:0.86rem; color:var(--text); line-height:1.5; }
+    .bl-grid { display:grid; grid-template-columns:repeat(auto-fit, minmax(230px, 1fr)); gap:0.8rem 1.4rem; }
+    .bl-guide h3 { font-size:0.68rem; font-weight:700; letter-spacing:0.08em; text-transform:uppercase; color:var(--muted); margin-bottom:0.35rem; }
+    .bl-guide ul { list-style:none; display:flex; flex-direction:column; gap:0.4rem; }
+    .bl-guide li { font-size:0.8rem; line-height:1.5; color:var(--muted); padding-left:0.85rem; position:relative; }
+    .bl-guide li::before { content:""; position:absolute; left:0; top:0.6em; width:4px; height:4px; border-radius:50%; background:var(--green); }
+    .bl-guide li b { color:var(--text); font-weight:600; }
+    .bl-guide li.bl-wait { color:var(--gold); }
+    .bl-guide li.bl-wait::before { background:var(--gold); }
     .mbx-list { display:flex; flex-direction:column; min-height:0; border-right:1px solid var(--line); background:rgba(9,18,12,0.35); }
     .mbx-lhead { display:flex; align-items:center; justify-content:space-between; gap:0.6rem; padding:0.85rem 1rem; border-bottom:1px solid var(--line); }
     .mbx-lhead h2 { font-family:"Montserrat",sans-serif; font-size:0.95rem; font-weight:700; letter-spacing:0.02em; }
@@ -2596,6 +2608,46 @@
       </section>
       <section id="inboxDetail" class="mbx-read" aria-live="polite"></section>
     </div>
+
+    <!-- How the Twilio business line and the cell work together. Plain markup, nothing loads. -->
+    <section class="bl-guide" aria-labelledby="blGuideHead">
+      <h2 id="blGuideHead"><i class="fa-solid fa-phone-volume" aria-hidden="true"></i> Business line (216)&nbsp;302&#8209;8486: how to use it</h2>
+      <p class="bl-bottom"><b>Bottom line:</b> give customers 302&#8209;8486 only, for calls and texts. It rings your cell first and the AI receptionist covers whatever you miss, so your cell number stays private.</p>
+      <div class="bl-grid">
+        <div>
+          <h3>Calls coming in</h3>
+          <ul>
+            <li><b>Open hours, no calendar event:</b> your cell rings about 10&nbsp;s and says &ldquo;Business line call. Press any key to answer.&rdquo; Press a key to take it.</li>
+            <li><b>Don&rsquo;t want it?</b> Decline or let it ring. The AI answers, takes a message or books a time, and pages you on Telegram.</li>
+            <li><b>After hours or in a meeting:</b> the AI answers right away.</li>
+          </ul>
+        </div>
+        <div>
+          <h3>Calling a customer</h3>
+          <ul>
+            <li>From your cell, call 302&#8209;8486, dial their 10&#8209;digit number, then <b>#</b>. They see 302&#8209;8486 as &ldquo;Tevis Eng Sol&rdquo;.</li>
+            <li>Stay silent for 8&nbsp;s instead and you reach the AI (handy for testing it).</li>
+            <li>Don&rsquo;t call customers straight from your cell. That shows them your personal number.</li>
+          </ul>
+        </div>
+        <div>
+          <h3>Texting</h3>
+          <ul>
+            <li>Customer texts reach your cell as &ldquo;(216) 555&#8209;0191: message&rdquo;.</li>
+            <li><b>Reply:</b> text 302&#8209;8486 and it goes to whoever texted last. <b>Someone else:</b> start with their number, like &ldquo;2165550191: On my way&rdquo;.</li>
+            <li><b>Texting someone first?</b> Ask before you send: &ldquo;Can Tevis Engineering Solutions text you at this number? Reply STOP to opt out.&rdquo; Note the yes and the date.</li>
+            <li class="bl-wait">Texts start once carriers approve the campaign (submitted Oct&nbsp;19; usually 1&ndash;3 weeks).</li>
+          </ul>
+        </div>
+        <div>
+          <h3>Afterwards</h3>
+          <ul>
+            <li>AI calls and voicemails show up here in the Inbox with the recording, transcript and summary. Call back from the business line.</li>
+            <li><b>Cost:</b> about $5 a month in Twilio fees (Inventory, vendor Twilio) plus a cent or two a minute. A dial-out is billed on both legs.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
   </main>
 
   <div id="viewTickets">
@@ -5494,6 +5546,58 @@
       });
     }
 
+    // A "Text ..." button from the business line (tes-portal src/sms.js). It starts
+    // disabled and asks /admin/sms/check whether the text can go; when it cannot, the
+    // reason is on the button (no mobile, no OK to texts, replied STOP). With a number
+    // but no OK yet, a "Record text OK" button sits beside it, so staff can note the
+    // customer's yes (and how they gave it) without leaving the page.
+    //   container: where the buttons go. query: 'invoice=12' or 'appointment=7&which=reminder'.
+    //   send(): the POST, returning the api() promise. who: {account_id, email} for the OK.
+    function smsAction(container, label, query, send, who, done) {
+      var b = el('button', null, label);
+      b.type = 'button'; b.disabled = true; b.title = 'Checking for a mobile number…';
+      container.appendChild(b);
+      var okBtn = null;
+      function refresh() {
+        api('/admin/sms/check?' + query).then(function (c) {
+          if (okBtn) { okBtn.remove(); okBtn = null; }
+          if (!c.ok) { b.title = 'Could not check texting'; return; }
+          b.disabled = !c.can;
+          b.title = c.can ? 'Text to ' + c.phone : c.message;
+          if (!c.can && c.reason === 'no_opt_in' && c.phone) {
+            okBtn = el('button', 'linkish', 'Record text OK');
+            okBtn.type = 'button';
+            okBtn.title = 'The customer agreed to texts at ' + c.phone;
+            okBtn.addEventListener('click', function () {
+              var how = prompt('Did the customer agree to texts at ' + c.phone + '?\n\nHow did they say yes? One of: ' +
+                (c.sources || []).join(', ') + '\n\n(A note goes on file with your name.)', 'verbal');
+              if (!how) return;
+              var note = prompt('Note (optional): when, and about what', '');
+              if (note === null) return;
+              api('/admin/sms/consent', { method: 'POST', body: { phone: c.phone, account_id: (who && who.account_id) || null, email: (who && who.email) || null,
+                opt_in: true, source: how.trim(), note: note } }).then(function (r) {
+                toast(r.ok ? 'Texts OK recorded for ' + r.phone : (r.message || 'Could not record it'));
+                refresh();
+              });
+            });
+            b.insertAdjacentElement('afterend', okBtn);
+          }
+        });
+      }
+      b.addEventListener('click', function () {
+        if (!confirm(label + ' to ' + b.title.replace(/^Text to /, '') + ' now?')) return;
+        b.disabled = true;
+        send().then(function (r) {
+          b.disabled = false;
+          if (!r.ok) { toast(r.message || SEND_ERROR[r.error] || 'Could not text (' + (r.error || 'unknown') + ')'); refresh(); return; }
+          toast('Texted ' + r.phone + (r.first ? ' (first text: STOP line added)' : ''));
+          if (done) done(r);
+        });
+      });
+      refresh();
+      return b;
+    }
+
     function copyPayLink(v) {
       api('/admin/invoices/' + v.id + '/paylink', { method: 'POST', body: {} }).then(function (r) {
         if (!r.ok) return toast('Could not mint a link');
@@ -6222,6 +6326,12 @@
         var send = act(v.sent_at ? 'Resend invoice' : 'Email invoice', 'prim', function () {
           sendInvoiceMail(v, send, function () { loadInvoices(); });
         });
+      }
+      if (v.status === 'open' || v.status === 'paid') {
+        var paidInv = v.status === 'paid';
+        smsAction(acts, paidInv ? 'Text receipt' : 'Text invoice', 'invoice=' + v.id, function () {
+          return api('/admin/invoices/' + v.id + (paidInv ? '/text-receipt' : '/text'), { method: 'POST', body: {} });
+        }, { account_id: v.account_id, email: v.email }, function () { loadInvoices(); });
       }
       if (v.status === 'open' || v.status === 'pending') {
         act('Copy pay link', null, function () { copyPayLink(v); });
@@ -7229,6 +7339,13 @@
             };
             go();
           });
+          var apptWho = { account_id: a.account_id, email: a.email };
+          smsAction(acts, 'Text confirmation', 'appointment=' + id, function () {
+            return api('/admin/appointments/' + id + '/text', { method: 'POST', body: { which: 'confirm' } });
+          }, apptWho, function () { openAppointment(id); });
+          smsAction(acts, 'Text reminder', 'appointment=' + id + '&which=reminder', function () {
+            return api('/admin/appointments/' + id + '/text', { method: 'POST', body: { which: 'reminder' } });
+          }, apptWho, function () { openAppointment(id); });
           aact('Cancel', 'danger', function () {
             var why = prompt('Cancel this? The customer gets a cancellation and their calendar clears.\n\nReason (optional):', '');
             if (why === null) return;
