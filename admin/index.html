@@ -1194,6 +1194,18 @@
     .fin-table td { padding:0.45rem 0.5rem; border-bottom:1px solid rgba(44,66,50,0.6); }
     .fin-table td.warn { color:var(--gold); }
     .fin-table tr.pick { cursor:pointer; }
+    .fin-ex-wrap { max-height:26rem; overflow:auto; }
+    .fin-ex-wrap thead th { position:sticky; top:0; z-index:1; background:var(--card); cursor:default; }
+    .fin-table.fin-ex { min-width:440px; }
+    .fin-ex tr.fin-ex-group td { padding-top:0.75rem; border-bottom-color:var(--line); font-variant-numeric:tabular-nums; }
+    .fin-ex tbody:first-of-type tr.fin-ex-group td { padding-top:0.5rem; }
+    .fin-ex tr.fin-ex-group b { font-family:"Montserrat",sans-serif; font-size:0.78rem; font-weight:700; color:var(--text); }
+    .fin-ex tr.fin-ex-group span { margin-left:0.5rem; font-size:0.7rem; color:var(--muted); }
+    .fin-ex tr.fin-ex-group td.num { font-weight:700; color:var(--text); }
+    .fin-ex td.fin-ex-date { color:var(--muted); white-space:nowrap; width:4.2rem; }
+    .fin-ex td.fin-ex-name { line-height:1.35; }
+    .fin-ex td.fin-ex-name small { display:block; font-size:0.7rem; color:var(--muted); }
+    .fin-ex td.fin-ex-type { color:var(--muted); white-space:nowrap; font-size:0.74rem; }
     .fin-table tr.pick:hover td, .fin-table tr.hi td { background:rgba(74,172,101,0.09); }
     .kbd-list { display:grid; gap:0.35rem; margin-top:0.5rem; }
     .kbd-row { display:flex; align-items:baseline; gap:0.6rem; }
@@ -15073,12 +15085,16 @@
       grid.appendChild(hs);
 
       // ---- expenses ----
-      var ex = finPanel('Expenses', money(st.expenses.total_cents) + ' · ' + money(st.expenses.purchases_cents) + ' equipment · ' + money(st.expenses.recurring_cents) + ' subscriptions · ' + money(st.expenses.ledger_cents) + ' card and cash · ' + money(st.expenses.paypal_cents) + ' PayPal');
+      // Only the sources that have money in them; a row of "$0.00 PayPal" says nothing.
+      var exParts = [money(st.expenses.total_cents) + ' total'];
+      [['purchases_cents', 'one-time'], ['recurring_cents', 'subscriptions'], ['ledger_cents', 'card and cash'], ['paypal_cents', 'PayPal']].forEach(function (p) {
+        if (st.expenses[p[0]]) exParts.push(money(st.expenses[p[0]]) + ' ' + p[1]);
+      });
+      var ex = finPanel('Expenses', exParts.join(' · '));
       var exWrap = el('div', 'fin-clients');
       var exDonut = el('div', 'fin-donut');
       svgDonut(exDonut, st.expenses.by_category.map(function (c) { return { label: cap(c.category), value: c.cents }; }), { fmt: money, label: 'Expenses by category', empty: 'No expenses this period.' });
       exWrap.appendChild(exDonut);
-      var exList = el('div', 'fin-list');
       // Four kinds reach this list and only three had a label, so ledger rows -- the
       // Chase card and cash, which is most of what TES spends -- read "PayPal purchase".
       function EXPENSE_KIND(x) {
@@ -15086,6 +15102,13 @@
         if (x.kind === 'recurring') return 'subscription charge';
         if (x.kind === 'ledger') return x.account_label || 'card or cash';
         return 'PayPal purchase';
+      }
+      // The short form for the table's Type column.
+      function EXPENSE_TYPE(x) {
+        if (x.kind === 'purchase') return 'One-time';
+        if (x.kind === 'recurring') return 'Subscription';
+        if (x.kind === 'ledger') return x.account_label || 'Card or cash';
+        return 'PayPal';
       }
       // The server fills `name` and `vendor` from whatever the source had, and both
       // fall back: a PayPal row with no subject is named "PayPal purchase", a card row
@@ -15105,14 +15128,59 @@
         });
         return parts.join(' · ') || EXPENSE_KIND(x);
       }
-      st.expenses.items.slice(0, 60).forEach(function (x) {
-        var right = el('b', 'num', money(x.cents));
-        exList.appendChild(row(expenseLabel(x),
-          fmtDate(x.ts) + ' · ' + EXPENSE_KIND(x) + (x.tag ? ' · ' + x.tag : ''),
-          right, x.item_id ? function () { showView('inventory'); var go = function () { flashInvt(x.item_id); }; if (invtAll.length) go(); else loadInventory().then(go); } : null));
-      });
-      if (!st.expenses.items.length) exList.appendChild(el('div', 'row-sub', 'Nothing spent this period. Purchases come from the Inventory tab (TES-paid items) and from PayPal rows marked as expenses.'));
-      exWrap.appendChild(exList);
+      // One table, grouped by vendor (largest first) with a subtotal line each. Under a
+      // vendor heading the name drops the vendor it starts with ("Twilio A2P brand..."
+      // under Twilio reads "A2P brand..."), and a trailing "(...)" becomes muted detail.
+      var exTw = el('div', 'fin-table-wrap fin-ex-wrap');
+      if (!st.expenses.items.length) {
+        exTw.appendChild(el('div', 'row-sub', 'Nothing spent this period. Purchases come from the Inventory tab (TES-paid items) and from PayPal rows marked as expenses.'));
+      } else {
+        var groups = {};
+        st.expenses.items.forEach(function (x) {
+          var v = String(x.vendor || '').trim() || (x.kind === 'ledger' ? (x.account_label || 'Card or cash') : x.kind === 'purchase' || x.kind === 'recurring' ? 'Other' : 'PayPal');
+          var key = v.toLowerCase();
+          (groups[key] = groups[key] || { vendor: v, cents: 0, items: [] }).items.push(x);
+          groups[key].cents += x.cents;
+        });
+        var gl = Object.keys(groups).map(function (k) { return groups[k]; }).sort(function (a, b) { return b.cents - a.cents; });
+        var et = el('table', 'fin-table fin-ex');
+        var eh = el('thead'); var ehr = el('tr');
+        [['', 'Date'], ['', 'Expense'], ['', 'Type'], ['num', 'Amount']].forEach(function (c) { ehr.appendChild(el('th', c[0], c[1])); });
+        eh.appendChild(ehr); et.appendChild(eh);
+        gl.forEach(function (g) {
+          var gb = el('tbody');
+          var gr = el('tr', 'fin-ex-group');
+          var gtd = el('td'); gtd.colSpan = 3;
+          gtd.appendChild(el('b', null, g.vendor));
+          gtd.appendChild(el('span', null, g.items.length + (g.items.length === 1 ? ' item' : ' items')));
+          gr.appendChild(gtd);
+          gr.appendChild(el('td', 'num', money(g.cents)));
+          gb.appendChild(gr);
+          var vre = new RegExp('^' + g.vendor.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '\\b[\\s:,·-]*', 'i');
+          g.items.slice().sort(function (a, b) { return b.ts - a.ts; }).forEach(function (x) {
+            var tr = el('tr');
+            var label = expenseLabel(x).replace(/ · [^·]+$/, function (m) { return vre.test(m.slice(3)) ? '' : m; });
+            var shortL = label.replace(vre, '') || label;
+            var m = /^(.*?)\s*\(([^()]+)\)\s*$/.exec(shortL);
+            var td = el('td', 'fin-ex-name');
+            td.appendChild(document.createTextNode(m ? m[1] : shortL));
+            if (m) td.appendChild(el('small', null, m[2]));
+            td.title = label + (x.tag ? ' · ' + x.tag : '');
+            tr.appendChild(el('td', 'fin-ex-date', fmtDate(x.ts).replace(new RegExp(',? ' + new Date().getFullYear() + '$'), '')));
+            tr.appendChild(td);
+            tr.appendChild(el('td', 'fin-ex-type', EXPENSE_TYPE(x)));
+            tr.appendChild(el('td', 'num', money(x.cents)));
+            if (x.item_id) {
+              tr.classList.add('pick');
+              tr.addEventListener('click', function () { showView('inventory'); var go = function () { flashInvt(x.item_id); }; if (invtAll.length) go(); else loadInventory().then(go); });
+            }
+            gb.appendChild(tr);
+          });
+          et.appendChild(gb);
+        });
+        exTw.appendChild(et);
+      }
+      exWrap.appendChild(exTw);
       ex.appendChild(exWrap);
       grid.appendChild(ex);
 
