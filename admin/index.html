@@ -9682,7 +9682,7 @@
     }
 
     // The weekly files the routine delivered (tes-portal deliveriesFor): when each was emailed and
-    // to whom, every "Send again" after it, and a button to send it once more.
+    // to whom, every "Send again" after it, any texts, and buttons to email or text it once more.
     function ddDeliveries(c) {
       var list = c.deliveries || [], to = c.deliver_to;
       if (!to || !to.account_id) return null;
@@ -9710,6 +9710,12 @@
               + (s.actor ? ' by ' + s.actor : '')));
           });
         }
+        (d.texts || []).forEach(function (t) {
+          var okT = t.status === 'queued';
+          txt.appendChild(el('small', okT ? 'ok' : 'bad', (okT ? 'Texted ' + when(t.sent_at) + ' to ' + fmtPhone(t.phone)
+            : 'Text ' + when(t.sent_at) + ' did NOT go out' + (t.status === 'opted_out' ? ' (replied STOP)' : t.error ? ' (' + t.error + ')' : ''))
+            + (t.actor && t.actor !== 'crash-pilot' ? ' by ' + t.actor : '')));
+        });
         row.appendChild(txt);
         var acts = el('div', 'inv-actions'), again = el('button', null, 'Send again');
         again.type = 'button';
@@ -9724,6 +9730,10 @@
           });
         });
         acts.appendChild(again);
+        // A text too (tes-portal src/sms.js), when the customer agreed to texts.
+        smsAction(acts, 'Text', 'document=' + d.id, function () {
+          return api('/admin/data-campaigns/' + encodeURIComponent(c.key) + '/deliveries/' + d.id + '/text', { method: 'POST', body: {} });
+        }, { account_id: to.account_id, email: to.email }, function () { loadCampaigns(); });
         row.appendChild(acts);
         box.appendChild(row);
       });
