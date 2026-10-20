@@ -227,6 +227,7 @@
           <div class="cf-turnstile" data-sitekey="0x4AAAAAAEfjPSABvMOUzIl3" data-theme="dark" data-size="flexible"></div>
           <button class="btn btn-primary" type="submit" id="sendBtn"><i class="fa-solid fa-paper-plane"></i> Email me a sign-in link</button>
           <button class="btn btn-secondary" type="submit" id="smsBtn"><i class="fa-solid fa-mobile-screen-button"></i> Text me a code instead</button>
+          <p class="auth-consent">Texting works once you have turned on texts: sign in by email once and we will offer to set it up. Until then, we email your code instead.</p>
         </form>
 
         <form id="codeForm" class="auth-form" hidden>
@@ -501,7 +502,7 @@
         // otherwise this page becomes a way to test which emails have accounts.
         // The text request falls back to email on the Worker, for the same reason.
         say(byText
-          ? 'If that address has an account, a code is on the way: by text if your account has a mobile number set up for texts, otherwise by email.'
+          ? 'If that address has an account, a code is on the way. It goes to your phone if you have turned on texts; if you have not yet, it went to your email. Sign in with it and we will offer to set up texts for next time.'
           : 'If that address has an account, a sign-in link and code are on the way.');
         emailForm.hidden = true;
         codeForm.hidden = false;
