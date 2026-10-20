@@ -197,9 +197,33 @@
 
       <section class="pcard">
         <h2><i class="fa-solid fa-shield-halved"></i> Sign-in &amp; security</h2>
-        <div class="secline"><i class="fa-solid fa-circle-check"></i><span>You sign in with a one-time link or a 6-digit code sent to your email &mdash; there is no password to lose.</span></div>
+        <div class="secline"><i class="fa-solid fa-circle-check"></i><span>You sign in with a one-time link or a 6-digit code sent to your email or phone &mdash; there is no password to lose.</span></div>
         <div class="secline"><i class="fa-solid fa-circle-check"></i><span>Tevis Engineering never sees or stores a password for your account.</span></div>
         <div class="secline"><i class="fa-solid fa-circle-check"></i><span>Sessions expire automatically, so an unattended device won't stay signed in.</span></div>
+
+        <p class="fsub">Texts</p>
+        <p class="note actnote" id="smsState">Checking&hellip;</p>
+        <div class="actrow" id="smsActions" hidden>
+          <button type="button" class="btn btn-ghost" id="smsSetup"><i class="fa-solid fa-mobile-screen-button"></i> Set up texts</button>
+          <button type="button" class="btn btn-ghost" id="smsOff" hidden><i class="fa-solid fa-comment-slash"></i> Turn off texts</button>
+        </div>
+        <form id="smsForm" hidden>
+          <div class="field" style="margin-top:0.9rem;">
+            <label for="smsPhone">Mobile number</label>
+            <input id="smsPhone" type="tel" inputmode="tel" autocomplete="tel-national" placeholder="(216) 555-0100">
+            <span class="hint">By tapping Send code you agree to receive sign-in codes and account texts from Tevis Engineering Solutions at this number. Message frequency varies. Msg &amp; data rates may apply. Reply STOP to opt out, HELP for help. <a href="../privacy_policy.html#text-messages" style="color:var(--green);">Text message terms</a>.</span>
+          </div>
+          <button type="submit" class="btn btn-primary" id="smsSend"><i class="fa-solid fa-paper-plane"></i> Send code</button>
+        </form>
+        <form id="smsCodeForm" hidden>
+          <div class="field" style="margin-top:0.9rem;">
+            <label for="smsCode">6-digit code we texted</label>
+            <input id="smsCode" type="text" inputmode="numeric" pattern="[0-9]{6}" maxlength="6" autocomplete="one-time-code" placeholder="000000">
+          </div>
+          <button type="submit" class="btn btn-primary" id="smsConfirm"><i class="fa-solid fa-check"></i> Confirm</button>
+        </form>
+        <p class="note" id="smsMsg" role="status" aria-live="polite"></p>
+
         <a class="btn btn-ghost signout-link" href="#" style="margin-top:0.6rem;"><i class="fa-solid fa-right-from-bracket"></i> Sign out</a>
       </section>
 
@@ -374,6 +398,80 @@
           prefRows.appendChild(rowEl);
         });
       }
+      // ---- texts: sign-in codes and account texts to the customer's mobile ----
+      // Turning them on takes a code texted to the number, so nobody can add a phone
+      // they do not hold. Turning them off covers every kind of text, as STOP would.
+      var smsState = document.getElementById('smsState');
+      var smsActions = document.getElementById('smsActions');
+      var smsForm = document.getElementById('smsForm');
+      var smsCodeForm = document.getElementById('smsCodeForm');
+      var smsMsg = document.getElementById('smsMsg');
+
+      function renderSms(r) {
+        smsForm.hidden = smsCodeForm.hidden = true;
+        if (r.on) {
+          smsState.textContent = 'Texts are on for ' + r.phone + '. On the sign-in page, choose “Text me a code instead” to get your code there.';
+        } else if (r.available === false) {
+          smsState.textContent = 'Texts are not available right now.';
+          smsActions.hidden = true;
+          return;
+        } else {
+          smsState.textContent = 'Get your sign-in code by text instead of email, plus texts about your invoices and appointments.';
+        }
+        document.getElementById('smsPhone').value = r.on ? '' : (r.phone || '');
+        smsActions.hidden = false;
+        document.getElementById('smsSetup').hidden = !!r.on;
+        document.getElementById('smsOff').hidden = !r.on;
+      }
+
+      api('GET', '/sms/status').then(function (r) {
+        if (r.ok) renderSms(r); else smsState.textContent = 'Could not load your text settings.';
+      }).catch(function () { smsState.textContent = 'Could not load your text settings.'; });
+
+      document.getElementById('smsSetup').addEventListener('click', function () {
+        smsActions.hidden = true;
+        smsForm.hidden = false;
+        say(smsMsg, '');
+        document.getElementById('smsPhone').focus();
+      });
+
+      smsForm.addEventListener('submit', function (ev) {
+        ev.preventDefault();
+        var btn = document.getElementById('smsSend');
+        btn.disabled = true;
+        say(smsMsg, 'Sending…');
+        api('POST', '/sms/enroll', { phone: document.getElementById('smsPhone').value }).then(function (r) {
+          btn.disabled = false;
+          if (!r.ok) { say(smsMsg, r.message || 'Could not send the code. Please try again.', 'bad'); return; }
+          say(smsMsg, 'Code sent to ' + r.phone + '.', 'ok');
+          smsForm.hidden = true;
+          smsCodeForm.hidden = false;
+          document.getElementById('smsCode').focus();
+        }).catch(function () { btn.disabled = false; say(smsMsg, 'Could not send the code. Please try again.', 'bad'); });
+      });
+
+      smsCodeForm.addEventListener('submit', function (ev) {
+        ev.preventDefault();
+        var btn = document.getElementById('smsConfirm');
+        btn.disabled = true;
+        api('POST', '/sms/enroll/confirm', { code: document.getElementById('smsCode').value }).then(function (r) {
+          btn.disabled = false;
+          if (!r.ok) { say(smsMsg, r.message || 'That code did not work. Please try again.', 'bad'); return; }
+          document.getElementById('smsCode').value = '';
+          renderSms(r);
+          say(smsMsg, 'Texts are set up.', 'ok');
+        }).catch(function () { btn.disabled = false; say(smsMsg, 'That code did not work. Please try again.', 'bad'); });
+      });
+
+      document.getElementById('smsOff').addEventListener('click', function () {
+        if (!confirm('Turn off all texts from Tevis Engineering? Sign-in codes, invoices and appointment texts will come by email only.')) return;
+        api('POST', '/sms/optout').then(function (r) {
+          if (!r.ok) { say(smsMsg, 'Could not turn texts off. Please try again.', 'bad'); return; }
+          renderSms(r);
+          say(smsMsg, 'Texts are off.', 'ok');
+        }).catch(function () { say(smsMsg, 'Could not turn texts off. Please try again.', 'bad'); });
+      });
+
       api('GET', '/prefs').then(function (r) { if (r.ok && r.prefs) renderPrefs(r); else prefRows.textContent = 'Could not load your preferences.'; }).catch(function () { prefRows.textContent = 'Could not load your preferences.'; });
     })();
   </script>

@@ -82,6 +82,10 @@
     .auth-back:hover { color:var(--green); }
     .auth-status { min-height:1.2rem; font-size:0.85rem; color:var(--green); margin-bottom:0.3rem; }
     .auth-status.err { color:#f19a9a; }
+    .auth-consent { font-size:0.74rem; color:var(--muted); line-height:1.45; }
+    .auth-consent a { color:var(--green); }
+    .auth-offer-h { font-size:1rem; font-weight:700; text-align:center; }
+    .auth-offer-p { font-size:0.85rem; color:var(--muted); text-align:center; }
     .method { display:inline-flex; align-items:center; gap:0.5rem; font-size:0.82rem; color:#cfe0d2; background:var(--card-2); border:1px solid var(--line); border-radius:999px; padding:0.4rem 0.85rem; }
     .method i { color:var(--gold); }
     .auth-note { margin-top:1rem; font-size:0.82rem; color:var(--muted); text-align:center; }
@@ -222,6 +226,7 @@
           <input class="auth-input" id="loginEmail" name="email" type="email" required autocomplete="email" placeholder="you@yourcompany.com">
           <div class="cf-turnstile" data-sitekey="0x4AAAAAAEfjPSABvMOUzIl3" data-theme="dark" data-size="flexible"></div>
           <button class="btn btn-primary" type="submit" id="sendBtn"><i class="fa-solid fa-paper-plane"></i> Email me a sign-in link</button>
+          <button class="btn btn-secondary" type="submit" id="smsBtn"><i class="fa-solid fa-mobile-screen-button"></i> Text me a code instead</button>
         </form>
 
         <form id="codeForm" class="auth-form" hidden>
@@ -231,8 +236,26 @@
           <button class="auth-back" type="button" id="backBtn">Use a different email</button>
         </form>
 
+        <!-- After signing in, when the account has no texting number yet (smsOffer from /auth/verify). -->
+        <form id="smsForm" class="auth-form" hidden>
+          <p class="auth-offer-h">Sign in by text next time?</p>
+          <p class="auth-offer-p">Add your mobile number and you can get your sign-in code by text instead of email.</p>
+          <label class="auth-label" for="smsPhone">Mobile number</label>
+          <input class="auth-input" id="smsPhone" name="phone" type="tel" inputmode="tel" autocomplete="tel-national" placeholder="(216) 555-0100">
+          <p class="auth-consent">By tapping Send code you agree to receive sign-in codes and account texts from Tevis Engineering Solutions at this number. Message frequency varies. Msg &amp; data rates may apply. Reply STOP to opt out, HELP for help. <a href="privacy_policy.html#text-messages">Text message terms</a>.</p>
+          <button class="btn btn-primary" type="submit" id="smsSendBtn"><i class="fa-solid fa-mobile-screen-button"></i> Send code</button>
+          <button class="auth-back" type="button" id="smsSkipBtn">Not now</button>
+        </form>
+
+        <form id="smsCodeForm" class="auth-form" hidden>
+          <label class="auth-label" for="smsCode">Enter the 6-digit code we texted</label>
+          <input class="auth-input auth-code" id="smsCode" name="code" type="text" inputmode="numeric" pattern="[0-9]{6}" maxlength="6" autocomplete="one-time-code" placeholder="000000">
+          <button class="btn btn-primary" type="submit" id="smsConfirmBtn"><i class="fa-solid fa-check"></i> Confirm</button>
+          <button class="auth-back" type="button" id="smsBackBtn">Use a different number</button>
+        </form>
+
         <p class="auth-status" id="authStatus" role="status"></p>
-        <p class="auth-note">No password to remember. We email you a one-time link and code &mdash; both expire in 15 minutes and work once.</p>
+        <p class="auth-note" id="authNote">No password to remember. We email you a one-time link and code, or text you a code &mdash; they expire in 15 minutes and work once.</p>
         <div class="auth-divider">New to TES Software?</div>
         <div class="auth-secondary">
           <a class="btn btn-secondary" href="software.html"><i class="fa-solid fa-laptop-code"></i> Explore Software</a>
@@ -265,7 +288,7 @@
             <p>Update your profile, contacts, and notification preferences.</p>
           </div>
         </div>
-        <p class="peek-trust"><i class="fa-solid fa-shield-halved"></i> <span>Tevis Engineering never stores a password for your account &mdash; you sign in with a one-time link or code sent to your email, and your session is encrypted end to end.</span></p>
+        <p class="peek-trust"><i class="fa-solid fa-shield-halved"></i> <span>Tevis Engineering never stores a password for your account &mdash; you sign in with a one-time link or code sent to your email or phone, and your session is encrypted end to end.</span></p>
       </aside>
     </div>
   </main>
@@ -347,7 +370,15 @@
     var statusEl = document.getElementById('authStatus');
     var sendBtn = document.getElementById('sendBtn');
     var codeBtn = document.getElementById('codeBtn');
+    var smsBtn = document.getElementById('smsBtn');
+    var smsForm = document.getElementById('smsForm');
+    var smsCodeForm = document.getElementById('smsCodeForm');
     var pendingEmail = '';
+    // Which of the two submit buttons sent the email form. Set on click, because
+    // SubmitEvent.submitter is missing on older Safari.
+    var channel = 'email';
+    sendBtn.addEventListener('click', function () { channel = 'email'; });
+    smsBtn.addEventListener('click', function () { channel = 'sms'; });
 
     // --- Turnstile -------------------------------------------------------
     // The widget renders itself (class="cf-turnstile") and writes the token into
@@ -381,11 +412,68 @@
     if (m) {
       say('Signing you in\u2026');
       api('/auth/verify', { token: decodeURIComponent(m[1]) }).then(function (r) {
-        if (r && r.ok) { location.replace(PORTAL); return; }
-        say('That link has expired or was already used. Request a new one below.', true);
         history.replaceState(null, '', location.pathname);
+        if (r && r.ok) { signedIn(r); return; }
+        say('That link has expired or was already used. Request a new one below.', true);
       });
     }
+
+    // Signed in. Straight to the portal, unless the account has no texting number yet:
+    // then offer to add one first (the Worker sends smsOffer only in that case).
+    function signedIn(r) {
+      if (!r.smsOffer) { location.replace(PORTAL); return; }
+      emailForm.hidden = true;
+      codeForm.hidden = true;
+      smsForm.hidden = false;
+      document.getElementById('authNote').hidden = true;
+      document.getElementById('smsPhone').value = r.smsOffer.phone || '';
+      say('');
+      document.getElementById('smsPhone').focus();
+    }
+
+    smsForm.addEventListener('submit', function (ev) {
+      ev.preventDefault();
+      var phone = document.getElementById('smsPhone').value.trim();
+      if (!phone) { say('Enter your mobile number.', true); return; }
+      var btn = document.getElementById('smsSendBtn');
+      btn.disabled = true;
+      say('Sending…');
+      api('/sms/enroll', { phone: phone }).then(function (r) {
+        btn.disabled = false;
+        if (!r || !r.ok) { say((r && r.message) || 'Could not send the code. Try again.', true); return; }
+        say('Code sent to ' + r.phone + '.');
+        smsForm.hidden = true;
+        smsCodeForm.hidden = false;
+        document.getElementById('smsCode').value = '';
+        document.getElementById('smsCode').focus();
+      });
+    });
+
+    smsCodeForm.addEventListener('submit', function (ev) {
+      ev.preventDefault();
+      var code = document.getElementById('smsCode').value.trim();
+      if (!/^[0-9]{6}$/.test(code)) { say('Enter the 6-digit code from the text.', true); return; }
+      var btn = document.getElementById('smsConfirmBtn');
+      btn.disabled = true;
+      say('Checking…');
+      api('/sms/enroll/confirm', { code: code }).then(function (r) {
+        btn.disabled = false;
+        if (!r || !r.ok) { say((r && r.message) || 'That code did not work. Try again.', true); return; }
+        smsCodeForm.hidden = true;
+        say('Texts are set up. Next time, choose “Text me a code instead.”');
+        setTimeout(function () { location.replace(PORTAL); }, 1800);
+      });
+    });
+
+    document.getElementById('smsBackBtn').addEventListener('click', function () {
+      smsCodeForm.hidden = true;
+      smsForm.hidden = false;
+      say('');
+    });
+
+    document.getElementById('smsSkipBtn').addEventListener('click', function () {
+      api('/sms/enroll/dismiss', {}).then(function () { location.replace(PORTAL); }, function () { location.replace(PORTAL); });
+    });
 
     emailForm.addEventListener('submit', function (ev) {
       ev.preventDefault();
@@ -399,10 +487,11 @@
       }
 
       pendingEmail = email;
-      sendBtn.disabled = true;
+      var byText = channel === 'sms';
+      sendBtn.disabled = smsBtn.disabled = true;
       say('Sending\u2026');
-      api('/auth/request', { email: email, turnstileToken: token }).then(function (r) {
-        sendBtn.disabled = false;
+      api('/auth/request', { email: email, turnstileToken: token, channel: byText ? 'sms' : 'email' }).then(function (r) {
+        sendBtn.disabled = smsBtn.disabled = false;
         resetTurnstile();
         if (r && r.ok === false && r.error === 'challenge_failed') {
           say('Verification failed. Reload the page and try again.', true);
@@ -410,7 +499,10 @@
         }
         // Always the same message whether or not the address is registered --
         // otherwise this page becomes a way to test which emails have accounts.
-        say('If that address has an account, a sign-in link and code are on the way.');
+        // The text request falls back to email on the Worker, for the same reason.
+        say(byText
+          ? 'If that address has an account, a code is on the way: by text if your account has a mobile number set up for texts, otherwise by email.'
+          : 'If that address has an account, a sign-in link and code are on the way.');
         emailForm.hidden = true;
         codeForm.hidden = false;
         document.getElementById('loginCode').focus();
@@ -420,12 +512,12 @@
     codeForm.addEventListener('submit', function (ev) {
       ev.preventDefault();
       var otp = document.getElementById('loginCode').value.trim();
-      if (!/^[0-9]{6}$/.test(otp)) { say('Enter the 6-digit code from your email.', true); return; }
+      if (!/^[0-9]{6}$/.test(otp)) { say('Enter the 6-digit code from your email or text.', true); return; }
       codeBtn.disabled = true;
       say('Checking\u2026');
       api('/auth/verify', { email: pendingEmail, otp: otp }).then(function (r) {
         codeBtn.disabled = false;
-        if (r && r.ok) { location.replace(PORTAL); return; }
+        if (r && r.ok) { signedIn(r); return; }
         say('That code is not valid or has expired. Request a new one.', true);
       });
     });
