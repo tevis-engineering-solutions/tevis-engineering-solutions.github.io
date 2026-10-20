@@ -15,4 +15,10 @@ Disallow: /quote.html
 # copy on it; the page that sells it is 3d-shed-builder-tool.html.
 Disallow: /shed-demo/
 
+# Meta's AI-training and indexing crawler (added 2026-10-20). Facebook link previews use a
+# different crawler (facebookexternalhit) and are not affected. REMOVE this block if TES runs
+# Meta ads and wants Meta's ad tools to read the site; Meta re-reads robots.txt within a day.
+User-agent: meta-externalagent
+Disallow: /
+
 Sitemap: https://tevisengineering.com/sitemap.xml
