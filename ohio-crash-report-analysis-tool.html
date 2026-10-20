@@ -43,170 +43,248 @@
       --blue: #4aac65;
       --green: #4aac65;
       --gold: #c89830;
+      --soft: #b9ccbc;       /* body copy on dark: between --text and --muted */
+      --hair: rgba(44,66,50,0.7);
     }
     * { box-sizing: border-box; margin: 0; padding: 0; }
     html { scroll-behavior: smooth; }
     body {
       font-family: "Inter", "Segoe UI", system-ui, sans-serif;
       color: var(--text);
-      background: radial-gradient(circle at top, #172b1c 0%, #0d1710 45%, #060e08 100%);
+      background: radial-gradient(1200px 700px at 70% -10%, #172b1c 0%, rgba(13,23,16,0) 70%), #0d1710;
       line-height: 1.65;
+      -webkit-font-smoothing: antialiased;
     }
-    .container { width: min(1120px, 92%); margin: 0 auto; }
-    .hero { padding: 3.5rem 0 2rem; text-align: left; }
-    .eyebrow { display:inline-flex; align-items:center; gap:0.4rem; border:1px solid rgba(74,172,101,0.45); border-radius:999px; padding:0.32rem 0.8rem; font-size:0.8rem; font-weight:700; text-transform:uppercase; letter-spacing:0.08em; color:#cdeed6; background:rgba(74,172,101,0.12); margin-bottom:0.9rem; }
-    h1 { font-family:"Montserrat",sans-serif; text-transform:uppercase; letter-spacing:0.02em; font-size:clamp(2rem,6vw,3.15rem); line-height:1.12; margin-bottom:0.9rem; }
-    h1 .grad { background:linear-gradient(90deg,#4aac65,#c89830); -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent; }
-    .hero p { max-width:900px; color:var(--muted); font-size:1.05rem; }
-    .cta-row { margin-top:1.4rem; display:flex; gap:0.8rem; flex-wrap:wrap; }
-    .btn { text-decoration:none; border-radius:999px; padding:0.78rem 1.2rem; font-weight:700; border:1px solid transparent; font-size:0.9rem; font-family:"Montserrat",sans-serif; text-transform:uppercase; letter-spacing:0.03em; cursor:pointer; }
-    .btn-primary { background:linear-gradient(135deg,#c89830,#e0b840); color:#0d1710; box-shadow:0 10px 20px rgba(200,152,48,0.25); }
-    .btn-secondary { border-color:rgba(74,172,101,0.4); background:rgba(74,172,101,0.1); color:#cdeed6; }
-    .section { margin-top:1.25rem; background:rgba(20,32,25,0.74); border:1px solid var(--line); border-radius:16px; padding:1.5rem; }
-    .section h2 { font-family:"Montserrat",sans-serif; text-transform:uppercase; letter-spacing:0.03em; font-size:1.3rem; margin-bottom:0.75rem; color:#f1f7f1; }
-    .section h2 .gold { color:var(--gold); }
-    .section > p { color:var(--muted); margin-bottom:0.7rem; }
-    .section p strong, .section li strong { color:#dfeadf; }
-    .lead-line { font-size:1.08rem; color:#cfe0d2 !important; }
-    .grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(250px,1fr)); gap:0.85rem; margin-top:0.85rem; }
-    .card { background:var(--card); border:1px solid var(--line); border-radius:12px; padding:1rem; }
-    .card h3 { font-family:"Montserrat",sans-serif; font-size:1rem; margin-bottom:0.5rem; color:#e4ede5; display:flex; align-items:center; gap:0.55rem; }
-    .card h3 i { color:var(--gold); width:1.1rem; text-align:center; }
-    .card p, .card li { font-size:0.95rem; color:#bcd0bf; }
-    ul.ticks { list-style:none; margin-top:0.35rem; }
-    ul.ticks li { position:relative; padding-left:1.4rem; margin-bottom:0.45rem; }
-    ul.ticks li::before { content:"\2713"; position:absolute; left:0; top:0.05rem; color:var(--green); font-weight:700; }
+    .container { width: min(1160px, 92%); margin: 0 auto; }
+    a { color: inherit; }
+    .gold { color: var(--gold); }
+    .grad { background:linear-gradient(90deg,#4aac65,#c89830); -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent; }
 
-    /* stat tiles */
-    .stats { display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:0.8rem; margin-top:1.6rem; }
-    .stat { background:var(--card); border:1px solid var(--line); border-radius:12px; padding:0.9rem 1rem; }
-    .stat b { display:block; font-family:"Montserrat",sans-serif; font-size:1.55rem; font-weight:800; line-height:1.1; background:linear-gradient(90deg,#4aac65,#c89830); -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent; }
-    .stat span { display:block; font-size:0.8rem; color:var(--muted); margin-top:0.25rem; }
+    /* ---- type ---- */
+    .kicker { display:inline-flex; align-items:center; gap:0.5rem; font-family:"Montserrat",sans-serif; font-size:0.72rem; font-weight:800; letter-spacing:0.16em; text-transform:uppercase; color:var(--gold); margin-bottom:0.9rem; }
+    .kicker::before { content:""; width:18px; height:2px; border-radius:2px; background:var(--gold); }
+    h1 { font-family:"Montserrat",sans-serif; text-transform:uppercase; letter-spacing:0.01em; font-weight:800; font-size:clamp(2.1rem,4.6vw,3.35rem); line-height:1.08; margin-bottom:1.1rem; }
+    .sec h2, .cta-band h2 { font-family:"Montserrat",sans-serif; font-weight:700; letter-spacing:-0.01em; font-size:clamp(1.6rem,3.1vw,2.3rem); line-height:1.18; color:#f1f7f1; max-width:24ch; margin-bottom:0.9rem; }
+    .lead { font-size:1.08rem; color:var(--soft); max-width:64ch; }
+    .lead strong, .soft strong { color:#e9f2ea; font-weight:600; }
+    .fine { font-size:0.86rem; color:var(--muted); margin-top:1rem; max-width:80ch; }
+    .fine a, .lead a, .faq-a a, .notice a { color:var(--gold); }
 
-    /* screenshots */
-    .shot { margin-top:0.9rem; }
-    .shot img { display:block; width:100%; height:auto; border:1px solid var(--line); border-radius:12px; box-shadow:0 14px 40px rgba(0,0,0,0.4); background:#0b120d; }
-    .shot figcaption { margin-top:0.6rem; font-size:0.85rem; color:var(--muted); line-height:1.55; }
-    .shot figcaption .tag { display:inline-block; font-size:0.66rem; letter-spacing:0.14em; text-transform:uppercase; color:var(--gold); font-weight:800; margin-right:0.5rem; }
-    .shot figcaption b { color:#cfe0d2; }
-    .shots-2.even { grid-template-columns:1fr 1fr; align-items:start; }
-    @media (max-width:760px) { .shots-2.even { grid-template-columns:1fr; } }
-    #capabilities .grid { grid-template-columns:repeat(3,minmax(0,1fr)); }
-    @media (max-width:960px) { #capabilities .grid { grid-template-columns:repeat(2,minmax(0,1fr)); } }
-    @media (max-width:600px) { #capabilities .grid { grid-template-columns:1fr; } }
-    .wn-new { display:inline-flex; align-items:center; gap:0.5rem; margin:0 0 1rem; padding:0.4rem 0.85rem; border-radius:999px; border:1px solid rgba(200,152,48,0.45); background:rgba(200,152,48,0.1); color:#f1e4c2; font-size:0.85rem; font-weight:600; text-decoration:none; }
-    .wn-new b { font-family:"Montserrat",sans-serif; font-size:0.66rem; letter-spacing:0.14em; text-transform:uppercase; color:#0d1710; background:var(--gold); padding:0.18rem 0.5rem; border-radius:999px; }
-    .wn-new:hover { border-color:var(--gold); }
-    .wn-grid { display:grid; grid-template-columns:1fr 1fr; gap:1rem; margin-top:1rem; }
-    .wn-col { border:1px solid var(--line); border-radius:14px; padding:1.2rem 1.25rem; background:rgba(13,23,16,0.55); }
-    .wn-col.now { border-color:rgba(200,152,48,0.6); background:rgba(200,152,48,0.06); }
-    .wn-k { font-family:"Montserrat",sans-serif; font-size:0.7rem; font-weight:800; letter-spacing:0.14em; text-transform:uppercase; color:var(--muted); margin:0 0 0.2rem; }
-    .wn-col.now .wn-k { color:var(--gold); }
-    .wn-col h3 { font-family:"Montserrat",sans-serif; font-size:1.05rem; color:#f1f7f1; margin:0 0 0.8rem; text-transform:none; letter-spacing:0; }
-    .wn-col ul { list-style:none; margin:0; padding:0; }
-    .wn-col li { position:relative; padding:0 0 0.6rem 1.35rem; color:#cfe0d2; line-height:1.5; font-size:0.95rem; }
-    .wn-col li::before { content:''; position:absolute; left:0.2rem; top:0.55em; width:0.45rem; height:0.45rem; border-radius:50%; background:var(--muted); }
-    .wn-col.now li::before { background:var(--gold); }
-    .wn-col li b { color:#f1f7f1; }
-    .wn-nums { display:grid; grid-template-columns:repeat(3,1fr); gap:1rem; margin-top:1rem; }
-    .wn-num { border:1px solid var(--line); border-radius:14px; padding:1rem 1.1rem; background:rgba(13,23,16,0.55); }
-    .wn-num .from { color:var(--muted); font-size:0.85rem; text-decoration:line-through; text-decoration-color:rgba(138,164,141,0.6); }
-    .wn-num .to { display:block; font-family:"Montserrat",sans-serif; font-weight:800; font-size:1.45rem; color:var(--gold); line-height:1.15; margin:0.15rem 0 0.25rem; }
-    .wn-num span:last-child { color:#cfe0d2; font-size:0.88rem; }
-    @media (max-width:760px) { .wn-grid, .wn-nums { grid-template-columns:1fr; } }
-    .film video { display:block; width:100%; height:auto; aspect-ratio:16/9; border:1px solid var(--line); border-radius:12px; box-shadow:0 14px 40px rgba(0,0,0,0.4); background:#0b120d; }
-    .shots-2 { display:grid; grid-template-columns:1.55fr 1fr; gap:1rem; align-items:start; margin-top:0.9rem; }
-    @media (max-width:760px) { .shots-2 { grid-template-columns:1fr; } }
+    /* ---- layout ---- */
+    .sec { padding:5rem 0; border-top:1px solid rgba(44,66,50,0.45); }
+    .sec-head { margin-bottom:2.2rem; }
+    .sec-head.center { text-align:center; }
+    .sec-head.center h2, .sec-head.center .lead { margin-left:auto; margin-right:auto; }
+    /* a full-bleed tinted band behind a section, without leaving the container */
+    .band { background:rgba(20,32,25,0.55); box-shadow:0 0 0 100vmax rgba(20,32,25,0.55); clip-path:inset(0 -100vmax); }
+    .split { display:grid; grid-template-columns:1fr 1fr; gap:3rem; align-items:start; }
+    .split.wide-left { grid-template-columns:1.1fr 0.9fr; }
+    .split > *, .evolve > *, .hero > * { min-width:0; }   /* let wide children (the table) scroll, not stretch the grid */
+    #value .split { grid-template-columns:0.8fr 1.2fr; align-items:center; }
+    @media (max-width:900px) { #value .split { grid-template-columns:1fr; } }
+    @media (max-width:900px) { .split, .split.wide-left { grid-template-columns:1fr; gap:2rem; } .sec { padding:3.6rem 0; } }
 
-    /* process */
-    .process { counter-reset:flow; display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:0.8rem; margin-top:0.7rem; }
-    .process-step { background:var(--card); border:1px solid var(--line); border-radius:12px; padding:0.95rem; position:relative; }
-    .process-step::before { counter-increment:flow; content:counter(flow); position:absolute; top:-10px; right:10px; width:24px; height:24px; border-radius:999px; display:grid; place-items:center; font-size:0.78rem; font-weight:800; color:#0d1710; background:linear-gradient(135deg,#c89830,#e0b840); }
-    .process-step strong { display:block; margin-bottom:0.35rem; color:#dfeadf; }
-    .process-step p { color:var(--muted); font-size:0.92rem; }
+    /* ---- buttons ---- */
+    .cta-row { margin-top:1.6rem; display:flex; gap:0.8rem; flex-wrap:wrap; }
+    .btn { display:inline-flex; align-items:center; justify-content:center; gap:0.5rem; text-decoration:none; border-radius:999px; padding:0.85rem 1.35rem; font-weight:700; border:1px solid transparent; font-size:0.88rem; font-family:"Montserrat",sans-serif; text-transform:uppercase; letter-spacing:0.04em; cursor:pointer; transition:transform .2s, filter .2s, border-color .2s, background .2s; }
+    .btn:hover { transform:translateY(-1px); }
+    .btn-primary { background:linear-gradient(135deg,#c89830,#e0b840); color:#0d1710; box-shadow:0 10px 24px rgba(200,152,48,0.22); }
+    .btn-primary:hover { filter:brightness(1.06); }
+    .btn-secondary { border-color:rgba(74,172,101,0.4); background:rgba(74,172,101,0.08); color:#cdeed6; }
+    .btn-secondary:hover { border-color:var(--green); background:rgba(74,172,101,0.14); }
+    .btn-ghost { color:#cdeed6; padding-left:0.4rem; padding-right:0.4rem; }
+    .btn-ghost:hover { color:#fff; }
 
-    /* notice / callout */
-    .notice { margin-top:0.95rem; border-radius:12px; border:1px solid rgba(200,152,48,0.34); background:rgba(200,152,48,0.09); padding:0.9rem 1rem; color:#ecd9b3; font-size:0.94rem; }
+    /* ---- hero ---- */
+    .breadcrumbs { padding:1.25rem 0 0; font-size:0.8rem; color:var(--muted); }
+    .breadcrumbs a { color:var(--muted); text-decoration:none; }
+    .breadcrumbs a:hover { color:var(--green); }
+    .hero { display:grid; grid-template-columns:1fr 1.05fr; gap:3rem; align-items:center; padding:3rem 0 4.5rem; }
+    .pill { display:inline-flex; align-items:center; gap:0.55rem; border:1px solid rgba(200,152,48,0.4); border-radius:999px; padding:0.3rem 0.9rem 0.3rem 0.35rem; font-size:0.82rem; font-weight:600; color:#f1e4c2; background:rgba(200,152,48,0.08); text-decoration:none; margin-bottom:1.3rem; transition:border-color .2s; }
+    .pill:hover { border-color:var(--gold); }
+    .pill b { font-family:"Montserrat",sans-serif; font-size:0.64rem; letter-spacing:0.14em; text-transform:uppercase; color:#0d1710; background:var(--gold); padding:0.2rem 0.55rem; border-radius:999px; }
+    .hero .lead { font-size:1.12rem; }
+    .stats { display:grid; grid-template-columns:repeat(4,auto); justify-content:start; gap:0; margin-top:2.2rem; }
+    .stat { padding:0 1.4rem; border-left:1px solid var(--hair); }
+    .stat:first-child { padding-left:0; border-left:0; }
+    .stat b { display:block; font-family:"Montserrat",sans-serif; font-size:1.45rem; font-weight:800; line-height:1.1; color:#f1f7f1; }
+    .stat span { display:block; font-size:0.78rem; color:var(--muted); margin-top:0.3rem; max-width:15ch; line-height:1.4; }
+    @media (max-width:980px) { .hero { grid-template-columns:1fr; gap:2.4rem; padding-top:2.2rem; } }
+    @media (max-width:560px) { .stats { grid-template-columns:1fr 1fr; gap:1.2rem 0; } .stat:nth-child(3) { padding-left:0; border-left:0; } .cta-row .btn { flex:1 1 100%; } }
+
+    /* ---- product shots in an app-window frame ---- */
+    .frame { position:relative; border-radius:14px; border:1px solid rgba(74,172,101,0.22); background:#0b120d; overflow:hidden; box-shadow:0 30px 80px rgba(0,0,0,0.55), 0 0 0 1px rgba(255,255,255,0.02) inset; }
+    .frame::before { content:""; display:block; height:26px; border-bottom:1px solid rgba(44,66,50,0.6); background:
+        radial-gradient(circle at 14px 13px, #3a5444 4px, transparent 4.5px),
+        radial-gradient(circle at 30px 13px, #3a5444 4px, transparent 4.5px),
+        radial-gradient(circle at 46px 13px, #3a5444 4px, transparent 4.5px), #101b14; }
+    .frame img, .frame video { display:block; width:100%; height:auto; }
+    .hero-shot { position:relative; }
+    .hero-shot::after { content:""; position:absolute; inset:12% 0 -10% 8%; z-index:-1; background:radial-gradient(closest-side, rgba(74,172,101,0.22), transparent); filter:blur(10px); }
+    .shot { margin:0; }
+    .shot figcaption { margin-top:0.8rem; font-size:0.86rem; color:var(--muted); line-height:1.55; }
+    .shot figcaption b { color:#dfeadf; font-weight:600; }
+    .tag { display:inline-block; font-family:"Montserrat",sans-serif; font-size:0.62rem; letter-spacing:0.14em; text-transform:uppercase; color:var(--gold); font-weight:800; margin-right:0.45rem; }
+    .gallery { display:grid; grid-template-columns:1fr 1fr; gap:2rem; margin-top:3rem; }
+    .gallery .span-2 { grid-column:1 / -1; }
+    @media (max-width:760px) { .gallery { grid-template-columns:1fr; } }
+    .film-wrap { max-width:940px; margin:0 auto; }
+    .film video { aspect-ratio:16/9; background:#0b120d; }
+
+    /* ---- feature cards ---- */
+    .features { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:1rem; }
+    @media (max-width:960px) { .features { grid-template-columns:repeat(2,minmax(0,1fr)); } }
+    @media (max-width:600px) { .features { grid-template-columns:1fr; } }
+    .card { background:linear-gradient(180deg, rgba(28,46,34,0.55), rgba(20,32,25,0.55)); border:1px solid var(--hair); border-radius:14px; padding:1.35rem 1.3rem; transition:border-color .2s, transform .2s; }
+    .card:hover { border-color:rgba(200,152,48,0.38); }
+    .card h3 { font-family:"Montserrat",sans-serif; font-size:1rem; font-weight:700; color:#f1f7f1; margin:0.9rem 0 0.4rem; }
+    .card p { font-size:0.93rem; color:var(--soft); }
+    .ic { width:40px; height:40px; border-radius:10px; display:grid; place-items:center; background:rgba(74,172,101,0.1); border:1px solid rgba(74,172,101,0.24); color:var(--green); font-size:0.95rem; }
+    .card.new { border-color:rgba(200,152,48,0.45); }
+    .card.new .ic { background:rgba(200,152,48,0.12); border-color:rgba(200,152,48,0.35); color:var(--gold); }
+    .badge { display:inline-block; margin-left:0.4rem; vertical-align:2px; font-family:"Montserrat",sans-serif; font-size:0.58rem; letter-spacing:0.12em; text-transform:uppercase; color:#0d1710; background:var(--gold); padding:0.15rem 0.45rem; border-radius:999px; }
+
+    /* ---- steps ---- */
+    .steps { list-style:none; counter-reset:step; display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:1rem; }
+    .steps.stack { grid-template-columns:1fr; gap:1.1rem; }
+    .steps li { counter-increment:step; position:relative; padding:1.2rem 1.2rem 1.25rem; border-radius:14px; border:1px solid var(--hair); background:rgba(20,32,25,0.5); }
+    .steps li::before { content:counter(step, decimal-leading-zero); display:block; font-family:"Montserrat",sans-serif; font-weight:800; font-size:0.78rem; letter-spacing:0.08em; color:var(--gold); margin-bottom:0.55rem; }
+    .steps.stack li { padding:0 0 0 3rem; border:0; background:none; }
+    .steps.stack li::before { position:absolute; left:0; top:0.1rem; width:2.1rem; height:2.1rem; border-radius:999px; display:grid; place-items:center; border:1px solid rgba(200,152,48,0.45); margin:0; font-size:0.72rem; }
+    .steps strong { display:block; color:#f1f7f1; font-weight:600; margin-bottom:0.25rem; }
+    .steps p { color:var(--soft); font-size:0.93rem; }
+    @media (max-width:900px) { .steps { grid-template-columns:1fr 1fr; } }
+    @media (max-width:560px) { .steps { grid-template-columns:1fr; } }
+    .notice { margin-top:1.6rem; border-left:3px solid var(--gold); padding:0.2rem 0 0.2rem 1.1rem; color:var(--soft); font-size:0.95rem; max-width:82ch; }
     .notice b { color:#f2e2c0; }
 
-    /* comparison tables */
-    .ptable-wrap { overflow-x:auto; margin-top:0.85rem; border:1px solid var(--line); border-radius:12px; }
-    .ptable { width:100%; border-collapse:collapse; font-size:0.92rem; min-width:520px; }
-    .ptable th, .ptable td { text-align:left; padding:0.65rem 0.85rem; border-bottom:1px solid var(--line); vertical-align:top; }
-    .ptable thead th { color:var(--gold); text-transform:uppercase; font-size:0.68rem; letter-spacing:0.06em; font-family:"Montserrat",sans-serif; background:rgba(255,255,255,0.02); }
+    /* ---- before / after numbers ---- */
+    .nums { display:grid; grid-template-columns:repeat(3,1fr); gap:1rem; }
+    .num { border:1px solid var(--hair); border-radius:14px; padding:1.25rem 1.3rem; background:rgba(13,23,16,0.5); }
+    .num .from { color:var(--muted); font-size:0.85rem; text-decoration:line-through; text-decoration-color:rgba(138,164,141,0.6); }
+    .num .to { display:block; font-family:"Montserrat",sans-serif; font-weight:800; font-size:1.5rem; color:var(--gold); line-height:1.15; margin:0.2rem 0 0.3rem; }
+    .num span:last-child { color:var(--soft); font-size:0.9rem; }
+    @media (max-width:760px) { .nums { grid-template-columns:1fr; } }
+
+    /* ---- check lists ---- */
+    ul.ticks { list-style:none; display:grid; gap:0.55rem; }
+    ul.ticks.cols { grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); gap:0.6rem 1.6rem; }
+    ul.ticks li { position:relative; padding-left:1.5rem; color:var(--soft); font-size:0.94rem; }
+    ul.ticks li::before { content:"\2713"; position:absolute; left:0; top:0; color:var(--gold); font-weight:700; }
+    ul.ticks li b { color:#f1f7f1; font-weight:600; }
+
+    /* ---- enrichment: what a match can include ---- */
+    .match { border:1px solid rgba(200,152,48,0.32); border-radius:16px; background:linear-gradient(180deg, rgba(28,46,34,0.6), rgba(13,23,16,0.6)); padding:1.5rem; }
+    .match h3 { font-family:"Montserrat",sans-serif; font-size:1.05rem; color:#f1f7f1; margin-bottom:0.3rem; }
+    .match > p { color:var(--muted); font-size:0.88rem; margin-bottom:1.1rem; }
+    .fgroup { padding:0.95rem 0; border-top:1px solid rgba(44,66,50,0.55); }
+    .fgroup h4 { display:flex; align-items:center; gap:0.55rem; font-family:"Montserrat",sans-serif; font-size:0.8rem; letter-spacing:0.06em; text-transform:uppercase; color:#dfeadf; margin-bottom:0.25rem; }
+    .fgroup h4 i { color:var(--gold); width:1rem; text-align:center; }
+    .fgroup p { color:var(--soft); font-size:0.88rem; margin-bottom:0.5rem; }
+    .chips { display:flex; flex-wrap:wrap; gap:0.35rem; }
+    .chips code { font-family:"Inter",sans-serif; font-size:0.76rem; color:#cfe0d2; background:rgba(13,23,16,0.75); border:1px solid var(--hair); border-radius:6px; padding:0.18rem 0.5rem; }
+    .chips code.in { border-color:rgba(74,172,101,0.5); color:#cdeed6; }
+    .match .fine { margin-top:0.9rem; }
+    .stats-row { display:grid; grid-template-columns:repeat(3,1fr); gap:1rem; margin-top:2.6rem; }
+    .stats-row .stat { border:1px solid var(--hair); border-radius:14px; padding:1.1rem 1.25rem; background:rgba(13,23,16,0.45); }
+    .stats-row .stat:first-child { padding-left:1.25rem; border-left:1px solid var(--hair); }
+    .stats-row .stat b { font-size:1.9rem; }
+    .stats-row .stat b.grad { display:inline-block; }
+    .stats-row .stat span { max-width:none; font-size:0.85rem; }
+    @media (max-width:700px) { .stats-row { grid-template-columns:1fr; } }
+    .ways { display:grid; grid-template-columns:1fr 1fr; gap:1rem; margin-top:2rem; }
+    .way { border:1px solid var(--hair); border-radius:14px; padding:1.3rem 1.35rem; background:rgba(20,32,25,0.55); }
+    .way h3 { font-family:"Montserrat",sans-serif; font-size:1rem; color:#f1f7f1; margin-bottom:0.45rem; display:flex; align-items:center; gap:0.55rem; }
+    .way h3 i { color:var(--gold); }
+    .way p { color:var(--soft); font-size:0.92rem; }
+    @media (max-width:760px) { .ways { grid-template-columns:1fr; } }
+
+    /* ---- comparison table ---- */
+    .ptable-wrap { overflow-x:auto; border:1px solid var(--hair); border-radius:14px; }
+    .ptable { width:100%; border-collapse:collapse; font-size:0.93rem; min-width:540px; }
+    .ptable th, .ptable td { text-align:left; padding:0.85rem 1.05rem; border-bottom:1px solid rgba(44,66,50,0.55); vertical-align:top; }
+    .ptable thead th { color:var(--muted); text-transform:uppercase; font-size:0.68rem; letter-spacing:0.08em; font-family:"Montserrat",sans-serif; }
     .ptable tbody tr:last-child td { border-bottom:none; }
     .ptable td.rowlab { color:#dfeadf; font-weight:600; }
-    .ptable .hl { background:rgba(74,172,101,0.09); color:#eaf3ec; }
+    .ptable td { color:var(--soft); }
+    .ptable .hl { background:rgba(74,172,101,0.08); color:#eaf3ec; }
     .ptable thead th.hl { color:#9fe3b4; }
 
-    /* pricing model cards */
-    .models { display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); gap:1rem; margin-top:1rem; }
-    .model { position:relative; background:var(--card); border:1px solid var(--line); border-radius:14px; padding:1.3rem 1.15rem; }
-    .model.feat { border:2px solid var(--gold); box-shadow:0 10px 30px rgba(200,152,48,0.16); }
-    .model .rec { position:absolute; top:-11px; left:50%; transform:translateX(-50%); background:linear-gradient(135deg,#c89830,#e0b840); color:#3a2c07; font-size:0.62rem; letter-spacing:0.12em; text-transform:uppercase; font-weight:800; padding:4px 12px; border-radius:999px; white-space:nowrap; }
-    .model h3 { font-family:"Montserrat",sans-serif; font-size:1.1rem; color:#fff; text-align:center; margin-bottom:0.4rem; }
-    .model .mprice { font-family:"Montserrat",sans-serif; font-size:1.7rem; font-weight:800; color:var(--green); text-align:center; line-height:1; margin-bottom:0.7rem; }
-    .model .mprice small { font-size:0.55em; color:var(--muted); font-weight:500; }
-    .model p { font-size:0.9rem; color:#bcd0bf; margin-bottom:0.6rem; }
-    .model .fit { font-size:0.82rem; color:var(--muted); text-align:center; margin-top:0.4rem; }
-    .model .fit b { color:var(--gold); font-weight:700; }
+    /* ---- pricing ---- */
+    .models { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:1rem; }
+    @media (max-width:900px) { .models { grid-template-columns:1fr; } }
+    .model { position:relative; border:1px solid var(--hair); border-radius:16px; padding:1.5rem 1.4rem; background:rgba(20,32,25,0.55); display:flex; flex-direction:column; }
+    .model h3 { font-family:"Montserrat",sans-serif; font-size:0.78rem; letter-spacing:0.14em; text-transform:uppercase; color:var(--gold); margin-bottom:0.6rem; }
+    .model .mprice { font-family:"Montserrat",sans-serif; font-size:1.9rem; font-weight:800; color:#f1f7f1; line-height:1.1; margin-bottom:0.9rem; }
+    .model .mprice small { font-size:0.46em; color:var(--muted); font-weight:500; letter-spacing:0; }
+    .model p { font-size:0.92rem; color:var(--soft); margin-bottom:0.7rem; }
+    .model .fit { margin-top:auto; padding-top:0.8rem; border-top:1px solid rgba(44,66,50,0.55); font-size:0.84rem; color:var(--muted); margin-bottom:0; }
+    .model .fit b { color:#dfeadf; }
+    .sub-h { font-family:"Montserrat",sans-serif; font-weight:700; font-size:1.25rem; color:#f1f7f1; margin:3.4rem 0 0.4rem; }
+    .plans { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:1rem; margin-top:1.4rem; align-items:stretch; }
+    @media (max-width:900px) { .plans { grid-template-columns:1fr; } }
+    .plan { position:relative; border:1px solid var(--hair); border-radius:16px; padding:1.6rem 1.4rem; background:rgba(20,32,25,0.55); display:flex; flex-direction:column; }
+    .plan.feat { border-color:rgba(200,152,48,0.7); background:linear-gradient(180deg, rgba(200,152,48,0.08), rgba(20,32,25,0.55) 40%); box-shadow:0 18px 50px rgba(200,152,48,0.1); }
+    .plan .ribbon { position:absolute; top:-11px; left:1.4rem; background:linear-gradient(135deg,#c89830,#e0b840); color:#3a2c07; font-family:"Montserrat",sans-serif; font-size:0.6rem; letter-spacing:0.12em; text-transform:uppercase; font-weight:800; padding:4px 12px; border-radius:999px; }
+    .plan .pname { font-family:"Montserrat",sans-serif; font-size:1rem; font-weight:700; color:#f1f7f1; margin-bottom:0.5rem; }
+    .plan .price { font-family:"Montserrat",sans-serif; font-size:2.2rem; font-weight:800; color:#f1f7f1; line-height:1; }
+    .plan .price small { font-size:0.38em; color:var(--muted); font-weight:500; }
+    .plan .annual { font-size:0.8rem; color:var(--gold); font-weight:600; margin-top:0.5rem; }
+    .plan ul.spec { list-style:none; margin:1.2rem 0 1.4rem; display:grid; gap:0.5rem; }
+    .plan ul.spec li { position:relative; padding-left:1.4rem; font-size:0.9rem; color:var(--soft); }
+    .plan ul.spec li::before { content:"\2713"; position:absolute; left:0; top:0; color:var(--gold); font-weight:700; }
+    .plan .btn { margin-top:auto; width:100%; font-size:0.8rem; }
+    .incl-box { margin-top:2rem; border:1px solid var(--hair); border-radius:14px; padding:1.3rem 1.4rem; background:rgba(13,23,16,0.4); }
+    .incl-box h3 { font-family:"Montserrat",sans-serif; font-size:0.78rem; letter-spacing:0.14em; text-transform:uppercase; color:var(--muted); margin-bottom:0.9rem; }
 
-    /* subscription plan cards */
-    .plans { display:grid; grid-template-columns:repeat(auto-fit,minmax(215px,1fr)); gap:1rem; margin-top:1.1rem; align-items:start; }
-    .plan { position:relative; background:var(--card); border:1px solid var(--line); border-radius:14px; padding:1.4rem 1.15rem; text-align:center; }
-    .plan.feat { border:2px solid var(--gold); box-shadow:0 10px 30px rgba(200,152,48,0.16); }
-    .plan .ribbon { position:absolute; top:-11px; left:50%; transform:translateX(-50%); background:linear-gradient(135deg,#c89830,#e0b840); color:#3a2c07; font-size:0.62rem; letter-spacing:0.12em; text-transform:uppercase; font-weight:800; padding:4px 13px; border-radius:999px; white-space:nowrap; }
-    .plan .pname { font-family:"Montserrat",sans-serif; font-size:1.05rem; font-weight:700; color:#fff; margin-bottom:0.6rem; }
-    .plan .price { font-family:"Montserrat",sans-serif; font-size:2rem; font-weight:800; color:var(--green); line-height:1; }
-    .plan .price small { font-size:0.42em; color:var(--muted); font-weight:500; }
-    .plan .annual { font-size:0.78rem; color:var(--gold); font-weight:700; margin-top:0.45rem; }
-    .plan ul.spec { list-style:none; text-align:left; margin:1rem 0 1.1rem; }
-    .plan ul.spec li { position:relative; padding-left:1.4rem; margin-bottom:0.5rem; font-size:0.85rem; color:#bcd0bf; }
-    .plan ul.spec li::before { content:"\2713"; position:absolute; left:0; top:0.05rem; color:var(--gold); font-weight:700; }
-    .plan .btn { display:block; font-size:0.8rem; padding:0.6rem 1rem; }
+    /* ---- crash report fields ---- */
+    .fields { display:flex; flex-wrap:wrap; gap:0.4rem; margin-top:1.4rem; }
+    .fields code { font-family:"Inter",sans-serif; font-size:0.82rem; background:rgba(20,32,25,0.7); border:1px solid var(--hair); border-radius:6px; padding:0.3rem 0.65rem; color:#cfe0d2; }
+    .fields code.opt { border-color:rgba(200,152,48,0.45); color:#f1e4c2; }
+    .oh1 { max-width:420px; justify-self:end; }
+    @media (max-width:900px) { .oh1 { justify-self:start; } }
 
-    .incl { list-style:none; margin-top:1rem; display:grid; grid-template-columns:repeat(auto-fit,minmax(230px,1fr)); gap:0.5rem 1.4rem; }
-    .incl li { position:relative; padding-left:1.4rem; font-size:0.9rem; color:#cfe0d2; }
-    .incl li::before { content:"\2713"; position:absolute; left:0; top:0.05rem; color:var(--gold); font-weight:700; }
-
-    .fields { display:flex; flex-wrap:wrap; gap:0.4rem; margin-top:0.6rem; }
-    .fields code { font-family:"Inter",sans-serif; font-size:0.82rem; background:var(--card); border:1px solid var(--line); border-radius:6px; padding:0.28rem 0.6rem; color:#cfe0d2; }
-
-    /* FAQ */
-    .faq { margin-top:0.6rem; }
-    .faq details { border:1px solid var(--line); border-radius:12px; background:var(--card); margin-bottom:0.6rem; overflow:hidden; }
-    .faq summary { cursor:pointer; padding:0.9rem 1rem; font-family:"Montserrat",sans-serif; font-weight:700; font-size:0.98rem; color:#e4ede5; list-style:none; display:flex; justify-content:space-between; align-items:center; gap:1rem; }
+    /* ---- FAQ ---- */
+    .faq { max-width:860px; margin:0 auto; }
+    .faq details { border-bottom:1px solid rgba(44,66,50,0.6); }
+    .faq details:first-of-type { border-top:1px solid rgba(44,66,50,0.6); }
+    .faq summary { cursor:pointer; padding:1.15rem 0.2rem; font-family:"Montserrat",sans-serif; font-weight:600; font-size:1.02rem; color:#eef5ef; list-style:none; display:flex; justify-content:space-between; align-items:center; gap:1rem; }
     .faq summary::-webkit-details-marker { display:none; }
-    .faq summary::after { content:"+"; color:var(--gold); font-weight:800; font-size:1.2rem; }
+    .faq summary::after { content:"+"; flex:none; width:1.7rem; height:1.7rem; border-radius:999px; display:grid; place-items:center; border:1px solid rgba(200,152,48,0.45); color:var(--gold); font-weight:700; }
     .faq details[open] summary::after { content:"\2212"; }
-    .faq details[open] summary { border-bottom:1px solid var(--line); }
-    .faq .faq-a { padding:0.9rem 1rem; color:var(--muted); font-size:0.95rem; }
+    .faq .faq-a { padding:0 0.2rem 1.3rem; color:var(--soft); font-size:0.97rem; max-width:76ch; }
 
-    /* CTA band + request form */
-    .cta-band { margin-top:1.25rem; background:radial-gradient(120% 130% at 50% 0%,rgba(74,172,101,0.14),transparent 60%),linear-gradient(160deg,#16261d,#0f1c14); border:1px solid rgba(74,172,101,0.28); border-radius:16px; padding:1.8rem 1.5rem; text-align:center; }
-    .cta-band h2 { font-family:"Montserrat",sans-serif; text-transform:uppercase; letter-spacing:0.03em; font-size:1.4rem; color:#fff; margin-bottom:0.5rem; }
-    .cta-band p { color:var(--muted); max-width:640px; margin:0 auto 1.2rem; }
-    .req-form { max-width:640px; margin:1.2rem auto 0; display:grid; grid-template-columns:1fr 1fr; gap:0.7rem; text-align:left; }
-    .req-form .full { grid-column:1 / -1; }
-    .req-form label { display:block; font-size:0.78rem; text-transform:uppercase; letter-spacing:0.05em; color:var(--muted); margin-bottom:0.3rem; font-weight:600; }
-    .req-form input, .req-form select, .req-form textarea { width:100%; padding:0.6rem 0.75rem; border-radius:8px; border:1px solid var(--line); background:var(--bg); color:var(--text); font-size:0.9rem; font-family:"Inter",sans-serif; outline:none; transition:border-color 0.2s; }
-    .req-form input:focus, .req-form select:focus, .req-form textarea:focus { border-color:var(--green); }
-    .req-form .trap { position:absolute; left:-9999px; opacity:0; height:0; overflow:hidden; }
-    .req-form button { grid-column:1 / -1; }
-    .req-success { max-width:640px; margin:1rem auto 0; background:rgba(74,172,101,0.1); border:1px solid rgba(74,172,101,0.35); border-radius:12px; padding:1.2rem; color:#cdeed6; }
+    /* ---- reading ---- */
+    .reading-grid { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:1rem; }
+    @media (max-width:1000px) { .reading-grid { grid-template-columns:1fr 1fr; } }
+    @media (max-width:560px) { .reading-grid { grid-template-columns:1fr; } }
+    a.rcard { display:flex; flex-direction:column; text-decoration:none; color:inherit; }
+    a.rcard h3 { margin-top:0; font-size:0.98rem; line-height:1.4; }
+    a.rcard .rmore { margin-top:auto; padding-top:0.9rem; color:#e0b840; font-weight:700; font-size:0.88rem; }
+
+    /* ---- get started: trial, subscribe, other ---- */
+    .cta-band { margin:5rem 0 0; border:1px solid rgba(74,172,101,0.26); border-radius:20px; padding:3rem 2rem; text-align:center; background:radial-gradient(120% 120% at 50% 0%, rgba(74,172,101,0.14), transparent 60%), linear-gradient(160deg,#16261d,#0f1c14); }
+    .cta-band h2 { margin:0 auto 0.7rem; }
+    .cta-band > p { color:var(--soft); max-width:640px; margin:0 auto 2rem; }
+    .buy-grid { display:grid; grid-template-columns:1fr 1fr; gap:1.2rem; max-width:1000px; margin:0 auto; text-align:left; align-items:start; }
+    @media (max-width:860px) { .buy-grid { grid-template-columns:1fr; } .cta-band { padding:2.2rem 1.1rem; } }
+    .buy-panel { background:rgba(13,23,16,0.55); border:1px solid var(--hair); border-radius:16px; padding:1.4rem 1.3rem; }
+    .buy-panel h3 { font-family:"Montserrat",sans-serif; font-size:1.05rem; color:#fff; margin:0 0 0.3rem; }
+    .buy-panel .lede { color:var(--muted); font-size:0.9rem; margin:0 0 1rem; }
+    .buy-form, .req-form { display:grid; grid-template-columns:1fr 1fr; gap:0.75rem; text-align:left; margin:0; }
+    .req-form { max-width:760px; margin:1.2rem auto 0; }
+    .buy-form .full, .req-form .full { grid-column:1 / -1; }
+    .buy-form label, .req-form label { display:block; font-size:0.74rem; text-transform:uppercase; letter-spacing:0.06em; color:var(--muted); margin-bottom:0.35rem; font-weight:600; }
+    .buy-form input, .buy-form select, .req-form input, .req-form select, .req-form textarea { width:100%; padding:0.68rem 0.8rem; border-radius:10px; border:1px solid var(--line); background:#0a130d; color:var(--text); font-size:0.92rem; font-family:"Inter",sans-serif; outline:none; transition:border-color .2s, box-shadow .2s; }
+    .buy-form input:focus, .buy-form select:focus, .req-form input:focus, .req-form select:focus, .req-form textarea:focus { border-color:var(--green); box-shadow:0 0 0 3px rgba(74,172,101,0.15); }
+    .buy-form button, .req-form button { grid-column:1 / -1; }
+    .buy-form .trap, .req-form .trap { position:absolute; left:-9999px; opacity:0; height:0; overflow:hidden; }
+    .buy-note { font-size:0.8rem; color:var(--muted); margin:0.2rem 0 0; grid-column:1 / -1; }
+    .req-success { max-width:760px; margin:1rem auto 0; background:rgba(74,172,101,0.1); border:1px solid rgba(74,172,101,0.35); border-radius:12px; padding:1.2rem; color:#cdeed6; text-align:left; }
+    .req-success a { color:#cdeed6; }
+    .buy-panel .req-success { margin:0 0 1rem; }
     .cf-turnstile { width:100%; max-width:100%; overflow:hidden; grid-column:1 / -1; }
     .cf-turnstile iframe { max-width:100% !important; }
-    .buy-panel { max-width:640px; margin:0 auto 1.6rem; background:rgba(255,255,255,0.03); border:1px solid rgba(74,172,101,0.22); border-radius:14px; padding:1.2rem 1.1rem; }
-    .buy-panel h3 { font-family:"Montserrat",sans-serif; text-transform:uppercase; letter-spacing:0.04em; font-size:0.95rem; color:#fff; margin:0 0 0.3rem; }
-    .buy-panel .lede { color:var(--muted); font-size:0.9rem; margin:0 0 0.9rem; }
-    .buy-form { display:grid; grid-template-columns:1fr 1fr; gap:0.7rem; text-align:left; margin:0; }
-    .buy-form .full { grid-column:1 / -1; }
-    .buy-form label { display:block; font-size:0.78rem; text-transform:uppercase; letter-spacing:0.05em; color:var(--muted); margin-bottom:0.3rem; font-weight:600; }
-    .buy-form input, .buy-form select { width:100%; padding:0.6rem 0.75rem; border-radius:8px; border:1px solid var(--line); background:var(--bg); color:var(--text); font-size:0.9rem; font-family:"Inter",sans-serif; outline:none; }
-    .buy-form input:focus, .buy-form select:focus { border-color:var(--green); }
-    .buy-form button { grid-column:1 / -1; }
-    .buy-form .trap { position:absolute; left:-9999px; opacity:0; height:0; overflow:hidden; }
-    .buy-note { font-size:0.8rem; color:var(--muted); margin:0.7rem 0 0; grid-column:1 / -1; }
     /* These start a purchase now rather than just scrolling, so they need a real tap
        target. The shared .btn padding renders 37px on a phone. */
     [data-buy] { min-height:44px; }
@@ -218,14 +296,54 @@
     .bt-save { margin-left:auto; font-family:"Montserrat",sans-serif; font-weight:700; font-size:0.72rem; text-transform:uppercase; letter-spacing:0.05em; color:#0d1710; background:linear-gradient(135deg,#c89830,#e0b840); padding:0.25rem 0.6rem; border-radius:999px; }
     @media (max-width:560px) { .bt-save { margin-left:0; } }
     .buy-error { grid-column:1 / -1; display:none; background:rgba(200,60,60,0.12); border:1px solid rgba(220,90,90,0.4); border-radius:8px; padding:0.7rem 0.85rem; color:#ffc9c9; font-size:0.88rem; }
+    .other-buy { max-width:760px; margin:2.6rem auto 0; padding-top:2rem; border-top:1px solid rgba(44,66,50,0.6); }
+    .other-buy h3 { font-family:"Montserrat",sans-serif; font-size:1.05rem; color:#fff; margin:0 0 0.35rem; }
+    .other-buy > p { color:var(--muted); font-size:0.9rem; margin:0 auto; max-width:640px; }
     @media (max-width:560px) { .req-form, .buy-form { grid-template-columns:1fr; } }
 
-    .mini-note { margin-top:0.75rem; font-size:0.88rem; color:var(--muted); }
-    .breadcrumbs { padding:1.25rem 0 0; font-size:0.82rem; color:var(--muted); }
-    .breadcrumbs a { color:var(--muted); text-decoration:none; }
-    .breadcrumbs a:hover { color:var(--green); }
-    @media (max-width:700px) { .hero { padding-top:2.8rem; } .section { padding:1.1rem; } }
-    @media (max-width:480px) { .hero { padding:2.2rem 0 1.5rem; } .cta-row { flex-direction:column; align-items:stretch; } .cta-row .btn { text-align:center; } .process { grid-template-columns:1fr; } }
+    /* ---- what's new: then vs. now ---- */
+    .evolve { display:grid; grid-template-columns:0.62fr 1.6fr; gap:1.4rem; align-items:stretch; }
+    @media (max-width:960px) { .evolve { grid-template-columns:1fr; } .evolve .then { order:2; } }
+    .era { font-family:"Montserrat",sans-serif; font-size:0.68rem; font-weight:800; letter-spacing:0.14em; text-transform:uppercase; color:var(--muted); margin-bottom:0.35rem; }
+    .then { border:1px dashed rgba(44,66,50,0.9); border-radius:18px; padding:1.5rem 1.4rem; background:rgba(13,23,16,0.35); }
+    .then h3 { font-family:"Montserrat",sans-serif; font-size:1.05rem; color:#a9bcac; margin-bottom:1rem; }
+    .then ul { list-style:none; display:grid; gap:0.6rem; }
+    .then li { position:relative; padding-left:1.15rem; color:var(--muted); font-size:0.9rem; line-height:1.45; }
+    .then li::before { content:""; position:absolute; left:0.1rem; top:0.55em; width:0.4rem; height:0.4rem; border-radius:50%; background:#3a5444; }
+    /* the "now" panel: a gold gradient border with a slow drift, and a soft gold glow */
+    .now-panel { position:relative; border-radius:20px; padding:1.6rem; background:
+        linear-gradient(160deg, rgba(28,46,34,0.96), rgba(13,23,16,0.98)) padding-box,
+        linear-gradient(120deg, #c89830, #4aac65 35%, #e0b840 65%, #c89830) border-box;
+      background-size:100% 100%, 240% 240%; border:1.5px solid transparent;
+      overflow:hidden; box-shadow:0 30px 90px rgba(200,152,48,0.14), 0 0 0 1px rgba(200,152,48,0.06); animation:nowDrift 9s ease-in-out infinite alternate; }
+    .now-panel::before { content:""; position:absolute; inset:-30% -10% auto 30%; height:70%; z-index:0; pointer-events:none;
+      background:radial-gradient(closest-side, rgba(200,152,48,0.16), transparent); }
+    .now-panel > * { position:relative; z-index:1; }
+    @keyframes nowDrift { from { background-position:0 0, 0% 50%; } to { background-position:0 0, 100% 50%; } }
+    @media (prefers-reduced-motion: reduce) { .now-panel { animation:none; } }
+    .now-panel .era { color:var(--gold); }
+    .now-head h3 { font-family:"Montserrat",sans-serif; font-size:clamp(1.25rem,2.2vw,1.6rem); color:#fff; margin-bottom:1.2rem; }
+    .hero-tile { display:grid; grid-template-columns:auto 1fr auto; gap:1.1rem; align-items:center; text-decoration:none; color:inherit; border-radius:16px; padding:1.25rem 1.3rem; border:1px solid rgba(200,152,48,0.5); background:linear-gradient(120deg, rgba(200,152,48,0.16), rgba(200,152,48,0.04) 60%); transition:transform .2s, border-color .2s, box-shadow .2s; }
+    .hero-tile:hover { transform:translateY(-2px); border-color:var(--gold); box-shadow:0 14px 40px rgba(200,152,48,0.18); }
+    .ic.big { width:54px; height:54px; border-radius:14px; font-size:1.3rem; background:linear-gradient(135deg,#c89830,#e0b840); color:#0d1710; border:0; box-shadow:0 10px 26px rgba(200,152,48,0.3); }
+    .ht-body { display:block; }
+    .ht-body .badge { margin:0 0 0.35rem; }
+    .ht-title { display:block; font-family:"Montserrat",sans-serif; font-weight:800; font-size:1.18rem; color:#fff; line-height:1.25; margin:0.35rem 0 0.35rem; }
+    .ht-text { display:block; color:#d9e6da; font-size:0.93rem; }
+    .ht-more { display:inline-block; margin-top:0.5rem; color:#e0b840; font-weight:700; font-size:0.88rem; }
+    .ht-stat { text-align:center; padding-left:1.1rem; border-left:1px solid rgba(200,152,48,0.35); }
+    .ht-stat b { display:block; font-family:"Montserrat",sans-serif; font-weight:800; font-size:2.3rem; line-height:1; color:#e0b840; }
+    .ht-stat span { display:block; font-size:0.74rem; color:var(--soft); max-width:11ch; margin-top:0.35rem; line-height:1.35; }
+    @media (max-width:640px) { .hero-tile { grid-template-columns:1fr; } .now-panel { padding:1.2rem; } .ht-stat { grid-column:1 / -1; display:flex; align-items:baseline; gap:0.6rem; text-align:left; padding:0.8rem 0 0; border-left:0; border-top:1px solid rgba(200,152,48,0.35); } .ht-stat span { max-width:none; } }
+    .now-grid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:0.8rem; margin-top:0.9rem; }
+    @media (max-width:760px) { .now-grid { grid-template-columns:1fr 1fr; } }
+    @media (max-width:460px) { .now-grid { grid-template-columns:1fr; } }
+    .tile { border-radius:14px; padding:1rem 1.05rem; border:1px solid rgba(74,172,101,0.22); background:rgba(13,23,16,0.55); transition:border-color .2s, transform .2s; }
+    .tile:hover { border-color:rgba(74,172,101,0.5); transform:translateY(-2px); }
+    .tile .ic { width:34px; height:34px; border-radius:9px; font-size:0.85rem; margin-bottom:0.6rem; }
+    .tile b { display:block; font-family:"Montserrat",sans-serif; font-size:0.92rem; color:#f1f7f1; margin-bottom:0.2rem; }
+    .tile > span:last-child { display:block; color:var(--soft); font-size:0.84rem; line-height:1.45; }
+    #whats-new .nums { margin-top:1.4rem; }
 
     /* Newsletter signup */
     .newsletter-section { background: var(--card); border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); padding: 3.5rem 5%; margin-top: 4rem; }
@@ -295,10 +413,6 @@
     .tfoot-social a:hover { color:#4aac65; }
     @media (max-width:780px) { .tfoot-grid { grid-template-columns:1fr 1fr; } }
     @media (max-width:480px) { .tfoot-grid { grid-template-columns:1fr; } }
-    .reading a.rcard { display:block; text-decoration:none; color:inherit; }
-    .reading a.rcard:hover { border-color:rgba(200,152,48,.45); }
-    .reading a.rcard h3 { font-size:1.02rem; margin-bottom:.4rem; }
-    .reading a.rcard .rmore { display:inline-block; margin-top:.6rem; color:#e0b840; font-weight:700; font-size:.9rem; }
   </style>
   <script type="application/ld+json">
   {
@@ -444,243 +558,327 @@
     </nav>
 
     <section class="hero">
-      <span class="eyebrow"><i class="fa-solid fa-bolt"></i> TES Software &middot; Ohio Crash Report Analysis Tool</span>
-      <a class="wn-new" href="#whats-new"><b>New</b> Version 1.3: a map dashboard, cleaner leads, and AI at about 0.2&cent; a report</a>
-      <h1>Ohio Crash Report <span class="grad">Leads for Law Firms</span></h1>
-      <p>
-        A purpose-built application that turns Ohio's official crash reports into a clean, de-duplicated
-        <strong>audience of crash-involved people</strong> &mdash; name, mailing address, injury status, county, agency, and crash
-        date &mdash; ready for outreach or addressable / CTV advertising. Built for <strong>personal-injury law firms and
-        injury-care practices</strong>. You <strong>own</strong> the pipeline instead of renting a spreadsheet from a data broker.
-      </p>
-      <div class="cta-row">
-        <a class="btn btn-primary" href="#get-started">Start Your Free Trial</a>
-        <a class="btn btn-secondary" href="#pricing">See Pricing</a>
+      <div>
+        <a class="pill" href="#whats-new"><b>New</b> Version 1.3: contact enrichment, a map dashboard and AI at about 0.2&cent; a report</a>
+        <h1>Ohio crash report <span class="grad">leads for law firms</span></h1>
+        <p class="lead">
+          Software that turns Ohio's official OH-1 crash reports into a clean, de-duplicated <strong>audience of crash-involved
+          people</strong>: name, mailing address, injury, county, agency and crash date. Built for <strong>personal-injury law
+          firms and injury-care practices</strong> that would rather <strong>own</strong> the pipeline than rent a broker's spreadsheet.
+        </p>
+        <div class="cta-row">
+          <a class="btn btn-primary" href="#get-started">Start your free trial</a>
+          <a class="btn btn-secondary" href="#pricing">See pricing</a>
+          <a class="btn btn-ghost" href="#film"><i class="fa-solid fa-circle-play"></i> Watch it run</a>
+        </div>
+        <div class="stats">
+          <div class="stat"><b>~0.2&cent;</b><span>AI cost to read a report</span></div>
+          <div class="stat"><b>2,500&times;</b><span>cheaper than buying reports retail</span></div>
+          <div class="stat"><b>88</b><span>Ohio counties, plus agency search</span></div>
+          <div class="stat"><b>$0</b><span>per-record fee, because you own it</span></div>
+        </div>
       </div>
-      <div class="stats">
-        <div class="stat"><b>~0.2&cent;</b><span>AI cost per report read</span></div>
-        <div class="stat"><b>2,500&times;+</b><span>cheaper than buying reports retail</span></div>
-        <div class="stat"><b>88</b><span>Ohio counties + agency search</span></div>
-        <div class="stat"><b>$0</b><span>per-record data fee &mdash; you own it</span></div>
-      </div>
-    </section>
-
-    <section class="section" id="film">
-      <h2>See it run in <span class="gold">60 seconds</span></h2>
-      <p class="lead-line">A real scan from start to finish: pick counties, clear one CAPTCHA, let the AI read the reports, then work the leads on the dashboard.</p>
-      <figure class="shot film">
-        <video controls preload="none" playsinline poster="assets/crash/ohio-crash-tool-film-poster.webp" width="1920" height="1080">
-          <source src="assets/crash/ohio-crash-tool-film.mp4" type="video/mp4">
-          <track kind="captions" src="assets/crash/ohio-crash-tool-film.vtt" srclang="en" label="English">
-          Your browser does not play this video. <a href="assets/crash/ohio-crash-tool-film.mp4">Download it (MP4, 13 MB)</a>.
-        </video>
-        <figcaption><span class="tag">Real data</span>The dashboard shows a client's real crash data with <b>names, street addresses and citation numbers redacted</b> and report numbers replaced.</figcaption>
+      <figure class="shot hero-shot">
+        <div class="frame">
+          <img src="assets/crash/lead-dashboard.webp" alt="Ohio Crash List lead dashboard: filters, summary tiles, an Ohio map shaded by leads per county with a county ranking, a leads-per-day chart stacked by injury, and a breakdown of who the leads are." width="1500" height="1208" fetchpriority="high" decoding="async">
+        </div>
+        <figcaption><span class="tag">The output</span>A live lead map, leads per day and who the leads are. Every number follows the filters. <em>Real client data; personal details are not shown.</em></figcaption>
       </figure>
     </section>
 
-    <section class="section" id="whats-new">
-      <h2>What&rsquo;s new in <span class="gold">version 1.3</span></h2>
-      <p class="lead-line">The tool shipped in August as a fast way to turn Ohio crash reports into a lead list. Version 1.3 turns that list into a working desk: a map of where the leads are, leads you can act on without sorting, and AI that costs a fraction of what it did.</p>
-      <div class="wn-grid">
-        <div class="wn-col">
-          <p class="wn-k">Where it started &middot; August 2026</p>
-          <h3>A scanner and a lead list</h3>
+    <section class="sec" id="film">
+      <div class="sec-head center">
+        <span class="kicker">60-second film</span>
+        <h2>See a real scan from start to finish</h2>
+        <p class="lead">Pick counties, clear one CAPTCHA, let the AI read the reports, then work the leads on the dashboard.</p>
+      </div>
+      <figure class="shot film film-wrap">
+        <div class="frame">
+          <video controls preload="none" playsinline poster="assets/crash/ohio-crash-tool-film-poster.webp" width="1920" height="1080">
+            <source src="assets/crash/ohio-crash-tool-film.mp4" type="video/mp4">
+            <track kind="captions" src="assets/crash/ohio-crash-tool-film.vtt" srclang="en" label="English">
+            Your browser does not play this video. <a href="assets/crash/ohio-crash-tool-film.mp4">Download it (MP4, 13 MB)</a>.
+          </video>
+        </div>
+        <figcaption><span class="tag">Real data</span>A client's real crash data, with <b>names, street addresses and citation numbers redacted</b> and report numbers replaced.</figcaption>
+      </figure>
+    </section>
+
+    <section class="sec" id="whats-new">
+      <div class="sec-head center">
+        <span class="kicker">What's new</span>
+        <h2>Two months in, it does <span class="grad">a lot more</span> than make a list</h2>
+        <p class="lead">It shipped in August as a fast way to turn crash reports into a lead list. Version 1.3.6 is a full lead desk: it finds the leads, cleans them, maps them, and now finds their phone numbers too.</p>
+      </div>
+      <div class="evolve">
+        <div class="then">
+          <p class="era">Where it started &middot; August 2026</p>
+          <h3>A scanner and a list</h3>
           <ul>
-            <li>Search by county or one agency, one CAPTCHA per search</li>
+            <li>Search by county or one agency</li>
             <li>AI reads each report into one record per person</li>
-            <li>A table of leads with county counts and a severity tally</li>
-            <li>Every injured person listed, including drivers who were cited</li>
-            <li>One Claude model, priced per report as it ran</li>
+            <li>A table of leads with county counts</li>
+            <li>Every injured person listed, including cited drivers</li>
+            <li>One Claude model, priced as it ran</li>
+            <li>Names and addresses only</li>
           </ul>
         </div>
-        <div class="wn-col now">
-          <p class="wn-k">Where it is now &middot; Version 1.3.3, October 2026</p>
-          <h3>A lead desk your team works from</h3>
-          <ul>
-            <li><b>A map dashboard.</b> Ohio shaded by leads; hover a county for its count, click it to filter everything, see leads per day and who the leads are.</li>
-            <li><b>Cleaner leads.</b> Drivers charged with an offense are set aside automatically, so the list starts with people you can contact.</li>
-            <li><b>Find any crash.</b> Search every report by number, name, street, city, agency or date and see everyone on it.</li>
-            <li><b>Sharper targeting.</b> Pick individual agencies inside a county, and export by crash date or by the date a report was pulled.</li>
-            <li><b>You set the AI spend.</b> Claude Haiku 5.5, trimmed report text, half-price batching, and the cost per report shown before you start.</li>
-            <li><b>Signed by TES.</b> Windows shows Tevis Engineering Solutions, LLC as the verified publisher of every installer.</li>
-          </ul>
+        <div class="now-panel">
+          <div class="now-head">
+            <p class="era">Where it is now &middot; Version 1.3.6, October 2026</p>
+            <h3>A lead desk your team works from</h3>
+          </div>
+          <a class="hero-tile" href="#enrich">
+            <span class="ic big"><i class="fa-solid fa-address-book"></i></span>
+            <span class="ht-body">
+              <span class="badge">New</span>
+              <span class="ht-title">Phone and email for the leads you pick</span>
+              <span class="ht-text">Package any filtered audience and enrich it through People Data Labs: mobile numbers and personal emails that also match ad audiences on Facebook, Google and connected TV. A cost preview, a cap on every run, and no one paid for twice.</span>
+              <span class="ht-more">See how enrichment works &rarr;</span>
+            </span>
+            <span class="ht-stat"><b>86%</b><span>of leads matched in testing</span></span>
+          </a>
+          <div class="now-grid">
+            <div class="tile"><span class="ic"><i class="fa-solid fa-map"></i></span><b>A live Ohio map</b><span>Leads shaded by county; click one to filter everything.</span></div>
+            <div class="tile"><span class="ic"><i class="fa-solid fa-user-check"></i></span><b>Cleaner leads</b><span>Drivers charged with an offense are set aside for you.</span></div>
+            <div class="tile"><span class="ic"><i class="fa-solid fa-magnifying-glass"></i></span><b>Find any crash</b><span>Search every report and see everyone on it.</span></div>
+            <div class="tile"><span class="ic"><i class="fa-solid fa-crosshairs"></i></span><b>Sharper targeting</b><span>Single agencies inside a county; export by crash or pull date.</span></div>
+            <div class="tile"><span class="ic"><i class="fa-solid fa-gauge-high"></i></span><b>You set the AI spend</b><span>Haiku 5.5, trimmed text, half-price batching, cost up front.</span></div>
+            <div class="tile"><span class="ic"><i class="fa-solid fa-certificate"></i></span><b>Signed by TES</b><span>Windows shows Tevis Engineering Solutions, LLC as the publisher.</span></div>
+          </div>
         </div>
       </div>
-      <div class="wn-nums">
-        <div class="wn-num"><span class="from">~1.5&cent; per report</span><span class="to">~0.2&cent;</span><span>AI cost to read a report, with Haiku 5.5 and trimmed text</span></div>
-        <div class="wn-num"><span class="from">County bar chart</span><span class="to">Live Ohio map</span><span>Hover, click and filter the whole dashboard</span></div>
-        <div class="wn-num"><span class="from">Every injured party</span><span class="to">Contactable leads</span><span>Cited drivers set aside before the list reaches you</span></div>
+      <div class="nums">
+        <div class="num"><span class="from">~1.5&cent; per report</span><span class="to">~0.2&cent;</span><span>AI cost to read a report, with Haiku 5.5 and trimmed text</span></div>
+        <div class="num"><span class="from">County bar chart</span><span class="to">Live Ohio map</span><span>Hover, click and filter the whole dashboard</span></div>
+        <div class="num"><span class="from">Name and address</span><span class="to">Phone and email</span><span>Optional enrichment for the leads you pick</span></div>
       </div>
     </section>
 
-    <section class="section" id="what">
-      <h2>Ohio accident report leads you <span class="gold">own</span>, not a rented list</h2>
-      <p class="lead-line">
-        The tool scans Ohio's official crash-report portal &mdash; by county or by law-enforcement agency &mdash; over a date
-        window you choose; uses AI to <strong>read each OH-1 report</strong> and extract every person involved; leaves out
-        drivers who were charged with an offense; de-duplicates everyone into a database; and opens a live, map-based
-        dashboard with a one-click spreadsheet export.
-      </p>
-      <p>
-        It is a self-contained desktop program with your branding &mdash; not a third-party data subscription. The output matches
-        the shape of the broker spreadsheets already on the market, <strong>minus the paid phone / email &ldquo;append&rdquo;</strong>
-        (which can be added). The one manual step &mdash; a person clearing a quick anti-bot check once per search &mdash; is a
-        deliberate, defensible choice, explained below.
-      </p>
-      <div class="shots-2 even">
+    <section class="sec band" id="how">
+      <div class="split wide-left">
+        <div class="sec-head">
+          <span class="kicker">How it works</span>
+          <h2>From the state's crash portal to a lead list you <span class="gold">own</span></h2>
+          <p class="lead">
+            The tool searches Ohio's official Crash Retrieval portal by county or law-enforcement agency, reads every injury
+            report with AI, leaves out drivers who were charged with an offense, and de-duplicates everyone into a database on
+            your own computer. You only ever solve CAPTCHAs. Everything else is automatic.
+          </p>
+        </div>
+        <div class="notice">
+          <b>Why the one human step?</b> Ohio's portal puts a CAPTCHA on every search so a person, not a bot, makes each
+          request. We <strong>deliberately do not build CAPTCHA-defeating automation</strong>: it is brittle, it works against
+          the site's controls, and it is the wrong exposure for a professional practice. Want it fully unattended? Add a paid,
+          contracted data feed as an upgrade.
+        </div>
+      </div>
+      <ol class="steps">
+        <li><strong>Pick your scope</strong><p>Choose counties on the map or one law-enforcement agency, and a date window.</p></li>
+        <li><strong>Clear one check</strong><p>A staff member clears one quick anti-bot check per search, a few minutes for a multi-county pull.</p></li>
+        <li><strong>Fetch and read</strong><p>The tool pages the results, downloads the injury reports, reads each one into records, and sets aside cited drivers.</p></li>
+        <li><strong>Work the leads</strong><p>De-duplicated leads land on the map dashboard, ready to filter, search, enrich and export.</p></li>
+      </ol>
+    </section>
+
+    <section class="sec" id="capabilities">
+      <div class="sec-head">
+        <span class="kicker">What it does</span>
+        <h2>Everything between a crash report and a call list</h2>
+      </div>
+      <div class="features">
+        <article class="card">
+          <span class="ic"><i class="fa-solid fa-map-location-dot"></i></span>
+          <h3>County and agency search</h3>
+          <p>A clickable map and list of all 88 Ohio counties with presets (NE Ohio, big metros, statewide), or one department's injury crashes statewide.</p>
+        </article>
+        <article class="card">
+          <span class="ic"><i class="fa-solid fa-robot"></i></span>
+          <h3>AI extraction, your way</h3>
+          <p><strong>One record per person</strong> on each report, with name, address, age, gender and injury. Hybrid, rules-only ($0), always-AI, or download now and read later.</p>
+        </article>
+        <article class="card">
+          <span class="ic"><i class="fa-solid fa-gauge-high"></i></span>
+          <h3>You set the AI spend</h3>
+          <p>Pick the Claude model, trim the boilerplate every report repeats (about 54% fewer tokens), or batch at half price. The cost shows before you start.</p>
+        </article>
+        <article class="card">
+          <span class="ic"><i class="fa-solid fa-layer-group"></i></span>
+          <h3>Clean, de-duplicated leads</h3>
+          <p>The same person across several crashes collapses into one entry with full provenance. Drivers charged with an offense are left out automatically.</p>
+        </article>
+        <article class="card">
+          <span class="ic"><i class="fa-solid fa-chart-column"></i></span>
+          <h3>A dashboard that filters itself</h3>
+          <p>Hover a county for its count, click it to filter the whole page. Filter by injury, date window or the latest pull, and export exactly what you see.</p>
+        </article>
+        <article class="card">
+          <span class="ic"><i class="fa-solid fa-magnifying-glass"></i></span>
+          <h3>Find any crash</h3>
+          <p>Search every report by number, name, street, city, agency or date and see everyone on it, with a link to the source PDF.</p>
+        </article>
+        <article class="card new">
+          <span class="ic"><i class="fa-solid fa-address-book"></i></span>
+          <h3>Contact enrichment <span class="badge">New</span></h3>
+          <p>Add phone numbers and emails to the leads <strong>you</strong> pick. Package exactly the audience you want and enrich only that, with a cost cap on every run.</p>
+        </article>
+        <article class="card">
+          <span class="ic"><i class="fa-solid fa-file-pdf"></i></span>
+          <h3>Every lead has a source</h3>
+          <p>Each row links to the OH-1 report it came from, stored in your database, so anyone on your team can check a lead in one click.</p>
+        </article>
+        <article class="card">
+          <span class="ic"><i class="fa-solid fa-shield-halved"></i></span>
+          <h3>Signed and local</h3>
+          <p>Windows shows Tevis Engineering Solutions, LLC as the verified publisher, and your lead database lives on your own computer.</p>
+        </article>
+      </div>
+      <div class="gallery">
         <figure class="shot">
-          <img src="assets/crash/app-setup.webp" alt="Ohio Crash Scanner setup screen: crash date range, extraction mode, model and token-saving options, a county list with NE Ohio, big metros and all-88 presets, and an Ohio map with seventeen Northeast Ohio counties selected." width="1222" height="892" loading="lazy" decoding="async">
-          <figcaption><span class="tag">The app</span><b>Pick your scope on a map.</b> Click counties, use a preset (NE Ohio, big metros, all 88), or switch to Agencies and search one department. Choose the AI model and mode, and see the cost per report before you press Start.</figcaption>
+          <div class="frame"><img src="assets/crash/app-setup.webp" alt="Ohio Crash Scanner setup screen: crash date range, extraction mode, model and token-saving options, a county list with presets, and an Ohio map with seventeen Northeast Ohio counties selected." width="1222" height="892" loading="lazy" decoding="async"></div>
+          <figcaption><span class="tag">The app</span><b>Pick your scope on a map.</b> Presets or single counties, or switch to one agency. See the cost per report before you press Start.</figcaption>
         </figure>
         <figure class="shot">
-          <img src="assets/crash/app-scan.webp" alt="Ohio Crash Scanner mid-run: extracting party information from Lorain County reports, a progress bar, a log of each county's results, and the AI cost so far." width="1202" height="732" loading="lazy" decoding="async">
-          <figcaption><span class="tag">The run</span><b>It reads every report while you watch.</b> The scan pages the results, downloads the injury reports, and reads each one, with a live log and a running AI cost. A two-county week read 26 reports for about five cents.</figcaption>
+          <div class="frame"><img src="assets/crash/app-scan.webp" alt="Ohio Crash Scanner mid-run: extracting party information from Lorain County reports, a progress bar, a log of each county's results, and the AI cost so far." width="1202" height="732" loading="lazy" decoding="async"></div>
+          <figcaption><span class="tag">The run</span><b>It reads every report while you watch.</b> A two-county week read 26 reports for about five cents.</figcaption>
+        </figure>
+        <figure class="shot span-2">
+          <div class="frame"><img src="assets/crash/dashboard-find.webp" alt="Find a crash: a search for Akron on October 8, 2026 returns one Summit County crash with three drivers, their roles, injuries and ages; names and street addresses are redacted." width="1500" height="370" loading="lazy" decoding="async"></div>
+          <figcaption><span class="tag">Find a crash</span><b>One search, everyone on the report.</b> <em>Names, street addresses and ZIPs redacted; report numbers replaced.</em></figcaption>
         </figure>
       </div>
-      <figure class="shot">
-        <img src="assets/crash/dps-portal.webp" alt="Ohio Department of Public Safety Crash Retrieval portal: advanced search by crash date range, county, or law-enforcement agency, gated by a CAPTCHA text box." width="1500" height="905" loading="lazy" decoding="async">
-        <figcaption><span class="tag">The source</span><b>Ohio's official crash portal.</b> The state's public Crash Retrieval site &mdash; searchable by county or agency. Every search is gated by a CAPTCHA; that is the one step a person clears.</figcaption>
-      </figure>
     </section>
 
-    <section class="section" id="capabilities">
-      <h2>What the Ohio crash report tool does</h2>
-      <div class="grid">
-        <article class="card">
-          <h3><i class="fa-solid fa-map-location-dot"></i> County + agency search</h3>
-          <p>An interactive map and a filterable list for all 88 Ohio counties, with one-click presets (NE Ohio, big metros, all 88). Or switch to Agencies and query one department &mdash; one search pulls that agency's injury crashes statewide.</p>
-        </article>
-        <article class="card">
-          <h3><i class="fa-solid fa-robot"></i> AI extraction, your way</h3>
-          <p>Reads each report PDF and returns <strong>one record per person</strong> (driver, passenger, pedestrian) with name, address, age, gender, and injury severity. Four modes: hybrid (rules first, AI only when needed), rules-only ($0), always-AI, or download now and read later.</p>
-        </article>
-        <article class="card">
-          <h3><i class="fa-solid fa-gauge-high"></i> You set the AI spend</h3>
-          <p>Pick the Claude model, trim the boilerplate every report repeats (about 54% fewer tokens), or batch reports at half price. The estimated cost per report shows before you start, and a live meter tracks the run.</p>
-        </article>
-        <article class="card">
-          <h3><i class="fa-solid fa-layer-group"></i> Clean, de-duplicated leads</h3>
-          <p>A local database collapses the same person across multiple crashes into one entry, keeps full per-crash provenance, and checks every report for drivers charged with an offense &mdash; they are left out of the leads automatically.</p>
-        </article>
-        <article class="card">
-          <h3><i class="fa-solid fa-chart-column"></i> A dashboard that filters itself</h3>
-          <p>An Ohio map shaded by leads: hover a county for its count, click it to filter the whole page. Filter by injury level, date window or the latest pull; see leads per day, injury mix, drivers vs. passengers, and minors. Export exactly what you see to CSV.</p>
-        </article>
-        <article class="card">
-          <h3><i class="fa-solid fa-magnifying-glass"></i> Find any crash</h3>
-          <p>Search every report on file by report number, name, street, city, agency or date, and see everyone on that crash &mdash; including cited drivers and people with no apparent injury &mdash; with a link to the source PDF.</p>
-        </article>
-        <article class="card">
-          <h3><i class="fa-solid fa-address-book"></i> Contact enrichment, on your terms</h3>
-          <p>Add phone numbers and emails to the leads <strong>you</strong> pick. Filter the dashboard, package exactly the audience you want, and enrich only that &mdash; nothing is enriched automatically, and no one is ever looked up (or paid for) twice.</p>
-        </article>
+    <section class="sec band" id="enrich">
+      <div class="split">
+        <div>
+          <div class="sec-head">
+            <span class="kicker">Contact enrichment</span>
+            <h2>Phone and email, <span class="gold">only for the leads you choose</span></h2>
+            <p class="lead">An Ohio crash report gives you a name and a mailing address. It almost never gives you a phone number. Contact enrichment closes that gap through People Data Labs, a third-party identity provider, on a budget you set.</p>
+          </div>
+          <ol class="steps stack">
+            <li><strong>Filter</strong><p>Narrow the dashboard to the leads worth reaching: county, date window, injury level, drivers who were not cited.</p></li>
+            <li><strong>Package</strong><p>One click bundles that exact list and tells you how many are in it, how many were already looked up, and the most it can cost.</p></li>
+            <li><strong>Enrich</strong><p>Each person is looked up at the match confidence you set. Anyone already done is skipped, and the run stops at your cap.</p></li>
+            <li><strong>Reach out</strong><p>Phones and emails land in the dashboard and a contacts export, ready for your CRM, mail house or ad platform.</p></li>
+          </ol>
+        </div>
+        <aside class="match" aria-labelledby="matchHead">
+          <h3 id="matchHead">What a People Data Labs match can include</h3>
+          <p>One match is one record from PDL's Person Base bundle. Fields that are useful for marketing, directly or indirectly:</p>
+          <div class="fgroup">
+            <h4><i class="fa-solid fa-phone"></i> Reach them directly</h4>
+            <p>Call, text or email the people you have chosen.</p>
+            <div class="chips"><code class="in">mobile_phone</code><code class="in">phone_numbers</code><code class="in">recommended_personal_email</code><code class="in">personal_emails</code><code class="in">work_email</code></div>
+          </div>
+          <div class="fgroup">
+            <h4><i class="fa-solid fa-bullseye"></i> Reach them on the platforms they use</h4>
+            <p>Emails and phones double as match keys for Facebook, Google and connected-TV custom audiences. Profile links show where someone is active.</p>
+            <div class="chips"><code>facebook_url</code><code>linkedin_url</code><code>twitter_url</code><code>profiles</code></div>
+          </div>
+          <div class="fgroup">
+            <h4><i class="fa-solid fa-user"></i> Know who they are</h4>
+            <p>Segment and personalize by work and life stage, or build lookalike audiences.</p>
+            <div class="chips"><code>job_title</code><code>job_title_levels</code><code>job_company_name</code><code>industry</code><code>job_company_size</code><code>birth_year</code></div>
+          </div>
+          <div class="fgroup">
+            <h4><i class="fa-solid fa-location-dot"></i> Know where they are</h4>
+            <p>Confirm the mailing address on the report and target by metro.</p>
+            <div class="chips"><code>location_street_address</code><code>location_locality</code><code>location_postal_code</code><code>location_metro</code><code>street_addresses</code></div>
+          </div>
+          <div class="fgroup">
+            <h4><i class="fa-solid fa-signal"></i> Read the signals</h4>
+            <p>Self-reported interests, and a score for how current the profile is.</p>
+            <div class="chips"><code>interests</code><code>activity_score</code></div>
+          </div>
+          <p class="fine">Highlighted fields are in your dashboard and exports today. The rest come back on the same match at no extra credit; ask us if you want any of them added to your export. Contact values need a paid PDL plan.</p>
+        </aside>
       </div>
-      <figure class="shot" style="margin-top:1.2rem;">
-        <img src="assets/crash/lead-dashboard.webp" alt="Ohio Crash List lead dashboard: filters, summary tiles (574 contactable leads, 460 crash reports, 67 counties, 249 cited and left out), an Ohio map shaded by leads per county with a county ranking, a leads-per-day chart stacked by injury, and a breakdown of injury severity, drivers, passengers and minors." width="1500" height="1208" loading="lazy" decoding="async">
-        <figcaption><span class="tag">The output</span><b>What the firm works from.</b> Summary tiles, a lead map you can hover and click, leads per day, and who the leads are &mdash; every number follows the filters. <em>Real client data; personal details are not shown.</em></figcaption>
-      </figure>
-      <figure class="shot">
-        <img src="assets/crash/dashboard-find.webp" alt="Find a crash: a search for Akron on October 8, 2026 returns one Summit County crash with three drivers, their roles, injuries and ages; names and street addresses are redacted." width="1500" height="370" loading="lazy" decoding="async">
-        <figcaption><span class="tag">Find a crash</span><b>One search, everyone on the report.</b> <em>Names, street addresses and ZIPs redacted; report numbers replaced.</em></figcaption>
-      </figure>
+      <div class="stats-row">
+        <div class="stat"><b class="grad">86%</b><span>of crash leads matched to a real person</span></div>
+        <div class="stat"><b class="grad">~1 in 2</b><span>came back with a phone or email at high confidence</span></div>
+        <div class="stat"><b class="grad">$0</b><span>for a lookup that finds no one</span></div>
+      </div>
+      <p class="fine">From our October 2026 test of 99 randomly chosen Northeast Ohio leads. Results vary by county, by how complete each report is, and by the confidence setting you choose.</p>
+      <div class="ways">
+        <div class="way">
+          <h3><i class="fa-solid fa-key"></i> Your own account</h3>
+          <p>Connect your own People Data Labs account in Settings, on any edition. PDL bills you directly at their rates, and your key stays on your computer. PDL charges per <strong>match</strong>, so a lookup that finds no one costs nothing, and with &ldquo;reachable only&rdquo; on, a match counts only when it has a phone or email. PDL&rsquo;s free plan includes up to 100 lookups a month (it confirms contact data exists but hides the values); paid plans that show phones and emails start at $98 a month. <a href="https://www.peopledatalabs.com/pricing/person" target="_blank" rel="noopener">Current PDL pricing</a>.</p>
+        </div>
+        <div class="way">
+          <h3><i class="fa-solid fa-handshake"></i> Let us handle it</h3>
+          <p>Rather not manage another vendor? We enrich your leads through our own data account, right in the app on a subscription, or in your regular delivery on Data as a Service. Billing follows <strong>usage</strong>: you pay for the contact data your leads actually use, plus a modest service fee, and lookups that come back empty cost you nothing. A small monthly minimum applies in months you use it. You set a monthly contact limit, metered against your license, and we never go past it without your OK.</p>
+        </div>
+      </div>
+      <div class="incl-box">
+        <h3>Spend controls on every run</h3>
+        <ul class="ticks cols">
+          <li>You choose every lead, with no blanket enrichment</li>
+          <li>A spending cap on every run</li>
+          <li>Already-enriched people skipped automatically</li>
+          <li>A match-confidence threshold you set (default: high)</li>
+          <li>The cost shown before every run</li>
+          <li>A log of every lookup and credit spent</li>
+        </ul>
+      </div>
     </section>
 
-    <section class="section" id="how">
-      <h2>How an Ohio crash report becomes a lead</h2>
-      <p>You only ever solve CAPTCHAs. Everything else is automatic.</p>
-      <div class="process">
-        <div class="process-step"><strong>Pick your scope</strong><p>Choose counties on the map or query a law-enforcement agency, and set a date window.</p></div>
-        <div class="process-step"><strong>Clear one check</strong><p>A staff member clears one quick anti-bot check per search &mdash; a few minutes total for a multi-county pull.</p></div>
-        <div class="process-step"><strong>Auto-fetch &amp; extract</strong><p>The tool pages the results, downloads the injury reports, reads each one into structured records, and sets aside drivers who were charged.</p></div>
-        <div class="process-step"><strong>Dashboard &amp; export</strong><p>De-duplicated leads land on the map dashboard, ready to filter, search and export to CSV.</p></div>
-      </div>
-      <div class="notice">
-        <b>Why the one human step?</b> Ohio's portal places a CAPTCHA on every search to ensure a person &mdash; not a bot &mdash; makes each request. We <strong>deliberately do not build CAPTCHA-defeating automation</strong>: it is brittle, works against the site's controls, and is the wrong exposure for a professional practice. Free &rArr; accept a small human step each run. Fully unattended &rArr; add a paid, contracted data feed (available as an upgrade).
+    <section class="sec" id="value">
+      <div class="split">
+        <div class="sec-head">
+          <span class="kicker">The math</span>
+          <h2>What it saves vs. <span class="gold">buying Ohio crash reports</span></h2>
+          <p class="lead">Brokers are not defeating the CAPTCHA either. They hold an authorized, contracted pipe into the same records and resell it. You pay only for the AI that <strong>reads</strong> each report, about 0.2&cent;, not for gated access.</p>
+          <p class="fine">Illustrative market ranges for about 1,000 injury reports. At the scale of a typical broker file (thousands of reports), that is tens of thousands of dollars retail versus a few dollars here. More in <a href="blog/ohio-crash-report-leads-for-law-firms.html">buying a list vs. building your own pipeline</a>.</p>
+        </div>
+        <div class="ptable-wrap">
+          <table class="ptable">
+            <thead><tr><th></th><th>Buying reports retail (e.g. BuyCrash)</th><th class="hl">This tool</th></tr></thead>
+            <tbody>
+              <tr><td class="rowlab">Cost to obtain &amp; read 1,000</td><td>$5,000 &ndash; $15,000</td><td class="hl">~$2 in AI</td></tr>
+              <tr><td class="rowlab">Per report</td><td>$5 &ndash; $15</td><td class="hl">~$0.002 (about 0.2&cent;)</td></tr>
+              <tr><td class="rowlab">Exclusivity</td><td>Non-exclusive, resold to competitors</td><td class="hl">Exclusive: you generate &amp; own it</td></tr>
+              <tr><td class="rowlab">Afterward</td><td>You bought copies</td><td class="hl">You own the audience and reuse it freely</td></tr>
+            </tbody>
+          </table>
+        </div>
       </div>
     </section>
-
-    <section class="section" id="enrich">
-      <h2>Phone and email &mdash; <span class="gold">only for the leads you choose</span></h2>
-      <p class="lead-line">An Ohio crash report gives you a name and a mailing address. It almost never gives you a phone number. Contact enrichment closes that gap through People Data Labs, a third-party identity provider, on a budget you set.</p>
-      <div class="process">
-        <div class="process-step"><strong>Filter</strong><p>Narrow the dashboard to the leads worth reaching &mdash; county, date window, injury level, drivers who were not cited.</p></div>
-        <div class="process-step"><strong>Package</strong><p>One click bundles that exact list and tells you up front how many people are in it, how many were already looked up, and the most it can cost.</p></div>
-        <div class="process-step"><strong>Enrich</strong><p>The app looks each person up at the match confidence you set, skips anyone already done, and stops at your spending cap.</p></div>
-        <div class="process-step"><strong>Reach out</strong><p>Phones and emails land in the dashboard and a contacts export, ready for your CRM, mail house or ad platform.</p></div>
+    <section class="sec band" id="pricing">
+      <div class="sec-head">
+        <span class="kicker">Pricing</span>
+        <h2>Three ways to get Ohio crash leads</h2>
+        <p class="lead">Own the software, subscribe to it, or skip the app and just get the data. Every option is validated, so you never pay for junk records, and every option costs a fraction of what the big data channels charge.</p>
       </div>
-      <div class="stats">
-        <div class="stat"><b>86%</b><span>of crash leads matched to a real person</span></div>
-        <div class="stat"><b>~1 in 2</b><span>came back with a phone or email at high confidence</span></div>
-        <div class="stat"><b>$0</b><span>for a lookup that finds no one</span></div>
-      </div>
-      <p class="mini-note">From our October 2026 test of 99 randomly chosen Northeast Ohio leads. Results vary by county, by how complete each report is, and by the confidence setting you choose.</p>
-      <div class="notice">
-        <b>Two ways to get contact data.</b>
-        <p style="margin-top:0.4rem;"><strong>Your own account:</strong> connect your own People Data Labs account in Settings, on any edition. PDL bills you directly, at their rates, and your key stays on your computer. PDL charges per <strong>match</strong> &mdash; a lookup that finds no one costs nothing &mdash; and with &ldquo;reachable only&rdquo; on, the app asks PDL to count a match only when it has a phone or email. PDL&rsquo;s free plan includes up to 100 lookups a month (it confirms contact data exists but hides the values); paid plans that show phones and emails start at $98 a month. <a href="https://www.peopledatalabs.com/pricing/person" target="_blank" rel="noopener" style="color:var(--gold);">Current PDL pricing</a>.</p>
-        <p style="margin-top:0.6rem;"><strong>Let us handle it:</strong> rather not manage another vendor? We enrich your leads through our own data account &mdash; right in the app on a subscription, or in your regular delivery on Data as a Service. Billing follows <strong>usage</strong>: you pay for the contact data your leads actually use, plus a modest service fee, and lookups that come back empty cost you nothing. A small monthly minimum applies in months you use it. You set a monthly contact limit, metered against your license, and we never go past it without your OK.</p>
-      </div>
-      <ul class="incl">
-        <li>You choose every lead &mdash; no blanket enrichment</li>
-        <li>A spending cap on every run</li>
-        <li>Already-enriched people skipped automatically</li>
-        <li>A match-confidence threshold you set (default: high)</li>
-        <li>The cost shown before every run</li>
-        <li>A log of every lookup and credit spent</li>
-      </ul>
-    </section>
-
-    <section class="section" id="value">
-      <h2>What it saves vs. <span class="gold">buying Ohio crash reports</span></h2>
-      <p>
-        Brokers are not defeating the CAPTCHA either &mdash; they hold an authorized, contracted pipe into the same records and
-        resell it. You pay only for the AI that <strong>reads</strong> each report &mdash; about 0.2&cent; &mdash; not for gated access.
-        To assemble ~1,000 injury reports:
-      </p>
-      <div class="ptable-wrap">
-        <table class="ptable">
-          <thead><tr><th></th><th>Buying reports retail (e.g. BuyCrash)</th><th class="hl">This tool</th></tr></thead>
-          <tbody>
-            <tr><td class="rowlab">Cost to obtain &amp; read them</td><td>$5,000 &ndash; $15,000</td><td class="hl">~$2 in AI</td></tr>
-            <tr><td class="rowlab">Per report</td><td>$5 &ndash; $15</td><td class="hl">~$0.002 (about 0.2&cent;)</td></tr>
-            <tr><td class="rowlab">Exclusivity</td><td>Non-exclusive &mdash; resold to competitors</td><td class="hl">Exclusive &mdash; you generate &amp; own it</td></tr>
-            <tr><td class="rowlab">Afterward</td><td>You bought copies</td><td class="hl">You own the audience &mdash; reuse it freely</td></tr>
-          </tbody>
-        </table>
-      </div>
-      <p class="mini-note">Illustrative market ranges &mdash; same public records; the difference is you pay for the <em>reading</em>, not for access someone else gates behind a per-report fee. At the scale of a typical broker file (thousands of reports), that is tens of thousands of dollars retail versus a few dollars here. We walk through the whole comparison in <a href="blog/ohio-crash-report-leads-for-law-firms.html" style="color:var(--gold);">buying a list vs. building your own pipeline</a>.</p>
-    </section>
-
-    <section class="section" id="pricing">
-      <h2>Ohio crash lead pricing: three ways to get it</h2>
-      <p>Own the software, subscribe to it, or skip the app entirely and just get the data. Every option is validated &mdash; you never pay for junk records &mdash; and every option costs a fraction of what the big data channels charge.</p>
       <div class="models">
         <div class="model">
-          <h3>Own It</h3>
+          <h3>Own it</h3>
           <p class="mprice">$3,995 <small>one-time + tax</small></p>
           <p>Buy the software outright and run it in-house on <strong>your own AI key</strong>, so you pay for AI at cost with no recurring license fee. Your data never leaves your office. Includes a 60-day portal-change warranty; AI typically runs a few dollars a month.</p>
           <p class="fit"><b>Best when</b> you want control and the lowest long-run cost.</p>
         </div>
         <div class="model">
-          <h3>License It</h3>
+          <h3>License it</h3>
           <p class="mprice">from $199 <small>/ month + tax</small></p>
-          <p>An all-inclusive <strong>subscription</strong> &mdash; AI, updates, support, and portal-change fixes built in. It always works and stays current, with nothing to maintain. Month-to-month, cancel anytime.</p>
+          <p>An all-inclusive <strong>subscription</strong> with AI, updates, support and portal-change fixes built in. It always works and stays current, with nothing to maintain. Month-to-month, cancel anytime.</p>
           <p class="fit"><b>Best when</b> you want it to just work and keep improving.</p>
         </div>
         <div class="model">
           <h3>Data as a Service</h3>
           <p class="mprice">from $495 <small>/ month + tax</small></p>
-          <p>Never open the app. <strong>We</strong> run it and deliver validated, injury-tagged crashes &mdash; with the source report and every party on it &mdash; for your counties and agencies, up to twice a week. Add phones and emails, billed on usage.</p>
-          <p class="fit"><b>Best when</b> you just want the data &mdash; no operational lift.</p>
+          <p>Never open the app. <strong>We</strong> run it and deliver validated, injury-tagged crashes, with the source report and every party on it, for your counties and agencies, up to twice a week. Add phones and emails, billed on usage.</p>
+          <p class="fit"><b>Best when</b> you just want the data, with no operational lift.</p>
         </div>
       </div>
 
-      <h3 style="font-family:'Montserrat',sans-serif;text-transform:uppercase;letter-spacing:0.03em;font-size:1rem;color:#f1f7f1;margin:1.8rem 0 0.3rem;">License it &mdash; the all-inclusive subscription</h3>
-      <p>The AI is included, and support, updates, new features, and portal-change fixes are all built in. You run the weekly pull (a few minutes); we keep everything behind it running.</p>
+      <h3 class="sub-h">License it: the all-inclusive subscription</h3>
+      <p class="lead">The AI is included, and support, updates, new features and portal-change fixes are all built in. You run the weekly pull (a few minutes); we keep everything behind it running.</p>
       <div class="plans">
         <div class="plan">
           <p class="pname">Starter</p>
           <p class="price">$199<small>/mo + tax</small></p>
-          <p class="annual">$1,910/yr + tax &mdash; save 20%</p>
+          <p class="annual">$1,910/yr + tax &middot; save 20%</p>
           <ul class="spec">
             <li>1,000 reports a month</li>
             <li>1&ndash;3 counties or 1 agency</li>
@@ -691,10 +889,10 @@
           <button type="button" class="btn btn-secondary" data-buy="starter">Subscribe</button>
         </div>
         <div class="plan feat">
-          <span class="ribbon">Most Popular</span>
+          <span class="ribbon">Most popular</span>
           <p class="pname">Pro</p>
           <p class="price">$549<small>/mo + tax</small></p>
-          <p class="annual">$5,270/yr + tax &mdash; save 20%</p>
+          <p class="annual">$5,270/yr + tax &middot; save 20%</p>
           <ul class="spec">
             <li>4,000 reports a month</li>
             <li>A full region (~15 counties) + 1 agency</li>
@@ -708,7 +906,7 @@
         <div class="plan">
           <p class="pname">Firm / Statewide</p>
           <p class="price">$1,199<small>/mo + tax</small></p>
-          <p class="annual">$11,510/yr + tax &mdash; save 20%</p>
+          <p class="annual">$11,510/yr + tax &middot; save 20%</p>
           <ul class="spec">
             <li>15,000 reports a month</li>
             <li>Statewide or unlimited counties + agencies</li>
@@ -720,54 +918,73 @@
           <button type="button" class="btn btn-secondary" data-buy="enterprise">Subscribe</button>
         </div>
       </div>
-      <ul class="incl">
-        <li>AI usage &mdash; on our key, nothing to manage</li>
-        <li>All software updates &amp; new features</li>
-        <li>Portal-change fixes handled for you</li>
-        <li>Support &amp; onboarding / training</li>
-        <li>Setup fee waived on annual prepay</li>
-        <li>Your validated audience, refreshed on cadence</li>
-        <li>Optional contact enrichment: your own People Data Labs account, or ours, billed on usage</li>
-      </ul>
-      <p class="mini-note">Not sure which counties to start with? See <a href="blog/ohio-crash-reports-by-county.html" style="color:var(--gold);">how to choose your coverage area</a>. Data-as-a-service is priced by coverage: 1&ndash;3 counties $495/mo, 4&ndash;10 $1,100, a full region (11&ndash;25) $1,500, statewide from $2,500 &mdash; or pay per validated crash ($3&ndash;$8). Contact enrichment is an optional add-on, billed on usage (with a small monthly minimum) up to a monthly limit you set. All prices are plus applicable sales tax. Every plan is built to your counties, cadence, and budget &mdash; <a href="#get-started" style="color:var(--gold);">request a tailored quote</a>. A 14-day, 100-report free trial is available to evaluate the tool first.</p>
-    </section>
-
-    <section class="section" id="fields">
-      <h2>What data an Ohio crash report gives you</h2>
-      <div class="fields">
-        <code>report_number</code><code>crash_date</code><code>county</code><code>agency</code><code>unit / role</code><code>last, first, middle</code><code>date_of_birth</code><code>age</code><code>gender</code><code>street</code><code>city</code><code>state</code><code>ZIP</code><code>injury_code</code><code>injury_description</code><code>+ optional phone</code><code>+ optional email</code>
+      <div class="incl-box">
+        <h3>Every subscription includes</h3>
+        <ul class="ticks cols">
+          <li>AI usage, on our key, nothing to manage</li>
+          <li>All software updates &amp; new features</li>
+          <li>Portal-change fixes handled for you</li>
+          <li>Support &amp; onboarding / training</li>
+          <li>Setup fee waived on annual prepay</li>
+          <li>Your validated audience, refreshed on cadence</li>
+          <li>Optional contact enrichment: your own People Data Labs account, or ours, billed on usage</li>
+        </ul>
       </div>
-      <p class="mini-note">Injury severity: Fatal / Suspected Serious / Suspected Minor / Injury Possible / No Apparent. Every row links back to the full OH-1 report already in your database. Our guide to <a href="blog/what-is-in-an-ohio-crash-report.html" style="color:var(--gold);">what is on an Ohio crash report</a> explains what each field means and where the severity scale can mislead you.</p>
-      <figure class="shot" style="margin-top:1rem;max-width:520px;">
-        <img src="assets/crash/oh1-report.webp" alt="A sample Ohio OH-1 traffic crash report, page 1, opened from a lead's PDF link." width="905" height="1160" loading="lazy" decoding="async">
-        <figcaption><span class="tag">The record</span><b>The actual source report</b> behind every lead &mdash; a real public record with the officer's details blurred.</figcaption>
-      </figure>
+      <p class="fine">Not sure which counties to start with? See <a href="blog/ohio-crash-reports-by-county.html">how to choose your coverage area</a>. Data as a Service is priced by coverage: 1&ndash;3 counties $495/mo, 4&ndash;10 $1,100, a full region (11&ndash;25) $1,500, statewide from $2,500, or pay per validated crash ($3&ndash;$8). Contact enrichment is an optional add-on, billed on usage (with a small monthly minimum) up to a monthly limit you set. All prices are plus applicable sales tax. Every plan is built to your counties, cadence and budget; <a href="#get-started">request a tailored quote</a>. A 14-day, 100-report free trial is available to evaluate the tool first.</p>
     </section>
 
-    <section class="svc-faq faq" aria-label="Frequently asked questions">
-      <h2 style="font-family:'Montserrat',sans-serif;text-transform:uppercase;letter-spacing:0.03em;font-size:1.3rem;margin-bottom:0.9rem;color:#fff;">Frequently Asked Questions</h2>
-      <details>
-        <summary>Where does the crash data come from?</summary>
-        <div class="faq-a">From Ohio's own official public Crash Retrieval portal, operated by the Ohio Department of Public Safety. The tool reads the same public OH-1 crash reports anyone can request &mdash; it does not hack, scrape around security, or defeat the site's anti-bot check. A person clears one quick CAPTCHA per search, and everything after that is automated. If you want the manual version of that process, we wrote it up in <a href="blog/how-to-get-an-ohio-crash-report.html">how to get an Ohio crash report</a>.</div>
-      </details>
-      <details>
-        <summary>Are phone numbers and emails included?</summary>
-        <div class="faq-a">Not by default. Phone and email are almost never printed on a crash report, so the base output is an addressable audience (name, mailing address, injury, county, agency, date) &mdash; the same shape as the broker spreadsheets, which sell contacts as a paid &ldquo;append.&rdquo; When you want them, <a href="#enrich">contact enrichment</a> adds phones and emails for only the leads you select. On the software, it runs on your own People Data Labs account: PDL bills you directly, charges only for matches, and you set a cap on every run. On a subscription or Data as a Service, we can handle it for you instead and bill on usage &mdash; the contact data your leads actually use plus a modest service fee &mdash; up to a monthly limit you choose. Either way it is optional; the tool works fully without it. See <a href="blog/what-is-in-an-ohio-crash-report.html">what is actually on an OH-1</a> for the full field list.</div>
-      </details>
-      <details>
-        <summary>How much does it cost to run?</summary>
-        <div class="faq-a">On the own-it option the only per-use cost is AI &mdash; about 0.2&cent; per injury report read, a few dollars a month for a weekly regional pull. The subscription includes the AI in the monthly price. A rules-only mode runs the whole pipeline for $0.</div>
-      </details>
-      <details>
-        <summary>How should we handle compliance?</summary>
-        <div class="faq-a">The tool reads public records through the state's own public portal and respects its controls. What you do with the data afterwards is yours to determine: every field has its own rules about outreach, and they differ by industry and change over time. Do your own due diligence with your own counsel and use the tool inside the policies that govern your practice. We are happy to build filters, suppression lists, and cadence controls that fit whatever those policies turn out to be. Contact enrichment adds phone and email data, which brings outreach rules of its own; the same advice applies, and we&rsquo;ll set the holds and suppression to match.</div>
-      </details>
+    <section class="sec" id="fields">
+      <div class="split">
+        <div>
+          <div class="sec-head">
+            <span class="kicker">The record</span>
+            <h2>What data an Ohio crash report gives you</h2>
+            <p class="lead">Every lead is read from the official OH-1 and links back to the full report in your database.</p>
+          </div>
+          <div class="fields">
+            <code>report_number</code><code>crash_date</code><code>county</code><code>agency</code><code>unit / role</code><code>last, first, middle</code><code>date_of_birth</code><code>age</code><code>gender</code><code>street</code><code>city</code><code>state</code><code>ZIP</code><code>injury_code</code><code>injury_description</code><code class="opt">+ optional phone</code><code class="opt">+ optional email</code>
+          </div>
+          <p class="fine">Injury severity: Fatal / Suspected Serious / Suspected Minor / Injury Possible / No Apparent. Our guide to <a href="blog/what-is-in-an-ohio-crash-report.html">what is on an Ohio crash report</a> explains each field and where the severity scale can mislead you.</p>
+        </div>
+        <figure class="shot oh1">
+          <div class="frame"><img src="assets/crash/oh1-report.webp" alt="A sample Ohio OH-1 traffic crash report, page 1, opened from a lead's PDF link." width="905" height="1160" loading="lazy" decoding="async"></div>
+          <figcaption><span class="tag">The source</span><b>The actual report</b> behind every lead, a real public record with the officer's details blurred.</figcaption>
+        </figure>
+      </div>
     </section>
 
-    <section class="section reading" id="reading">
-      <h2>Working with <span class="gold">Ohio crash report data</span></h2>
-      <p class="lead-line">Background reading on where the records come from, what is on them, and how to scope coverage &mdash; whether or not you ever use our software.</p>
-      <div class="grid">
+    <section class="sec band svc-faq" id="faq" aria-label="Frequently asked questions">
+      <div class="sec-head center">
+        <span class="kicker">FAQ</span>
+        <h2>Frequently asked questions</h2>
+      </div>
+      <div class="faq">
+        <details>
+          <summary>Where does the crash data come from?</summary>
+          <div class="faq-a">From Ohio's own official public Crash Retrieval portal, operated by the Ohio Department of Public Safety. The tool reads the same public OH-1 crash reports anyone can request &mdash; it does not hack, scrape around security, or defeat the site's anti-bot check. A person clears one quick CAPTCHA per search, and everything after that is automated. If you want the manual version of that process, we wrote it up in <a href="blog/how-to-get-an-ohio-crash-report.html">how to get an Ohio crash report</a>.</div>
+        </details>
+        <details>
+          <summary>Are phone numbers and emails included?</summary>
+          <div class="faq-a">Not by default. Phone and email are almost never printed on a crash report, so the base output is an addressable audience (name, mailing address, injury, county, agency, date) &mdash; the same shape as the broker spreadsheets, which sell contacts as a paid &ldquo;append.&rdquo; When you want them, <a href="#enrich">contact enrichment</a> adds phones and emails for only the leads you select. On the software, it runs on your own People Data Labs account: PDL bills you directly, charges only for matches, and you set a cap on every run. On a subscription or Data as a Service, we can handle it for you instead and bill on usage &mdash; the contact data your leads actually use plus a modest service fee &mdash; up to a monthly limit you choose. Either way it is optional; the tool works fully without it. See <a href="blog/what-is-in-an-ohio-crash-report.html">what is actually on an OH-1</a> for the full field list.</div>
+        </details>
+        <details>
+          <summary>How much does it cost to run?</summary>
+          <div class="faq-a">On the own-it option the only per-use cost is AI &mdash; about 0.2&cent; per injury report read, a few dollars a month for a weekly regional pull. The subscription includes the AI in the monthly price. A rules-only mode runs the whole pipeline for $0.</div>
+        </details>
+        <details>
+          <summary>How should we handle compliance?</summary>
+          <div class="faq-a">The tool reads public records through the state's own public portal and respects its controls. What you do with the data afterwards is yours to determine: every field has its own rules about outreach, and they differ by industry and change over time. Do your own due diligence with your own counsel and use the tool inside the policies that govern your practice. We are happy to build filters, suppression lists, and cadence controls that fit whatever those policies turn out to be. Contact enrichment adds phone and email data, which brings outreach rules of its own; the same advice applies, and we&rsquo;ll set the holds and suppression to match.</div>
+        </details>
+      </div>
+    </section>
+
+    <section class="sec reading" id="reading">
+      <div class="sec-head">
+        <span class="kicker">Guides</span>
+        <h2>Working with <span class="gold">Ohio crash report data</span></h2>
+        <p class="lead">Where the records come from, what is on them, and how to scope coverage, whether or not you ever use our software.</p>
+      </div>
+      <div class="reading-grid">
         <a class="card rcard" href="blog/how-to-get-an-ohio-crash-report.html">
           <h3>How to Get an Ohio Crash Report (OH-1): Where to Look and How Long It Takes</h3>
           <p>Where the OH-1 lives, how long it takes to appear, which agency to ask, and what gets redacted before you see it.</p>
@@ -792,10 +1009,11 @@
     </section>
 
     <section class="cta-band" id="get-started">
-      <h2>Get started</h2>
-      <p>Start a free trial or subscribe in the next minute &mdash; both are instant and neither needs us to be awake. If you would rather buy it outright, pay another way, or set up something bespoke, ask below and you will hear back from the engineer within one business day.</p>
-      <!-- 1. Instant free trial. Issues a key and emails it; nobody has to be awake. -->
-      <div class="buy-panel" id="trialPanel">
+      <span class="kicker">Get started</span>
+      <h2>Try it free, or subscribe in a minute</h2>
+      <p>Both are instant and neither needs us to be awake. To buy it outright, pay another way, or set up something bespoke, ask below and you will hear back from the engineer within one business day.</p>
+      <div class="buy-grid">
+        <div class="buy-panel" id="trialPanel">
         <h3>Start a free trial now</h3>
         <p class="lede">14 days, 100 report analyses. We email your license key and a sign-in link straight away &mdash; no card, no call.</p>
         <div class="req-success" id="trialSuccess" style="display:none;">
@@ -814,9 +1032,7 @@
         </form>
       </div>
 
-      <!-- 2. Subscription checkout. The plan id is chosen server-side; this form only
-           names a tier. See /portal-api/public/subscribe. -->
-      <div class="buy-panel" id="buyPanel">
+        <div class="buy-panel" id="buyPanel">
         <h3>Subscribe</h3>
         <p class="lede">Choose the Plan and Billing Options below and we'll take you to PayPal to complete the transaction. Your license key is emailed the moment the payment clears.</p>
         <form class="buy-form" id="buyForm" novalidate>
@@ -858,12 +1074,12 @@
           <p class="buy-note">Cancel any time from PayPal. Annual plans bill once for the year.</p>
         </form>
       </div>
+      </div>
 
-      <!-- 3. Everything that is genuinely a conversation: buying outright, data as a
-           service, or anything bespoke. Unchanged Formspree form. -->
-      <h3 style="font-family:'Montserrat',sans-serif;text-transform:uppercase;letter-spacing:0.04em;font-size:0.95rem;color:#fff;margin:1.8rem 0 0.3rem;">Another way to buy</h3>
-      <p style="color:var(--muted);max-width:640px;margin:0 auto 0.6rem;font-size:0.9rem;">Not everything fits a card and a checkout. Buying outright, data as a service, paying by check, ACH or wire, invoicing on net terms, a purchase order, several seats, or a paid pilot &mdash; tell us what you need and we&rsquo;ll set it up by hand.</p>
-      <div class="req-success" id="reqSuccess" style="display:none;">
+      <div class="other-buy">
+        <h3>Another way to buy</h3>
+        <p>Not everything fits a card and a checkout. Buying outright, Data as a Service, paying by check, ACH or wire, invoicing on net terms, a purchase order, several seats, or a paid pilot: tell us what you need and we&rsquo;ll set it up by hand.</p>
+        <div class="req-success" id="reqSuccess" style="display:none;">
         <strong>Thanks &mdash; your request is in.</strong> We&rsquo;ll reply within one business day with a quote, payment details, or whatever the arrangement needs. For anything urgent, call <a href="tel:+12163028486" style="color:#cdeed6;">(216)&nbsp;302&#8209;8486</a>.
       </div>
       <form id="reqForm" class="req-form" action="https://formspree.io/f/maqvanal" method="POST" data-send-once data-sent-show="#reqSuccess" data-ack="crash">
@@ -924,6 +1140,7 @@
         <div class="cf-turnstile full" data-sitekey="0x4AAAAAAEfjPSABvMOUzIl3" data-theme="dark" data-size="flexible"></div>
         <button type="submit" class="btn btn-primary">Send My Request</button>
       </form>
+      </div>
     </section>
   </main>
 
