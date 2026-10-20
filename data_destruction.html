@@ -3,23 +3,24 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Data Destruction Services | Tevis Engineering Solutions</title>
-  <meta name="description" content="NIST 800-88 certified data destruction and hard drive sanitization in Cleveland, Ohio. Certificate of destruction provided. Protect your business from data breaches.">
+  <title>Data Destruction &amp; Hard Drive Wiping in Cleveland | Tevis Engineering Solutions</title>
+  <meta name="description" content="Hard drive and SSD wiping and destruction in Cleveland, Ohio, to NIST SP 800-88. Every drive logged by serial, certificate of destruction available. Wipes from $55.">
   <meta name="author" content="Tyler Tevis, Tevis Engineering Solutions">
   <meta property="og:type" content="website">
   <meta property="og:site_name" content="Tevis Engineering Solutions">
   <meta property="og:locale" content="en_US">
   <meta property="og:url" content="https://tevisengineering.com/data_destruction.html">
-  <meta property="og:title" content="Data Destruction Services | Tevis Engineering Solutions">
-  <meta property="og:description" content="Secure data destruction and media sanitization for regulated industries in Ohio. Chain-of-custody documentation, NIST-aligned methods, destruction certificates.">
-  <meta property="og:image" content="https://tevisengineering.com/assets/og-image.png">
+  <meta property="og:title" content="Data Destruction &amp; Hard Drive Wiping in Cleveland | Tevis Engineering Solutions">
+  <meta property="og:description" content="Wipe or destroy old hard drives and SSDs to NIST SP 800-88, with a chain-of-custody log and a certificate for your records. Cleveland and Northeast Ohio.">
+  <meta property="og:image" content="https://tevisengineering.com/assets/data-destruction/dd-hero-og.jpg">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="630">
-  <meta property="og:image:alt" content="Cleveland IT Support &amp; Custom Engineering | Tevis Engineering Solutions">
+  <meta property="og:image:alt" content="Open hard drive under gold light, for TES data destruction">
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="Data Destruction Services | Tevis Engineering Solutions">
-  <meta name="twitter:description" content="Secure data destruction and media sanitization for regulated industries in Ohio. Chain-of-custody documentation, NIST-aligned methods, destruction certificates.">
-  <meta name="twitter:image" content="https://tevisengineering.com/assets/og-image.png">
+  <meta name="twitter:title" content="Data Destruction &amp; Hard Drive Wiping in Cleveland | Tevis Engineering Solutions">
+  <meta name="twitter:description" content="Wipe or destroy old hard drives and SSDs to NIST SP 800-88, with a chain-of-custody log and a certificate for your records. Cleveland and Northeast Ohio.">
+  <meta name="twitter:image" content="https://tevisengineering.com/assets/data-destruction/dd-hero-og.jpg">
+  <link rel="preload" as="image" href="assets/data-destruction/dd-hero-1600.webp" imagesrcset="assets/data-destruction/dd-hero-640.webp 640w, assets/data-destruction/dd-hero-1600.webp 1536w" imagesizes="100vw" fetchpriority="high">
   <link rel="canonical" href="https://tevisengineering.com/data_destruction.html">
   <link rel="icon" type="image/png" href="assets/favicon.png">
   <link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
@@ -36,198 +37,129 @@
   <style>
     :root {
       --bg: #0d1710;
-      --panel: #121d2e;
-      --panel-soft: #0f1826;
+      --card: #142019;
+      --card-2: #1c2e22;
+      --line: #2c4232;
       --text: #e4ede5;
+      --soft: #c3cec6;
       --muted: #8aa48d;
-      --line: #2a3f62;
       --blue: #4aac65;
-      --blue-dark: #1d5c38;
-      --alert: #ff7f5c;
-      --ok: #63d1a4;
+      --green: #4aac65;
+      --gold: #c89830;
     }
     * { box-sizing: border-box; margin: 0; padding: 0; }
     html { scroll-behavior: smooth; }
-    body {
-      font-family: "Inter", "Segoe UI", system-ui, sans-serif;
-      color: var(--text);
-      background:
-        radial-gradient(circle at 12% 4%, rgba(99, 175, 255, 0.22), transparent 30%),
-        radial-gradient(circle at 88% 10%, rgba(255, 127, 92, 0.18), transparent 34%),
-        linear-gradient(180deg, #0d1523 0%, #080d16 100%);
-      line-height: 1.65;
-    }
-    .container {
-      width: min(1120px, 92%);
-      margin: 0 auto;
-    }
-    .hero {
-      padding: 3.5rem 0 2rem;
-      text-align: left;
-    }
-    .eyebrow {
-      display: inline-block;
-      border: 1px solid rgba(255, 127, 92, 0.45);
-      border-radius: 999px;
-      padding: 0.32rem 0.72rem;
-      font-size: 0.82rem;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
-      color: #ffdccc;
-      background: rgba(255, 127, 92, 0.12);
-      margin-bottom: 0.9rem;
-    }
-    h1 {
-      font-family: "Montserrat", sans-serif;
-      text-transform: uppercase;
-      letter-spacing: 0.02em;
-      font-size: clamp(2rem, 6vw, 3.15rem);
-      line-height: 1.12;
-      margin-bottom: 0.9rem;
-    }
-    .hero p {
-      max-width: 900px;
-      color: var(--muted);
-      font-size: 1.05rem;
-    }
-    .cta-row {
-      margin-top: 1.4rem;
-      display: flex;
-      gap: 0.8rem;
-      flex-wrap: wrap;
-    }
-    .btn {
-      text-decoration: none;
-      border-radius: 999px;
-      padding: 0.78rem 1.05rem;
-      font-weight: 700;
-      border: 1px solid transparent;
-      font-size: 0.95rem;
-    }
-    .btn-primary {
-      background: linear-gradient(120deg, var(--blue), #6dc882);
-      color: #08111f;
-    }
-    .btn-secondary {
-      border-color: rgba(99, 175, 255, 0.35);
-      background: rgba(99, 175, 255, 0.12);
-      color: #d9eaff;
+    body { font-family: "Inter", "Segoe UI", system-ui, sans-serif; color: var(--text); background: var(--bg); line-height: 1.65; overflow-x: hidden; }
+    .container { width: min(1120px, 92%); margin: 0 auto; }
+    img { max-width: 100%; }
+
+    /* ---- type ---- */
+    .kicker { display:inline-flex; align-items:center; gap:0.5rem; font-family:"Montserrat",sans-serif; font-size:0.72rem; font-weight:800; letter-spacing:0.16em; text-transform:uppercase; color:var(--gold); margin-bottom:0.9rem; }
+    .kicker::before { content:""; width:18px; height:2px; border-radius:2px; background:var(--gold); }
+    h1 { font-family:"Montserrat",sans-serif; font-weight:800; letter-spacing:-0.01em; font-size:clamp(2.2rem,5vw,3.6rem); line-height:1.06; margin-bottom:1.1rem; color:#f4f8f4; }
+    .nw { white-space:nowrap; }
+    .grad { background:linear-gradient(90deg,#4aac65,#c89830); -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent; }
+    .sec h2, .dd-cta h2 { font-family:"Montserrat",sans-serif; font-weight:700; letter-spacing:-0.01em; font-size:clamp(1.6rem,3.1vw,2.3rem); line-height:1.18; color:#f1f7f1; max-width:24ch; margin-bottom:0.9rem; }
+    .lead { font-size:1.08rem; color:var(--soft); max-width:60ch; }
+    .fine { font-size:0.84rem; color:var(--muted); margin-top:1.2rem; max-width:80ch; }
+    .fine a, .lead a { color:var(--gold); }
+
+    /* ---- layout ---- */
+    .sec { padding:5rem 0; }
+    .sec + .sec { border-top:1px solid rgba(44,66,50,0.45); }
+    .sec-head { margin-bottom:2.4rem; }
+    .band { background:rgba(20,32,25,0.55); box-shadow:0 0 0 100vmax rgba(20,32,25,0.55); clip-path:inset(0 -100vmax); }
+    .split { display:grid; grid-template-columns:1fr 1fr; gap:3.5rem; align-items:center; }
+    .split > * { min-width:0; }
+    @media (max-width:900px) { .split { grid-template-columns:1fr; gap:2rem; } .sec { padding:3.6rem 0; } }
+
+    /* ---- buttons ---- */
+    .cta-row { margin-top:1.8rem; display:flex; gap:0.8rem; flex-wrap:wrap; }
+    .btn { display:inline-flex; align-items:center; justify-content:center; gap:0.5rem; text-decoration:none; border-radius:999px; padding:0.9rem 1.4rem; font-weight:700; border:1px solid transparent; font-size:0.88rem; font-family:"Montserrat",sans-serif; text-transform:uppercase; letter-spacing:0.04em; transition:transform .2s, filter .2s, border-color .2s, background .2s; }
+    .btn:hover { transform:translateY(-1px); }
+    .btn-primary { background:linear-gradient(135deg,#c89830,#e0b840); color:#0d1710; box-shadow:0 10px 24px rgba(200,152,48,0.22); }
+    .btn-primary:hover { filter:brightness(1.06); }
+    .btn-secondary { border-color:rgba(74,172,101,0.4); background:rgba(13,23,16,0.55); color:#cdeed6; }
+    .btn-secondary:hover { border-color:var(--green); background:rgba(74,172,101,0.14); }
+
+    /* ---- hero ---- */
+    .dd-hero { position:relative; min-height:min(640px,82vh); display:flex; align-items:center; overflow:hidden; border-bottom:1px solid rgba(44,66,50,0.55); }
+    .dd-hero-img { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; object-position:70% 50%; }
+    .dd-hero::after { content:""; position:absolute; inset:0; background:linear-gradient(90deg, #0d1710 0%, rgba(13,23,16,0.92) 34%, rgba(13,23,16,0.35) 62%, rgba(13,23,16,0.1) 100%), linear-gradient(0deg, #0d1710 0%, transparent 28%); }
+    .dd-hero .container { position:relative; z-index:1; padding:5rem 0 4.5rem; }
+    .dd-hero-copy { max-width:560px; }
+    .dd-hero .lead { font-size:1.15rem; }
+    .dd-from { margin-top:1.1rem; font-size:0.92rem; color:var(--muted); }
+    .dd-from b { color:#f1e2b8; font-weight:700; }
+    @media (max-width:760px) {
+      .dd-hero { display:block; min-height:0; }
+      .dd-hero-img { position:relative; inset:auto; height:auto; aspect-ratio:16 / 9; object-position:80% 50%; }
+      .dd-hero::after { top:0; bottom:auto; height:0; padding-top:56.25%; background:linear-gradient(0deg, #0d1710 0%, transparent 45%); }
+      .dd-hero .container { padding:0 0 3rem; margin-top:-2.5rem; }
     }
 
-    .section {
-      margin-top: 1.25rem;
-      background: rgba(11, 18, 30, 0.74);
-      border: 1px solid var(--line);
-      border-radius: 16px;
-      padding: 1.3rem;
-    }
-    .section h2 {
-      font-family: "Montserrat", sans-serif;
-      text-transform: uppercase;
-      letter-spacing: 0.03em;
-      font-size: 1.3rem;
-      margin-bottom: 0.75rem;
-      color: #f1f7ff;
-    }
-    .section p {
-      color: var(--muted);
-      margin-bottom: 0.7rem;
-    }
+    /* ---- trust strip ---- */
+    .dd-trust { display:grid; grid-template-columns:repeat(4,1fr); gap:1px; background:rgba(44,66,50,0.55); border:1px solid rgba(44,66,50,0.55); border-radius:16px; overflow:hidden; margin-top:-2.6rem; position:relative; z-index:2; }
+    .dd-trust div { background:#101b14; padding:1.2rem 1.25rem; display:flex; gap:0.85rem; align-items:flex-start; }
+    .dd-trust i { color:var(--gold); font-size:1.05rem; margin-top:0.2rem; width:1.2rem; text-align:center; }
+    .dd-trust b { display:block; font-family:"Montserrat",sans-serif; font-size:0.86rem; color:#f1f7f1; line-height:1.3; }
+    .dd-trust span { display:block; font-size:0.8rem; color:var(--muted); line-height:1.45; margin-top:0.2rem; }
+    @media (max-width:900px) { .dd-trust { grid-template-columns:1fr 1fr; } }
+    @media (max-width:760px) { .dd-trust { margin-top:0; } }
+    @media (max-width:440px) { .dd-trust { grid-template-columns:1fr; } }
 
-    .grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-      gap: 0.85rem;
-      margin-top: 0.75rem;
-    }
-    .card {
-      background: var(--panel);
-      border: 1px solid #2f4468;
-      border-radius: 12px;
-      padding: 0.9rem;
-    }
-    .card h3 {
-      font-family: "Montserrat", sans-serif;
-      font-size: 1rem;
-      margin-bottom: 0.5rem;
-      color: #cde2ff;
-    }
-    .card p,
-    .card li {
-      font-size: 0.95rem;
-      color: #bdd0eb;
-    }
-    ul {
-      list-style: none;
-      margin-top: 0.35rem;
-    }
-    li {
-      position: relative;
-      padding-left: 1.15rem;
-      margin-bottom: 0.45rem;
-    }
-    li::before {
-      content: "•";
-      position: absolute;
-      left: 0;
-      top: 0;
-      color: var(--blue);
-    }
-    .process {
-      counter-reset: flow;
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-      gap: 0.8rem;
-      margin-top: 0.7rem;
-    }
-    .process-step {
-      background: var(--panel-soft);
-      border: 1px solid #2b3f60;
-      border-radius: 12px;
-      padding: 0.9rem;
-      position: relative;
-    }
-    .process-step::before {
-      counter-increment: flow;
-      content: counter(flow);
-      position: absolute;
-      top: -10px;
-      right: 10px;
-      width: 24px;
-      height: 24px;
-      border-radius: 999px;
-      display: grid;
-      place-items: center;
-      font-size: 0.78rem;
-      font-weight: 800;
-      color: #061223;
-      background: linear-gradient(135deg, #9fd0ff, #5ba8ff);
-    }
-    .process-step strong {
-      display: inline-block;
-      margin-bottom: 0.45rem;
-      color: #d6e7ff;
-    }
+    /* ---- process cards ---- */
+    .dd-steps { display:grid; grid-template-columns:repeat(3,1fr); gap:1.4rem; }
+    .dd-step { background:var(--card); border:1px solid var(--line); border-radius:16px; overflow:hidden; display:flex; flex-direction:column; }
+    .dd-step img { display:block; width:100%; height:auto; aspect-ratio:16 / 9; object-fit:cover; border-bottom:1px solid var(--line); }
+    .dd-step-body { padding:1.3rem 1.35rem 1.45rem; }
+    .dd-step-n { font-family:"Montserrat",sans-serif; font-size:0.7rem; font-weight:800; letter-spacing:0.14em; text-transform:uppercase; color:var(--green); }
+    .dd-step h3 { font-family:"Montserrat",sans-serif; font-size:1.08rem; color:#f1f7f1; margin:0.35rem 0 0.5rem; line-height:1.3; }
+    .dd-step p { font-size:0.93rem; color:var(--soft); }
+    @media (max-width:900px) { .dd-steps { grid-template-columns:1fr; max-width:560px; } }
 
-    .notice {
-      margin-top: 0.95rem;
-      border-radius: 12px;
-      border: 1px solid rgba(255, 127, 92, 0.34);
-      background: rgba(255, 127, 92, 0.1);
-      padding: 0.85rem 0.95rem;
-      color: #ffd8ca;
-      font-size: 0.94rem;
-    }
+    /* ---- what you get ---- */
+    .dd-photo { border-radius:16px; border:1px solid rgba(74,172,101,0.22); overflow:hidden; box-shadow:0 30px 80px rgba(0,0,0,0.5); }
+    .dd-photo img { display:block; width:100%; height:auto; }
+    .dd-list { list-style:none; margin-top:1.4rem; display:grid; gap:0.9rem; }
+    .dd-list li { display:flex; gap:0.8rem; align-items:flex-start; color:var(--soft); font-size:0.97rem; }
+    .dd-list i { color:var(--green); margin-top:0.3rem; }
+    .dd-list b { color:#f1f7f1; font-weight:600; }
 
-    .mini-note {
-      margin-top: 0.75rem;
-      font-size: 0.9rem;
-      color: #98adcb;
-    }
+    /* ---- pricing ---- */
+    .dd-prices { border:1px solid var(--line); border-radius:16px; overflow:hidden; background:var(--card); }
+    .dd-price { display:grid; grid-template-columns:1fr auto; gap:0.4rem 1.5rem; align-items:center; padding:1.15rem 1.4rem; }
+    .dd-price + .dd-price { border-top:1px solid var(--line); }
+    .dd-price b { font-family:"Montserrat",sans-serif; font-size:0.98rem; color:#f1f7f1; }
+    .dd-price span { grid-column:1; font-size:0.88rem; color:var(--muted); }
+    .dd-price em { grid-column:2; grid-row:1 / span 2; font-style:normal; font-family:"Montserrat",sans-serif; font-weight:800; color:var(--gold); font-size:1.05rem; white-space:nowrap; text-align:right; }
+    .dd-price em small { display:block; font-size:0.66rem; font-weight:700; letter-spacing:0.12em; text-transform:uppercase; color:var(--muted); }
+    .dd-price.pop { background:linear-gradient(90deg, rgba(200,152,48,0.09), transparent 70%); }
+    .dd-tag { display:inline-block; margin-left:0.5rem; padding:0.12rem 0.5rem; border-radius:999px; font-size:0.62rem; letter-spacing:0.1em; text-transform:uppercase; background:rgba(200,152,48,0.16); color:#f1e2b8; vertical-align:2px; }
+    .dd-who { display:flex; flex-wrap:wrap; gap:0.55rem; margin-top:1.5rem; }
+    .dd-who span { padding:0.45rem 0.85rem; border-radius:999px; border:1px solid var(--line); background:rgba(20,32,25,0.7); font-size:0.84rem; color:var(--soft); }
+    .dd-who b { color:#f1f7f1; font-weight:600; }
 
-    @media (max-width: 700px) { .hero { padding-top: 2.8rem; } .section { padding: 1rem; } }
-    @media (max-width: 480px) { .hero { padding: 2.2rem 0 1.5rem; } .cta-row { flex-direction: column; align-items: stretch; } .cta-row .btn { text-align: center; } .process { grid-template-columns: 1fr; } }
+    /* ---- FAQ ---- */
+    .svc-faq > * { max-width:820px; }
+    .svc-faq details { border-bottom:1px solid var(--line); }
+    .svc-faq details:first-of-type { border-top:1px solid var(--line); }
+    .svc-faq summary { cursor:pointer; padding:1.15rem 0; font-family:"Montserrat",sans-serif; font-weight:700; font-size:1rem; color:#f0f4f0; list-style:none; display:flex; justify-content:space-between; gap:1rem; align-items:center; }
+    .svc-faq summary::-webkit-details-marker { display:none; }
+    .svc-faq summary::after { content:"+"; color:var(--gold); font-weight:800; font-size:1.3rem; line-height:1; }
+    .svc-faq details[open] summary::after { content:"\2212"; }
+    .svc-faq .a { padding:0 0 1.25rem; color:var(--soft); font-size:0.95rem; line-height:1.7; max-width:68ch; }
+    .svc-faq-guides { margin:1.6rem 0 0; font-size:0.9rem; color:var(--muted); }
+    .svc-faq-guides a { color:var(--gold); text-decoration:none; font-weight:600; }
+    .svc-faq-guides a:hover { text-decoration:underline; }
+
+    /* ---- closing CTA ---- */
+    .dd-cta { margin:1rem 0 5rem; padding:3.2rem 2.5rem; border-radius:20px; border:1px solid rgba(200,152,48,0.3); background:radial-gradient(120% 140% at 100% 0%, rgba(200,152,48,0.14), transparent 55%), radial-gradient(100% 120% at 0% 100%, rgba(74,172,101,0.14), transparent 55%), #111d15; text-align:center; }
+    .dd-cta h2 { margin-left:auto; margin-right:auto; }
+    .dd-cta .lead { margin:0 auto; }
+    .dd-cta .cta-row { justify-content:center; }
+    .dd-cta .fine { margin-left:auto; margin-right:auto; }
+    @media (max-width:520px) { .dd-cta { padding:2.4rem 1.3rem; } .cta-row { flex-direction:column; align-items:stretch; } }
 
     /* Newsletter signup */
     .newsletter-section { background: var(--card); border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); padding: 3.5rem 5%; margin-top: 4rem; }
@@ -298,36 +230,15 @@
     .tfoot-veteran { display:inline-flex; align-items:center; gap:0.45rem; font-family:'Montserrat','Segoe UI',system-ui,sans-serif; font-size:0.78rem; font-weight:700; letter-spacing:0.06em; text-transform:uppercase; padding:6px 12px; border-radius:999px; line-height:1; background:linear-gradient(135deg,#2d6a3f,#3d8a55); border:1px solid rgba(255,255,255,0.18); color:#fff; }
     @media (max-width:780px) { .tfoot-grid { grid-template-columns:1fr 1fr; } }
     @media (max-width:480px) { .tfoot-grid { grid-template-columns:1fr; } }
-      .svc-faq { margin-top: 1.5rem; background: rgba(255,255,255,0.025); border: 1px solid rgba(255,255,255,0.1); border-radius: 16px; padding: 1.5rem; }
-    .svc-faq > h2 { font-family:"Montserrat",sans-serif; text-transform:uppercase; letter-spacing:0.03em; font-size:1.3rem; margin:0 0 1rem; color:#fff; }
-    .svc-faq details { border:1px solid rgba(255,255,255,0.12); border-radius:12px; background:rgba(255,255,255,0.02); margin-bottom:0.6rem; overflow:hidden; }
-    .svc-faq summary { cursor:pointer; padding:0.9rem 1rem; font-family:"Montserrat",sans-serif; font-weight:700; font-size:0.98rem; color:#f0f4f0; list-style:none; display:flex; justify-content:space-between; align-items:center; gap:1rem; }
-    .svc-faq summary::-webkit-details-marker { display:none; }
-    .svc-faq summary::after { content:"+"; color:#c89830; font-weight:800; font-size:1.2rem; }
-    .svc-faq details[open] summary::after { content:"\2212"; }
-    .svc-faq details[open] summary { border-bottom:1px solid rgba(255,255,255,0.1); }
-    .svc-faq .a { padding:0.9rem 1rem; color:#c3cec6; font-size:0.95rem; line-height:1.7; }
-    .svc-faq-guides { margin:1.2rem 0 0; padding-top:1rem; border-top:1px solid rgba(255,255,255,0.1); font-size:0.92rem; color:#9fb0a3; }
-    .svc-faq-guides a { color:#c89830; text-decoration:none; font-weight:600; }
-    .svc-faq-guides a:hover { text-decoration:underline; }
   </style>
   <script type="application/ld+json">
-  {
-    "@context": "https://schema.org",
-    "@type": "Service",
-    "name": "Data Destruction and Media Sanitization — Cleveland, Ohio",
-    "description": "NIST 800-88 compliant data destruction and media sanitization for hard drives, SSDs, and storage devices. Certificate of destruction provided. Serving Cleveland and Northeast Ohio.",
-    "provider": {"@id": "https://tevisengineering.com/#business"},
-    "areaServed": "Cleveland, Ohio",
-    "url": "https://tevisengineering.com/data_destruction.html",
-    "serviceType": "Data Destruction"
-  }
+  {"@context": "https://schema.org", "@type": "Service", "name": "Data Destruction and Media Sanitization, Cleveland, Ohio", "description": "Hard drive and SSD wiping and physical destruction to NIST SP 800-88, with chain-of-custody records and a certificate of destruction. Serving Cleveland and Northeast Ohio.", "provider": {"@id": "https://tevisengineering.com/#business"}, "areaServed": "Cleveland, Ohio", "url": "https://tevisengineering.com/data_destruction.html", "serviceType": "Data Destruction", "image": "https://tevisengineering.com/assets/data-destruction/dd-hero-1600.webp", "offers": [{"@type": "Offer", "name": "Single drive wipe", "priceCurrency": "USD", "priceSpecification": {"@type": "PriceSpecification", "minPrice": 55, "priceCurrency": "USD"}}, {"@type": "Offer", "name": "Wipe + certificate of destruction", "priceCurrency": "USD", "priceSpecification": {"@type": "PriceSpecification", "minPrice": 110, "priceCurrency": "USD"}}, {"@type": "Offer", "name": "Physical destruction + documentation", "priceCurrency": "USD", "priceSpecification": {"@type": "PriceSpecification", "minPrice": 70, "priceCurrency": "USD"}}, {"@type": "Offer", "name": "Multi-device batch (3 to 10 drives)", "priceCurrency": "USD", "priceSpecification": {"@type": "PriceSpecification", "minPrice": 210, "priceCurrency": "USD"}}, {"@type": "Offer", "name": "Full decommission", "priceCurrency": "USD", "priceSpecification": {"@type": "PriceSpecification", "minPrice": 210, "priceCurrency": "USD"}}]}
   </script>
   <script type="application/ld+json">
   {"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://tevisengineering.com/"},{"@type":"ListItem","position":2,"name":"Data Destruction","item":"https://tevisengineering.com/data_destruction.html"}]}
   </script>
   <script type="application/ld+json">
-  {"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What data destruction methods do you use?","acceptedAnswer":{"@type":"Answer","text":"We select the method based on the media type and your reuse intent, mapped to the categories in NIST SP 800-88 Rev. 1 (clear, purge, or destroy)."}},{"@type":"Question","name":"Do I get a certificate of destruction?","acceptedAnswer":{"@type":"Answer","text":"Yes. Every engagement includes a destruction or sanitization certificate plus chain-of-custody documentation suitable for audits and your records."}},{"@type":"Question","name":"Does this help with HIPAA or other compliance?","acceptedAnswer":{"@type":"Answer","text":"We provide documentation aligned to common frameworks such as HIPAA, GLBA, FERPA, and PCI DSS. Your specific obligations should be reviewed with your own compliance and legal advisors."}},{"@type":"Question","name":"What devices and media can you handle?","acceptedAnswer":{"@type":"Answer","text":"Hard drives, SSDs, and other storage media from workstations, servers, and backup systems, handled on-site or by scheduled pickup."}},{"@type":"Question","name":"Are you third-party certified?","acceptedAnswer":{"@type":"Answer","text":"We do not represent this service as third-party certified unless and until a formal certification is obtained and active. What you get is a documented, NIST-aligned process and evidence package."}}]}
+  {"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "What methods do you use?", "acceptedAnswer": {"@type": "Answer", "text": "The one NIST SP 800-88 Rev. 1 calls for on that media and for what happens to it next: clear or purge when the drive will be reused, destroy when it will not. Hard drives and SSDs are handled differently, because a method that works on one does not always work on the other."}}, {"@type": "Question", "name": "Do I get a certificate of destruction?", "acceptedAnswer": {"@type": "Answer", "text": "Yes, with any job that includes one, along with the chain-of-custody log. It lists the date, the method and each drive’s serial number, so it works for audits and your own records."}}, {"@type": "Question", "name": "Does this help with HIPAA or other compliance?", "acceptedAnswer": {"@type": "Answer", "text": "The records line up with what HIPAA, GLBA, FERPA and PCI DSS expect for disposing of media. Your exact obligations are best confirmed with your own compliance or legal advisor; we provide the work and the evidence."}}, {"@type": "Question", "name": "What can you handle, and where?", "acceptedAnswer": {"@type": "Answer", "text": "Hard drives, SSDs and other storage from desktops, laptops, servers and backup systems. We work on-site across Cleveland and Northeast Ohio, or pick the drives up on a scheduled date."}}, {"@type": "Question", "name": "Are you third-party certified?", "acceptedAnswer": {"@type": "Answer", "text": "No, and we will not claim to be until we are. What you get is a documented process that follows NIST SP 800-88, and a record of every drive you can show anyone who asks."}}]}
   </script>
   <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
 </head>
@@ -381,165 +292,146 @@
   </div>
 </div>
 
-  <main class="container">
-    <section class="hero">
-      <span class="eyebrow">Secure Media Sanitization</span>
-      <h1>Data Destruction Services for Compliance-Driven Organizations</h1>
-      <p>
-        Tevis Engineering Solutions provides controlled data destruction and media sanitization services for organizations that must enforce
-        documented retention, legal hold, and secure disposal procedures. Engagements are scoped with chain-of-custody documentation,
-        method selection by media type, and destruction records suitable for audit workflows.
-      </p>
-      <div class="cta-row">
-        <a class="btn btn-primary" href="contact.html">Request a Discovery Call</a>
-        <a class="btn btn-secondary" href="#workflow">Review Service Workflow</a>
-      </div>
-    </section>
-
-    <section class="section" id="industries">
-      <h2>Industries and Use Cases</h2>
-      <p>
-        This service is designed for entities that handle regulated or sensitive data and need defensible disposal practices.
-      </p>
-      <div class="grid">
-        <article class="card">
-          <h3>Healthcare and Clinical Operations</h3>
-          <ul>
-            <li>PHI-bearing endpoints and removable media</li>
-            <li>Decommissioning of clinical workstations and backup media</li>
-            <li>Retention-aligned destruction scheduling and records</li>
-          </ul>
-        </article>
-        <article class="card">
-          <h3>Legal and Professional Services</h3>
-          <ul>
-            <li>Client matter file lifecycle controls</li>
-            <li>Secure disposal of legacy devices and archives</li>
-            <li>Legal hold exception handling and sign-off controls</li>
-          </ul>
-        </article>
-        <article class="card">
-          <h3>Finance, Insurance, and Accounting</h3>
-          <ul>
-            <li>Controlled destruction tied to record retention policy</li>
-            <li>Audit-ready tracking and authorization logs</li>
-            <li>Media-specific sanitization for devices and backup assets</li>
-          </ul>
-        </article>
-        <article class="card">
-          <h3>Education, Public Sector, and SMB</h3>
-          <ul>
-            <li>Scheduled retirement of endpoints and storage media</li>
-            <li>Destruction attestations for governance requirements</li>
-            <li>Policy-aligned support for mixed on-site and remote environments</li>
-          </ul>
-        </article>
-      </div>
-    </section>
-
-    <section class="section" id="workflow">
-      <h2>Standard Service Workflow</h2>
-      <p>
-        The process is structured to support internal controls, separation of duties, and evidence retention.
-      </p>
-      <div class="process">
-        <div class="process-step">
-          <strong>Scoping and Intake</strong>
-          <p>Identify data classes, media inventory, applicable policy requirements, and legal hold constraints before execution.</p>
-        </div>
-        <div class="process-step">
-          <strong>Authorization and Chain of Custody</strong>
-          <p>Document authorized requestor, assets covered, handoff timeline, and custody transitions from pickup through destruction.</p>
-        </div>
-        <div class="process-step">
-          <strong>Sanitization Method Selection</strong>
-          <p>Apply a method appropriate to media type and reuse intent, mapped to NIST SP 800-88 Rev. 1 guidance categories.</p>
-        </div>
-        <div class="process-step">
-          <strong>Execution and Verification</strong>
-          <p>Perform destruction or sanitization, then verify completion against scope and exception criteria.</p>
-        </div>
-        <div class="process-step">
-          <strong>Certificate and Audit Packet</strong>
-          <p>Issue destruction documentation with date, method, asset references, and service attestation for your records.</p>
+  <main>
+    <section class="dd-hero" aria-labelledby="dd-title">
+      <img class="dd-hero-img" src="assets/data-destruction/dd-hero-1600.webp" srcset="assets/data-destruction/dd-hero-640.webp 640w, assets/data-destruction/dd-hero-1600.webp 1536w" sizes="100vw" width="1536" height="864" alt="Open hard drive with its platter exposed under a thin gold rim light" fetchpriority="high">
+      <div class="container">
+        <div class="dd-hero-copy">
+          <span class="kicker">Data destruction &middot; Cleveland, Ohio</span>
+          <h1 id="dd-title">Retire old drives. <span class="grad">Leave nothing behind.</span></h1>
+          <p class="lead">We wipe or destroy your hard drives and SSDs to <span class="nw">NIST SP 800-88</span>, log every one by serial number, and hand you a certificate for your records.</p>
+          <div class="cta-row">
+            <a class="btn btn-primary" href="contact.html"><i class="fa-solid fa-file-signature" aria-hidden="true"></i> Get a quote</a>
+            <a class="btn btn-secondary" href="tel:+12163028486"><i class="fa-solid fa-phone" aria-hidden="true"></i> (216) 302-8486</a>
+          </div>
+          <p class="dd-from">Drive wipes from <b>$55</b> &middot; with a certificate from <b>$110</b></p>
         </div>
       </div>
     </section>
 
-    <section class="section" id="controls">
-      <h2>Control Framework and Documentation</h2>
-      <div class="grid">
-        <article class="card">
-          <h3>Operational Controls</h3>
-          <ul>
-            <li>Documented intake and authorization requirements</li>
-            <li>Serialized asset tracking where applicable</li>
-            <li>Policy-based hold and exception handling</li>
-            <li>Secure transport and storage safeguards during processing</li>
-          </ul>
-        </article>
-        <article class="card">
-          <h3>Evidence Package</h3>
-          <ul>
-            <li>Service order and approved scope</li>
-            <li>Chain-of-custody log</li>
-            <li>Destruction or sanitization certificate</li>
-            <li>Exception report and remediation notes when needed</li>
-          </ul>
-        </article>
-        <article class="card">
-          <h3>Common Regulatory Mapping</h3>
-          <ul>
-            <li>HIPAA record disposal expectations (healthcare)</li>
-            <li>GLBA / SEC / FINRA retention and disposal alignment (financial services)</li>
-            <li>FERPA-informed student data handling (education)</li>
-            <li>PCI DSS media handling expectations where payment data is in scope</li>
-          </ul>
-        </article>
+    <div class="container">
+      <div class="dd-trust" role="list">
+        <div role="listitem"><i class="fa-solid fa-shield-halved" aria-hidden="true"></i><p><b>NIST SP 800-88</b><span>The federal standard for media sanitization</span></p></div>
+        <div role="listitem"><i class="fa-solid fa-certificate" aria-hidden="true"></i><p><b>Certificate available</b><span>Date, method and serial for every drive</span></p></div>
+        <div role="listitem"><i class="fa-solid fa-link" aria-hidden="true"></i><p><b>Chain of custody</b><span>Logged from pickup to final record</span></p></div>
+        <div role="listitem"><i class="fa-solid fa-flag-usa" aria-hidden="true"></i><p><b>Veteran-owned, local</b><span>Handled by the engineer, never a call center</span></p></div>
       </div>
-      <p class="mini-note">
-        Final policy, retention, and statutory mapping should be reviewed by your legal counsel and compliance leadership for your specific obligations.
-      </p>
-    </section>
 
-    <section class="section" id="scope">
-      <h2>Scope Boundaries</h2>
-      <p>
-        Pricing, final policy definitions, and statutory obligations vary by industry and jurisdiction. Service scope, liability boundaries, and
-        document retention windows are finalized in your signed agreement and statement of work.
-      </p>
-      <p>
-        Tevis Engineering Solutions does not represent this service as third-party certified unless and until a formal certification is obtained and active.
-      </p>
-      <div class="notice">
-        This page is informational and does not constitute legal advice. Tevis Engineering Solutions provides implementation support and documentation based on client-approved policies.
-      </div>
-    </section>
-    <section class="svc-faq" aria-label="Frequently asked questions">
-      <h2>Frequently Asked Questions</h2>
-      <details>
-        <summary>What data destruction methods do you use?</summary>
-        <div class="a">We select the method based on the media type and your reuse intent, mapped to the categories in NIST SP 800-88 Rev. 1 (clear, purge, or destroy).</div>
-      </details>
-      <details>
-        <summary>Do I get a certificate of destruction?</summary>
-        <div class="a">Yes. Every engagement includes a destruction or sanitization certificate plus chain-of-custody documentation suitable for audits and your records.</div>
-      </details>
-      <details>
-        <summary>Does this help with HIPAA or other compliance?</summary>
-        <div class="a">We provide documentation aligned to common frameworks such as HIPAA, GLBA, FERPA, and PCI DSS. Your specific obligations should be reviewed with your own compliance and legal advisors.</div>
-      </details>
-      <details>
-        <summary>What devices and media can you handle?</summary>
-        <div class="a">Hard drives, SSDs, and other storage media from workstations, servers, and backup systems, handled on-site or by scheduled pickup.</div>
-      </details>
-      <details>
-        <summary>Are you third-party certified?</summary>
-        <div class="a">We do not represent this service as third-party certified unless and until a formal certification is obtained and active. What you get is a documented, NIST-aligned process and evidence package.</div>
-      </details>
-      <p class="svc-faq-guides"><strong>Related guides:</strong> <a href="blog/cybersecurity-basics-for-cleveland-small-business.html">Cybersecurity Basics for Small Business</a> &middot; <a href="blog/small-business-backup-strategy.html">The Backup Strategy That Works</a></p>
-    </section>
+      <section class="sec" id="how" aria-labelledby="how-h">
+        <div class="sec-head">
+          <span class="kicker">How it works</span>
+          <h2 id="how-h">Every drive accounted for, start to finish</h2>
+          <p class="lead">On-site or by scheduled pickup. You choose whether each drive is wiped for reuse or destroyed for good.</p>
+        </div>
+        <div class="dd-steps">
+          <article class="dd-step">
+            <img src="assets/data-destruction/dd-intake-640.webp" srcset="assets/data-destruction/dd-intake-640.webp 640w, assets/data-destruction/dd-intake-1600.webp 1536w" sizes="(max-width: 900px) 92vw, 360px" width="640" height="360" alt="Retired drives and SSDs laid out in a neat grid, each sealed and tagged" loading="lazy">
+            <div class="dd-step-body">
+              <span class="dd-step-n">Step 1</span>
+              <h3>Logged and sealed</h3>
+              <p>We record each drive and its serial number, note who authorized the job, and keep it sealed until the work is done.</p>
+            </div>
+          </article>
+          <article class="dd-step">
+            <img src="assets/data-destruction/dd-wipe-640.webp" srcset="assets/data-destruction/dd-wipe-640.webp 640w, assets/data-destruction/dd-wipe-1600.webp 1536w" sizes="(max-width: 900px) 92vw, 360px" width="640" height="360" alt="Solid-state drive connected to a drive dock with a green status light" loading="lazy">
+            <div class="dd-step-body">
+              <span class="dd-step-n">Step 2a</span>
+              <h3>Wiped for reuse</h3>
+              <p>Drives you plan to reuse, resell or return get the NIST method for their media type, then a check that the wipe finished.</p>
+            </div>
+          </article>
+          <article class="dd-step">
+            <img src="assets/data-destruction/dd-destroy-640.webp" srcset="assets/data-destruction/dd-destroy-640.webp 640w, assets/data-destruction/dd-destroy-1600.webp 1536w" sizes="(max-width: 900px) 92vw, 360px" width="640" height="360" alt="Shredded hard drive fragments and broken platter pieces on a dark surface" loading="lazy">
+            <div class="dd-step-body">
+              <span class="dd-step-n">Step 2b</span>
+              <h3>Or destroyed for good</h3>
+              <p>Failed drives, or any drive you never want to see again, are physically destroyed, with photos for your file.</p>
+            </div>
+          </article>
+        </div>
+      </section>
 
+      <section class="sec band" id="proof" aria-labelledby="proof-h">
+        <div class="split">
+          <div class="dd-photo">
+            <img src="assets/data-destruction/dd-certificate-1600.webp" srcset="assets/data-destruction/dd-certificate-640.webp 640w, assets/data-destruction/dd-certificate-1600.webp 1536w" sizes="(max-width: 900px) 92vw, 540px" width="1536" height="864" alt="Certificate with a gold foil seal in a green folder beside a pen and a sealed envelope" loading="lazy">
+          </div>
+          <div>
+            <span class="kicker">What you get</span>
+            <h2 id="proof-h">Paperwork that holds up in an audit</h2>
+            <p class="lead">When an auditor, client or insurer asks what happened to those old drives, you hand them a folder.</p>
+            <ul class="dd-list">
+              <li><i class="fa-solid fa-check" aria-hidden="true"></i><span><b>Certificate of destruction</b> with the date, the method and each drive&rsquo;s serial</span></li>
+              <li><i class="fa-solid fa-check" aria-hidden="true"></i><span><b>Chain-of-custody log</b> from the moment we take the drives</span></li>
+              <li><i class="fa-solid fa-check" aria-hidden="true"></i><span><b>Photo proof</b> for every drive that is physically destroyed</span></li>
+              <li><i class="fa-solid fa-check" aria-hidden="true"></i><span><b>An exceptions note</b> if any drive could not be handled as planned</span></li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <section class="sec" id="pricing" aria-labelledby="pricing-h">
+        <div class="split">
+          <div>
+            <span class="kicker">Pricing</span>
+            <h2 id="pricing-h">Simple prices, quoted before we start</h2>
+            <p class="lead">Every job gets a written quote first. Larger batches and on-site work are priced to the job.</p>
+            <div class="dd-who">
+              <span><b>Medical &amp; dental</b> &middot; HIPAA</span>
+              <span><b>Law firms</b></span>
+              <span><b>Finance &amp; accounting</b> &middot; GLBA</span>
+              <span><b>Schools</b> &middot; FERPA</span>
+              <span><b>Retail</b> &middot; PCI DSS</span>
+              <span><b>Any office</b> retiring old PCs</span>
+            </div>
+          </div>
+          <div class="dd-prices">
+            <div class="dd-price"><b>Single drive wipe</b><span>Securely erased to NIST SP 800-88</span><em><small>From</small>$55</em></div>
+            <div class="dd-price pop"><b>Wipe + certificate<span class="dd-tag">Most chosen</span></b><span>Erased, with a signed certificate for your records</span><em><small>From</small>$110</em></div>
+            <div class="dd-price"><b>Physical destruction</b><span>Destroyed, with photo proof and paperwork</span><em><small>From</small>$70</em></div>
+            <div class="dd-price"><b>Multi-device batch</b><span>3 to 10 drives, one audit-ready report</span><em><small>From</small>$210</em></div>
+            <div class="dd-price"><b>Full decommission</b><span>Wiped, documented and responsibly disposed of</span><em><small>From</small>$210</em></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="sec svc-faq" id="faq" aria-labelledby="faq-h">
+        <span class="kicker">Questions</span>
+        <h2 id="faq-h">Before you hand over your drives</h2>
+        <details>
+          <summary>What methods do you use?</summary>
+          <div class="a">The one NIST SP 800-88 Rev. 1 calls for on that media and for what happens to it next: clear or purge when the drive will be reused, destroy when it will not. Hard drives and SSDs are handled differently, because a method that works on one does not always work on the other.</div>
+        </details>
+        <details>
+          <summary>Do I get a certificate of destruction?</summary>
+          <div class="a">Yes, with any job that includes one, along with the chain-of-custody log. It lists the date, the method and each drive&rsquo;s serial number, so it works for audits and your own records.</div>
+        </details>
+        <details>
+          <summary>Does this help with HIPAA or other compliance?</summary>
+          <div class="a">The records line up with what HIPAA, GLBA, FERPA and PCI DSS expect for disposing of media. Your exact obligations are best confirmed with your own compliance or legal advisor; we provide the work and the evidence.</div>
+        </details>
+        <details>
+          <summary>What can you handle, and where?</summary>
+          <div class="a">Hard drives, SSDs and other storage from desktops, laptops, servers and backup systems. We work on-site across Cleveland and Northeast Ohio, or pick the drives up on a scheduled date.</div>
+        </details>
+        <details>
+          <summary>Are you third-party certified?</summary>
+          <div class="a">No, and we will not claim to be until we are. What you get is a documented process that follows NIST SP 800-88, and a record of every drive you can show anyone who asks.</div>
+        </details>
+        <p class="svc-faq-guides"><strong>Related guides:</strong> <a href="blog/cybersecurity-basics-for-cleveland-small-business.html">Cybersecurity Basics for Small Business</a> &middot; <a href="blog/small-business-backup-strategy.html">The Backup Strategy That Works</a></p>
+      </section>
+
+      <section class="dd-cta" aria-labelledby="cta-h">
+        <span class="kicker">Get started</span>
+        <h2 id="cta-h">Got a closet full of old computers?</h2>
+        <p class="lead">Tell us roughly how many drives and where they are. You will hear back from the engineer within one business day, with a written quote before any work starts.</p>
+        <div class="cta-row">
+          <a class="btn btn-primary" href="contact.html"><i class="fa-solid fa-file-signature" aria-hidden="true"></i> Get a quote</a>
+          <a class="btn btn-secondary" href="tel:+12163028486"><i class="fa-solid fa-phone" aria-hidden="true"></i> Call (216) 302-8486</a>
+        </div>
+        <p class="fine">Scope, liability and record-retention terms are set in your signed agreement. This page is general information, not legal advice.</p>
+      </section>
+    </div>
   </main>
 
   <!-- NEWSLETTER SIGNUP — BUTTONDOWN_USERNAME: replace tevisengineering in the form action below -->
