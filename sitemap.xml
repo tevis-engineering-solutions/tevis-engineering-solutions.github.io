@@ -122,9 +122,15 @@
   </url>
   <url>
     <loc>https://tevisengineering.com/blog/</loc>
-    <lastmod>2026-07-20</lastmod>
+    <lastmod>2026-10-21</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://tevisengineering.com/blog/what-missed-calls-cost-a-small-business.html</loc>
+    <lastmod>2026-10-21</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
   </url>
   <url>
     <loc>https://tevisengineering.com/blog/moving-your-cleveland-business-to-microsoft-365.html</loc>
