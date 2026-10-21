@@ -21,6 +21,7 @@
     - Guide: how to find government bids in Ohio: https://tevisengineering.com/blog/how-to-find-government-bids-in-ohio.html
   - Cleveland Geo Visualizer, a free map of Cleveland open data: https://tevisengineering.com/cleveland-geo-visualizer.html
 - Data destruction (NIST-aligned media sanitization): https://tevisengineering.com/data_destruction.html
+- AI integration (free consult, then custom plug-and-play AI tools for a business workflow): https://tevisengineering.com/ai-integration.html
 - Knowledge transfer and IT documentation: https://tevisengineering.com/knowledge_transfer.html
 - Office setup and IT equipment: https://tevisengineering.com/office-setup.html
 - Free website analysis: https://tevisengineering.com/free-website-analysis.html
