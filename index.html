@@ -65,6 +65,9 @@
   img { display:block; }
   ::-webkit-scrollbar { width:10px; height:10px; }
   ::-webkit-scrollbar-thumb { background:var(--border-default); border-radius:6px; }
+  /* Starfield (assets/js/home-sky.js): fixed behind the page, so it shows only through transparent sections */
+  .stars { position:fixed; inset:0; width:100%; height:100%; z-index:0; pointer-events:none; }
+  body > header, body > section, body > .band, body > footer { position:relative; z-index:1; }
 
   /* ---------- Buttons ---------- */
   .btn { display:inline-flex; align-items:center; justify-content:center; gap:0.5rem; font-family:var(--font-display);
@@ -640,6 +643,7 @@
   <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
 </head>
 <body>
+  <canvas class="stars" id="stars" aria-hidden="true"></canvas>
 
   <!-- ============ NAV ============ -->
   <div class="tnav-bar">
@@ -1426,6 +1430,7 @@ window.addEventListener('load', function(){ setTimeout(tesLoadChat, 4000); });
     a.addEventListener('ended', function () { a.currentTime = 0; bar.style.width = '0%'; t.textContent = fmt(total); });
   })();
   </script>
+<script src="assets/js/home-sky.js" defer></script>
 <script src="assets/js/tes-analytics.js" defer></script>
 </body>
 </html>
