@@ -518,7 +518,21 @@
   .grev-sum-stars svg { width:22px; height:22px; }
   .grev-count { color:var(--text-muted); font-size:0.95rem; }
   .grev-glogo svg { width:22px; height:22px; display:block; }
-  .grev-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(275px,1fr)); gap:1.1rem; align-items:start; }
+  /* Horizontal scroller: ~2.6 cards visible on desktop so the next one peeks in; arrows only when it overflows */
+  .grev-rail { position:relative; }
+  .grev-grid { --grev-gap:1.1rem; display:flex; gap:var(--grev-gap); overflow-x:auto; scroll-snap-type:x mandatory; overscroll-behavior-x:contain;
+    padding:0.3rem 2px 1.3rem; scrollbar-width:thin; scrollbar-color:var(--border-default) transparent; }
+  .grev-grid:focus-visible { outline:2px solid var(--brand-accent); outline-offset:4px; border-radius:12px; }
+  .grev-grid > .grev-card { flex:0 0 calc((100% - 2 * var(--grev-gap)) / 2.6); scroll-snap-align:start; }
+  .grev-nav { position:absolute; top:calc(50% - 0.5rem); transform:translateY(-50%); width:44px; height:44px; border-radius:50%; display:flex; align-items:center; justify-content:center;
+    background:rgba(9,18,12,0.9); color:var(--brand-accent); border:1px solid var(--wash-gold-border); cursor:pointer; font-size:0.95rem; z-index:2;
+    transition:background var(--dur-base),color var(--dur-base),opacity var(--dur-base); }
+  .grev-nav:hover { background:var(--brand-accent); color:var(--text-on-accent); }
+  .grev-nav:disabled { opacity:0.3; cursor:default; background:rgba(9,18,12,0.9); color:var(--brand-accent); }
+  .grev-nav[hidden] { display:none; }
+  .grev-prev { left:-62px; } .grev-next { right:-62px; }
+  @media (max-width:1100px) { .grev-nav { display:none; } }
+  @media (max-width:860px) { .grev-grid > .grev-card { flex-basis:calc((100% - var(--grev-gap)) / 1.6); } }
   .grev-card { position:relative; background:#fff; border-radius:12px; padding:1.2rem 1.25rem 1.3rem; box-shadow:0 8px 22px rgba(0,0,0,0.30); }
   .grev-card-top { display:flex; align-items:center; gap:0.7rem; margin-bottom:0.5rem; }
   .grev-ava, .grev-ava-fallback { width:40px; height:40px; border-radius:50%; flex-shrink:0; }
@@ -542,7 +556,7 @@
   .grev-cta { text-align:center; margin-top:1.9rem; }
   .grev-gbtn { gap:0.55rem; }
   .grev-gbtn svg { width:18px; height:18px; }
-  @media (max-width:560px) { .grev-grid { grid-template-columns:1fr; } }
+  @media (max-width:560px) { .grev-grid > .grev-card { flex-basis:86%; } }
   /* Testimonials clients agreed to share from their portal. Hidden until one is approved. */
   .tquotes { margin-top:2.4rem; }
   .tquotes h3 { text-align:center; font-family:"Montserrat",sans-serif; font-size:1.05rem; letter-spacing:0.08em; text-transform:uppercase; color:#c89830; margin:0 0 1.1rem; }
@@ -1000,7 +1014,11 @@
       </div>
       <div class="grev-loading" id="grevLoading"><span class="grev-spinner" aria-hidden="true"></span> Loading reviews&hellip;</div>
       <p class="grev-fallback" id="grevFallback">See what our clients are saying about us on Google.</p>
-      <div class="grev-grid" id="grevGrid" role="list"></div>
+      <div class="grev-rail">
+        <button type="button" class="grev-nav grev-prev" id="grevPrev" aria-label="Previous reviews" hidden><i class="fa-solid fa-chevron-left" aria-hidden="true"></i></button>
+        <div class="grev-grid" id="grevGrid" role="list" tabindex="0" aria-label="Google reviews, scroll sideways for more"></div>
+        <button type="button" class="grev-nav grev-next" id="grevNext" aria-label="More reviews" hidden><i class="fa-solid fa-chevron-right" aria-hidden="true"></i></button>
+      </div>
       <div class="grev-cta">
         <a class="btn btn--secondary btn--sm grev-gbtn" href="https://share.google/O4oor3ja1I48TL3LP" target="_blank" rel="noopener noreferrer"><svg viewBox="0 0 48 48" aria-hidden="true"><path fill="#4285F4" d="M45.12 24.5c0-1.56-.14-3.06-.4-4.5H24v8.51h11.84c-.51 2.75-2.06 5.08-4.39 6.64v5.52h7.11c4.16-3.83 6.56-9.47 6.56-16.17z"/><path fill="#34A853" d="M24 46c5.94 0 10.92-1.97 14.56-5.33l-7.11-5.52c-1.97 1.32-4.49 2.1-7.45 2.1-5.73 0-10.58-3.87-12.31-9.07H4.34v5.7C7.96 41.07 15.4 46 24 46z"/><path fill="#FBBC05" d="M11.69 28.18C11.25 26.86 11 25.45 11 24s.25-2.86.69-4.18v-5.7H4.34C2.85 17.09 2 20.45 2 24c0 3.55.85 6.91 2.34 9.88l7.35-5.7z"/><path fill="#EA4335" d="M24 10.75c3.23 0 6.13 1.11 8.41 3.29l6.31-6.31C34.91 4.18 29.93 2 24 2 15.4 2 7.96 6.93 4.34 14.12l7.35 5.7c1.73-5.2 6.58-9.07 12.31-9.07z"/></svg> Review us on Google</a>
       </div>
@@ -1239,7 +1257,7 @@
   (function () {
     var API_KEY   = 'AIzaSyAjU65fxH_TQ8RO2Ajd-KnZRCZOkWXHgJE';   // browser key — HTTP-referrer restricted to tevisengineering.com
     var PLACE_ID  = 'ChIJe6S4QRL9YIARNtwVTAIP5Ec';               // Tevis Engineering Solutions, LLC
-    var CACHE_KEY = 'tes_greviews_v1', CACHE_TTL = 60 * 60 * 1000; // sessionStorage cache: 1 hour
+    var CACHE_KEY = 'tes_greviews_v2', CACHE_TTL = 60 * 60 * 1000; // sessionStorage cache: 1 hour
     var MAX_REVIEWS = 5;
 
     var section = document.getElementById('reviews');
@@ -1319,17 +1337,37 @@
       countEl.textContent = data.count === 1 ? '1 Google review' : (data.count || data.reviews.length) + ' Google reviews';
       summary.hidden = false;
       grid.innerHTML = '';
-      data.reviews.slice(0, MAX_REVIEWS).forEach(function (r) { grid.appendChild(makeCard(r)); });
+      // Newest first, so the left end of the scroller is the most recent review.
+      data.reviews.slice().sort(function (a, b) { return (b.ts || 0) - (a.ts || 0); }).slice(0, MAX_REVIEWS).forEach(function (r) { grid.appendChild(makeCard(r)); });
       loading.style.display = 'none';
       fallback.style.display = 'none';
+      updateRail();
     }
+
+    // Scroller arrows: shown only when the cards overflow, disabled at each end.
+    var prev = document.getElementById('grevPrev'), next = document.getElementById('grevNext');
+    function updateRail() {
+      var max = grid.scrollWidth - grid.clientWidth, x = grid.scrollLeft, over = max > 4;
+      prev.hidden = next.hidden = !over;
+      prev.disabled = x <= 4; next.disabled = x >= max - 4;
+    }
+    function step(dir) {
+      var card = grid.querySelector('.grev-card');
+      var by = card ? card.getBoundingClientRect().width + parseFloat(getComputedStyle(grid).columnGap || 0) : grid.clientWidth * 0.8;
+      grid.scrollBy({ left: dir * by, behavior: 'smooth' });
+    }
+    prev.addEventListener('click', function () { step(-1); });
+    next.addEventListener('click', function () { step(1); });
+    grid.addEventListener('scroll', updateRail, { passive: true });
+    window.addEventListener('resize', updateRail);
 
     function normalize(place) {
       var list = (place.reviews || []).map(function (rv) {
         var a = rv.authorAttribution || {};
         var t = rv.text; if (t && typeof t === 'object') t = t.text || '';
         return { name: a.displayName || 'Google user', photo: a.photoURI || '', uri: a.uri || '',
-                 rating: rv.rating || 0, time: rv.relativePublishTimeDescription || '', text: t || '' };
+                 rating: rv.rating || 0, time: rv.relativePublishTimeDescription || '', text: t || '',
+                 ts: rv.publishTime ? new Date(rv.publishTime).getTime() || 0 : 0 };
       });
       return { rating: place.rating || 0, count: place.userRatingCount || list.length, reviews: list };
     }
