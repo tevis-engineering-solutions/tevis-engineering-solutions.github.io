@@ -39,20 +39,38 @@
     :root {
       --bg: #0d1710;
       --card: #142019;
+      --card-2: #1c2e22;
       --text: #e4ede5;
       --muted: #8aa48d;
       --line: #2c4232;
       --blue: #4aac65;
       --accent: #c89830;
+      --gold-2: #e0b840;
+      --mint: #6dc882;
+      --mono: ui-monospace, "Cascadia Mono", "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+      --ease: cubic-bezier(0.22, 1, 0.36, 1);
     }
     * { box-sizing: border-box; margin: 0; padding: 0; }
     html { scroll-behavior: smooth; }
     body {
       font-family: "Inter", "Segoe UI", system-ui, sans-serif;
-      background: radial-gradient(circle at top, #172b1c 0%, var(--bg) 45%, #060e08 100%);
+      background: radial-gradient(circle at top, #172b1c 0%, var(--bg) 45%, #060e08 100%) fixed;
       color: var(--text);
       line-height: 1.65;
+      overflow-x: hidden;
     }
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+      background:
+        radial-gradient(40vw 30vw at 85% 12%, rgba(200, 152, 48, 0.07), transparent 70%),
+        radial-gradient(50vw 40vw at 8% 60%, rgba(74, 172, 101, 0.08), transparent 70%);
+    }
+    .stars { position: fixed; inset: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none; }
+    main, .tfoot { position: relative; z-index: 1; }
     .container {
       width: min(1200px, 92%);
       margin: 0 auto;
@@ -115,234 +133,784 @@
     @media(max-width:780px){.tfoot-grid{grid-template-columns:1fr 1fr;}}
     @media(max-width:480px){.tfoot-grid{grid-template-columns:1fr;}}
 
+    /* ==================== DECK HUES ==================== */
+    /* One tint per deck, all from the green/gold palette. The icon and the call code carry the meaning. */
+    .d-it  { --hue: #4aac65; }
+    .d-smb { --hue: #c89830; }
+    .d-web { --hue: #6dc882; }
+    .d-hw  { --hue: #e0b840; }
+    .d-pr  { --hue: #c2d2c5; }
+    .d-gov { --hue: #9fd4ac; }
+
     /* ==================== HERO ==================== */
-    .hero {
-      padding: 4rem 0 2.5rem;
-      text-align: center;
-    }
-    .eyebrow {
-      display: inline-block;
-      padding: 0.32rem 0.8rem;
-      border: 1px solid rgba(74, 172, 101, 0.4);
-      border-radius: 999px;
-      color: #a8d4ff;
-      font-size: 0.82rem;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      font-weight: 700;
-      margin-bottom: 1rem;
-      background: rgba(74, 172, 101, 0.08);
-    }
-    .hero h1 {
-      font-family: "Montserrat", sans-serif;
-      text-transform: uppercase;
-      letter-spacing: 0.03em;
-      font-size: clamp(2rem, 6vw, 3rem);
-      line-height: 1.15;
-      margin-bottom: 1rem;
-      color: #ffffff;
-    }
-    .hero p {
-      max-width: 660px;
-      margin: 0 auto;
-      color: var(--muted);
-      font-size: 1.08rem;
-    }
-
-    /* ==================== FILTER BAR ==================== */
-    .filter-bar {
-      display: flex;
-      gap: 0.55rem;
-      flex-wrap: wrap;
-      justify-content: center;
-      margin: 2.2rem 0 2.5rem;
-    }
-    .filter-pill {
-      padding: 0.48rem 1rem;
-      border-radius: 999px;
-      border: 1px solid rgba(74, 172, 101, 0.28);
-      background: rgba(74, 172, 101, 0.07);
-      color: #b4cfee;
-      font-size: 0.88rem;
-      font-weight: 600;
-      cursor: pointer;
-      transition: background 0.18s ease, color 0.18s ease, border-color 0.18s ease;
-      font-family: inherit;
-    }
-    .filter-pill:hover {
-      background: rgba(74, 172, 101, 0.16);
-      color: #d4e8ff;
-    }
-    .filter-pill.active {
-      background: rgba(74, 172, 101, 0.22);
-      border-color: rgba(74, 172, 101, 0.6);
-      color: #e6f2ff;
-    }
-
-    /* ==================== ARTICLE GRID ==================== */
-    .articles-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 1.4rem;
-      margin-bottom: 3.5rem;
-    }
-    .article-card {
-      background: var(--card);
-      border: 1px solid var(--line);
-      border-radius: 16px;
-      padding: 1.4rem;
-      display: flex;
-      flex-direction: column;
-      transition: border-color 0.2s ease, transform 0.2s ease;
-      text-decoration: none;
-      position: relative;
-      overflow: hidden;
-    }
-    .article-card::after {
-      content: '';
+    .hero-wrap { position: relative; overflow: hidden; }
+    .hero-floor {
       position: absolute;
-      bottom: 0;
-      left: 0;
-      right: 0;
-      height: 2px;
-      background: linear-gradient(90deg, var(--blue), #6dc882);
-      transform: scaleX(0);
-      transform-origin: left;
-      transition: transform 0.2s ease;
+      left: -20%;
+      right: -20%;
+      bottom: -10px;
+      height: 260px;
+      z-index: 0;
+      pointer-events: none;
+      background-image:
+        linear-gradient(rgba(74, 172, 101, 0.18) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(74, 172, 101, 0.18) 1px, transparent 1px);
+      background-size: 56px 56px;
+      transform: perspective(420px) rotateX(64deg);
+      transform-origin: bottom center;
+      -webkit-mask-image: linear-gradient(to top, #000 10%, transparent 85%);
+      mask-image: linear-gradient(to top, #000 10%, transparent 85%);
+      animation: floor 4s linear infinite;
     }
-    .article-card:hover {
-      border-color: rgba(74, 172, 101, 0.4);
-      transform: translateY(-3px);
-    }
-    .article-card:hover::after {
-      transform: scaleX(1);
-    }
-    .article-card.hidden {
-      display: none;
-    }
-    .card-category {
-      display: inline-block;
-      font-size: 0.72rem;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.09em;
-      padding: 0.22rem 0.6rem;
-      border-radius: 999px;
-      margin-bottom: 0.85rem;
-      width: fit-content;
-    }
-    .cat-it { background: rgba(74, 172, 101, 0.15); color: #6dc882; border: 1px solid rgba(74, 172, 101, 0.25); }
-    .cat-hardware { background: rgba(255, 165, 0, 0.12); color: #ffbf4d; border: 1px solid rgba(255, 165, 0, 0.22); }
-    .cat-web { background: rgba(0, 220, 130, 0.12); color: #3edfaa; border: 1px solid rgba(0, 220, 130, 0.22); }
-    .cat-smb { background: rgba(200, 100, 255, 0.12); color: #c87aff; border: 1px solid rgba(200, 100, 255, 0.22); }
-    .cat-data { background: rgba(200, 152, 48, 0.14); color: #e0b840; border: 1px solid rgba(200, 152, 48, 0.28); }
-    .article-card h2 {
-      font-family: "Montserrat", sans-serif;
-      font-size: 1.05rem;
-      font-weight: 700;
-      line-height: 1.3;
-      color: #e8f2ff;
-      margin-bottom: 0.6rem;
-    }
-    .article-card p {
-      font-size: 0.9rem;
-      color: var(--muted);
-      line-height: 1.55;
-      flex: 1;
-      margin-bottom: 1rem;
-    }
-    .card-footer {
-      display: flex;
+    @keyframes floor { to { background-position: 0 56px, 0 0; } }
+    .hero {
+      position: relative;
+      z-index: 1;
+      display: grid;
+      grid-template-columns: 1.08fr 0.92fr;
+      gap: 2.5rem;
       align-items: center;
-      justify-content: space-between;
-      margin-top: auto;
+      padding: 4.2rem 0 4.5rem;
     }
-    .read-time {
-      font-size: 0.76rem;
-      color: #5e7a9a;
-      font-weight: 500;
-    }
-    .read-link {
-      font-size: 0.84rem;
-      font-weight: 700;
-      color: var(--blue);
+    .kicker {
       display: inline-flex;
       align-items: center;
-      gap: 0.3rem;
+      gap: 0.65rem;
+      font-family: var(--mono);
+      font-size: 0.76rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 1.2rem;
     }
-
-    /* ==================== CTA ==================== */
-    .cta-section {
-      text-align: center;
-      padding: 3rem 1rem 4rem;
-      border-top: 1px solid var(--line);
+    .pulse {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--blue);
+      box-shadow: 0 0 0 0 rgba(74, 172, 101, 0.7);
+      animation: pulse 2.4s infinite;
     }
-    .cta-section h2 {
-      font-family: "Montserrat", sans-serif;
-      font-size: 1.6rem;
+    @keyframes pulse { 70% { box-shadow: 0 0 0 10px rgba(74, 172, 101, 0); } 100% { box-shadow: 0 0 0 0 rgba(74, 172, 101, 0); } }
+    .hero h1 { font-family: "Montserrat", sans-serif; line-height: 1; margin-bottom: 1.3rem; }
+    .h1-top {
+      display: block;
+      font-size: clamp(2.6rem, 6.4vw, 4.7rem);
       font-weight: 800;
       text-transform: uppercase;
-      letter-spacing: 0.03em;
-      color: #ffffff;
-      margin-bottom: 0.65rem;
+      letter-spacing: 0.01em;
+      background: linear-gradient(180deg, #ffffff 30%, #a9bfac 100%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
     }
-    .cta-section p {
+    .h1-sub {
+      display: block;
+      margin-top: 0.75rem;
+      font-size: clamp(0.95rem, 2vw, 1.25rem);
+      font-weight: 700;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--accent);
+    }
+    .hero-lede { color: var(--muted); font-size: 1.07rem; max-width: 54ch; }
+    .hud {
+      margin-top: 2rem;
+      display: grid;
+      grid-template-columns: auto auto auto 1fr;
+      border: 1px solid rgba(74, 172, 101, 0.25);
+      border-radius: 14px;
+      background: linear-gradient(180deg, rgba(20, 32, 25, 0.8), rgba(10, 18, 13, 0.65));
+      backdrop-filter: blur(6px);
+      overflow: hidden;
+    }
+    .hud-cell { padding: 0.8rem 1.15rem; border-right: 1px solid rgba(74, 172, 101, 0.16); min-width: 0; }
+    .hud-cell:last-child { border-right: 0; }
+    .hud-k { display: block; font-family: var(--mono); font-size: 0.64rem; letter-spacing: 0.16em; text-transform: uppercase; color: var(--muted); }
+    .hud-v { display: block; font-family: "Montserrat", sans-serif; font-weight: 800; font-size: 1.55rem; color: #fff; line-height: 1.25; font-variant-numeric: tabular-nums; }
+    .hud-new a {
+      display: flex;
+      align-items: center;
+      gap: 0.45rem;
+      margin-top: 0.2rem;
+      color: var(--text);
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 0.88rem;
+      line-height: 1.35;
+      transition: color 0.2s;
+    }
+    .hud-new a span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .hud-new a i { color: var(--accent); transition: transform 0.25s var(--ease); }
+    .hud-new a:hover { color: var(--gold-2); }
+    .hud-new a:hover i { transform: translateX(4px); }
+
+    /* ==================== ORBIT (deck selector) ==================== */
+    .orbit {
+      position: relative;
+      width: min(470px, 100%);
+      aspect-ratio: 1;
+      margin: 0 auto;
+      container-type: size;
+    }
+    .ring { position: absolute; border-radius: 50%; border: 1px solid rgba(74, 172, 101, 0.2); }
+    .ring::before { content: ''; position: absolute; top: -4px; left: calc(50% - 4px); width: 7px; height: 7px; border-radius: 50%; }
+    .ring-1 { inset: 1%; border-style: dashed; border-color: rgba(200, 152, 48, 0.26); animation: spin 150s linear infinite; }
+    .ring-1::before { background: var(--blue); box-shadow: 0 0 12px var(--blue); }
+    .ring-2 { inset: 15%; border-color: rgba(74, 172, 101, 0.28); box-shadow: inset 0 0 60px rgba(74, 172, 101, 0.06); }
+    .ring-3 { inset: 31%; border-color: rgba(200, 152, 48, 0.35); animation: spin 36s linear infinite reverse; }
+    .ring-3::before { background: var(--accent); box-shadow: 0 0 12px var(--accent); }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .orbit-core {
+      position: absolute;
+      inset: 38%;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      background: radial-gradient(circle, rgba(74, 172, 101, 0.28), transparent 70%);
+    }
+    .orbit-core img {
+      width: 74%;
+      height: auto;
+      border-radius: 16px;
+      box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.14), 0 0 46px rgba(74, 172, 101, 0.5);
+      animation: glow 5s ease-in-out infinite;
+    }
+    @keyframes glow { 50% { box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.14), 0 0 70px rgba(200, 152, 48, 0.45); } }
+    .orbit-track { position: absolute; inset: 0; animation: spin 110s linear infinite; }
+    .node {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      width: 0;
+      height: 0;
+      transform: rotate(var(--a)) translateX(35cqw) rotate(calc(-1 * var(--a)));
+    }
+    .node-spin { position: absolute; left: 0; top: 0; width: 0; height: 0; animation: spin 110s linear infinite reverse; }
+    .orbit:hover .orbit-track, .orbit:hover .node-spin, .orbit:hover .ring { animation-play-state: paused; }
+    .node-btn {
+      position: absolute;
+      left: 0;
+      top: 0;
+      transform: translate(-50%, -32px);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.4rem;
+      background: none;
+      border: 0;
+      color: var(--text);
+      cursor: pointer;
+      font: inherit;
+    }
+    .node-orb {
+      position: relative;
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      font-size: 1.15rem;
+      color: var(--hue);
+      background: radial-gradient(circle at 35% 30%, #1f3427, #0b150e 75%);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.4), 0 8px 22px rgba(0, 0, 0, 0.45);
+      transition: transform 0.3s var(--ease), box-shadow 0.3s, border-color 0.3s;
+    }
+    .node-orb b {
+      position: absolute;
+      top: -4px;
+      right: -6px;
+      min-width: 22px;
+      height: 22px;
+      padding: 0 5px;
+      border-radius: 999px;
+      display: grid;
+      place-items: center;
+      font-family: var(--mono);
+      font-size: 0.66rem;
+      font-weight: 700;
+      color: #0d1710;
+      background: var(--hue);
+    }
+    .node-label {
+      font-family: var(--mono);
+      font-size: 0.64rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
       color: var(--muted);
-      font-size: 1rem;
-      margin-bottom: 1.6rem;
-      max-width: 480px;
-      margin-left: auto;
-      margin-right: auto;
+      white-space: nowrap;
+      padding: 0.15rem 0.5rem;
+      border-radius: 6px;
+      background: rgba(5, 11, 7, 0.7);
+      transition: color 0.2s;
     }
-    .btn-primary {
-      display: inline-block;
+    .node-btn:hover .node-orb, .node-btn:focus-visible .node-orb {
+      transform: scale(1.14);
+      border-color: var(--hue);
+      box-shadow: 0 0 0 5px rgba(255, 255, 255, 0.03), 0 0 28px var(--hue);
+    }
+    .node-btn:hover .node-label { color: #fff; }
+    .node-btn[aria-pressed="true"] .node-orb {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 4px rgba(200, 152, 48, 0.2), 0 0 30px rgba(200, 152, 48, 0.55);
+    }
+    .node-btn[aria-pressed="true"] .node-label { color: var(--accent); }
+    .orbit-hint {
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: -1.6rem;
+      text-align: center;
+      font-family: var(--mono);
+      font-size: 0.66rem;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: rgba(138, 164, 141, 0.7);
+    }
+
+    /* ==================== CONSOLE (search + decks) ==================== */
+    .console {
+      position: relative;
+      margin: 0 0 3rem;
+      padding: 1.1rem;
+      border: 1px solid rgba(74, 172, 101, 0.22);
+      border-radius: 18px;
+      background: linear-gradient(180deg, rgba(20, 32, 25, 0.86), rgba(10, 18, 13, 0.78));
+      backdrop-filter: blur(8px);
+      box-shadow: 0 24px 60px rgba(0, 0, 0, 0.35);
+      scroll-margin-top: 90px;
+    }
+    .console::before {
+      content: '';
+      position: absolute;
+      inset: -1px;
+      border-radius: 18px;
+      pointer-events: none;
+      background:
+        linear-gradient(var(--accent), var(--accent)) top left / 18px 2px no-repeat,
+        linear-gradient(var(--accent), var(--accent)) top left / 2px 18px no-repeat,
+        linear-gradient(var(--accent), var(--accent)) top right / 18px 2px no-repeat,
+        linear-gradient(var(--accent), var(--accent)) top right / 2px 18px no-repeat,
+        linear-gradient(var(--accent), var(--accent)) bottom left / 18px 2px no-repeat,
+        linear-gradient(var(--accent), var(--accent)) bottom left / 2px 18px no-repeat,
+        linear-gradient(var(--accent), var(--accent)) bottom right / 18px 2px no-repeat,
+        linear-gradient(var(--accent), var(--accent)) bottom right / 2px 18px no-repeat;
+      opacity: 0.8;
+    }
+    .console-top { display: flex; align-items: center; gap: 1rem; flex-wrap: wrap; margin-bottom: 0.95rem; }
+    .search { position: relative; flex: 1 1 320px; }
+    .search i { position: absolute; left: 1rem; top: 50%; transform: translateY(-50%); color: var(--muted); pointer-events: none; transition: color 0.2s; }
+    .search input {
+      width: 100%;
+      padding: 0.82rem 3.2rem 0.82rem 2.7rem;
+      border-radius: 12px;
+      border: 1px solid var(--line);
+      background: rgba(5, 11, 7, 0.75);
+      color: var(--text);
+      font: inherit;
+      font-size: 0.95rem;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    .search input::placeholder { color: #6b836e; }
+    .search input:focus { outline: none; border-color: var(--blue); box-shadow: 0 0 0 3px rgba(74, 172, 101, 0.18), 0 0 24px rgba(74, 172, 101, 0.15); }
+    .search:focus-within i { color: var(--blue); }
+    .search kbd {
+      position: absolute;
+      right: 0.8rem;
+      top: 50%;
+      transform: translateY(-50%);
+      font-family: var(--mono);
+      font-size: 0.72rem;
+      color: var(--muted);
+      border: 1px solid var(--line);
+      border-bottom-width: 2px;
+      border-radius: 6px;
+      padding: 0.05rem 0.45rem;
+      pointer-events: none;
+    }
+    .search input::-webkit-search-cancel-button { filter: grayscale(1) brightness(1.4); }
+    .readout { font-family: var(--mono); font-size: 0.76rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); white-space: nowrap; }
+    .readout b { color: var(--accent); font-weight: 700; }
+    .decks { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 0.55rem; }
+    .deck-chip {
+      --hue: var(--accent);
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      gap: 0.25rem;
+      padding: 0.7rem 0.8rem 0.75rem;
+      border-radius: 12px;
+      border: 1px solid var(--line);
+      background: rgba(13, 23, 16, 0.65);
+      color: var(--text);
+      font: inherit;
+      text-align: left;
+      cursor: pointer;
+      overflow: hidden;
+      transition: transform 0.25s var(--ease), border-color 0.25s, background 0.25s, box-shadow 0.25s;
+    }
+    .deck-chip::after {
+      content: '';
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      height: 2px;
+      background: var(--hue);
+      box-shadow: 0 0 10px var(--hue);
+      transform: scaleX(0);
+      transform-origin: left;
+      transition: transform 0.35s var(--ease);
+    }
+    .dc-top { display: flex; align-items: center; justify-content: space-between; gap: 0.4rem; }
+    .dc-top i { color: var(--hue); font-size: 0.95rem; transition: transform 0.3s var(--ease), filter 0.3s; }
+    .dc-code { font-family: var(--mono); font-size: 0.62rem; letter-spacing: 0.14em; color: var(--muted); }
+    .dc-name { font-family: "Montserrat", sans-serif; font-weight: 700; font-size: 0.8rem; line-height: 1.2; }
+    .dc-count { font-family: var(--mono); font-size: 0.68rem; color: var(--hue); letter-spacing: 0.06em; }
+    .deck-chip:hover { transform: translateY(-3px); border-color: color-mix(in srgb, var(--hue) 55%, transparent); }
+    .deck-chip:hover .dc-top i { transform: scale(1.18) rotate(-6deg); filter: drop-shadow(0 0 6px var(--hue)); }
+    .deck-chip:hover::after, .deck-chip[aria-pressed="true"]::after { transform: scaleX(1); }
+    .deck-chip[aria-pressed="true"] {
+      border-color: var(--hue);
+      background: linear-gradient(180deg, color-mix(in srgb, var(--hue) 16%, transparent), rgba(13, 23, 16, 0.65));
+      box-shadow: 0 0 24px color-mix(in srgb, var(--hue) 22%, transparent);
+    }
+    .deck-chip:focus-visible, .node-btn:focus-visible, .spine:focus-visible, .ask a:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+
+    /* ==================== SHELVES ==================== */
+    .shelf { margin-bottom: 3.4rem; scroll-margin-top: 90px; }
+    .shelf[hidden] { display: none; }
+    .shelf-head { display: flex; align-items: flex-end; justify-content: space-between; gap: 1rem; margin-bottom: 1.1rem; }
+    .shelf-code { display: flex; align-items: center; gap: 0.7rem; font-family: var(--mono); font-size: 0.7rem; letter-spacing: 0.22em; text-transform: uppercase; color: var(--hue); margin-bottom: 0.35rem; }
+    .shelf-code::after { content: ''; width: 60px; height: 1px; background: linear-gradient(90deg, var(--hue), transparent); }
+    .shelf-head h2 {
+      display: flex;
+      align-items: center;
+      gap: 0.7rem;
+      font-family: "Montserrat", sans-serif;
+      font-weight: 800;
+      font-size: clamp(1.3rem, 2.4vw, 1.75rem);
+      line-height: 1.2;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+      color: #fff;
+    }
+    .shelf-head h2 i { color: var(--hue); font-size: 0.85em; filter: drop-shadow(0 0 10px color-mix(in srgb, var(--hue) 60%, transparent)); }
+    .shelf-desc { color: var(--muted); font-size: 0.93rem; margin-top: 0.2rem; }
+    .shelf-stats { font-family: var(--mono); font-size: 0.72rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); text-align: right; white-space: nowrap; line-height: 1.8; }
+    .shelf-stats b { color: var(--hue); font-weight: 700; }
+    .shelf-row { display: flex; gap: 10px; height: 410px; }
+    .shelf-lip {
+      position: relative;
+      height: 2px;
+      margin-top: 12px;
+      border-radius: 2px;
+      background: linear-gradient(90deg, transparent, var(--hue) 15%, var(--hue) 85%, transparent);
+      box-shadow: 0 0 16px 1px color-mix(in srgb, var(--hue) 55%, transparent);
+      opacity: 0.75;
+    }
+    .shelf-lip::after {
+      content: '';
+      position: absolute;
+      left: 6%;
+      right: 6%;
+      top: 2px;
+      height: 34px;
+      background: radial-gradient(50% 100% at 50% 0%, color-mix(in srgb, var(--hue) 18%, transparent), transparent 70%);
+    }
+
+    /* A spine: collapsed it is a book on the shelf, open it is the cover with the summary. */
+    .spine {
+      position: relative;
+      flex: 0 0 74px;
+      min-width: 0;
+      border-radius: 14px;
+      overflow: hidden;
+      isolation: isolate;
+      text-decoration: none;
+      color: var(--text);
+      background: #0a140e;
+      border: 1px solid rgba(255, 255, 255, 0.07);
+      transition: flex-grow 0.6s var(--ease), border-color 0.3s, box-shadow 0.3s, transform 0.3s var(--ease);
+    }
+    .spine[hidden] { display: none; }
+    .spine.is-open { flex-grow: 1; }
+    .spine:not(.is-open):hover { transform: translateY(-6px); }
+    .spine:hover {
+      border-color: color-mix(in srgb, var(--hue) 60%, transparent);
+      box-shadow: 0 20px 44px rgba(0, 0, 0, 0.5), 0 0 34px color-mix(in srgb, var(--hue) 20%, transparent);
+    }
+    .spine::after {
+      content: '';
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: 0;
+      height: 3px;
+      z-index: 3;
+      background: var(--hue);
+      box-shadow: 0 0 14px var(--hue);
+      opacity: 0.85;
+    }
+    .spine::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      z-index: 2;
+      pointer-events: none;
+      background: radial-gradient(280px circle at var(--mx, 50%) var(--my, 50%), color-mix(in srgb, var(--hue) 20%, transparent), transparent 62%);
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+    .spine:hover::before { opacity: 1; }
+    .spine-img {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: 72% 50%;
+      z-index: -2;
+      filter: saturate(0.3) brightness(0.36);
+      transform: scale(1.2);
+      transition: filter 0.7s var(--ease), transform 0.9s var(--ease);
+    }
+    .spine.is-open .spine-img { filter: none; transform: scale(1); }
+    .spine.is-open:hover .spine-img { transform: scale(1.045); }
+    .spine-shade {
+      position: absolute;
+      inset: 0;
+      z-index: -1;
+      background: linear-gradient(180deg, rgba(5, 11, 7, 0.15), rgba(5, 11, 7, 0.7));
+      transition: opacity 0.5s;
+    }
+    .spine-shade::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(90deg, rgba(7, 14, 9, 0.97) 0%, rgba(7, 14, 9, 0.88) 36%, rgba(7, 14, 9, 0.3) 68%, rgba(7, 14, 9, 0) 100%);
+      opacity: 0;
+      transition: opacity 0.5s;
+    }
+    .spine.is-open .spine-shade::after { opacity: 1; }
+    .spine-scan {
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: -45%;
+      height: 45%;
+      z-index: 2;
+      pointer-events: none;
+      background: linear-gradient(180deg, transparent, rgba(224, 184, 64, 0.1) 60%, rgba(224, 184, 64, 0.22) 98%, transparent);
+      opacity: 0;
+    }
+    .spine.is-open:hover .spine-scan { animation: scan 1.5s var(--ease); }
+    @keyframes scan { 0% { top: -45%; opacity: 1; } 100% { top: 100%; opacity: 0.2; } }
+
+    .spine-edge {
+      position: absolute;
+      inset: 0;
+      z-index: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 1rem 0 0.9rem;
+      transition: opacity 0.25s;
+    }
+    .spine.is-open .spine-edge { opacity: 0; pointer-events: none; }
+    .spine-ic {
+      flex-shrink: 0;
+      width: 38px;
+      height: 38px;
+      border-radius: 11px;
+      display: grid;
+      place-items: center;
+      color: var(--hue);
+      background: rgba(5, 11, 7, 0.7);
+      border: 1px solid color-mix(in srgb, var(--hue) 40%, transparent);
+    }
+    .spine-title {
+      flex: 1;
+      min-height: 0;
+      margin: 0.9rem 0;
+      writing-mode: vertical-rl;
+      transform: rotate(180deg);
+      font-family: "Montserrat", sans-serif;
+      font-weight: 700;
+      font-size: 0.8rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      color: #e4ede5;
+      text-shadow: 0 1px 8px rgba(0, 0, 0, 0.8);
+    }
+    .spine-call {
+      flex-shrink: 0;
+      font-family: var(--mono);
+      font-size: 0.64rem;
+      line-height: 1.3;
+      letter-spacing: 0.08em;
+      text-align: center;
+      color: var(--hue);
+      padding: 0.3rem 0.4rem;
+      border-radius: 6px;
+      background: rgba(5, 11, 7, 0.75);
+      border: 1px solid color-mix(in srgb, var(--hue) 30%, transparent);
+    }
+    .spine-call span { display: block; color: var(--muted); }
+    .beacon {
+      position: absolute;
+      top: 12px;
+      right: 9px;
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--gold-2);
+      box-shadow: 0 0 0 0 rgba(224, 184, 64, 0.7);
+      animation: beacon 2s infinite;
+    }
+    @keyframes beacon { 70% { box-shadow: 0 0 0 8px rgba(224, 184, 64, 0); } 100% { box-shadow: 0 0 0 0 rgba(224, 184, 64, 0); } }
+
+    .spine-body {
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      z-index: 1;
+      width: 450px;
+      max-width: 100%;
+      padding: 1.7rem 1.8rem 1.5rem;
+      display: flex;
+      flex-direction: column;
+      opacity: 0;
+      transform: translateX(-14px);
+      transition: opacity 0.25s, transform 0.45s var(--ease);
+    }
+    .spine.is-open .spine-body { opacity: 1; transform: none; transition-delay: 0.2s; }
+
+    /* The tag, redone as a library call number: code, deck, and a "new" flag when it applies. */
+    .call-tag {
+      display: inline-flex;
+      align-items: stretch;
+      width: fit-content;
+      border-radius: 8px;
+      overflow: hidden;
+      font-family: var(--mono);
+      font-size: 0.68rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      border: 1px solid color-mix(in srgb, var(--hue) 45%, transparent);
+      background: rgba(5, 11, 7, 0.75);
+      backdrop-filter: blur(4px);
+    }
+    .ct-code { display: inline-flex; align-items: center; gap: 0.45rem; padding: 0.3rem 0.6rem; background: var(--hue); color: #0d1710; font-weight: 700; }
+    .ct-name { padding: 0.3rem 0.65rem; color: var(--hue); }
+    .ct-new { padding: 0.3rem 0.6rem; color: var(--gold-2); border-left: 1px solid color-mix(in srgb, var(--hue) 45%, transparent); }
+    .spine h3 {
+      margin: 1.05rem 0 0.65rem;
+      font-family: "Montserrat", sans-serif;
+      font-weight: 800;
+      font-size: 1.32rem;
+      line-height: 1.25;
+      color: #fff;
+      text-wrap: balance;
+    }
+    .spine p {
+      color: rgba(228, 237, 229, 0.78);
+      font-size: 0.93rem;
+      line-height: 1.6;
+      display: -webkit-box;
+      -webkit-line-clamp: 5;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+    .spine-meta { margin-top: auto; padding-top: 1rem; display: flex; align-items: center; justify-content: space-between; gap: 1rem; }
+    .signal { display: inline-flex; align-items: center; gap: 0.6rem; font-family: var(--mono); font-size: 0.7rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
+    .bars { display: inline-flex; align-items: flex-end; gap: 2px; height: 14px; }
+    .bars i { display: block; width: 3px; border-radius: 1px; background: var(--line); }
+    .bars i.on { background: var(--hue); box-shadow: 0 0 6px color-mix(in srgb, var(--hue) 60%, transparent); }
+    .open-link { display: inline-flex; align-items: center; gap: 0.5rem; font-family: "Montserrat", sans-serif; font-weight: 700; font-size: 0.78rem; letter-spacing: 0.07em; text-transform: uppercase; color: var(--accent); white-space: nowrap; }
+    .open-link i { transition: transform 0.3s var(--ease); }
+    .spine:hover .open-link i { transform: translateX(5px); }
+
+    .empty {
+      text-align: center;
+      padding: 3rem 1rem 3.5rem;
+      border: 1px dashed var(--line);
+      border-radius: 18px;
+      margin-bottom: 3rem;
+      color: var(--muted);
+    }
+    .empty[hidden] { display: none; }
+    .empty i { font-size: 2rem; color: var(--accent); margin-bottom: 0.8rem; display: block; }
+    .empty b { color: var(--text); }
+    .empty button { margin-top: 1rem; }
+
+    /* ==================== ASK THE ARCHIVIST ==================== */
+    .ask {
+      position: relative;
+      margin: 1rem 0 4rem;
+      padding: 2.4rem 2.6rem;
+      border-radius: 22px;
+      border: 1px solid rgba(200, 152, 48, 0.3);
+      background:
+        radial-gradient(120% 140% at 0% 0%, rgba(200, 152, 48, 0.13), transparent 55%),
+        radial-gradient(120% 140% at 100% 100%, rgba(74, 172, 101, 0.14), transparent 55%),
+        #0f1c14;
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      gap: 2.2rem;
+      align-items: center;
+      overflow: hidden;
+    }
+    .radar {
+      position: relative;
+      width: 104px;
+      height: 104px;
+      border-radius: 50%;
+      background:
+        radial-gradient(circle, transparent 30%, rgba(74, 172, 101, 0.25) 31%, transparent 32%, transparent 62%, rgba(74, 172, 101, 0.25) 63%, transparent 64%),
+        radial-gradient(circle, #13261a, #08120b);
+      border: 1px solid rgba(74, 172, 101, 0.35);
+      overflow: hidden;
+    }
+    .radar::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: 50%;
+      background: conic-gradient(from 0deg, rgba(200, 152, 48, 0.55), transparent 70deg);
+      animation: spin 3.2s linear infinite;
+    }
+    .radar::after { content: ''; position: absolute; left: 64%; top: 30%; width: 6px; height: 6px; border-radius: 50%; background: var(--gold-2); box-shadow: 0 0 10px var(--gold-2); animation: blip 3.2s infinite; }
+    @keyframes blip { 0%, 15% { opacity: 0; } 20% { opacity: 1; } 60%, 100% { opacity: 0; } }
+    .ask-k { font-family: var(--mono); font-size: 0.7rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--accent); margin-bottom: 0.4rem; }
+    .ask h2 { font-family: "Montserrat", sans-serif; font-size: clamp(1.3rem, 2.6vw, 1.7rem); font-weight: 800; text-transform: uppercase; letter-spacing: 0.03em; color: #fff; line-height: 1.2; margin-bottom: 0.4rem; }
+    .ask p { color: var(--muted); max-width: 52ch; }
+    .ask-actions { display: flex; flex-direction: column; gap: 0.6rem; }
+    .btn-gold, .btn-ghost {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.55rem;
       text-decoration: none;
       border-radius: 999px;
-      padding: 0.85rem 1.6rem;
-      font-weight: 700;
+      padding: 0.8rem 1.5rem;
       font-family: "Montserrat", sans-serif;
-      font-size: 0.9rem;
+      font-weight: 700;
+      font-size: 0.82rem;
       text-transform: uppercase;
-      letter-spacing: 0.04em;
-      background: linear-gradient(135deg, var(--blue), #6dc882);
-      color: #06101f;
-      border: none;
-      transition: filter 0.2s ease, transform 0.2s ease;
+      letter-spacing: 0.05em;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: transform 0.2s, filter 0.2s, border-color 0.2s, background 0.2s;
     }
-    .btn-primary:hover { filter: brightness(1.08); transform: translateY(-1px); }
+    .btn-gold { color: #0d1710; background: linear-gradient(135deg, #c89830, #e0b840); border: 1px solid rgba(255, 255, 255, 0.25); box-shadow: 0 10px 24px rgba(200, 152, 48, 0.28); }
+    .btn-gold:hover { transform: translateY(-2px); filter: brightness(1.07); }
+    .btn-ghost { color: var(--text); background: transparent; border: 1px solid rgba(255, 255, 255, 0.3); }
+    .btn-ghost:hover { transform: translateY(-2px); border-color: #fff; background: rgba(255, 255, 255, 0.04); }
 
-    /* ==================== RESPONSIVE ==================== */
-    @media (max-width: 900px) {
-      .articles-grid { grid-template-columns: repeat(2, 1fr); }
+    /* ==================== NEWSLETTER ==================== */
+    .newsletter-section { padding: 0 0 4rem; }
+    .newsletter-inner {
+      position: relative;
+      max-width: 760px;
+      margin: 0 auto;
+      text-align: center;
+      padding: 2.6rem 2rem 2.2rem;
+      border-radius: 22px;
+      border: 1px solid rgba(74, 172, 101, 0.25);
+      background: linear-gradient(180deg, rgba(20, 32, 25, 0.88), rgba(10, 18, 13, 0.85));
+      overflow: hidden;
     }
-    @media (max-width: 600px) {
-      body { overflow-x: hidden; }
-      .articles-grid { grid-template-columns: 1fr; }
-      .hero h1 { font-size: 1.75rem; }
+    .newsletter-inner::before {
+      content: '';
+      position: absolute;
+      left: 50%;
+      top: -170px;
+      width: 340px;
+      height: 340px;
+      transform: translateX(-50%);
+      border-radius: 50%;
+      border: 1px solid rgba(200, 152, 48, 0.18);
+      box-shadow: 0 0 0 40px rgba(74, 172, 101, 0.03), 0 0 0 80px rgba(74, 172, 101, 0.02);
+      pointer-events: none;
     }
-    @media (max-width: 480px) {
-      .hero { padding: 2.5rem 0 1.8rem; }
-    }
-
-    /* Newsletter signup */
-    .newsletter-section { background: var(--card); border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); padding: 3.5rem 5%; margin-top: 2rem; }
-    .newsletter-inner { max-width: 640px; margin: 0 auto; text-align: center; }
-    .newsletter-heading { font-family: "Montserrat", sans-serif; font-size: 1.5rem; font-weight: 700; color: var(--text); margin: 0 0 0.5rem; text-transform: uppercase; letter-spacing: 0.04em; }
-    .newsletter-sub { color: var(--muted); font-size: 0.95rem; margin: 0 0 1.75rem; }
-    .newsletter-form { display: flex; gap: 0.6rem; justify-content: center; flex-wrap: wrap; }
-    .newsletter-input { flex: 1 1 220px; max-width: 320px; padding: 0.7rem 1rem; border-radius: 8px; border: 1px solid var(--line); background: var(--bg); color: var(--text); font-size: 0.95rem; font-family: "Inter", sans-serif; outline: none; transition: border-color 0.2s; }
-    .newsletter-input:focus { border-color: var(--blue); }
-    .newsletter-btn { padding: 0.7rem 1.5rem; border-radius: 8px; border: none; background: var(--blue); color: #0d1710; font-family: "Montserrat", sans-serif; font-weight: 700; font-size: 0.9rem; cursor: pointer; text-transform: uppercase; letter-spacing: 0.05em; transition: opacity 0.2s; }
-    .newsletter-btn:hover { opacity: 0.85; }
+    .newsletter-k { position: relative; display: inline-flex; align-items: center; gap: 0.5rem; font-family: var(--mono); font-size: 0.7rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--accent); margin-bottom: 0.6rem; }
+    .newsletter-heading { position: relative; font-family: "Montserrat", sans-serif; font-size: 1.45rem; font-weight: 800; color: #fff; margin: 0 0 0.5rem; text-transform: uppercase; letter-spacing: 0.04em; }
+    .newsletter-sub { color: var(--muted); font-size: 0.95rem; margin: 0 0 1.6rem; }
+    .newsletter-form { position: relative; display: flex; gap: 0.6rem; justify-content: center; flex-wrap: wrap; }
+    .newsletter-input { flex: 1 1 220px; max-width: 340px; padding: 0.78rem 1.1rem; border-radius: 999px; border: 1px solid var(--line); background: rgba(5, 11, 7, 0.8); color: var(--text); font-size: 0.95rem; font-family: "Inter", sans-serif; outline: none; transition: border-color 0.2s, box-shadow 0.2s; }
+    .newsletter-input:focus { border-color: var(--blue); box-shadow: 0 0 0 3px rgba(74, 172, 101, 0.18); }
+    .newsletter-btn { padding: 0.78rem 1.6rem; border-radius: 999px; border: none; background: linear-gradient(135deg, var(--blue), var(--mint)); color: #0d1710; font-family: "Montserrat", sans-serif; font-weight: 700; font-size: 0.85rem; cursor: pointer; text-transform: uppercase; letter-spacing: 0.05em; transition: transform 0.2s, filter 0.2s; }
+    .newsletter-btn:hover { transform: translateY(-2px); filter: brightness(1.08); }
     .newsletter-fine { margin-top: 1rem; font-size: 0.78rem; color: var(--muted); }
     .newsletter-fine a { color: var(--muted); text-decoration: underline; }
     .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); border: 0; }
+
+    /* ==================== RESPONSIVE ==================== */
+    @media (max-width: 1080px) {
+      .decks { grid-auto-flow: column; grid-template-columns: none; grid-auto-columns: minmax(138px, 1fr); overflow-x: auto; padding-bottom: 0.3rem; scrollbar-width: thin; }
+      .shelf-row { height: 380px; }
+      .spine { flex-basis: 62px; }
+      .spine-body { width: 380px; padding: 1.4rem 1.4rem 1.3rem; }
+      .spine h3 { font-size: 1.18rem; }
+    }
+    @media (max-width: 900px) {
+      .hero { grid-template-columns: 1fr; padding: 3rem 0 3.5rem; }
+      .orbit { display: none; }
+      .hud { grid-template-columns: repeat(3, auto) 1fr; }
+    }
+    @media (max-width: 760px) {
+      .hud { grid-template-columns: repeat(3, 1fr); }
+      .hud-new { grid-column: 1 / -1; border-top: 1px solid rgba(74, 172, 101, 0.16); }
+      .hud-cell:nth-child(3) { border-right: 0; }
+      .hud-cell { padding: 0.75rem 0.9rem; }
+      .hud-v { font-size: 1.3rem; white-space: nowrap; }
+      .hud-v small { font-size: 0.7em; }
+      .shelf-head { flex-direction: column; align-items: flex-start; gap: 0.4rem; }
+      .shelf-stats { text-align: left; }
+      .shelf-row { flex-direction: column; height: auto; gap: 12px; }
+      .spine { flex: none; display: grid; grid-template-columns: 112px 1fr; background: var(--card); }
+      .spine:not(.is-open):hover { transform: none; }
+      .spine-img { position: relative; inset: auto; grid-column: 1; height: 100%; min-height: 150px; z-index: 0; filter: none; transform: none; }
+      .spine.is-open:hover .spine-img { transform: none; }
+      .spine-shade, .spine-edge, .spine-scan { display: none; }
+      .spine-body { position: relative; grid-column: 2; width: auto; opacity: 1; transform: none; padding: 0.95rem 1rem 0.9rem; }
+      .spine h3 { font-size: 1rem; margin: 0.6rem 0 0.35rem; }
+      .spine p { font-size: 0.86rem; -webkit-line-clamp: 3; }
+      .spine-meta { padding-top: 0.6rem; }
+      .ct-name { display: none; }
+      .ask { grid-template-columns: 1fr; text-align: center; padding: 2rem 1.4rem; gap: 1.2rem; }
+      .radar { margin: 0 auto; width: 84px; height: 84px; }
+      .ask p { margin: 0 auto; }
+    }
+    @media (max-width: 420px) {
+      .spine { grid-template-columns: 88px 1fr; }
+      .signal .bars { display: none; }
+      .readout { width: 100%; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      *, *::before, *::after { animation: none !important; }
+      .spine, .spine-img, .spine-body, .spine-edge { transition-duration: 0.01s !important; }
+    }
+    .node.a0 { --a: -90deg; }
+    .node.a1 { --a: -30deg; }
+    .node.a2 { --a: 30deg; }
+    .node.a3 { --a: 90deg; }
+    .node.a4 { --a: 150deg; }
+    .node.a5 { --a: 210deg; }
   </style>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" media="print" data-async-css><noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"></noscript>
   <script>document.querySelectorAll('link[data-async-css]').forEach(function (l) { function on() { l.media = 'all'; } if (l.sheet) on(); else l.addEventListener('load', on); });</script>
   <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
 </head>
 <body>
+  <canvas class="stars" id="stars" aria-hidden="true"></canvas>
   <div class="tnav-bar">
     <div class="tnav-inner">
       <a class="tnav-brand" href="../index.html">
@@ -391,261 +959,594 @@
   </div>
 
   <main>
+    <section class="hero-wrap">
+      <div class="hero-floor" aria-hidden="true"></div>
+      <div class="container hero">
+        <div>
+          <p class="kicker"><span class="pulse" aria-hidden="true"></span>TES Archive &middot; Knowledge Base</p>
+          <h1><span class="h1-top">The Archive</span><span class="h1-sub">IT tips &amp; field guides</span></h1>
+          <p class="hero-lede">Practical advice for Cleveland small businesses on IT, hardware, web, public records and government bids. Written by an engineer who has seen what actually goes wrong.</p>
+          <div class="hud" role="group" aria-label="Archive summary">
+            <div class="hud-cell"><span class="hud-k">Entries</span><span class="hud-v" id="hudEntries">22</span></div>
+            <div class="hud-cell"><span class="hud-k">Decks</span><span class="hud-v" id="hudDecks">06</span></div>
+            <div class="hud-cell"><span class="hud-k">Reading</span><span class="hud-v"><span id="hudMinutes">155</span><small> min</small></span></div>
+            <div class="hud-cell hud-new"><span class="hud-k">Newest arrival</span><a href="moving-your-cleveland-business-to-microsoft-365.html"><span>Moving to Microsoft 365</span><i class="fa-solid fa-arrow-right" aria-hidden="true"></i></a></div>
+          </div>
+        </div>
+        <div class="orbit" aria-hidden="true">
+          <div class="ring ring-1"></div>
+          <div class="ring ring-2"></div>
+          <div class="ring ring-3"></div>
+          <div class="orbit-core"><img src="../assets/logo-mark-176.webp" alt="" width="176" height="176"></div>
+          <div class="orbit-track">
+            <div class="node d-it a0"><div class="node-spin"><button class="node-btn" type="button" data-filter="it-tips" tabindex="-1" aria-pressed="false"><span class="node-orb"><i class="fa-solid fa-screwdriver-wrench"></i><b>5</b></span><span class="node-label">IT &middot; IT Tips</span></button></div></div>
+            <div class="node d-smb a1"><div class="node-spin"><button class="node-btn" type="button" data-filter="cleveland-smb" tabindex="-1" aria-pressed="false"><span class="node-orb"><i class="fa-solid fa-city"></i><b>4</b></span><span class="node-label">SMB &middot; Cleveland SMB</span></button></div></div>
+            <div class="node d-web a2"><div class="node-spin"><button class="node-btn" type="button" data-filter="web-software" tabindex="-1" aria-pressed="false"><span class="node-orb"><i class="fa-solid fa-globe"></i><b>2</b></span><span class="node-label">WEB &middot; Web &amp; Software</span></button></div></div>
+            <div class="node d-hw a3"><div class="node-spin"><button class="node-btn" type="button" data-filter="hardware" tabindex="-1" aria-pressed="false"><span class="node-orb"><i class="fa-solid fa-microchip"></i><b>3</b></span><span class="node-label">HW &middot; Hardware</span></button></div></div>
+            <div class="node d-pr a4"><div class="node-spin"><button class="node-btn" type="button" data-filter="public-records" tabindex="-1" aria-pressed="false"><span class="node-orb"><i class="fa-solid fa-folder-open"></i><b>4</b></span><span class="node-label">PR &middot; Public Records</span></button></div></div>
+            <div class="node d-gov a5"><div class="node-spin"><button class="node-btn" type="button" data-filter="gov-bids" tabindex="-1" aria-pressed="false"><span class="node-orb"><i class="fa-solid fa-landmark"></i><b>4</b></span><span class="node-label">GOV &middot; Government Bids</span></button></div></div>
+          </div>
+          <p class="orbit-hint">Pick a deck</p>
+        </div>
+      </div>
+    </section>
+
     <div class="container">
-      <section class="hero">
-        <span class="eyebrow">Knowledge Base</span>
-        <h1>IT Tips &amp; Guides</h1>
-        <p>Practical advice for Cleveland small businesses navigating IT, hardware, and software decisions — written by an engineer who's seen what actually goes wrong.</p>
+      <div class="console" id="console">
+        <div class="console-top">
+          <div class="search">
+            <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>
+            <label for="archiveSearch" class="sr-only">Search the archive</label>
+            <input type="search" id="archiveSearch" placeholder="Search the archive: backups, OhioBuys, RAM..." autocomplete="off">
+            <kbd aria-hidden="true">/</kbd>
+          </div>
+          <p class="readout" id="readout" aria-live="polite">Showing <b>22</b> of 22 entries</p>
+        </div>
+        <div class="decks" role="group" aria-label="Filter articles by deck">
+          <button class="deck-chip" type="button" data-filter="all" aria-pressed="true"><span class="dc-top"><span class="dc-code">ALL</span><i class="fa-solid fa-layer-group" aria-hidden="true"></i></span><span class="dc-name">Every deck</span><span class="dc-count">22 entries</span></button>
+          <button class="deck-chip d-it" type="button" data-filter="it-tips" aria-pressed="false"><span class="dc-top"><span class="dc-code">IT</span><i class="fa-solid fa-screwdriver-wrench" aria-hidden="true"></i></span><span class="dc-name">IT Tips</span><span class="dc-count">5 entries</span></button>
+          <button class="deck-chip d-smb" type="button" data-filter="cleveland-smb" aria-pressed="false"><span class="dc-top"><span class="dc-code">SMB</span><i class="fa-solid fa-city" aria-hidden="true"></i></span><span class="dc-name">Cleveland SMB</span><span class="dc-count">4 entries</span></button>
+          <button class="deck-chip d-web" type="button" data-filter="web-software" aria-pressed="false"><span class="dc-top"><span class="dc-code">WEB</span><i class="fa-solid fa-globe" aria-hidden="true"></i></span><span class="dc-name">Web &amp; Software</span><span class="dc-count">2 entries</span></button>
+          <button class="deck-chip d-hw" type="button" data-filter="hardware" aria-pressed="false"><span class="dc-top"><span class="dc-code">HW</span><i class="fa-solid fa-microchip" aria-hidden="true"></i></span><span class="dc-name">Hardware</span><span class="dc-count">3 entries</span></button>
+          <button class="deck-chip d-pr" type="button" data-filter="public-records" aria-pressed="false"><span class="dc-top"><span class="dc-code">PR</span><i class="fa-solid fa-folder-open" aria-hidden="true"></i></span><span class="dc-name">Public Records</span><span class="dc-count">4 entries</span></button>
+          <button class="deck-chip d-gov" type="button" data-filter="gov-bids" aria-pressed="false"><span class="dc-top"><span class="dc-code">GOV</span><i class="fa-solid fa-landmark" aria-hidden="true"></i></span><span class="dc-name">Government Bids</span><span class="dc-count">4 entries</span></button>
+        </div>
+      </div>
+
+      <div id="shelves">
+        <section class="shelf d-it" id="deck-it-tips" data-deck="it-tips" aria-labelledby="deck-it-tips-h">
+          <div class="shelf-head">
+            <div>
+              <p class="shelf-code">Deck 01 &middot; IT</p>
+              <h2 id="deck-it-tips-h"><i class="fa-solid fa-screwdriver-wrench" aria-hidden="true"></i>IT Tips</h2>
+              <p class="shelf-desc">Diagnose it, fix it, or know when to call someone.</p>
+            </div>
+            <p class="shelf-stats"><b class="shelf-n">5</b> entries<br>30 min of reading</p>
+          </div>
+          <div class="shelf-row">
+            <a href="why-is-my-computer-so-slow-and-how-to-fix-it.html" class="spine is-open" data-min="8">
+              <img class="spine-img" src="../assets/blog/why-is-my-computer-so-slow-and-how-to-fix-it-640.webp" alt="" width="640" height="360" loading="lazy" decoding="async">
+              <span class="spine-shade"></span>
+              <span class="spine-scan"></span>
+              <span class="spine-edge" aria-hidden="true">
+                <span class="spine-ic"><i class="fa-solid fa-screwdriver-wrench"></i></span>
+                <span class="spine-title">Why is my PC so slow?</span>
+                <span class="spine-call">IT<span>05</span></span>
+              </span>
+              <div class="spine-body">
+                <span class="call-tag"><span class="ct-code"><i class="fa-solid fa-screwdriver-wrench" aria-hidden="true"></i>IT&middot;05</span><span class="ct-name">IT Tips</span></span>
+                <h3>Why Is My Computer So Slow — And How Do I Fix It?</h3>
+                <p>A sluggish PC almost always has a fixable cause. Here's how we diagnose one — startup bloat, storage, RAM, malware, and heat — and how to tell a tune-up from a machine worth replacing.</p>
+                <div class="spine-meta">
+                  <span class="signal"><span class="bars" aria-hidden="true"></span>8 min read</span>
+                  <span class="open-link">Read article <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></span>
+                </div>
+              </div>
+            </a>
+            <a href="when-does-your-pc-need-more-ram.html" class="spine" data-min="6">
+              <img class="spine-img" src="../assets/blog/when-does-your-pc-need-more-ram-640.webp" alt="" width="640" height="360" loading="lazy" decoding="async">
+              <span class="spine-shade"></span>
+              <span class="spine-scan"></span>
+              <span class="spine-edge" aria-hidden="true">
+                <span class="spine-ic"><i class="fa-solid fa-screwdriver-wrench"></i></span>
+                <span class="spine-title">Does it need more RAM?</span>
+                <span class="spine-call">IT<span>04</span></span>
+              </span>
+              <div class="spine-body">
+                <span class="call-tag"><span class="ct-code"><i class="fa-solid fa-screwdriver-wrench" aria-hidden="true"></i>IT&middot;04</span><span class="ct-name">IT Tips</span></span>
+                <h3>How to Know When Your PC Needs More RAM</h3>
+                <p>Your computer is slow — but is RAM actually the problem? Here's how to check Task Manager, read the real signals, and decide whether an upgrade is worth it or if it's time for a new machine.</p>
+                <div class="spine-meta">
+                  <span class="signal"><span class="bars" aria-hidden="true"></span>6 min read</span>
+                  <span class="open-link">Read article <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></span>
+                </div>
+              </div>
+            </a>
+            <a href="5-signs-your-router-needs-replacing.html" class="spine" data-min="5">
+              <img class="spine-img" src="../assets/blog/5-signs-your-router-needs-replacing-640.webp" alt="" width="640" height="360" loading="lazy" decoding="async">
+              <span class="spine-shade"></span>
+              <span class="spine-scan"></span>
+              <span class="spine-edge" aria-hidden="true">
+                <span class="spine-ic"><i class="fa-solid fa-screwdriver-wrench"></i></span>
+                <span class="spine-title">5 signs of a dying router</span>
+                <span class="spine-call">IT<span>03</span></span>
+              </span>
+              <div class="spine-body">
+                <span class="call-tag"><span class="ct-code"><i class="fa-solid fa-screwdriver-wrench" aria-hidden="true"></i>IT&middot;03</span><span class="ct-name">IT Tips</span></span>
+                <h3>5 Signs Your Router Needs Replacing</h3>
+                <p>Routers don't last forever, and an aging one causes symptoms that look like ISP problems or device issues. Learn the five warning signs — and what to replace it with.</p>
+                <div class="spine-meta">
+                  <span class="signal"><span class="bars" aria-hidden="true"></span>5 min read</span>
+                  <span class="open-link">Read article <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></span>
+                </div>
+              </div>
+            </a>
+            <a href="what-to-do-before-calling-it-support.html" class="spine" data-min="4">
+              <img class="spine-img" src="../assets/blog/what-to-do-before-calling-it-support-640.webp" alt="" width="640" height="360" loading="lazy" decoding="async">
+              <span class="spine-shade"></span>
+              <span class="spine-scan"></span>
+              <span class="spine-edge" aria-hidden="true">
+                <span class="spine-ic"><i class="fa-solid fa-screwdriver-wrench"></i></span>
+                <span class="spine-title">Before you call support</span>
+                <span class="spine-call">IT<span>02</span></span>
+              </span>
+              <div class="spine-body">
+                <span class="call-tag"><span class="ct-code"><i class="fa-solid fa-screwdriver-wrench" aria-hidden="true"></i>IT&middot;02</span><span class="ct-name">IT Tips</span></span>
+                <h3>What to Do Before Calling IT Support</h3>
+                <p>A five-minute checklist that saves hours — and money. Most support calls start with information that should have been gathered before picking up the phone.</p>
+                <div class="spine-meta">
+                  <span class="signal"><span class="bars" aria-hidden="true"></span>4 min read</span>
+                  <span class="open-link">Read article <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></span>
+                </div>
+              </div>
+            </a>
+            <a href="small-business-backup-strategy.html" class="spine" data-min="7">
+              <img class="spine-img" src="../assets/blog/small-business-backup-strategy-640.webp" alt="" width="640" height="360" loading="lazy" decoding="async">
+              <span class="spine-shade"></span>
+              <span class="spine-scan"></span>
+              <span class="spine-edge" aria-hidden="true">
+                <span class="spine-ic"><i class="fa-solid fa-screwdriver-wrench"></i></span>
+                <span class="spine-title">A backup plan that works</span>
+                <span class="spine-call">IT<span>01</span></span>
+              </span>
+              <div class="spine-body">
+                <span class="call-tag"><span class="ct-code"><i class="fa-solid fa-screwdriver-wrench" aria-hidden="true"></i>IT&middot;01</span><span class="ct-name">IT Tips</span></span>
+                <h3>The Small Business Backup Strategy That Actually Works</h3>
+                <p>The 3-2-1 rule explained for non-IT people. How to set up a backup system that survives ransomware, hardware failure, and human error — and how to verify it's actually working.</p>
+                <div class="spine-meta">
+                  <span class="signal"><span class="bars" aria-hidden="true"></span>7 min read</span>
+                  <span class="open-link">Read article <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></span>
+                </div>
+              </div>
+            </a>
+          </div>
+          <div class="shelf-lip" aria-hidden="true"></div>
+        </section>
+
+        <section class="shelf d-smb" id="deck-cleveland-smb" data-deck="cleveland-smb" aria-labelledby="deck-cleveland-smb-h">
+          <div class="shelf-head">
+            <div>
+              <p class="shelf-code">Deck 02 &middot; SMB</p>
+              <h2 id="deck-cleveland-smb-h"><i class="fa-solid fa-city" aria-hidden="true"></i>Cleveland SMB</h2>
+              <p class="shelf-desc">Budgets, security and support models for local businesses.</p>
+            </div>
+            <p class="shelf-stats"><b class="shelf-n">4</b> entries<br>30 min of reading</p>
+          </div>
+          <div class="shelf-row">
+            <a href="moving-your-cleveland-business-to-microsoft-365.html" class="spine is-open" data-min="8">
+              <img class="spine-img" src="../assets/blog/moving-your-cleveland-business-to-microsoft-365-640.webp" alt="" width="640" height="360" loading="lazy" decoding="async">
+              <span class="spine-shade"></span>
+              <span class="spine-scan"></span>
+              <span class="spine-edge" aria-hidden="true">
+                <span class="spine-ic"><i class="fa-solid fa-city"></i></span>
+                <span class="spine-title">Moving to Microsoft 365</span>
+                <span class="spine-call">SMB<span>04</span></span>
+                <span class="beacon"></span>
+              </span>
+              <div class="spine-body">
+                <span class="call-tag"><span class="ct-code"><i class="fa-solid fa-city" aria-hidden="true"></i>SMB&middot;04</span><span class="ct-name">Cleveland SMB</span><span class="ct-new">New</span></span>
+                <h3>Moving Your Cleveland Business to Microsoft 365: When, Why, and What It Takes</h3>
+                <p>When the switch actually earns its keep, what a clean migration involves step by step, and the mistakes — skipped backups, sloppy DNS cutovers — that cost small businesses time and data.</p>
+                <div class="spine-meta">
+                  <span class="signal"><span class="bars" aria-hidden="true"></span>8 min read</span>
+                  <span class="open-link">Read article <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></span>
+                </div>
+              </div>
+            </a>
+            <a href="how-much-should-a-cleveland-small-business-spend-on-it.html" class="spine" data-min="8">
+              <img class="spine-img" src="../assets/blog/how-much-should-a-cleveland-small-business-spend-on-it-640.webp" alt="" width="640" height="360" loading="lazy" decoding="async">
+              <span class="spine-shade"></span>
+              <span class="spine-scan"></span>
+              <span class="spine-edge" aria-hidden="true">
+                <span class="spine-ic"><i class="fa-solid fa-city"></i></span>
+                <span class="spine-title">What to spend on IT</span>
+                <span class="spine-call">SMB<span>03</span></span>
+              </span>
+              <div class="spine-body">
+                <span class="call-tag"><span class="ct-code"><i class="fa-solid fa-city" aria-hidden="true"></i>SMB&middot;03</span><span class="ct-name">Cleveland SMB</span></span>
+                <h3>How Much Should a Cleveland Small Business Spend on IT?</h3>
+                <p>A practical look at real IT budget benchmarks for small businesses — what to spend, the buckets it should cover, and why fixed-price beats getting nickel-and-dimed.</p>
+                <div class="spine-meta">
+                  <span class="signal"><span class="bars" aria-hidden="true"></span>8 min read</span>
+                  <span class="open-link">Read article <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></span>
+                </div>
+              </div>
+            </a>
+            <a href="cybersecurity-basics-for-cleveland-small-business.html" class="spine" data-min="7">
+              <img class="spine-img" src="../assets/blog/cybersecurity-basics-for-cleveland-small-business-640.webp" alt="" width="640" height="360" loading="lazy" decoding="async">
+              <span class="spine-shade"></span>
+              <span class="spine-scan"></span>
+              <span class="spine-edge" aria-hidden="true">
+                <span class="spine-ic"><i class="fa-solid fa-city"></i></span>
+                <span class="spine-title">Cybersecurity basics</span>
+                <span class="spine-call">SMB<span>02</span></span>
+              </span>
+              <div class="spine-body">
+                <span class="call-tag"><span class="ct-code"><i class="fa-solid fa-city" aria-hidden="true"></i>SMB&middot;02</span><span class="ct-name">Cleveland SMB</span></span>
+                <h3>Cybersecurity Basics Every Cleveland Small Business Needs</h3>
+                <p>You don't need an enterprise budget — you need the basics done right. MFA, password managers, backups, patching, and phishing awareness, in plain language and in order of return on effort.</p>
+                <div class="spine-meta">
+                  <span class="signal"><span class="bars" aria-hidden="true"></span>7 min read</span>
+                  <span class="open-link">Read article <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></span>
+                </div>
+              </div>
+            </a>
+            <a href="managed-it-vs-break-fix.html" class="spine" data-min="7">
+              <img class="spine-img" src="../assets/blog/managed-it-vs-break-fix-640.webp" alt="" width="640" height="360" loading="lazy" decoding="async">
+              <span class="spine-shade"></span>
+              <span class="spine-scan"></span>
+              <span class="spine-edge" aria-hidden="true">
+                <span class="spine-ic"><i class="fa-solid fa-city"></i></span>
+                <span class="spine-title">Managed IT vs. break-fix</span>
+                <span class="spine-call">SMB<span>01</span></span>
+              </span>
+              <div class="spine-body">
+                <span class="call-tag"><span class="ct-code"><i class="fa-solid fa-city" aria-hidden="true"></i>SMB&middot;01</span><span class="ct-name">Cleveland SMB</span></span>
+                <h3>Managed IT vs. Break-Fix: Which Is Right for Your Business?</h3>
+                <p>An honest comparison of the two support models — with a cost breakdown at realistic failure rates. Spoiler: the answer depends on how much downtime you can actually afford.</p>
+                <div class="spine-meta">
+                  <span class="signal"><span class="bars" aria-hidden="true"></span>7 min read</span>
+                  <span class="open-link">Read article <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></span>
+                </div>
+              </div>
+            </a>
+          </div>
+          <div class="shelf-lip" aria-hidden="true"></div>
+        </section>
+
+        <section class="shelf d-web" id="deck-web-software" data-deck="web-software" aria-labelledby="deck-web-software-h">
+          <div class="shelf-head">
+            <div>
+              <p class="shelf-code">Deck 03 &middot; WEB</p>
+              <h2 id="deck-web-software-h"><i class="fa-solid fa-globe" aria-hidden="true"></i>Web &amp; Software</h2>
+              <p class="shelf-desc">What a website costs and what it has to do for you.</p>
+            </div>
+            <p class="shelf-stats"><b class="shelf-n">2</b> entries<br>15 min of reading</p>
+          </div>
+          <div class="shelf-row">
+            <a href="how-much-does-a-small-business-website-cost.html" class="spine is-open" data-min="9">
+              <img class="spine-img" src="../assets/blog/how-much-does-a-small-business-website-cost-640.webp" alt="" width="640" height="360" loading="lazy" decoding="async">
+              <span class="spine-shade"></span>
+              <span class="spine-scan"></span>
+              <span class="spine-edge" aria-hidden="true">
+                <span class="spine-ic"><i class="fa-solid fa-globe"></i></span>
+                <span class="spine-title">What a website costs</span>
+                <span class="spine-call">WEB<span>02</span></span>
+              </span>
+              <div class="spine-body">
+                <span class="call-tag"><span class="ct-code"><i class="fa-solid fa-globe" aria-hidden="true"></i>WEB&middot;02</span><span class="ct-name">Web &amp; Software</span></span>
+                <h3>How Much Does a Small Business Website Cost?</h3>
+                <p>The honest range runs from a few hundred dollars to five figures. Here are the four real price tiers, what actually drives the number up, and the ongoing costs nobody warns you about.</p>
+                <div class="spine-meta">
+                  <span class="signal"><span class="bars" aria-hidden="true"></span>9 min read</span>
+                  <span class="open-link">Read article <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></span>
+                </div>
+              </div>
+            </a>
+            <a href="website-for-small-business.html" class="spine" data-min="6">
+              <img class="spine-img" src="../assets/blog/website-for-small-business-640.webp" alt="" width="640" height="360" loading="lazy" decoding="async">
+              <span class="spine-shade"></span>
+              <span class="spine-scan"></span>
+              <span class="spine-edge" aria-hidden="true">
+                <span class="spine-ic"><i class="fa-solid fa-globe"></i></span>
+                <span class="spine-title">Do you need a website?</span>
+                <span class="spine-call">WEB<span>01</span></span>
+              </span>
+              <div class="spine-body">
+                <span class="call-tag"><span class="ct-code"><i class="fa-solid fa-globe" aria-hidden="true"></i>WEB&middot;01</span><span class="ct-name">Web &amp; Software</span></span>
+                <h3>Does Your Small Business Actually Need a Website in 2026?</h3>
+                <p>A Google Business profile isn't enough — and here's why. Ownership, SEO, credibility, and what a well-built small business site actually needs to do for you.</p>
+                <div class="spine-meta">
+                  <span class="signal"><span class="bars" aria-hidden="true"></span>6 min read</span>
+                  <span class="open-link">Read article <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></span>
+                </div>
+              </div>
+            </a>
+          </div>
+          <div class="shelf-lip" aria-hidden="true"></div>
+        </section>
+
+        <section class="shelf d-hw" id="deck-hardware" data-deck="hardware" aria-labelledby="deck-hardware-h">
+          <div class="shelf-head">
+            <div>
+              <p class="shelf-code">Deck 04 &middot; HW</p>
+              <h2 id="deck-hardware-h"><i class="fa-solid fa-microchip" aria-hidden="true"></i>Hardware</h2>
+              <p class="shelf-desc">PCBs, CAD and 3D printing, from an idea to a part in your hand.</p>
+            </div>
+            <p class="shelf-stats"><b class="shelf-n">3</b> entries<br>23 min of reading</p>
+          </div>
+          <div class="shelf-row">
+            <a href="from-cad-to-physical-part-how-custom-3d-printing-works.html" class="spine is-open" data-min="8">
+              <img class="spine-img" src="../assets/blog/from-cad-to-physical-part-how-custom-3d-printing-works-640.webp" alt="" width="640" height="360" loading="lazy" decoding="async">
+              <span class="spine-shade"></span>
+              <span class="spine-scan"></span>
+              <span class="spine-edge" aria-hidden="true">
+                <span class="spine-ic"><i class="fa-solid fa-microchip"></i></span>
+                <span class="spine-title">From CAD to a real part</span>
+                <span class="spine-call">HW<span>03</span></span>
+              </span>
+              <div class="spine-body">
+                <span class="call-tag"><span class="ct-code"><i class="fa-solid fa-microchip" aria-hidden="true"></i>HW&middot;03</span><span class="ct-name">Hardware</span></span>
+                <h3>From CAD to Physical Part: How Custom 3D Printing Works</h3>
+                <p>The full custom 3D printing workflow — from CAD model to a finished, usable part in your hand. Design, material choice, printing, and finishing, in plain language.</p>
+                <div class="spine-meta">
+                  <span class="signal"><span class="bars" aria-hidden="true"></span>8 min read</span>
+                  <span class="open-link">Read article <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></span>
+                </div>
+              </div>
+            </a>
+            <a href="pcb-design-for-first-time-hardware-founders.html" class="spine" data-min="8">
+              <img class="spine-img" src="../assets/blog/pcb-design-for-first-time-hardware-founders-640.webp" alt="" width="640" height="360" loading="lazy" decoding="async">
+              <span class="spine-shade"></span>
+              <span class="spine-scan"></span>
+              <span class="spine-edge" aria-hidden="true">
+                <span class="spine-ic"><i class="fa-solid fa-microchip"></i></span>
+                <span class="spine-title">PCB design for founders</span>
+                <span class="spine-call">HW<span>02</span></span>
+              </span>
+              <div class="spine-body">
+                <span class="call-tag"><span class="ct-code"><i class="fa-solid fa-microchip" aria-hidden="true"></i>HW&middot;02</span><span class="ct-name">Hardware</span></span>
+                <h3>PCB Design for First-Time Hardware Founders</h3>
+                <p>From schematic to Gerber files — what to expect when you commission a custom board. Common mistakes, realistic timelines, and how to avoid the errors that turn a two-week project into a three-month ordeal.</p>
+                <div class="spine-meta">
+                  <span class="signal"><span class="bars" aria-hidden="true"></span>8 min read</span>
+                  <span class="open-link">Read article <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></span>
+                </div>
+              </div>
+            </a>
+            <a href="3d-printing-for-prototypes.html" class="spine" data-min="7">
+              <img class="spine-img" src="../assets/blog/3d-printing-for-prototypes-640.webp" alt="" width="640" height="360" loading="lazy" decoding="async">
+              <span class="spine-shade"></span>
+              <span class="spine-scan"></span>
+              <span class="spine-edge" aria-hidden="true">
+                <span class="spine-ic"><i class="fa-solid fa-microchip"></i></span>
+                <span class="spine-title">3D printed prototypes</span>
+                <span class="spine-call">HW<span>01</span></span>
+              </span>
+              <div class="spine-body">
+                <span class="call-tag"><span class="ct-code"><i class="fa-solid fa-microchip" aria-hidden="true"></i>HW&middot;01</span><span class="ct-name">Hardware</span></span>
+                <h3>Using 3D Printing for Product Prototypes: What Small Manufacturers Need to Know</h3>
+                <p>FDM vs. resin, real-world tolerances, what 3D printing is good for — and when you need injection molding instead. A practical guide for first-time hardware product builders.</p>
+                <div class="spine-meta">
+                  <span class="signal"><span class="bars" aria-hidden="true"></span>7 min read</span>
+                  <span class="open-link">Read article <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></span>
+                </div>
+              </div>
+            </a>
+          </div>
+          <div class="shelf-lip" aria-hidden="true"></div>
+        </section>
+
+        <section class="shelf d-pr" id="deck-public-records" data-deck="public-records" aria-labelledby="deck-public-records-h">
+          <div class="shelf-head">
+            <div>
+              <p class="shelf-code">Deck 05 &middot; PR</p>
+              <h2 id="deck-public-records-h"><i class="fa-solid fa-folder-open" aria-hidden="true"></i>Public Records</h2>
+              <p class="shelf-desc">Ohio crash reports: where they live and what is in them.</p>
+            </div>
+            <p class="shelf-stats"><b class="shelf-n">4</b> entries<br>31 min of reading</p>
+          </div>
+          <div class="shelf-row">
+            <a href="how-to-get-an-ohio-crash-report.html" class="spine is-open" data-min="8">
+              <img class="spine-img" src="../assets/blog/how-to-get-an-ohio-crash-report-640.webp" alt="" width="640" height="360" loading="lazy" decoding="async">
+              <span class="spine-shade"></span>
+              <span class="spine-scan"></span>
+              <span class="spine-edge" aria-hidden="true">
+                <span class="spine-ic"><i class="fa-solid fa-folder-open"></i></span>
+                <span class="spine-title">Get an Ohio crash report</span>
+                <span class="spine-call">PR<span>04</span></span>
+              </span>
+              <div class="spine-body">
+                <span class="call-tag"><span class="ct-code"><i class="fa-solid fa-folder-open" aria-hidden="true"></i>PR&middot;04</span><span class="ct-name">Public Records</span></span>
+                <h3>How to Get an Ohio Crash Report (OH-1): Where to Look and How Long It Takes</h3>
+                <p>Where the OH-1 lives, how long it takes to appear, which agency to ask, and what gets redacted before you see it.</p>
+                <div class="spine-meta">
+                  <span class="signal"><span class="bars" aria-hidden="true"></span>8 min read</span>
+                  <span class="open-link">Read article <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></span>
+                </div>
+              </div>
+            </a>
+            <a href="what-is-in-an-ohio-crash-report.html" class="spine" data-min="7">
+              <img class="spine-img" src="../assets/blog/what-is-in-an-ohio-crash-report-640.webp" alt="" width="640" height="360" loading="lazy" decoding="async">
+              <span class="spine-shade"></span>
+              <span class="spine-scan"></span>
+              <span class="spine-edge" aria-hidden="true">
+                <span class="spine-ic"><i class="fa-solid fa-folder-open"></i></span>
+                <span class="spine-title">Inside the OH-1</span>
+                <span class="spine-call">PR<span>03</span></span>
+              </span>
+              <div class="spine-body">
+                <span class="call-tag"><span class="ct-code"><i class="fa-solid fa-folder-open" aria-hidden="true"></i>PR&middot;03</span><span class="ct-name">Public Records</span></span>
+                <h3>What's Actually in an Ohio Crash Report (OH-1), Field by Field</h3>
+                <p>A walk through the OH-1: crash identifiers, units, person rows, and the injury severity scale. Which fields matter and which are not there at all.</p>
+                <div class="spine-meta">
+                  <span class="signal"><span class="bars" aria-hidden="true"></span>7 min read</span>
+                  <span class="open-link">Read article <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></span>
+                </div>
+              </div>
+            </a>
+            <a href="ohio-crash-reports-by-county.html" class="spine" data-min="7">
+              <img class="spine-img" src="../assets/blog/ohio-crash-reports-by-county-640.webp" alt="" width="640" height="360" loading="lazy" decoding="async">
+              <span class="spine-shade"></span>
+              <span class="spine-scan"></span>
+              <span class="spine-edge" aria-hidden="true">
+                <span class="spine-ic"><i class="fa-solid fa-folder-open"></i></span>
+                <span class="spine-title">Coverage by county</span>
+                <span class="spine-call">PR<span>02</span></span>
+              </span>
+              <div class="spine-body">
+                <span class="call-tag"><span class="ct-code"><i class="fa-solid fa-folder-open" aria-hidden="true"></i>PR&middot;02</span><span class="ct-name">Public Records</span></span>
+                <h3>Ohio Crash Reports by County: How to Choose Your Coverage Area</h3>
+                <p>Ohio has 88 counties and hundreds of reporting agencies. Picking coverage by population is the obvious move and usually the wrong one.</p>
+                <div class="spine-meta">
+                  <span class="signal"><span class="bars" aria-hidden="true"></span>7 min read</span>
+                  <span class="open-link">Read article <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></span>
+                </div>
+              </div>
+            </a>
+            <a href="ohio-crash-report-leads-for-law-firms.html" class="spine" data-min="9">
+              <img class="spine-img" src="../assets/blog/ohio-crash-report-leads-for-law-firms-640.webp" alt="" width="640" height="360" loading="lazy" decoding="async">
+              <span class="spine-shade"></span>
+              <span class="spine-scan"></span>
+              <span class="spine-edge" aria-hidden="true">
+                <span class="spine-ic"><i class="fa-solid fa-folder-open"></i></span>
+                <span class="spine-title">Crash leads: buy or build</span>
+                <span class="spine-call">PR<span>01</span></span>
+              </span>
+              <div class="spine-body">
+                <span class="call-tag"><span class="ct-code"><i class="fa-solid fa-folder-open" aria-hidden="true"></i>PR&middot;01</span><span class="ct-name">Public Records</span></span>
+                <h3>Ohio Crash Report Leads: Buying a List vs. Building Your Own Pipeline</h3>
+                <p>What you are actually paying a crash-lead broker for, why exclusivity is the real problem, and what it costs to run the pipeline yourself.</p>
+                <div class="spine-meta">
+                  <span class="signal"><span class="bars" aria-hidden="true"></span>9 min read</span>
+                  <span class="open-link">Read article <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></span>
+                </div>
+              </div>
+            </a>
+          </div>
+          <div class="shelf-lip" aria-hidden="true"></div>
+        </section>
+
+        <section class="shelf d-gov" id="deck-gov-bids" data-deck="gov-bids" aria-labelledby="deck-gov-bids-h">
+          <div class="shelf-head">
+            <div>
+              <p class="shelf-code">Deck 06 &middot; GOV</p>
+              <h2 id="deck-gov-bids-h"><i class="fa-solid fa-landmark" aria-hidden="true"></i>Government Bids</h2>
+              <p class="shelf-desc">Finding, reading and pricing public contracts in Ohio.</p>
+            </div>
+            <p class="shelf-stats"><b class="shelf-n">4</b> entries<br>26 min of reading</p>
+          </div>
+          <div class="shelf-row">
+            <a href="how-to-find-government-bids-in-ohio.html" class="spine is-open" data-min="7">
+              <img class="spine-img" src="../assets/blog/how-to-find-government-bids-in-ohio-640.webp" alt="" width="640" height="360" loading="lazy" decoding="async">
+              <span class="spine-shade"></span>
+              <span class="spine-scan"></span>
+              <span class="spine-edge" aria-hidden="true">
+                <span class="spine-ic"><i class="fa-solid fa-landmark"></i></span>
+                <span class="spine-title">Where Ohio bids are posted</span>
+                <span class="spine-call">GOV<span>04</span></span>
+                <span class="beacon"></span>
+              </span>
+              <div class="spine-body">
+                <span class="call-tag"><span class="ct-code"><i class="fa-solid fa-landmark" aria-hidden="true"></i>GOV&middot;04</span><span class="ct-name">Government Bids</span><span class="ct-new">New</span></span>
+                <h3>How to Find Government Bids in Ohio: Where Public Contracts Are Posted</h3>
+                <p>City, county, state and federal bid sources in Ohio, and a weekly routine for checking them.</p>
+                <div class="spine-meta">
+                  <span class="signal"><span class="bars" aria-hidden="true"></span>7 min read</span>
+                  <span class="open-link">Read article <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></span>
+                </div>
+              </div>
+            </a>
+            <a href="ohiobuys-for-small-vendors.html" class="spine" data-min="6">
+              <img class="spine-img" src="../assets/blog/ohiobuys-for-small-vendors-640.webp" alt="" width="640" height="360" loading="lazy" decoding="async">
+              <span class="spine-shade"></span>
+              <span class="spine-scan"></span>
+              <span class="spine-edge" aria-hidden="true">
+                <span class="spine-ic"><i class="fa-solid fa-landmark"></i></span>
+                <span class="spine-title">OhioBuys for small vendors</span>
+                <span class="spine-call">GOV<span>03</span></span>
+                <span class="beacon"></span>
+              </span>
+              <div class="spine-body">
+                <span class="call-tag"><span class="ct-code"><i class="fa-solid fa-landmark" aria-hidden="true"></i>GOV&middot;03</span><span class="ct-name">Government Bids</span><span class="ct-new">New</span></span>
+                <h3>OhioBuys for Small Vendors: How to Find and Track State of Ohio Bids</h3>
+                <p>Reading OhioBuys listings, MBE set-asides, and what happens when a posting is revised.</p>
+                <div class="spine-meta">
+                  <span class="signal"><span class="bars" aria-hidden="true"></span>6 min read</span>
+                  <span class="open-link">Read article <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></span>
+                </div>
+              </div>
+            </a>
+            <a href="cuyahoga-county-and-cleveland-bids.html" class="spine" data-min="6">
+              <img class="spine-img" src="../assets/blog/cuyahoga-county-and-cleveland-bids-640.webp" alt="" width="640" height="360" loading="lazy" decoding="async">
+              <span class="spine-shade"></span>
+              <span class="spine-scan"></span>
+              <span class="spine-edge" aria-hidden="true">
+                <span class="spine-ic"><i class="fa-solid fa-landmark"></i></span>
+                <span class="spine-title">County and city bids</span>
+                <span class="spine-call">GOV<span>02</span></span>
+                <span class="beacon"></span>
+              </span>
+              <div class="spine-body">
+                <span class="call-tag"><span class="ct-code"><i class="fa-solid fa-landmark" aria-hidden="true"></i>GOV&middot;02</span><span class="ct-name">Government Bids</span><span class="ct-new">New</span></span>
+                <h3>Bidding on Cuyahoga County and City of Cleveland Contracts</h3>
+                <p>The county portal, city invitations to bid, sealed and emailed responses, and deadlines.</p>
+                <div class="spine-meta">
+                  <span class="signal"><span class="bars" aria-hidden="true"></span>6 min read</span>
+                  <span class="open-link">Read article <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></span>
+                </div>
+              </div>
+            </a>
+            <a href="how-to-price-a-government-bid.html" class="spine" data-min="7">
+              <img class="spine-img" src="../assets/blog/how-to-price-a-government-bid-640.webp" alt="" width="640" height="360" loading="lazy" decoding="async">
+              <span class="spine-shade"></span>
+              <span class="spine-scan"></span>
+              <span class="spine-edge" aria-hidden="true">
+                <span class="spine-ic"><i class="fa-solid fa-landmark"></i></span>
+                <span class="spine-title">Pricing a bid, line by line</span>
+                <span class="spine-call">GOV<span>01</span></span>
+                <span class="beacon"></span>
+              </span>
+              <div class="spine-body">
+                <span class="call-tag"><span class="ct-code"><i class="fa-solid fa-landmark" aria-hidden="true"></i>GOV&middot;01</span><span class="ct-name">Government Bids</span><span class="ct-new">New</span></span>
+                <h3>How to Price a Government Bid Line by Line Without Losing Money</h3>
+                <p>Landed cost, freight, margin versus markup, rate cards, lead times, and when to pass.</p>
+                <div class="spine-meta">
+                  <span class="signal"><span class="bars" aria-hidden="true"></span>7 min read</span>
+                  <span class="open-link">Read article <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></span>
+                </div>
+              </div>
+            </a>
+          </div>
+          <div class="shelf-lip" aria-hidden="true"></div>
+        </section>
+      </div>
+
+      <div class="empty" id="empty" hidden>
+        <i class="fa-solid fa-satellite-dish" aria-hidden="true"></i>
+        <p>Nothing in the archive matches <b id="emptyQ"></b> yet.</p>
+        <button class="btn-ghost" type="button" id="emptyReset">Show every entry</button>
+      </div>
+
+      <section class="ask" aria-labelledby="askH">
+        <div class="radar" aria-hidden="true"></div>
+        <div>
+          <p class="ask-k">Not on the shelves?</p>
+          <h2 id="askH">Ask the archivist</h2>
+          <p>If you didn't find what you were looking for, get in touch. Most questions get a same-day response.</p>
+        </div>
+        <div class="ask-actions">
+          <a href="../make_ticket.html" class="btn-gold"><i class="fa-solid fa-headset" aria-hidden="true"></i> Submit a Support Ticket</a>
+          <a href="../contact.html" class="btn-ghost"><i class="fa-solid fa-envelope" aria-hidden="true"></i> Send a Message</a>
+        </div>
       </section>
-
-      <div class="filter-bar" id="filterBar" role="group" aria-label="Filter articles by category">
-        <button class="filter-pill active" data-filter="all" type="button">All</button>
-        <button class="filter-pill" data-filter="it-tips" type="button">IT Tips</button>
-        <button class="filter-pill" data-filter="hardware" type="button">Hardware</button>
-        <button class="filter-pill" data-filter="web-software" type="button">Web &amp; Software</button>
-        <button class="filter-pill" data-filter="cleveland-smb" type="button">Cleveland SMB</button>
-        <button class="filter-pill" data-filter="public-records" type="button">Public Records</button>
-        <button class="filter-pill" data-filter="gov-bids" type="button">Government Bids</button>
-      </div>
-
-      <div class="articles-grid" id="articlesGrid">
-
-        <a href="moving-your-cleveland-business-to-microsoft-365.html" class="article-card" data-category="cleveland-smb">
-          <span class="card-category cat-smb">Cleveland SMB</span>
-          <h2>Moving Your Cleveland Business to Microsoft 365: When, Why, and What It Takes</h2>
-          <p>When the switch actually earns its keep, what a clean migration involves step by step, and the mistakes — skipped backups, sloppy DNS cutovers — that cost small businesses time and data.</p>
-          <div class="card-footer">
-            <span class="read-time">8 min read</span>
-            <span class="read-link">Read Article &rarr;</span>
-          </div>
-        </a>
-
-        <a href="how-to-find-government-bids-in-ohio.html" class="article-card" data-category="gov-bids">
-          <span class="card-category cat-data">Government Bids</span>
-          <h2>How to Find Government Bids in Ohio: Where Public Contracts Are Posted</h2>
-          <p>City, county, state and federal bid sources in Ohio, and a weekly routine for checking them.</p>
-          <div class="card-footer">
-            <span class="read-time">7 min read</span>
-            <span class="read-link">Read Article &rarr;</span>
-          </div>
-        </a>
-
-        <a href="ohiobuys-for-small-vendors.html" class="article-card" data-category="gov-bids">
-          <span class="card-category cat-data">Government Bids</span>
-          <h2>OhioBuys for Small Vendors: How to Find and Track State of Ohio Bids</h2>
-          <p>Reading OhioBuys listings, MBE set-asides, and what happens when a posting is revised.</p>
-          <div class="card-footer">
-            <span class="read-time">6 min read</span>
-            <span class="read-link">Read Article &rarr;</span>
-          </div>
-        </a>
-
-        <a href="cuyahoga-county-and-cleveland-bids.html" class="article-card" data-category="gov-bids">
-          <span class="card-category cat-data">Government Bids</span>
-          <h2>Bidding on Cuyahoga County and City of Cleveland Contracts</h2>
-          <p>The county portal, city invitations to bid, sealed and emailed responses, and deadlines.</p>
-          <div class="card-footer">
-            <span class="read-time">6 min read</span>
-            <span class="read-link">Read Article &rarr;</span>
-          </div>
-        </a>
-
-        <a href="how-to-price-a-government-bid.html" class="article-card" data-category="gov-bids">
-          <span class="card-category cat-data">Government Bids</span>
-          <h2>How to Price a Government Bid Line by Line Without Losing Money</h2>
-          <p>Landed cost, freight, margin versus markup, rate cards, lead times, and when to pass.</p>
-          <div class="card-footer">
-            <span class="read-time">7 min read</span>
-            <span class="read-link">Read Article &rarr;</span>
-          </div>
-        </a>
-
-        <a href="how-to-get-an-ohio-crash-report.html" class="article-card" data-category="public-records">
-          <span class="card-category cat-data">Public Records</span>
-          <h2>How to Get an Ohio Crash Report (OH-1): Where to Look and How Long It Takes</h2>
-          <p>Where the OH-1 lives, how long it takes to appear, which agency to ask, and what gets redacted before you see it.</p>
-          <div class="card-footer">
-            <span class="read-time">8 min read</span>
-            <span class="read-link">Read Article &rarr;</span>
-          </div>
-        </a>
-
-        <a href="ohio-crash-report-leads-for-law-firms.html" class="article-card" data-category="public-records">
-          <span class="card-category cat-data">Public Records</span>
-          <h2>Ohio Crash Report Leads: Buying a List vs. Building Your Own Pipeline</h2>
-          <p>What you are actually paying a crash-lead broker for, why exclusivity is the real problem, and what it costs to run the pipeline yourself.</p>
-          <div class="card-footer">
-            <span class="read-time">9 min read</span>
-            <span class="read-link">Read Article &rarr;</span>
-          </div>
-        </a>
-
-        <a href="what-is-in-an-ohio-crash-report.html" class="article-card" data-category="public-records">
-          <span class="card-category cat-data">Public Records</span>
-          <h2>What's Actually in an Ohio Crash Report (OH-1), Field by Field</h2>
-          <p>A walk through the OH-1: crash identifiers, units, person rows, and the injury severity scale. Which fields matter and which are not there at all.</p>
-          <div class="card-footer">
-            <span class="read-time">7 min read</span>
-            <span class="read-link">Read Article &rarr;</span>
-          </div>
-        </a>
-
-        <a href="ohio-crash-reports-by-county.html" class="article-card" data-category="public-records">
-          <span class="card-category cat-data">Public Records</span>
-          <h2>Ohio Crash Reports by County: How to Choose Your Coverage Area</h2>
-          <p>Ohio has 88 counties and hundreds of reporting agencies. Picking coverage by population is the obvious move and usually the wrong one.</p>
-          <div class="card-footer">
-            <span class="read-time">7 min read</span>
-            <span class="read-link">Read Article &rarr;</span>
-          </div>
-        </a>
-
-        <a href="from-cad-to-physical-part-how-custom-3d-printing-works.html" class="article-card" data-category="hardware">
-          <span class="card-category cat-hardware">Hardware</span>
-          <h2>From CAD to Physical Part: How Custom 3D Printing Works</h2>
-          <p>The full custom 3D printing workflow — from CAD model to a finished, usable part in your hand. Design, material choice, printing, and finishing, in plain language.</p>
-          <div class="card-footer">
-            <span class="read-time">8 min read</span>
-            <span class="read-link">Read Article →</span>
-          </div>
-        </a>
-
-        <a href="how-much-does-a-small-business-website-cost.html" class="article-card" data-category="web-software">
-          <span class="card-category cat-web">Web &amp; Software</span>
-          <h2>How Much Does a Small Business Website Cost?</h2>
-          <p>The honest range runs from a few hundred dollars to five figures. Here are the four real price tiers, what actually drives the number up, and the ongoing costs nobody warns you about.</p>
-          <div class="card-footer">
-            <span class="read-time">9 min read</span>
-            <span class="read-link">Read Article →</span>
-          </div>
-        </a>
-
-        <a href="why-is-my-computer-so-slow-and-how-to-fix-it.html" class="article-card" data-category="it-tips">
-          <span class="card-category cat-it">IT Tips</span>
-          <h2>Why Is My Computer So Slow — And How Do I Fix It?</h2>
-          <p>A sluggish PC almost always has a fixable cause. Here's how we diagnose one — startup bloat, storage, RAM, malware, and heat — and how to tell a tune-up from a machine worth replacing.</p>
-          <div class="card-footer">
-            <span class="read-time">8 min read</span>
-            <span class="read-link">Read Article →</span>
-          </div>
-        </a>
-
-        <a href="how-much-should-a-cleveland-small-business-spend-on-it.html" class="article-card" data-category="cleveland-smb">
-          <span class="card-category cat-smb">Cleveland SMB</span>
-          <h2>How Much Should a Cleveland Small Business Spend on IT?</h2>
-          <p>A practical look at real IT budget benchmarks for small businesses — what to spend, the buckets it should cover, and why fixed-price beats getting nickel-and-dimed.</p>
-          <div class="card-footer">
-            <span class="read-time">8 min read</span>
-            <span class="read-link">Read Article →</span>
-          </div>
-        </a>
-
-
-        <a href="cybersecurity-basics-for-cleveland-small-business.html" class="article-card" data-category="cleveland-smb">
-          <span class="card-category cat-smb">Cleveland SMB</span>
-          <h2>Cybersecurity Basics Every Cleveland Small Business Needs</h2>
-          <p>You don't need an enterprise budget — you need the basics done right. MFA, password managers, backups, patching, and phishing awareness, in plain language and in order of return on effort.</p>
-          <div class="card-footer">
-            <span class="read-time">7 min read</span>
-            <span class="read-link">Read Article →</span>
-          </div>
-        </a>
-
-        <a href="when-does-your-pc-need-more-ram.html" class="article-card" data-category="it-tips">
-          <span class="card-category cat-it">IT Tips</span>
-          <h2>How to Know When Your PC Needs More RAM</h2>
-          <p>Your computer is slow — but is RAM actually the problem? Here's how to check Task Manager, read the real signals, and decide whether an upgrade is worth it or if it's time for a new machine.</p>
-          <div class="card-footer">
-            <span class="read-time">6 min read</span>
-            <span class="read-link">Read Article →</span>
-          </div>
-        </a>
-
-        <a href="5-signs-your-router-needs-replacing.html" class="article-card" data-category="it-tips">
-          <span class="card-category cat-it">IT Tips</span>
-          <h2>5 Signs Your Router Needs Replacing</h2>
-          <p>Routers don't last forever, and an aging one causes symptoms that look like ISP problems or device issues. Learn the five warning signs — and what to replace it with.</p>
-          <div class="card-footer">
-            <span class="read-time">5 min read</span>
-            <span class="read-link">Read Article →</span>
-          </div>
-        </a>
-
-        <a href="what-to-do-before-calling-it-support.html" class="article-card" data-category="it-tips">
-          <span class="card-category cat-it">IT Tips</span>
-          <h2>What to Do Before Calling IT Support</h2>
-          <p>A five-minute checklist that saves hours — and money. Most support calls start with information that should have been gathered before picking up the phone.</p>
-          <div class="card-footer">
-            <span class="read-time">4 min read</span>
-            <span class="read-link">Read Article →</span>
-          </div>
-        </a>
-
-        <a href="small-business-backup-strategy.html" class="article-card" data-category="it-tips">
-          <span class="card-category cat-it">IT Tips</span>
-          <h2>The Small Business Backup Strategy That Actually Works</h2>
-          <p>The 3-2-1 rule explained for non-IT people. How to set up a backup system that survives ransomware, hardware failure, and human error — and how to verify it's actually working.</p>
-          <div class="card-footer">
-            <span class="read-time">7 min read</span>
-            <span class="read-link">Read Article →</span>
-          </div>
-        </a>
-
-        <a href="managed-it-vs-break-fix.html" class="article-card" data-category="cleveland-smb">
-          <span class="card-category cat-smb">Cleveland SMB</span>
-          <h2>Managed IT vs. Break-Fix: Which Is Right for Your Business?</h2>
-          <p>An honest comparison of the two support models — with a cost breakdown at realistic failure rates. Spoiler: the answer depends on how much downtime you can actually afford.</p>
-          <div class="card-footer">
-            <span class="read-time">7 min read</span>
-            <span class="read-link">Read Article →</span>
-          </div>
-        </a>
-
-        <a href="website-for-small-business.html" class="article-card" data-category="web-software">
-          <span class="card-category cat-web">Web &amp; Software</span>
-          <h2>Does Your Small Business Actually Need a Website in 2026?</h2>
-          <p>A Google Business profile isn't enough — and here's why. Ownership, SEO, credibility, and what a well-built small business site actually needs to do for you.</p>
-          <div class="card-footer">
-            <span class="read-time">6 min read</span>
-            <span class="read-link">Read Article →</span>
-          </div>
-        </a>
-
-        <a href="pcb-design-for-first-time-hardware-founders.html" class="article-card" data-category="hardware">
-          <span class="card-category cat-hardware">Hardware</span>
-          <h2>PCB Design for First-Time Hardware Founders</h2>
-          <p>From schematic to Gerber files — what to expect when you commission a custom board. Common mistakes, realistic timelines, and how to avoid the errors that turn a two-week project into a three-month ordeal.</p>
-          <div class="card-footer">
-            <span class="read-time">8 min read</span>
-            <span class="read-link">Read Article →</span>
-          </div>
-        </a>
-
-        <a href="3d-printing-for-prototypes.html" class="article-card" data-category="hardware">
-          <span class="card-category cat-hardware">Hardware</span>
-          <h2>Using 3D Printing for Product Prototypes: What Small Manufacturers Need to Know</h2>
-          <p>FDM vs. resin, real-world tolerances, what 3D printing is good for — and when you need injection molding instead. A practical guide for first-time hardware product builders.</p>
-          <div class="card-footer">
-            <span class="read-time">7 min read</span>
-            <span class="read-link">Read Article →</span>
-          </div>
-        </a>
-
-      </div><!-- /.articles-grid -->
-    </div><!-- /.container -->
-
-    <div class="container">
-      <div class="cta-section">
-        <h2>Have an IT Question?</h2>
-        <p>If you didn't find what you were looking for, get in touch. Most questions get a same-day response.</p>
-        <a href="../make_ticket.html" class="btn-primary">Submit a Support Ticket</a>
-      </div>
     </div>
 
     <!-- NEWSLETTER SIGNUP — BUTTONDOWN_USERNAME: replace tevisengineering in the form action below -->
-    <section class="newsletter-section" aria-label="Email newsletter signup">
+    <section class="newsletter-section container" aria-label="Email newsletter signup">
       <div class="newsletter-inner">
         <div class="newsletter-text">
+          <p class="newsletter-k"><i class="fa-solid fa-tower-broadcast" aria-hidden="true"></i> Monthly transmission</p>
           <h2 class="newsletter-heading">IT Tips for Individuals &amp; Small Businesses</h2>
           <p class="newsletter-sub">Monthly practical advice — no spam, no upsells. Unsubscribe anytime.</p>
         </div>
@@ -745,23 +1646,163 @@
         mega.querySelectorAll('a').forEach(function(a) { a.addEventListener('click', function() { setOpen(false); }); });
       })();
 
-      // Filter pills
-      var pills = document.querySelectorAll('.filter-pill');
-      var cards = document.querySelectorAll('.article-card');
-      pills.forEach(function(pill) {
-        pill.addEventListener('click', function() {
-          pills.forEach(function(p) { p.classList.remove('active'); });
-          pill.classList.add('active');
-          var filter = pill.getAttribute('data-filter');
-          cards.forEach(function(card) {
-            if (filter === 'all' || card.getAttribute('data-category') === filter) {
-              card.classList.remove('hidden');
-            } else {
-              card.classList.add('hidden');
-            }
-          });
+      var mq = function(q) { return window.matchMedia && window.matchMedia(q).matches; };
+      var still = mq('(prefers-reduced-motion: reduce)');
+
+      // Starfield: slow twinkle, a little scroll parallax, an occasional gold shooting star.
+      (function() {
+        var c = document.getElementById('stars');
+        if (!c || !c.getContext) return;
+        var ctx = c.getContext('2d');
+        var dpr = Math.min(window.devicePixelRatio || 1, 2);
+        var w = 0, h = 0, stars = [], shoot = null, lastShot = 0, raf = 0;
+        function seed() {
+          var n = Math.min(240, Math.round(w * h / 7000));
+          stars = [];
+          for (var i = 0; i < n; i++) {
+            var r = Math.random();
+            stars.push({
+              x: Math.random() * w, y: Math.random() * h, z: 0.2 + Math.random() * 0.8,
+              r: r < 0.92 ? 0.3 + Math.random() * 1.0 : 1.2 + Math.random() * 1.2,
+              p: Math.random() * 6.283, s: 0.4 + Math.random() * 1.4,
+              c: r > 0.94 ? '224,184,64' : (r > 0.86 ? '109,200,130' : '228,237,229')
+            });
+          }
+        }
+        function size() {
+          var nw = window.innerWidth, nh = window.innerHeight, reseed = nw !== w;
+          w = nw; h = nh;
+          c.width = w * dpr; c.height = h * dpr;
+          ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+          if (reseed) seed();
+        }
+        function draw(t) {
+          ctx.clearRect(0, 0, w, h);
+          var sy = window.scrollY || 0;
+          for (var i = 0; i < stars.length; i++) {
+            var s = stars[i];
+            var y = (s.y - sy * s.z * 0.12) % h; if (y < 0) y += h;
+            var a = still ? 0.6 * s.z : (0.3 + 0.7 * (0.5 + 0.5 * Math.sin(t * 0.001 * s.s + s.p))) * s.z;
+            ctx.fillStyle = 'rgba(' + s.c + ',' + a.toFixed(3) + ')';
+            ctx.beginPath(); ctx.arc(s.x, y, s.r, 0, 6.283); ctx.fill();
+          }
+          if (still) return;
+          if (!shoot && t - lastShot > 6000 && Math.random() < 0.006) {
+            shoot = { x: w * (0.3 + Math.random() * 0.6), y: h * Math.random() * 0.35, vx: -(5 + Math.random() * 3), vy: 2 + Math.random() * 1.5, life: 0 };
+            lastShot = t;
+          }
+          if (shoot) {
+            shoot.life++; shoot.x += shoot.vx; shoot.y += shoot.vy;
+            var tx = shoot.x - shoot.vx * 16, ty = shoot.y - shoot.vy * 16;
+            var g = ctx.createLinearGradient(shoot.x, shoot.y, tx, ty);
+            var fade = Math.max(0, 1 - shoot.life / 70);
+            g.addColorStop(0, 'rgba(224,184,64,' + (0.9 * fade).toFixed(3) + ')');
+            g.addColorStop(1, 'rgba(224,184,64,0)');
+            ctx.strokeStyle = g; ctx.lineWidth = 1.5;
+            ctx.beginPath(); ctx.moveTo(shoot.x, shoot.y); ctx.lineTo(tx, ty); ctx.stroke();
+            if (shoot.life > 70) shoot = null;
+          }
+        }
+        function loop(t) { draw(t); raf = document.hidden ? 0 : requestAnimationFrame(loop); }
+        var rt;
+        window.addEventListener('resize', function() { clearTimeout(rt); rt = setTimeout(function() { size(); if (still) draw(0); }, 120); });
+        size();
+        if (still) {
+          draw(0);
+          window.addEventListener('scroll', function() { draw(0); }, { passive: true });
+        } else {
+          raf = requestAnimationFrame(loop);
+          document.addEventListener('visibilitychange', function() { if (!document.hidden && !raf) raf = requestAnimationFrame(loop); });
+        }
+      })();
+
+      // Shelves: a spine opens on hover or focus; on touch the first tap opens it, the second follows the link.
+      var spines = Array.prototype.slice.call(document.querySelectorAll('.spine'));
+      var shelves = Array.prototype.slice.call(document.querySelectorAll('.shelf'));
+      var canHover = mq('(hover: hover)');
+      function openSpine(s) {
+        s.parentNode.querySelectorAll('.spine.is-open').forEach(function(x) { if (x !== s) x.classList.remove('is-open'); });
+        s.classList.add('is-open');
+      }
+      spines.forEach(function(s) {
+        var t;
+        s.setAttribute('data-search', s.textContent.replace(/\s+/g, ' ').toLowerCase());
+        var min = parseInt(s.getAttribute('data-min'), 10) || 0;
+        var bars = s.querySelector('.bars');
+        for (var i = 0; i < 10; i++) {
+          var b = document.createElement('i');
+          b.style.height = (4 + i) + 'px';
+          if (i < min) b.className = 'on';
+          bars.appendChild(b);
+        }
+        s.addEventListener('mouseenter', function() { clearTimeout(t); t = setTimeout(function() { openSpine(s); }, 70); });
+        s.addEventListener('mouseleave', function() { clearTimeout(t); });
+        s.addEventListener('focus', function() { openSpine(s); });
+        s.addEventListener('mousemove', function(e) {
+          var r = s.getBoundingClientRect();
+          s.style.setProperty('--mx', (e.clientX - r.left) + 'px');
+          s.style.setProperty('--my', (e.clientY - r.top) + 'px');
+        });
+        s.addEventListener('click', function(e) {
+          if (!canHover && !s.classList.contains('is-open') && mq('(min-width: 761px)')) { e.preventDefault(); openSpine(s); }
         });
       });
+
+      // Filters: deck chips, orbit nodes and the search box all drive one state.
+      var state = { deck: 'all', q: '' };
+      var controls = Array.prototype.slice.call(document.querySelectorAll('[data-filter]'));
+      var search = document.getElementById('archiveSearch');
+      var readout = document.getElementById('readout');
+      var empty = document.getElementById('empty');
+      var total = spines.length;
+      function apply() {
+        var shown = 0;
+        shelves.forEach(function(sh) {
+          var deckOk = state.deck === 'all' || sh.getAttribute('data-deck') === state.deck;
+          var n = 0, open = null;
+          sh.querySelectorAll('.spine').forEach(function(s) {
+            var ok = deckOk && (!state.q || s.getAttribute('data-search').indexOf(state.q) !== -1);
+            s.hidden = !ok;
+            if (ok) { n++; if (s.classList.contains('is-open')) open = s; }
+          });
+          sh.hidden = n === 0;
+          if (n && !open) openSpine(sh.querySelector('.spine:not([hidden])'));
+          shown += n;
+        });
+        controls.forEach(function(b) { b.setAttribute('aria-pressed', b.getAttribute('data-filter') === state.deck ? 'true' : 'false'); });
+        readout.innerHTML = 'Showing <b>' + shown + '</b> of ' + total + ' entries';
+        empty.hidden = shown > 0;
+        if (!shown) document.getElementById('emptyQ').textContent = state.q ? '"' + state.q + '"' : 'that filter';
+      }
+      controls.forEach(function(b) {
+        b.addEventListener('click', function() {
+          var f = b.getAttribute('data-filter');
+          state.deck = (state.deck === f && f !== 'all') ? 'all' : f;
+          apply();
+          if (b.classList.contains('node-btn')) document.getElementById('console').scrollIntoView({ behavior: still ? 'auto' : 'smooth', block: 'start' });
+        });
+      });
+      search.addEventListener('input', function() { state.q = search.value.trim().toLowerCase(); apply(); });
+      search.addEventListener('keydown', function(e) { if (e.key === 'Escape') { search.value = ''; state.q = ''; apply(); search.blur(); } });
+      document.getElementById('emptyReset').addEventListener('click', function() { search.value = ''; state.q = ''; state.deck = 'all'; apply(); });
+      document.addEventListener('keydown', function(e) {
+        var tag = (e.target.tagName || '').toLowerCase();
+        if (e.key === '/' && tag !== 'input' && tag !== 'textarea' && !e.target.isContentEditable) { e.preventDefault(); search.focus(); }
+      });
+
+      // Counts stay right as posts are added: the hero, chips, orbit and shelf headers read them from the spines.
+      function minsOf(list) { return list.reduce(function(m, s) { return m + (parseInt(s.getAttribute('data-min'), 10) || 0); }, 0); }
+      shelves.forEach(function(sh) {
+        var key = sh.getAttribute('data-deck');
+        var list = Array.prototype.slice.call(sh.querySelectorAll('.spine'));
+        sh.querySelector('.shelf-stats').innerHTML = '<b class="shelf-n">' + list.length + '</b> entries<br>' + minsOf(list) + ' min of reading';
+        document.querySelectorAll('.deck-chip[data-filter="' + key + '"] .dc-count').forEach(function(el) { el.textContent = list.length + ' entries'; });
+        document.querySelectorAll('.node-btn[data-filter="' + key + '"] b').forEach(function(el) { el.textContent = list.length; });
+      });
+      document.querySelector('.deck-chip[data-filter="all"] .dc-count').textContent = total + ' entries';
+      document.getElementById('hudEntries').textContent = total;
+      document.getElementById('hudMinutes').textContent = minsOf(spines);
+      apply();
 
       // Newsletter popup — BUTTONDOWN_USERNAME: replace tevisengineering below
       var form = document.getElementById('newsletterForm');
