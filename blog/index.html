@@ -853,7 +853,14 @@
 
     /* ==================== RESPONSIVE ==================== */
     @media (max-width: 1080px) {
-      .decks { grid-auto-flow: column; grid-template-columns: none; grid-auto-columns: minmax(138px, 1fr); overflow-x: auto; padding-bottom: 0.3rem; scrollbar-width: thin; }
+      .decks { grid-auto-flow: column; grid-template-columns: none; grid-auto-columns: minmax(138px, 1fr); overflow-x: auto; padding-bottom: 0.65rem; }
+      /* Chrome ignores the ::-webkit-scrollbar rules below when the standard properties are set, so those are Firefox-only. */
+      @supports not selector(::-webkit-scrollbar) { .decks { scrollbar-width: thin; scrollbar-color: rgba(200, 152, 48, 0.6) rgba(74, 172, 101, 0.08); } }
+      .decks::-webkit-scrollbar { height: 6px; }
+      .decks::-webkit-scrollbar-track { background: rgba(74, 172, 101, 0.08); border-radius: 999px; }
+      .decks::-webkit-scrollbar-thumb { background: linear-gradient(90deg, #4aac65, #c89830); border-radius: 999px; }
+      .decks::-webkit-scrollbar-thumb:hover { background: linear-gradient(90deg, #6dc882, #e0b840); }
+      .decks::-webkit-scrollbar-button { display: none; }
       .shelf-row { height: 380px; }
       .spine { flex-basis: 62px; }
       .spine-body { width: 380px; padding: 1.4rem 1.4rem 1.3rem; }
