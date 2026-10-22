@@ -946,6 +946,7 @@
     .cvt-opt:focus-visible { outline:2px solid var(--green); outline-offset:2px; }
     .adlg-form > [hidden] { display:none; }
     .adlg-form + .adlg-meta { margin-top:0.9rem; }
+    .adlg h3.adlg-sub { font-family:"Montserrat",sans-serif; font-size:0.7rem; font-weight:800; text-transform:uppercase; letter-spacing:0.06em; color:var(--muted); margin:1.1rem 0 0.6rem; padding-top:0.9rem; border-top:1px solid var(--line); }
     @media (max-width:520px) { .cvt-opts, .adlg-form { grid-template-columns:1fr; } }
     .adlg-form .wide { grid-column:1 / -1; }
     .adlg-form label { display:block; font-family:"Montserrat",sans-serif; font-size:0.62rem; font-weight:700; text-transform:uppercase;
@@ -1647,6 +1648,34 @@
     .qt-manual { display:inline-flex; align-items:center; gap:0.45rem; flex-wrap:wrap; }
     .qt-manual label { font-size:0.76rem; color:var(--muted); }
     .qt-manual input[type=date] { min-height:32px; padding:0.3rem 0.5rem; border-radius:8px; border:1px solid var(--line); background:var(--bg); color:var(--text); font-family:inherit; font-size:0.8rem; color-scheme:dark; }
+    /* Tiers on an uploaded quote: one row per option, its price a range until the work is scoped. */
+    .qtier-ed { display:grid; gap:0.4rem; }
+    .qtier-row { display:grid; grid-template-columns:5.25rem minmax(0,1fr) 5.5rem 5.5rem 2.5rem; gap:0.4rem; align-items:center; }
+    .qtier-row input { width:100%; box-sizing:border-box; height:38px; min-height:0; padding:0 0.55rem; border-radius:8px; border:1px solid var(--line); background:var(--bg); color:var(--text); font:inherit; font-size:0.84rem; }
+    .qtier-row input:focus { outline:none; border-color:var(--green); }
+    .qtier-row .qtier-note { grid-column:2 / span 3; }
+    .qtier-head { font-family:"Montserrat",sans-serif; font-size:0.6rem; font-weight:700; text-transform:uppercase; letter-spacing:0.05em; color:var(--muted); }
+    .qtier-head[hidden] { display:none; }
+    .qtier-x { height:38px; border-radius:8px; border:1px solid var(--line); background:transparent; color:var(--muted); cursor:pointer; }
+    .qtier-x:hover { border-color:#7f2c2c; color:#e08585; }
+    .qtier-add { justify-self:start; font-family:"Montserrat",sans-serif; font-size:0.66rem; font-weight:700; text-transform:uppercase; letter-spacing:0.03em; padding:0.45rem 0.8rem; border-radius:999px; border:1px solid var(--line); background:var(--bg); color:var(--text); cursor:pointer; }
+    .qtier-add:hover { border-color:var(--green); }
+    .qtier-list { display:grid; gap:0.7rem; }
+    @media (max-width:560px) {
+      .qtier-row { grid-template-columns:minmax(0,1fr) minmax(0,1fr) 2.5rem; }
+      .qtier-row .qtier-x { grid-column:3; grid-row:1; }
+      .qtier-row .qtier-note { grid-column:1 / -1; }
+      .qtier-head { display:none; }
+    }
+    .qtiers { margin-top:0.55rem; display:grid; gap:0.25rem; }
+    .qtiers .qt-row { display:flex; justify-content:space-between; gap:0.6rem; font-size:0.78rem; padding:0.35rem 0.6rem; border:1px solid rgba(44,66,50,0.8); border-radius:8px; background:rgba(0,0,0,0.12); }
+    .qtiers .qt-row b { font-family:"Montserrat",sans-serif; font-weight:800; font-size:0.74rem; }
+    .qtiers .qt-row .qt-n { color:var(--muted); }
+    .qtiers .qt-row .qt-p { white-space:nowrap; font-variant-numeric:tabular-nums; }
+    .qtiers .qt-row.on { border-color:var(--gold); background:rgba(200,152,48,0.08); }
+    .qtiers .qt-row.on .qt-p { color:var(--gold); font-weight:700; }
+    .qtiers .qt-note { display:block; font-size:0.72rem; color:var(--muted); margin-top:0.1rem; }
+    .qtiers .qt-agreed { font-size:0.74rem; color:#e0c98a; }
     .q-pdf-chip { display:inline-flex; align-items:center; gap:0.3rem; font-size:0.66rem; font-weight:700; letter-spacing:0.04em; text-transform:uppercase; color:#e0a090; border:1px solid rgba(224,160,144,0.45); border-radius:5px; padding:0.05rem 0.35rem; margin-right:0.35rem; vertical-align:1px; }
 
     /* Drafting from the handbook. Gold, because it writes the document. */
@@ -2960,7 +2989,11 @@
             </div>
           </div>
         </div>
-        <p class="qt-pdf-note" data-qmode="pdf" hidden>The customer sees the PDF. These figures are for tracking and for invoicing it later; leave them blank if the document offers options and nothing is chosen yet. You can set them when it is accepted.</p>
+        <div class="fwide" data-qmode="pdf" hidden>
+          <label id="qtTiersL">Tiers or options (optional)</label>
+          <div id="qtTiers" role="group" aria-labelledby="qtTiersL"></div>
+        </div>
+        <p class="qt-pdf-note" data-qmode="pdf" hidden>The customer sees the PDF. These figures are for tracking and for invoicing it later. If the document offers tiers, list them above and leave the totals blank: a range can be firmed up after scoping, and the tier and price agreed are set when it is accepted.</p>
 
         <div class="qai" id="qtAi" data-qmode="build">
           <div class="qai-h">
@@ -7930,7 +7963,7 @@
     var qtTimer = null;
     var quoteView = 'open';
     var QUOTE_COLOR = { draft: '#8aa48d', sent: '#4fa2ff', viewed: '#4aac65', accepted: '#22c55e', converted: '#22c55e', declined: '#6a8ba8', expired: '#c89830' };
-    var QUOTE_ERROR = { not_pdf: 'That file is not a PDF', missing_file: 'Drop the PDF first', too_large: 'That PDF is over 10 MB', empty_file: 'That file is empty', bad_encoding: 'The file could not be read', bad_number: 'The number can only have letters, digits and dashes', number_taken: 'A quote with that number already exists', duplicate_pdf: 'That PDF is already on another quote', same_pdf: 'That is the PDF already on file', bad_date: 'That date is not valid', future_date: 'The day it was sent cannot be in the future', no_pdf: 'This quote has no PDF on file', pdf_missing: 'The stored PDF could not be read', how_required: 'Say how they accepted', note_required: 'Say how it is being billed', pdf_quote: 'An uploaded quote cannot be copied; upload the revised PDF instead', number_fixed: 'The number cannot change once it has been sent', not_pdf_quote: 'That is only for uploaded quotes', storage_unavailable: 'File storage is not available', invalid_email: 'That email is not valid', title_required: 'Give the quote a title', items_required: 'Add at least one line with a description', bad_qty: 'A quantity is not a number', bad_price: 'A price is not a number', bad_interval: 'A line has an interval nobody recognizes', bad_range: 'A line has a high price below its low price', not_editable: 'This quote has been decided and cannot be edited', not_sendable: 'This quote cannot be sent in its current state', send_failed: 'Resend refused the email', mail_unconfigured: 'Email is not configured on the Worker', not_accepted: 'The customer has not accepted; tick the verbal box to convert anyway', already_converted: 'Already converted', duplicate_number: 'An invoice with that number already exists', not_draft: 'Only a draft can be deleted', not_open: 'This quote is no longer open', nothing_priced: 'Every required line is $0.00. Price at least one required line before sending; optional add-ons do not count, because the customer can accept without them.', nothing_to_convert: 'Everything on this quote is recurring, and the service agreement could not be started, so there is nothing to convert it into yet' };
+    var QUOTE_ERROR = { not_pdf: 'That file is not a PDF', missing_file: 'Drop the PDF first', too_large: 'That PDF is over 10 MB', empty_file: 'That file is empty', bad_encoding: 'The file could not be read', bad_number: 'The number can only have letters, digits and dashes', number_taken: 'A quote with that number already exists', duplicate_pdf: 'That PDF is already on another quote', same_pdf: 'That is the PDF already on file', bad_date: 'That date is not valid', future_date: 'The day it was sent cannot be in the future', no_pdf: 'This quote has no PDF on file', pdf_missing: 'The stored PDF could not be read', how_required: 'Say how they accepted', note_required: 'Say how it is being billed', pdf_quote: 'An uploaded quote cannot be copied; upload the revised PDF instead', number_fixed: 'The number cannot change once it has been sent', not_pdf_quote: 'That is only for uploaded quotes', storage_unavailable: 'File storage is not available', invalid_email: 'That email is not valid', title_required: 'Give the quote a title', items_required: 'Add at least one line with a description', bad_qty: 'A quantity is not a number', bad_price: 'A price is not a number', bad_interval: 'A line has an interval nobody recognizes', bad_range: 'A line has a high price below its low price', not_editable: 'This quote has been decided and cannot be edited', not_sendable: 'This quote cannot be sent in its current state', send_failed: 'Resend refused the email', mail_unconfigured: 'Email is not configured on the Worker', not_accepted: 'The customer has not accepted; tick the verbal box to convert anyway', already_converted: 'Already converted', duplicate_number: 'An invoice with that number already exists', not_draft: 'Only a draft can be deleted', not_open: 'This quote is no longer open', nothing_priced: 'Every required line is $0.00. Price at least one required line before sending; optional add-ons do not count, because the customer can accept without them.', nothing_to_convert: 'Everything on this quote is recurring, and the service agreement could not be started, so there is nothing to convert it into yet', bad_tiers: 'The tiers could not be read', bad_tier_price: 'A tier price is not a number', bad_tier_range: 'A tier has its "up to" figure below its price', unknown_tier: 'That tier is not on the quote', tier_is_range: 'That tier is priced as a range; enter the price agreed', already_invoiced: 'It has been invoiced; change the invoice instead', nothing_to_save: 'Nothing changed' };
     // Byte-identical to CONFIG.quoteTerms in the Worker (src/config.js). The two must
     // move together: this is what a new quote is seeded with, that is what the server
     // falls back to.
@@ -8198,6 +8231,7 @@
       document.getElementById('qtTerms').value = q ? (q.terms || '') : DEFAULT_TERMS;
       qtSelected = null; qtCustSel.hidden = true;
       qtLinesEl.textContent = '';
+      qtTierEd.set(q && q.source === 'pdf' ? q.tiers : []);
       if (q) {
         document.getElementById('qtEmail').value = q.email || '';
         document.getElementById('qtName').value = q.contact_name || '';
@@ -8255,7 +8289,9 @@
       }).then(function (doc) {
         return doc.getMetadata().catch(function () { return null; }).then(function (meta) {
           var pages = [], chain = Promise.resolve();
-          for (var p = 1; p <= Math.min(doc.numPages, 3); p++) {
+          // Twelve pages: the header is on the first, but a tier table or a payment
+          // schedule is often further in.
+          for (var p = 1; p <= Math.min(doc.numPages, 12); p++) {
             (function (n) {
               chain = chain.then(function () { return doc.getPage(n); })
                 .then(function (page) { return page.getTextContent(); })
@@ -8344,7 +8380,139 @@
         if (ef) { var tt = ef[1].replace(/^(a|an|the)\s+/i, ''); out.title = tt.charAt(0).toUpperCase() + tt.slice(1); }
       }
       out.intro = qtSummary(lines);
+      var tiers = qtTiersOf(lines);
+      if (tiers.length) out.tiers = tiers;
       return out;
+    }
+
+    // ---- tiers off the PDF ----
+    // A document that offers a choice lays it out one of two ways, and the house
+    // documents use both:
+    //   - columns: "Tier 1 / Tier 2 / Tier 3" across the top of a table, with a row of
+    //     prices under them ("Your price  $600 - $900  $1,250 - $2,000 ...");
+    //   - rows: "Option A -- Estimator's Assistant ... $4,750 - $5,500", one per line,
+    //     the price in the right-hand column and often wrapped onto the next line.
+    // Columns win when both are there, because a column table is where a document puts
+    // the figures it means as the price (an "Engagement total" row beats the build-only
+    // price in the option list). Names the rows give are kept for the same labels.
+    // Like everything read off a PDF, the result is a suggestion in an editable table.
+    var QT_TIER_RE = /^(tier|option|package|plan)\s+([0-9]{1,2}[a-z]?|[A-Z])(?![A-Za-z0-9])/i;
+    function qtRunsText(runs) {
+      var text = '', prevEnd = null;
+      runs.forEach(function (r) {
+        if (text && prevEnd != null && r.x - prevEnd >= 1.5) text += ' ';
+        text += r.str;
+        prevEnd = r.x + (r.w || 0);
+      });
+      return text.replace(/\s+/g, ' ').trim();
+    }
+    // "$1,250 – $2,000" -> {low: 1250, high: 2000}; "$3,000 fixed" -> {low: 3000}. Null without a figure.
+    function qtMoneyRange(s) {
+      var m = /\$\s*([\d,]+(?:\.\d{1,2})?)(?:\s*(?:[–—-]|to)\s*\$?\s*([\d,]+(?:\.\d{1,2})?))?/i.exec(String(s || ''));
+      if (!m) return null;
+      var n = function (x) { return x == null ? null : Number(x.replace(/,/g, '')); };
+      var low = n(m[1]), high = n(m[2]);
+      if (!isFinite(low)) return null;
+      return { low: low, high: high != null && isFinite(high) && high > low ? high : null };
+    }
+    function qtSplitTier(text) {
+      var m = QT_TIER_RE.exec(text);
+      if (!m) return null;
+      var label = m[1].charAt(0).toUpperCase() + m[1].slice(1).toLowerCase() + ' ' + m[2];
+      // The name, not the description that runs on after it: up to a colon or a
+      // bracket, and never more than a short phrase.
+      var name = text.slice(m[0].length).replace(/^[\s–—:|-]+/, '').split(/[:(]/)[0].trim();
+      if (name.length > 60) name = name.slice(0, 60).replace(/\s+\S*$/, '');
+      return { label: label, name: name };
+    }
+    function qtTierColumns(lines) {
+      for (var i = 0; i < lines.length; i++) {
+        // The header: two or more runs that each start with a tier label, across lines a
+        // few points apart (a two-line header sits its cells on different baselines).
+        var heads = [], last = i;
+        for (var j = i; j < lines.length && lines[j].page === lines[i].page && Math.abs(lines[j].y - lines[i].y) <= 12; j++) {
+          var n0 = heads.length;
+          lines[j].runs.forEach(function (rn) { if (QT_TIER_RE.test(rn.str.trim())) heads.push({ x: rn.x, text: rn.str.trim() }); });
+          if (heads.length > n0) last = j;
+        }
+        if (heads.length < 2) continue;
+        heads.sort(function (a, b) { return a.x - b.x; });
+        var left = heads[0].x;
+        // A name wrapped under its header: lines just below with nothing in the row-label column.
+        var k = last + 1;
+        for (; k < lines.length && lines[k].page === lines[i].page && lines[last].y - lines[k].y <= 16; k++) {
+          var runs = lines[k].runs;
+          if (runs.some(function (rn) { return rn.x < left - 8; })) break;
+          runs.forEach(function (rn) {
+            var h = heads.filter(function (x) { return Math.abs(x.x - rn.x) <= 8; })[0];
+            if (h) h.text += ' ' + rn.str.trim();
+          });
+          last = k;
+        }
+        // The price row: the best-labelled row with a figure in at least two columns.
+        var best = null;
+        for (k = last + 1; k < lines.length && lines[k].page === lines[i].page && k < last + 60; k++) {
+          var byCol = heads.map(function () { return []; });
+          var labelRuns = [];
+          lines[k].runs.forEach(function (rn) {
+            if (rn.x < left - 10) { labelRuns.push(rn); return; }
+            var c = -1;
+            heads.forEach(function (h, hi) { if (h.x <= rn.x + 30) c = hi; });
+            if (c >= 0) byCol[c].push(rn);
+          });
+          var prices = byCol.map(function (rs) { return qtMoneyRange(qtRunsText(rs)); });
+          if (prices.filter(Boolean).length < 2) continue;
+          var label = qtRunsText(labelRuns).toLowerCase();
+          var score = /standard|value|regular|list|retail|msrp|was\b/.test(label) ? -5
+            : /total/.test(label) ? 3 : /price/.test(label) ? 2 : /investment|cost|fee|amount/.test(label) ? 1 : 0;
+          if (!best || score > best.score) best = { score: score, prices: prices };
+        }
+        if (!best) continue;
+        return heads.map(function (h, hi) {
+          var t = qtSplitTier(h.text);
+          var p = best.prices[hi];
+          return t && p ? { label: t.label, name: t.name, low: p.low, high: p.high } : null;
+        }).filter(Boolean);
+      }
+      return [];
+    }
+    function qtTierRows(lines) {
+      var out = [];
+      for (var i = 0; i < lines.length; i++) {
+        var first = lines[i].runs[0];
+        if (!first || !QT_TIER_RE.test(qtRunsText(lines[i].runs))) continue;
+        // The block: this line and the lines under it, up to the next tier.
+        var block = [lines[i]];
+        for (var j = i + 1; j < lines.length && j < i + 4 && lines[j].page === lines[i].page && !QT_TIER_RE.test(lines[j].text); j++) block.push(lines[j]);
+        // The name is the left-hand cell: runs up to the first wide gap, and the same
+        // column on the lines under it.
+        var cut = null, prevEnd = null;
+        lines[i].runs.forEach(function (rn) { if (cut == null && prevEnd != null && rn.x - prevEnd > 12) cut = rn.x; prevEnd = rn.x + (rn.w || 0); });
+        // With no gap there is no name column, and the lines under it are description.
+        var t = qtSplitTier((cut == null ? [lines[i]] : block).map(function (ln) {
+          return qtRunsText(ln.runs.filter(function (rn) { return cut == null || rn.x < cut - 4; }));
+        }).filter(Boolean).join(' '));
+        // The price is the right-hand column: from the rightmost run carrying a $ sign.
+        var px = null;
+        block.forEach(function (ln) { ln.runs.forEach(function (rn) { if (/\$/.test(rn.str) && (px == null || rn.x > px)) px = rn.x; }); });
+        if (!t || px == null) continue;
+        var priceText = block.map(function (ln) { return qtRunsText(ln.runs.filter(function (rn) { return rn.x >= px - 10; })); }).join(' ');
+        var p = qtMoneyRange(priceText);
+        if (p) out.push({ label: t.label, name: t.name, low: p.low, high: p.high });
+      }
+      // One label once, the first time it is priced.
+      var seen = {};
+      out = out.filter(function (x) { var k = x.label.toLowerCase(); if (seen[k]) return false; seen[k] = true; return true; });
+      return out.length >= 2 ? out : [];
+    }
+    function qtTiersOf(lines) {
+      var cols = qtTierColumns(lines), rows = qtTierRows(lines);
+      if (!cols.length) return rows;
+      cols.forEach(function (c) {
+        var r = rows.filter(function (x) { return x.label.toLowerCase() === c.label.toLowerCase(); })[0];
+        if (!c.name && r) c.name = r.name;
+      });
+      return cols;
     }
 
     function qtApplyParsed(got) {
@@ -8358,6 +8526,7 @@
       set('qtCompany', got.company, 'company');
       set('qtTitle', got.title, 'title');
       set('qtIntro', got.intro, 'summary');
+      if (got.tiers && got.tiers.length && qtTierEd.isEmpty()) { qtTierEd.set(got.tiers); filled.push(got.tiers.length + ' tiers'); }
       return filled;
     }
 
@@ -8790,6 +8959,7 @@
           intro: document.getElementById('qtIntro').value.trim(), number: document.getElementById('qtNumber').value.trim(),
           valid_until: document.getElementById('qtValidDate').value, amount: document.getElementById('qtAmtOnce').value.trim(),
           recurring: document.getElementById('qtAmtRec').value.trim(), recurring_interval: document.getElementById('qtRecInt').value,
+          tiers: qtTierEd.read(),
         };
         if (!document.getElementById('quoteId').value) {
           pp.doc_type = qtDocType;
@@ -8914,6 +9084,189 @@
     // An uploaded quote is accepted the way its PDF says (usually a signed copy), and
     // recorded here: how, who signed, and the figures actually taken. A signed copy can
     // be filed on the customer's file in the same step.
+    // ---- tiers on an uploaded quote ----
+    // One editor, used by the upload form and by the card's Tiers dialog. Prices are
+    // dollars as typed; a blank high side means the tier is a firm price, which is
+    // what a range becomes once the work is scoped. Takes tiers as the Worker sends
+    // them (cents) or as the PDF reader finds them (dollars).
+    /** "Tier 2 - Online Catalog", the same words the Worker records an agreed tier in. */
+    function tierTitle(t) { return [t.label, t.name].filter(Boolean).join(' - '); }
+    function tierPrice(t) { return t.high_cents != null ? money(t.low_cents) + ' – ' + money(t.high_cents) : money(t.low_cents); }
+    /** The span a tiered quote covers before anything is chosen: lowest low to highest high. */
+    function tierSpan(tiers) {
+      var lo = Math.min.apply(null, tiers.map(function (t) { return t.low_cents; }));
+      var hi = Math.max.apply(null, tiers.map(function (t) { return t.high_cents != null ? t.high_cents : t.low_cents; }));
+      return hi > lo ? money(lo) + ' – ' + money(hi) : money(lo);
+    }
+    function tierEditor(tiers, onChange) {
+      var wrap = el('div', 'qtier-ed');
+      var head = el('div', 'qtier-row qtier-head');
+      ['Tier', 'Name', 'Price', 'Up to (range)', ''].forEach(function (t) { head.appendChild(el('span', null, t)); });
+      var list = el('div', 'qtier-list');
+      var add = el('button', 'qtier-add', '+ Add a tier');
+      add.type = 'button';
+      wrap.appendChild(head); wrap.appendChild(list); wrap.appendChild(add);
+      var dollars = function (cents, d) {
+        var v = cents != null ? cents / 100 : d;
+        return v == null || v === '' ? '' : Number(v).toFixed(2).replace(/\.00$/, '');
+      };
+      var changed = function () { head.hidden = !list.children.length; if (onChange) onChange(); };
+      function addRow(t) {
+        t = t || {};
+        var r = el('div', 'qtier-row');
+        var mk = function (cls, val, ph, label, dec) {
+          var i = el('input', cls); i.type = 'text'; i.value = val || ''; i.placeholder = ph; i.setAttribute('aria-label', label);
+          if (dec) i.inputMode = 'decimal';
+          i.addEventListener('input', function () { if (onChange) onChange(); });
+          r.appendChild(i); return i;
+        };
+        var n = list.children.length + 1;
+        var lab = mk('qtier-lab', t.label, 'Tier ' + n, 'Tier label');
+        var nm = mk('qtier-nm', t.name, 'Name', 'Tier name');
+        var lo = mk('qtier-lo', dollars(t.low_cents, t.low), '1,250', 'Price, or the low end of a range', true);
+        var hi = mk('qtier-hi', dollars(t.high_cents, t.high), 'if a range', 'High end of the range; blank for a firm price', true);
+        var x = el('button', 'qtier-x'); x.type = 'button'; x.setAttribute('aria-label', 'Remove this tier');
+        x.appendChild(el('i', 'fa-solid fa-xmark'));
+        x.addEventListener('click', function () { r.remove(); changed(); });
+        r.appendChild(x);
+        var note = mk('qtier-note', t.note, 'Note: what is in it, what scoping settled (optional)', 'Tier note');
+        r.read = function () { return { label: lab.value.trim(), name: nm.value.trim(), low: lo.value.trim(), high: hi.value.trim(), note: note.value.trim() }; };
+        list.appendChild(r);
+        return lab;
+      }
+      add.addEventListener('click', function () { addRow().focus(); changed(); });
+      var api_ = {
+        el: wrap,
+        /** As the Worker wants them. Rows with neither a label nor a name are left out, as the Worker leaves them out. */
+        read: function () {
+          return Array.prototype.map.call(list.children, function (r) { return r.read(); })
+            .filter(function (t) { return t.label || t.name; });
+        },
+        set: function (arr) { list.textContent = ''; (arr || []).forEach(addRow); changed(); },
+        isEmpty: function () { return !api_.read().length; },
+      };
+      api_.set(tiers);
+      return api_;
+    }
+    var qtTierEd = tierEditor([]);
+    document.getElementById('qtTiers').appendChild(qtTierEd.el);
+
+    // The tiers on the card, the agreed one marked.
+    function quoteTiersView(q) {
+      var box = el('div', 'qtiers');
+      var hit = false;
+      (q.tiers || []).forEach(function (t) {
+        var on = !!q.accepted_tier && q.accepted_tier === tierTitle(t);
+        if (on) hit = true;
+        var row = el('div', 'qt-row' + (on ? ' on' : ''));
+        var l = el('span');
+        l.appendChild(el('b', null, t.label || t.name));
+        if (t.label && t.name) l.appendChild(el('span', 'qt-n', ' · ' + t.name));
+        if (on) { l.appendChild(document.createTextNode(' ')); l.appendChild(badge('agreed', '#c89830')); }
+        if (t.note) l.appendChild(el('span', 'qt-note', t.note));
+        row.appendChild(l);
+        row.appendChild(el('span', 'qt-p', on ? money(q.accepted_cents) : tierPrice(t)));
+        box.appendChild(row);
+      });
+      // The tier agreed was renamed or dropped since: the record still says what it was.
+      if (q.accepted_tier && !hit) box.appendChild(el('div', 'qt-agreed', 'Agreed: ' + q.accepted_tier + ' at ' + money(q.accepted_cents)));
+      return box;
+    }
+
+    // Tiers firmed up after scoping, and, once it is accepted, the tier and price agreed.
+    function quoteTermsDialog(q) {
+      var accepted = q.status === 'accepted';
+      var body = el('div');
+      var sel, price, rec, recInt;
+      function syncTiers() {
+        if (!sel) return;
+        var cur = sel.value;
+        var tiers = ed.read();
+        sel.textContent = '';
+        var none = el('option', null, 'No tier, just the figure'); none.value = ''; sel.appendChild(none);
+        var usd = function (s) { var n = Number(String(s).replace(/[$,\s]/g, '')); return isFinite(n) ? money(Math.round(n * 100)) : s; };
+        tiers.forEach(function (t, i) {
+          var o = el('option', null, tierTitle(t) + (t.low ? ' (' + (t.high ? usd(t.low) + ' – ' + usd(t.high) : usd(t.low)) + ')' : ''));
+          o.value = String(i); sel.appendChild(o);
+        });
+        if (cur && Number(cur) < tiers.length) sel.value = cur;
+      }
+      var ed = tierEditor(q.tiers || [], syncTiers);
+      body.appendChild(ed.el);
+      // A quote uploaded before tiers were read, or one whose rows were cleared: read
+      // them off the PDF on file. They replace the rows only after a yes when there are
+      // rows already, since those may be figures somebody firmed up by hand.
+      if (q.has_pdf) {
+        var readBtn = el('button', 'qtier-add', 'Read tiers from the PDF');
+        readBtn.type = 'button';
+        readBtn.addEventListener('click', function () {
+          readBtn.disabled = true;
+          readBtn.textContent = 'Reading…';
+          fetch(API + '/admin/quotes/' + q.id + '/pdf', { credentials: 'same-origin' })
+            .then(function (r) { if (!r.ok) throw new Error('pdf'); return r.blob(); })
+            .then(function (b) { return qtReadPdf(new File([b], q.number + '.pdf', { type: 'application/pdf' })); })
+            .then(function (r) {
+              var got = qtTiersOf(pdfLines(r.pages));
+              readBtn.disabled = false;
+              readBtn.textContent = 'Read tiers from the PDF';
+              if (!got.length) return toast('No tiers found in the PDF');
+              if (!ed.isEmpty() && !confirm('Replace the tiers here with the ' + got.length + ' read from the PDF?')) return;
+              ed.set(got);
+              syncTiers();
+              toast('Read ' + got.length + ' tiers. Check them, then Save.');
+            })
+            .catch(function () { readBtn.disabled = false; readBtn.textContent = 'Read tiers from the PDF'; toast('Could not read the PDF'); });
+        });
+        body.appendChild(readBtn);
+      }
+      if (accepted) {
+        body.appendChild(el('h3', 'adlg-sub', 'What was agreed'));
+        var form = el('div', 'adlg-form');
+        var field = function (label, input, cls) { var dv = el('div', cls || null); var l = el('label', null, label); l.htmlFor = input.id; dv.appendChild(l); dv.appendChild(input); form.appendChild(dv); return dv; };
+        sel = el('select'); sel.id = 'qtmTier';
+        field('Tier', sel);
+        price = el('input'); price.id = 'qtmPrice'; price.inputMode = 'decimal'; price.value = q.accepted_cents ? (q.accepted_cents / 100).toFixed(2) : '';
+        field('Agreed price (one-time)', price);
+        var cur = { rec: '', int: 'month' };
+        (q.items || []).forEach(function (i) { if ((i.interval || 'once') !== 'once') { cur.rec = (i.line_cents / 100).toFixed(2); cur.int = i.interval; } });
+        rec = el('input'); rec.id = 'qtmRec'; rec.inputMode = 'decimal'; rec.value = cur.rec; rec.placeholder = 'none';
+        field('Recurring', rec);
+        recInt = el('select'); recInt.id = 'qtmRecInt';
+        [['month', 'per month'], ['quarter', 'per quarter'], ['year', 'per year']].forEach(function (x) { var o = el('option', null, x[1]); o.value = x[0]; recInt.appendChild(o); });
+        recInt.value = cur.int;
+        field('How often', recInt);
+        body.appendChild(form);
+        syncTiers();
+        (q.tiers || []).forEach(function (t, i) { if (q.accepted_tier === tierTitle(t)) sel.value = String(i); });
+        // Picking a firm tier fills in its price; a range leaves the figure to be typed.
+        sel.addEventListener('change', function () {
+          var t = ed.read()[Number(sel.value)];
+          if (sel.value !== '' && t && t.low && !t.high) price.value = t.low;
+        });
+        body.appendChild(el('p', 'adlg-meta', 'Changes the figure the invoice is raised for. The quote history keeps what it was.'));
+      } else {
+        body.appendChild(el('p', 'adlg-meta', 'Firm up a range once the work is scoped by clearing its "up to" figure. The tier and price agreed are set when you mark it accepted.'));
+      }
+      var out = null;
+      return askDialog({ title: (accepted ? 'Agreed terms for ' : 'Tiers on ') + q.number, lead: q.title, body: body, buttons: [
+        { label: 'Cancel', value: null },
+        { label: 'Save', value: true, cls: 'prim', act: function () {
+          var b = { tiers: ed.read() };
+          if (accepted) {
+            b.tier = sel.value;
+            b.amount = price.value.trim();
+            b.recurring = rec.value.trim();
+            b.recurring_interval = recInt.value;
+          }
+          return api('/admin/quotes/' + q.id + '/terms', { method: 'POST', body: b }).then(function (r) {
+            if (!r.ok) return { error: (QUOTE_ERROR[r.error] || 'Could not save') + (r.tier ? ' (' + r.tier + ')' : '') };
+            out = r;
+            toast(accepted ? 'Agreed terms saved' : 'Tiers saved');
+          });
+        } },
+      ] }).then(function (v) { return v ? out : null; });
+    }
+
     function acceptPdfDialog(q) {
       var once = '', rec = '', recInt = 'month';
       (q.items || []).forEach(function (i) {
@@ -8930,8 +9283,25 @@
       field('How', how);
       var who = el('input'); who.id = 'paWho'; who.value = q.contact_name || ''; who.placeholder = 'Name on the signed copy';
       field('Signed by (optional)', who);
+      // A tiered quote is accepted for one tier. A firm tier brings its price; a range
+      // is settled into the figure agreed.
+      var tiers = q.tiers || [];
+      var tierSel = null;
+      if (tiers.length) {
+        tierSel = el('select'); tierSel.id = 'paTier';
+        var none = el('option', null, 'Choose the tier agreed'); none.value = ''; tierSel.appendChild(none);
+        tiers.forEach(function (t, i) { var o = el('option', null, tierTitle(t) + ' (' + tierPrice(t) + ')'); o.value = String(i); tierSel.appendChild(o); });
+        field('Tier agreed', tierSel, 'wide');
+      }
       var o1 = el('input'); o1.id = 'paOnce'; o1.inputMode = 'decimal'; o1.value = once; o1.placeholder = '0.00';
-      field('One-time amount taken', o1);
+      field(tiers.length ? 'Agreed price (one-time)' : 'One-time amount taken', o1);
+      if (tierSel) tierSel.addEventListener('change', function () {
+        var t = tiers[Number(tierSel.value)];
+        if (tierSel.value === '' || !t) return;
+        o1.value = t.high_cents == null ? (t.low_cents / 100).toFixed(2) : '';
+        o1.placeholder = t.high_cents == null ? '0.00' : 'within ' + tierPrice(t);
+        if (t.high_cents != null) o1.focus();
+      });
       var r1 = el('input'); r1.id = 'paRec'; r1.inputMode = 'decimal'; r1.value = rec; r1.placeholder = 'none';
       field('Recurring amount taken', r1);
       var ri = el('select'); ri.id = 'paRecInt';
@@ -8949,10 +9319,12 @@
         { label: 'Mark accepted', value: true, cls: 'prim', act: function () {
           var f = file.files && file.files[0];
           if (f && f.size > 10 * 1024 * 1024) return { error: 'The signed copy is over 10 MB.' };
+          if (tierSel && !tierSel.value) return { error: 'Choose the tier they agreed to.' };
           return api('/admin/quotes/' + q.id + '/accept', { method: 'POST', body: {
             how: how.value, signed_by: who.value.trim(), amount: o1.value.trim(), recurring: r1.value.trim(), recurring_interval: ri.value,
+            tier: tierSel ? tierSel.value : undefined,
           } }).then(function (r) {
-            if (!r.ok) return { error: QUOTE_ERROR[r.error] || 'Could not mark it accepted' };
+            if (!r.ok) return { error: (QUOTE_ERROR[r.error] || 'Could not mark it accepted') + (r.tier ? ' (' + r.tier + ')' : '') };
             out = r;
             if (!f || !holderBase) { toast('Marked accepted'); return; }
             return fileToBase64(f).then(function (b64) {
@@ -8977,6 +9349,8 @@
         var tj = q.totals || JSON.parse(q.totals_json || 'null') || {};
         ['month', 'quarter', 'year'].forEach(function (k) { if (tj[k] && tj[k].low) recur = money(tj[k].low) + ' / ' + k; });
       } catch (e) { /* no totals */ }
+      // Tiers and nothing chosen yet: the span they cover.
+      if (!amt && !recur && q.tiers && q.tiers.length) return tierSpan(q.tiers);
       return [amt ? money(amt) : '', recur].filter(Boolean).join(' + ') || 'no figure';
     }
 
@@ -8999,6 +9373,8 @@
         + (isPdf ? (q.pdf_filename ? ' · ' + q.pdf_filename : ' · no PDF on file') : q.item_count ? ' · ' + q.item_count + (q.item_count === 1 ? ' line' : ' lines') : '')
         + (q.optional_cents ? ' · ' + money(q.optional_cents) + ' optional' : '')));
       d.appendChild(quoteStatusLine(q));
+      if (q.tiers && q.tiers.length) d.appendChild(quoteTiersView(q));
+      else if (q.accepted_tier) d.appendChild(el('div', 'inv-meta', 'Agreed: ' + q.accepted_tier));
       var acts = el('div', 'inv-actions');
       function qact(label, cls, fn) { var b = el('button', cls || null, label); b.type = 'button'; b.addEventListener('click', fn); acts.appendChild(b); return b; }
       var open = q.status === 'sent' || q.status === 'viewed';
@@ -9017,6 +9393,8 @@
       if (isPdf) {
         qact('Open PDF', null, function () { window.open(API + '/admin/quotes/' + q.id + '/pdf', '_blank', 'noopener'); });
         if (q.status === 'draft' || open || q.status === 'expired') qact('Replace PDF', null, function () { replaceQuotePdf(q, reload); });
+        if (q.status === 'accepted') qact('Agreed terms', null, function () { quoteTermsDialog(q).then(function (r) { if (r) reload(); }); });
+        else if (q.status === 'draft' || open || q.status === 'expired') qact(q.tiers && q.tiers.length ? 'Tiers' : 'Add tiers', null, function () { quoteTermsDialog(q).then(function (r) { if (r) reload(); }); });
       }
       if (open || q.status === 'draft') {
         qact('Copy link', null, function () {
@@ -9320,6 +9698,8 @@
       else if (q.expired) when.push('Expired ' + fmtDate(q.valid_until));
       else if (q.valid_until) when.push('Valid until ' + fmtDate(q.valid_until));
       if (q.status === 'converted' && q.invoice_number) when.push('Invoice ' + q.invoice_number);
+      if (q.accepted_tier) when.push(q.accepted_tier);
+      else if (q.tiers && q.tiers.length) when.push(q.tiers.length + ' tiers');
       return docRow({
         chip: q.source === 'pdf' ? 'PDF' : '',
         number: q.number, what: q.title, sub: when.join(' · '),
