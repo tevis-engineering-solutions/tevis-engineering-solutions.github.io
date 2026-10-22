@@ -484,13 +484,6 @@
     .invfind { max-width:1100px; margin:0 auto 0.6rem; padding:0 1rem; }
     .invfind input { width:100%; padding:0.55rem 0.75rem; border-radius:8px; border:1px solid var(--line); background:var(--card); color:var(--text); font-family:inherit; font-size:0.88rem; }
     .invfind input:focus { outline:none; border-color:var(--green); }
-    .inv-group { margin-bottom:0.9rem; }
-    .inv-group-h { display:flex; justify-content:space-between; align-items:baseline; gap:0.6rem; flex-wrap:wrap; padding:0.35rem 0.25rem 0.4rem; border-bottom:1px solid var(--line); margin-bottom:0.45rem; }
-    .inv-group-h h3 { font-family:"Montserrat",sans-serif; font-size:0.88rem; font-weight:800; word-break:break-word; }
-    .inv-group-h .g-sub { font-size:0.72rem; color:var(--muted); word-break:break-word; }
-    .inv-group-h .g-tot { font-family:"Montserrat",sans-serif; font-size:0.74rem; color:var(--muted); white-space:nowrap; }
-    .inv-group-h .g-tot b { color:var(--gold); font-weight:800; }
-    .inv-group-h .g-tot .late { color:#ef4444; }
     .inv.late { border-color:rgba(239,68,68,0.5); }
     .inv-meta .sent { color:#9fd3ae; }
     .inv-meta .nopdf { color:#e0c98a; }
@@ -512,10 +505,46 @@
     .notes-ed textarea:focus { outline:none; border-color:var(--green); }
     .notes-ed .reply-row { margin-top:0.5rem; }
     .worklog-add input[type="file"] { flex:1 1 100%; }
-    /* A group header on the Invoices tab opens the customer's file. */
-    .g-open { all:unset; cursor:pointer; display:block; }
-    .g-open:hover h3, .g-open:focus-visible h3 { color:var(--gold); }
-    .g-open h3::after { content:" \2197"; font-size:0.7em; color:var(--muted); }
+    /* Invoices and quotes: a customer folds open to its rows; a row opens the full card over the list. */
+    .dg { border:1px solid var(--line); border-radius:12px; background:var(--card); margin-bottom:0.5rem; overflow:hidden; }
+    .dg.on { border-color:rgba(74,172,101,0.45); }
+    .dg-hrow { display:flex; align-items:stretch; }
+    .dg-h { all:unset; box-sizing:border-box; flex:1 1 auto; min-width:0; display:flex; align-items:center; gap:0.7rem; padding:0.75rem 0.9rem; cursor:pointer; }
+    .dg-h:hover h3, .dg-h:focus-visible h3 { color:var(--gold); }
+    .dg-h:focus-visible { outline:2px solid var(--green); outline-offset:-2px; border-radius:12px; }
+    .dg-chev { color:var(--muted); font-size:0.75rem; width:0.8rem; flex:none; transition:transform .15s; }
+    .dg.on .dg-chev { transform:rotate(90deg); }
+    .dg-who { flex:1 1 auto; min-width:0; }
+    .dg-who h3 { font-family:"Montserrat",sans-serif; font-size:0.88rem; font-weight:800; word-break:break-word; }
+    .dg-who .g-sub { font-size:0.72rem; color:var(--muted); word-break:break-word; }
+    .dg .g-tot { font-family:"Montserrat",sans-serif; font-size:0.74rem; color:var(--muted); text-align:right; flex:none; }
+    .dg .g-tot b { color:var(--gold); font-weight:800; }
+    .dg .g-tot .late { color:#ef4444; }
+    .dg-file { flex:none; width:44px; border:0; border-left:1px solid var(--line); background:transparent; color:var(--muted); cursor:pointer; font-size:0.8rem; }
+    .dg-file:hover, .dg-file:focus-visible { color:var(--gold); background:rgba(200,152,48,0.06); outline:none; }
+    .dg-body { border-top:1px solid var(--line); padding:0.35rem; }
+    .dg-body[hidden] { display:none; }
+    .dg-row { all:unset; box-sizing:border-box; width:100%; display:flex; align-items:center; gap:0.6rem; padding:0.55rem 0.6rem; border-radius:8px; cursor:pointer; }
+    .dg-row + .dg-row { border-top:1px solid rgba(44,66,50,0.7); }
+    .dg-row:hover, .dg-row:focus-visible { background:rgba(74,172,101,0.1); outline:none; }
+    .dg-row.late .dg-num { color:#ef8585; }
+    .dg-row.archived { opacity:0.7; }
+    .dg-l { flex:1 1 auto; min-width:0; }
+    .dg-num { font-family:"Montserrat",sans-serif; font-weight:800; font-size:0.8rem; word-break:break-word; }
+    .dg-num .dg-what { font-weight:600; color:var(--text); }
+    .dg-sub { font-size:0.72rem; color:var(--muted); margin-top:0.15rem; word-break:break-word; }
+    .dg-r { flex:none; display:flex; align-items:center; gap:0.35rem; flex-wrap:wrap; justify-content:flex-end; }
+    .dg-r .inv-amt { font-size:0.88rem; min-width:5.5rem; text-align:right; }
+    .dg-r .fa-chevron-right { color:var(--muted); font-size:0.65rem; margin-left:0.15rem; }
+    @media (max-width:560px) {
+      .dg-h { flex-wrap:wrap; }
+      .dg .g-tot { flex-basis:100%; text-align:left; padding-left:1.5rem; }
+      .dg-row { flex-wrap:wrap; }
+      .dg-r { flex-basis:100%; justify-content:flex-start; }
+      .dg-r .inv-amt { min-width:0; text-align:left; margin-left:auto; }
+    }
+    #docDetail { padding:0.9rem; }
+    #docDetail > .inv { border:0; background:transparent; padding:0; margin:0; }
     /* ---- customers ---- */
     .custfind { border:1px solid var(--line); border-radius:14px; background:var(--card); padding:1rem; margin-bottom:1rem; }
     .custfind label { display:block; font-size:0.68rem; text-transform:uppercase; letter-spacing:0.05em; color:var(--muted); font-weight:700; margin-bottom:0.2rem; }
@@ -585,7 +614,7 @@
     .cu-modal[hidden] { display:none; }
     .cu-modal-box { width:100%; max-width:860px; background:var(--bg); border:1px solid var(--line); border-radius:16px; box-shadow:0 24px 60px rgba(0,0,0,0.55); margin-bottom:4vh; }
     .cu-modal-bar { position:sticky; top:0; z-index:2; display:flex; align-items:center; justify-content:space-between; gap:0.6rem; padding:0.55rem 0.6rem 0.55rem 1rem; background:var(--card); border-bottom:1px solid var(--line); border-radius:16px 16px 0 0; }
-    #custModalTitle, #tkModalTitle { font-family:"Montserrat",sans-serif; font-size:0.7rem; font-weight:800; text-transform:uppercase; letter-spacing:0.06em; color:var(--muted); }
+    #custModalTitle, #tkModalTitle, #docModalTitle { font-family:"Montserrat",sans-serif; font-size:0.7rem; font-weight:800; text-transform:uppercase; letter-spacing:0.06em; color:var(--muted); }
     .cu-modal-x { width:40px; height:40px; border-radius:999px; border:1px solid var(--line); background:var(--bg); color:var(--text); cursor:pointer; font-size:1rem; display:inline-flex; align-items:center; justify-content:center; }
     .cu-modal-x:hover { border-color:var(--gold); color:var(--gold); }
     #custDetail, #tkModal #detail { padding:0.9rem; }
@@ -2986,6 +3015,17 @@
       </div>
       <div id="quoteList"><div class="state">Loading quotes&hellip;</div></div>
     </section>
+
+    <!-- An invoice or a quote opens over the list, with every action its card has. -->
+    <div class="cu-modal" id="docModal" hidden>
+      <div class="cu-modal-box" role="dialog" aria-modal="true" aria-labelledby="docModalTitle">
+        <div class="cu-modal-bar">
+          <span id="docModalTitle">Invoice</span>
+          <button type="button" class="cu-modal-x" id="docModalX" aria-label="Close"><i class="fa-solid fa-xmark" aria-hidden="true"></i></button>
+        </div>
+        <section id="docDetail" aria-live="polite"></section>
+      </div>
+    </div>
 
   </main>
 
@@ -6485,32 +6525,162 @@
 
         order.forEach(function (k) {
           var g = groups[k];
-          var wrap = el('div', 'inv-group');
-          var h = el('div', 'inv-group-h');
-          // The header is the way into the customer's file. An account id opens the
-          // dossier directly; an unlinked address opens the Customers tab searched for it.
-          var left = el('button', 'g-open');
-          left.type = 'button';
-          left.setAttribute('aria-label', 'Open the customer file for ' + g.name);
-          left.appendChild(el('h3', null, g.name));
-          if (g.email && g.email !== g.name) left.appendChild(el('div', 'g-sub', g.email));
-          left.addEventListener('click', function () {
-            showView('customers');
-            if (/^email:/.test(k)) { custMode = 'people'; syncMode(); custQEl.value = g.email; loadCustomers(g.email); }
-            else { custMode = 'people'; syncMode(); openCustomer(k); }
-          });
-          h.appendChild(left);
           var tot = el('div', 'g-tot');
           tot.appendChild(document.createTextNode(g.rows.length + (g.rows.length === 1 ? ' invoice' : ' invoices')));
           if (g.owed) { tot.appendChild(document.createTextNode(' · ')); tot.appendChild(el('b', null, money(g.owed) + ' owed')); }
           if (g.late) { tot.appendChild(document.createTextNode(' · ')); tot.appendChild(el('b', 'late', g.late + ' overdue')); }
-          h.appendChild(tot);
-          wrap.appendChild(h);
-          g.rows.forEach(function (v) { wrap.appendChild(invCard(v)); });
-          invListEl.appendChild(wrap);
+          // A search or a lone customer is already narrowed down, so it opens itself.
+          invListEl.appendChild(docGroup('inv', k, {
+            name: g.name, sub: g.email && g.email !== g.name ? g.email : '', tot: tot,
+            open: !!invSearch || order.length === 1,
+            rows: g.rows.map(invRow),
+            // An account id opens the dossier directly; an unlinked address opens the
+            // Customers tab searched for it.
+            file: function () {
+              showView('customers');
+              if (/^email:/.test(k)) { custMode = 'people'; syncMode(); custQEl.value = g.email; loadCustomers(g.email); }
+              else { custMode = 'people'; syncMode(); openCustomer(k); }
+            },
+          }));
         });
+        return list;
+      }).then(function (list) {
+        // An open card is redrawn from the fresh row, so what an action changed shows in
+        // place. One that has left this view (paid on Open, deleted) closes.
+        if (!docOpen || docOpen.kind !== 'inv') return list;
+        var v = (list || []).filter(function (x) { return x.id === docOpen.id; })[0];
+        if (v) openInvoiceDetail(v); else docModalClose(true);
+        return list;
       });
     }
+
+    // ---- invoices and quotes: a list of customers, each folding open ----
+    // Each customer is one line; opening it lists their invoices or quotes as rows,
+    // and a row opens the full card (every action it ever had) over the list. Which
+    // customers are open survives a reload, so an action does not fold the list up.
+    var docOpenGroups = { inv: {}, quote: {} };
+    function docGroup(kind, key, o) {
+      var isOpen = !!(o.open || docOpenGroups[kind][key]);
+      var wrap = el('div', 'dg' + (isOpen ? ' on' : ''));
+      var hrow = el('div', 'dg-hrow');
+      var h = el('button', 'dg-h');
+      h.type = 'button';
+      h.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+      h.appendChild(el('i', 'fa-solid fa-chevron-right dg-chev'));
+      var who = el('div', 'dg-who');
+      who.appendChild(el('h3', null, o.name));
+      if (o.sub) who.appendChild(el('div', 'g-sub', o.sub));
+      h.appendChild(who);
+      h.appendChild(o.tot);
+      hrow.appendChild(h);
+      if (o.file) {
+        var f = el('button', 'dg-file');
+        f.type = 'button';
+        f.title = 'Open the customer file';
+        f.setAttribute('aria-label', 'Open the customer file for ' + o.name);
+        f.appendChild(el('i', 'fa-solid fa-arrow-up-right-from-square'));
+        f.addEventListener('click', o.file);
+        hrow.appendChild(f);
+      }
+      wrap.appendChild(hrow);
+      var body = el('div', 'dg-body');
+      body.hidden = !isOpen;
+      o.rows.forEach(function (r) { body.appendChild(r); });
+      wrap.appendChild(body);
+      h.addEventListener('click', function () {
+        var on = body.hidden;
+        body.hidden = !on;
+        wrap.classList.toggle('on', on);
+        h.setAttribute('aria-expanded', on ? 'true' : 'false');
+        if (on) docOpenGroups[kind][key] = true; else delete docOpenGroups[kind][key];
+      });
+      return wrap;
+    }
+    /** One row in an open customer: the number and what it is, its dates, its status and figure. */
+    function docRow(o) {
+      var b = el('button', 'dg-row' + (o.cls ? ' ' + o.cls : ''));
+      b.type = 'button';
+      var l = el('span', 'dg-l');
+      var n = el('span', 'dg-num');
+      if (o.chip) n.appendChild(el('span', 'q-pdf-chip', o.chip));
+      n.appendChild(document.createTextNode(o.number));
+      if (o.what) n.appendChild(el('span', 'dg-what', ' · ' + o.what));
+      l.appendChild(n);
+      if (o.sub) l.appendChild(el('div', 'dg-sub', o.sub));
+      b.appendChild(l);
+      var r = el('span', 'dg-r');
+      o.badges.forEach(function (x) { r.appendChild(x); });
+      r.appendChild(el('span', 'inv-amt', o.amount));
+      r.appendChild(el('i', 'fa-solid fa-chevron-right'));
+      b.appendChild(r);
+      b.addEventListener('click', o.open);
+      return b;
+    }
+    function invRow(v) {
+      var badges = [];
+      if (v.overdue) badges.push(badge('overdue', '#ef4444'));
+      if (v.archived) badges.push(badge('archived', '#6a8ba8'));
+      badges.push(badge(v.status, STATUS_COLOR[v.status] || '#8aa48d'));
+      var when = [];
+      if (v.issued_at) when.push('Issued ' + fmtDate(v.issued_at));
+      if (v.due_at && v.status !== 'paid') when.push((v.overdue ? 'Was due ' : 'Due ') + fmtDate(v.due_at));
+      if (v.paid_at) when.push('Paid ' + fmtDate(v.paid_at));
+      if (v.status === 'pending') when.push('payment reported, confirm it');
+      if (v.internal_notes) when.push('has a note');
+      return docRow({
+        cls: (v.overdue ? 'late' : '') + (v.archived ? ' archived' : ''),
+        number: v.number, what: v.service, sub: when.join(' · '),
+        badges: badges, amount: money(v.amount_cents),
+        open: function () { openInvoiceDetail(v); },
+      });
+    }
+
+    // The card over the list. One holder for both kinds; docOpen says which is showing
+    // so a reload of that list can redraw it.
+    var docModalEl = document.getElementById('docModal');
+    var docDetailEl = document.getElementById('docDetail');
+    var docOpen = null;
+    var docModalFocus = null;
+    function docModalShow(kind, id, title, card, hash) {
+      docOpen = { kind: kind, id: id };
+      docDetailEl.textContent = '';
+      docDetailEl.appendChild(card);
+      document.getElementById('docModalTitle').textContent = title;
+      if (docModalEl.hidden) {
+        docModalFocus = document.activeElement;
+        docModalEl.hidden = false;
+        document.body.classList.add('cu-locked');
+        document.getElementById('docModalX').focus();
+        docModalEl.querySelector('.cu-modal-box').scrollTop = 0;
+      }
+      if (location.hash !== hash) history.replaceState(null, '', hash);
+    }
+    function openInvoiceDetail(v) {
+      docModalShow('inv', v.id, 'Invoice ' + v.number, invCard(v), '#inv=' + encodeURIComponent(v.number));
+    }
+    function openQuoteDetail(q) {
+      docModalShow('quote', q.id, (q.doc_type === 'estimate' ? 'Estimate ' : q.doc_type === 'sow' ? 'Statement of Work ' : 'Quote ') + q.number,
+        quoteCard(q), '#q=' + q.id);
+    }
+    function docModalClose(quiet) {
+      if (docModalEl.hidden) return;
+      docModalEl.hidden = true;
+      document.body.classList.remove('cu-locked');
+      docDetailEl.textContent = '';
+      docOpen = null;
+      if (/^#(inv|q)=/.test(location.hash)) history.replaceState(null, '', '#invoices');
+      if (!quiet && docModalFocus && docModalFocus.focus && document.contains(docModalFocus)) docModalFocus.focus();
+      docModalFocus = null;
+    }
+    document.getElementById('docModalX').addEventListener('click', function () { docModalClose(); });
+    docModalEl.addEventListener('click', function (e) { if (e.target === docModalEl) docModalClose(); });
+    document.addEventListener('keydown', function (e) {
+      if (e.key !== 'Escape' || docModalEl.hidden) return;
+      // A dialog asked from inside the card closes itself first.
+      if (document.querySelector('dialog[open]')) return;
+      if (typeof cmdk !== 'undefined' && cmdk && !cmdk.hidden) return;
+      docModalClose();
+    });
 
     document.getElementById('invFilters').addEventListener('click', function (e) {
       var b = e.target.closest('.fpill');
@@ -6538,7 +6708,11 @@
       });
       invSearch = number;
       invQEl.value = number;
-      loadInvoices().then(function () { invListEl.scrollIntoView({ behavior: 'smooth', block: 'start' }); });
+      loadInvoices().then(function (list) {
+        var v = (list || []).filter(function (x) { return x.number === number; })[0];
+        if (v) openInvoiceDetail(v);
+        else invListEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      });
     }
 
     // ---- agreements: terms, the meter, billing (Phase 4) ------------------
@@ -8789,6 +8963,23 @@
       ] }).then(function (v) { return v ? out : null; });
     }
 
+    /** The one-time figure a quote is worth now: what was taken once accepted, the total before. */
+    function quoteAmountCents(q) {
+      return q.status === 'accepted' || q.status === 'converted' ? q.accepted_cents : q.total_cents;
+    }
+    // An uploaded quote can have no figure yet, or only a recurring one; it shows what
+    // it has rather than $0.00.
+    function quoteAmountText(q) {
+      var amt = quoteAmountCents(q);
+      if (q.source !== 'pdf') return money(amt);
+      var recur = '';
+      try {
+        var tj = q.totals || JSON.parse(q.totals_json || 'null') || {};
+        ['month', 'quarter', 'year'].forEach(function (k) { if (tj[k] && tj[k].low) recur = money(tj[k].low) + ' / ' + k; });
+      } catch (e) { /* no totals */ }
+      return [amt ? money(amt) : '', recur].filter(Boolean).join(' + ') || 'no figure';
+    }
+
     function quoteCard(q, onChange) {
       var reload = onChange || loadQuotes;
       var d = el('div', 'inv quote-' + q.status);
@@ -8801,17 +8992,7 @@
       var right = el('span');
       right.appendChild(badge(q.status === 'viewed' ? 'opened' : q.status, QUOTE_COLOR[q.status] || '#8aa48d'));
       right.appendChild(document.createTextNode(' '));
-      var amt = q.status === 'accepted' || q.status === 'converted' ? q.accepted_cents : q.total_cents;
-      // An uploaded quote can have no figure yet, or only a recurring one; it shows what
-      // it has rather than $0.00.
-      var recur = '';
-      if (isPdf) {
-        try {
-          var tj = q.totals || JSON.parse(q.totals_json || 'null') || {};
-          ['month', 'quarter', 'year'].forEach(function (k) { if (tj[k] && tj[k].low) recur = money(tj[k].low) + ' / ' + k; });
-        } catch (e) { /* no totals */ }
-      }
-      right.appendChild(el('span', 'inv-amt', isPdf ? ([amt ? money(amt) : '', recur].filter(Boolean).join(' + ') || 'no figure') : money(amt)));
+      right.appendChild(el('span', 'inv-amt', quoteAmountText(q)));
       top.appendChild(right);
       d.appendChild(top);
       d.appendChild(el('div', 'inv-meta', [q.contact_name, q.company, q.email].filter(Boolean).join(' · ')
@@ -9082,7 +9263,69 @@
         if (!r.ok) { quoteListEl.appendChild(el('div', 'state', 'Could not load quotes.')); return; }
         var list = r.quotes || [];
         if (!list.length) { quoteListEl.appendChild(el('div', 'state', quoteView === 'open' ? 'No open quotes. Start one with + New quote.' : 'Nothing here.')); return; }
-        list.forEach(function (q) { quoteListEl.appendChild(quoteCard(q)); });
+
+        // One group per company (or person, when there is no company), alphabetical;
+        // the rows inside keep the server's order.
+        var groups = {};
+        var order = [];
+        list.forEach(function (q) {
+          var k = q.org_id ? 'org:' + q.org_id
+            : q.company ? 'co:' + q.company.trim().toLowerCase()
+            : q.account_id ? 'acct:' + q.account_id
+            : 'email:' + String(q.email || '').toLowerCase();
+          if (!groups[k]) {
+            groups[k] = { name: q.company || q.contact_name || q.email || 'No customer', sub: [], rows: [], cents: 0 };
+            order.push(k);
+          }
+          var g = groups[k];
+          g.rows.push(q);
+          g.cents += quoteAmountCents(q) || 0;
+          [q.company ? q.contact_name : '', q.email].forEach(function (s) { if (s && s !== g.name && g.sub.indexOf(s) < 0) g.sub.push(s); });
+        });
+        order.sort(function (a, b) { return groups[a].name.localeCompare(groups[b].name, undefined, { sensitivity: 'base' }); });
+
+        order.forEach(function (k) {
+          var g = groups[k];
+          var tot = el('div', 'g-tot');
+          tot.appendChild(document.createTextNode(g.rows.length + (g.rows.length === 1 ? ' quote' : ' quotes')));
+          if (g.cents) { tot.appendChild(document.createTextNode(' · ')); tot.appendChild(el('b', null, money(g.cents))); }
+          quoteListEl.appendChild(docGroup('quote', k, {
+            name: g.name, sub: g.sub.join(' · '), tot: tot,
+            open: order.length === 1,
+            rows: g.rows.map(quoteRow),
+          }));
+        });
+        return list;
+      }).then(function (list) {
+        // As with invoices, an open card is redrawn. A quote that left this view is
+        // fetched on its own rather than closed: accepting one moves it to Accepted,
+        // and the next step (convert, start a project) is on the same card.
+        if (!docOpen || docOpen.kind !== 'quote') return list;
+        var id = docOpen.id;
+        var q = (list || []).filter(function (x) { return x.id === id; })[0];
+        if (q) { openQuoteDetail(q); return list; }
+        return api('/admin/quotes/' + id).then(function (r) {
+          if (!docOpen || docOpen.id !== id) return;
+          if (r.ok && r.quote) openQuoteDetail(r.quote); else docModalClose(true);
+        }).then(function () { return list; });
+      });
+    }
+    function quoteRow(q) {
+      var when = [];
+      if (q.status === 'draft') when.push('Draft, not sent');
+      else if (q.sent_at) when.push((q.sent_via === 'manual' ? 'Sent from your mailbox ' : 'Sent ') + fmtDate(q.sent_at));
+      if (q.viewed_at) when.push('Opened ' + fmtDate(q.viewed_at));
+      if (q.status === 'accepted' || q.status === 'converted') when.push('Accepted ' + fmtDate(q.decided_at));
+      else if (q.status === 'declined') when.push('Declined ' + fmtDate(q.decided_at));
+      else if (q.expired) when.push('Expired ' + fmtDate(q.valid_until));
+      else if (q.valid_until) when.push('Valid until ' + fmtDate(q.valid_until));
+      if (q.status === 'converted' && q.invoice_number) when.push('Invoice ' + q.invoice_number);
+      return docRow({
+        chip: q.source === 'pdf' ? 'PDF' : '',
+        number: q.number, what: q.title, sub: when.join(' · '),
+        badges: [badge(q.status === 'viewed' ? 'opened' : q.status, QUOTE_COLOR[q.status] || '#8aa48d')],
+        amount: quoteAmountText(q),
+        open: function () { openQuoteDetail(q); },
       });
     }
     document.getElementById('quoteFilters').addEventListener('click', function (e) {
@@ -9097,15 +9340,10 @@
       history.replaceState(null, '', '#q=' + id);
       quoteView = 'all';
       Array.prototype.forEach.call(document.querySelectorAll('#quoteFilters .fpill'), function (x) { x.classList.toggle('on', x.getAttribute('data-view') === 'all'); });
-      loadQuotes().then(function () {
-        api('/admin/quotes/' + id).then(function (r) {
-          if (!r.ok) return;
-          quoteListEl.textContent = '';
-          quoteListEl.appendChild(quoteCard(r.quote, function () { showQuote(id); }));
-          var back = licAction('Show all quotes', null, function () { loadQuotes(); });
-          quoteListEl.appendChild(back);
-          quoteListEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
-        });
+      loadQuotes().then(function (list) {
+        var q = (list || []).filter(function (x) { return x.id === id; })[0];
+        if (q) return openQuoteDetail(q);
+        api('/admin/quotes/' + id).then(function (r) { if (r.ok) openQuoteDetail(r.quote); });
       });
     }
 
@@ -27553,6 +27791,8 @@
       if (which !== 'tickets' && !tkModalEl.hidden) tkModalClose(true);
       if (which !== 'inventory' && typeof invtModalEl !== 'undefined' && !invtModalEl.hidden) invtModalClose(true);
       if (which !== 'customers' && !custModal.hidden) custModalClose();
+      // Always, even staying on Invoices: Edit and Duplicate open the quote form under it.
+      if (typeof docModalEl !== 'undefined' && !docModalEl.hidden) docModalClose(true);
       // Leaving Contracting with a bid half edited asks first; staying puts the hash back.
       if (which !== 'contracting' && !document.getElementById('viewContracting').hidden && !ctLeaveOk()) {
         if (ctBidId) history.replaceState(null, '', '#b=' + ctBidId);
