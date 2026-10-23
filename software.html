@@ -326,11 +326,12 @@
         </div>
       </div>
         <div class="sw-spot-vis">
-          <div class="sw-spot-top"><span><i class="fa-solid fa-fire-flame-simple" aria-hidden="true"></i> Lakeside Comfort &middot; 7:45 PM</span><span class="sw-spot-tag">After hours</span></div>
-          <p class="sw-spot-bub c">I noticed a strong gas smell near my furnace and I&rsquo;m worried about safety.</p>
-          <p class="sw-spot-bub a">If you smell gas, or a carbon monoxide alarm is sounding, you should leave the house immediately and call 911&hellip;</p>
-          <button class="spot-play" type="button" data-src="assets/receptionist/reel-safety.mp3" data-seconds="22" aria-label="Play a sample call: a gas leak reported after hours"><span class="pb"><i class="fa-solid fa-play" aria-hidden="true"></i></span><span class="lbl">Hear it answer</span><span class="bar"><i></i></span><span class="t">0:22</span></button>
-          <p class="sw-spot-note">A sample call to a fictional heating company</p>
+          <div class="sw-spot-top"><span><i class="fa-solid fa-tooth" aria-hidden="true"></i> Maple Ridge Dental &middot; 10:00 AM</span><span class="sw-spot-tag">Booked</span></div>
+          <p class="sw-spot-bub c">When is the earliest available appointment?</p>
+          <p class="sw-spot-bub a">Here are the earliest available times: tomorrow, Wednesday, at 10:00 AM, or at 11:00 AM, or at 11:30 AM. Which one works best for you?</p>
+          <p class="sw-spot-bub c">I&rsquo;ll take the 10:00 AM appointment tomorrow, please.</p>
+          <button class="spot-play" type="button" data-src="assets/receptionist/reel-booking.mp3" data-seconds="19" aria-label="Play a sample call: a new patient books a dental appointment"><span class="pb"><i class="fa-solid fa-play" aria-hidden="true"></i></span><span class="lbl">Hear it answer</span><span class="bar"><i></i></span><span class="t">0:19</span></button>
+          <p class="sw-spot-note">A sample call to a fictional dental office</p>
         </div>
     </section>
 
@@ -608,7 +609,7 @@ window.addEventListener('load', function(){ setTimeout(tesLoadChat, 4000); });
       } else a.pause();
     });
     a.addEventListener('play', function () { icon.className = 'fa-solid fa-pause'; b.setAttribute('aria-label', 'Pause the sample call'); });
-    a.addEventListener('pause', function () { icon.className = 'fa-solid fa-play'; b.setAttribute('aria-label', 'Play a sample call: a gas leak reported after hours'); });
+    a.addEventListener('pause', function () { icon.className = 'fa-solid fa-play'; b.setAttribute('aria-label', 'Play a sample call: a new patient books a dental appointment'); });
     a.addEventListener('timeupdate', function () {
       var d = isFinite(a.duration) && a.duration > 0 ? a.duration : total;
       bar.style.width = (d ? a.currentTime / d * 100 : 0) + '%';
