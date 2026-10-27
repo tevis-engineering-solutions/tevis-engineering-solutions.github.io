@@ -130,6 +130,45 @@
     @media (max-width:760px) { .gallery { grid-template-columns:1fr; } }
     .film-wrap { max-width:940px; margin:0 auto; }
     .film video { aspect-ratio:16/9; background:#0b120d; }
+    /* the film player: the AI Receptionist page's gold edge and ringed play button */
+    @property --cf-a { syntax:'<angle>'; inherits:false; initial-value:0deg; }
+    .film-edge { position:relative; border-radius:22px; padding:2px; background:linear-gradient(135deg, rgba(200,152,48,0.6), rgba(74,172,101,0.3) 45%, rgba(200,152,48,0.6)); box-shadow:0 44px 110px rgba(0,0,0,0.6), 0 0 140px rgba(200,152,48,0.16); transition:transform .35s ease, box-shadow .35s ease; }
+    .film-edge::before { content:""; position:absolute; inset:0; border-radius:inherit; padding:2px; z-index:2; pointer-events:none;
+      background:conic-gradient(from var(--cf-a), transparent 0 58%, #f0c75a 74%, #6dc882 86%, transparent 100%);
+      -webkit-mask:linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0); -webkit-mask-composite:xor; mask-composite:exclude;
+      animation:cfEdge 5s linear infinite; }
+    @keyframes cfEdge { to { --cf-a:360deg; } }
+    .film:not(.is-started) .film-edge:hover { transform:translateY(-3px); box-shadow:0 52px 120px rgba(0,0,0,0.62), 0 0 160px rgba(200,152,48,0.26); }
+    .film.is-started .film-edge::before { animation-play-state:paused; opacity:0.45; }
+    .film-frame { position:relative; border-radius:20px; overflow:hidden; background:#060e08; aspect-ratio:16/9; }
+    .film-frame video { display:block; width:100%; height:100%; object-fit:cover; background:#060e08; }
+    .film-play { position:absolute; inset:0; z-index:1; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:1rem; padding:0 1rem 11%; border:0; cursor:pointer; color:#fff; font:inherit; background:radial-gradient(46% 52% at 50% 42%, rgba(4,10,6,0.66), rgba(4,10,6,0.28) 62%, rgba(4,10,6,0) 100%); transition:background .3s ease; }
+    .film-play:hover { background:radial-gradient(46% 52% at 50% 42%, rgba(4,10,6,0.5), rgba(4,10,6,0.16) 62%, rgba(4,10,6,0) 100%); }
+    .film-play:focus-visible { outline:3px solid #fff; outline-offset:-8px; }
+    .film-btn { position:relative; width:108px; height:108px; flex:0 0 auto; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:2.2rem; color:#0d1710; background:linear-gradient(135deg,#c89830,#e0b840); box-shadow:0 18px 46px rgba(0,0,0,0.55); transition:transform .25s ease; }
+    .film-btn i { margin-left:7px; }
+    .film-btn::before, .film-btn::after { content:""; position:absolute; inset:0; border-radius:50%; border:2px solid rgba(224,184,64,0.75); animation:cfRing 2.4s ease-out infinite; }
+    .film-btn::after { animation-delay:1.2s; }
+    @keyframes cfRing { to { transform:scale(1.8); opacity:0; } }
+    .film-play:hover .film-btn { transform:scale(1.08); }
+    .film-cta { display:flex; flex-direction:column; align-items:center; gap:0.15rem; padding:0.6rem 1.3rem 0.65rem; border-radius:999px; background:rgba(6,14,8,0.78); border:1px solid rgba(200,152,48,0.5); }
+    .film-cta b { font:800 0.98rem/1.15 "Montserrat",sans-serif; text-transform:uppercase; letter-spacing:0.1em; color:#fff; }
+    .film-cta small { display:flex; align-items:center; gap:0.4rem; font:500 0.8rem/1.2 "Inter",sans-serif; color:#cfe0d2; }
+    .film-cta small i { color:var(--gold); }
+    .film.is-started .film-play { display:none; }
+    .film figcaption { margin-top:1.1rem; }
+    @media (max-width:980px) { .film-btn { width:88px; height:88px; font-size:1.85rem; } }
+    @media (max-width:640px) {
+      .film-edge { border-radius:18px; }
+      .film-frame { border-radius:16px; }
+      .film-play { gap:0.55rem; padding-bottom:9%; }
+      .film-btn { width:62px; height:62px; font-size:1.35rem; }
+      .film-btn i { margin-left:4px; }
+      .film-cta { padding:0.32rem 0.8rem 0.36rem; }
+      .film-cta b { font-size:0.7rem; letter-spacing:0.08em; }
+      .film-cta small { display:none; }
+    }
+    @media (prefers-reduced-motion: reduce) { .film-edge::before, .film-btn::before, .film-btn::after { animation:none !important; } }
 
     /* ---- feature cards ---- */
     .features { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:1rem; }
@@ -418,12 +457,12 @@
   {
     "@context": "https://schema.org",
     "@type": "VideoObject",
-    "name": "Ohio Crash Report Analysis Tool in 60 seconds",
-    "description": "A real scan with the Ohio Crash Report Analysis Tool: picking counties, clearing the state portal's CAPTCHA, AI reading each OH-1 report, and working the leads on the dashboard. Personal data is redacted.",
-    "thumbnailUrl": "https://tevisengineering.com/assets/crash/ohio-crash-tool-film-poster.jpg",
-    "contentUrl": "https://tevisengineering.com/assets/crash/ohio-crash-tool-film.mp4",
-    "uploadDate": "2026-10-11",
-    "duration": "PT59S",
+    "name": "Ohio Crash Report Analysis Tool in one minute",
+    "description": "A real scan with the Ohio Crash Report Analysis Tool: picking counties, clearing the state portal's CAPTCHA, AI reading each OH-1 report, working the leads on the dashboard, and adding phones and emails through People Data Labs. Personal data is redacted.",
+    "thumbnailUrl": "https://tevisengineering.com/assets/crash/ohio-crash-tool-film-poster-v2.jpg",
+    "contentUrl": "https://tevisengineering.com/assets/crash/ohio-crash-tool-film-v2.mp4",
+    "uploadDate": "2026-10-27",
+    "duration": "PT1M5S",
     "publisher": { "@type": "Organization", "name": "Tevis Engineering Solutions", "url": "https://tevisengineering.com" }
   }
   </script>
@@ -588,19 +627,25 @@
 
     <section class="sec" id="film">
       <div class="sec-head center">
-        <span class="kicker">60-second film</span>
+        <span class="kicker">One-minute film</span>
         <h2>See a real scan from start to finish</h2>
-        <p class="lead">Pick counties, clear one CAPTCHA, let the AI read the reports, then work the leads on the dashboard.</p>
+        <p class="lead">Pick counties, clear one CAPTCHA, let the AI read the reports, then work the leads on the dashboard and add their phones and emails.</p>
       </div>
-      <figure class="shot film film-wrap">
-        <div class="frame">
-          <video controls preload="none" playsinline poster="assets/crash/ohio-crash-tool-film-poster.webp" width="1920" height="1080">
-            <source src="assets/crash/ohio-crash-tool-film.mp4" type="video/mp4">
-            <track kind="captions" src="assets/crash/ohio-crash-tool-film.vtt" srclang="en" label="English">
-            Your browser does not play this video. <a href="assets/crash/ohio-crash-tool-film.mp4">Download it (MP4, 13 MB)</a>.
-          </video>
+      <figure class="shot film film-wrap" id="crashFilmBox">
+        <div class="film-edge">
+          <div class="film-frame">
+            <video id="crashFilm" controls preload="none" playsinline poster="assets/crash/ohio-crash-tool-film-poster-v2.webp" width="1920" height="1080">
+              <source src="assets/crash/ohio-crash-tool-film-v2.mp4" type="video/mp4">
+              <track kind="captions" src="assets/crash/ohio-crash-tool-film-v2.vtt" srclang="en" label="English">
+              Your browser does not play this video. <a href="assets/crash/ohio-crash-tool-film-v2.mp4">Download it (MP4, 14 MB)</a>.
+            </video>
+            <button class="film-play" type="button" aria-label="Play the one-minute film, with sound">
+              <span class="film-btn" aria-hidden="true"><i class="fa-solid fa-play"></i></span>
+              <span class="film-cta" aria-hidden="true"><b>Watch the film</b><small><i class="fa-solid fa-volume-high"></i> 65 seconds &middot; sound on</small></span>
+            </button>
+          </div>
         </div>
-        <figcaption><span class="tag">Real data</span>A client's real crash data, with <b>names, street addresses and citation numbers redacted</b> and report numbers replaced.</figcaption>
+        <figcaption><span class="tag">Real data</span>A client's real crash data, with <b>names, street addresses, ZIPs, birth dates and citation numbers redacted</b> and report numbers replaced. The phones and emails in the enrichment step are sample results, also redacted.</figcaption>
       </figure>
     </section>
 
@@ -1446,6 +1491,36 @@
           if (em) setTimeout(function() { em.focus(); }, 400);
         });
       }
+    })();
+
+    // ---- the film: the big button starts it, the frame comes into view, and how far people watch
+    (function () {
+      var fig = document.getElementById('crashFilmBox'), v = document.getElementById('crashFilm');
+      if (!fig || !v) return;
+      var btn = fig.querySelector('.film-play'), started = false, marks = { 25: false, 50: false, 75: false };
+      var calm = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      function track(name, params) { if (window.tesTrack) window.tesTrack(name, params); }
+      // Controls are in the markup for anyone without scripts; with them, the big button starts it and the controls come back once it plays.
+      v.removeAttribute('controls');
+      btn.addEventListener('click', function () { var go = v.play(); if (go && go.catch) go.catch(function () {}); });
+      // The first time it plays, bring the whole frame into view under the sticky bar.
+      function inView() {
+        var bar = document.querySelector('.tnav-bar'), top = bar ? bar.getBoundingClientRect().bottom : 0;
+        var r = v.getBoundingClientRect(), room = window.innerHeight - top;
+        if (r.top >= top && r.bottom <= window.innerHeight) return;
+        var want = r.height <= room ? top + (room - r.height) / 2 : top + 8;
+        window.scrollBy({ top: r.top - want, behavior: calm ? 'auto' : 'smooth' });
+      }
+      v.addEventListener('play', function () {
+        fig.classList.add('is-started'); v.setAttribute('controls', '');
+        if (!started) { started = true; inView(); track('film_play', { film: 'ohio-crash-tool' }); }
+      });
+      v.addEventListener('timeupdate', function () {
+        if (!v.duration) return;
+        var p = v.currentTime / v.duration * 100;
+        [25, 50, 75].forEach(function (m) { if (!marks[m] && p >= m) { marks[m] = true; track('film_progress', { film: 'ohio-crash-tool', percent: m }); } });
+      });
+      v.addEventListener('ended', function () { track('film_complete', { film: 'ohio-crash-tool' }); });
     })();
   </script>
 
