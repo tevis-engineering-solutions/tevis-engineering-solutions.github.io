@@ -2212,6 +2212,13 @@
     .mks-state.warn { color:var(--gold); }
     .mks-state.done { color:var(--green); }
     .mks-problem { margin-top:0.45rem; font-size:0.76rem; color:var(--muted); }
+    .mks-upload { margin-top:0.65rem; padding-top:0.6rem; border-top:1px solid rgba(138,164,141,0.15); }
+    .mks-up-hint { margin:0 0 0.45rem; font-size:0.76rem; color:var(--muted); line-height:1.45; }
+    .mks-up-row { display:flex; align-items:center; gap:0.45rem; flex-wrap:wrap; }
+    .mks-up-row select { max-width:100%; }
+    .mks-up-note { margin-top:0.4rem; font-size:0.76rem; color:var(--muted); min-height:1em; }
+    .mks-up-note.warn { color:var(--gold); }
+    .mks-up-note.done { color:var(--green); }
     .mks-tiles { display:grid; grid-template-columns:repeat(auto-fill, minmax(7.2rem, 1fr)); gap:0.45rem; margin-bottom:0.65rem; }
     .mks-tile { border:1px solid rgba(138,164,141,0.22); border-radius:8px; padding:0.4rem 0.55rem; }
     .mks-tile b { display:block; font-family:"Montserrat",sans-serif; font-size:1.05rem; color:var(--text); }
@@ -3713,6 +3720,17 @@
             <section class="mks-card" aria-label="State reports">
               <div class="mks-card-h"><h3 class="mk-sub-h">State reports</h3><span class="mks-meta" id="mksFeedMeta"></span></div>
               <div id="mksFeed"></div>
+              <div class="mks-upload">
+                <p class="mks-up-hint">When the state&rsquo;s site keeps refusing the reader, open the report there yourself, save it (Ctrl+S), and upload it here. It picks up where the reader stopped.</p>
+                <div class="mks-up-row">
+                  <label for="mksUpCode" class="sr-only">Report</label>
+                  <select id="mksUpCode"><option value="WI0100R">LLC</option><option value="WI0050R">Corporation</option><option value="WI0070R">Nonprofit</option><option value="WI0080R">Professional corporation</option></select>
+                  <a class="ct-btn sm" id="mksUpOpen" href="https://publicfiles.ohiosos.gov/free/OnlineBusinessReports/WI0100R.TXT" target="_blank" rel="noopener noreferrer"><i class="fa-solid fa-arrow-up-right-from-square" aria-hidden="true"></i> Open on the state&rsquo;s site</a>
+                  <button type="button" class="ct-btn sm" id="mksUpBtn"><i class="fa-solid fa-upload" aria-hidden="true"></i> Upload the saved file</button>
+                  <input type="file" id="mksUpFile" accept=".txt,.TXT,text/plain" hidden>
+                </div>
+                <div class="mks-up-note" id="mksUpNote" role="status" aria-live="polite"></div>
+              </div>
             </section>
             <section class="mks-card" aria-label="Website lookup">
               <div class="mks-card-h"><h3 class="mk-sub-h">Website lookup</h3><button type="button" class="ct-btn sm" id="mksAutoBtn" hidden>Pause automatic search</button></div>
@@ -27739,11 +27757,12 @@
         if (waiting || parked) refusing++;
         if (x.done) done++;
         row.appendChild(mksBar(x.done ? 100 : x.progress, waiting || parked));
-        var st = x.done ? (x.kept + ' kept') : parked ? 'paused, resumes at the next check' : waiting ? 'refused; retry ' + fmt(x.retry_at) : !x.month ? 'waiting' : x.progress + '%';
+        var st = x.done ? (x.kept + ' kept') : x.uploading ? 'uploading, ' + x.progress + '%' : parked ? 'paused, resumes at the next check' : waiting ? 'refused; retry ' + fmt(x.retry_at) : !x.month ? 'waiting' : x.progress + '%';
         row.appendChild(el('span', 'mks-state' + (x.done ? ' done' : waiting || parked ? ' warn' : ''), st));
         feed.appendChild(row);
       });
       if (f.last_error) feed.appendChild(el('div', 'mks-problem', 'Last problem: ' + f.last_error + '. A refused piece waits and tries again, from 30 minutes up to 12 hours.'));
+      mksUpDefault(f.files);
 
       var ll = document.getElementById('mksLookupLine');
       ll.textContent = '';
@@ -28161,6 +28180,72 @@
       clearTimeout(mksTimer);
       mksTimer = setTimeout(function () { mksSearch = e.target.value.trim(); mksLoad(); }, 250);
     });
+    // Upload by hand: a report saved from the state's site in a browser, when the site's bot
+    // check refuses the Worker. Sent in 256 KB pieces, each read like a cron tick reads a range.
+    var MKS_CHUNK = 262144, mksUpBusy = false, mksUpPicked = false;
+    var MKS_UP_BASE = 'https://publicfiles.ohiosos.gov/free/OnlineBusinessReports/';
+    function mksUpNote(t, cls) { var n = document.getElementById('mksUpNote'); n.textContent = t || ''; n.className = 'mks-up-note' + (cls ? ' ' + cls : ''); }
+    function mksUpSync() { var c = document.getElementById('mksUpCode').value; document.getElementById('mksUpOpen').href = MKS_UP_BASE + c + '.TXT'; }
+    // The select starts on the first report not yet read, until a person picks one.
+    function mksUpDefault(files) {
+      if (mksUpPicked || mksUpBusy) return;
+      var first = (files || []).filter(function (x) { return !x.done; })[0];
+      if (first) { document.getElementById('mksUpCode').value = first.code; mksUpSync(); }
+    }
+    function mksB64(u8) {
+      var s = '';
+      for (var i = 0; i < u8.length; i += 32768) s += String.fromCharCode.apply(null, u8.subarray(i, i + 32768));
+      return btoa(s);
+    }
+    function mksUpload(file, code) {
+      var name = document.getElementById('mksUpCode').selectedOptions[0].textContent;
+      var btn = document.getElementById('mksUpBtn');
+      var stop = function (msg) { mksUpBusy = false; btn.disabled = false; mksUpNote(msg, 'warn'); mksSummary(); };
+      mksUpBusy = true; btn.disabled = true;
+      mksUpNote('Checking the file…');
+      // A saved bot-check page is HTML, not a report: refuse it before anything is sent.
+      file.slice(0, 400).text().then(function (head) {
+        if (/<(!doctype|html|head|body)/i.test(head) || !/DOCUMENT NUMBER|CHARTER NUMBER/i.test(head)) {
+          return stop('That file is not a state report. If the state’s site showed a check page, finish it, let the report load, then save it again.');
+        }
+        return api('/admin/sos/upload', { method: 'POST', body: { code: code, size: file.size } }).then(function (r) {
+          if (!r.ok) return stop('Upload refused: ' + mkErr(r));
+          if (r.done) { mksUpBusy = false; btn.disabled = false; mksUpNote('The ' + name + ' report for ' + r.month + ' is already read.', 'done'); return; }
+          mksUpNote(r.resumed ? 'Same file the reader was on. Carrying on from ' + Math.round(r.offset / file.size * 100) + '%.' : 'Reading the ' + name + ' report…');
+          var step = function (off) {
+            return file.slice(off, off + MKS_CHUNK).arrayBuffer().then(function (buf) {
+              return api('/admin/sos/upload', { method: 'POST', body: { code: code, offset: off, data: mksB64(new Uint8Array(buf)) } });
+            }).then(function (p) {
+              if (!p.ok && p.error === 'wrong_offset' && typeof p.offset === 'number') return step(p.offset);
+              if (!p.ok) return stop('Stopped at ' + Math.round(off / file.size * 100) + '%: ' + mkErr(p) + '. Upload the same file again to carry on.');
+              if (p.done) {
+                mksUpBusy = false; btn.disabled = false;
+                mksUpNote('Read the ' + name + ' report. New filings are on the list, and the website search picks them up.', 'done');
+                mksSummary(); mksLoad();
+                return;
+              }
+              mksUpNote('Reading the ' + name + ' report… ' + Math.round(p.offset / file.size * 100) + '%');
+              return step(p.offset);
+            });
+          };
+          return step(r.offset);
+        });
+      }).catch(function () { stop('Could not read that file.'); });
+    }
+    document.getElementById('mksUpCode').addEventListener('change', function () { mksUpPicked = true; mksUpSync(); });
+    document.getElementById('mksUpBtn').addEventListener('click', function () { document.getElementById('mksUpFile').click(); });
+    document.getElementById('mksUpFile').addEventListener('change', function () {
+      var file = this.files && this.files[0];
+      this.value = '';
+      if (!file || mksUpBusy) return;
+      // The saved file keeps the state's name (WI0100R.TXT), which settles which report it is.
+      var m = /WI0(100|050|070|080)R/i.exec(file.name);
+      var sel = document.getElementById('mksUpCode');
+      if (m) { sel.value = 'WI0' + m[1] + 'R'; mksUpPicked = true; mksUpSync(); }
+      else if (!window.confirm('Upload ' + file.name + ' as the ' + sel.selectedOptions[0].textContent + ' report?')) return;
+      mksUpload(file, sel.value);
+    });
+
     document.getElementById('mksCheck').addEventListener('click', function () {
       var b = document.getElementById('mksCheck');
       b.disabled = true; b.textContent = 'Checking…';
