@@ -1429,6 +1429,13 @@
     .home-col > .chart-panel { margin-bottom:0.6rem; }
     .att-sec h3 .n { display:inline-block; min-width:1.3rem; padding:0 0.35rem; margin-left:0.35rem; border-radius:999px; background:var(--gold); color:#0d1710; font-size:0.62rem; line-height:1.3rem; text-align:center; letter-spacing:0; }
     .att-sec h3 .n.calm { background:var(--line); color:var(--muted); }
+    .att-fold { display:inline-flex; align-items:center; gap:0; padding:0.15rem 0.3rem 0.15rem 0; margin:0; border:0; background:transparent; color:inherit; font:inherit; text-transform:inherit; letter-spacing:inherit; cursor:pointer; border-radius:6px; }
+    .att-fold:hover { color:var(--text); }
+    .att-fold:focus-visible { outline:2px solid var(--green); outline-offset:2px; }
+    .att-chev { font-size:0.6rem; width:0.9rem; margin-right:0.25rem; transition:transform 0.15s; }
+    .att-sec.folded .att-chev { transform:rotate(-90deg); }
+    .att-sec.folded > :not(h3) { display:none; }
+    .att-sec.folded h3 { margin-bottom:0.2rem; }
     .att-sec .row { margin-bottom:0.3rem; }
     .att-sec .row-main b { font-family:"Montserrat",sans-serif; font-weight:800; }
     .att-sec .late { color:#ef4444; }
@@ -17916,10 +17923,39 @@
       else showView('home');
     }
 
-    function attSection(title, n, hot) {
+    // A foldable section's header is a button; whether it is folded is kept per
+    // section in this browser, so a long list stays shut across reloads.
+    var ATT_FOLD_KEY = 'tes_home_fold';
+    function attFolds() { try { return JSON.parse(localStorage.getItem(ATT_FOLD_KEY) || '{}') || {}; } catch (e) { return {}; } }
+    function attSection(title, n, hot, foldable) {
       var s = el('section', 'cust-sec att-sec');
-      var h = el('h3', null, title);
-      h.appendChild(el('span', 'n' + (hot ? '' : ' calm'), String(n)));
+      var h = el('h3');
+      var label = h;
+      if (foldable) {
+        var key = title.toLowerCase();
+        var btn = el('button', 'att-fold');
+        btn.type = 'button';
+        var chev = el('i', 'fa-solid fa-chevron-down att-chev');
+        chev.setAttribute('aria-hidden', 'true');
+        btn.appendChild(chev);
+        h.appendChild(btn);
+        label = btn;
+        var setFold = function (shut) {
+          s.classList.toggle('folded', shut);
+          btn.setAttribute('aria-expanded', shut ? 'false' : 'true');
+          btn.title = shut ? 'Show ' + title : 'Hide ' + title;
+        };
+        setFold(!!attFolds()[key]);
+        btn.addEventListener('click', function () {
+          var shut = !s.classList.contains('folded');
+          setFold(shut);
+          var f = attFolds();
+          if (shut) f[key] = 1; else delete f[key];
+          try { localStorage.setItem(ATT_FOLD_KEY, JSON.stringify(f)); } catch (e) { /* this browser only */ }
+        });
+      }
+      label.appendChild(document.createTextNode(title));
+      label.appendChild(el('span', 'n' + (hot ? '' : ' calm'), String(n)));
       s.appendChild(h);
       return s;
     }
@@ -18031,7 +18067,7 @@
       }
       if ((a.quotes || []).length) {
         any = true;
-        var sQ = attSection('Quotes', a.quotes.length, true);
+        var sQ = attSection('Quotes', a.quotes.length, true, true);
         a.quotes.forEach(function (q) {
           // An uploaded quote can carry no figure; its total is in the PDF.
           var right = el('b', 'num', q.pdf && !q.total_cents ? 'PDF' : money(q.total_cents));
@@ -18051,7 +18087,7 @@
       var lRules = (a.leads && a.leads.rules_proposed) || 0, lSends = (a.leads && a.leads.sends_to_review) || 0;
       if (lr.length || ld.length || lRules || lSends) {
         any = true;
-        var sL = attSection('Leads', lr.length + ld.length, lr.length > 0);
+        var sL = attSection('Leads', lr.length + ld.length, lr.length > 0, true);
         if (lRules || lSends) sL.appendChild(row('Style rules', [lRules ? lRules + ' proposed rule' + (lRules === 1 ? '' : 's') + ' to accept or reject' : '', lSends ? lSends + ' sent email' + (lSends === 1 ? '' : 's') + ' not reviewed' : ''].filter(Boolean).join(' · '), null, function () { showView('marketing'); mkRulesToggle(true); }));
         lr.forEach(function (x) { sL.appendChild(row(x.who, 'Replied ' + fmtDate(x.replied_at) + ', not answered yet', el('b', 'num', 'reply'), function () { openObject('lead', x.id); })); });
         ld.forEach(function (x) { sL.appendChild(row(x.who, (x.next_action || 'Follow up') + ' · ' + (x.days_late ? x.days_late + ' days late' : 'due today'), null, function () { openObject('lead', x.id); })); });
