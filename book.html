@@ -414,7 +414,7 @@
       <div class="bk-days" id="bkDays" role="tablist" aria-label="Choose a day"></div>
       <div class="bk-times" id="bkTimes" role="group" aria-label="Choose a time"></div>
       <p class="bk-none" id="bkNone" hidden>
-        Nothing free in the next two weeks. <a href="contact.html">Send us a message</a> or call
+        Nothing free in the next three weeks. <a href="contact.html">Send us a message</a> or call
         <a href="tel:+12163028486">(216)&nbsp;302&#8209;8486</a> and we will find a time.
       </p>
 
@@ -731,7 +731,7 @@
     function loadSlots() {
       $('bkLoading').hidden = false;
       $('bkForm').hidden = true; chosen = null;
-      return fetch('/portal-api/slots?minutes=' + $('bkMinutes').value + '&kind=' + $('bkKind').value + '&days=14')
+      return fetch('/portal-api/slots?minutes=' + $('bkMinutes').value + '&kind=' + $('bkKind').value + '&days=21')
         .then(function (r) { return r.json(); })
         .then(function (d) {
           $('bkLoading').hidden = true;

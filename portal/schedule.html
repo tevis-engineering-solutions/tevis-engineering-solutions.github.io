@@ -202,7 +202,7 @@
 
       <div class="bk-days" id="bkDays" role="tablist" aria-label="Choose a day"></div>
       <div class="bk-times" id="bkTimes" role="group" aria-label="Choose a time"></div>
-      <p class="bk-none" id="bkNone" hidden>No times free in the next two weeks. <a href="messages.html">Send us a message</a> and we will find one.</p>
+      <p class="bk-none" id="bkNone" hidden>No times free in the next three weeks. <a href="messages.html">Send us a message</a> and we will find one.</p>
 
       <div class="bk-details" id="bkDetails" hidden>
         <div class="bk-chosen" id="bkChosen"></div>
@@ -338,7 +338,7 @@
       var kind = document.getElementById('bkKind').value;
       var minutes = document.getElementById('bkMinutes').value;
       document.getElementById('bkDetails').hidden = true; chosen = null;
-      return fetch(API + '/slots?minutes=' + minutes + '&kind=' + kind + '&days=14', { credentials: 'same-origin' })
+      return fetch(API + '/slots?minutes=' + minutes + '&kind=' + kind + '&days=21', { credentials: 'same-origin' })
         .then(function (r) { return r.json(); })
         .then(function (d) {
           slotData = d.ok ? d : { days: [] };
