@@ -109,13 +109,6 @@
     .bk-field select, .bk-field input, .bk-field textarea { width:100%; padding:0.6rem 0.75rem; border-radius:9px; border:1px solid var(--line); background:var(--bg); color:var(--text); font-family:inherit; font-size:0.9rem; min-height:44px; }
     .bk-field textarea { min-height:60px; resize:vertical; }
     .bk-field select:focus, .bk-field input:focus, .bk-field textarea:focus { outline:none; border-color:var(--green); }
-    .bk-days { display:flex; gap:0.5rem; overflow-x:auto; padding-bottom:0.5rem; margin-bottom:0.9rem; scrollbar-width:thin; }
-    .bk-day { flex:0 0 auto; display:flex; flex-direction:column; align-items:center; gap:0.1rem; min-width:76px; padding:0.6rem 0.5rem; border-radius:11px; border:1px solid var(--line); background:var(--bg); color:var(--muted); cursor:pointer; font-family:"Montserrat",sans-serif; }
-    .bk-day .wd { font-size:0.66rem; text-transform:uppercase; letter-spacing:0.06em; }
-    .bk-day .n { font-size:0.9rem; font-weight:800; color:#e4ede5; }
-    .bk-day .c { font-size:0.62rem; }
-    .bk-day.on { background:linear-gradient(135deg,var(--gold),#e0b840); border-color:transparent; color:#3a2c08; }
-    .bk-day.on .n { color:#0d1710; }
     .bk-times { display:flex; flex-wrap:wrap; gap:0.5rem; }
     .bk-time { padding:0.65rem 1rem; min-height:44px; border-radius:999px; border:1px solid var(--line); background:var(--bg); color:#e4ede5; font-family:"Montserrat",sans-serif; font-size:0.82rem; font-weight:700; cursor:pointer; }
     .bk-time:hover { border-color:var(--green); color:#fff; }
@@ -200,7 +193,7 @@
         </div>
       </div>
 
-      <div class="bk-days" id="bkDays" role="tablist" aria-label="Choose a day"></div>
+      <div id="bkDays"></div>
       <div class="bk-times" id="bkTimes" role="group" aria-label="Choose a time"></div>
       <p class="bk-none" id="bkNone" hidden>No times free in the next three weeks. <a href="messages.html">Send us a message</a> and we will find one.</p>
 
@@ -237,6 +230,7 @@
   </footer>
 
   <script src="../assets/js/invoices.js?v=2"></script>
+  <script src="../assets/js/week-picker.js"></script>
   <script>
   (function () {
     'use strict';
@@ -305,17 +299,7 @@
       var days = (slotData && slotData.days) || [];
       document.getElementById('bkNone').hidden = days.length > 0;
       if (!days.length) return;
-      if (!days.some(function (d) { return d.day === activeDay; })) activeDay = days[0].day;
-      days.forEach(function (d) {
-        var b = el('button', 'bk-day' + (d.day === activeDay ? ' on' : '')); b.type = 'button';
-        b.setAttribute('role', 'tab'); b.setAttribute('aria-selected', d.day === activeDay ? 'true' : 'false');
-        var lab = dayLabel(d.day);
-        b.appendChild(el('span', 'wd', lab.wd));
-        b.appendChild(el('span', 'n', lab.n));
-        b.appendChild(el('span', 'c', d.count + ' free'));
-        b.addEventListener('click', function () { activeDay = d.day; renderSlots(); });
-        daysEl.appendChild(b);
-      });
+      activeDay = TESWeekPicker.render(daysEl, slotData, activeDay, function (k) { activeDay = k; renderSlots(); });
       var day = days.find(function (d) { return d.day === activeDay; });
       day.slots.forEach(function (s) {
         var b = el('button', 'bk-time', timeOf(s.starts_at)); b.type = 'button';
@@ -338,7 +322,7 @@
       var kind = document.getElementById('bkKind').value;
       var minutes = document.getElementById('bkMinutes').value;
       document.getElementById('bkDetails').hidden = true; chosen = null;
-      return fetch(API + '/slots?minutes=' + minutes + '&kind=' + kind + '&days=21', { credentials: 'same-origin' })
+      return fetch(API + '/slots?minutes=' + minutes + '&kind=' + kind + '&days=' + TESWeekPicker.days(), { credentials: 'same-origin' })
         .then(function (r) { return r.json(); })
         .then(function (d) {
           slotData = d.ok ? d : { days: [] };

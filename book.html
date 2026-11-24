@@ -270,13 +270,6 @@
     .spin { width:16px; height:16px; border-radius:50%; border:2px solid rgba(255,255,255,0.15); border-top-color:var(--blue); animation:bkspin 0.9s linear infinite; display:inline-block; }
     @keyframes bkspin { to { transform:rotate(360deg); } }
     @media (prefers-reduced-motion:reduce) { .spin { animation:none; } }
-    .bk-days { display:flex; gap:0.6rem; overflow-x:auto; padding-bottom:0.6rem; margin-bottom:1rem; }
-    .bk-day { flex:0 0 auto; display:flex; flex-direction:column; align-items:center; min-width:86px; padding:0.7rem 0.6rem; border-radius:12px; border:1px solid var(--line); background:var(--bg); color:var(--muted); cursor:pointer; font-family:"Montserrat",sans-serif; }
-    .bk-day .wd { font-size:0.68rem; text-transform:uppercase; letter-spacing:0.06em; }
-    .bk-day .n { font-size:1rem; font-weight:800; color:#e4ede5; }
-    .bk-day .c { font-size:0.64rem; }
-    .bk-day.on { background:linear-gradient(135deg,#c89830,#e0b840); border-color:transparent; color:#3a2c08; }
-    .bk-day.on .n { color:#0d1710; }
     .bk-times { display:flex; flex-wrap:wrap; gap:0.6rem; }
     .bk-time { padding:0.8rem 1.2rem; min-height:48px; border-radius:999px; border:1px solid var(--line); background:var(--bg); color:#e4ede5; font-family:"Montserrat",sans-serif; font-size:0.88rem; font-weight:700; cursor:pointer; }
     .bk-time:hover { border-color:var(--blue); color:#fff; }
@@ -411,7 +404,7 @@
       </div>
 
       <div class="bk-loading" id="bkLoading"><span class="spin"></span> Checking the calendar&hellip;</div>
-      <div class="bk-days" id="bkDays" role="tablist" aria-label="Choose a day"></div>
+      <div id="bkDays"></div>
       <div class="bk-times" id="bkTimes" role="group" aria-label="Choose a time"></div>
       <p class="bk-none" id="bkNone" hidden>
         Nothing free in the next three weeks. <a href="contact.html">Send us a message</a> or call
@@ -679,6 +672,7 @@
     })();
   </script>
 
+  <script src="assets/js/week-picker.js"></script>
   <script>
   (function () {
     'use strict';
@@ -699,17 +693,7 @@
       var days = (slotData && slotData.days) || [];
       $('bkNone').hidden = days.length > 0;
       if (!days.length) return;
-      if (!days.some(function (d) { return d.day === activeDay; })) activeDay = days[0].day;
-      days.forEach(function (d) {
-        var b = el('button', 'bk-day' + (d.day === activeDay ? ' on' : '')); b.type = 'button';
-        b.setAttribute('role', 'tab'); b.setAttribute('aria-selected', d.day === activeDay ? 'true' : 'false');
-        var lab = dayLabel(d.day);
-        b.appendChild(el('span', 'wd', lab.wd));
-        b.appendChild(el('span', 'n', lab.n));
-        b.appendChild(el('span', 'c', d.count + ' free'));
-        b.addEventListener('click', function () { activeDay = d.day; renderSlots(); });
-        daysEl.appendChild(b);
-      });
+      activeDay = TESWeekPicker.render(daysEl, slotData, activeDay, function (k) { activeDay = k; renderSlots(); });
       var day = days.find(function (d) { return d.day === activeDay; });
       day.slots.forEach(function (s) {
         var b = el('button', 'bk-time', timeOf(s.starts_at)); b.type = 'button';
@@ -731,7 +715,7 @@
     function loadSlots() {
       $('bkLoading').hidden = false;
       $('bkForm').hidden = true; chosen = null;
-      return fetch('/portal-api/slots?minutes=' + $('bkMinutes').value + '&kind=' + $('bkKind').value + '&days=21')
+      return fetch('/portal-api/slots?minutes=' + $('bkMinutes').value + '&kind=' + $('bkKind').value + '&days=' + TESWeekPicker.days())
         .then(function (r) { return r.json(); })
         .then(function (d) {
           $('bkLoading').hidden = true;
