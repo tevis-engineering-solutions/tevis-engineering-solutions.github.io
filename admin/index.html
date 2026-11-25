@@ -16223,6 +16223,7 @@
       var tools = el('div', 'lg-tools');
       var acct = document.createElement('select');
       acct.setAttribute('aria-label', 'Account');
+      acct.className = 'lg-acct lg-acct-filter';
       var any = el('option', null, 'Every account');
       any.value = '';
       acct.appendChild(any);
@@ -16269,7 +16270,11 @@
       return api(url).then(function (r) {
         list.textContent = '';
         if (!r || !r.ok) return list.appendChild(el('div', 'row-sub', 'Could not load the ledger.'));
-        if (r.accounts && r.accounts.length) lgAccounts = r.accounts;
+        if (r.accounts && r.accounts.length) {
+          var was = lgAccounts.map(function (a) { return a.id; }).join();
+          lgAccounts = r.accounts;
+          if (lgAccounts.map(function (a) { return a.id; }).join() !== was) lgSyncAccountSelects();
+        }
         if (r.categories) lgCategories = r.categories;
         if (list._after) list._after(r);
         if (!r.entries.length) {
@@ -17086,9 +17091,29 @@
       finRefreshQuiet();
     }
 
+    // The panel is drawn before the first ledger load says which accounts exist, so
+    // every account picker is refilled once it does (it used to keep the one-account
+    // placeholder until the next full redraw, hiding Cash, Other and Paid personally).
+    function lgSyncAccountSelects() {
+      Array.prototype.forEach.call(document.querySelectorAll('select.lg-acct'), function (s) {
+        var keep = s.value;
+        var filter = s.classList.contains('lg-acct-filter');
+        s.textContent = '';
+        if (filter) { var any = el('option', null, 'Every account'); any.value = ''; s.appendChild(any); }
+        lgAccounts.forEach(function (a) {
+          if (filter && a.url) return;
+          var o = el('option', null, a.label);
+          o.value = a.id;
+          s.appendChild(o);
+        });
+        if (Array.prototype.some.call(s.options, function (o) { return o.value === keep; })) s.value = keep;
+      });
+    }
+
     function lgAccountSelect(name) {
       var s = document.createElement('select');
       s.setAttribute('aria-label', name);
+      s.className = 'lg-acct';
       lgAccounts.forEach(function (a) {
         var o = el('option', null, a.label);
         o.value = a.id;
