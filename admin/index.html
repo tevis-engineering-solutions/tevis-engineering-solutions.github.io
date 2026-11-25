@@ -16359,7 +16359,19 @@
         d._ruleHost = sh;
         return d;
       }
-      if (!e.classification) {
+      // Paid personally: the owner's own money, so it is a cost (or parts) or nothing.
+      // Finance counts each such cost as owner money in by itself.
+      var ownerPaid = e.account === 'owner_paid';
+      if (!e.classification && ownerPaid) {
+        if (!e.parent_id) right.appendChild(licAction('Split\u2026', null, function () { lgSplit(e); }));
+        if (e.amount_cents < 0) {
+          right.appendChild(licAction('Business expense', 'prim', function () { lgClassify(e, { classification: 'expense' }); }));
+          right.appendChild(licAction('Parts for a job\u2026', null, function () { lgLinkParts(e); }));
+        } else {
+          right.appendChild(licAction('Refund of a business cost', null, function () { lgClassify(e, { classification: 'expense' }); }));
+        }
+        right.appendChild(licAction('Personal', null, function () { lgClassify(e, { classification: 'personal' }); }));
+      } else if (!e.classification) {
         if (!e.parent_id) right.appendChild(licAction('Split\u2026', null, function () { lgSplit(e); }));
         if (lgCategories.length) right.appendChild(lgCategoryPick(e));
         if (e.amount_cents < 0) {
@@ -16383,7 +16395,7 @@
         }
         // A deposit from your own bank files itself as a transfer, which is right for
         // the P&L either way but says nothing about whose money it was.
-        if (e.amount_cents > 0 && e.classification !== 'owner_funding' && e.classification !== 'invoice_payment') {
+        if (!ownerPaid && e.amount_cents > 0 && e.classification !== 'owner_funding' && e.classification !== 'invoice_payment') {
           right.appendChild(licAction('Owner funding', null, function () { lgClassify(e, { classification: 'owner_funding' }); }));
         }
         right.appendChild(licAction('Always\u2026', null, function () { lgAlways(e); }));
@@ -17224,6 +17236,21 @@
       [acct, day, desc, vendor, amt, cls].forEach(function (n) { f.appendChild(n); });
       box.appendChild(f);
       box.appendChild(el('div', 'row-sub', 'The amount is what you spent; it is recorded as money going out.'));
+      // Paid personally: a business cost paid with your own money (a personal card, or
+      // before the business accounts existed). Counted as a business expense AND as
+      // owner money in; pay yourself back with a draw from EFCU checking.
+      var opHint = el('div', 'row-sub',
+        'Paid personally: a business cost you paid with your own money. Finance counts it as a business expense and as owner money in, so enter it once and attach the receipt. Pay yourself back with a draw from EFCU checking filed as Owner funding.');
+      opHint.hidden = true;
+      box.appendChild(opHint);
+      acct.addEventListener('change', function () {
+        var op = acct.value === 'owner_paid';
+        opHint.hidden = !op;
+        Array.prototype.forEach.call(cls.options, function (o) {
+          o.hidden = op && ['owner_funding', 'transfer'].indexOf(o.value) >= 0;
+        });
+        if (op && ['owner_funding', 'transfer', 'job_parts', ''].indexOf(cls.value) >= 0) cls.value = 'expense';
+      });
 
       var actions = el('div', 'inv-actions');
       var save = el('button', 'prim', 'Add it');
