@@ -38,7 +38,7 @@ Monday to Friday, 9am to 6pm Eastern.
 
 ## Pricing
 - Standard engineering rate: $80 per hour. Every job is scoped and quoted before work starts.
-- Engineering projects: a $50 per hour technical consultation, credited to the project, then a written statement of work. Projects up to $5,000 bill 50/50; larger projects bill 40/30/30 at milestones.
+- Engineering projects: a $50 per hour technical consultation, credited to the project, then a written statement of work. Projects bill a 20% deposit at signing, then at milestone gates set in the statement of work (each gate net 14, final acceptance net 30).
 - Website Watch: $12 per month or $120 per year per site.
 - Full rate card with starting prices: https://tevisengineering.com/service_catalog.html
 - Pricing sheet: https://tevisengineering.com/pricing_sheet.html

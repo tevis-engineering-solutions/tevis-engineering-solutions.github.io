@@ -3037,7 +3037,7 @@
         </div>
         <div class="fwide" data-qmode="build">
           <label for="qtNextStep">Next step</label>
-          <textarea id="qtNextStep" rows="2" placeholder="Left blank, this is written from the total: 50/50 up to $5,000, 40/30/30 above."></textarea>
+          <textarea id="qtNextStep" rows="2" placeholder="Left blank, this is written for you: a 20% deposit on signing, then 40% at the midpoint gate and 40% on final acceptance."></textarea>
         </div>
         <div class="fwide" data-qmode="build">
           <label for="qtTerms">Terms (printed on the quote)</label>
@@ -24763,7 +24763,7 @@
           bill.addEventListener('click', function () {
             if (!confirm('Raise an invoice for ' + money(m.billing_cents) + ' to ' + pjDetail.holder.name + ' (' + (pjDetail.holder.email || 'no billing contact') + ')?')) return;
             bill.disabled = true;
-            api('/admin/projects/' + pjId + '/milestones/' + m.id + '/bill', { method: 'POST', body: { due_days: 14 } }).then(function (r) {
+            api('/admin/projects/' + pjId + '/milestones/' + m.id + '/bill', { method: 'POST', body: { due_days: m.needs_signoff ? 30 : 14 } }).then(function (r) {
               bill.disabled = false;
               if (!r.ok) { toast(ctErr(r)); return; }
               pjDetail = r; renderProject(); toast('Invoice ' + r.invoice_number + ' created. Send it from the Invoices tab.');
