@@ -1958,7 +1958,8 @@
     .ct-site { display:flex; align-items:center; gap:0.4rem; border:1px solid var(--line); border-radius:10px; background:var(--bg); padding:0.4rem 0.5rem; min-width:0; }
     .ct-site a { flex:1; min-width:0; color:var(--text); text-decoration:none; font-size:0.8rem; font-weight:600; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; min-height:32px; display:flex; flex-direction:column; justify-content:center; }
     .ct-site a:hover { color:var(--gold); }
-    .ct-site a small { font-weight:400; font-size:0.66rem; color:var(--muted); }
+    .ct-site a small { font-weight:400; font-size:0.66rem; color:var(--muted); white-space:normal; line-height:1.3; }
+    .ct-site .ct-btn { flex:none; padding:0.4rem 0.6rem; }
     .ct-site a small.stale { color:var(--gold); }
     .ct-site .fed { font-size:0.56rem; font-weight:800; text-transform:uppercase; letter-spacing:0.05em; color:#e08585; border:1px solid #7f2c2c; border-radius:999px; padding:0.1rem 0.4rem; white-space:nowrap; }
     .ct-btn { font-family:"Montserrat",sans-serif; font-size:0.68rem; font-weight:700; text-transform:uppercase; letter-spacing:0.03em; padding:0.45rem 0.75rem; border-radius:999px; border:1px solid var(--line); background:var(--bg); color:var(--text); cursor:pointer; min-height:36px; white-space:nowrap;
@@ -2021,16 +2022,39 @@
     .ct-q-head { display:flex; justify-content:space-between; gap:0.6rem; align-items:flex-start; flex-wrap:wrap; margin-bottom:0.5rem; }
     .ct-q-head h2, .ct-sec-h { font-family:"Montserrat",sans-serif; font-size:0.92rem; text-transform:uppercase; letter-spacing:0.05em; margin:0 0 0.15rem; display:flex; align-items:center; gap:0.45rem; flex-wrap:wrap; }
     .ct-sec-h { margin:0 0 0.5rem; }
-    .ct-q-card { border:1px solid rgba(74,172,101,0.28); border-radius:10px; background:var(--card-2); padding:0.7rem 0.75rem; margin-bottom:0.55rem; }
+    /* Queue rows (2026-11-26): one compact row per post, the AI fit on the left, the read in view. */
+    .ct-q-card { display:grid; grid-template-columns:3rem minmax(0,1fr); column-gap:0.65rem; border:1px solid rgba(74,172,101,0.22); border-radius:8px; background:var(--card-2); padding:0.5rem 0.65rem; margin-bottom:0.35rem; }
     .ct-q-card.new { border-left:3px solid var(--gold); }
-    .ct-q-card .n { font-family:"Montserrat",sans-serif; font-size:0.64rem; font-weight:800; color:var(--muted); letter-spacing:0.02em; }
-    .ct-q-card .t { font-size:0.92rem; font-weight:600; margin:0.2rem 0 0.1rem; line-height:1.35; word-break:break-word; }
-    .ct-q-card .a { font-size:0.74rem; color:#a9bfac; }
-    .ct-q-card .chips { display:flex; flex-wrap:wrap; gap:0.3rem; margin-top:0.45rem; }
+    .ct-q-card.dq { opacity:0.72; }
+    .ct-q-fit { grid-row:span 9; align-self:start; width:3rem; height:3rem; border-radius:8px; display:flex; flex-direction:column; align-items:center; justify-content:center; font-family:"Montserrat",sans-serif; font-weight:800; font-size:1.05rem; line-height:1; border:1px solid var(--line); color:var(--muted); background:var(--bg); }
+    .ct-q-fit small { font-size:0.5rem; font-weight:700; letter-spacing:0.06em; text-transform:uppercase; margin-top:0.2rem; opacity:0.85; }
+    .ct-q-fit.hi { color:#7fd99a; border-color:rgba(74,172,101,0.6); }
+    .ct-q-fit.mid { color:var(--gold); border-color:rgba(200,152,48,0.55); }
+    .ct-q-fit.lo { color:#e08585; border-color:#7f2c2c; }
+    .ct-q-line { display:flex; align-items:baseline; gap:0.6rem; min-width:0; }
+    .ct-q-card .t { flex:1; min-width:0; font-size:0.9rem; font-weight:600; margin:0; line-height:1.3; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+    .ct-q-due { flex:none; font-family:"Montserrat",sans-serif; font-size:0.66rem; font-weight:800; letter-spacing:0.02em; color:var(--muted); white-space:nowrap; }
+    .ct-q-due.gold { color:var(--gold); }
+    .ct-q-due.red { color:#e08585; }
+    .ct-q-card .n { font-size:0.7rem; color:#a9bfac; margin-top:0.1rem; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+    .ct-q-sum { font-size:0.78rem; color:var(--text); opacity:0.9; margin:0.25rem 0 0; line-height:1.35; }
+    .ct-q-card .chips { display:flex; flex-wrap:wrap; gap:0.25rem; margin-top:0.3rem; }
+    .ct-q-card .chips:empty { display:none; }
     .ct-q-card .chips > * { max-width:100%; overflow:hidden; text-overflow:ellipsis; }
-    .ct-q-card .reply-row { margin-top:0.5rem; }
+    .ct-q-card .chips .ct-chip { font-size:0.58rem; padding:0.12rem 0.45rem; }
+    .ct-q-foot { display:flex; align-items:center; gap:0.5rem; flex-wrap:wrap; margin-top:0.35rem; }
+    .ct-q-card .reply-row { margin:0; gap:0.3rem; }
+    .ct-q-card .reply-row button, .ct-q-card .reply-row a.ct-btn { min-height:30px; padding:0.3rem 0.7rem; font-size:0.62rem; }
     .ct-q-card .reply-row a.ct-btn { text-decoration:none; display:inline-flex; align-items:center; }
-    .ct-q-det summary { font-size:0.74rem; color:var(--muted); cursor:pointer; margin-top:0.35rem; }
+    .ct-q-det { margin-left:auto; }
+    .ct-q-det[open] { flex-basis:100%; margin-left:0; }
+    @media (max-width:600px) {
+      .ct-q-card { grid-template-columns:2.5rem minmax(0,1fr); column-gap:0.5rem; }
+      .ct-q-fit { width:2.5rem; height:2.5rem; font-size:0.9rem; }
+      .ct-q-line { flex-wrap:wrap; row-gap:0.1rem; }
+      .ct-q-card .t { white-space:normal; flex-basis:100%; }
+    }
+    .ct-q-det summary { font-size:0.74rem; color:var(--muted); cursor:pointer; }
     .ct-q-det p { font-size:0.78rem; margin:0.3rem 0 0; white-space:pre-line; }
     .ct-q-empty { padding:0.6rem 0.2rem 0.8rem; font-size:0.82rem; }
     .ct-site a small.auto { color:var(--green); }
@@ -20210,8 +20234,8 @@
     var ctqView = 'queue';
     var ctqSearch = '';
     // Source and sort are remembered in this browser, so the queue opens the way it was left.
-    var ctqSource = '', ctqSort = 'best';
-    try { ctqSource = localStorage.getItem('tes_ctq_source') || ''; ctqSort = localStorage.getItem('tes_ctq_sort') || 'best'; } catch (e) {}
+    var ctqSource = '', ctqSort = 'ai_fit';
+    try { ctqSource = localStorage.getItem('tes_ctq_source') || ''; ctqSort = localStorage.getItem('tes_ctq_sort') || 'ai_fit'; } catch (e) {}
     var ctqTimer = null;
     var ctqShowAll = false;
     var CT_FEED_LABEL = { cleveland: 'City of Cleveland', cuyahoga: 'Cuyahoga County', samgov: 'SAM.gov', ohiobuys: 'OhioBuys', bidnet: 'BidNet', manual: 'Added by hand' };
@@ -20277,45 +20301,61 @@
     }
 
     function ctqCard(p) {
-      var c = el('article', 'ct-q-card' + (p.status === 'new' ? ' new' : ''));
-      var top = el('div', 'n', [p.kind, p.event_no].filter(Boolean).join(' ') + ' · ' + (CT_FEED_LABEL[p.source] || p.source) + ' · first seen ' + ctAgo(p.first_seen_at));
-      c.appendChild(top);
-      c.appendChild(el('div', 't', p.title));
-      if (p.agency) c.appendChild(el('div', 'a', p.agency));
-      var chips = el('div', 'chips');
+      // A set-aside TES does not hold (MBE, EDGE, WBE, SDVOSB...) or a federal post disqualifies
+      // it; VFBE and VOSB are TES's own (docs/CONTRACTING.md s1).
+      var dq = !!p.federal || !!(p.set_aside && !/\b(VFBE|veteran[- ]friendly|VOSB|veteran-owned small business)\b/i.test(p.set_aside));
+      var c = el('article', 'ct-q-card' + (p.status === 'new' ? ' new' : '') + (dq ? ' dq' : ''));
+      // Claude's read of it (feed_triage.js): the fit on the left, the summary in view.
+      var fitN = p.ai && p.ai.fit != null ? p.ai.fit : null;
+      var effort = p.ai && p.ai.effort ? ({ S: 'quick', M: 'a day or two', L: 'full proposal' }[p.ai.effort] || p.ai.effort) : null;
+      var fit = el('div', 'ct-q-fit' + (fitN == null ? '' : fitN >= 70 ? ' hi' : fitN >= 40 ? ' mid' : ' lo'));
+      fit.appendChild(document.createTextNode(fitN == null ? '–' : String(fitN)));
+      fit.appendChild(el('small', null, fitN == null ? 'score ' + (p.score || 0) : 'fit'));
+      fit.title = fitN == null ? 'Not read by AI triage yet. Keyword score ' + (p.score || 0) + '.'
+        : 'Claude’s read of the title and description against the capability statement' + (effort ? '. Effort: ' + effort : '');
+      c.appendChild(fit);
+      var line = el('div', 'ct-q-line');
+      var t = el('div', 't', p.title);
+      t.title = p.title || '';
+      line.appendChild(t);
+      var due;
       if (p.due_at) {
         var d = Math.ceil((p.due_at - Date.now() / 1000) / 86400);
-        chips.appendChild(el('span', 'ct-chip ' + (d <= 3 ? 'red' : d <= 10 ? 'gold' : ''), d < 0 ? 'Closed' : 'Closes ' + (d === 0 ? 'today' : 'in ' + ctDays(d)) + ' · ' + fmtDate(p.due_at)));
-      } else chips.appendChild(el('span', 'ct-chip', 'No closing date listed'));
-      (p.matches || []).slice(0, 3).forEach(function (m) {
-        var chip = el('span', 'ct-chip ' + (m.tier === 1 ? 'gold' : 'green'), m.code + ' · ' + m.hits.slice(0, 3).join(', '));
-        chip.title = 'Tier ' + m.tier + ' · ' + (m.description || '');
-        chips.appendChild(chip);
-      });
-      if (p.excluded) { var xchip = el('span', 'ct-chip', 'Filtered out: ' + p.excluded); xchip.title = 'The title has "' + p.excluded + '" and names no specific tech'; chips.appendChild(xchip); }
+        due = el('span', 'ct-q-due' + (d <= 3 ? ' red' : d <= 10 ? ' gold' : ''), d < 0 ? 'Closed' : (d === 0 ? 'Closes today' : 'Closes in ' + ctDays(d)) + ' · ' + fmtDate(p.due_at));
+      } else due = el('span', 'ct-q-due', 'No closing date');
+      line.appendChild(due);
+      c.appendChild(line);
+      c.appendChild(el('div', 'n', [p.agency, [p.kind, p.event_no].filter(Boolean).join(' '), CT_FEED_LABEL[p.source] || p.source, effort, 'seen ' + ctAgo(p.first_seen_at)].filter(Boolean).join(' · ')));
+      if (p.ai && p.ai.summary) c.appendChild(el('p', 'ct-q-sum', p.ai.summary));
+      var chips = el('div', 'chips');
       if (p.federal) chips.appendChild(el('span', 'ct-chip red', 'Federal · monitor only'));
-      if (p.set_aside) chips.appendChild(el('span', 'ct-chip', p.set_aside));
+      if (p.set_aside) chips.appendChild(el('span', 'ct-chip' + (dq ? ' red' : ' green'), p.set_aside));
+      ((p.ai && p.ai.flags) || []).forEach(function (fl) {
+        // The set-aside and federal chips above already say it.
+        if ((p.set_aside && /set[- ]?aside/i.test(fl)) || (p.federal && /federal/i.test(fl))) return;
+        chips.appendChild(el('span', 'ct-chip red', fl));
+      });
       if (p.status === 'watching') chips.appendChild(el('span', 'ct-chip gold', 'Watching'));
       if (p.status === 'passed') chips.appendChild(el('span', 'ct-chip', 'Passed' + (p.note ? ': ' + p.note : '')));
       if (p.gone_at) chips.appendChild(el('span', 'ct-chip', 'No longer listed'));
+      if (p.excluded) { var xchip = el('span', 'ct-chip', 'Filtered out: ' + p.excluded); xchip.title = 'The title has "' + p.excluded + '" and names no specific tech'; chips.appendChild(xchip); }
       c.appendChild(chips);
-      // Claude's read of it (feed_triage.js): fit, a summary, red flags.
-      if (p.ai) {
-        var ai = el('div', 'ct-q-ai');
-        var fit = el('span', 'ct-chip ' + (p.ai.fit >= 80 ? 'green' : p.ai.fit >= 40 ? 'gold' : 'red'), 'Fit ' + p.ai.fit + (p.ai.effort ? ' \u00b7 ' + ({ S: 'quick', M: 'a day or two', L: 'full proposal' }[p.ai.effort] || p.ai.effort) : ''));
-        fit.title = 'Claude\u2019s read of the title and description against the capability statement';
-        ai.appendChild(fit);
-        (p.ai.flags || []).forEach(function (fl) { ai.appendChild(el('span', 'ct-chip red', fl)); });
-        if (p.ai.summary) ai.appendChild(el('p', 'row-sub', p.ai.summary));
-        c.appendChild(ai);
-      }
+      // The keyword codes, the description and the contact are one click away.
       var det = el('details', 'ct-q-det');
       det.appendChild(el('summary', null, 'Details'));
+      var codes = el('div', 'chips');
+      (p.matches || []).slice(0, 4).forEach(function (m) {
+        var chip = el('span', 'ct-chip ' + (m.tier === 1 ? 'gold' : 'green'), m.code + ' · ' + m.hits.slice(0, 3).join(', '));
+        chip.title = 'Tier ' + m.tier + ' · ' + (m.description || '');
+        codes.appendChild(chip);
+      });
+      det.appendChild(codes);
       if (p.description) det.appendChild(el('p', null, p.description));
       var who = [p.contact_name, p.contact_email, fmtPhone(p.contact_phone)].filter(Boolean).join(' · ');
       if (who) det.appendChild(el('p', 'row-sub', 'Contact: ' + who));
       if (p.place) det.appendChild(el('p', 'row-sub', 'Place of performance: ' + p.place));
-      c.appendChild(det);
+      if (!p.description && !who && !p.place && !(p.matches || []).length) det.appendChild(el('p', 'row-sub', 'Nothing more was listed.'));
+      var foot = el('div', 'ct-q-foot');
 
       var rr = el('div', 'reply-row');
       if (p.status === 'promoted' && p.bid_id) {
@@ -20369,7 +20409,9 @@
       }
       if (p.url) { var op = el('a', 'ct-btn sm', 'Open posting ↗'); op.href = p.url; op.target = '_blank'; op.rel = 'noopener noreferrer'; rr.appendChild(op); }
       if (p.doc_url) { var dc = el('a', 'ct-btn sm', 'Bid document ↗'); dc.href = p.doc_url; dc.target = '_blank'; dc.rel = 'noopener noreferrer'; rr.appendChild(dc); }
-      c.appendChild(rr);
+      foot.appendChild(rr);
+      foot.appendChild(det);
+      c.appendChild(foot);
       return c;
     }
 
@@ -20393,7 +20435,7 @@
     var markSort = function () {
       Array.prototype.forEach.call(ctqSortPills, function (x) { var on = x.getAttribute('data-sort') === ctqSort; x.classList.toggle('on', on); x.setAttribute('aria-pressed', on ? 'true' : 'false'); });
     };
-    if (!document.querySelector('#ctqSort [data-sort="' + ctqSort + '"]')) ctqSort = 'best';
+    if (!document.querySelector('#ctqSort [data-sort="' + ctqSort + '"]')) ctqSort = 'ai_fit';
     markSort();
     Array.prototype.forEach.call(ctqSortPills, function (b) {
       b.addEventListener('click', function () {
