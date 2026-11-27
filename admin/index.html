@@ -7800,6 +7800,7 @@
         var bits = [(c.person_name || clWho(c)) + (c.minutes != null ? ' · ' + c.minutes + ' min' : '') + (c.after_hours ? ' · after hours' : '')];
         if (c.summary) bits.push(c.summary);
         if (c.callback_done_at) bits.push('Called back ' + fmtDate(c.callback_done_at));
+        else if (c.no_callback) bits.push('No call back needed');
         else if (c.outcome === 'message' || c.outcome === 'transferred' || (c.outcome === 'hangup' && c.from_number)) bits.push('Not called back yet');
         var right = el('div', 'cust-badges');
         if (c.urgency && c.urgency !== 'routine') right.appendChild(badge(c.urgency, CL_URG[c.urgency] || '#8aa48d'));
@@ -27441,7 +27442,7 @@
         c.messages.forEach(function (m) {
           var p = el('p', 'cl-msg');
           p.appendChild(badge(m.urgency || 'routine', CL_URG[m.urgency] || '#8aa48d'));
-          p.appendChild(document.createTextNode(' ' + (m.name || '') + (m.phone ? ', ' + fmtPhone(m.phone) : '') + ': ' + (m.reason || '') + (m.details ? '. ' + m.details : '') + (m.best_time_to_call ? ' (best time: ' + m.best_time_to_call + ')' : '')));
+          p.appendChild(document.createTextNode(' ' + (m.name || '') + (m.phone ? ', ' + fmtPhone(m.phone) : '') + ': ' + (m.reason || '') + (m.details ? '. ' + m.details : '') + (m.best_time_to_call ? ' (best time: ' + m.best_time_to_call + ')' : '') + (m.wants_callback === false ? ' (no call back needed)' : '')));
           mb.appendChild(p);
         });
         host.appendChild(mb);
