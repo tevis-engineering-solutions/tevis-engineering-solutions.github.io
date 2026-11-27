@@ -20236,7 +20236,7 @@
     var ctqSearch = '';
     // Source and sort are remembered in this browser, so the queue opens the way it was left.
     var ctqSource = '', ctqSort = 'ai_fit';
-    try { ctqSource = localStorage.getItem('tes_ctq_source') || ''; ctqSort = localStorage.getItem('tes_ctq_sort') || 'ai_fit'; } catch (e) {}
+    try { ctqSource = localStorage.getItem('tes_ctq_source') || ''; ctqSort = localStorage.getItem('tes_ctq_sort2') || 'ai_fit'; } catch (e) {}
     var ctqTimer = null;
     var ctqShowAll = false;
     var CT_FEED_LABEL = { cleveland: 'City of Cleveland', cuyahoga: 'Cuyahoga County', samgov: 'SAM.gov', ohiobuys: 'OhioBuys', bidnet: 'BidNet', demandstar: 'DemandStar', manual: 'Added by hand' };
@@ -20444,7 +20444,7 @@
     Array.prototype.forEach.call(ctqSortPills, function (b) {
       b.addEventListener('click', function () {
         ctqSort = b.getAttribute('data-sort'); ctqShowAll = false; markSort();
-        try { localStorage.setItem('tes_ctq_sort', ctqSort); } catch (e) {}
+        try { localStorage.setItem('tes_ctq_sort2', ctqSort); } catch (e) {}
         loadQueue();
       });
     });
