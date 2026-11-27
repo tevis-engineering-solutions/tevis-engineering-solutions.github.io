@@ -3613,6 +3613,7 @@
             <option value="">All sources</option>
             <option value="ohiobuys">OhioBuys</option>
             <option value="bidnet">BidNet</option>
+            <option value="demandstar">DemandStar</option>
             <option value="cleveland">City of Cleveland</option>
             <option value="cuyahoga">Cuyahoga County</option>
             <option value="samgov">SAM.gov</option>
@@ -20238,7 +20239,7 @@
     try { ctqSource = localStorage.getItem('tes_ctq_source') || ''; ctqSort = localStorage.getItem('tes_ctq_sort') || 'ai_fit'; } catch (e) {}
     var ctqTimer = null;
     var ctqShowAll = false;
-    var CT_FEED_LABEL = { cleveland: 'City of Cleveland', cuyahoga: 'Cuyahoga County', samgov: 'SAM.gov', ohiobuys: 'OhioBuys', bidnet: 'BidNet', manual: 'Added by hand' };
+    var CT_FEED_LABEL = { cleveland: 'City of Cleveland', cuyahoga: 'Cuyahoga County', samgov: 'SAM.gov', ohiobuys: 'OhioBuys', bidnet: 'BidNet', demandstar: 'DemandStar', manual: 'Added by hand' };
 
     function loadQueue() {
       var list = document.getElementById('ctqList');
@@ -20272,6 +20273,9 @@
         if (lr && !lr.ok && lr.error && lr.error !== 'no_key') return name + ': last read failed (' + lr.error + ')';
         return name + ': read ' + ctAgo(s.last_ok) + (s.last_ok ? ', every ' + s.every_hours + ' h' : '');
       });
+      // Bid alert emails (bid_alerts.js): the daily feed from OhioBuys, BidNet and DemandStar.
+      var al = ctFeed.alerts;
+      if (al) parts.unshift(!al.last ? 'Email alerts: none received yet' : 'Email alerts: last ' + ctAgo(al.last.received_at) + (al.week ? ' · ' + al.week.n + ' this week, ' + al.week.added + ' new post' + (al.week.added === 1 ? '' : 's') + (al.week.problems ? ', ' + al.week.problems + ' not read' : '') : ''));
       st.textContent = parts.join(' · ');
       var nb = document.getElementById('ctqCount');
       nb.textContent = ctFeed.new_matches ? ctFeed.new_matches + ' new' : '';
