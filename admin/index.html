@@ -26446,7 +26446,7 @@
     // call's overlay. Calls are deleted one at a time from the overlay, or picked on the list.
     var clView = 'open', clRows = [], clOpenId = null, clSel = {}, clSetup = null;
     function clDur(sec) { var t = Math.max(0, Math.round(Number(sec) || 0)); return Math.floor(t / 60) + ':' + String(t % 60).padStart(2, '0'); }
-    var CL_OUTCOME = { booked: 'Booked', message: 'Message', transferred: 'Transferred', info_only: 'Answered', hangup: 'Hung up', spam: 'Spam' };
+    var CL_OUTCOME = { booked: 'Booked', message: 'Message', transferred: 'Transferred', info_only: 'Answered', hangup: 'Hung up', spam: 'Spam', wrong_number: 'Wrong number' };
     var CL_URG = { emergency: '#ef4444', urgent: '#c89830', routine: '#8aa48d' };
     function clWho(c) { return c.caller_name || fmtPhone(c.from_number) || 'Unknown caller'; }
     var CL_COLS = [
